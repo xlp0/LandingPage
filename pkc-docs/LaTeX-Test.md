@@ -82,13 +82,25 @@ $$
 
 ## Combined Example
 
-Consider the probability distribution $p(x)$ where:
+Consider the time-evolution operator for a perturbed quantum harmonic oscillator with second-order correction:
 
 $$
-p(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}
+\hat{U}(t) = e^{-\frac{i}{\hbar}\hat{H}t} = \exp\left[-\frac{i}{\hbar}t\left(\hat{H}_0 + \lambda\hat{V} + \lambda^2\sum_{n=1}^{\infty}\frac{(-1)^n}{(n+1)!}\int_0^t dt_1 \int_0^{t_1} dt_2 \cdots \int_0^{t_{n-1}} dt_n [\hat{V}(t_1), [\hat{V}(t_2), \cdots [\hat{V}(t_n), \hat{H}_0]\cdots]]\right)\right]
 $$
 
-This is the normal distribution with mean $\mu$ and standard deviation $\sigma$.
+where the perturbed energy eigenvalues satisfy the coupled differential equations:
+
+$$
+E_n^{(k)} = \langle n^{(0)} | \hat{V} | n^{(k-1)} \rangle + \sum_{\substack{m=0 \\ m \neq n}}^{\infty} \frac{\langle n^{(0)} | \hat{V} | m^{(0)} \rangle \langle m^{(0)} | \hat{V} | n^{(k-2)} \rangle}{E_n^{(0)} - E_m^{(0)}} - \sum_{l=1}^{k-1} E_n^{(l)} \langle n^{(0)} | n^{(k-l)} \rangle
+$$
+
+and the wavefunctions are normalized such that:
+
+$$
+\Psi_n(x,t) = \sum_{k=0}^{\infty} \lambda^k \psi_n^{(k)}(x) e^{-\frac{i}{\hbar}E_n t} \quad \text{where} \quad \int_{-\infty}^{\infty} \left|\Psi_n(x,t)\right|^2 dx = 1
+$$
+
+This describes a quantum harmonic oscillator perturbed by potential $\hat{V}$ with coupling constant $\lambda$, using time-dependent perturbation theory with degenerate state corrections.
 
 ## Testing Edge Cases
 
