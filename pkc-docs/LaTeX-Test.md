@@ -30,22 +30,52 @@ $$
 x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
 $$
 
-A more complex example with matrices:
+A more complex example with matrices featuring Singular Value Decomposition (SVD) and block matrix operations:
 
 $$
+\mathbf{A} = \mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^* = 
 \begin{bmatrix}
-a & b \\
-c & d
+| & | & & | \\
+\mathbf{u}_1 & \mathbf{u}_2 & \cdots & \mathbf{u}_r \\
+| & | & & |
 \end{bmatrix}
 \begin{bmatrix}
-x \\
-y
+\sigma_1 & 0 & \cdots & 0 \\
+0 & \sigma_2 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \sigma_r
+\end{bmatrix}
+\begin{bmatrix}
+— & \mathbf{v}_1^* & — \\
+— & \mathbf{v}_2^* & — \\
+& \vdots & \\
+— & \mathbf{v}_r^* & —
+\end{bmatrix}
+$$
+
+For a partitioned system with block Kronecker structure:
+
+$$
+\left[\begin{array}{c|c}
+\mathbf{A}_{11} \otimes \mathbf{I}_n & \mathbf{A}_{12} \otimes \mathbf{B} \\
+\hline
+\mathbf{A}_{21} \otimes \mathbf{B}^T & \mathbf{A}_{22} \otimes \mathbf{I}_m
+\end{array}\right]
+\begin{bmatrix}
+\text{vec}(\mathbf{X}_1) \\
+\text{vec}(\mathbf{X}_2)
 \end{bmatrix}
 =
 \begin{bmatrix}
-ax + by \\
-cx + dy
+\text{vec}(\mathbf{C}_1) \\
+\text{vec}(\mathbf{C}_2)
 \end{bmatrix}
+$$
+
+where the matrix derivative satisfies:
+
+$$
+\frac{\partial}{\partial \mathbf{X}} \text{tr}\left(\mathbf{A}\mathbf{X}\mathbf{B}\mathbf{X}^T\mathbf{C}\right) = \mathbf{A}^T\mathbf{C}^T\mathbf{X}\mathbf{B}^T + \mathbf{C}\mathbf{A}\mathbf{X}\mathbf{B}
 $$
 
 ## Attention Mechanism (from LLM docs)
