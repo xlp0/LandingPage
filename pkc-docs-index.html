@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PKC Design Documents</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .doc-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .doc-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .doc-card h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .doc-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .doc-card .meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .doc-card .size {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .doc-card .view-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: opacity 0.3s ease;
+        }
+
+        .doc-card:hover .view-btn {
+            opacity: 0.9;
+        }
+
+        .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="images/PKC_Flat_Logo_TransparentBackground.png" alt="PKC Logo" style="max-width: 120px; height: auto; margin-bottom: 1rem;" />
+            <h1>PKC Design Documents</h1>
+            <p>Explore the Personal Knowledge Container design documentation with interactive diagrams</p>
+        </div>
+
+        <div class="card-grid">
+            <a href="pkc-viewer.html?doc=MVP%20Cards%20Design%20Rationale.md" class="doc-card">
+                <div class="icon">🎴</div>
+                <h2>MVP Cards Design Rationale</h2>
+                <p>Architectural foundation of the MVP Cards system - MCard, PCard, and VCard - implementing networks of card-arrows based on Category Theory principles.</p>
+                <div class="meta">
+                    <span class="size">47.7 KB</span>
+                    <span class="view-btn">View Document →</span>
+                </div>
+            </a>
+
+            <a href="pkc-viewer.html?doc=PKC%20as%20the%20Network.md" class="doc-card">
+                <div class="icon">🌐</div>
+                <h2>PKC as the Network</h2>
+                <p>Understanding how the Personal Knowledge Container functions as a self-describing network infrastructure at Internet scale.</p>
+                <div class="meta">
+                    <span class="size">52.5 KB</span>
+                    <span class="view-btn">View Document →</span>
+                </div>
+            </a>
+
+            <a href="pkc-viewer.html?doc=Personal%20Knowledge%20Container.md" class="doc-card">
+                <div class="icon">📦</div>
+                <h2>Personal Knowledge Container</h2>
+                <p>Core concepts and implementation details of the Personal Knowledge Container system for sovereign knowledge management.</p>
+                <div class="meta">
+                    <span class="size">62.9 KB</span>
+                    <span class="view-btn">View Document →</span>
+                </div>
+            </a>
+
+            <a href="pkc-viewer.html?doc=Yoneda%20Arithmetic.md" class="doc-card">
+                <div class="icon">🔢</div>
+                <h2>Yoneda Arithmetic</h2>
+                <p>Mathematical foundations using Yoneda Lemma and Category Theory to establish formal computational structures.</p>
+                <div class="meta">
+                    <span class="size">105 KB</span>
+                    <span class="view-btn">View Document →</span>
+                </div>
+            </a>
+
+            <a href="pkc-viewer.html?doc=LaTeX-Test.md" class="doc-card">
+                <div class="icon">📐</div>
+                <h2>LaTeX Rendering Test</h2>
+                <p>Test document demonstrating inline and display LaTeX math rendering with various examples including equations, matrices, and Greek symbols.</p>
+                <div class="meta">
+                    <span class="size">2.1 KB</span>
+                    <span class="view-btn">View Document →</span>
+                </div>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

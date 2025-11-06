@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PKC - A Resource-Aware Computational Infrastructure for Community Learning. Self-Sovereign Knowledge Management built on Web5 architecture.">
+    <title>PKC - Personal Knowledge Container</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .logo-container {
+            margin-bottom: 3rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .logo-container img {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            opacity: 0.9;
+            line-height: 1.8;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease-out 0.8s both;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #ffd700;
+        }
+
+        .feature p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 1s both;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #ffffff;
+            color: #667eea;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .tutorials {
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease-out 0.9s both;
+        }
+
+        .tutorials h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .tutorial-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .tutorial-link {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tutorial-link:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 215, 0, 0.5);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .tutorial-link .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tutorial-link .title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .tutorial-link .description {
+            font-size: 0.9rem;
+            opacity: 0.85;
+            margin: 0;
+        }
+
+        .footer {
+            margin-top: 4rem;
+            opacity: 0.8;
+            font-size: 0.9rem;
+            animation: fadeIn 1s ease-out 1.2s both;
+        }
+
+        .footer a {
+            color: #ffd700;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer a:hover {
+            opacity: 0.8;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .description {
+                font-size: 1rem;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .logo-container img {
+                max-width: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="images/PKC_Flat_Logo_TransparentBackground.png" alt="PKC Logo" />
+        </div>
+
+        <h1>Personal Knowledge Container</h1>
+        <p class="subtitle">A Resource-Aware Computational Infrastructure for Community Learning</p>
+
+        <p class="description">
+            PKC is a revolutionary Web5-native platform built on polynomial functor theory and computational trinitarianism. 
+            It implements a decentralized architecture where data, computation, and value are unified through self-sovereign 
+            knowledge management, enabling verifiable, privacy-preserving collaboration with AI-enhanced learning capabilities.
+        </p>
+
+        <div class="features">
+            <a href="pkc-viewer.html?doc=Personal%20Knowledge%20Container.md" class="feature">
+                <h3>🔐 Self-Sovereign</h3>
+                <p>Own and control your knowledge with decentralized identifiers and cryptographic integrity</p>
+            </a>
+            <a href="pkc-viewer.html?doc=PKC%20as%20the%20Network.md" class="feature">
+                <h3>🌐 Web5 Native</h3>
+                <p>Built on Decentralized Web Node architecture with content-addressable storage</p>
+            </a>
+            <a href="pkc-viewer.html?doc=Yoneda%20Arithmetic.md" class="feature">
+                <h3>🧮 Polynomial Functor</h3>
+                <p>Type-safe knowledge transformations with machine learning integration</p>
+            </a>
+            <a href="pkc-viewer.html?doc=MVP%20Cards%20Design%20Rationale.md" class="feature">
+                <h3>📇 Card-Based UI</h3>
+                <p>HyperCard-inspired navigation with immutable, content-addressable information atoms</p>
+            </a>
+        </div>
+
+        <div class="tutorials">
+            <h2>📖 Tutorials & Learning Resources</h2>
+            <div class="tutorial-links">
+                <a href="https://docs.google.com/presentation/d/1LLvQcw7mGzEBqzQ3Y-rp4__W72Z-ULM8YcBxxvo_RII" class="tutorial-link" target="_blank">
+                    <div class="icon">📊</div>
+                    <div class="title">PKC Introduction Slides</div>
+                    <p class="description">Comprehensive presentation on PKC fundamentals and architecture</p>
+                </a>
+                <a href="https://docs.google.com/presentation/d/15sf_Uy55OHdaxaI6XvSpl1rKgzVROs0iKzPhaG8FofE" class="tutorial-link" target="_blank">
+                    <div class="icon">🎯</div>
+                    <div class="title">PKC Advanced Concepts</div>
+                    <p class="description">Deep dive into polynomial functors and Web5 integration</p>
+                </a>
+                <a href="https://www.youtube.com/watch?v=b82v_A8_uQE&list=PLKk7631XfeqGEWvJMcE6rgfd-Q6TCrpKg&index=4" class="tutorial-link" target="_blank">
+                    <div class="icon">🎥</div>
+                    <div class="title">PKC Video Tutorial</div>
+                    <p class="description">Step-by-step video guide to getting started with PKC</p>
+                </a>
+                <a href="https://www.youtube.com/watch?v=HanRtMhH6Gk&list=PLKk7631XfeqGEWvJMcE6rgfd-Q6TCrpKg&index=2" class="tutorial-link" target="_blank">
+                    <div class="icon">📺</div>
+                    <div class="title">PKC Walkthrough</div>
+                    <p class="description">Practical demonstration of PKC features and capabilities</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="cta-buttons">
+            <a href="pkc-docs-index.html" class="btn btn-primary">📚 Browse Documentation</a>
+            <a href="https://pkc.pub" class="btn btn-secondary" target="_blank">Visit PKC.pub</a>
+            <a href="https://github.com/xlp0/PKC" class="btn btn-secondary" target="_blank">View on GitHub</a>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2025 PKC Project | Enabling the Extreme Learning Process</p>
+            <p>Built with ❤️ for self-sovereign knowledge management</p>
+        </div>
+    </div>
+</body>
+</html>

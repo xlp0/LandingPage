@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PKC Document Viewer</title>
+    
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.0.0/marked.min.js"></script>
+    
+    <!-- Mermaid.js for diagram rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    
+    <!-- KaTeX for LaTeX math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- Highlight.js for code syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h1 {
+            font-size: 1.5rem;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            color: #666;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #fee;
+            border: 2px solid #fcc;
+            border-radius: 8px;
+            padding: 2rem;
+            color: #c33;
+            text-align: center;
+        }
+
+        .content {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            line-height: 1.8;
+        }
+
+        .content h1 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        .content h2 {
+            color: #34495e;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+
+        .content h3 {
+            color: #4a5568;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            font-size: 1.5rem;
+        }
+
+        .content h4 {
+            color: #5a6978;
+            margin-top: 1.2rem;
+            margin-bottom: 0.6rem;
+            font-size: 1.2rem;
+        }
+
+        .content p {
+            margin-bottom: 1rem;
+            color: #4a5568;
+        }
+
+        .content ul, .content ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .content li {
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+
+        .content code {
+            background: #f7fafc;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+            font-size: 0.9em;
+        }
+
+        .content pre {
+            background: #2d3748;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .content pre code {
+            background: none;
+            padding: 0;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+        }
+
+        .content blockquote {
+            border-left: 4px solid #667eea;
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            color: #5a6978;
+            font-style: italic;
+        }
+
+        .content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .content table th {
+            background: #667eea;
+            color: white;
+            padding: 0.8rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .content table td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .content table tr:hover {
+            background: #f7fafc;
+        }
+
+        .content a {
+            color: #667eea;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .content a:hover {
+            border-bottom-color: #667eea;
+        }
+
+        .content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .mermaid {
+            background: #f7fafc;
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        /* LaTeX Math Styles */
+        .math-inline {
+            display: inline;
+        }
+
+        .math-display {
+            display: block;
+            margin: 1.5rem 0;
+            text-align: center;
+            overflow-x: auto;
+            padding: 1rem;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+
+        .katex {
+            font-size: 1.1em;
+        }
+
+        .katex-display {
+            margin: 1rem 0;
+        }
+
+        .metadata {
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 4px;
+        }
+
+        .metadata h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            margin-top: 0;
+        }
+
+        .metadata p {
+            margin: 0.3rem 0;
+            font-size: 0.9rem;
+            color: #5a6978;
+        }
+
+        strong {
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-content">
+            <h1 id="doc-title">Loading...</h1>
+            <a href="pkc-docs-index.html" class="back-btn">← Back to Index</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading document...</p>
+        </div>
+        <div id="error" class="error" style="display: none;"></div>
+        <div id="content" class="content" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ 
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+
+        // Get document name from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const docName = urlParams.get('doc');
+        
+        if (!docName) {
+            showError('No document specified. Please select a document from the index page.');
+        } else {
+            loadDocument(docName);
+        }
+
+        async function loadDocument(filename) {
+            try {
+                // Update title
+                document.getElementById('doc-title').textContent = filename.replace('.md', '');
+                
+                // Fetch the markdown file from the server
+                const response = await fetch(`/pkc-docs/${filename}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load document: ${response.status} ${response.statusText}`);
+                }
+                
+                const markdownText = await response.text();
+                
+                // Parse and render the markdown
+                await renderMarkdown(markdownText);
+                
+                // Hide loading, show content
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error loading document:', error);
+                showError(`Error loading document: ${error.message}<br><br>Please ensure the document exists at: /pkc-docs/${filename}`);
+            }
+        }
+
+        async function renderMarkdown(markdown) {
+            const contentDiv = document.getElementById('content');
+            
+            // Configure marked.js
+            marked.setOptions({
+                breaks: true,
+                gfm: true,
+                headerIds: true,
+                mangle: false,
+                highlight: function(code, lang) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        try {
+                            return hljs.highlight(code, { language: lang }).value;
+                        } catch (err) {
+                            console.error('Highlight error:', err);
+                        }
+                    }
+                    return hljs.highlightAuto(code).value;
+                }
+            });
+
+            // Process markdown - extract special blocks first
+            let processedMarkdown = markdown;
+            
+            // Step 1: Extract LaTeX display math ($$...$$)
+            const mathDisplayBlocks = [];
+            processedMarkdown = processedMarkdown.replace(/\$\$([\s\S]*?)\$\$/g, (match, math) => {
+                const index = mathDisplayBlocks.length;
+                mathDisplayBlocks.push(math.trim());
+                return `<div class="math-display-placeholder" data-index="${index}"></div>`;
+            });
+            
+            // Step 2: Extract LaTeX inline math ($...$)
+            const mathInlineBlocks = [];
+            processedMarkdown = processedMarkdown.replace(/\$([^\$\n]+?)\$/g, (match, math) => {
+                const index = mathInlineBlocks.length;
+                mathInlineBlocks.push(math.trim());
+                return `<span class="math-inline-placeholder" data-index="${index}"></span>`;
+            });
+            
+            // Step 3: Extract mermaid blocks
+            const mermaidBlocks = [];
+            processedMarkdown = processedMarkdown.replace(/```mermaid\n([\s\S]*?)```/g, (match, diagram) => {
+                const index = mermaidBlocks.length;
+                mermaidBlocks.push(diagram.trim());
+                return `<div class="mermaid-placeholder" data-index="${index}"></div>`;
+            });
+            
+            // Convert markdown to HTML
+            let html = marked.parse(processedMarkdown);
+            
+            // Extract and format frontmatter if present
+            const frontmatterMatch = markdown.match(/^---\n([\s\S]*?)\n---/);
+            if (frontmatterMatch) {
+                const frontmatter = frontmatterMatch[1];
+                const metadata = parseFrontmatter(frontmatter);
+                html = metadata + html;
+            }
+            
+            contentDiv.innerHTML = html;
+            
+            // Render LaTeX display math ($$...$$)
+            const mathDisplayPlaceholders = contentDiv.querySelectorAll('.math-display-placeholder');
+            for (let i = 0; i < mathDisplayPlaceholders.length; i++) {
+                const placeholder = mathDisplayPlaceholders[i];
+                const index = parseInt(placeholder.getAttribute('data-index'));
+                const math = mathDisplayBlocks[index];
+                
+                try {
+                    const mathDiv = document.createElement('div');
+                    mathDiv.className = 'math-display';
+                    katex.render(math, mathDiv, {
+                        displayMode: true,
+                        throwOnError: false,
+                        strict: false
+                    });
+                    placeholder.replaceWith(mathDiv);
+                } catch (error) {
+                    console.error('LaTeX display math error:', error);
+                    placeholder.innerHTML = `<div style="background: #fee; padding: 0.5rem; border: 1px solid #fcc; color: #c33; font-size: 0.9rem;">
+                        Math Error: ${error.message}
+                    </div>`;
+                }
+            }
+            
+            // Render LaTeX inline math ($...$)
+            const mathInlinePlaceholders = contentDiv.querySelectorAll('.math-inline-placeholder');
+            for (let i = 0; i < mathInlinePlaceholders.length; i++) {
+                const placeholder = mathInlinePlaceholders[i];
+                const index = parseInt(placeholder.getAttribute('data-index'));
+                const math = mathInlineBlocks[index];
+                
+                try {
+                    const mathSpan = document.createElement('span');
+                    mathSpan.className = 'math-inline';
+                    katex.render(math, mathSpan, {
+                        displayMode: false,
+                        throwOnError: false,
+                        strict: false
+                    });
+                    placeholder.replaceWith(mathSpan);
+                } catch (error) {
+                    console.error('LaTeX inline math error:', error);
+                    placeholder.innerHTML = `<span style="background: #fee; padding: 0.2rem; border: 1px solid #fcc; color: #c33; font-size: 0.8rem;">
+                        [Math Error]
+                    </span>`;
+                }
+            }
+            
+            // Render mermaid diagrams
+            const placeholders = contentDiv.querySelectorAll('.mermaid-placeholder');
+            
+            if (mermaidBlocks.length > 0) {
+                for (let i = 0; i < placeholders.length; i++) {
+                    const placeholder = placeholders[i];
+                    const index = parseInt(placeholder.getAttribute('data-index'));
+                    const diagram = mermaidBlocks[index];
+                    
+                    try {
+                        // Create unique ID for this diagram
+                        const id = `mermaid-${Date.now()}-${i}`;
+                        
+                        // Render the diagram
+                        const { svg } = await mermaid.render(id, diagram);
+                        
+                        // Create container and insert SVG
+                        const mermaidDiv = document.createElement('div');
+                        mermaidDiv.className = 'mermaid';
+                        mermaidDiv.innerHTML = svg;
+                        placeholder.replaceWith(mermaidDiv);
+                    } catch (error) {
+                        console.error('Mermaid rendering error for diagram', index, ':', error);
+                        // Show error in place of diagram
+                        placeholder.innerHTML = `<div style="background: #fee; padding: 1rem; border: 1px solid #fcc; border-radius: 4px; color: #c33;">
+                            <strong>Mermaid Diagram Error:</strong><br>
+                            <pre style="margin-top: 0.5rem; font-size: 0.9rem;">${error.message || 'Failed to render diagram'}</pre>
+                        </div>`;
+                    }
+                }
+            }
+        }
+
+        function parseFrontmatter(frontmatter) {
+            const lines = frontmatter.split('\n');
+            let metadata = '<div class="metadata"><h4>Document Metadata</h4>';
+            
+            for (let line of lines) {
+                if (line.trim()) {
+                    const [key, ...valueParts] = line.split(':');
+                    if (key && valueParts.length > 0) {
+                        const value = valueParts.join(':').trim();
+                        metadata += `<p><strong>${key.trim()}:</strong> ${value}</p>`;
+                    }
+                }
+            }
+            
+            metadata += '</div>';
+            return metadata;
+        }
+
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error').innerHTML = message;
+        }
+    </script>
+</body>
+</html>
