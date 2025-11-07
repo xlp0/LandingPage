@@ -4,56 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PKC Landing Page</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'pkc-primary': '#667eea',
+              'pkc-secondary': '#764ba2',
+              'pkc-gold': '#ffd700'
+            },
+            animation: {
+              'pulse-slow': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+            }
+          }
+        }
+      }
+    </script>
     <style>
-      :root { --bg1:#667eea; --bg2:#764ba2; --gold:#ffd700; }
-      *{box-sizing:border-box;margin:0}
-      body{min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#fff}
-      .wrap{max-width:960px;padding:2rem;text-align:center}
-      h1{font-size:2.2rem;margin-bottom:.5rem}
-      .subtitle{opacity:.9;margin-bottom:1.5rem}
-      .links{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
-      .links a{padding:.6rem 1rem;border-radius:999px;border:1px solid rgba(255,255,255,.4);color:#fff;text-decoration:none}
-      .links a.primary{background:#fff;color:var(--bg1)}
-      /* WS status badge */
-      .ws-badge{position:fixed;right:16px;bottom:16px;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.2px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);backdrop-filter:blur(8px);display:inline-flex;align-items:center;gap:6px;color:#fff;z-index:50}
-      .ws-dot{width:8px;height:8px;border-radius:50%;background:#999;display:inline-block}
-      .ws-ok .ws-dot{background:#22c55e}
-      .ws-warn .ws-dot{background:#f59e0b}
-      .ws-err .ws-dot{background:#ef4444}
-
-      /* P2P presence panel */
-      .p2p-panel{position:fixed;left:16px;bottom:16px;width:280px;max-height:40vh;display:flex;flex-direction:column;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.25);border-radius:12px;color:#fff;backdrop-filter:blur(8px);overflow:hidden;z-index:50}
-      .p2p-head{padding:.5rem .75rem;border-bottom:1px solid rgba(255,255,255,.15);font-weight:600;display:flex;justify-content:space-between;gap:.5rem}
-      .p2p-body{padding:.5rem .75rem;overflow:auto;font-size:.85rem}
-      .p2p-kv{opacity:.9}
-      .p2p-msg{opacity:.9;margin:.25rem 0;word-break:break-word}
+      /* Status dot colors - using Tailwind utilities directly in HTML */
     </style>
 </head>
-<body>
-    <div class="wrap">
-      <h1>PKC Landing Page</h1>
-      <p class="subtitle">Static-first. Modular by design. Local‑first ready.</p>
-      <div class="links">
-        <a class="primary" href="pkc-docs-index.html">Browse Documentation</a>
-        <a href="js/modules/p2p-serverless/example.html">🔗 P2P Demo</a>
-        <a href="pkc-viewer.html?doc=LaTeX-Test.md">LaTeX Test</a>
-        <a href="https://github.com/xlp0/LandingPage" target="_blank" rel="noopener">GitHub</a>
+<body class="min-h-screen flex items-center justify-center font-sans text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="max-w-4xl mx-auto px-8 py-16 text-center">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">PKC Landing Page</h1>
+      <p class="text-xl md:text-2xl opacity-90 mb-12">Static-first. Modular by design. Local‑first ready.</p>
+      <div class="flex flex-wrap gap-4 justify-center mb-16">
+        <a href="pkc-docs-index.html" class="px-6 py-3 bg-white text-pkc-primary rounded-full border border-white/40 hover:bg-white/90 transition-colors font-medium">Browse Documentation</a>
+        <a href="js/modules/p2p-serverless/example.html" class="px-6 py-3 rounded-full border border-white/40 text-white hover:bg-white/10 transition-colors font-medium">🔗 P2P Demo</a>
+        <a href="pkc-viewer.html?doc=LaTeX-Test.md" class="px-6 py-3 rounded-full border border-white/40 text-white hover:bg-white/10 transition-colors font-medium">LaTeX Test</a>
+        <a href="https://github.com/xlp0/LandingPage" target="_blank" rel="noopener" class="px-6 py-3 rounded-full border border-white/40 text-white hover:bg-white/10 transition-colors font-medium">GitHub</a>
       </div>
     </div>
-    <div id="p2p-panel" class="p2p-panel" aria-live="polite">
-      <div class="p2p-head">
+    
+    <!-- P2P Status Panel -->
+    <div id="p2p-panel" class="fixed left-4 bottom-4 w-72 max-h-[40vh] flex flex-col bg-black/25 border border-white/25 rounded-xl text-white backdrop-blur-md overflow-hidden z-50" aria-live="polite">
+      <div class="px-3 py-2 border-b border-white/15 font-semibold flex justify-between items-center gap-2">
         <span>P2P</span>
-        <div style="display:flex;gap:8px;font-size:11px;">
+        <div class="flex gap-2 text-xs">
           <span>Clients: <span id="client-count">0</span></span>
           <span>Peers: <span id="peer-count">0</span></span>
         </div>
       </div>
-      <div class="p2p-body">
-        <div id="p2p-status" class="p2p-kv">idle</div>
+      <div class="px-3 py-2 overflow-auto text-sm">
+        <div id="p2p-status" class="opacity-90">idle</div>
         <div id="p2p-messages"></div>
       </div>
     </div>
-    <div id="ws-status" class="ws-badge ws-warn" aria-live="polite"><span class="ws-dot"></span><span>WS: idle</span></div>
+    
+    <!-- WebSocket Status Badge -->
+    <div id="ws-status" class="fixed right-4 bottom-4 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-white/15 border border-white/30 backdrop-blur-md inline-flex items-center gap-1.5 text-white z-50" aria-live="polite">
+      <span class="w-2 h-2 rounded-full bg-gray-400" id="ws-dot"></span>
+      <span>WS: idle</span>
+    </div>
+    
     <script type="module">
       import { PKC } from './js/pkc-core.js';
       PKC.load('/modules.json');
