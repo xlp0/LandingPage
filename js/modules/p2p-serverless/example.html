@@ -24,6 +24,66 @@
   </script>
   <style>
     /* Status indicator styling - handled by JavaScript class manipulation */
+    
+    /* Modal styles for invitation display */
+    .p2p-invitation-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+    
+    .modal-content {
+      background: rgba(255,255,255,0.95);
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .modal-content h3 {
+      margin-bottom: 15px;
+      color: #1a202c;
+    }
+    
+    .modal-content button {
+      margin-right: 10px;
+      margin-top: 10px;
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+    
+    .modal-content button:hover {
+      background: #5a67d8;
+    }
+    
+    .modal-content textarea {
+      width: 100%;
+      min-height: 100px;
+      font-family: monospace;
+      font-size: 11px;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 6px;
+      padding: 8px;
+      margin: 10px 0;
+      color: #2d3748;
+    }
   </style>
 <body class="min-h-screen font-sans text-white p-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
   <div class="max-w-6xl mx-auto p-8">
@@ -118,6 +178,19 @@
       try {
         await p2pModule.init({ pkc, config, appConfig: {}, capabilities });
         await p2pModule.start();
+        
+        // Setup create invitation button
+        const createBtn = document.getElementById('create-invitation-btn');
+        if (createBtn) {
+          createBtn.onclick = async () => {
+            try {
+              const invitation = await p2pModule.createInvitation();
+              p2pModule._displayInvitation(invitation);
+            } catch (e) {
+              alert('Failed to create invitation: ' + e.message);
+            }
+          };
+        }
         
         // Setup accept invitation button
     const acceptBtn = document.getElementById('accept-invitation-btn');
