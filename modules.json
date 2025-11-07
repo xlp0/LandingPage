@@ -1,0 +1,31 @@
+{
+  "modules": [
+    {
+      "id": "markdown-renderer",
+      "entry": "/js/modules/markdown-renderer/index.js",
+      "enabled": true
+    },
+    {
+      "id": "net-gateway",
+      "entry": "/js/modules/net-gateway/index.js",
+      "enabled": true,
+      "when": "websocket",
+      "config": { "wsUrl": "ws://localhost:3001/ws/" }
+    },
+    {
+      "id": "p2p-serverless",
+      "entry": "/js/modules/p2p-serverless/index.js",
+      "enabled": true,
+      "when": "webrtc",
+      "config": {
+        "iceServers": [
+          { "urls": "stun:stun.l.google.com:19302" },
+          { "urls": "stun:stun1.l.google.com:19302" }
+        ],
+        "channelName": "pkc-p2p-discovery",
+        "invitationTTL": 300000,
+        "autoAcceptInvitations": false
+      }
+    }
+  ]
+}

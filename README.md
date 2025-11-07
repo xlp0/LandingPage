@@ -32,9 +32,11 @@ A modern web-based viewer for PKC (Personal Knowledge Container) design document
 ├── README.md                    # This file
 ├── PKC-DOCS-README.md           # Detailed project documentation
 ├── LATEX-SUPPORT-SUMMARY.md     # LaTeX implementation details
+├── index.html                   # PKC landing page with features
 ├── pkc-docs-index.html          # Main landing page with document cards
 ├── pkc-viewer.html              # Dynamic markdown viewer
 ├── mermaid-test.html            # Mermaid diagram testing
+├── nginx-pkc.conf               # Nginx server configuration
 ├── iisstart.htm                 # IIS default page (modified)
 ├── iisstart.png                 # IIS logo
 └── pkc-docs/                    # Documents directory
@@ -64,6 +66,188 @@ python -m http.server 8000
 npx serve .
 # Then visit http://localhost:3000/pkc-docs-index.html
 ```
+
+### Option 4: Nginx on Mac (Recommended for Production)
+
+#### Prerequisites
+- Homebrew package manager installed
+- Basic terminal/command line knowledge
+
+#### Installation Steps
+
+1. **Install Nginx via Homebrew**
+   ```bash
+   brew install nginx
+   ```
+
+2. **Create Nginx Configuration Directory** (if not exists)
+   ```bash
+   sudo mkdir -p /opt/homebrew/etc/nginx/servers
+   ```
+
+3. **Create Configuration File**
+   
+   Create a file named `nginx-pkc.conf` in your project directory with the following content:
+   
+   ```nginx
+   server {
+       listen 8081;
+       server_name localhost pkc.local;
+
+       # Root directory for PKC Landing Page
+       root /Users/YOUR_USERNAME/Documents/Development/GovTech/PKC/LandingPage;
+       
+       # Default file to serve
+       index index.html;
+
+       # Main location block
+       location / {
+           try_files $uri $uri/ =404;
+       }
+
+       # Enable gzip compression
+       gzip on;
+       gzip_types text/plain text/css application/json application/javascript text/xml application/xml text/javascript;
+       
+       # Security headers
+       add_header X-Frame-Options "SAMEORIGIN" always;
+       add_header X-Content-Type-Options "nosniff" always;
+       add_header X-XSS-Protection "1; mode=block" always;
+
+       # Cache static assets
+       location ~* \.(jpg|jpeg|png|gif|ico|css|js|svg)$ {
+           expires 1y;
+           add_header Cache-Control "public, immutable";
+       }
+
+       # Handle 404 errors
+       error_page 404 /404.html;
+       location = /404.html {
+           internal;
+       }
+   }
+   ```
+   
+   **Important**: Replace `/Users/YOUR_USERNAME/...` with your actual project path.
+
+4. **Copy Configuration to Nginx**
+   ```bash
+   sudo cp nginx-pkc.conf /opt/homebrew/etc/nginx/servers/
+   ```
+
+5. **Test Configuration**
+   ```bash
+   nginx -t
+   ```
+   
+   You should see:
+   ```
+   nginx: the configuration file /opt/homebrew/etc/nginx/nginx.conf syntax is ok
+   nginx: configuration file /opt/homebrew/etc/nginx/nginx.conf test is successful
+   ```
+
+6. **Start Nginx Service**
+   ```bash
+   brew services start nginx
+   ```
+
+7. **Access Your Site**
+   
+   Open your browser and navigate to:
+   - Main landing page: `http://localhost:8081`
+   - Documentation index: `http://localhost:8081/pkc-docs-index.html`
+
+#### Managing Nginx
+
+**Check Nginx Status**
+```bash
+brew services list | grep nginx
+```
+
+**Stop Nginx**
+```bash
+brew services stop nginx
+```
+
+**Restart Nginx**
+```bash
+brew services restart nginx
+```
+
+**Reload Configuration** (without stopping)
+```bash
+nginx -s reload
+```
+
+**View Nginx Logs**
+```bash
+# Error log
+tail -f /opt/homebrew/var/log/nginx/error.log
+
+# Access log
+tail -f /opt/homebrew/var/log/nginx/access.log
+```
+
+**Check Which Ports Nginx is Using**
+```bash
+lsof -i :8081
+```
+
+#### Updating Configuration
+
+After making changes to `nginx-pkc.conf`:
+
+1. Copy updated config to nginx directory:
+   ```bash
+   sudo cp nginx-pkc.conf /opt/homebrew/etc/nginx/servers/
+   ```
+
+2. Test the new configuration:
+   ```bash
+   nginx -t
+   ```
+
+3. Reload nginx to apply changes:
+   ```bash
+   nginx -s reload
+   ```
+
+#### Troubleshooting
+
+**Port Already in Use**
+- If port 8081 is already in use, change the `listen` directive in the config file to another port (e.g., 8082)
+- Update the config and reload nginx
+
+**Permission Denied**
+- Ensure you have read permissions on all files in the project directory
+- Use `sudo` when copying config files to `/opt/homebrew/etc/nginx/servers/`
+
+**404 Errors**
+- Verify the `root` path in the config matches your actual project directory
+- Check file permissions: `ls -la /path/to/your/project`
+
+**Configuration Test Fails**
+- Review error messages from `nginx -t`
+- Check for syntax errors in `nginx-pkc.conf`
+- Ensure the nginx servers directory exists
+
+#### Configuration Features
+
+The provided nginx configuration includes:
+- ✅ **Gzip Compression**: Reduces file sizes for faster loading
+- ✅ **Security Headers**: Protects against common web vulnerabilities
+- ✅ **Static Asset Caching**: Improves performance with 1-year cache
+- ✅ **Clean URLs**: Proper handling of directories and files
+- ✅ **Error Handling**: Custom 404 error pages
+
+#### Performance Benefits
+
+Using nginx provides several advantages over simple development servers:
+- **Production-grade performance**: Handle concurrent connections efficiently
+- **Static file optimization**: Fast serving of HTML, CSS, JS, images
+- **Compression**: Automatic gzip for text-based files
+- **Caching**: Browser caching for static assets
+- **Security**: Built-in security headers and protection
 
 ## 📖 Usage
 
@@ -193,11 +377,12 @@ This project is provided as-is for viewing PKC design documentation.
 
 ## 📊 Project Stats
 
-- **Lines of Code**: ~1,500 lines
+- **Lines of Code**: ~1,800 lines
 - **Documents**: 5 PKC design documents
 - **Libraries**: 4 modern JavaScript libraries
 - **Browser Support**: All modern browsers
-- **Last Updated**: November 5, 2025
+- **Server Options**: 4 (Python, Node.js, Nginx, IIS)
+- **Last Updated**: November 7, 2025
 
 ## 🚀 Live Demo
 
