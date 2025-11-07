@@ -12,6 +12,21 @@ function setBadge(state, text) {
   el.classList.add(state);
   const spanText = el.querySelector('span:last-child');
   if (spanText) spanText.textContent = text;
+  
+  // Update the dot color directly with Tailwind classes
+  const dot = document.getElementById('ws-dot');
+  if (dot) {
+    dot.className = 'w-2 h-2 rounded-full'; // Reset classes
+    if (state === 'ws-ok') {
+      dot.classList.add('bg-green-500');
+    } else if (state === 'ws-warn') {
+      dot.classList.add('bg-amber-500');
+    } else if (state === 'ws-err') {
+      dot.classList.add('bg-red-500');
+    } else {
+      dot.classList.add('bg-gray-400');
+    }
+  }
 }
 
 function updateClientCount(count) {
