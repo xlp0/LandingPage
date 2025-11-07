@@ -42,6 +42,8 @@ function appendMsg(text) {
   messagesElement = document.getElementById('p2p-messages');
   if (messagesElement) {
     const li = document.createElement('li');
+    // Ensure long content (codes/JSON) wraps fully
+    li.className = 'whitespace-pre-wrap break-words break-all font-mono text-xs leading-snug';
     li.textContent = `${new Date().toLocaleTimeString()}: ${text}`;
     messagesElement.appendChild(li);
     
@@ -307,7 +309,7 @@ export default {
     }
     
     connectionManager.broadcast(data);
-    appendMsg(`Broadcast: ${JSON.stringify(data).substring(0, 50)}`);
+    appendMsg(`Broadcast: ${JSON.stringify(data)}`);
   },
   
   /**
@@ -382,7 +384,7 @@ export default {
     });
     
     connectionManager.on('message', ({ peerId, data }) => {
-      appendMsg(`From ${peerId}: ${JSON.stringify(data).substring(0, 50)}`);
+      appendMsg(`From ${peerId}: ${JSON.stringify(data)}`);
       
       // Call registered handlers
       messageHandlers.forEach(handler => {
@@ -435,6 +437,22 @@ export default {
             await this.acceptInvitation(input);
           } catch (e) {
             alert('Failed to accept invitation: ' + e.message);
+          }
+        }
+      };
+    }
+    
+    // Setup complete connection button
+    const completeBtn = document.getElementById('complete-connection-btn');
+    if (completeBtn) {
+      completeBtn.onclick = async () => {
+        const input = prompt('Paste answer code from Tab 2:');
+        if (input) {
+          try {
+            await this.completeConnection(input);
+            alert('Connection completed! You should now be connected.');
+          } catch (e) {
+            alert('Failed to complete connection: ' + e.message);
           }
         }
       };

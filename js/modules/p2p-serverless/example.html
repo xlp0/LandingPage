@@ -141,7 +141,7 @@
     
     <div class="bg-white/10 border border-white/20 rounded-lg p-5 backdrop-blur-sm">
       <h2 class="mb-4 text-lg font-semibold">Message Log</h2>
-      <ul id="p2p-messages" class="space-y-2 max-h-80 overflow-y-auto bg-black/20 border border-white/20 rounded-lg p-3"></ul>
+      <ul id="p2p-messages" class="space-y-2 max-h-80 overflow-y-auto bg-black/20 border border-white/20 rounded-lg p-3 whitespace-pre-wrap break-words break-all font-mono text-xs leading-snug"></ul>
     </div>
     
     <div id="invitation-display"></div>
@@ -177,55 +177,7 @@
     (async () => {
       try {
         await p2pModule.init({ pkc, config, appConfig: {}, capabilities });
-        await p2pModule.start();
-        
-        // Setup create invitation button
-        const createBtn = document.getElementById('create-invitation-btn');
-        if (createBtn) {
-          createBtn.onclick = async () => {
-            try {
-              const invitation = await p2pModule.createInvitation();
-              p2pModule._displayInvitation(invitation);
-            } catch (e) {
-              alert('Failed to create invitation: ' + e.message);
-            }
-          };
-        }
-        
-        // Setup accept invitation button
-    const acceptBtn = document.getElementById('accept-invitation-btn');
-    if (acceptBtn) {
-      acceptBtn.onclick = async () => {
-        const input = prompt('Paste invitation code from Tab 1:');
-        if (input) {
-          try {
-            const result = await p2pModule.acceptInvitation(input);
-            // acceptInvitation now returns the answer for the user to send back
-            if (result && result.answer) {
-              alert('Copy the answer code that will appear and send it back to Tab 1!');
-            }
-          } catch (e) {
-            alert('Failed to accept invitation: ' + e.message);
-          }
-        }
-      };
-    }
-    
-    // Setup complete connection button
-    const completeBtn = document.getElementById('complete-connection-btn');
-    if (completeBtn) {
-      completeBtn.onclick = async () => {
-        const input = prompt('Paste answer code from Tab 2:');
-        if (input) {
-          try {
-            await p2pModule.completeConnection(input);
-            alert('Connection completed! You should now be connected.');
-          } catch (e) {
-            alert('Failed to complete connection: ' + e.message);
-          }
-        }
-      };
-    }    
+        await p2pModule.start();    
         // Update status indicator
         const statusIndicator = document.getElementById('status-indicator');
         const interval = setInterval(() => {

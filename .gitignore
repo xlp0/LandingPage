@@ -52,3 +52,15 @@ out/
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Playwright test artifacts
+playwright-report/
+test-results/
+blob-report/
+.playwright-cache/
+
+# Local dev screenshots/videos (keep app assets intact)
+debug-screenshot.png
+fixed-screenshot.png
+tests/screenshots/
+tests/videos/

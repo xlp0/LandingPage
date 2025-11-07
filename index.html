@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PKC Landing Page</title>
+    <!-- Anime.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -27,10 +29,10 @@
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center font-sans text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-    <div class="max-w-4xl mx-auto px-8 py-16 text-center">
-      <h1 class="text-4xl md:text-5xl font-bold mb-4">PKC Landing Page</h1>
-      <p class="text-xl md:text-2xl opacity-90 mb-12">Static-first. Modular by design. Local‑first ready.</p>
-      <div class="flex flex-wrap gap-4 justify-center mb-16">
+    <div class="max-w-4xl mx-auto px-8 py-16 text-center" data-anime="main-content">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4 opacity-0 translate-y-8" data-anime="title">PKC Landing Page</h1>
+      <p class="text-xl md:text-2xl mb-12 opacity-0 translate-y-8" data-anime="subtitle">Static-first. Modular by design. Local‑first ready.</p>
+      <div class="flex flex-wrap gap-4 justify-center mb-16 opacity-0 translate-y-8" data-anime="buttons">
         <a href="pkc-docs-index.html" class="px-6 py-3 bg-white text-pkc-primary rounded-full border border-white/40 hover:bg-white/90 transition-colors font-medium">Browse Documentation</a>
         <a href="js/modules/p2p-serverless/example.html" class="px-6 py-3 rounded-full border border-white/40 text-white hover:bg-white/10 transition-colors font-medium">🔗 P2P Demo</a>
         <a href="pkc-viewer.html?doc=LaTeX-Test.md" class="px-6 py-3 rounded-full border border-white/40 text-white hover:bg-white/10 transition-colors font-medium">LaTeX Test</a>
@@ -49,7 +51,7 @@
       </div>
       <div class="px-3 py-2 overflow-auto text-sm">
         <div id="p2p-status" class="opacity-90">idle</div>
-        <div id="p2p-messages"></div>
+        <div id="p2p-messages" class="mt-2 max-h-52 overflow-y-auto whitespace-pre-wrap break-words break-all font-mono text-xs leading-snug space-y-1"></div>
       </div>
     </div>
     
@@ -61,6 +63,123 @@
     
     <script type="module">
       import { PKC } from './js/pkc-core.js';
+      
+      // Anime.js Page Animations
+      document.addEventListener('DOMContentLoaded', () => {
+        // Page entrance animations
+        const tl = anime.timeline({
+          easing: 'easeOutExpo',
+          duration: 800
+        });
+        
+        tl.add({
+          targets: '[data-anime="title"]',
+          opacity: [0, 1],
+          translateY: [32, 0],
+          duration: 1000
+        })
+        .add({
+          targets: '[data-anime="subtitle"]',
+          opacity: [0, 1],
+          translateY: [24, 0],
+          duration: 800
+        }, '-=600')
+        .add({
+          targets: '[data-anime="buttons"]',
+          opacity: [0, 1],
+          translateY: [16, 0],
+          duration: 600
+        }, '-=400');
+        
+        // Button hover animations
+        const buttons = document.querySelectorAll('[data-anime="buttons"] a');
+        buttons.forEach(button => {
+          button.addEventListener('mouseenter', () => {
+            anime({
+              targets: button,
+              scale: 1.05,
+              duration: 200,
+              easing: 'easeOutQuad'
+            });
+          });
+          
+          button.addEventListener('mouseleave', () => {
+            anime({
+              targets: button,
+              scale: 1,
+              duration: 200,
+              easing: 'easeOutQuad'
+            });
+          });
+        });
+        
+        // Status panel slide-in animation
+        const p2pPanel = document.getElementById('p2p-panel');
+        const wsStatus = document.getElementById('ws-status');
+        
+        anime({
+          targets: p2pPanel,
+          translateX: [-300, 0],
+          opacity: [0, 1],
+          duration: 800,
+          delay: 1000,
+          easing: 'easeOutExpo'
+        });
+        
+        anime({
+          targets: wsStatus,
+          translateX: [300, 0],
+          opacity: [0, 1],
+          duration: 800,
+          delay: 1200,
+          easing: 'easeOutExpo'
+        });
+        
+        // Status dot pulse animation
+        const wsDot = document.getElementById('ws-dot');
+        anime({
+          targets: wsDot,
+          scale: [1, 1.2, 1],
+          duration: 2000,
+          loop: true,
+          easing: 'easeInOutQuad',
+          delay: 2000
+        });
+        
+        // Add floating background elements
+        createFloatingElements();
+      });
+      
+      // Create floating background elements
+      function createFloatingElements() {
+        const body = document.body;
+        const colors = ['#667eea', '#764ba2', '#ffd700'];
+        
+        for (let i = 0; i < 8; i++) {
+          const element = document.createElement('div');
+          element.className = 'fixed pointer-events-none rounded-full opacity-10';
+          element.style.width = Math.random() * 100 + 20 + 'px';
+          element.style.height = element.style.width;
+          element.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          element.style.left = Math.random() * 100 + '%';
+          element.style.top = Math.random() * 100 + '%';
+          
+          body.appendChild(element);
+          
+          // Animate floating elements
+          anime({
+            targets: element,
+            translateX: () => anime.random(-50, 50),
+            translateY: () => anime.random(-50, 50),
+            scale: [0.8, 1.2, 0.8],
+            duration: 4000 + Math.random() * 4000,
+            loop: true,
+            easing: 'easeInOutQuad',
+            delay: Math.random() * 2000
+          });
+        }
+      }
+      
       PKC.load('/modules.json');
     </script>
 </body>

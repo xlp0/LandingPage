@@ -7,7 +7,12 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:ui": "playwright test --ui",
+    "install-browsers": "playwright install",
+    "report": "playwright show-report",
     "ws-server": "node ws-server.js"
   },
   "repository": {
@@ -22,6 +27,9 @@
     "url": "https://github.com/xlp0/LandingPage/issues"
   },
   "homepage": "https://github.com/xlp0/LandingPage#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  },
   "dependencies": {
     "ws": "^8.18.3",
     "express": "^4.18.2"

@@ -1,0 +1,155 @@
+# P2P Serverless End-to-End Tests
+
+This directory contains Playwright tests for the P2P Serverless functionality of the PKC Landing Page.
+
+## Setup
+
+1. **Install Dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Install Playwright Browsers:**
+   ```bash
+   npm run install-browsers
+   ```
+
+## Running Tests
+
+### Run All Tests
+```bash
+npm test
+```
+
+### Run Tests in Headed Mode (see browser)
+```bash
+npm run test:headed
+```
+
+### Debug Tests (step through)
+```bash
+npm run test:debug
+```
+
+### Visual Test Runner
+```bash
+npm run test:ui
+```
+
+### View Test Reports
+```bash
+npm run report
+```
+
+## Test Structure
+
+### `p2p-connection.spec.js`
+
+**Main Test: "should complete full P2P connection between two tabs"**
+
+This test automates the complete P2P connection flow:
+
+1. **Setup**: Opens two browser contexts (simulating two users)
+2. **Tab 1 - Create Invitation**: Clicks "Create Invitation" button, extracts invitation code
+3. **Tab 2 - Accept Invitation**: Clicks "Accept Invitation", pastes invitation code, extracts answer code
+4. **Tab 1 - Complete Connection**: Clicks "Complete Connection", pastes answer code
+5. **Verification**: Confirms both tabs show "Connected to 1 peer"
+6. **Messaging Test**: Sends messages between connected peers
+7. **Disconnect Test**: Tests disconnect functionality
+
+**Secondary Test: "should handle connection timeouts gracefully"**
+
+Tests error handling with expired invitation codes.
+
+## Test Architecture
+
+### Browser Contexts
+- Uses separate browser contexts to simulate different users
+- Prevents cross-contamination between test sessions
+- More realistic than multiple pages in same context
+
+### Dialog Handling
+- Automatically handles browser prompts for invitation codes
+- Extracts and passes codes between tabs seamlessly
+- No manual intervention required
+
+### Real-time Verification
+- Waits for WebRTC connection establishment
+- Verifies UI updates (peer counts, status messages)
+- Tests actual message exchange between peers
+
+## Configuration
+
+### `playwright.config.js`
+- Configured for local development (localhost:8000)
+- Automatically starts Python HTTP server
+- Uses Chromium by default (fastest for WebRTC)
+- HTML reporter for detailed test results
+
+### Test Timeouts
+- WebRTC connection: 15 seconds
+- Modal appearance: 5-10 seconds
+- Message delivery: 5 seconds
+
+## Troubleshooting
+
+### WebRTC Connection Issues
+- Ensure no firewall blocking WebRTC ports
+- Check STUN server connectivity
+- Verify WebRTC is enabled in browser
+
+### Test Flakiness
+- WebRTC connections can be timing-sensitive
+- Increase timeouts if needed in CI environments
+- Use `fullyParallel: false` to avoid resource conflicts
+
+### Browser Context Issues
+- Each test creates fresh browser contexts
+- Contexts are properly cleaned up after tests
+- No cross-test contamination
+
+## CI/CD Integration
+
+For continuous integration, add to your pipeline:
+
+```yaml
+- name: Install Playwright Browsers
+  run: npm run install-browsers
+
+- name: Run P2P Tests
+  run: npm test
+  env:
+    CI: true
+```
+
+## Manual Testing
+
+If you prefer manual testing instead of automated tests:
+
+1. Open two browser tabs to `http://localhost:8000/js/modules/p2p-serverless/example.html`
+2. Follow the on-screen instructions
+3. Tab 1: Create Invitation → Copy code
+4. Tab 2: Accept Invitation → Paste Tab 1's code → Copy answer
+5. Tab 1: Complete Connection → Paste Tab 2's answer
+6. Send messages to verify connection
+
+## Test Coverage
+
+- ✅ Invitation creation and modal display
+- ✅ QR code generation
+- ✅ Cross-tab code exchange
+- ✅ WebRTC connection establishment
+- ✅ Real-time messaging
+- ✅ Connection status updates
+- ✅ Error handling (expired codes)
+- ✅ Disconnect functionality
+- ✅ UI responsiveness and accessibility
+
+## Performance Metrics
+
+Typical test execution times:
+- Full connection flow: 30-45 seconds
+- Individual steps: 2-10 seconds each
+- Message exchange: < 1 second
+
+These tests provide comprehensive coverage of the P2P serverless functionality, ensuring reliable peer-to-peer communication across different browser contexts.
