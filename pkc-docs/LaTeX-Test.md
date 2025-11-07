@@ -58,7 +58,6 @@ For a partitioned system with block Kronecker structure:
 ```math
 \left[\begin{array}{c|c}
 \mathbf{A}_{11} \otimes \mathbf{I}_n & \mathbf{A}_{12} \otimes \mathbf{B} \\
-\hline
 \mathbf{A}_{21} \otimes \mathbf{B}^T & \mathbf{A}_{22} \otimes \mathbf{I}_m
 \end{array}\right]
 \begin{bmatrix}
