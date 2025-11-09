@@ -125,6 +125,34 @@ python3 -m http.server 8000 --bind 0.0.0.0
 
 ## 🔧 **P2P Configuration**
 
+### **Application-level configuration (app-config.json)**
+The application reads runtime settings from `/app-config.json`. Use this file to configure WebRTC/P2P and other app knobs without changing code.
+
+Example:
+
+```json
+{
+  "wsHost": "192.168.1.139",
+  "wsPort": 3001,
+  "wsPath": "/ws/",
+  "p2p": {
+    "iceServers": [
+      { "urls": "stun:stun.l.google.com:19302" },
+      { "urls": "stun:stun1.l.google.com:19302" }
+    ]
+  }
+}
+```
+
+How it’s loaded:
+- `js/modules/p2p-serverless/config.js` fetches `/app-config.json` (no-cache) and resolves effective config via `resolveP2PConfig()`.
+- Precedence (highest first): module init overrides → `app-config.json` → built‑in defaults.
+- Add TURN servers here if your environment requires relaying.
+
+See also:
+- `js/modules/p2p-serverless/README.md` (module-level details)
+- `tests/README.md` (why config matters for e2e)
+
 ### **Module Configuration** (`modules.json`)
 ```json
 {
@@ -135,10 +163,7 @@ python3 -m http.server 8000 --bind 0.0.0.0
       "enabled": true,
       "when": "webrtc",
       "config": {
-        "iceServers": [
-          { "urls": "stun:stun.l.google.com:19302" },
-          { "urls": "stun:stun1.l.google.com:19302" }
-        ],
+        "iceServers": [ /* optional override; prefer app-config.json */ ],
         "channelName": "pkc-p2p-discovery",
         "invitationTTL": 300000
       }

@@ -1,6 +1,7 @@
 // PKC Module: p2p-serverless/connection
 // Purpose: WebRTC connection manager for serverless P2P
 // Handles peer connection lifecycle, ICE negotiation, and data channels
+import { DefaultP2PConfig } from './config.js';
 
 /**
  * WebRTC Connection Manager
@@ -9,10 +10,7 @@
 export class ConnectionManager {
   constructor(config = {}) {
     this.config = {
-      iceServers: config.iceServers || [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' }
-      ],
+      iceServers: config.iceServers || DefaultP2PConfig.iceServers,
       dataChannelOptions: {
         ordered: true,
         maxRetransmits: 3

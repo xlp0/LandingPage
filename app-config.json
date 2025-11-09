@@ -1,5 +1,11 @@
 {
   "wsHost": "192.168.1.139",
   "wsPort": 3001,
-  "wsPath": "/ws/"
+  "wsPath": "/ws/",
+  "p2p": {
+    "iceServers": [
+      { "urls": "stun:stun.l.google.com:19302" },
+      { "urls": "stun:stun1.l.google.com:19302" }
+    ]
+  }
 }

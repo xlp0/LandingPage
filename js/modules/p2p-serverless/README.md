@@ -19,17 +19,17 @@ This module implements a completely serverless P2P architecture using WebRTC Dat
 
 ```
 ┌─────────────────────────────────────────────────┐
-│              p2p-serverless Module               │
+│              p2p-serverless Module              │
 ├─────────────────────────────────────────────────┤
-│                                                  │
-│  ┌──────────────┐  ┌─────────────────────────┐ │
-│  │  index.js    │  │  Main module interface  │ │
-│  └──────┬───────┘  └─────────────────────────┘ │
-│         │                                        │
+│                                                 │
+│  ┌──────────────┐  ┌─────────────────────────┐  │
+│  │  index.js    │  │  Main module interface  │  │
+│  └──────┬───────┘  └─────────────────────────┘  │
+│         │                                       │
 │         ├──► connection.js  (WebRTC Manager)    │
 │         ├──► discovery.js   (Peer Discovery)    │
 │         └──► qr-code.js     (QR Generation)     │
-│                                                  │
+│                                                 │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -37,16 +37,16 @@ This module implements a completely serverless P2P architecture using WebRTC Dat
 
 ### 1. Module Configuration
 
-Add to `modules.json`:
+Preferred: set P2P settings in the application-level `app-config.json` (see section below). You can still override via module init or `modules.json` if needed.
+
+Add to `modules.json` (optional override):
 
 ```json
 {
   "id": "p2p-serverless",
   "enabled": true,
   "config": {
-    "iceServers": [
-      { "urls": "stun:stun.l.google.com:19302" }
-    ],
+    "iceServers": [ /* optional override; see app-config.json */ ],
     "channelName": "pkc-p2p-discovery",
     "autoAcceptInvitations": false
   }
@@ -272,6 +272,38 @@ p2p-serverless/
 - Per peer overhead: ~1-2 MB
 
 ## Troubleshooting
+
+### Application-level configuration (app-config.json)
+
+`app-config.json` (served from the site root) is the primary place to manage runtime configuration for the app, including P2P/WebRTC settings. The P2P module loads it at startup via `resolveP2PConfig()` (see `js/modules/p2p-serverless/config.js`).
+
+Example:
+
+```json
+{
+  "wsHost": "192.168.1.139",
+  "wsPort": 3001,
+  "wsPath": "/ws/",
+  "p2p": {
+    "iceServers": [
+      { "urls": "stun:stun.l.google.com:19302" },
+      { "urls": "stun:stun1.l.google.com:19302" }
+    ]
+  }
+}
+```
+
+Precedence for P2P settings (highest first):
+
+1. Module init overrides (e.g. `p2p.init({ config: { iceServers: [...] } })`)
+2. `app-config.json` → `p2p.iceServers`
+3. Built-in safe defaults (empty list by default; provide app-config or overrides for production)
+
+Notes:
+
+- The loader fetches `/app-config.json` with `cache: 'no-cache'` to avoid stale values.
+- If the file is missing or malformed, defaults are used (no crash).
+- Add TURN servers here for constrained networks (NAT/firewall) to stabilize connectivity.
 
 ### Connection Fails
 

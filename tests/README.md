@@ -1,3 +1,39 @@
+### Application-level configuration (`app-config.json`)
+
+The application exposes runtime configuration via a JSON file served at the site root: `app-config.json`.
+
+Key fields used by tests and the P2P module:
+
+- `wsHost`, `wsPort`, `wsPath`
+- `p2p.iceServers`: WebRTC ICE server list (STUN/TURN). Example:
+
+```json
+{
+  "wsHost": "192.168.1.139",
+  "wsPort": 3001,
+  "wsPath": "/ws/",
+  "p2p": {
+    "iceServers": [
+      { "urls": "stun:stun.l.google.com:19302" },
+      { "urls": "stun:stun1.l.google.com:19302" }
+    ]
+  }
+}
+```
+
+How it is loaded:
+
+- The P2P module calls `resolveP2PConfig()` (see `js/modules/p2p-serverless/config.js`) which fetches `/app-config.json` and reads `p2p.iceServers`.
+- Precedence for P2P settings:
+  1. Module init overrides (e.g. `p2p.init({ config: { iceServers: [...] } })`)
+  2. `app-config.json` → `p2p.iceServers`
+  3. Built-in safe defaults
+
+Why this matters for tests:
+
+- You can point tests to specific STUN/TURN infrastructure without touching code.
+- In constrained networks, add a TURN server here to stabilize connectivity.
+
 # P2P Serverless End-to-End Tests
 
 This directory contains Playwright tests for the P2P Serverless functionality of the PKC Landing Page.

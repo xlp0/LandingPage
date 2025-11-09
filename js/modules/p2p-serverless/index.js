@@ -3,6 +3,7 @@
 // Architecture: Browser-native, no bootstrap servers, QR/URL-based peer discovery
 
 import { ConnectionManager } from './connection.js';
+import { resolveP2PConfig } from './config.js';
 import { DiscoveryManager } from './discovery.js';
 import { QRCodeGenerator, QRCodeScanner } from './qr-code.js';
 
@@ -120,12 +121,13 @@ export default {
     try {
       setStatus('Initializing...', 'info');
       
-      // Initialize connection manager
+      // Resolve P2P config from app-config.json with overrides
+      const effectiveP2P = await resolveP2PConfig(config || {});
+      this.effectiveP2P = effectiveP2P;
+      
+      // Initialize connection manager with resolved ICE servers
       connectionManager = new ConnectionManager({
-        iceServers: config.iceServers || [
-          { urls: 'stun:stun.l.google.com:19302' },
-          { urls: 'stun:stun1.l.google.com:19302' }
-        ]
+        iceServers: effectiveP2P.iceServers
       });
       
       // Initialize discovery manager
