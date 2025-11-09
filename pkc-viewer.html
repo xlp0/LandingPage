@@ -20,6 +20,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     
+    <!-- Local TikZ renderer -->
+    <script src="js/modules/tikz-renderer.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -240,6 +243,16 @@
             text-align: center;
         }
 
+        /* TikZ diagram container (rendered client-side via local renderer) */
+        .tikz-container {
+            background: #f7fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            text-align: center;
+        }
+
         /* LaTeX Math Styles */
         .math-inline {
             display: inline;
@@ -378,7 +391,22 @@
             // Process markdown - extract special blocks first
             let processedMarkdown = markdown;
             
-            // Step 1: Extract LaTeX display math ($$...$$)
+            // Step 1: Extract TikZ/TikZ-CD fenced blocks FIRST (before math extraction)
+            const tikzBlocks = [];
+            processedMarkdown = processedMarkdown.replace(/```(?:tikz|tikzcd|latex-diagram)\n([\s\S]*?)```/g, (match, code) => {
+                const index = tikzBlocks.length;
+                tikzBlocks.push(code.trim());
+                return `<div class="tikz-placeholder" data-index="${index}"></div>`;
+            });
+
+            // Step 2: Extract inline LaTeX environments for tikzpicture/tikzcd
+            processedMarkdown = processedMarkdown.replace(/\\begin\{(tikzpicture|tikzcd)\}([\s\S]*?)\\end\{\1\}/g, (match) => {
+                const index = tikzBlocks.length;
+                tikzBlocks.push(match.trim());
+                return `<div class="tikz-placeholder" data-index="${index}"></div>`;
+            });
+            
+            // Step 3: Extract LaTeX display math ($$...$$)
             const mathDisplayBlocks = [];
             processedMarkdown = processedMarkdown.replace(/\$\$([\s\S]*?)\$\$/g, (match, math) => {
                 const index = mathDisplayBlocks.length;
@@ -386,7 +414,7 @@
                 return `<div class="math-display-placeholder" data-index="${index}"></div>`;
             });
             
-            // Step 2: Extract LaTeX inline math ($...$)
+            // Step 4: Extract LaTeX inline math ($...$)
             const mathInlineBlocks = [];
             processedMarkdown = processedMarkdown.replace(/\$([^\$\n]+?)\$/g, (match, math) => {
                 const index = mathInlineBlocks.length;
@@ -394,7 +422,7 @@
                 return `<span class="math-inline-placeholder" data-index="${index}"></span>`;
             });
             
-            // Step 3: Extract mermaid blocks
+            // Step 5: Extract mermaid blocks
             const mermaidBlocks = [];
             processedMarkdown = processedMarkdown.replace(/```mermaid\n([\s\S]*?)```/g, (match, diagram) => {
                 const index = mermaidBlocks.length;
@@ -490,6 +518,30 @@
                         placeholder.innerHTML = `<div style="background: #fee; padding: 1rem; border: 1px solid #fcc; border-radius: 4px; color: #c33;">
                             <strong>Mermaid Diagram Error:</strong><br>
                             <pre style="margin-top: 0.5rem; font-size: 0.9rem;">${error.message || 'Failed to render diagram'}</pre>
+                        </div>`;
+                    }
+                }
+            }
+
+            // Render TikZ/TikZ-CD diagrams with local renderer
+            const tikzPlaceholders = contentDiv.querySelectorAll('.tikz-placeholder');
+            if (tikzBlocks.length > 0) {
+                const renderer = new TikZRenderer();
+                for (let i = 0; i < tikzPlaceholders.length; i++) {
+                    const placeholder = tikzPlaceholders[i];
+                    const index = parseInt(placeholder.getAttribute('data-index'));
+                    const code = tikzBlocks[index];
+                    
+                    try {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'tikz-container';
+                        wrapper.innerHTML = renderer.render(code);
+                        placeholder.replaceWith(wrapper);
+                    } catch (error) {
+                        console.error('TikZ diagram setup error', index, ':', error);
+                        placeholder.innerHTML = `<div style="background: #fee; padding: 1rem; border: 1px solid #fcc; border-radius: 4px; color: #c33;">
+                            <strong>TikZ Diagram Error:</strong><br>
+                            <pre style="margin-top: 0.5rem; font-size: 0.9rem; white-space: pre-wrap;">${error.message || 'Failed to prepare diagram'}</pre>
                         </div>`;
                     }
                 }
