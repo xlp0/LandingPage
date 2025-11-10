@@ -1,5 +1,5 @@
 # PKC Landing Page
-## Personal Knowledge Container - Decentralized Communication System
+## Personal Knowledge Container (PKC) - Decentralized Communication System
 
 A modern, **static-first, modular web application** with **serverless P2P communication capabilities** built entirely with browser-native WebRTC APIs. Features rich markdown documentation viewing, LaTeX math rendering, Mermaid diagrams, and **zero-dependency peer-to-peer networking**.
 
