@@ -1,6 +1,6 @@
 services:
   landingpage:
-    build: .
+    image: henry768/landingpage:latest_landingpage
     container_name: landingpage
     restart: unless-stopped
     ports:
