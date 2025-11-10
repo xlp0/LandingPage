@@ -1,0 +1,20 @@
+services:
+  landingpage:
+    build: .
+    container_name: landingpage
+    restart: unless-stopped
+    ports:
+      - "3000:3000"  # Web server port
+      - "3001:3001"  # WebSocket server port
+    environment:
+      - NODE_ENV=production
+    # Uncomment for development
+    # volumes:
+    #   - .:/app
+    #   - /app/node_modules
+    networks:
+      - landingpage-network
+
+networks:
+  landingpage-network:
+    driver: bridge

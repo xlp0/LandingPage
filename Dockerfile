@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm ci
 
 # Copy the rest of the application
 COPY . .
@@ -26,12 +26,13 @@ COPY --from=builder /app/pkc-docs ./pkc-docs
 COPY --from=builder /app/pkc-docs-index.html .
 COPY --from=builder /app/pkc-viewer.html .
 COPY --from=builder /app/ws-server.js .
+COPY --from=builder /app/modules.json .
 
-# Expose the port the app runs on
-EXPOSE 3000
+# Install http-server to serve static files
+RUN npm install -g http-server
 
-# Set environment variables
-ENV NODE_ENV=production
+# Expose the ports the app runs on
+EXPOSE 3000 3001
 
-# Start the application
-CMD ["node", "ws-server.js"]
+# Start both the static file server and WebSocket server
+CMD ["sh", "-c", "http-server -p 3000 & node ws-server.js"]
