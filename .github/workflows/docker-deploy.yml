@@ -43,7 +43,7 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: henry768/LandingPage:latest_LandingPage
+          tags: henry768/landingpage:latest_landingpage
           cache-from: type=registry,ref=henry768/LandingPage:buildcache
           cache-to: type=registry,ref=henry768/LandingPage:buildcache,mode=max
           build-args: |
