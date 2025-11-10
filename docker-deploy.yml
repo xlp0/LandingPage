@@ -1,0 +1,52 @@
+name: Build and Push Docker Image LandingPage
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  DOCKER_HUB_REPOSITORY: henry768/LandingPage
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    environment: docker
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Set up QEMU for multi-arch builds
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      # Login to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: henry768
+          password: ${{ secrets.DOCKERTOKEN }}
+          
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: henry768/LandingPage:latest_LandingPage
+          cache-from: type=registry,ref=henry768/LandingPage:buildcache
+          cache-to: type=registry,ref=henry768/LandingPage:buildcache,mode=max
+          build-args: |
+            ROLLUP_SKIP_NODEJS=true
+            npm_config_platform=linux
+            npm_config_arch=x64
