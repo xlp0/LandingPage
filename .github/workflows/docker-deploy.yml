@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKER_HUB_REPOSITORY: henry768/LandingPage
+  DOCKER_HUB_REPOSITORY: henry768/landingpage
 
 jobs:
   build-and-push:
