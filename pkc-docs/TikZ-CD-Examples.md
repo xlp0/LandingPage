@@ -5,14 +5,15 @@ Description: Category Theory diagrams using LaTeX TikZ-CD rendered locally in th
 
 # TikZ-CD Examples
 
-This document demonstrates Category Theory diagrams written in LaTeX and rendered using **professional-grade libraries** for authentic LaTeX output.
+This document demonstrates Category Theory diagrams written in LaTeX and rendered using **pre-rendered professional-quality SVGs** for authentic LaTeX output.
 
 ## Rendering Technology
 
-**TikZJax + MathJax 4** - The gold standard for web-based LaTeX rendering:
-- **TikZJax**: Real TeX compilation via WebAssembly for authentic TikZ diagrams
+**Pre-rendered SVGs + MathJax 4** - Professional LaTeX quality with instant loading:
+- **Pre-rendered SVGs**: Generated offline using real LaTeX (pdflatex + pdf2svg)
 - **MathJax 4**: Comprehensive LaTeX math support with professional typography
-- **Output quality**: Identical to desktop LaTeX compilers
+- **Output quality**: Identical to desktop LaTeX compilers (because it IS desktop LaTeX!)
+- **Performance**: Instant loading, works completely offline
 
 ## Simple Commutative Square
 
@@ -73,11 +74,12 @@ G \arrow[r, "\cong", shift left] \arrow[r, "\id"', shift right] & H
 
 **Professional Rendering Stack:**
 
-### **TikZJax** (Real TeX Compilation)
-- ✅ **Full TikZ support** - Not just TikZ-CD, but complete TikZ syntax
-- ✅ **Authentic output** - Uses actual TeX compiler compiled to WebAssembly
-- ✅ **Professional quality** - Identical to desktop LaTeX output
-- ✅ **All TikZ packages** - Supports libraries, custom styles, advanced features
+### **Pre-Rendered SVG Diagrams** (Real LaTeX Output)
+- ✅ **Full TikZ support** - Complete TikZ and TikZ-CD syntax
+- ✅ **Authentic output** - Generated using actual desktop LaTeX (pdflatex)
+- ✅ **Professional quality** - Identical to desktop LaTeX output (because it IS)
+- ✅ **Fast & Reliable** - Pre-rendered, instant loading, works offline
+- ✅ **Perfect arrows** - All TikZ elements preserved using pdf2svg conversion
 
 ### **MathJax 4** (Comprehensive Math)
 - ✅ **Complete LaTeX support** - All math environments, symbols, packages
@@ -92,17 +94,17 @@ G \arrow[r, "\cong", shift left] \arrow[r, "\id"', shift right] & H
 - Complex multi-level commutative diagrams
 - Full TikZ (tikzpicture) support beyond TikZ-CD
 
-**Usage:**
-````
-```tikzcd
-A \arrow[r, "f"] & B
-```
+**How It Works:**
+1. TikZ diagrams are written in LaTeX `.tex` files
+2. Converted to SVG using `pdflatex` + `pdf2svg` (offline, one-time)
+3. SVG files loaded instantly in browser (no compilation needed)
+4. System automatically matches TikZ code to pre-rendered SVG
+5. Falls back to custom renderer for diagrams not pre-rendered
 
-```tikz
-\begin{tikzpicture}
-  % Full TikZ syntax here
-\end{tikzpicture}
-```
-````
+**Adding New Diagrams:**
+See `assets/tikz-diagrams/README.md` for instructions on:
+- Creating new `.tex` files
+- Running `convert-to-svg.sh` to generate SVGs
+- Updating the manifest for automatic matching
 
-This professional rendering stack produces **publication-quality diagrams** indistinguishable from those created with desktop LaTeX compilers.
+This **pre-rendering approach** produces **publication-quality diagrams** identical to desktop LaTeX output, with the added benefits of instant loading and offline support.

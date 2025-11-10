@@ -334,3 +334,9 @@ class TikZRenderer {
         });
     }
 }
+
+// Ensure TikZRenderer is available globally
+if (typeof window !== 'undefined') {
+    window.TikZRenderer = TikZRenderer;
+    console.log('TikZRenderer class loaded and assigned to window');
+}

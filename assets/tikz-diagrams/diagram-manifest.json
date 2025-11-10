@@ -1,0 +1,39 @@
+{
+  "diagrams": [
+    {
+      "id": "01-simple-square",
+      "file": "diagram-01-simple-square.svg",
+      "code": "A \\arrow[r, \"f\"] \\arrow[d, \"g\"'] & B \\arrow[d, \"h\"] \\\\\nC \\arrow[r, \"k\"'] & D"
+    },
+    {
+      "id": "02-pullback",
+      "file": "diagram-02-pullback.svg",
+      "code": "P \\arrow[r] \\arrow[d] & X \\arrow[d, \"p\"] \\\\\nY \\arrow[r, \"q\"'] & Z"
+    },
+    {
+      "id": "03-triangle",
+      "file": "diagram-03-triangle.svg",
+      "code": "F(A) \\arrow[rr, \"F(f)\"] \\arrow[dr, \"\\eta_A\"'] & & F(B) \\\\\n& G(A) \\arrow[ur, \"G(f)\"'] &"
+    },
+    {
+      "id": "04-complex",
+      "file": "diagram-04-complex.svg",
+      "code": "A \\arrow[r, \"f\"] \\arrow[d, \"g\"'] & B \\arrow[r, \"h\"] \\arrow[d, \"i\"] & C \\arrow[d, \"j\"] \\\\\nD \\arrow[r, \"k\"'] \\arrow[ru, \"l\"] & E \\arrow[r, \"m\"] & F"
+    },
+    {
+      "id": "05-pullback-math",
+      "file": "diagram-05-pullback-math.svg",
+      "code": "X \\times_Z Y \\arrow[r, \"\\pi_1\"] \\arrow[d, \"\\pi_2\"'] & X \\arrow[d, \"f\"] \\\\\nY \\arrow[r, \"g\"'] & Z"
+    },
+    {
+      "id": "06-isomorphism",
+      "file": "diagram-06-isomorphism.svg",
+      "code": "G \\arrow[r, \"\\cong\", shift left] \\arrow[r, \"\\id\"', shift right] & H"
+    },
+    {
+      "id": "07-full-tikz",
+      "file": "diagram-07-full-tikz.svg",
+      "code": "\\begin{tikzpicture}\n  \\node (M)  at (0,0) {$M$};\n  \\node (MxM) at (-2,2) {$M \\times M$};\n  \\node (e) at (2,2) {$1$};\n  \\draw[->] (MxM) -- node[left]{$m$} (M);\n  \\draw[->] (e) -- node[right]{$u$} (M);\n\\end{tikzpicture}"
+    }
+  ]
+}

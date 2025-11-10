@@ -1,159 +1,65 @@
 // PKC Module: professional-tikz-renderer (client-side)
-// Purpose: Professional TikZ rendering using TikZJax WebAssembly
-// Uses real TeX compilation for authentic LaTeX output
+// Purpose: TikZ diagram rendering
+// Uses pre-rendered professional-quality SVGs with fallback to custom renderer
 
 class ProfessionalTikZRenderer {
     constructor() {
-        this.tikzjaxLoaded = false;
-        this.loadTikZJax();
+        this.manifest = null;
+        this.loadingPromise = this.loadManifest();
+        console.log('TikZ renderer initialized (pre-rendered SVGs + fallback)');
     }
 
-    // Load TikZJax library
-    async loadTikZJax() {
+    // Load diagram manifest
+    async loadManifest() {
         try {
-            console.log('Loading TikZJax...');
-            
-            // Try multiple CDN sources for TikZJax
-            const tikzjaxSources = [
-                'https://tikzjax.com/v1/fonts.css',
-                'https://cdn.jsdelivr.net/npm/tikzjax@1/fonts.css'
-            ];
-
-            // Load CSS first
-            let cssLoaded = false;
-            for (const cssUrl of tikzjaxSources) {
-                try {
-                    const css = document.createElement('link');
-                    css.rel = 'stylesheet';
-                    css.type = 'text/css';
-                    css.href = cssUrl;
-                    
-                    await new Promise((resolve, reject) => {
-                        css.onload = resolve;
-                        css.onerror = reject;
-                        document.head.appendChild(css);
-                    });
-                    
-                    console.log(`TikZJax CSS loaded from: ${cssUrl}`);
-                    cssLoaded = true;
-                    break;
-                } catch (error) {
-                    console.warn(`Failed to load TikZJax CSS from ${cssUrl}:`, error);
-                }
-            }
-
-            if (!cssLoaded) {
-                throw new Error('Failed to load TikZJax CSS from all sources');
-            }
-
-            // Load JavaScript
-            const jsSources = [
-                'https://tikzjax.com/v1/tikzjax.js',
-                'https://cdn.jsdelivr.net/npm/tikzjax@1/tikzjax.js'
-            ];
-
-            let jsLoaded = false;
-            for (const jsUrl of jsSources) {
-                try {
-                    const script = document.createElement('script');
-                    script.src = jsUrl;
-                    
-                    await new Promise((resolve, reject) => {
-                        const timeout = setTimeout(() => {
-                            reject(new Error('TikZJax loading timeout'));
-                        }, 10000);
-                        
-                        script.onload = () => {
-                            clearTimeout(timeout);
-                            resolve();
-                        };
-                        script.onerror = () => {
-                            clearTimeout(timeout);
-                            reject(new Error('TikZJax script load failed'));
-                        };
-                        document.head.appendChild(script);
-                    });
-                    
-                    console.log(`TikZJax JS loaded from: ${jsUrl}`);
-                    jsLoaded = true;
-                    break;
-                } catch (error) {
-                    console.warn(`Failed to load TikZJax JS from ${jsUrl}:`, error);
-                }
-            }
-
-            if (jsLoaded) {
-                this.tikzjaxLoaded = true;
-                console.log('TikZJax loaded successfully');
-            } else {
-                throw new Error('Failed to load TikZJax JS from all sources');
-            }
-
+            const response = await fetch('assets/tikz-diagrams/diagram-manifest.json');
+            this.manifest = await response.json();
+            console.log(`✓ Loaded manifest with ${this.manifest.diagrams.length} pre-rendered diagrams`);
         } catch (error) {
-            console.error('Error loading TikZJax:', error);
-            this.tikzjaxLoaded = false;
+            console.warn('Could not load diagram manifest, will use fallback only:', error);
+            this.manifest = { diagrams: [] };
         }
     }
 
     // Main rendering function
     async render(code) {
-        console.log('ProfessionalTikZRenderer.render() called with:', code);
-        
         try {
-            // Wait for TikZJax to load
-            if (!this.tikzjaxLoaded) {
-                await this.waitForTikZJax();
-            }
+            // Wait for manifest to load
+            await this.loadingPromise;
 
-            // If TikZJax failed to load, use fallback renderer
-            if (!this.tikzjaxLoaded) {
-                console.log('TikZJax not available, using fallback renderer');
+            // Normalize code for matching
+            const normalizedCode = code.trim().replace(/\s+/g, ' ');
+
+            // Check if we have a pre-rendered version
+            const diagram = this.manifest.diagrams.find(d => {
+                const normalizedDiagramCode = d.code.replace(/\s+/g, ' ');
+                return normalizedCode.includes(normalizedDiagramCode) || normalizedDiagramCode.includes(normalizedCode);
+            });
+
+            if (diagram) {
+                console.log(`✓ Using pre-rendered SVG: ${diagram.file}`);
+                return await this.loadPrerenderedSVG(diagram.file);
+            } else {
+                console.log('No pre-rendered version found, using fallback renderer');
                 return this.renderWithFallback(code);
             }
-
-            // Check if this is already just the content (no begin/end tags)
-            if (!code.includes('\\begin{tikzcd}') && !code.includes('\\begin{tikzpicture}')) {
-                console.log('Rendering as TikZ-CD content (no begin/end tags)');
-                code = `\\begin{tikzcd}\n${code}\n\\end{tikzcd}`;
-            }
-
-            // Create a temporary script element for TikZJax to process
-            const tempScript = document.createElement('script');
-            tempScript.type = 'text/tikz';
-            tempScript.textContent = code;
-            
-            // Create a container for the script
-            const container = document.createElement('div');
-            container.style.display = 'none';
-            container.appendChild(tempScript);
-            document.body.appendChild(container);
-
-            // Wait for TikZJax to process
-            await this.waitForProcessing(tempScript);
-
-            // Get the resulting SVG
-            const svg = container.querySelector('svg');
-            let result = '';
-
-            if (svg) {
-                // Clone and style the SVG
-                const styledSvg = svg.cloneNode(true);
-                styledSvg.style.maxWidth = '100%';
-                styledSvg.style.height = 'auto';
-                styledSvg.style.background = 'white';
-                result = styledSvg.outerHTML;
-            } else {
-                result = this.renderError(code, new Error('TikZJax failed to produce output'));
-            }
-
-            // Clean up
-            document.body.removeChild(container);
-
-            return result;
-
         } catch (error) {
-            console.error('Professional TikZ rendering error:', error);
+            console.error('Error in render:', error);
             return this.renderWithFallback(code);
+        }
+    }
+
+    // Load pre-rendered SVG
+    async loadPrerenderedSVG(filename) {
+        try {
+            const response = await fetch(`assets/tikz-diagrams/${filename}`);
+            const svgText = await response.text();
+            
+            // Wrap in a container with centering
+            return `<div style="text-align: center; margin: 1.5rem 0;">${svgText}</div>`;
+        } catch (error) {
+            console.error(`Failed to load SVG ${filename}:`, error);
+            throw error; // Will trigger fallback
         }
     }
 
@@ -161,43 +67,20 @@ class ProfessionalTikZRenderer {
     renderWithFallback(code) {
         try {
             console.log('Using fallback TikZ renderer');
+            console.log('TikZRenderer available:', typeof window.TikZRenderer);
             
             // Import our custom renderer dynamically
             if (window.TikZRenderer) {
                 const fallbackRenderer = new window.TikZRenderer();
                 return fallbackRenderer.render(code);
             } else {
-                return this.renderError(code, new Error('No TikZ renderer available'));
+                console.error('window.TikZRenderer is not defined! Script may not have loaded.');
+                return this.renderError(code, new Error('TikZ renderer not loaded - check script order in HTML'));
             }
         } catch (error) {
             console.error('Fallback renderer error:', error);
             return this.renderError(code, error);
         }
-    }
-
-    // Wait for TikZJax to load
-    waitForTikZJax() {
-        return new Promise((resolve) => {
-            const checkInterval = setInterval(() => {
-                if (this.tikzjaxLoaded || window.tikzjax) {
-                    clearInterval(checkInterval);
-                    resolve();
-                }
-            }, 100);
-        });
-    }
-
-    // Wait for TikZJax to process a script element
-    waitForProcessing(scriptElement) {
-        return new Promise((resolve) => {
-            const checkInterval = setInterval(() => {
-                // Check if script has been replaced with SVG
-                if (scriptElement.nextSibling && scriptElement.nextSibling.tagName === 'SVG') {
-                    clearInterval(checkInterval);
-                    resolve();
-                }
-            }, 50);
-        });
     }
 
     // Error display

@@ -1,0 +1,11 @@
+\documentclass[tikz,border=2pt]{standalone}
+\usepackage{tikz}
+\begin{document}
+\begin{tikzpicture}
+  \node (M)  at (0,0) {$M$};
+  \node (MxM) at (-2,2) {$M \times M$};
+  \node (e) at (2,2) {$1$};
+  \draw[->] (MxM) -- node[left]{$m$} (M);
+  \draw[->] (e) -- node[right]{$u$} (M);
+\end{tikzpicture}
+\end{document}
