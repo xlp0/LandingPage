@@ -11,17 +11,18 @@
     <!-- Mermaid.js for diagram rendering -->
     <script src="js/libs/mermaid/mermaid.min.js"></script>
     
-    <!-- KaTeX for LaTeX math rendering -->
-    <link rel="stylesheet" href="js/libs/katex/katex.min.css">
-    <script src="js/libs/katex/katex.min.js"></script>
-    <script src="js/libs/katex/auto-render.min.js"></script>
+    <!-- Professional math rendering with MathJax 4 -->
+    <script src="js/modules/professional-math-renderer.js"></script>
+    
+    <!-- Professional TikZ rendering with TikZJax -->
+    <script src="js/modules/professional-tikz-renderer.js"></script>
+    
+    <!-- Fallback TikZ renderer (custom) -->
+    <script src="js/modules/tikz-renderer.js"></script>
     
     <!-- Highlight.js for code syntax highlighting -->
     <link rel="stylesheet" href="js/libs/highlightjs/github.min.css">
     <script src="js/libs/highlightjs/highlight.min.js"></script>
-    
-    <!-- Local TikZ renderer -->
-    <script src="js/modules/tikz-renderer.js"></script>
     
     <style>
         * {
@@ -443,51 +444,49 @@
             
             contentDiv.innerHTML = html;
             
-            // Render LaTeX display math ($$...$$)
+            // Render LaTeX display math with professional MathJax 4
             const mathDisplayPlaceholders = contentDiv.querySelectorAll('.math-display-placeholder');
-            for (let i = 0; i < mathDisplayPlaceholders.length; i++) {
-                const placeholder = mathDisplayPlaceholders[i];
-                const index = parseInt(placeholder.getAttribute('data-index'));
-                const math = mathDisplayBlocks[index];
-                
-                try {
-                    const mathDiv = document.createElement('div');
-                    mathDiv.className = 'math-display';
-                    katex.render(math, mathDiv, {
-                        displayMode: true,
-                        throwOnError: false,
-                        strict: false
-                    });
-                    placeholder.replaceWith(mathDiv);
-                } catch (error) {
-                    console.error('LaTeX display math error:', error);
-                    placeholder.innerHTML = `<div style="background: #fee; padding: 0.5rem; border: 1px solid #fcc; color: #c33; font-size: 0.9rem;">
-                        Math Error: ${error.message}
-                    </div>`;
+            if (mathDisplayBlocks.length > 0) {
+                const mathRenderer = new ProfessionalMathRenderer();
+                for (let i = 0; i < mathDisplayPlaceholders.length; i++) {
+                    const placeholder = mathDisplayPlaceholders[i];
+                    const index = parseInt(placeholder.getAttribute('data-index'));
+                    const math = mathDisplayBlocks[index];
+                    
+                    try {
+                        const renderedMath = await mathRenderer.renderDisplayMath(math);
+                        const wrapper = document.createElement('div');
+                        wrapper.innerHTML = renderedMath;
+                        placeholder.replaceWith(wrapper);
+                    } catch (error) {
+                        console.error('MathJax display math error:', error);
+                        placeholder.innerHTML = `<span style="background: #fee; padding: 0.5rem; border: 1px solid #fcc; color: #c33; font-size: 0.9rem;">
+                            [Math Display Error]
+                        </span>`;
+                    }
                 }
             }
-            
-            // Render LaTeX inline math ($...$)
+
+            // Render LaTeX inline math with professional MathJax 4
             const mathInlinePlaceholders = contentDiv.querySelectorAll('.math-inline-placeholder');
-            for (let i = 0; i < mathInlinePlaceholders.length; i++) {
-                const placeholder = mathInlinePlaceholders[i];
-                const index = parseInt(placeholder.getAttribute('data-index'));
-                const math = mathInlineBlocks[index];
-                
-                try {
-                    const mathSpan = document.createElement('span');
-                    mathSpan.className = 'math-inline';
-                    katex.render(math, mathSpan, {
-                        displayMode: false,
-                        throwOnError: false,
-                        strict: false
-                    });
-                    placeholder.replaceWith(mathSpan);
-                } catch (error) {
-                    console.error('LaTeX inline math error:', error);
-                    placeholder.innerHTML = `<span style="background: #fee; padding: 0.2rem; border: 1px solid #fcc; color: #c33; font-size: 0.8rem;">
-                        [Math Error]
-                    </span>`;
+            if (mathInlineBlocks.length > 0) {
+                const mathRenderer = new ProfessionalMathRenderer();
+                for (let i = 0; i < mathInlinePlaceholders.length; i++) {
+                    const placeholder = mathInlinePlaceholders[i];
+                    const index = parseInt(placeholder.getAttribute('data-index'));
+                    const math = mathInlineBlocks[index];
+                    
+                    try {
+                        const renderedMath = await mathRenderer.renderInlineMath(math);
+                        const wrapper = document.createElement('span');
+                        wrapper.innerHTML = renderedMath;
+                        placeholder.replaceWith(wrapper);
+                    } catch (error) {
+                        console.error('MathJax inline math error:', error);
+                        placeholder.innerHTML = `<span style="background: #fee; padding: 0.2rem; border: 1px solid #fcc; color: #c33; font-size: 0.8rem;">
+                            [Math Error]
+                        </span>`;
+                    }
                 }
             }
             
@@ -523,20 +522,27 @@
                 }
             }
 
-            // Render TikZ/TikZ-CD diagrams with local renderer
+            // Render TikZ/TikZ-CD diagrams with professional TikZJax renderer
             const tikzPlaceholders = contentDiv.querySelectorAll('.tikz-placeholder');
+            console.log('Found TikZ placeholders:', tikzPlaceholders.length);
+            console.log('TikZ blocks array:', tikzBlocks);
+            
             if (tikzBlocks.length > 0) {
-                const renderer = new TikZRenderer();
+                console.log('ProfessionalTikZRenderer class available:', typeof ProfessionalTikZRenderer);
+                const renderer = new ProfessionalTikZRenderer();
                 for (let i = 0; i < tikzPlaceholders.length; i++) {
                     const placeholder = tikzPlaceholders[i];
                     const index = parseInt(placeholder.getAttribute('data-index'));
                     const code = tikzBlocks[index];
                     
+                    console.log(`Rendering TikZ diagram ${i}, index ${index}, code:`, code);
+                    
                     try {
                         const wrapper = document.createElement('div');
                         wrapper.className = 'tikz-container';
-                        wrapper.innerHTML = renderer.render(code);
+                        wrapper.innerHTML = await renderer.render(code);
                         placeholder.replaceWith(wrapper);
+                        console.log(`Successfully rendered TikZ diagram ${i}`);
                     } catch (error) {
                         console.error('TikZ diagram setup error', index, ':', error);
                         placeholder.innerHTML = `<div style="background: #fee; padding: 1rem; border: 1px solid #fcc; border-radius: 4px; color: #c33;">
