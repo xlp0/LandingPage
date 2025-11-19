@@ -138,6 +138,11 @@ export default {
         invitation: roomData.invitation
       });
       
+      // Update room list display
+      if (roomListManager) {
+        roomListManager.updateRoomList();
+      }
+      
       // Update UI
       uiHandler.updateStatus(`Room "${roomName}" created! Waiting for opponent...`);
       
@@ -160,16 +165,31 @@ export default {
       // Join room using connection handler
       const joinData = await connectionHandler.joinRoom(invitation);
       
-      // Display answer modal
-      uiHandler.displayAnswer(joinData.answerInvitation);
+      // Update UI - no need to show answer code anymore
+      uiHandler.updateStatus('Requesting to join... Waiting for host approval.');
       
-      // Update UI
-      uiHandler.updateStatus('Joined room! Send answer back to host.');
+      // Send join request once data channel is ready
+      this._setupJoinRequestSender();
       
     } catch (error) {
       console.error('[TicTacToe P2P] Failed to join room:', error);
       uiHandler.updateStatus('Failed to join room: ' + error.message);
     }
+  },
+  
+  /**
+   * Setup join request sender (sends request once data channel is open)
+   */
+  _setupJoinRequestSender() {
+    // Listen for data channel ready event
+    connectionManager.on('peer:connect', (data) => {
+      const joinRequest = connectionHandler.getPendingJoinRequest();
+      if (joinRequest) {
+        console.log('[TicTacToe P2P] Sending join request to host');
+        connectionManager.broadcast(joinRequest);
+        connectionHandler.clearPendingJoinRequest();
+      }
+    });
   },
   
   /**
@@ -505,6 +525,22 @@ export default {
     console.log('[TicTacToe P2P] Handling message:', message);
     
     switch (message.type) {
+      case 'join-request':
+        // Handle join request from guest
+        this._handleJoinRequest(message);
+        break;
+        
+      case 'join-approved':
+        // Handle join approval from host
+        uiHandler.updateStatus('Join approved! Starting game...');
+        break;
+        
+      case 'join-rejected':
+        // Handle join rejection from host
+        uiHandler.updateStatus('Join request rejected by host');
+        alert('The host rejected your join request');
+        break;
+        
       case 'chat':
         // Handle chat message
         this._addChatMessage(message.message, false);
@@ -836,6 +872,38 @@ export default {
     } else {
       console.warn('[TicTacToe P2P] Reset button not found');
     }
+  },
+  
+  /**
+   * Handle join request from guest
+   */
+  _handleJoinRequest(request) {
+    console.log('[TicTacToe P2P] Received join request:', request);
+    
+    // Show approval dialog to host
+    uiHandler.showJoinRequestDialog(request.peerId, (approved) => {
+      if (approved) {
+        // Approve join request
+        console.log('[TicTacToe P2P] Approving join request');
+        
+        // Complete connection with the answer
+        connectionHandler.completeConnection(request.answerInvitation)
+          .then(() => {
+            // Send approval message
+            connectionManager.broadcast({ type: 'join-approved' });
+            uiHandler.updateStatus('Player joined! Starting game...');
+          })
+          .catch(error => {
+            console.error('[TicTacToe P2P] Failed to complete connection:', error);
+            uiHandler.updateStatus('Failed to accept player: ' + error.message);
+          });
+      } else {
+        // Reject join request
+        console.log('[TicTacToe P2P] Rejecting join request');
+        connectionManager.broadcast({ type: 'join-rejected' });
+        uiHandler.updateStatus('Join request rejected');
+      }
+    });
   },
   
   /**

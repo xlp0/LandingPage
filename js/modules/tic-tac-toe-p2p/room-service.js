@@ -15,9 +15,16 @@ class RoomService {
     if (typeof BroadcastChannel !== 'undefined') {
       this.broadcastChannel = new BroadcastChannel(this.channelName);
       this.broadcastChannel.onmessage = (event) => {
+        console.log('[RoomService] BroadcastChannel received message:', event.data);
         this._handleBroadcastMessage(event.data);
       };
-      console.log('[RoomService] BroadcastChannel initialized');
+      console.log('[RoomService] BroadcastChannel initialized on channel:', this.channelName);
+      
+      // Test broadcast to verify it's working
+      setTimeout(() => {
+        console.log('[RoomService] Testing BroadcastChannel...');
+        this._broadcastMessage({ type: 'test', message: 'BroadcastChannel test' });
+      }, 500);
     } else {
       console.warn('[RoomService] BroadcastChannel not supported');
     }
@@ -148,17 +155,24 @@ class RoomService {
   _broadcastMessage(message) {
     if (this.broadcastChannel) {
       try {
+        console.log('[RoomService] Broadcasting message:', message.type, message);
         this.broadcastChannel.postMessage(message);
       } catch (error) {
         console.error('[RoomService] Failed to broadcast message:', error);
       }
+    } else {
+      console.warn('[RoomService] Cannot broadcast - BroadcastChannel not available');
     }
   }
   
   _handleBroadcastMessage(message) {
-    console.log('[RoomService] Received broadcast:', message);
+    console.log('[RoomService] Handling broadcast message:', message.type);
     
     switch (message.type) {
+      case 'test':
+        console.log('[RoomService] ✓ BroadcastChannel test received:', message.message);
+        break;
+        
       case 'room-created':
         if (!this.localRooms.has(message.room.id)) {
           this.rooms.set(message.room.id, message.room);
@@ -182,9 +196,11 @@ class RoomService {
         
       case 'room-list-request':
         // Send our local rooms to requester
+        console.log('[RoomService] Received room-list-request, sending', this.localRooms.size, 'local rooms');
         this.localRooms.forEach(roomId => {
           const room = this.rooms.get(roomId);
           if (room) {
+            console.log('[RoomService] Responding with room:', room.name);
             this._broadcastMessage({
               type: 'room-created',
               room: room
@@ -197,8 +213,10 @@ class RoomService {
   
   _notifyRoomListUpdate() {
     // Dispatch custom event for UI updates
+    const rooms = this.getRooms();
+    console.log('[RoomService] Notifying room list update, rooms:', rooms.length);
     window.dispatchEvent(new CustomEvent('roomListUpdated', {
-      detail: { rooms: this.getRooms() }
+      detail: { rooms: rooms }
     }));
   }
   

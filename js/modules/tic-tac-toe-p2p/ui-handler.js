@@ -167,6 +167,40 @@ class UIHandler {
   getChatInput() {
     return this.elements.chatInput ? this.elements.chatInput.value : '';
   }
+  
+  /**
+   * Show join request approval dialog
+   */
+  showJoinRequestDialog(peerId, callback) {
+    const modal = document.createElement('div');
+    modal.className = 'p2p-invitation-modal';
+    modal.innerHTML = `
+      <div class="modal-content">
+        <h3>🎮 Join Request</h3>
+        <p>A player wants to join your game!</p>
+        <p style="font-size: 0.9em; color: #666; margin-top: 10px;">Peer ID: ${peerId.substr(0, 12)}...</p>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button id="approve-join-btn" style="flex: 1; background: #10b981; color: white;">✓ Accept</button>
+          <button id="reject-join-btn" style="flex: 1; background: #ef4444; color: white;">✗ Reject</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // Bind buttons
+    const approveBtn = modal.querySelector('#approve-join-btn');
+    const rejectBtn = modal.querySelector('#reject-join-btn');
+    
+    approveBtn.onclick = () => {
+      modal.remove();
+      callback(true);
+    };
+    
+    rejectBtn.onclick = () => {
+      modal.remove();
+      callback(false);
+    };
+  }
 }
 
 export default UIHandler;

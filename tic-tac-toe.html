@@ -403,8 +403,10 @@
         
       } catch (e) {
         console.error('Failed to start Tic-Tac-Toe P2P:', e);
+        console.error('Error stack:', e.stack);
         const statusText = document.getElementById('p2p-status');
         if (statusText) statusText.textContent = 'Failed to start: ' + e.message;
+        alert('Failed to initialize game: ' + e.message + '\n\nCheck console for details.');
       }
     })();
   </script>

@@ -10,24 +10,50 @@ class RoomListManager {
    * Setup room list UI
    */
   setup() {
+    console.log('[RoomListManager] Setting up room list UI...');
+    
     // Create room list container
     const gameBoard = document.querySelector('.game-board');
-    if (!gameBoard) return;
-    
-    const roomListContainer = document.createElement('div');
-    roomListContainer.className = 'room-list-container';
-    roomListContainer.innerHTML = `
-      <div class="room-list-header">
-        <h3>🎮 Available Games</h3>
-        <button id="refresh-rooms-btn" class="refresh-btn">🔄 Refresh</button>
-      </div>
-      <div id="room-list" class="room-list">
-        <div class="no-rooms">No games available. Create one to get started!</div>
-      </div>
-    `;
-    
-    // Insert before game board
-    gameBoard.parentNode.insertBefore(roomListContainer, gameBoard);
+    if (!gameBoard) {
+      console.warn('[RoomListManager] Game board not found, trying alternative selector');
+      // Try to find any suitable container
+      const container = document.querySelector('.grid') || document.querySelector('main');
+      if (!container) {
+        console.error('[RoomListManager] No suitable container found for room list');
+        return;
+      }
+      
+      // Create room list at the beginning of the container
+      const roomListContainer = document.createElement('div');
+      roomListContainer.className = 'room-list-container';
+      roomListContainer.innerHTML = `
+        <div class="room-list-header">
+          <h3>🎮 Available Games</h3>
+          <button id="refresh-rooms-btn" class="refresh-btn">🔄 Refresh</button>
+        </div>
+        <div id="room-list" class="room-list">
+          <div class="no-rooms">No games available. Create one to get started!</div>
+        </div>
+      `;
+      container.insertBefore(roomListContainer, container.firstChild);
+      console.log('[RoomListManager] Room list inserted into alternative container');
+    } else {
+      const roomListContainer = document.createElement('div');
+      roomListContainer.className = 'room-list-container';
+      roomListContainer.innerHTML = `
+        <div class="room-list-header">
+          <h3>🎮 Available Games</h3>
+          <button id="refresh-rooms-btn" class="refresh-btn">🔄 Refresh</button>
+        </div>
+        <div id="room-list" class="room-list">
+          <div class="no-rooms">No games available. Create one to get started!</div>
+        </div>
+      `;
+      
+      // Insert before game board
+      gameBoard.parentNode.insertBefore(roomListContainer, gameBoard);
+      console.log('[RoomListManager] Room list inserted before game board');
+    }
     
     // Bind refresh button
     const refreshBtn = document.getElementById('refresh-rooms-btn');
@@ -56,10 +82,15 @@ class RoomListManager {
    * Update room list display
    */
   updateRoomList(rooms = null) {
+    console.log('[RoomListManager] Updating room list...');
     const roomList = document.getElementById('room-list');
-    if (!roomList) return;
+    if (!roomList) {
+      console.warn('[RoomListManager] Room list element not found');
+      return;
+    }
     
     const availableRooms = rooms || this.roomService.getRooms();
+    console.log('[RoomListManager] Available rooms:', availableRooms.length, availableRooms);
     
     if (availableRooms.length === 0) {
       roomList.innerHTML = '<div class="no-rooms">No games available. Create one to get started!</div>';

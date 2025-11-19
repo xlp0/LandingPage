@@ -77,17 +77,42 @@ class ConnectionHandler {
       this.currentRoom = {
         roomId: parsedInvitation.roomId || 'unknown',
         isHost: false,
-        answerInvitation: answerInvitation
+        answerInvitation: answerInvitation,
+        guestPeerId: answerData.peerId
+      };
+      
+      // Send join request to host via data channel
+      // This will be sent once the data channel is open
+      this.pendingJoinRequest = {
+        type: 'join-request',
+        peerId: answerData.peerId,
+        answerInvitation: answerInvitation.encoded,
+        timestamp: Date.now()
       };
       
       return {
-        answerInvitation: answerInvitation.encoded
+        answerInvitation: answerInvitation.encoded,
+        autoConnect: true
       };
       
     } catch (error) {
       console.error('[ConnectionHandler] Failed to join room:', error);
       throw error;
     }
+  }
+  
+  /**
+   * Get pending join request
+   */
+  getPendingJoinRequest() {
+    return this.pendingJoinRequest;
+  }
+  
+  /**
+   * Clear pending join request
+   */
+  clearPendingJoinRequest() {
+    this.pendingJoinRequest = null;
   }
   
   /**
