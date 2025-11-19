@@ -1,15 +1,15 @@
 services:
   landingpage:
-    image: henry768/landingpage:latest_landingpage
-    container_name: landingpage
+    build: .
+    container_name: landingpage-local
     restart: unless-stopped
     ports:
-      - "3000:3001"  # Map host port 3000 to container port 3001
+      - "8765:3000"  # HTTP server
+      - "8766:3001"  # WebSocket server
     environment:
       - NODE_ENV=production
-    command: node ws-server.js
     volumes:
-      - ./.env:/app/.env  # Mount .env file for runtime access
+      - ./.env:/app/.env  # Mount .env file for runtime access (if exists)
     networks:
       - landingpage-network
 

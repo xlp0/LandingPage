@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Dashboard - P2P Chat Rooms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <h1>🌐 WebRTC Dashboard</h1>
+            <p>Serverless P2P Chat Rooms</p>
+            <div class="user-info">
+                <input type="text" id="user-name" placeholder="Enter your name..." value="">
+                <button id="save-name-btn">Save Name</button>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main class="dashboard-main">
+            <!-- Room Creation Section -->
+            <section class="room-creation">
+                <h2>Create New Room</h2>
+                <div class="create-room-form">
+                    <input type="text" id="room-name" placeholder="Room name..." maxlength="50">
+                    <textarea id="room-description" placeholder="Room description (optional)..." maxlength="200"></textarea>
+                    <div class="room-options">
+                        <label>
+                            <input type="checkbox" id="require-approval" checked>
+                            Require host approval for new members
+                        </label>
+                        <label>
+                            Max participants: 
+                            <select id="max-participants">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </label>
+                    </div>
+                    <button id="create-room-btn" class="primary-btn">🏠 Create Room</button>
+                </div>
+            </section>
+
+            <!-- Available Rooms Section -->
+            <section class="available-rooms">
+                <div class="section-header">
+                    <h2>Available Rooms</h2>
+                    <div class="room-controls">
+                        <button id="refresh-rooms-btn">🔄 Refresh</button>
+                        <button id="test-broadcast-btn" style="background: #28a745; color: white;">🧪 Test Broadcast</button>
+                        <input type="text" id="search-rooms" placeholder="Search rooms...">
+                    </div>
+                </div>
+                <div id="rooms-list" class="rooms-grid">
+                    <div class="no-rooms-message">
+                        <p>No rooms available. Create one to get started!</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Chat Room View (Hidden by default) -->
+        <div id="chat-room-view" class="chat-room-view hidden">
+            <div class="chat-header">
+                <div class="room-info">
+                    <h2 id="current-room-name">Room Name</h2>
+                    <span id="current-room-status">Connected</span>
+                </div>
+                <div class="room-actions">
+                    <button id="share-room-btn">🔗 Share Room</button>
+                    <button id="transfer-host-btn" class="host-only hidden">👑 Transfer Host</button>
+                    <button id="leave-room-btn">🚪 Leave Room</button>
+                </div>
+            </div>
+
+            <div class="chat-content">
+                <!-- Participants List -->
+                <div class="participants-panel">
+                    <h3>Participants (<span id="participant-count">0</span>)</h3>
+                    <div id="participants-list" class="participants-list"></div>
+                    
+                    <!-- Host Controls -->
+                    <div id="host-controls" class="host-controls host-only hidden">
+                        <h4>Host Controls</h4>
+                        <div id="pending-requests" class="pending-requests">
+                            <h5>Join Requests</h5>
+                            <div id="requests-list" class="requests-list">
+                                <p class="no-requests">No pending requests</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="chat-panel">
+                    <div id="chat-messages" class="chat-messages"></div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="Type your message..." maxlength="500">
+                        <button id="send-message-btn">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <!-- Room Link Modal -->
+        <div id="room-link-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>🔗 Share Room</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Share this link with others to invite them to the room:</p>
+                    <div class="link-container">
+                        <input type="text" id="shareable-link" readonly>
+                        <button id="copy-link-btn">📋 Copy</button>
+                    </div>
+                    <div class="link-options">
+                        <label>
+                            <input type="checkbox" id="instant-join-link">
+                            Create instant join link (bypasses approval)
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Join Request Modal -->
+        <div id="join-request-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Join Room Request</h3>
+                </div>
+                <div class="modal-body">
+                    <p>Enter your display name to request access to this room:</p>
+                    <input type="text" id="join-name-input" placeholder="Your name..." maxlength="50">
+                    <textarea id="join-message-input" placeholder="Optional message to host..." maxlength="200"></textarea>
+                    <div class="modal-actions">
+                        <button id="send-join-request-btn" class="primary-btn">Send Request</button>
+                        <button id="cancel-join-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Host Transfer Modal -->
+        <div id="host-transfer-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>👑 Transfer Host</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Select a participant to transfer host privileges to:</p>
+                    <div id="transfer-participants-list" class="transfer-list"></div>
+                    <textarea id="transfer-reason" placeholder="Optional reason for transfer..." maxlength="200"></textarea>
+                    <div class="modal-actions">
+                        <button id="confirm-transfer-btn" class="primary-btn" disabled>Transfer Host</button>
+                        <button class="close-modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="connection-status">
+                <span id="connection-indicator" class="status-indicator offline"></span>
+                <span id="connection-text">Initializing...</span>
+            </div>
+            <div class="room-status">
+                <span id="room-indicator" class="status-indicator"></span>
+                <span id="room-text">No room</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="dashboard-manager.js"></script>
+    <script type="module">
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const { DashboardManager } = await import('./dashboard-manager.js');
+                window.dashboard = new DashboardManager();
+                await window.dashboard.init();
+            } catch (error) {
+                console.error('Failed to initialize dashboard:', error);
+                document.getElementById('connection-text').textContent = 'Failed to initialize';
+            }
+        });
+
+        // Handle URL parameters for direct room joining
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('room');
+        const token = urlParams.get('token');
+        const instant = urlParams.get('instant') === 'true';
+
+        if (roomId && token) {
+            // Store join parameters for after initialization
+            window.pendingRoomJoin = { roomId, token, instant };
+        }
+    </script>
+</body>
+</html>
