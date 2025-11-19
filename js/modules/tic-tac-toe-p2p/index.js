@@ -334,6 +334,55 @@ export default {
   },
   
   /**
+   * Reset the game
+   */
+  resetGame() {
+    if (!currentRoom || !gameLogic) {
+      return;
+    }
+    
+    console.log('[TicTacToe P2P] Resetting game...');
+    
+    // Reset game logic
+    gameLogic.reset();
+    
+    // Update board display
+    this._updateGameBoard();
+    
+    // Send reset message to opponent
+    try {
+      connectionManager.broadcast({
+        type: 'game-reset'
+      });
+      console.log('[TicTacToe P2P] Reset message sent to opponent');
+    } catch (error) {
+      console.error('[TicTacToe P2P] Failed to send reset message:', error);
+    }
+    
+    // Update UI
+    const gameStatus = document.getElementById('game-status');
+    if (gameStatus) {
+      if (currentRoom.isHost) {
+        gameStatus.textContent = 'Game reset! Your turn (X).';
+      } else {
+        gameStatus.textContent = 'Game reset! Wait for host to start.';
+      }
+    }
+    
+    // Hide reset button
+    const resetBtn = document.getElementById('reset-game-btn');
+    if (resetBtn) {
+      resetBtn.style.display = 'none';
+    }
+    
+    // Enable game board
+    const gameCells = document.querySelectorAll('.game-cell');
+    gameCells.forEach(cell => cell.classList.remove('disabled'));
+    
+    console.log('[TicTacToe P2P] Game reset complete');
+  },
+  
+  /**
    * Send chat message to opponent (using working P2P modules)
    */
   sendChatMessage(message) {
@@ -584,10 +633,26 @@ export default {
           gameLogic.reset();
         }
         this._updateGameBoard();
+        
+        // Update UI
         const gameStatus = document.getElementById('game-status');
         if (gameStatus) {
-          gameStatus.textContent = 'Game reset! Ready to play.';
+          if (currentRoom.isHost) {
+            gameStatus.textContent = 'Game reset! Your turn (X).';
+          } else {
+            gameStatus.textContent = 'Game reset! Wait for host to start.';
+          }
         }
+        
+        // Hide reset button
+        const resetBtn = document.getElementById('reset-game-btn');
+        if (resetBtn) {
+          resetBtn.style.display = 'none';
+        }
+        
+        // Enable game board
+        const gameCells = document.querySelectorAll('.game-cell');
+        gameCells.forEach(cell => cell.classList.remove('disabled'));
         break;
         
       default:
@@ -824,6 +889,18 @@ export default {
       };
     });
     console.log('[TicTacToe P2P] Game board bound to', gameCells.length, 'cells');
+    
+    // Reset game button
+    const resetBtn = document.getElementById('reset-game-btn');
+    if (resetBtn) {
+      resetBtn.onclick = () => {
+        console.log('[TicTacToe P2P] Reset button clicked');
+        this.resetGame();
+      };
+      console.log('[TicTacToe P2P] Reset button bound');
+    } else {
+      console.warn('[TicTacToe P2P] Reset button not found');
+    }
   },
   
   /**
