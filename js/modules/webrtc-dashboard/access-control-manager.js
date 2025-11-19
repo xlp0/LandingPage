@@ -1,9 +1,11 @@
 // WebRTC Dashboard Access Control Manager
 // Handles join requests, approvals, and host transfers
 
+import { getSharedBroadcastService } from './shared-broadcast.js';
+
 export class AccessControlManager {
     constructor() {
-        this.broadcastChannel = null;
+        this.broadcastService = null;
         this.pendingRequests = new Map(); // requestId -> request data
         this.eventHandlers = new Map();
         
@@ -19,8 +21,8 @@ export class AccessControlManager {
         console.log('[AccessControl] Initializing...');
         
         try {
-            // Initialize broadcast channel
-            this._initializeBroadcastChannel();
+            // Initialize shared broadcast service
+            this.broadcastService = getSharedBroadcastService(this.channelName);
             
             this.isInitialized = true;
             console.log('[AccessControl] Initialized successfully');
@@ -50,10 +52,7 @@ export class AccessControlManager {
             this.pendingRequests.set(requestData.id, requestData);
             
             // Broadcast join request
-            this._broadcastMessage({
-                type: 'join-request',
-                request: requestData
-            });
+            this._broadcastMessage('join-request', requestData);
             
             return requestData;
             
@@ -78,8 +77,7 @@ export class AccessControlManager {
             request.approvedAt = new Date();
             
             // Broadcast approval
-            this._broadcastMessage({
-                type: 'join-approved',
+            this._broadcastMessage('join-approved', {
                 requestId: requestId,
                 request: request
             });
@@ -110,8 +108,7 @@ export class AccessControlManager {
             request.rejectionReason = reason;
             
             // Broadcast rejection
-            this._broadcastMessage({
-                type: 'join-rejected',
+            this._broadcastMessage('join-rejected', {
                 requestId: requestId,
                 request: request,
                 reason: reason
@@ -142,10 +139,7 @@ export class AccessControlManager {
             };
             
             // Broadcast host transfer
-            this._broadcastMessage({
-                type: 'host-transfer',
-                transfer: transferData
-            });
+            this._broadcastMessage('host-transfer', transferData);
             
             return transferData;
             
@@ -181,10 +175,7 @@ export class AccessControlManager {
             };
             
             // Broadcast automatic host transfer
-            this._broadcastMessage({
-                type: 'host-transfer',
-                transfer: transferData
-            });
+            this._broadcastMessage('host-transfer', transferData);
             
             console.log('[AccessControl] Automatic host transfer to:', newHost.name);
             
@@ -221,18 +212,8 @@ export class AccessControlManager {
         this._addEventListener('hostTransfer', handler);
     }
     
-    // Private methods
-    _initializeBroadcastChannel() {
-        if (typeof BroadcastChannel !== 'undefined') {
-            this.broadcastChannel = new BroadcastChannel(this.channelName);
-            this.broadcastChannel.onmessage = (event) => {
-                this._handleBroadcastMessage(event.data);
-            };
-            console.log('[AccessControl] BroadcastChannel initialized');
-        } else {
-            console.warn('[AccessControl] BroadcastChannel not supported');
-        }
-    }
+    // Private methods - OLD METHOD REMOVED
+    // Now using shared BroadcastService instead
     
     _handleBroadcastMessage(message) {
         console.log('[AccessControl] Received message:', message.type);
@@ -306,14 +287,11 @@ export class AccessControlManager {
         });
     }
     
-    _broadcastMessage(message) {
-        if (this.broadcastChannel) {
-            try {
-                console.log('[AccessControl] Broadcasting message:', message.type);
-                this.broadcastChannel.postMessage(message);
-            } catch (error) {
-                console.error('[AccessControl] Failed to broadcast message:', error);
-            }
+    _broadcastMessage(type, data = {}) {
+        if (this.broadcastService) {
+            this.broadcastService.send(type, data);
+        } else {
+            console.warn('[AccessControl] BroadcastService not available');
         }
     }
     

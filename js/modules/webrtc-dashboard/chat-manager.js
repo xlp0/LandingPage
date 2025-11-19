@@ -194,18 +194,8 @@ export class ChatManager {
         this._addEventListener('hostChanged', handler);
     }
     
-    // Private methods
-    _initializeBroadcastChannel() {
-        if (typeof BroadcastChannel !== 'undefined') {
-            this.broadcastChannel = new BroadcastChannel(this.channelName);
-            this.broadcastChannel.onmessage = (event) => {
-                this._handleBroadcastMessage(event.data);
-            };
-            console.log('[ChatManager] BroadcastChannel initialized');
-        } else {
-            console.warn('[ChatManager] BroadcastChannel not supported');
-        }
-    }
+    // Private methods - OLD METHOD REMOVED
+    // Now using shared BroadcastService instead
     
     _handleBroadcastMessage(message) {
         // Only handle messages for our current room

@@ -9,6 +9,7 @@ import { getSharedBroadcastService } from './shared-broadcast.js';
 export class RoomService {
     constructor() {
         this.instanceId = 'room-service-' + Math.random().toString(36).substr(2, 9);
+        console.log('🔥🔥🔥 [RoomService] NEW VERSION 2.0 LOADED! 🔥🔥🔥');
         console.log('[RoomService] Constructor called, instance:', this.instanceId);
         
         this.connectionManager = null;
@@ -442,17 +443,24 @@ export class RoomService {
     }
     
     _broadcastMessage(type, data = {}) {
+        console.log('[RoomService] 🚀 NEW BROADCAST METHOD - Sending:', type);
+        
         if (this.isDestroyed) {
             console.log('[RoomService] Service destroyed, cannot broadcast:', type);
             return;
         }
         
         if (!this.broadcastService) {
-            console.warn('[RoomService] BroadcastService not available');
+            console.error('[RoomService] ❌ BroadcastService not available for:', type);
             return;
         }
         
-        this.broadcastService.send(type, data);
+        try {
+            this.broadcastService.send(type, data);
+            console.log('[RoomService] ✅ Successfully sent via BroadcastService:', type);
+        } catch (error) {
+            console.error('[RoomService] ❌ Failed to send via BroadcastService:', error);
+        }
     }
     
     _sanitizeRoomForBroadcast(room) {

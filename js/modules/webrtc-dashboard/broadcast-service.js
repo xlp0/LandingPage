@@ -33,10 +33,32 @@ export class BroadcastService {
             try {
                 this.broadcastChannel = new BroadcastChannel(this.channelName);
                 this.broadcastChannel.onmessage = (event) => {
+                    console.log('🎉🎉🎉 [BroadcastService] 📨 BC MESSAGE RECEIVED! 🎉🎉🎉');
                     console.log('[BroadcastService] 📨 BC received:', event.data.type, 'on', this.channelName);
+                    console.log('[BroadcastService] Full message:', event.data);
                     this._handleMessage(event.data, 'broadcastchannel');
                 };
+                
+                // Also log when channel is created
                 console.log('[BroadcastService] ✅ BroadcastChannel initialized for:', this.channelName);
+                console.log('[BroadcastService] Channel object:', this.broadcastChannel);
+                console.log('[BroadcastService] Channel name:', this.broadcastChannel.name);
+                console.log('[BroadcastService] onmessage handler set:', !!this.broadcastChannel.onmessage);
+                
+                // Test if we can receive our own test
+                setTimeout(() => {
+                    console.log('[BroadcastService] 🧪 Sending self-test message...');
+                    try {
+                        this.broadcastChannel.postMessage({
+                            type: 'self-test',
+                            data: { message: 'Self test' },
+                            timestamp: Date.now()
+                        });
+                        console.log('[BroadcastService] Self-test message sent');
+                    } catch (error) {
+                        console.error('[BroadcastService] Self-test failed:', error);
+                    }
+                }, 2000);
             } catch (error) {
                 console.error('[BroadcastService] ❌ BroadcastChannel failed:', error);
                 this.broadcastChannel = null;
@@ -50,13 +72,21 @@ export class BroadcastService {
         const storageKey = `broadcast-${this.channelName}`;
         
         window.addEventListener('storage', (event) => {
+            console.log('[BroadcastService] 🔔 Storage event fired!', event.key);
             if (event.key === storageKey && event.newValue) {
                 try {
                     const data = JSON.parse(event.newValue);
+                    console.log('[BroadcastService] Storage data:', data);
+                    console.log('[BroadcastService] My tab ID:', this._getTabId());
+                    console.log('[BroadcastService] Message sender:', data.sender);
+                    
                     // Don't process our own messages
                     if (data.sender !== this._getTabId()) {
+                        console.log('🎊🎊🎊 [BroadcastService] 📨 LS MESSAGE RECEIVED! 🎊🎊🎊');
                         console.log('[BroadcastService] 📨 LS received:', data.type, 'on', this.channelName);
                         this._handleMessage(data, 'localstorage');
+                    } else {
+                        console.log('[BroadcastService] Ignoring own message');
                     }
                 } catch (error) {
                     console.error('[BroadcastService] Failed to parse localStorage message:', error);
