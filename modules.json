@@ -10,7 +10,7 @@
       "entry": "/js/modules/net-gateway/index.js",
       "enabled": true,
       "when": "websocket",
-      "config": { "wsUrl": "ws://localhost:3001/ws/" }
+      "config": { "wsUrl": "ws://localhost:3000/ws/" }
     },
     {
       "id": "p2p-serverless",

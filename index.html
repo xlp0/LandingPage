@@ -30,6 +30,7 @@
 </head>
 <body class="min-h-screen flex items-center justify-center font-sans text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="max-w-4xl mx-auto px-8 py-16 text-center" data-anime="main-content">
+      <p id="pkc-title-text" class="text-xl md:text-2xl font-semibold mb-4 opacity-0 translate-y-8" data-anime="env-title"></p>
       <h1 class="text-4xl md:text-5xl font-bold mb-4 opacity-0 translate-y-8" data-anime="title">PKC Landing Page</h1>
       <p class="text-xl md:text-2xl mb-12 opacity-0 translate-y-8" data-anime="subtitle">Static-first. Modular by design. Local‑first ready.</p>
       <div class="flex flex-wrap gap-4 justify-center mb-16 opacity-0 translate-y-8" data-anime="buttons">
@@ -61,6 +62,54 @@
       <span>WS: idle</span>
     </div>
     
+    <!-- Runtime environment watcher -->
+    <script>
+      async function updateEnvTitle() {
+        try {
+          // Try to fetch from API endpoint (now served from same port)
+          const response = await fetch('/api/env', { cache: 'no-cache' });
+          if (response.ok) {
+            const env = await response.json();
+            if (env.PKC_Title_Text) {
+              const titleEl = document.getElementById('pkc-title-text');
+              if (titleEl && titleEl.textContent !== env.PKC_Title_Text) {
+                titleEl.textContent = env.PKC_Title_Text;
+                console.log('[PKC] Title updated to:', env.PKC_Title_Text);
+              }
+            }
+          }
+        } catch (err) {
+          // Fallback: try to load .env file directly (works in static server)
+          try {
+            const response = await fetch('.env', { cache: 'no-cache' });
+            if (response.ok) {
+              const data = await response.text();
+              const lines = data.split('\n');
+              for (const line of lines) {
+                if (line.startsWith('PKC_Title_Text=')) {
+                  const value = line.split('=')[1].trim();
+                  const titleEl = document.getElementById('pkc-title-text');
+                  if (titleEl && titleEl.textContent !== value) {
+                    titleEl.textContent = value;
+                    console.log('[PKC] Title updated to:', value);
+                  }
+                  break;
+                }
+              }
+            }
+          } catch (fallbackErr) {
+            console.error('[PKC] Failed to load env from both sources:', err, fallbackErr);
+          }
+        }
+      }
+
+      // Initial load
+      updateEnvTitle();
+
+      // Poll for env changes every 2 seconds
+      setInterval(updateEnvTitle, 2000);
+    </script>
+    
     <script type="module">
       import { PKC } from './js/pkc-core.js';
       
@@ -73,6 +122,12 @@
         });
         
         tl.add({
+          targets: '[data-anime="env-title"]',
+          opacity: [0, 1],
+          translateY: [32, 0],
+          duration: 1000
+        })
+        .add({
           targets: '[data-anime="title"]',
           opacity: [0, 1],
           translateY: [32, 0],

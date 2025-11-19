@@ -4,15 +4,12 @@ services:
     container_name: landingpage
     restart: unless-stopped
     ports:
-      - "3000:80"    # Web server port (container uses port 80)
-      - "3001:3001"  # WebSocket server port
+      - "3000:3001"  # Map host port 3000 to container port 3001
     environment:
       - NODE_ENV=production
-    command: sh -c "npm install -g http-server && http-server -p 80 & node ws-server.js"
-    # Uncomment for development
-    # volumes:
-    #   - .:/app
-    #   - /app/node_modules
+    command: node ws-server.js
+    volumes:
+      - ./.env:/app/.env  # Mount .env file for runtime access
     networks:
       - landingpage-network
 

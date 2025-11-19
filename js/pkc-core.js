@@ -20,7 +20,7 @@ export const PKC = {
   async load(manifestUrl = '/modules.json') {
     // Load app-level configuration once
     try {
-      const appRes = await fetch('/app-config.json', { cache: 'no-cache' });
+      const appRes = await fetch(`/app-config.json?t=${Date.now()}`, { cache: 'no-cache' });
       if (appRes.ok) {
         this.ctx.appConfig = await appRes.json();
       } else {
@@ -31,7 +31,7 @@ export const PKC = {
     }
 
     this.ctx.log('Loading manifest', manifestUrl);
-    const res = await fetch(manifestUrl, { cache: 'no-cache' });
+    const res = await fetch(`${manifestUrl}?t=${Date.now()}`, { cache: 'no-cache' });
     if (!res.ok) throw new Error(`Failed to load manifest: ${res.status}`);
     const manifest = await res.json();
     const modules = (manifest && manifest.modules) || [];

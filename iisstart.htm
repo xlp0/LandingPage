@@ -31,6 +31,7 @@
 </head>
 <body>
     <div class="wrap">
+      <p id="pkc-title-text" class="subtitle" style="font-size:1.5rem;margin-bottom:0.5rem;font-weight:500"></p>
       <h1>PKC Landing Page</h1>
       <p class="subtitle">Static-first. Modular by design. Local‑first ready.</p>
       <div class="links">
@@ -54,6 +55,53 @@
       </div>
     </div>
     <div id="ws-status" class="ws-badge ws-warn" aria-live="polite"><span class="ws-dot"></span><span>WS: idle</span></div>
+    <script>
+      // Runtime environment watcher - polls for env changes
+      async function updateEnvTitle() {
+        try {
+          // Try to fetch from API endpoint (works in Docker with ws-server)
+          const response = await fetch('/api/env', { cache: 'no-cache' });
+          if (response.ok) {
+            const env = await response.json();
+            if (env.PKC_Title_Text) {
+              const titleEl = document.getElementById('pkc-title-text');
+              if (titleEl && titleEl.textContent !== env.PKC_Title_Text) {
+                titleEl.textContent = env.PKC_Title_Text;
+                console.log('[PKC] Title updated to:', env.PKC_Title_Text);
+              }
+            }
+          }
+        } catch (err) {
+          // Fallback: try to load .env file directly (works in static server)
+          try {
+            const response = await fetch('.env', { cache: 'no-cache' });
+            if (response.ok) {
+              const data = await response.text();
+              const lines = data.split('\n');
+              for (const line of lines) {
+                if (line.startsWith('PKC_Title_Text=')) {
+                  const value = line.split('=')[1].trim();
+                  const titleEl = document.getElementById('pkc-title-text');
+                  if (titleEl && titleEl.textContent !== value) {
+                    titleEl.textContent = value;
+                    console.log('[PKC] Title updated to:', value);
+                  }
+                  break;
+                }
+              }
+            }
+          } catch (fallbackErr) {
+            console.error('[PKC] Failed to load env from both sources:', err, fallbackErr);
+          }
+        }
+      }
+
+      // Initial load
+      updateEnvTitle();
+
+      // Poll for env changes every 2 seconds
+      setInterval(updateEnvTitle, 2000);
+    </script>
     <script type="module">
       import { PKC } from './js/pkc-core.js';
       PKC.load('/modules.json');

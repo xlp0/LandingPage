@@ -1,8 +1,16 @@
 const express = require('express');
 const { WebSocketServer } = require('ws');
 const http = require('http');
+const cors = require('cors');
+const path = require('path');
 
 const app = express();
+
+// Enable CORS for all routes
+app.use(cors());
+
+// Serve static files from the current directory
+app.use(express.static(__dirname));
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server, path: '/ws/' });
 
@@ -88,6 +96,27 @@ app.get('/', (req, res) => {
         status: 'running',
         connected_clients: connectedClients.size
     });
+});
+
+// Serve .env file as JSON endpoint
+app.get('/api/env', (req, res) => {
+    const fs = require('fs');
+    const path = require('path');
+    try {
+        const envPath = path.join(__dirname, '.env');
+        const envContent = fs.readFileSync(envPath, 'utf8');
+        const envObj = {};
+        envContent.split('\n').forEach(line => {
+            const [key, value] = line.split('=');
+            if (key && key.trim()) {
+                envObj[key.trim()] = value ? value.trim() : '';
+            }
+        });
+        res.json(envObj);
+    } catch (err) {
+        console.error('Error reading .env file:', err);
+        res.status(500).json({ error: 'Failed to read .env file' });
+    }
 });
 
 // Start server
