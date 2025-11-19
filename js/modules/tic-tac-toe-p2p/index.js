@@ -340,23 +340,16 @@ export default {
       return;
     }
     
-    console.log('[TicTacToe P2P] Resetting game...');
+    console.log('[TicTacToe P2P] Resetting game');
     
     // Reset game logic
     gameLogic.reset();
     
-    // Update board display
+    // Update UI
     this._updateGameBoard();
     
     // Send reset message to opponent
-    try {
-      connectionManager.broadcast({
-        type: 'game-reset'
-      });
-      console.log('[TicTacToe P2P] Reset message sent to opponent');
-    } catch (error) {
-      console.error('[TicTacToe P2P] Failed to send reset message:', error);
-    }
+    connectionManager.broadcast({ type: 'game-reset' });
     
     // Update UI
     const gameStatus = document.getElementById('game-status');
@@ -582,11 +575,15 @@ export default {
     connectionManager.on('peer:connect', (peerId) => {
       console.log('[TicTacToe P2P] Peer connected:', peerId);
       uiHandler.updateStatus('Connected! Game ready.');
+      this._updatePeerCount();
+      this._updatePeerList();
     });
     
     connectionManager.on('peer:disconnect', (peerId) => {
       console.log('[TicTacToe P2P] Peer disconnected:', peerId);
       uiHandler.updateStatus('Opponent disconnected');
+      this._updatePeerCount();
+      this._updatePeerList();
     });
     
     // Listen for game messages
@@ -633,17 +630,17 @@ export default {
         break;
         
       case 'game-start':
-        const currentRoom = connectionHandler.getCurrentRoom();
-        if (gameLogic && currentRoom) {
+        const roomInfo = connectionHandler.getCurrentRoom();
+        if (gameLogic && roomInfo) {
           // Guest receives game-start message from host
-          const myRole = currentRoom.isHost ? 'X' : 'O';
+          const myRole = roomInfo.isHost ? 'X' : 'O';
           gameLogic.setPlayerRole(myRole);
-          console.log('[TicTacToe P2P] Game start received - I am:', currentRoom.isHost ? 'HOST' : 'GUEST');
+          console.log('[TicTacToe P2P] Game start received - I am:', roomInfo.isHost ? 'HOST' : 'GUEST');
           console.log('[TicTacToe P2P] Game start - setting my role to:', myRole);
           console.log('[TicTacToe P2P] My role after game start:', gameLogic.getPlayerRole());
         
           // Update game status for guest
-          if (!currentRoom.isHost) {
+          if (!roomInfo.isHost) {
             const gameStatus = document.getElementById('game-status');
             if (gameStatus) {
               gameStatus.textContent = 'Host goes first (X). Wait for your turn.';
@@ -690,6 +687,7 @@ export default {
         break;
         
       case 'game-reset':
+        const resetRoomInfo = connectionHandler.getCurrentRoom();
         if (gameLogic) {
           gameLogic.reset();
         }
@@ -697,8 +695,8 @@ export default {
         
         // Update UI
         const gameStatus = document.getElementById('game-status');
-        if (gameStatus) {
-          if (currentRoom.isHost) {
+        if (gameStatus && resetRoomInfo) {
+          if (resetRoomInfo.isHost) {
             gameStatus.textContent = 'Game reset! Your turn (X).';
           } else {
             gameStatus.textContent = 'Game reset! Wait for host to start.';
@@ -739,6 +737,7 @@ export default {
    * Show game end result
    */
   _showGameEnd(winner) {
+    const currentRoom = connectionHandler.getCurrentRoom();
     const gameStatus = document.getElementById('game-status');
     if (gameStatus) {
       if (winner === 'draw') {
@@ -985,6 +984,15 @@ export default {
               // Send approval message
               connectionManager.broadcast({ type: 'join-approved' });
               
+              // Update room status to playing with 2 players
+              const currentRoom = connectionHandler.getCurrentRoom();
+              if (currentRoom && roomService) {
+                roomService.updateRoom(currentRoom.roomId, {
+                  status: 'playing',
+                  players: 2
+                });
+              }
+              
               // Start the game
               this._startGame();
               
@@ -1002,6 +1010,38 @@ export default {
         uiHandler.updateStatus('Join request rejected');
       }
     });
+  },
+  
+  /**
+   * Update peer count display
+   */
+  _updatePeerCount() {
+    const peerCount = connectionManager ? connectionManager.getPeers().length : 0;
+    const peerCountElement = document.getElementById('peer-count');
+    if (peerCountElement) {
+      peerCountElement.textContent = peerCount;
+    }
+  },
+  
+  /**
+   * Update peer list display
+   */
+  _updatePeerList() {
+    const peerList = document.getElementById('peer-list');
+    if (!peerList) return;
+    
+    const connectedPeers = connectionManager ? connectionManager.getPeers() : [];
+    
+    if (connectedPeers.length === 0) {
+      peerList.innerHTML = '<li class="p-3 bg-white/20 rounded text-center opacity-75">No players connected</li>';
+    } else {
+      peerList.innerHTML = connectedPeers.map(peer => 
+        `<li class="p-3 bg-white/20 rounded text-center">
+          <span class="font-medium">${peer.id.substr(0, 12)}...</span>
+          <span class="text-green-400 ml-2">●</span>
+        </li>`
+      ).join('');
+    }
   },
   
   /**
