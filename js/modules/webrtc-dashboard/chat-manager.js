@@ -2,6 +2,7 @@
 // Handles P2P messaging and participant management
 
 import { getSharedBroadcastService } from './shared-broadcast.js';
+import { RoomConnectionManager } from './managers/room-connection-manager.js';
 
 export class ChatManager {
     constructor() {
@@ -11,6 +12,7 @@ export class ChatManager {
         this.messageHistory = [];
         
         this.broadcastService = null;
+        this.roomConnection = null; // Per-room WebRTC connection manager
         this.eventHandlers = new Map();
         
         this.channelName = 'webrtc-dashboard-chat';
@@ -43,14 +45,20 @@ export class ChatManager {
     _setupMessageHandlers() {
         console.log('[ChatManager] Setting up message handlers...');
         
-        this.broadcastService.on('chat-message', (data) => {
-            console.log('[ChatManager] ✅ Chat message received:', data);
-            this._handleChatMessage(data);
-        });
+        // REMOVED: chat-message from WebSocket - now ONLY via WebRTC!
+        // WebSocket is ONLY for signaling: participant join/leave announcements
         
         this.broadcastService.on('participant-joined', (data) => {
             console.log('[ChatManager] ✅ Participant joined received:', data);
-            this._handleParticipantJoined(data);
+            console.log('[ChatManager] Participant data:', data.participant);
+            console.log('[ChatManager] Current room:', this.currentRoom);
+            
+            // Only handle if it's for our current room
+            if (data.roomId === this.currentRoom) {
+                this._handleParticipantJoined(data.participant);
+            } else {
+                console.log('[ChatManager] Ignoring participant join for different room');
+            }
         });
         
         this.broadcastService.on('participant-left', (data) => {
@@ -64,10 +72,23 @@ export class ChatManager {
     async joinRoom(roomId, userData) {
         console.log('[ChatManager] Joining room:', roomId);
         
+        // Clean up previous room connection if any
+        if (this.roomConnection) {
+            this.roomConnection.destroy();
+        }
+        
         this.currentRoom = roomId;
         this.currentUser = userData;
         
-        // Add self to participants
+        // Create new room-specific connection manager
+        this.roomConnection = new RoomConnectionManager(roomId);
+        await this.roomConnection.setUserId(userData.id); // Wait for signaling to initialize
+        
+        // Setup WebRTC event handlers
+        this._setupRoomConnectionHandlers();
+        
+        // Clear participants and add self
+        this.participants.clear();
         this.participants.set(userData.id, {
             ...userData,
             isHost: false,
@@ -76,7 +97,7 @@ export class ChatManager {
             isSelf: true
         });
         
-        // Announce joining
+        // Announce joining (for signaling only)
         this._broadcastMessage('participant-joined', {
             roomId: roomId,
             participant: {
@@ -91,6 +112,44 @@ export class ChatManager {
         this._addSystemMessage(`${userData.name} joined the room`);
         
         this._emitEvent('participantJoined', userData);
+    }
+    
+    _setupRoomConnectionHandlers() {
+        if (!this.roomConnection) return;
+        
+        // Handle incoming P2P messages
+        this.roomConnection.onDataReceived = (peerId, data) => {
+            console.log('[ChatManager] P2P message from peer:', peerId, 'type:', data.type);
+            
+            if (data.type === 'chat-message') {
+                // Only process messages for our room
+                if (data.roomId === this.currentRoom) {
+                    this._handleChatMessage(data.data);
+                } else {
+                    console.warn('[ChatManager] Ignoring message for different room:', data.roomId);
+                }
+            }
+        };
+        
+        // Handle peer connected
+        this.roomConnection.onPeerConnected = (peerId) => {
+            console.log('[ChatManager] ✅ Peer connected:', peerId);
+            console.log('[ChatManager] Total connected peers:', this.roomConnection.getConnectedPeers().length);
+            
+            // Send any pending messages
+            if (this._pendingMessages && this._pendingMessages.length > 0) {
+                console.log('[ChatManager] Sending', this._pendingMessages.length, 'pending messages');
+                this._pendingMessages.forEach(msg => {
+                    this._sendViaWebRTC(msg);
+                });
+                this._pendingMessages = [];
+            }
+        };
+        
+        // Handle peer disconnected
+        this.roomConnection.onPeerDisconnected = (peerId) => {
+            console.log('[ChatManager] Peer disconnected:', peerId);
+        };
     }
     
     async leaveRoom() {
@@ -112,6 +171,12 @@ export class ChatManager {
         
         // Send system message
         this._addSystemMessage(`${this.currentUser.name} left the room`);
+        
+        // Destroy room-specific WebRTC connections
+        if (this.roomConnection) {
+            this.roomConnection.destroy();
+            this.roomConnection = null;
+        }
         
         // Clear state
         this.currentRoom = null;
@@ -135,18 +200,44 @@ export class ChatManager {
             timestamp: new Date()
         };
         
-        console.log('[ChatManager] Sending message:', content.substring(0, 50));
+        console.log('[ChatManager] Sending message via WebRTC:', content.substring(0, 50));
         
         // Add to local history
         this.messageHistory.push(message);
         
-        // Broadcast message
-        this._broadcastMessage('chat-message', message);
+        // Send via WebRTC DataChannel to all peers in this room
+        if (this.roomConnection && this.roomConnection.getConnectedPeers().length > 0) {
+            console.log('[ChatManager] Sending via WebRTC DataChannel to', this.roomConnection.getConnectedPeers().length, 'peers');
+            this._sendViaWebRTC(message);
+        } else {
+            // NO FALLBACK TO WEBSOCKET! Messages MUST go via WebRTC
+            console.warn('[ChatManager] ⚠️ No WebRTC peers connected yet - message NOT sent');
+            console.warn('[ChatManager] Message will be sent once WebRTC connections establish');
+            // Store message to send once connected
+            if (!this._pendingMessages) this._pendingMessages = [];
+            this._pendingMessages.push(message);
+        }
         
-        // Emit event for UI
+        // Emit event for UI (show own message)
         this._emitEvent('message', message);
         
         return message;
+    }
+    
+    _sendViaWebRTC(message) {
+        if (!this.roomConnection) {
+            console.error('[ChatManager] No room connection available');
+            return;
+        }
+        
+        // Send to all peers in THIS room only
+        const sentCount = this.roomConnection.sendToAll({
+            type: 'chat-message',
+            roomId: this.currentRoom, // Include room ID for verification
+            data: message
+        });
+        
+        console.log(`[ChatManager] Sent message to ${sentCount} peers in room ${this.currentRoom}`);
     }
     
     updateParticipantStatus(participantId, status) {
@@ -268,12 +359,18 @@ export class ChatManager {
     }
     
     _handleParticipantJoined(participant) {
+        console.log('[ChatManager] _handleParticipantJoined called with:', participant);
+        console.log('[ChatManager] Current user ID:', this.currentUser?.id);
+        console.log('[ChatManager] Participant ID:', participant?.id);
+        console.log('[ChatManager] Participant name:', participant?.name);
+        
         // Don't handle our own join
         if (participant.id === this.currentUser?.id) {
+            console.log('[ChatManager] Ignoring own join');
             return;
         }
         
-        console.log('[ChatManager] Participant joined:', participant.name);
+        console.log('[ChatManager] Adding participant:', participant.name);
         
         // Add to participants
         this.participants.set(participant.id, {
@@ -281,6 +378,17 @@ export class ChatManager {
             isConnected: true,
             isSelf: false
         });
+        
+        console.log('[ChatManager] Total participants now:', this.participants.size);
+        console.log('[ChatManager] Participant names:', Array.from(this.participants.values()).map(p => p.name));
+        
+        // Initiate WebRTC connection to new participant
+        if (this.roomConnection) {
+            console.log('[ChatManager] Initiating WebRTC connection to:', participant.id);
+            this.roomConnection.createOffer(participant.id).catch(error => {
+                console.error('[ChatManager] Failed to create offer:', error);
+            });
+        }
         
         // Send system message
         this._addSystemMessage(`${participant.name} joined the room`);

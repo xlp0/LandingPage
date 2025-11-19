@@ -51,7 +51,9 @@ export class ParticipantManager {
     }
     
     removeJoinRequest(requestId) {
-        this.pendingRequests.delete(requestId);
+        console.log('[ParticipantManager] Removing join request:', requestId);
+        const removed = this.pendingRequests.delete(requestId);
+        console.log('[ParticipantManager] Request removed:', removed, 'Remaining:', this.pendingRequests.size);
         this._renderPendingRequests();
     }
     
@@ -119,7 +121,8 @@ export class ParticipantManager {
         
         approveBtn.addEventListener('click', async () => {
             try {
-                await this.accessControl.approveJoinRequest(request.id);
+                console.log('[ParticipantManager] Approving request:', request.id);
+                await this.accessControl.approveRequest(request.id);
                 this.removeJoinRequest(request.id);
                 this._showNotification(`${displayName} approved!`, 'success');
             } catch (error) {
@@ -130,7 +133,8 @@ export class ParticipantManager {
         
         rejectBtn.addEventListener('click', async () => {
             try {
-                await this.accessControl.rejectJoinRequest(request.id, 'Rejected by host');
+                console.log('[ParticipantManager] Rejecting request:', request.id);
+                await this.accessControl.rejectRequest(request.id, 'Rejected by host');
                 this.removeJoinRequest(request.id);
                 this._showNotification(`${displayName} rejected`, 'info');
             } catch (error) {

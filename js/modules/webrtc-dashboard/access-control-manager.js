@@ -40,7 +40,12 @@ export class AccessControlManager {
         console.log('[AccessControl] Setting up message handlers...');
         
         this.broadcastService.on('join-request', (data) => {
-            console.log('[AccessControl] ✅ Join request received:', data);
+            console.log('[AccessControl] ✅ Join request received for room:', data.roomId);
+            console.log('[AccessControl] Request data:', data);
+            
+            // CRITICAL: Only handle requests for rooms we're hosting
+            // We need to check if this is for a room we created
+            // This will be handled by the dashboard manager which knows the current room
             this._handleJoinRequest(data);
         });
         

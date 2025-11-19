@@ -36,7 +36,7 @@ export class DashboardManager {
             // Initialize core services
             this.roomService = new RoomService();
             this.accessControl = new AccessControlManager();
-            this.chatManager = new ChatManager();
+            this.chatManager = new ChatManager(); // Room-specific connections now
             this.ui = new UIComponents();
             
             await this.roomService.init();
@@ -73,19 +73,86 @@ export class DashboardManager {
             this._updateRoomsList(rooms);
         });
         
-        // Access control events - JOIN REQUESTS GO TO SIDEBAR!
+        // Access control events - JOIN REQUESTS GO TO SIDEBAR (HOST ONLY!)
         this.accessControl.onJoinRequest((request) => {
-            console.log('[Dashboard] 🔔 Join request received, adding to sidebar');
-            this.participantManager.addJoinRequest(request);
-            this._showNotification(`${request.userName || 'Someone'} wants to join!`, 'info', 5000);
+            console.log('[Dashboard] 🔔 Join request received');
+            console.log('[Dashboard] Request for room:', request.roomId);
+            console.log('[Dashboard] Current room:', this.roomManager?.currentRoom?.id);
+            console.log('[Dashboard] Is host:', this.roomManager?.isCurrentHost());
+            
+            // CRITICAL: Only show requests for OUR current room
+            const currentRoomId = this.roomManager?.currentRoom?.id;
+            if (!currentRoomId) {
+                console.log('[Dashboard] Not in a room, ignoring request');
+                return;
+            }
+            
+            if (request.roomId !== currentRoomId) {
+                console.log('[Dashboard] ⚠️ Request for different room, ignoring');
+                return;
+            }
+            
+            // Only show to host
+            if (this.roomManager && this.roomManager.isCurrentHost()) {
+                console.log('[Dashboard] User is host of this room, showing request in sidebar');
+                this.participantManager.addJoinRequest(request);
+                this._showNotification(`${request.userName || 'Someone'} wants to join!`, 'info', 5000);
+            } else {
+                console.log('[Dashboard] User is not host, ignoring request');
+            }
         });
         
-        this.accessControl.onJoinApproved((data) => {
-            console.log('[Dashboard] Join approved:', data);
+        this.accessControl.onJoinApproved(async (data) => {
+            console.log('[Dashboard] 🎉 Join approved!', data);
+            
+            // If we're the host, remove the request from sidebar
+            if (this.roomManager && this.roomManager.isCurrentHost() && data.requestId) {
+                console.log('[Dashboard] Removing approved request from sidebar');
+                this.participantManager.removeJoinRequest(data.requestId);
+            }
+            
+            // If this was our request, join the room
+            if (data.request && data.request.userId === this.currentUser?.id) {
+                console.log('[Dashboard] Our join request was approved! Joining room...');
+                try {
+                    const roomId = data.request.roomId;
+                    
+                    // Join the room via RoomService (establishes WebRTC)
+                    await this.roomService.joinRoom(roomId, this.currentUser);
+                    
+                    // Update room manager state
+                    const room = this.roomService.getRoom(roomId);
+                    if (room) {
+                        this.roomManager.currentRoom = room;
+                        this.roomManager.isHost = false; // Joiner is not host
+                    }
+                    
+                    // Join chat
+                    await this.chatManager.joinRoom(roomId, this.currentUser);
+                    
+                    // Update UI
+                    this._showChatView();
+                    this._updateParticipantsList();
+                    this._showNotification('✅ Joined room successfully!', 'success');
+                    
+                    console.log('[Dashboard] ✅ Successfully joined room via WebRTC');
+                } catch (error) {
+                    console.error('[Dashboard] Failed to join room:', error);
+                    this._showNotification('Failed to join room', 'error');
+                }
+            }
+            
+            // Update participant list for everyone (new person joined)
+            this._updateParticipantsList();
         });
         
         this.accessControl.onJoinRejected((data) => {
-            console.log('[Dashboard] Join rejected:', data);
+            console.log('[Dashboard] ❌ Join rejected:', data);
+            
+            // If this was our request, show rejection
+            if (data.request && data.request.userId === this.currentUser?.id) {
+                this._showNotification('Join request was rejected', 'error');
+            }
         });
         
         // Chat manager events
@@ -111,12 +178,16 @@ export class DashboardManager {
     
     _updateParticipantsList() {
         const participants = Array.from(this.chatManager.getParticipants().values());
+        console.log('[Dashboard] Updating participants list. Count:', participants.length);
+        console.log('[Dashboard] Participants:', participants.map(p => p.name));
+        
         this.participantManager.updateParticipantsList(participants);
         
         // Update count
         const countElement = document.getElementById('participant-count');
         if (countElement) {
             countElement.textContent = participants.length;
+            console.log('[Dashboard] Updated participant count display to:', participants.length);
         }
     }
     

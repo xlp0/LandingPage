@@ -328,13 +328,32 @@ export class RoomService {
     }
     
     _handleRoomCreated(room) {
-        if (!this.localRooms.has(room.id)) {
-            console.log('[RoomService] Remote room created:', room.name, 'Total rooms now:', this.rooms.size + 1);
-            this.rooms.set(room.id, room);
-            this._emitRoomListUpdate();
-        } else {
-            console.log('[RoomService] Ignoring own room creation:', room.name);
+        // Don't handle our own room creation
+        if (this.localRooms.has(room.id)) {
+            console.log('[RoomService] Ignoring own room creation:', room.id);
+            return;
         }
+        
+        // Check if room already exists (prevent duplicates)
+        if (this.rooms.has(room.id)) {
+            console.log('[RoomService] Room already exists:', room.id);
+            return;
+        }
+        
+        console.log('[RoomService] Remote room created:', room.name);
+        console.log('[RoomService] Room details:', {
+            id: room.id,
+            name: room.name,
+            host: room.host,
+            participants: room.participants?.length || 0
+        });
+        
+        // Add to rooms
+        this.rooms.set(room.id, room);
+        console.log('[RoomService] Total rooms now:', this.rooms.size);
+        
+        // Emit room list update
+        this._emitRoomListUpdate();
     }
     
     _handleRoomUpdated(room) {
