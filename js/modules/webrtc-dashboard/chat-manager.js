@@ -335,7 +335,21 @@ export class ChatManager {
             return;
         }
         
-        // Convert participants map to array
+        // CRITICAL: Make sure the peer we're sending to is in our participants list
+        if (!this.participants.has(peerId)) {
+            console.log('[ChatManager] Adding peer to participants before sending list:', peerId);
+            // We'll add them with minimal info - they'll send us their full info
+            this.participants.set(peerId, {
+                id: peerId,
+                name: 'Unknown', // Will be updated when we receive their list
+                isHost: false,
+                joinedAt: new Date(),
+                isConnected: true,
+                isSelf: false
+            });
+        }
+        
+        // Convert participants map to array (INCLUDING the peer we're sending to!)
         const participantList = Array.from(this.participants.values()).map(p => ({
             id: p.id,
             name: p.name,
@@ -343,7 +357,8 @@ export class ChatManager {
             joinedAt: p.joinedAt
         }));
         
-        console.log('[ChatManager] Sending participant list to peer:', peerId, 'Count:', participantList.length);
+        console.log('[ChatManager] Sending COMPLETE participant list to peer:', peerId, 'Count:', participantList.length);
+        console.log('[ChatManager] List includes:', participantList.map(p => p.name).join(', '));
         
         this.roomConnection.sendToPeer(peerId, {
             type: 'participant-list',
@@ -353,19 +368,41 @@ export class ChatManager {
     
     _handleParticipantList(participants) {
         console.log('[ChatManager] Processing received participant list. Count:', participants.length);
+        console.log('[ChatManager] Received participants:', participants.map(p => p.name).join(', '));
+        
+        let addedCount = 0;
+        let updatedCount = 0;
         
         participants.forEach(p => {
-            if (p.id !== this.currentUser?.id && !this.participants.has(p.id)) {
-                console.log('[ChatManager] Adding participant from P2P list:', p.name);
+            if (p.id === this.currentUser?.id) {
+                // Skip ourselves
+                return;
+            }
+            
+            if (!this.participants.has(p.id)) {
+                console.log('[ChatManager] Adding NEW participant from P2P list:', p.name);
                 this.participants.set(p.id, {
                     ...p,
                     isConnected: false, // Will be marked as connected when DataChannel opens
                     isSelf: false
                 });
+                addedCount++;
+            } else {
+                // Update existing participant info (in case name was "Unknown")
+                const existing = this.participants.get(p.id);
+                if (existing.name === 'Unknown' && p.name !== 'Unknown') {
+                    console.log('[ChatManager] Updating participant name from Unknown to:', p.name);
+                    existing.name = p.name;
+                    existing.isHost = p.isHost;
+                    existing.joinedAt = p.joinedAt;
+                    updatedCount++;
+                }
             }
         });
         
+        console.log('[ChatManager] Added:', addedCount, 'Updated:', updatedCount);
         console.log('[ChatManager] Total participants after merge:', this.participants.size);
+        console.log('[ChatManager] Current participant names:', Array.from(this.participants.values()).map(p => p.name).join(', '));
         
         // Emit update
         this._emitEvent('participantListUpdated', Array.from(this.participants.values()));

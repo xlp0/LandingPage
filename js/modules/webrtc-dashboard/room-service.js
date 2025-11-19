@@ -73,9 +73,9 @@ export class RoomService {
             console.log('[RoomService] ✅ Room added to local storage. Local rooms:', this.localRooms.size);
             console.log('[RoomService] Local room IDs:', Array.from(this.localRooms));
             
-            // Create WebRTC offer for the room
-            const offerData = await this.connectionManager.createOffer();
-            room.webrtcOffer = offerData;
+            // NOTE: We don't need to create a WebRTC offer here anymore
+            // WebRTC connections are now managed per-room by RoomConnectionManager
+            // This was causing Firefox compatibility issues
             
             // Broadcast room creation
             console.log('[RoomService] 📢 Broadcasting room-created for:', room.name);
