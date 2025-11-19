@@ -170,6 +170,12 @@ export class DashboardManager {
             this._updateParticipantsList();
         });
         
+        // Listen for participant list updates (when WebRTC connects)
+        this.chatManager.on('participantListUpdated', (participants) => {
+            console.log('[Dashboard] Participant list updated via WebRTC connection');
+            this._updateParticipantsList();
+        });
+        
         // Listen for notification events from participant manager
         document.addEventListener('notification', (e) => {
             this._showNotification(e.detail.message, e.detail.type);

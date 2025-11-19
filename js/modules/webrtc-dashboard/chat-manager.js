@@ -136,6 +136,18 @@ export class ChatManager {
             console.log('[ChatManager] ✅ Peer connected:', peerId);
             console.log('[ChatManager] Total connected peers:', this.roomConnection.getConnectedPeers().length);
             
+            // CRITICAL: Update participant as connected
+            const participant = this.participants.get(peerId);
+            if (participant) {
+                participant.isConnected = true;
+                console.log('[ChatManager] Updated participant as connected:', participant.name);
+            } else {
+                console.warn('[ChatManager] Peer connected but not in participants list:', peerId);
+            }
+            
+            // Emit participant list update
+            this._emitEvent('participantListUpdated', Array.from(this.participants.values()));
+            
             // Send any pending messages
             if (this._pendingMessages && this._pendingMessages.length > 0) {
                 console.log('[ChatManager] Sending', this._pendingMessages.length, 'pending messages');
@@ -464,6 +476,11 @@ export class ChatManager {
             this.eventHandlers.set(event, []);
         }
         this.eventHandlers.get(event).push(handler);
+    }
+    
+    // Public method for external event listeners
+    on(event, handler) {
+        this._addEventListener(event, handler);
     }
     
     _emitEvent(event, data) {
