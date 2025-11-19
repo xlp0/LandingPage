@@ -70,17 +70,21 @@ export class RoomService {
             // Store room locally
             this.rooms.set(room.id, room);
             this.localRooms.add(room.id);
+            console.log('[RoomService] ✅ Room added to local storage. Local rooms:', this.localRooms.size);
+            console.log('[RoomService] Local room IDs:', Array.from(this.localRooms));
             
             // Create WebRTC offer for the room
             const offerData = await this.connectionManager.createOffer();
             room.webrtcOffer = offerData;
             
             // Broadcast room creation
+            console.log('[RoomService] 📢 Broadcasting room-created for:', room.name);
             this._broadcastMessage('room-created', this._sanitizeRoomForBroadcast(room));
             
             // Emit room list update
             this._emitRoomListUpdate();
             
+            console.log('[RoomService] ✅ Room creation complete. Total rooms:', this.rooms.size);
             return room;
             
         } catch (error) {
@@ -351,20 +355,25 @@ export class RoomService {
     
     _handleRoomListRequest() {
         // Send our local rooms to requester
-        console.log('[RoomService] Room list requested. Local rooms:', this.localRooms.size, 'Total rooms:', this.rooms.size);
+        console.log('[RoomService] 📋 Room list requested!');
+        console.log('[RoomService] Local rooms count:', this.localRooms.size);
+        console.log('[RoomService] Local room IDs:', Array.from(this.localRooms));
+        console.log('[RoomService] Total rooms count:', this.rooms.size);
+        console.log('[RoomService] All room IDs:', Array.from(this.rooms.keys()));
         
         if (this.localRooms.size === 0) {
-            console.log('[RoomService] No local rooms to share');
+            console.log('[RoomService] ⚠️ No local rooms to share');
             return;
         }
         
+        console.log('[RoomService] 📤 Sharing', this.localRooms.size, 'local rooms...');
         this.localRooms.forEach(roomId => {
             const room = this.rooms.get(roomId);
             if (room) {
-                console.log('[RoomService] Sharing local room:', room.name);
+                console.log('[RoomService] 📢 Sharing local room:', room.name, 'ID:', roomId);
                 this._broadcastMessage('room-created', this._sanitizeRoomForBroadcast(room));
             } else {
-                console.warn('[RoomService] Local room not found in rooms map:', roomId);
+                console.warn('[RoomService] ❌ Local room not found in rooms map:', roomId);
             }
         });
     }

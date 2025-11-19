@@ -186,7 +186,7 @@
         // Initialize dashboard when page loads
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                const { DashboardManager } = await import('./dashboard-manager.js?v=2.0');
+                const { DashboardManager } = await import('./dashboard-manager-v2.js?v=3.0');
                 window.dashboard = new DashboardManager();
                 await window.dashboard.init();
             } catch (error) {

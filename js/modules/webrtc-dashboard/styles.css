@@ -705,6 +705,119 @@ button:disabled {
     display: flex;
 }
 
+/* Pending Requests Section in Sidebar */
+.pending-requests-section {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.pending-requests-section .section-header {
+    margin-bottom: 12px;
+}
+
+.pending-requests-section h4 {
+    color: #3b82f6;
+    font-size: 14px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Join Request Cards */
+.join-request-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    color: white;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.request-info {
+    margin-bottom: 12px;
+}
+
+.request-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.request-info strong {
+    font-size: 15px;
+    color: white;
+}
+
+.request-badge {
+    background: #10b981;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.request-message {
+    margin: 8px 0;
+    color: rgba(255,255,255,0.9);
+    font-size: 13px;
+    font-style: italic;
+}
+
+.request-time {
+    color: rgba(255,255,255,0.7);
+    font-size: 11px;
+}
+
+.request-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.approve-btn, .reject-btn {
+    flex: 1;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.approve-btn {
+    background: #10b981;
+    color: white;
+}
+
+.approve-btn:hover {
+    background: #059669;
+}
+
+.reject-btn {
+    background: #ef4444;
+    color: white;
+}
+
+.reject-btn:hover {
+    background: #dc2626;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .dashboard-main {

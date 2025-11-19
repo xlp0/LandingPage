@@ -16,11 +16,11 @@ RUN npm install -g http-server
 # Copy the rest of the application
 COPY . .
 
-# Expose the ports the app runs on
-EXPOSE 3000 3001
+# Expose the port the app runs on
+EXPOSE 3000
 
 # Set environment variables
 ENV NODE_ENV=production
 
-# Start both servers
-CMD ["sh", "-c", "http-server -p 3000 & node ws-server.js"]
+# Start unified server (HTTP + WebSocket on same port)
+CMD ["node", "unified-server.js"]

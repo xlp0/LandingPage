@@ -4,8 +4,7 @@ services:
     container_name: landingpage-local
     restart: unless-stopped
     ports:
-      - "8765:3000"  # HTTP server
-      - "8766:3001"  # WebSocket server
+      - "8765:3000"  # Unified HTTP + WebSocket server
     environment:
       - NODE_ENV=production
     volumes:

@@ -1,15 +1,15 @@
 // Shared Broadcast Service Instance
 // Single instance shared across all dashboard services
 
-import { BroadcastService } from './broadcast-service.js';
+import { WebSocketBroadcastService } from './websocket-broadcast-service.js';
 
 // Create shared instances for each channel
 const services = new Map();
 
 export function getSharedBroadcastService(channelName) {
     if (!services.has(channelName)) {
-        console.log('[SharedBroadcast] Creating new service for channel:', channelName);
-        services.set(channelName, new BroadcastService(channelName));
+        console.log('[SharedBroadcast] Creating new WebSocket service for channel:', channelName);
+        services.set(channelName, new WebSocketBroadcastService(channelName));
     }
     return services.get(channelName);
 }

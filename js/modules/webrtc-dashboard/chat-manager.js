@@ -28,6 +28,9 @@ export class ChatManager {
             // Initialize shared broadcast service
             this.broadcastService = getSharedBroadcastService(this.channelName);
             
+            // Setup message handlers
+            this._setupMessageHandlers();
+            
             this.isInitialized = true;
             console.log('[ChatManager] Initialized successfully');
             
@@ -35,6 +38,27 @@ export class ChatManager {
             console.error('[ChatManager] Initialization failed:', error);
             throw error;
         }
+    }
+    
+    _setupMessageHandlers() {
+        console.log('[ChatManager] Setting up message handlers...');
+        
+        this.broadcastService.on('chat-message', (data) => {
+            console.log('[ChatManager] ✅ Chat message received:', data);
+            this._handleChatMessage(data);
+        });
+        
+        this.broadcastService.on('participant-joined', (data) => {
+            console.log('[ChatManager] ✅ Participant joined received:', data);
+            this._handleParticipantJoined(data);
+        });
+        
+        this.broadcastService.on('participant-left', (data) => {
+            console.log('[ChatManager] ✅ Participant left received:', data);
+            this._handleParticipantLeft(data);
+        });
+        
+        console.log('[ChatManager] Message handlers set up');
     }
     
     async joinRoom(roomId, userData) {

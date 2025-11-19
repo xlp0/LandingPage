@@ -11,7 +11,11 @@ app.use(cors());
 
 // Serve static files from the current directory
 app.use(express.static(__dirname));
+
+// Create HTTP server
 const server = http.createServer(app);
+
+// Create WebSocket server on the same HTTP server
 const wss = new WebSocketServer({ server, path: '/ws/' });
 
 // Track connected clients
@@ -128,17 +132,23 @@ wss.on('connection', (ws, req) => {
 
 // Basic HTTP route
 app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// API endpoint for server status
+app.get('/api/status', (req, res) => {
     res.json({
-        message: 'PKC WebSocket Gateway Server',
+        message: 'THKMesh Unified Server',
         status: 'running',
-        connected_clients: connectedClients.size
+        connected_clients: connectedClients.size,
+        websocket_path: '/ws/',
+        timestamp: new Date().toISOString()
     });
 });
 
 // Serve .env file as JSON endpoint
 app.get('/api/env', (req, res) => {
     const fs = require('fs');
-    const path = require('path');
     try {
         const envPath = path.join(__dirname, '.env');
         const envContent = fs.readFileSync(envPath, 'utf8');
@@ -156,10 +166,14 @@ app.get('/api/env', (req, res) => {
     }
 });
 
-// Start server
-const PORT = process.env.PORT || 3001;
+// Start unified server on single port
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
-    console.log(`PKC WebSocket Gateway Server running on port ${PORT}`);
-    console.log(`WebSocket endpoint: ws://0.0.0.0:${PORT}/ws/`);
-    console.log(`Connected clients: ${connectedClients.size}`);
+    console.log('='.repeat(60));
+    console.log('🚀 THKMesh Unified Server Started!');
+    console.log('='.repeat(60));
+    console.log(`📡 HTTP Server:      http://0.0.0.0:${PORT}`);
+    console.log(`🔌 WebSocket Server: ws://0.0.0.0:${PORT}/ws/`);
+    console.log(`👥 Connected clients: ${connectedClients.size}`);
+    console.log('='.repeat(60));
 });

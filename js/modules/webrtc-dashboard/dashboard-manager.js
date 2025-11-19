@@ -834,8 +834,91 @@ export class DashboardManager {
     
     // Placeholder event handlers
     _handleJoinRequest(request) {
-        console.log('[Dashboard] Handle join request:', request);
-        // TODO: Update UI with new request
+        console.log('[Dashboard] 📩 Handle join request:', request);
+        console.log('[Dashboard] Request userName:', request.userName);
+        console.log('[Dashboard] Request displayName:', request.displayName);
+        
+        const displayName = request.displayName || request.userName || 'Anonymous';
+        
+        // Show notification
+        console.log('[Dashboard] Showing notification for:', displayName);
+        this._showNotification(`${displayName} wants to join the room`, 'info', 10000);
+        
+        // Add to requests list
+        console.log('[Dashboard] Calling _addJoinRequestToUI...');
+        this._addJoinRequestToUI(request);
+        console.log('[Dashboard] _addJoinRequestToUI completed');
+    }
+    
+    _addJoinRequestToUI(request) {
+        const requestsList = this.elements['requests-list'];
+        if (!requestsList) {
+            console.warn('[Dashboard] Requests list element not found');
+            return;
+        }
+        
+        console.log('[Dashboard] Adding join request to UI for:', request.userName || request.displayName);
+        console.log('[Dashboard] Requests list element:', requestsList);
+        console.log('[Dashboard] Requests list visible:', requestsList.offsetParent !== null);
+        console.log('[Dashboard] Requests list innerHTML before:', requestsList.innerHTML);
+        
+        // Remove "No pending requests" message if it exists
+        const noRequestsMsg = requestsList.querySelector('.no-requests');
+        if (noRequestsMsg) {
+            noRequestsMsg.remove();
+            console.log('[Dashboard] Removed "no requests" message');
+        } else {
+            console.log('[Dashboard] No "no-requests" message found');
+        }
+        
+        // Use userName if displayName is not available
+        const displayName = request.displayName || request.userName || 'Anonymous';
+        
+        // Create request card
+        const requestCard = document.createElement('div');
+        requestCard.className = 'join-request-card';
+        requestCard.dataset.requestId = request.id;
+        requestCard.innerHTML = `
+            <div class="request-info">
+                <strong>${this._escapeHtml(displayName)}</strong>
+                ${request.message ? `<p>${this._escapeHtml(request.message)}</p>` : ''}
+                <small>${new Date(request.timestamp).toLocaleTimeString()}</small>
+            </div>
+            <div class="request-actions">
+                <button class="approve-btn" data-request-id="${request.id}">✅ Approve</button>
+                <button class="reject-btn" data-request-id="${request.id}">❌ Reject</button>
+            </div>
+        `;
+        
+        // Add event listeners
+        const approveBtn = requestCard.querySelector('.approve-btn');
+        const rejectBtn = requestCard.querySelector('.reject-btn');
+        
+        approveBtn.addEventListener('click', async () => {
+            try {
+                await this.accessControl.approveJoinRequest(request.id);
+                requestCard.remove();
+                this._showNotification(`${request.displayName} approved!`, 'success');
+            } catch (error) {
+                this._showNotification('Failed to approve request', 'error');
+            }
+        });
+        
+        rejectBtn.addEventListener('click', async () => {
+            try {
+                await this.accessControl.rejectJoinRequest(request.id, 'Rejected by host');
+                requestCard.remove();
+                this._showNotification(`${request.displayName} rejected`, 'info');
+            } catch (error) {
+                this._showNotification('Failed to reject request', 'error');
+            }
+        });
+        
+        requestsList.appendChild(requestCard);
+        console.log('[Dashboard] ✅ Join request card appended');
+        console.log('[Dashboard] Requests list innerHTML after:', requestsList.innerHTML);
+        console.log('[Dashboard] Request card element:', requestCard);
+        console.log('[Dashboard] Request card visible:', requestCard.offsetParent !== null);
     }
     
     _handleJoinApproved(data) {

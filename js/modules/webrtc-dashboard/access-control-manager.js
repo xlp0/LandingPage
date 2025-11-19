@@ -24,6 +24,9 @@ export class AccessControlManager {
             // Initialize shared broadcast service
             this.broadcastService = getSharedBroadcastService(this.channelName);
             
+            // Setup message handlers
+            this._setupMessageHandlers();
+            
             this.isInitialized = true;
             console.log('[AccessControl] Initialized successfully');
             
@@ -31,6 +34,32 @@ export class AccessControlManager {
             console.error('[AccessControl] Initialization failed:', error);
             throw error;
         }
+    }
+    
+    _setupMessageHandlers() {
+        console.log('[AccessControl] Setting up message handlers...');
+        
+        this.broadcastService.on('join-request', (data) => {
+            console.log('[AccessControl] ✅ Join request received:', data);
+            this._handleJoinRequest(data);
+        });
+        
+        this.broadcastService.on('join-approved', (data) => {
+            console.log('[AccessControl] ✅ Join approved received:', data);
+            this._handleJoinApproved(data);
+        });
+        
+        this.broadcastService.on('join-rejected', (data) => {
+            console.log('[AccessControl] ✅ Join rejected received:', data);
+            this._handleJoinRejected(data);
+        });
+        
+        this.broadcastService.on('host-transfer', (data) => {
+            console.log('[AccessControl] ✅ Host transfer received:', data);
+            this._handleHostTransfer(data);
+        });
+        
+        console.log('[AccessControl] Message handlers set up');
     }
     
     async sendJoinRequest(request) {
@@ -238,13 +267,19 @@ export class AccessControlManager {
     }
     
     _handleJoinRequest(request) {
-        console.log('[AccessControl] Join request received:', request.userName);
+        console.log('[AccessControl] 📩 Join request received!');
+        console.log('[AccessControl] Request data:', request);
+        console.log('[AccessControl] Request ID:', request.id);
+        console.log('[AccessControl] Display name:', request.displayName);
         
         // Store the request for potential approval/rejection
         this.pendingRequests.set(request.id, request);
+        console.log('[AccessControl] Stored in pending requests. Total pending:', this.pendingRequests.size);
         
         // Emit event for UI handling
+        console.log('[AccessControl] 🔔 Emitting joinRequest event...');
         this._emitEvent('joinRequest', request);
+        console.log('[AccessControl] Event emitted successfully');
     }
     
     _handleJoinApproved(message) {
