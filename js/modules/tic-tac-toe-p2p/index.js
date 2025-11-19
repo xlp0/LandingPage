@@ -345,6 +345,14 @@ export default {
     // Reset game logic
     gameLogic.reset();
     
+    // Reinitialize player roles after reset
+    const myRole = currentRoom.isHost ? 'X' : 'O';
+    gameLogic.setPlayerRole(myRole);
+    
+    console.log('[TicTacToe P2P] Local reset - I am:', currentRoom.isHost ? 'HOST' : 'GUEST');
+    console.log('[TicTacToe P2P] Local reset - my role:', myRole);
+    console.log('[TicTacToe P2P] Local reset - can make move:', gameLogic.canMakeMove());
+    
     // Update UI
     this._updateGameBoard();
     
@@ -688,8 +696,17 @@ export default {
         
       case 'game-reset':
         const resetRoomInfo = connectionHandler.getCurrentRoom();
-        if (gameLogic) {
+        if (gameLogic && resetRoomInfo) {
+          // Reset game logic
           gameLogic.reset();
+          
+          // Reinitialize player roles after reset
+          const myRole = resetRoomInfo.isHost ? 'X' : 'O';
+          gameLogic.setPlayerRole(myRole);
+          
+          console.log('[TicTacToe P2P] Game reset - I am:', resetRoomInfo.isHost ? 'HOST' : 'GUEST');
+          console.log('[TicTacToe P2P] Game reset - my role:', myRole);
+          console.log('[TicTacToe P2P] Game reset - can make move:', gameLogic.canMakeMove());
         }
         this._updateGameBoard();
         
