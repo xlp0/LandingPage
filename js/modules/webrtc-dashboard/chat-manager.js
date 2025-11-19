@@ -66,6 +66,49 @@ export class ChatManager {
             this._handleParticipantLeft(data);
         });
         
+        // Handle peer-ready signal (initiates WebRTC connection)
+        this.broadcastService.on('peer-ready', (data) => {
+            console.log('[ChatManager] ✅ Peer ready signal received:', data);
+            console.log('[ChatManager] My user ID:', this.currentUser?.id);
+            console.log('[ChatManager] Signal from user ID:', data.userId);
+            
+            // CRITICAL: Ignore our own peer-ready signal!
+            if (data.userId === this.currentUser?.id) {
+                console.log('[ChatManager] Ignoring own peer-ready signal');
+                return;
+            }
+            
+            // Only handle if it's for our current room
+            if (data.roomId !== this.currentRoom) {
+                console.log('[ChatManager] Ignoring peer-ready for different room');
+                return;
+            }
+            
+            console.log('[ChatManager] Initiating WebRTC connection to ready peer:', data.userId);
+            
+            // Add participant if not already in list (race condition fix)
+            if (!this.participants.has(data.userId)) {
+                console.log('[ChatManager] Adding participant from peer-ready signal');
+                this.participants.set(data.userId, {
+                    id: data.userId,
+                    name: data.userName,
+                    isHost: false,
+                    joinedAt: new Date(),
+                    isConnected: false,
+                    isSelf: false
+                });
+            }
+            
+            // Initiate WebRTC connection
+            if (this.roomConnection) {
+                this.roomConnection.createOffer(data.userId).catch(error => {
+                    console.error('[ChatManager] Failed to create offer to ready peer:', error);
+                });
+            } else {
+                console.error('[ChatManager] No room connection available!');
+            }
+        });
+        
         console.log('[ChatManager] Message handlers set up');
     }
     
@@ -108,6 +151,14 @@ export class ChatManager {
             }
         });
         
+        // CRITICAL: Send ready signal to initiate WebRTC connections
+        console.log('[ChatManager] Sending ready signal to room');
+        this._broadcastMessage('peer-ready', {
+            roomId: roomId,
+            userId: userData.id,
+            userName: userData.name
+        });
+        
         // Send system message
         this._addSystemMessage(`${userData.name} joined the room`);
         
@@ -131,9 +182,15 @@ export class ChatManager {
             }
         };
         
-        // Handle peer connected
+        // Handle peer connected (RTCPeerConnection established)
         this.roomConnection.onPeerConnected = (peerId) => {
-            console.log('[ChatManager] ✅ Peer connected:', peerId);
+            console.log('[ChatManager] ✅ Peer RTCPeerConnection established:', peerId);
+            // Wait for DataChannel to open before marking as fully connected
+        };
+        
+        // Handle DataChannel open (fully ready for messaging)
+        this.roomConnection.onDataChannelOpen = (peerId) => {
+            console.log('[ChatManager] ✅ DataChannel opened with:', peerId);
             console.log('[ChatManager] Total connected peers:', this.roomConnection.getConnectedPeers().length);
             
             // CRITICAL: Update participant as connected
@@ -142,7 +199,7 @@ export class ChatManager {
                 participant.isConnected = true;
                 console.log('[ChatManager] Updated participant as connected:', participant.name);
             } else {
-                console.warn('[ChatManager] Peer connected but not in participants list:', peerId);
+                console.warn('[ChatManager] DataChannel opened but peer not in participants list:', peerId);
             }
             
             // Emit participant list update
@@ -394,13 +451,8 @@ export class ChatManager {
         console.log('[ChatManager] Total participants now:', this.participants.size);
         console.log('[ChatManager] Participant names:', Array.from(this.participants.values()).map(p => p.name));
         
-        // Initiate WebRTC connection to new participant
-        if (this.roomConnection) {
-            console.log('[ChatManager] Initiating WebRTC connection to:', participant.id);
-            this.roomConnection.createOffer(participant.id).catch(error => {
-                console.error('[ChatManager] Failed to create offer:', error);
-            });
-        }
+        // WebRTC connection will be initiated when peer sends 'peer-ready' signal
+        console.log('[ChatManager] Waiting for peer-ready signal from:', participant.id);
         
         // Send system message
         this._addSystemMessage(`${participant.name} joined the room`);

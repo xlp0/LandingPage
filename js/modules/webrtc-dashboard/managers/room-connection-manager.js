@@ -125,6 +125,9 @@ export class RoomConnectionManager {
         channel.onopen = () => {
             this._log(`✅ DATA CHANNEL OPENED with: ${peerId}`);
             this.dataChannels.set(peerId, channel);
+            
+            // Notify that data channel is ready
+            this.onDataChannelOpen(peerId);
         };
         
         channel.onmessage = (event) => {
@@ -282,5 +285,6 @@ export class RoomConnectionManager {
     onIceCandidate(peerId, candidate) {}
     onDataReceived(peerId, data) {}
     onPeerConnected(peerId) {}
+    onDataChannelOpen(peerId) {}
     onPeerDisconnected(peerId) {}
 }
