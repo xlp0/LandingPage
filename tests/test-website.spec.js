@@ -39,13 +39,25 @@ test.describe('PKC Website Navigation Test', () => {
     // Verify we're on the tic-tac-toe page
     await expect(page).toHaveURL(/.*tic-tac-toe\.html/);
     console.log('Successfully navigated to Tic-Tac-Toe page');
+
+    // 8. Click "Create Game" button
+    console.log('Clicking Create Game button...');
+    await page.locator('#create-invitation-btn').click();
+    await page.waitForTimeout(2000); // Wait 2 seconds
+    console.log('Successfully clicked Create Game button');
+    
+    // 9. Click "Join Game" button
+    console.log('Clicking Join Game button...');
+    await page.locator('.join-room-btn[data-room-id]').click();
+    await page.waitForTimeout(2000); // Wait 2 seconds
+    console.log('Successfully clicked Join Game button');
     
     // 5. Back to previous page
     console.log('Going back to previous page...');
     await page.goBack();
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000); // Wait 2 seconds
-    await expect(page).toHaveURL('https://test.pkc.pub/');
+    await page.waitForTimeout(3000); // Wait 2 seconds
+    await expect(page).toHaveURL('http://localhost:3000');
     console.log('Successfully returned to main page');
     
     // 6. Click "Video Meeting P2P" button
