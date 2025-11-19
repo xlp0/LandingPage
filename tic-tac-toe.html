@@ -109,8 +109,8 @@
     }
     
     .game-cell.disabled {
+      opacity: 0.5;
       cursor: not-allowed;
-      opacity: 0.6;
     }
     
     .chat-messages {
@@ -160,9 +160,126 @@
     .chat-input::placeholder {
       color: rgba(255,255,255,0.7);
     }
+
+    /* Room List Styles */
+    .room-list-container {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .room-list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .room-list-header h3 {
+      margin: 0;
+      color: white;
+      font-size: 1.2rem;
+    }
+
+    .refresh-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+
+    .refresh-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .room-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .no-rooms {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.7);
+      padding: 20px;
+      font-style: italic;
+    }
+
+    .room-item {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s;
+    }
+
+    .room-item:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .room-info {
+      flex: 1;
+    }
+
+    .room-name {
+      font-weight: 600;
+      color: white;
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+
+    .room-details {
+      display: flex;
+      gap: 15px;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .join-room-btn {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .join-room-btn:hover {
+      background: linear-gradient(135deg, #059669, #047857);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      .room-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .room-details {
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .join-room-btn {
+        width: 100%;
+      }
+    }
   </style>
-            height: 12px;
-            border-radius: 50%;
 </head>
 <body class="min-h-screen font-sans text-white p-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
   <div class="max-w-6xl mx-auto p-8">

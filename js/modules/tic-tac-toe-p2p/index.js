@@ -4,14 +4,19 @@
 
 import { ConnectionManager } from '../p2p-serverless/connection.js';
 import { DiscoveryManager } from '../p2p-serverless/discovery.js';
-import { TicTacToeGame } from './game-logic.js';
-// import { GameUI } from './game-ui.js'; // Not needed - using direct DOM manipulation
+import TicTacToeGame from './game-logic.js';
+import RoomService from './room-service.js';
+import UIHandler from './ui-handler.js';
+import RoomListManager from './room-list-manager.js';
+import ConnectionHandler from './connection-handler.js';
 
 let connectionManager = null;
 let discoveryManager = null;
 let gameLogic = null;
-let gameUI = null;
-let currentRoom = null;
+let roomService = null;
+let uiHandler = null;
+let roomListManager = null;
+let connectionHandler = null;
 
 /**
  * PKC Module: Tic-Tac-Toe P2P Game
@@ -51,13 +56,31 @@ export default {
     
     console.log('[TicTacToe P2P] Creating game components...');
     gameLogic = new TicTacToeGame();
-    // gameUI = new GameUI(); // Not needed - using direct DOM manipulation
-    console.log('[TicTacToe P2P] Game components created');
+    console.log('[TicTacToe P2P] Game logic initialized:', !!gameLogic);
     
-    // Setup event handlers
-    this._setupEventHandlers();
+    // Initialize room service
+    roomService = new RoomService();
+    console.log('[TicTacToe P2P] Room service initialized:', !!roomService);
     
-    console.log('[TicTacToe P2P] Module initialized successfully');
+    // Initialize UI handler
+    uiHandler = new UIHandler();
+    uiHandler.init();
+    console.log('[TicTacToe P2P] UI handler initialized:', !!uiHandler);
+    
+    // Initialize connection handler
+    connectionHandler = new ConnectionHandler(connectionManager, discoveryManager);
+    console.log('[TicTacToe P2P] Connection handler initialized:', !!connectionHandler);
+    
+    // Initialize room list manager
+    roomListManager = new RoomListManager(roomService, (invitation) => this.joinRoom(invitation));
+    roomListManager.setup();
+    console.log('[TicTacToe P2P] Room list manager initialized:', !!roomListManager);
+    
+    // Bind UI buttons
+    this._bindButtons();
+    
+    console.log('[TicTacToe P2P] Module initialization complete');
+    return true;
   },
   
   async start() {
@@ -95,143 +118,77 @@ export default {
   },
   
   /**
-   * Create a new game room (using working P2P modules)
+   * Create a new game room
    */
   async createRoom() {
     try {
-      console.log('[TicTacToe P2P] Creating room using P2P modules...');
+      console.log('[TicTacToe P2P] Creating room...');
       
-      // Check if modules are initialized
-      if (!connectionManager) {
-        throw new Error('ConnectionManager not initialized');
-      }
-      if (!discoveryManager) {
-        throw new Error('DiscoveryManager not initialized');
-      }
+      // Create room using connection handler
+      const roomData = await connectionHandler.createRoom();
       
-      console.log('[TicTacToe P2P] Creating WebRTC offer...');
-      // Create WebRTC offer using working P2P module
-      const offerData = await connectionManager.createOffer();
-      console.log('[TicTacToe P2P] Offer created:', offerData);
+      // Generate friendly room name
+      const roomName = roomService.generateRoomName();
       
-      console.log('[TicTacToe P2P] Creating invitation...');
-      // Create invitation with QR code using working P2P module
-      const invitation = discoveryManager.createInvitation(offerData);
-      console.log('[TicTacToe P2P] Invitation created:', invitation);
+      // Add room to service list
+      roomService.createRoom({
+        id: roomData.roomId,
+        name: roomName,
+        host: 'You',
+        invitation: roomData.invitation
+      });
       
-      currentRoom = {
-        id: offerData.peerId,
-        isHost: true,
-        invitation: invitation.encoded,
-        peerId: offerData.peerId
-      };
+      // Update UI
+      uiHandler.updateStatus(`Room "${roomName}" created! Waiting for opponent...`);
       
-      // Update status display
-      const statusText = document.getElementById('p2p-status');
-      if (statusText) {
-        statusText.textContent = 'Game room created! Waiting for player...';
-      }
+      // Optionally display invitation modal (for manual sharing)
+      // uiHandler.displayInvitation(roomData.invitation);
       
-      if (gameLogic) {
-        gameLogic.reset();
-        gameLogic.setPlayerRole('X'); // Host is always X
-      }
-      
-      console.log('[TicTacToe P2P] Room created with P2P modules:', currentRoom.id);
-      return currentRoom;
     } catch (error) {
       console.error('[TicTacToe P2P] Failed to create room:', error);
-      const statusText = document.getElementById('p2p-status');
-      if (statusText) {
-        statusText.textContent = 'Failed to create room: ' + error.message;
-      }
-      throw error;
+      uiHandler.updateStatus('Failed to create room: ' + error.message);
     }
   },
   
   /**
-   * Join an existing game room using invitation (using working P2P modules)
+   * Join an existing game room
    */
   async joinRoom(invitation) {
     try {
-      console.log('[TicTacToe P2P] Joining room using P2P modules...');
+      console.log('[TicTacToe P2P] Joining room...');
       
-      // Parse invitation using working P2P module
-      const invitationData = discoveryManager.parseInvitation(invitation);
-      if (!invitationData) {
-        throw new Error('Invalid invitation');
-      }
+      // Join room using connection handler
+      const joinData = await connectionHandler.joinRoom(invitation);
       
-      // Accept offer and generate answer using working P2P module
-      const answerData = await connectionManager.acceptOffer(
-        invitationData.peerId,
-        invitationData.offer,
-        invitationData.ice
-      );
+      // Display answer modal
+      uiHandler.displayAnswer(joinData.answerInvitation);
       
-      // Create answer invitation using working P2P module
-      const answerInvitation = discoveryManager.createAnswerInvitation(answerData);
+      // Update UI
+      uiHandler.updateStatus('Joined room! Send answer back to host.');
       
-      currentRoom = {
-        id: invitationData.peerId,
-        isHost: false,
-        invitation: invitation,
-        answerInvitation: answerInvitation.encoded,
-        peerId: invitationData.peerId
-      };
-      
-      // Update status display
-      const statusText = document.getElementById('p2p-status');
-      if (statusText) {
-        statusText.textContent = 'Joined game! Answer generated.';
-      }
-      
-      if (gameLogic) {
-        gameLogic.reset();
-        gameLogic.setPlayerRole('O'); // Guest is always O
-      }
-      
-      console.log('[TicTacToe P2P] Joined room with P2P modules:', currentRoom.id);
-      return currentRoom;
     } catch (error) {
       console.error('[TicTacToe P2P] Failed to join room:', error);
-      const statusText = document.getElementById('p2p-status');
-      if (statusText) {
-        statusText.textContent = 'Failed to join room: ' + error.message;
-      }
-      throw error;
+      uiHandler.updateStatus('Failed to join room: ' + error.message);
     }
   },
   
   /**
-   * Complete connection (host receives answer from guest) - using working P2P modules
+   * Complete connection (host receives answer from guest)
    */
   async completeConnection(answerInvitation) {
-    if (!currentRoom || !currentRoom.isHost) {
-      throw new Error('Only host can complete connection');
-    }
-    
     try {
-      console.log('[TicTacToe P2P] Completing connection using P2P modules...');
+      console.log('[TicTacToe P2P] Completing connection...');
       
-      // Parse answer invitation using working P2P module
-      const answerData = discoveryManager.parseInvitation(answerInvitation);
-      if (!answerData || answerData.type !== 'answer') {
-        throw new Error('Invalid answer data');
-      }
+      // Complete connection using connection handler
+      await connectionHandler.completeConnection(answerInvitation);
       
-      // Apply answer using working P2P module
-      await connectionManager.applyAnswer(
-        answerData.peerId,
-        answerData.answer,
-        answerData.ice
-      );
+      // Update UI
+      uiHandler.updateStatus('Connection completed! Game starting...');
       
-      console.log('[TicTacToe P2P] Connection completed with P2P modules');
+      console.log('[TicTacToe P2P] Connection completed');
     } catch (error) {
       console.error('[TicTacToe P2P] Failed to complete connection:', error);
-      gameUI.showError('Failed to complete connection: ' + error.message);
-      throw error;
+      uiHandler.updateStatus('Failed to complete connection: ' + error.message);
     }
   },
   
@@ -239,18 +196,19 @@ export default {
    * Leave current room
    */
   async leaveRoom() {
+    const currentRoom = connectionHandler.getCurrentRoom();
     if (!currentRoom) return;
     
     try {
-      // Disconnect from all peers using P2P module
-      if (currentRoom.peerId) {
-        connectionManager.disconnect(currentRoom.peerId);
-      }
+      // Disconnect from all peers
+      connectionManager.disconnect();
       
-      gameUI.showRoomLeft();
-      gameUI.clearChat(); // Clear chat messages
+      // Reset game state
       gameLogic.reset();
-      currentRoom = null;
+      
+      // Update UI
+      uiHandler.updateStatus('Left room');
+      uiHandler.updateGameStatus('');
       
       console.log('[TicTacToe P2P] Left room');
     } catch (error) {
@@ -262,31 +220,23 @@ export default {
    * Make a move in the game
    */
   makeMove(position) {
-    console.log('[TicTacToe P2P] makeMove called with position:', position);
-    console.log('[TicTacToe P2P] currentRoom:', !!currentRoom);
-    console.log('[TicTacToe P2P] gameLogic:', !!gameLogic);
+    const currentRoom = connectionHandler.getCurrentRoom();
     
     if (!currentRoom) {
       console.log('[TicTacToe P2P] No current room');
       return false;
     }
     
-    if (!gameLogic) {
-      console.log('[TicTacToe P2P] No game logic');
+    if (!gameLogic || !gameLogic.canMakeMove()) {
+      console.log('[TicTacToe P2P] Cannot make move');
+      uiHandler.updateGameStatus('Cannot make move - not your turn or game over');
       return false;
     }
     
-    if (!gameLogic.canMakeMove()) {
-      console.log('[TicTacToe P2P] Cannot make move - not your turn or game over');
-      return false;
-    }
-    
-    console.log('[TicTacToe P2P] Attempting to make move...');
     const success = gameLogic.makeMove(position);
-    console.log('[TicTacToe P2P] Move result:', success);
     if (success) {
       // Update board display
-      this._updateGameBoard();
+      uiHandler.updateGameBoard(gameLogic.getBoard());
       
       // Send move to opponent
       try {
@@ -297,12 +247,7 @@ export default {
           position: position,
           player: myRole  // Send MY role, not current player
         };
-        console.log('[TicTacToe P2P] I just moved as player:', myRole);
-        console.log('[TicTacToe P2P] My role:', gameLogic.getPlayerRole());
-        console.log('[TicTacToe P2P] Current player (after move):', gameLogic.getCurrentPlayer());
-        console.log('[TicTacToe P2P] Sending move message:', moveMessage);
         connectionManager.broadcast(moveMessage);
-        console.log('[TicTacToe P2P] Move message sent successfully');
       } catch (error) {
         console.error('[TicTacToe P2P] Failed to send move:', error);
       }
@@ -310,23 +255,13 @@ export default {
       // Check for game end
       const winner = gameLogic.getWinner();
       if (winner) {
-        this._showGameEnd(winner);
-        connectionManager.broadcast({
-          type: 'game-end',
-          winner: winner
-        });
+        uiHandler.showGameEnd(winner);
+        connectionManager.broadcast({ type: 'game-end', winner });
       } else if (gameLogic.isDraw()) {
-        this._showGameEnd('draw');
-        connectionManager.broadcast({
-          type: 'game-end',
-          winner: 'draw'
-        });
+        uiHandler.showGameEnd('draw');
+        connectionManager.broadcast({ type: 'game-end', winner: 'draw' });
       } else {
-        // Update status - waiting for opponent
-        const gameStatus = document.getElementById('game-status');
-        if (gameStatus) {
-          gameStatus.textContent = 'Waiting for opponent...';
-        }
+        uiHandler.updateGameStatus('Waiting for opponent...');
       }
     }
     
@@ -337,6 +272,7 @@ export default {
    * Reset the game
    */
   resetGame() {
+    const currentRoom = connectionHandler.getCurrentRoom();
     if (!currentRoom || !gameLogic) {
       return;
     }
@@ -799,8 +735,7 @@ export default {
       createBtn.onclick = async () => {
         try {
           console.log('[TicTacToe P2P] Create button clicked');
-          const room = await this.createRoom();
-          this._displayInvitation(room);
+          await this.createRoom();
         } catch (e) {
           console.error('[TicTacToe P2P] Failed to create game:', e);
           alert('Failed to create game: ' + e.message);
@@ -904,38 +839,8 @@ export default {
   },
   
   /**
-   * Display invitation modal (like P2P serverless example)
+   * Note: UI methods moved to separate modules:
+   * - _displayInvitation, _displayAnswer -> UIHandler
+   * - _setupRoomListUI, _updateRoomList, joinRoomFromList, _formatTime -> RoomListManager
    */
-  _displayInvitation(room) {
-    const modal = document.createElement('div');
-    modal.className = 'p2p-invitation-modal';
-    modal.innerHTML = `
-      <div class="modal-content">
-        <h3>🎮 Game Created!</h3>
-        <p>Share this invitation with your friend:</p>
-        <textarea readonly>${room.invitation}</textarea>
-        <button onclick="navigator.clipboard.writeText('${room.invitation}').then(() => alert('Copied!'))">Copy Invitation</button>
-        <button onclick="this.parentElement.parentElement.remove()">Close</button>
-      </div>
-    `;
-    document.body.appendChild(modal);
-  },
-  
-  /**
-   * Display answer modal (like P2P serverless example)
-   */
-  _displayAnswer(room) {
-    const modal = document.createElement('div');
-    modal.className = 'p2p-invitation-modal';
-    modal.innerHTML = `
-      <div class="modal-content">
-        <h3>📤 Send This Answer Back</h3>
-        <p>Copy this answer and send it to the host:</p>
-        <textarea readonly>${room.answerInvitation}</textarea>
-        <button onclick="navigator.clipboard.writeText('${room.answerInvitation}').then(() => alert('Copied!'))">Copy Answer</button>
-        <button onclick="this.parentElement.parentElement.remove()">Close</button>
-      </div>
-    `;
-    document.body.appendChild(modal);
-  }
 };

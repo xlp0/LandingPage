@@ -268,3 +268,6 @@ export class TicTacToeGame {
     return row * 3 + col;
   }
 }
+
+// Export as default for easier importing
+export default TicTacToeGame;
