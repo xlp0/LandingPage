@@ -99,13 +99,21 @@ export class ChatManager {
                 });
             }
             
-            // Initiate WebRTC connection
-            if (this.roomConnection) {
-                this.roomConnection.createOffer(data.userId).catch(error => {
-                    console.error('[ChatManager] Failed to create offer to ready peer:', error);
-                });
+            // Check if we already have a connection to this peer
+            const alreadyConnected = this.roomConnection && this.roomConnection.peers.has(data.userId);
+            
+            if (alreadyConnected) {
+                console.log('[ChatManager] Already have connection to:', data.userId);
             } else {
-                console.error('[ChatManager] No room connection available!');
+                // Initiate WebRTC connection
+                if (this.roomConnection) {
+                    console.log('[ChatManager] Creating new connection to:', data.userId);
+                    this.roomConnection.createOffer(data.userId).catch(error => {
+                        console.error('[ChatManager] Failed to create offer to ready peer:', error);
+                    });
+                } else {
+                    console.error('[ChatManager] No room connection available!');
+                }
             }
         });
         
@@ -151,12 +159,15 @@ export class ChatManager {
             }
         });
         
-        // CRITICAL: Send ready signal to initiate WebRTC connections
+        // CRITICAL: Send ready signal to initiate WebRTC connections with ALL existing participants
         console.log('[ChatManager] Sending ready signal to room');
+        console.log('[ChatManager] Current participants before ready signal:', this.participants.size);
+        
         this._broadcastMessage('peer-ready', {
             roomId: roomId,
             userId: userData.id,
-            userName: userData.name
+            userName: userData.name,
+            existingParticipants: Array.from(this.participants.keys()) // Tell others who we see
         });
         
         // Send system message
@@ -179,6 +190,10 @@ export class ChatManager {
                 } else {
                     console.warn('[ChatManager] Ignoring message for different room:', data.roomId);
                 }
+            } else if (data.type === 'participant-list') {
+                // Receive participant list from peer
+                console.log('[ChatManager] Received participant list from peer:', peerId);
+                this._handleParticipantList(data.participants);
             }
         };
         
@@ -193,6 +208,10 @@ export class ChatManager {
             console.log('[ChatManager] ✅ DataChannel opened with:', peerId);
             console.log('[ChatManager] Total connected peers:', this.roomConnection.getConnectedPeers().length);
             
+            // CRITICAL: Send our participant list to the newly connected peer
+            console.log('[ChatManager] Sending participant list to newly connected peer');
+            this._sendParticipantListToPeer(peerId);
+            
             // CRITICAL: Update participant as connected
             const participant = this.participants.get(peerId);
             if (participant) {
@@ -200,6 +219,7 @@ export class ChatManager {
                 console.log('[ChatManager] Updated participant as connected:', participant.name);
             } else {
                 console.warn('[ChatManager] DataChannel opened but peer not in participants list:', peerId);
+                console.warn('[ChatManager] This peer will receive our participant list via P2P');
             }
             
             // Emit participant list update
@@ -307,6 +327,48 @@ export class ChatManager {
         });
         
         console.log(`[ChatManager] Sent message to ${sentCount} peers in room ${this.currentRoom}`);
+    }
+    
+    _sendParticipantListToPeer(peerId) {
+        if (!this.roomConnection) {
+            console.error('[ChatManager] No room connection available');
+            return;
+        }
+        
+        // Convert participants map to array
+        const participantList = Array.from(this.participants.values()).map(p => ({
+            id: p.id,
+            name: p.name,
+            isHost: p.isHost || false,
+            joinedAt: p.joinedAt
+        }));
+        
+        console.log('[ChatManager] Sending participant list to peer:', peerId, 'Count:', participantList.length);
+        
+        this.roomConnection.sendToPeer(peerId, {
+            type: 'participant-list',
+            participants: participantList
+        });
+    }
+    
+    _handleParticipantList(participants) {
+        console.log('[ChatManager] Processing received participant list. Count:', participants.length);
+        
+        participants.forEach(p => {
+            if (p.id !== this.currentUser?.id && !this.participants.has(p.id)) {
+                console.log('[ChatManager] Adding participant from P2P list:', p.name);
+                this.participants.set(p.id, {
+                    ...p,
+                    isConnected: false, // Will be marked as connected when DataChannel opens
+                    isSelf: false
+                });
+            }
+        });
+        
+        console.log('[ChatManager] Total participants after merge:', this.participants.size);
+        
+        // Emit update
+        this._emitEvent('participantListUpdated', Array.from(this.participants.values()));
     }
     
     updateParticipantStatus(participantId, status) {
