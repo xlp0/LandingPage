@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Connection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .info { background: #e3f2fd; color: #1976d2; }
+        .success { background: #e8f5e8; color: #2e7d32; }
+        .error { background: #ffebee; color: #d32f2f; }
+        textarea { width: 100%; height: 100px; margin: 10px 0; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 WebRTC Connection Test</h1>
+        
+        <div id="status" class="status info">Ready to test connection</div>
+        
+        <div>
+            <h3>Step 1: Create Offer (Host)</h3>
+            <button onclick="createOffer()">Create Offer</button>
+            <textarea id="offer-output" placeholder="Offer will appear here..."></textarea>
+        </div>
+        
+        <div>
+            <h3>Step 2: Create Answer (Guest)</h3>
+            <textarea id="offer-input" placeholder="Paste offer here..."></textarea>
+            <button onclick="createAnswer()">Create Answer</button>
+            <textarea id="answer-output" placeholder="Answer will appear here..."></textarea>
+        </div>
+        
+        <div>
+            <h3>Step 3: Complete Connection (Host)</h3>
+            <textarea id="answer-input" placeholder="Paste answer here..."></textarea>
+            <button onclick="completeConnection()">Complete Connection</button>
+        </div>
+        
+        <div>
+            <h3>Test Messages</h3>
+            <input type="text" id="message-input" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send Message</button>
+            <div id="messages"></div>
+        </div>
+    </div>
+
+    <script>
+        let pc1 = null; // Host
+        let pc2 = null; // Guest
+        let dc1 = null; // Host data channel
+        let dc2 = null; // Guest data channel
+        
+        const config = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+            ]
+        };
+        
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            console.log(`[Test] ${message}`);
+        }
+        
+        async function createOffer() {
+            try {
+                updateStatus('Creating offer...', 'info');
+                
+                pc1 = new RTCPeerConnection(config);
+                
+                // Create data channel
+                dc1 = pc1.createDataChannel('test', { ordered: true });
+                
+                dc1.onopen = () => {
+                    updateStatus('Host data channel opened!', 'success');
+                };
+                
+                dc1.onmessage = (event) => {
+                    addMessage('Host received: ' + event.data);
+                };
+                
+                // Handle ICE candidates
+                const iceCandidates = [];
+                pc1.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        iceCandidates.push(event.candidate);
+                    } else {
+                        // ICE gathering complete
+                        const offerData = {
+                            offer: pc1.localDescription,
+                            iceCandidates: iceCandidates
+                        };
+                        document.getElementById('offer-output').value = btoa(JSON.stringify(offerData));
+                        updateStatus('Offer created! Copy and paste to guest.', 'success');
+                    }
+                };
+                
+                // Create and set offer
+                const offer = await pc1.createOffer();
+                await pc1.setLocalDescription(offer);
+                
+            } catch (error) {
+                updateStatus('Error creating offer: ' + error.message, 'error');
+            }
+        }
+        
+        async function createAnswer() {
+            try {
+                const offerText = document.getElementById('offer-input').value.trim();
+                if (!offerText) {
+                    updateStatus('Please paste the offer first', 'error');
+                    return;
+                }
+                
+                updateStatus('Creating answer...', 'info');
+                
+                const offerData = JSON.parse(atob(offerText));
+                
+                pc2 = new RTCPeerConnection(config);
+                
+                // Handle incoming data channel
+                pc2.ondatachannel = (event) => {
+                    dc2 = event.channel;
+                    dc2.onopen = () => {
+                        updateStatus('Guest data channel opened!', 'success');
+                    };
+                    dc2.onmessage = (event) => {
+                        addMessage('Guest received: ' + event.data);
+                    };
+                };
+                
+                // Handle ICE candidates
+                const iceCandidates = [];
+                pc2.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        iceCandidates.push(event.candidate);
+                    } else {
+                        // ICE gathering complete
+                        const answerData = {
+                            answer: pc2.localDescription,
+                            iceCandidates: iceCandidates
+                        };
+                        document.getElementById('answer-output').value = btoa(JSON.stringify(answerData));
+                        updateStatus('Answer created! Copy and paste back to host.', 'success');
+                    }
+                };
+                
+                // Set remote description and add ICE candidates
+                await pc2.setRemoteDescription(offerData.offer);
+                for (const candidate of offerData.iceCandidates) {
+                    await pc2.addIceCandidate(candidate);
+                }
+                
+                // Create and set answer
+                const answer = await pc2.createAnswer();
+                await pc2.setLocalDescription(answer);
+                
+            } catch (error) {
+                updateStatus('Error creating answer: ' + error.message, 'error');
+            }
+        }
+        
+        async function completeConnection() {
+            try {
+                const answerText = document.getElementById('answer-input').value.trim();
+                if (!answerText) {
+                    updateStatus('Please paste the answer first', 'error');
+                    return;
+                }
+                
+                updateStatus('Completing connection...', 'info');
+                
+                const answerData = JSON.parse(atob(answerText));
+                
+                // Set remote description and add ICE candidates
+                await pc1.setRemoteDescription(answerData.answer);
+                for (const candidate of answerData.iceCandidates) {
+                    await pc1.addIceCandidate(candidate);
+                }
+                
+                updateStatus('Connection completed! Try sending messages.', 'success');
+                
+            } catch (error) {
+                updateStatus('Error completing connection: ' + error.message, 'error');
+            }
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            if (dc1 && dc1.readyState === 'open') {
+                dc1.send(message);
+                addMessage('Host sent: ' + message);
+            }
+            
+            if (dc2 && dc2.readyState === 'open') {
+                dc2.send(message);
+                addMessage('Guest sent: ' + message);
+            }
+            
+            input.value = '';
+        }
+        
+        function addMessage(text) {
+            const messages = document.getElementById('messages');
+            const div = document.createElement('div');
+            div.textContent = `${new Date().toLocaleTimeString()}: ${text}`;
+            messages.appendChild(div);
+        }
+    </script>
+</body>
+</html>
