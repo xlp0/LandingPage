@@ -79,6 +79,15 @@ export default {
     // Bind UI buttons
     this._bindButtons();
     
+    // Setup join request listener
+    window.addEventListener('joinRequestReceived', (event) => {
+      console.log('[TicTacToe P2P] Join request received via BroadcastChannel');
+      this._handleJoinRequest(event.detail);
+    });
+    
+    // Setup WebRTC message handler
+    this._setupEventHandlers();
+    
     console.log('[TicTacToe P2P] Module initialization complete');
     return true;
   },
@@ -165,11 +174,22 @@ export default {
       // Join room using connection handler
       const joinData = await connectionHandler.joinRoom(invitation);
       
-      // Update UI - no need to show answer code anymore
+      // Send join request via BroadcastChannel (not WebRTC data channel)
+      // This allows the host to see the request before the connection is established
+      const joinRequest = connectionHandler.getPendingJoinRequest();
+      if (joinRequest && roomService) {
+        console.log('[TicTacToe P2P] Sending join request via BroadcastChannel');
+        roomService._broadcastMessage({
+          type: 'join-request-notification',
+          request: joinRequest
+        });
+      }
+      
+      // Update UI
       uiHandler.updateStatus('Requesting to join... Waiting for host approval.');
       
-      // Send join request once data channel is ready
-      this._setupJoinRequestSender();
+      // Setup listener for approval
+      this._setupJoinApprovalListener();
       
     } catch (error) {
       console.error('[TicTacToe P2P] Failed to join room:', error);
@@ -178,18 +198,41 @@ export default {
   },
   
   /**
+   * Setup join approval listener
+   */
+  _setupJoinApprovalListener() {
+    // Listen for approval via BroadcastChannel
+    window.addEventListener('joinRequestApproved', () => {
+      console.log('[TicTacToe P2P] Join request approved!');
+      uiHandler.updateStatus('Join approved! Connecting...');
+    });
+    
+    window.addEventListener('joinRequestRejected', () => {
+      console.log('[TicTacToe P2P] Join request rejected');
+      uiHandler.updateStatus('Join request rejected by host');
+      alert('The host rejected your join request');
+    });
+  },
+  
+  /**
    * Setup join request sender (sends request once data channel is open)
    */
   _setupJoinRequestSender() {
     // Listen for data channel ready event
-    connectionManager.on('peer:connect', (data) => {
+    const sendJoinRequest = (data) => {
       const joinRequest = connectionHandler.getPendingJoinRequest();
       if (joinRequest) {
-        console.log('[TicTacToe P2P] Sending join request to host');
-        connectionManager.broadcast(joinRequest);
-        connectionHandler.clearPendingJoinRequest();
+        console.log('[TicTacToe P2P] Data channel connected, sending join request to host');
+        setTimeout(() => {
+          connectionManager.broadcast(joinRequest);
+          console.log('[TicTacToe P2P] Join request sent:', joinRequest);
+          connectionHandler.clearPendingJoinRequest();
+        }, 500); // Small delay to ensure channel is fully ready
       }
-    });
+    };
+    
+    // Listen for connection event
+    connectionManager.on('peer:connect', sendJoinRequest);
   },
   
   /**
@@ -472,6 +515,8 @@ export default {
    */
   _startGame() {
     console.log('[TicTacToe P2P] _startGame called');
+    
+    const currentRoom = connectionHandler.getCurrentRoom();
     console.log('[TicTacToe P2P] currentRoom:', !!currentRoom);
     console.log('[TicTacToe P2P] gameLogic:', !!gameLogic);
     
@@ -515,7 +560,48 @@ export default {
       if (gameStatus) {
         gameStatus.textContent = 'Your turn! Click a square to play.';
       }
+      
+      // Enable game board for host
+      uiHandler.setGameBoardEnabled(true);
+    } else {
+      // For guest, wait for game-start message
+      const gameStatus = document.getElementById('game-status');
+      if (gameStatus) {
+        gameStatus.textContent = 'Waiting for game to start...';
+      }
     }
+  },
+  
+  /**
+   * Setup event handlers for WebRTC messages
+   */
+  _setupEventHandlers() {
+    console.log('[TicTacToe P2P] Setting up WebRTC event handlers');
+    
+    // Listen for peer connection events
+    connectionManager.on('peer:connect', (peerId) => {
+      console.log('[TicTacToe P2P] Peer connected:', peerId);
+      uiHandler.updateStatus('Connected! Game ready.');
+    });
+    
+    connectionManager.on('peer:disconnect', (peerId) => {
+      console.log('[TicTacToe P2P] Peer disconnected:', peerId);
+      uiHandler.updateStatus('Opponent disconnected');
+    });
+    
+    // Listen for game messages
+    connectionManager.on('message', (message) => {
+      console.log('[TicTacToe P2P] Received WebRTC message:', message);
+      // Extract the actual data from the message wrapper
+      const gameMessage = message.data || message;
+      console.log('[TicTacToe P2P] Extracted game message:', gameMessage);
+      this._handleGameMessage(gameMessage);
+    });
+    
+    connectionManager.on('connection-error', (error) => {
+      console.error('[TicTacToe P2P] Connection error:', error);
+      uiHandler.updateStatus('Connection error: ' + error.message);
+    });
   },
   
   /**
@@ -547,20 +633,23 @@ export default {
         break;
         
       case 'game-start':
-        if (gameLogic) {
+        const currentRoom = connectionHandler.getCurrentRoom();
+        if (gameLogic && currentRoom) {
           // Guest receives game-start message from host
           const myRole = currentRoom.isHost ? 'X' : 'O';
           gameLogic.setPlayerRole(myRole);
           console.log('[TicTacToe P2P] Game start received - I am:', currentRoom.isHost ? 'HOST' : 'GUEST');
           console.log('[TicTacToe P2P] Game start - setting my role to:', myRole);
           console.log('[TicTacToe P2P] My role after game start:', gameLogic.getPlayerRole());
-        }
         
-        // Update game status for guest
-        if (!currentRoom.isHost) {
-          const gameStatus = document.getElementById('game-status');
-          if (gameStatus) {
-            gameStatus.textContent = 'Host goes first (X). Wait for your turn.';
+          // Update game status for guest
+          if (!currentRoom.isHost) {
+            const gameStatus = document.getElementById('game-status');
+            if (gameStatus) {
+              gameStatus.textContent = 'Host goes first (X). Wait for your turn.';
+            }
+            // Enable game board for guest (but they can't move yet)
+            uiHandler.setGameBoardEnabled(true);
           }
         }
         break;
@@ -889,9 +978,18 @@ export default {
         // Complete connection with the answer
         connectionHandler.completeConnection(request.answerInvitation)
           .then(() => {
-            // Send approval message
-            connectionManager.broadcast({ type: 'join-approved' });
-            uiHandler.updateStatus('Player joined! Starting game...');
+            console.log('[TicTacToe P2P] Connection completed, starting game...');
+            
+            // Wait a bit for data channel to be fully ready
+            setTimeout(() => {
+              // Send approval message
+              connectionManager.broadcast({ type: 'join-approved' });
+              
+              // Start the game
+              this._startGame();
+              
+              uiHandler.updateStatus('Player joined! Game started!');
+            }, 1000);
           })
           .catch(error => {
             console.error('[TicTacToe P2P] Failed to complete connection:', error);
@@ -900,7 +998,7 @@ export default {
       } else {
         // Reject join request
         console.log('[TicTacToe P2P] Rejecting join request');
-        connectionManager.broadcast({ type: 'join-rejected' });
+        // Can't broadcast rejection if not connected yet
         uiHandler.updateStatus('Join request rejected');
       }
     });

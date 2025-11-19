@@ -194,6 +194,14 @@ class RoomService {
         }
         break;
         
+      case 'join-request-notification':
+        // Forward join request to the application
+        console.log('[RoomService] Received join request notification');
+        window.dispatchEvent(new CustomEvent('joinRequestReceived', {
+          detail: message.request
+        }));
+        break;
+        
       case 'room-list-request':
         // Send our local rooms to requester
         console.log('[RoomService] Received room-list-request, sending', this.localRooms.size, 'local rooms');
