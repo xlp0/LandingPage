@@ -5,11 +5,13 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  schedule:
+    - cron: '0 2 * * *'  # Run daily at 2 AM UTC
 
 jobs:
   playwright-tests:
+    timeout-minutes: 60
     runs-on: ubuntu-latest
-    timeout-minutes: 10
 
     steps:
     - uses: actions/checkout@v4
@@ -17,11 +19,11 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '18'
         cache: 'npm'
 
-    - name: Install Playwright
-      run: npx playwright install --with-deps
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps chromium
 
     - name: Install Docker Compose
       run: |
@@ -30,63 +32,34 @@ jobs:
         docker-compose --version
 
     - name: Start services with Docker Compose
-      run: docker-compose up -d --build
+      run: docker-compose up -d
       env:
         COMPOSE_PROJECT_NAME: landingpage-test
 
     - name: Install dependencies
-      run: npm ci
-
-    - name: Create test-results directory
-      run: mkdir -p tests/test-results
+      run: npm install
 
     - name: Wait for LandingPage app to be ready
       run: |
         echo "Waiting for LandingPage app to be ready..."
-        timeout 180 bash -c 'until curl -f http://localhost:8765; do sleep 5; done' || (echo "LandingPage app failed to start" && docker-compose logs && exit 1)
+        timeout 120 bash -c 'until curl -f http://localhost:8765; do sleep 2; done' || (echo "LandingPage app failed to start" && exit 1)
         echo "✅ LandingPage app is ready"
 
     - name: Run Playwright tests
-      run: npx playwright test tests/test-webrtc-dashboard-create-room.spec.js --retries=2 --timeout=300000
+      run: npx playwright test tests/test-webrtc-dashboard-create-room.spec.js
       env:
         BASE_URL: http://localhost:8765
-      continue-on-error: true
-
-    - name: List test results directory
-      run: |
-        echo "Test results directory contents:"
-        ls -la tests/test-results/
-        echo "Video files:"
-        find tests/test-results -name "*.webm" || echo "No video files found"
 
     - name: Upload test videos
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: playwright-videos
-        path: tests/test-results/**/*.webm
-        retention-days: 7
-
-    - name: Upload test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: test-results
-        path: tests/test-results/**
-        retention-days: 7
-
+        path: test-results/**/*.webm
+        retention-days: 30
+        
     - name: Stop services
       if: always()
-      run: |
-        docker-compose logs > docker-compose.log 2>&1
-        docker-compose down -v
+      run: docker-compose down -v
       env:
         COMPOSE_PROJECT_NAME: landingpage-test
-
-    - name: Upload Docker logs
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: docker-logs
-        path: docker-compose.log
-        retention-days: 1
