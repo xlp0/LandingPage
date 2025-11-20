@@ -7,7 +7,7 @@ import { RoomConnectionManager } from './managers/room-connection-manager.js';
 export class ChatManager {
     constructor(roomService = null) {
         this.roomService = roomService; // For accessing RoomConnectionManagers
-        this.currentRoomId = null;
+        this.currentRoom = null;
         this.currentUser = null;
         this.participants = new Map(); // userId -> participant data
         this.messageHistory = [];
@@ -101,19 +101,19 @@ export class ChatManager {
             }
             
             // Check if we already have a connection to this peer
-            const alreadyConnected = this.roomConnection && this.roomConnection.peers.has(data.userId);
+            const alreadyConnected = this.roomConnectionManager && this.roomConnectionManager.peers && this.roomConnectionManager.peers.has(data.userId);
             
             if (alreadyConnected) {
                 console.log('[ChatManager] Already have connection to:', data.userId);
             } else {
                 // Initiate WebRTC connection
-                if (this.roomConnection) {
+                if (this.roomConnectionManager) {
                     console.log('[ChatManager] Creating new connection to:', data.userId);
-                    this.roomConnection.createOffer(data.userId).catch(error => {
+                    this.roomConnectionManager.createOffer(data.userId).catch(error => {
                         console.error('[ChatManager] Failed to create offer to ready peer:', error);
                     });
                 } else {
-                    console.error('[ChatManager] No room connection available!');
+                    console.warn('[ChatManager] No room connection manager available to create offer');
                 }
             }
         });
@@ -130,7 +130,7 @@ export class ChatManager {
             this.roomConnectionManager = null;
         }
         
-        this.currentRoomId = roomId;
+        this.currentRoom = roomId;
         this.currentUser = userData;
         
         // Get the RoomConnectionManager from RoomService (created when joining)
@@ -195,10 +195,10 @@ export class ChatManager {
     }
     
     _setupRoomConnectionHandlers() {
-        if (!this.roomConnection) return;
+        if (!this.roomConnectionManager) return;
         
         // Handle incoming P2P messages
-        this.roomConnection.onDataReceived = (peerId, data) => {
+        this.roomConnectionManager.onDataReceived = (peerId, data) => {
             console.log('[ChatManager] P2P message from peer:', peerId, 'type:', data.type);
             
             if (data.type === 'chat-message') {
@@ -216,15 +216,15 @@ export class ChatManager {
         };
         
         // Handle peer connected (RTCPeerConnection established)
-        this.roomConnection.onPeerConnected = (peerId) => {
+        this.roomConnectionManager.onPeerConnected = (peerId) => {
             console.log('[ChatManager] ✅ Peer RTCPeerConnection established:', peerId);
             // Wait for DataChannel to open before marking as fully connected
         };
         
         // Handle DataChannel open (fully ready for messaging)
-        this.roomConnection.onDataChannelOpen = (peerId) => {
+        this.roomConnectionManager.onDataChannelOpen = (peerId) => {
             console.log('[ChatManager] ✅ DataChannel opened with:', peerId);
-            console.log('[ChatManager] Total connected peers:', this.roomConnection.getConnectedPeers().length);
+            console.log('[ChatManager] Total connected peers:', this.roomConnectionManager.getConnectedPeers().length);
             
             // CRITICAL: Send our participant list to the newly connected peer
             console.log('[ChatManager] Sending participant list to newly connected peer');
@@ -254,7 +254,7 @@ export class ChatManager {
         };
         
         // Handle peer disconnected
-        this.roomConnection.onPeerDisconnected = (peerId) => {
+        this.roomConnectionManager.onPeerDisconnected = (peerId) => {
             console.log('[ChatManager] Peer disconnected:', peerId);
         };
     }
@@ -280,9 +280,9 @@ export class ChatManager {
         this._addSystemMessage(`${this.currentUser.name} left the room`);
         
         // Destroy room-specific WebRTC connections
-        if (this.roomConnection) {
-            this.roomConnection.destroy();
-            this.roomConnection = null;
+        if (this.roomConnectionManager) {
+            this.roomConnectionManager.destroy();
+            this.roomConnectionManager = null;
         }
         
         // Clear state
@@ -313,8 +313,8 @@ export class ChatManager {
         this.messageHistory.push(message);
         
         // Send via WebRTC DataChannel to all peers in this room
-        if (this.roomConnection && this.roomConnection.getConnectedPeers().length > 0) {
-            console.log('[ChatManager] Sending via WebRTC DataChannel to', this.roomConnection.getConnectedPeers().length, 'peers');
+        if (this.roomConnectionManager && this.roomConnectionManager.getConnectedPeers().length > 0) {
+            console.log('[ChatManager] Sending via WebRTC DataChannel to', this.roomConnectionManager.getConnectedPeers().length, 'peers');
             this._sendViaWebRTC(message);
         } else {
             // NO FALLBACK TO WEBSOCKET! Messages MUST go via WebRTC
@@ -332,13 +332,13 @@ export class ChatManager {
     }
     
     _sendViaWebRTC(message) {
-        if (!this.roomConnection) {
-            console.error('[ChatManager] No room connection available');
+        if (!this.roomConnectionManager) {
+            console.error('[ChatManager] No room connection manager available');
             return;
         }
         
         // Send to all peers in THIS room only
-        const sentCount = this.roomConnection.sendToAll({
+        const sentCount = this.roomConnectionManager.sendToAll({
             type: 'chat-message',
             roomId: this.currentRoom, // Include room ID for verification
             data: message
@@ -348,8 +348,8 @@ export class ChatManager {
     }
     
     _sendParticipantListToPeer(peerId) {
-        if (!this.roomConnection) {
-            console.error('[ChatManager] No room connection available');
+        if (!this.roomConnectionManager) {
+            console.error('[ChatManager] No room connection manager available');
             return;
         }
         
@@ -378,7 +378,7 @@ export class ChatManager {
         console.log('[ChatManager] Sending COMPLETE participant list to peer:', peerId, 'Count:', participantList.length);
         console.log('[ChatManager] List includes:', participantList.map(p => p.name).join(', '));
         
-        this.roomConnection.sendToPeer(peerId, {
+        this.roomConnectionManager.sendToPeer(peerId, {
             type: 'participant-list',
             participants: participantList
         });
