@@ -170,8 +170,8 @@ export class ChatManager {
             existingParticipants: Array.from(this.participants.keys()) // Tell others who we see
         });
         
-        // Send system message
-        this._addSystemMessage(`${userData.name} joined the room`);
+        // Don't add system message here - it will be added when we receive participant-joined event
+        // This prevents duplicate "joined the room" messages
         
         this._emitEvent('participantJoined', userData);
     }
