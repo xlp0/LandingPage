@@ -14,6 +14,19 @@ app.use(express.static(__dirname));
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server, path: '/ws/' });
 
+// Log WebSocket upgrade attempts
+server.on('upgrade', (req, socket, head) => {
+    console.log('[Server] WebSocket upgrade attempt:', {
+        url: req.url,
+        headers: {
+            upgrade: req.headers.upgrade,
+            connection: req.headers.connection,
+            'sec-websocket-key': req.headers['sec-websocket-key'],
+            'sec-websocket-version': req.headers['sec-websocket-version']
+        }
+    });
+});
+
 // Track connected clients
 let connectedClients = new Set();
 
@@ -39,8 +52,13 @@ function broadcastClientCount() {
 wss.on('connection', (ws, req) => {
     const clientId = Date.now() + Math.random();
     connectedClients.add(clientId);
-    console.log(`Client connected (${clientId}):`, req.socket.remoteAddress);
-    console.log(`Total clients: ${connectedClients.size}`);
+    console.log(`[WebSocket] ✅ Client connected (${clientId}):`, req.socket.remoteAddress);
+    console.log(`[WebSocket] Total clients: ${connectedClients.size}`);
+    console.log(`[WebSocket] Connection details:`, {
+        url: req.url,
+        protocol: req.headers['sec-websocket-protocol'],
+        version: req.headers['sec-websocket-version']
+    });
 
     // Send current client count to the new client immediately
     ws.send(JSON.stringify({
@@ -166,7 +184,20 @@ app.get('/api/config', (req, res) => {
     
     console.log('[Server] Serving /api/config:', config);
     
+    // Set CORS headers explicitly for this endpoint
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    
     res.json(config);
+});
+
+// Handle OPTIONS requests for CORS preflight
+app.options('/api/config', (req, res) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.sendStatus(200);
 });
 
 // Start server
