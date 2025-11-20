@@ -5,8 +5,6 @@ import { ConnectionManager } from '../p2p-serverless/connection.js';
 import { DiscoveryManager } from '../p2p-serverless/discovery.js';
 import { resolveP2PConfig } from '../p2p-serverless/config.js';
 import { getSharedBroadcastService } from './shared-broadcast.js';
-import { RoomConnectionManager } from './managers/room-connection-manager.js';
-import { WebRTCSignaling } from './managers/webrtc-signaling.js';
 
 export class RoomService {
     constructor() {
@@ -17,13 +15,12 @@ export class RoomService {
         this.connectionManager = null;
         this.discoveryManager = null;
         this.broadcastService = null;
-        this.signaling = null;
         
         this.rooms = new Map(); // roomId -> room data
         this.localRooms = new Set(); // rooms created by this client
-        this.roomConnectionManagers = new Map(); // roomId -> RoomConnectionManager (for mesh network)
+        this.roomConnectionManagers = new Map(); // roomId -> RoomConnectionManager
         this.eventHandlers = new Map();
-        this.currentUserId = null; // Current user's ID for mesh network
+        this.currentUserId = null; // Current user's ID
         
         this.channelName = 'webrtc-dashboard-rooms';
         this.isInitialized = false;
@@ -43,9 +40,6 @@ export class RoomService {
             
             // Initialize broadcast service for room discovery
             this._initializeBroadcastService();
-            
-            // NOTE: WebRTC signaling will be initialized lazily when userId is known
-            // await this._initializeSignaling(); // Removed - will do lazily
             
             // Setup cleanup on page unload
             this._setupCleanup();
@@ -75,22 +69,15 @@ export class RoomService {
         console.log('[RoomService] Creating room:', room.name);
         
         try {
-            // Store current user ID for mesh network
-            this.currentUserId = roomData.hostId;
-            
-            // Initialize signaling with the host's userId
-            await this._initializeSignaling(roomData.hostId);
-            
             // Store room locally
             this.rooms.set(room.id, room);
             this.localRooms.add(room.id);
             console.log('[RoomService] ✅ Room added to local storage. Local rooms:', this.localRooms.size);
             console.log('[RoomService] Local room IDs:', Array.from(this.localRooms));
             
-            // Create RoomConnectionManager for this room (for mesh network)
-            console.log('[RoomService] 🔧 Creating RoomConnectionManager for host');
-            const roomConnectionManager = new RoomConnectionManager(room.id, this.signaling);
-            this.roomConnectionManagers.set(room.id, roomConnectionManager);
+            // NOTE: We don't need to create a WebRTC offer here anymore
+            // WebRTC connections are now managed per-room by RoomConnectionManager
+            // This was causing Firefox compatibility issues
             
             // Broadcast room creation
             console.log('[RoomService] 📢 Broadcasting room-created for:', room.name);
@@ -112,6 +99,8 @@ export class RoomService {
     }
     
     async joinRoom(roomId, userData) {
+        console.log('🔥🔥🔥 [RoomService] VERSION 5e2389d - JOIN ROOM CALLED! 🔥🔥🔥');
+        
         const room = this.rooms.get(roomId);
         if (!room) {
             throw new Error('Room not found');
@@ -120,12 +109,6 @@ export class RoomService {
         console.log('[RoomService] Joining room:', roomId);
         
         try {
-            // Store current user ID for mesh network
-            this.currentUserId = userData.id;
-            
-            // Initialize signaling with the joiner's userId
-            await this._initializeSignaling(userData.id);
-            
             // Add user to room participants
             room.participants.push({
                 id: userData.id,
@@ -287,6 +270,7 @@ export class RoomService {
         });
         
         this.broadcastService.on('user-joined-room', (data) => {
+            console.log('[RoomService] 🎯 Received user-joined-room broadcast:', data);
             this._handleUserJoinedRoom(data);
         });
         
@@ -298,24 +282,7 @@ export class RoomService {
             });
         }, 1500);
         
-        console.log('[RoomService] Broadcast service initialized');
-    }
-    
-    async _initializeSignaling(userId) {
-        // Only initialize if not already done or userId changed
-        if (this.signaling && this.signaling.userId === userId) {
-            console.log('[RoomService] Signaling already initialized for user:', userId);
-            return;
-        }
-        
-        console.log('[RoomService] Initializing WebRTC signaling for user:', userId);
-        
-        // Create a global signaling service for this RoomService instance
-        // Individual RoomConnectionManagers will use this
-        this.signaling = new WebRTCSignaling('global', userId);
-        await this.signaling.init();
-        
-        console.log('[RoomService] ✅ WebRTC signaling initialized for user:', userId);
+        console.log('[RoomService] BroadcastService initialized');
     }
     
     _setupP2PEventHandlers() {
@@ -443,38 +410,20 @@ export class RoomService {
         
         console.log('[RoomService] 👥 User joined room:', { roomId, userId, userName });
         
-        // Check if we're in this room (either as host or participant)
-        const room = this.rooms.get(roomId);
-        if (!room) {
-            console.log('[RoomService] Room not found, ignoring');
+        // Only handle if this is OUR room (we're the host)
+        if (!this.localRooms.has(roomId)) {
+            console.log('[RoomService] Not our room, ignoring');
             return;
         }
         
-        // Don't connect to ourselves
-        if (userId === this.currentUserId) {
-            console.log('[RoomService] Ignoring own join event');
-            return;
-        }
-        
-        // Get or create room connection manager for this room
-        let roomConnectionManager = this.roomConnectionManagers.get(roomId);
-        
-        // If we're in this room but don't have a connection manager, create one
+        // Get the room connection manager for this room
+        const roomConnectionManager = this.roomConnectionManagers.get(roomId);
         if (!roomConnectionManager) {
-            // Check if we're a participant in this room
-            const isParticipant = room.participants?.some(p => p.id === this.currentUserId);
-            
-            if (isParticipant || this.localRooms.has(roomId)) {
-                console.log('[RoomService] 🔧 Creating RoomConnectionManager for participant');
-                roomConnectionManager = new RoomConnectionManager(roomId, this.signaling);
-                this.roomConnectionManagers.set(roomId, roomConnectionManager);
-            } else {
-                console.log('[RoomService] Not in this room, ignoring');
-                return;
-            }
+            console.error('[RoomService] ❌ No connection manager for room:', roomId);
+            return;
         }
         
-        // Initiate WebRTC connection to the new joiner (MESH NETWORK)
+        // Initiate WebRTC connection to the new joiner
         console.log('[RoomService] 🤝 Initiating WebRTC connection to:', userId);
         try {
             await roomConnectionManager.createOffer(userId);
