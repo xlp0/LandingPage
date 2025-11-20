@@ -2,8 +2,14 @@
 // Uses WebSocket server for cross-browser/cross-device communication
 
 export class WebSocketBroadcastService {
-    constructor(channelName, wsUrl = 'ws://localhost:8765/ws/') {
+    constructor(channelName, wsUrl = null) {
         this.channelName = channelName;
+        
+        // Auto-detect WebSocket URL based on current location
+        if (!wsUrl) {
+            wsUrl = this._getWebSocketUrl();
+        }
+        
         this.wsUrl = wsUrl;
         this.ws = null;
         this.listeners = new Map();
@@ -13,7 +19,23 @@ export class WebSocketBroadcastService {
         this.maxReconnectAttempts = 5;
         
         console.log('[WSBroadcast] Creating service for channel:', channelName);
+        console.log('[WSBroadcast] WebSocket URL:', this.wsUrl);
         this._init();
+    }
+    
+    _getWebSocketUrl() {
+        // Get current page protocol and host
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const host = window.location.host; // includes port if present
+        
+        // If running on localhost with a specific port, use that
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            // Use port 8765 for local development
+            return `${protocol}//${window.location.hostname}:8765/ws/`;
+        }
+        
+        // For production (pkc.pub, etc.), use the same host
+        return `${protocol}//${host}/ws/`;
     }
     
     _init() {

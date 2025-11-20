@@ -872,3 +872,135 @@ button:disabled {
         grid-template-columns: 1fr;
     }
 }
+
+/* Mobile-specific fixes */
+@media (max-width: 768px) {
+    /* Fix iOS Safari input zoom */
+    input, textarea, select {
+        font-size: 16px !important;
+    }
+    
+    /* Better touch targets */
+    button {
+        min-height: 44px;
+        padding: 12px 20px;
+    }
+    
+    /* Fix chat on mobile */
+    .chat-view {
+        height: calc(100vh - 80px);
+        max-height: calc(100vh - 80px);
+    }
+    
+    .chat-messages {
+        height: calc(100vh - 250px);
+        max-height: calc(100vh - 250px);
+    }
+    
+    /* Show participants as overlay on mobile */
+    .participants-panel {
+        position: fixed;
+        right: -300px;
+        top: 0;
+        height: 100vh;
+        width: 280px;
+        background: white;
+        box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+        transition: right 0.3s ease;
+        z-index: 1000;
+    }
+    
+    .participants-panel.mobile-open {
+        right: 0;
+    }
+    
+    /* Mobile menu toggle */
+    .mobile-participants-toggle {
+        display: block;
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        font-size: 24px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        cursor: pointer;
+        z-index: 999;
+    }
+}
+
+/* Safari-specific fixes */
+@supports (-webkit-touch-callout: none) {
+    /* iOS Safari */
+    body {
+        /* Fix for Safari's bottom bar */
+        min-height: -webkit-fill-available;
+    }
+    
+    .dashboard-container {
+        min-height: -webkit-fill-available;
+    }
+    
+    /* Fix input appearance */
+    input, textarea, select {
+        -webkit-appearance: none;
+        appearance: none;
+        border-radius: 8px;
+    }
+    
+    /* Fix button appearance */
+    button {
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    
+    /* Prevent zoom on input focus */
+    input:focus, textarea:focus, select:focus {
+        font-size: 16px;
+    }
+    
+    /* Fix for iOS Safari scroll */
+    .chat-messages {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Landscape mode on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .chat-messages {
+        height: calc(100vh - 200px);
+    }
+    
+    .dashboard-header {
+        padding: 10px;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Tablet optimizations */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .dashboard-container {
+        max-width: 100%;
+        padding: 15px;
+    }
+    
+    .chat-content {
+        grid-template-columns: 1fr 280px;
+    }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Sharper text rendering */
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}

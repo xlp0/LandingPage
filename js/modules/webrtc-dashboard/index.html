@@ -2,9 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#667eea">
     <title>WebRTC Dashboard - P2P Chat Rooms</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- iOS Safari specific -->
+    <meta name="format-detection" content="telephone=no">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🌐</text></svg>">
 </head>
 <body>
     <div class="dashboard-container">
@@ -180,6 +186,11 @@
         </div>
     </div>
 
+    <!-- Mobile participants toggle button -->
+    <button class="mobile-participants-toggle" id="mobile-participants-toggle" style="display: none;">
+        👥
+    </button>
+
     <!-- Scripts -->
     <script type="module" src="dashboard-manager.js?v=2.0"></script>
     <script type="module">
@@ -189,6 +200,9 @@
                 const { DashboardManager } = await import('./dashboard-manager-v2.js?v=3.0');
                 window.dashboard = new DashboardManager();
                 await window.dashboard.init();
+                
+                // Setup mobile participants toggle
+                setupMobileParticipantsToggle();
             } catch (error) {
                 console.error('Failed to initialize dashboard:', error);
                 document.getElementById('connection-text').textContent = 'Failed to initialize';
@@ -204,6 +218,44 @@
         if (roomId && token) {
             // Store join parameters for after initialization
             window.pendingRoomJoin = { roomId, token, instant };
+        }
+        
+        // Mobile participants panel toggle
+        function setupMobileParticipantsToggle() {
+            const toggle = document.getElementById('mobile-participants-toggle');
+            const panel = document.querySelector('.participants-panel');
+            
+            if (!toggle || !panel) return;
+            
+            // Show toggle button on mobile
+            if (window.innerWidth <= 768) {
+                toggle.style.display = 'block';
+            }
+            
+            toggle.addEventListener('click', () => {
+                panel.classList.toggle('mobile-open');
+                toggle.textContent = panel.classList.contains('mobile-open') ? '✕' : '👥';
+            });
+            
+            // Close panel when clicking outside
+            document.addEventListener('click', (e) => {
+                if (panel.classList.contains('mobile-open') && 
+                    !panel.contains(e.target) && 
+                    !toggle.contains(e.target)) {
+                    panel.classList.remove('mobile-open');
+                    toggle.textContent = '👥';
+                }
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth <= 768) {
+                    toggle.style.display = 'block';
+                } else {
+                    toggle.style.display = 'none';
+                    panel.classList.remove('mobile-open');
+                }
+            });
         }
     </script>
 </body>
