@@ -8,9 +8,6 @@ const app = express();
 
 // Enable CORS for all routes
 app.use(cors());
-
-// Serve static files from the current directory
-app.use(express.static(__dirname));
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server, path: '/ws/' });
 
@@ -223,6 +220,10 @@ app.options('/api/config', (req, res) => {
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     res.sendStatus(200);
 });
+
+// Serve static files AFTER all API routes
+// This prevents static file middleware from intercepting API requests
+app.use(express.static(__dirname));
 
 // Start server
 const PORT = process.env.PORT || 3001;
