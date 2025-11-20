@@ -24,14 +24,21 @@ export class WebSocketBroadcastService {
     }
     
     _getWebSocketUrl() {
-        // SIMPLE: Always use the SAME domain the user is accessing from
+        // Check if WebSocket URL is configured via environment variable
+        // This allows deployment to specify a custom domain
+        if (window.__WEBSOCKET_URL__) {
+            console.log('[WSBroadcast] Using configured WebSocket URL:', window.__WEBSOCKET_URL__);
+            return window.__WEBSOCKET_URL__;
+        }
+        
+        // Fallback: Always use the SAME domain the user is accessing from
         // This works for localhost, dev.pkc.pub, pkc.pub, etc.
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const host = window.location.host; // This includes the port if present
         
         const wsUrl = `${protocol}//${host}/ws/`;
         
-        console.log('[WSBroadcast] WebSocket URL:', wsUrl);
+        console.log('[WSBroadcast] WebSocket URL (auto-detected):', wsUrl);
         console.log('[WSBroadcast] (Same domain as:', window.location.href, ')');
         
         return wsUrl;

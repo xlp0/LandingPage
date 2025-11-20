@@ -192,12 +192,18 @@
     </button>
 
     <!-- Scripts -->
-    <script type="module" src="dashboard-manager.js?v=6.0"></script>
+    <script type="module" src="dashboard-manager.js?v=7.0"></script>
     <script type="module">
+        // Load configuration first
+        import { loadConfig } from './config.js?v=7.0';
+        
         // Initialize dashboard when page loads
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                const { DashboardManager } = await import('./dashboard-manager-v2.js?v=6.0');
+                // Load config from server (sets window.__WEBSOCKET_URL__ if available)
+                await loadConfig();
+                
+                const { DashboardManager } = await import('./dashboard-manager-v2.js?v=7.0');
                 window.dashboard = new DashboardManager();
                 await window.dashboard.init();
                 

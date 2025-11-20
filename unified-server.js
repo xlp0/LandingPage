@@ -3,6 +3,7 @@ const { WebSocketServer } = require('ws');
 const http = require('http');
 const cors = require('cors');
 const path = require('path');
+require('dotenv').config(); // Load .env file
 
 const app = express();
 
@@ -11,6 +12,17 @@ app.use(cors());
 
 // Serve static files from the current directory
 app.use(express.static(__dirname));
+
+// API endpoint to serve configuration
+app.get('/api/config', (req, res) => {
+    const config = {
+        WEBSOCKET_URL: process.env.WEBSOCKET_URL || null,
+        NODE_ENV: process.env.NODE_ENV || 'development'
+    };
+    
+    console.log('[Config API] Serving config:', config);
+    res.json(config);
+});
 
 // Create HTTP server
 const server = http.createServer(app);
