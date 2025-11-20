@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: landingpage-dev
+  labels:
+    app: landingpage-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: landingpage-dev
+  template:
+    metadata:
+      labels:
+        app: landingpage-dev
+    spec:
+      containers:
+      - name: landingpage
+        image: henry768/landingpage:latest_landingpage
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          name: http
+        
+        # Load ALL environment variables from ConfigMap
+        envFrom:
+        - configMapRef:
+            name: landingpage-dev-config
+        
+        # Health checks using the new /health endpoint
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

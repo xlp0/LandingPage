@@ -144,12 +144,36 @@ wss.on('connection', (ws, req) => {
     });
 });
 
+// Health check endpoint (for Kubernetes probes and debugging)
+app.get('/health', (req, res) => {
+    res.json({
+        status: 'ok',
+        version: process.env.GIT_SHA || process.env.npm_package_version || 'unknown',
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+        endpoints: {
+            websocket: '/ws/',
+            config: '/api/config',
+            env: '/api/env'
+        },
+        environment: {
+            NODE_ENV: process.env.NODE_ENV || 'development',
+            PORT: process.env.PORT || 3001,
+            WEBSOCKET_URL: process.env.WEBSOCKET_URL || 'auto-detect'
+        },
+        websocket: {
+            connected_clients: connectedClients.size
+        }
+    });
+});
+
 // Basic HTTP route
 app.get('/', (req, res) => {
     res.json({
         message: 'PKC WebSocket Gateway Server',
         status: 'running',
-        connected_clients: connectedClients.size
+        connected_clients: connectedClients.size,
+        health_check: '/health'
     });
 });
 

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: landingpage-test-config
+  namespace: default
+data:
+  # WebSocket Configuration
+  WEBSOCKET_URL: "wss://test.pkc.pub/ws/"
+  
+  # Application Configuration
+  NODE_ENV: "production"
+  PORT: "3000"
