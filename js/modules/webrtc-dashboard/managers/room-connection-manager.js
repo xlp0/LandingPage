@@ -100,9 +100,25 @@ export class RoomConnectionManager {
             if (pc.connectionState === 'connected') {
                 this._log(`✅ PEER CONNECTED: ${peerId}`);
                 this.onPeerConnected(peerId);
-            } else if (pc.connectionState === 'disconnected' || pc.connectionState === 'failed') {
-                this._log(`❌ PEER DISCONNECTED/FAILED: ${peerId}`);
-                this.removePeer(peerId);
+            } else if (pc.connectionState === 'failed') {
+                this._log(`❌ PEER FAILED: ${peerId} - will retry`);
+                // Don't immediately remove on 'failed', give it a chance to reconnect
+                setTimeout(() => {
+                    if (pc.connectionState === 'failed') {
+                        this._log(`❌ PEER STILL FAILED after timeout: ${peerId} - removing`);
+                        this.removePeer(peerId);
+                    }
+                }, 5000);
+            } else if (pc.connectionState === 'disconnected') {
+                this._log(`⚠️ PEER DISCONNECTED: ${peerId} - waiting for reconnect`);
+                // Don't immediately remove on 'disconnected', it might reconnect
+                // Only remove if still disconnected after 10 seconds
+                setTimeout(() => {
+                    if (pc.connectionState === 'disconnected') {
+                        this._log(`❌ PEER STILL DISCONNECTED after timeout: ${peerId} - removing`);
+                        this.removePeer(peerId);
+                    }
+                }, 10000);
             }
         };
         
