@@ -267,6 +267,11 @@ export class RoomService {
             this._handleJoinRequest(data);
         });
         
+        this.broadcastService.on('user-joined-room', (data) => {
+            console.log('[RoomService] 🎯 Received user-joined-room broadcast:', data);
+            this._handleUserJoinedRoom(data);
+        });
+        
         // Test the service
         setTimeout(() => {
             console.log('[RoomService] 🧪 Testing BroadcastService...');
