@@ -67,6 +67,9 @@ export class RoomService {
         console.log('[RoomService] Creating room:', room.name);
         
         try {
+            // Store current user ID for mesh network
+            this.currentUserId = roomData.hostId;
+            
             // Store room locally
             this.rooms.set(room.id, room);
             this.localRooms.add(room.id);
@@ -105,6 +108,9 @@ export class RoomService {
         console.log('[RoomService] Joining room:', roomId);
         
         try {
+            // Store current user ID for mesh network
+            this.currentUserId = userData.id;
+            
             // Add user to room participants
             room.participants.push({
                 id: userData.id,
@@ -401,20 +407,38 @@ export class RoomService {
         
         console.log('[RoomService] 👥 User joined room:', { roomId, userId, userName });
         
-        // Only handle if this is OUR room (we're the host)
-        if (!this.localRooms.has(roomId)) {
-            console.log('[RoomService] Not our room, ignoring');
+        // Check if we're in this room (either as host or participant)
+        const room = this.rooms.get(roomId);
+        if (!room) {
+            console.log('[RoomService] Room not found, ignoring');
             return;
         }
         
-        // Get the room connection manager for this room
-        const roomConnectionManager = this.roomConnectionManagers.get(roomId);
+        // Don't connect to ourselves
+        if (userId === this.currentUserId) {
+            console.log('[RoomService] Ignoring own join event');
+            return;
+        }
+        
+        // Get or create room connection manager for this room
+        let roomConnectionManager = this.roomConnectionManagers.get(roomId);
+        
+        // If we're in this room but don't have a connection manager, create one
         if (!roomConnectionManager) {
-            console.error('[RoomService] ❌ No connection manager for room:', roomId);
-            return;
+            // Check if we're a participant in this room
+            const isParticipant = room.participants?.some(p => p.id === this.currentUserId);
+            
+            if (isParticipant || this.localRooms.has(roomId)) {
+                console.log('[RoomService] 🔧 Creating RoomConnectionManager for participant');
+                roomConnectionManager = new RoomConnectionManager(roomId, this.signaling);
+                this.roomConnectionManagers.set(roomId, roomConnectionManager);
+            } else {
+                console.log('[RoomService] Not in this room, ignoring');
+                return;
+            }
         }
         
-        // Initiate WebRTC connection to the new joiner
+        // Initiate WebRTC connection to the new joiner (MESH NETWORK)
         console.log('[RoomService] 🤝 Initiating WebRTC connection to:', userId);
         try {
             await roomConnectionManager.createOffer(userId);

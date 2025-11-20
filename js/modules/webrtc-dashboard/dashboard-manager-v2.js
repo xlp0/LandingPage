@@ -36,7 +36,7 @@ export class DashboardManager {
             // Initialize core services
             this.roomService = new RoomService();
             this.accessControl = new AccessControlManager();
-            this.chatManager = new ChatManager(); // Room-specific connections now
+            this.chatManager = new ChatManager(this.roomService); // Pass roomService for mesh network
             this.ui = new UIComponents();
             
             await this.roomService.init();

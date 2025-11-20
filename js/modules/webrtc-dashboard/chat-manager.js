@@ -5,14 +5,15 @@ import { getSharedBroadcastService } from './shared-broadcast.js';
 import { RoomConnectionManager } from './managers/room-connection-manager.js';
 
 export class ChatManager {
-    constructor() {
-        this.currentRoom = null;
+    constructor(roomService = null) {
+        this.roomService = roomService; // For accessing RoomConnectionManagers
+        this.currentRoomId = null;
         this.currentUser = null;
         this.participants = new Map(); // userId -> participant data
         this.messageHistory = [];
         
         this.broadcastService = null;
-        this.roomConnection = null; // Per-room WebRTC connection manager
+        this.roomConnectionManager = null; // Per-room WebRTC connection manager
         this.eventHandlers = new Map();
         
         this.channelName = 'webrtc-dashboard-chat';
@@ -124,16 +125,33 @@ export class ChatManager {
         console.log('[ChatManager] Joining room:', roomId);
         
         // Clean up previous room connection if any
-        if (this.roomConnection) {
-            this.roomConnection.destroy();
+        if (this.roomConnectionManager) {
+            // Don't destroy, just clear reference
+            this.roomConnectionManager = null;
         }
         
-        this.currentRoom = roomId;
+        this.currentRoomId = roomId;
         this.currentUser = userData;
         
-        // Create new room-specific connection manager
-        this.roomConnection = new RoomConnectionManager(roomId);
-        await this.roomConnection.setUserId(userData.id); // Wait for signaling to initialize
+        // Get the RoomConnectionManager from RoomService (created when joining)
+        // This ensures we use the same connection manager for mesh network
+        const roomConnectionManager = this.roomService?.roomConnectionManagers?.get(roomId);
+        
+        if (!roomConnectionManager) {
+            console.warn('[ChatManager] No RoomConnectionManager found for room:', roomId);
+            console.log('[ChatManager] Creating new RoomConnectionManager');
+            
+            // Create if it doesn't exist (shouldn't happen normally)
+            const RoomConnectionManager = (await import('./managers/room-connection-manager.js')).RoomConnectionManager;
+            this.roomConnectionManager = new RoomConnectionManager(roomId, this.roomService?.signaling);
+            
+            if (this.roomService) {
+                this.roomService.roomConnectionManagers.set(roomId, this.roomConnectionManager);
+            }
+        } else {
+            console.log('[ChatManager] Using existing RoomConnectionManager from RoomService');
+            this.roomConnectionManager = roomConnectionManager;
+        }
         
         // Setup WebRTC event handlers
         this._setupRoomConnectionHandlers();
