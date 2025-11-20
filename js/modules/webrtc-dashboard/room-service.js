@@ -97,6 +97,8 @@ export class RoomService {
     }
     
     async joinRoom(roomId, userData) {
+        console.log('🔥🔥🔥 [RoomService] VERSION 5e2389d - JOIN ROOM CALLED! 🔥🔥🔥');
+        
         const room = this.rooms.get(roomId);
         if (!room) {
             throw new Error('Room not found');

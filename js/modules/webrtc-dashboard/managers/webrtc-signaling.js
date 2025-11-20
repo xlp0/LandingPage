@@ -18,23 +18,24 @@ export class WebRTCSignaling {
         this.signalingService = getSharedBroadcastService(this.channelName);
         
         // Setup signaling message handlers
+        // NOTE: Only filter by toUserId, not roomId (roomId is 'global' for shared signaling)
         this.signalingService.on('webrtc-offer', (data) => {
-            if (data.roomId === this.roomId && data.toUserId === this.userId) {
-                console.log('[WebRTCSignaling] Received offer from:', data.fromUserId);
+            if (data.toUserId === this.userId) {
+                console.log('[WebRTCSignaling] ✅ Received offer from:', data.fromUserId, 'for room:', data.roomId);
                 this.onOffer(data.fromUserId, data.offer);
             }
         });
         
         this.signalingService.on('webrtc-answer', (data) => {
-            if (data.roomId === this.roomId && data.toUserId === this.userId) {
-                console.log('[WebRTCSignaling] Received answer from:', data.fromUserId);
+            if (data.toUserId === this.userId) {
+                console.log('[WebRTCSignaling] ✅ Received answer from:', data.fromUserId, 'for room:', data.roomId);
                 this.onAnswer(data.fromUserId, data.answer);
             }
         });
         
         this.signalingService.on('webrtc-ice', (data) => {
-            if (data.roomId === this.roomId && data.toUserId === this.userId) {
-                console.log('[WebRTCSignaling] Received ICE candidate from:', data.fromUserId);
+            if (data.toUserId === this.userId) {
+                console.log('[WebRTCSignaling] ✅ Received ICE candidate from:', data.fromUserId, 'for room:', data.roomId);
                 this.onIceCandidate(data.fromUserId, data.candidate);
             }
         });
