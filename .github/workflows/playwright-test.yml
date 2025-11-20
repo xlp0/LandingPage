@@ -13,33 +13,30 @@ jobs:
     container: node:18-alpine
 
     services:
-      # Start the application
       app:
         image: node:18-alpine
         ports:
           - "3000:3000"  # HTTP server
-          - "3001:3001"  # WebSocket server
         env:
           NODE_ENV: test
         volumes:
           - .:/app
         working-directory: /app
-        # Install dependencies and start the servers
         run: |
           apk add --no-cache curl
           npm install
-          npm install -g http-server
-          sh -c "http-server -p 3000 & node ws-server.js" &
-          # Wait for servers to be ready
-          while ! (curl -s http://localhost:3000 >/dev/null && curl -s http://localhost:3001 >/dev/null); do
-            echo "Waiting for servers to start..."
+          node unified-server.js &
+          while ! curl -s http://localhost:3000 >/dev/null; do
+            echo "Waiting for server to start..."
             sleep 2
           done
-          echo "Servers are ready!"
+          echo "Server is ready!"
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Ensures we get the full git history for versioning
 
     - name: Install dependencies
       run: |
@@ -49,9 +46,8 @@ jobs:
 
     - name: Run Playwright tests
       env:
-        BASE_URL: http://app:3000  # Access the app service by service name
+        BASE_URL: http://app:3000
       run: |
-        # Run tests with increased timeout
         npx playwright test tests/test-webrtc-dashboard-create-room.spec.js \
           --workers=1 \
           --timeout=60000 \
@@ -76,4 +72,4 @@ jobs:
 
     - name: Stop services
       if: always()
-      run: pkill -f "http-server|node"
+      run: pkill -f "node unified-server.js"
