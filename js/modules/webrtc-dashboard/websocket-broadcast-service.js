@@ -24,29 +24,16 @@ export class WebSocketBroadcastService {
     }
     
     _getWebSocketUrl() {
-        // Get current page protocol and host
+        // SIMPLE: Always use the SAME domain the user is accessing from
+        // This works for localhost, dev.pkc.pub, pkc.pub, etc.
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const host = window.location.host; // includes port if present
-        const hostname = window.location.hostname;
+        const host = window.location.host; // This includes the port if present
         
-        console.log('[WSBroadcast] 🔍 Auto-detecting WebSocket URL...');
-        console.log('[WSBroadcast] Current location:', {
-            protocol: window.location.protocol,
-            hostname: hostname,
-            host: host,
-            href: window.location.href
-        });
-        
-        // If running on localhost with a specific port, use that
-        if (hostname === 'localhost' || hostname === '127.0.0.1') {
-            const wsUrl = `${protocol}//${hostname}:8765/ws/`;
-            console.log('[WSBroadcast] ✅ Detected LOCAL environment, using:', wsUrl);
-            return wsUrl;
-        }
-        
-        // For production (pkc.pub, dev.pkc.pub, etc.), use the same host
         const wsUrl = `${protocol}//${host}/ws/`;
-        console.log('[WSBroadcast] ✅ Detected PRODUCTION environment, using:', wsUrl);
+        
+        console.log('[WSBroadcast] WebSocket URL:', wsUrl);
+        console.log('[WSBroadcast] (Same domain as:', window.location.href, ')');
+        
         return wsUrl;
     }
     
