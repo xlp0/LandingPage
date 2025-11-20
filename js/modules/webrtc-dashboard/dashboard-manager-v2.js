@@ -263,18 +263,28 @@ export class DashboardManager {
         // Save name button
         this.elements['save-name-btn']?.addEventListener('click', () => {
             const name = this.elements['user-name'].value.trim();
-            if (name) {
-                this.currentUser = {
-                    id: this._generateUserId(),
-                    name: name
-                };
-                this._saveUserPreferences();
-                this._showNotification('Name saved!', 'success');
+            if (!name) {
+                this._showNotification('⚠️ Please enter your name', 'error');
+                return;
             }
+            
+            this.currentUser = {
+                id: this._generateUserId(),
+                name: name
+            };
+            this._saveUserPreferences();
+            this._showNotification('✅ Name saved! You can now create or join rooms.', 'success');
+            console.log('[Dashboard] User saved:', this.currentUser);
         });
         
         // Create room button
         this.elements['create-room-btn']?.addEventListener('click', async () => {
+            // Check if user has saved their name
+            if (!this.currentUser || !this.currentUser.name) {
+                this._showNotification('⚠️ Please save your name first!', 'error');
+                return;
+            }
+            
             const roomName = this.elements['room-name'].value.trim();
             if (!roomName) {
                 this._showNotification('Please enter a room name', 'error');
@@ -288,9 +298,10 @@ export class DashboardManager {
                     requireApproval: this.elements['require-approval'].checked,
                     maxParticipants: parseInt(this.elements['max-participants'].value) || 10
                 });
-                this._showNotification('Room created!', 'success');
+                this._showNotification('✅ Room created!', 'success');
             } catch (error) {
-                this._showNotification('Failed to create room', 'error');
+                console.error('[Dashboard] Create room error:', error);
+                this._showNotification('❌ Failed to create room: ' + error.message, 'error');
             }
         });
         
