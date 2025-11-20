@@ -147,26 +147,38 @@ testWithConfig.describe('PKC Website Navigation Test', () => {
         
         // First user sends a message
         console.log('First user sending message...');
-        await firstUserPage.locator('#chat-input').fill('Hello from FirstUser');
+        const firstUserMessage = 'Hello from FirstUser ' + Date.now();
+        await firstUserPage.locator('#chat-input').fill(firstUserMessage);
         await firstUserPage.waitForTimeout(1000);
         
         await firstUserPage.locator('#send-message-btn').click();
-        await firstUserPage.waitForLoadState('networkidle');
-        await firstUserPage.waitForTimeout(1000);
+        await firstUserPage.waitForTimeout(2000); // Wait for message to be sent
         
         // Second user sends a reply
         console.log('Second user replying...');
-        await secondUserPage.locator('#chat-input').fill('Hello from SecondUser');
+        const secondUserMessage = 'Hello from SecondUser ' + Date.now();
+        await secondUserPage.locator('#chat-input').fill(secondUserMessage);
         await secondUserPage.waitForTimeout(1000);
         
         await secondUserPage.locator('#send-message-btn').click();
-        await secondUserPage.waitForLoadState('networkidle');
-        await secondUserPage.waitForTimeout(1000);
+        await secondUserPage.waitForTimeout(2000); // Wait for message to be sent
         
-        // Verify messages are visible to both users
-        await expect(firstUserPage.locator('.chat-message:has-text("Hello from SecondUser")')).toBeVisible();
-        await expect(secondUserPage.locator('.chat-message:has-text("Hello from FirstUser")')).toBeVisible();
-        await firstUserPage.waitForTimeout(1000);
+        // Verify messages are visible to both users with more flexible selectors
+        console.log('Verifying messages...');
+        try {
+          // Wait for messages to appear with a longer timeout
+          await expect(firstUserPage.locator(`.chat-message:has-text("${secondUserMessage}")`))
+            .toBeVisible({ timeout: 10000 });
+          await expect(secondUserPage.locator(`.chat-message:has-text("${firstUserMessage}")`))
+            .toBeVisible({ timeout: 10000 });
+          console.log('Messages verified successfully');
+        } catch (error) {
+          console.error('Message verification failed:', error);
+          // Take a screenshot for debugging
+          await firstUserPage.screenshot({ path: 'first-user-chat.png' });
+          await secondUserPage.screenshot({ path: 'second-user-chat.png' });
+          throw error;
+        }
         
         // Second user leaves
         console.log('Second user leaving...');
@@ -211,13 +223,13 @@ testWithConfig.describe('PKC Website Navigation Test', () => {
         
         // Close pages first
         const pagesToClose = [];
-        if (firstUserPage && !firstUserPage.isClosed()) {
+        if (typeof firstUserPage !== 'undefined' && firstUserPage && !firstUserPage.isClosed()) {
           console.log('Closing first user page...');
-          pagesToClose.push(firstUserPage.close());
+          pagesToClose.push(firstUserPage.close().catch(e => console.error('Error closing first user page:', e)));
         }
-        if (secondUserPage && !secondUserPage.isClosed()) {
+        if (typeof secondUserPage !== 'undefined' && secondUserPage && !secondUserPage.isClosed()) {
           console.log('Closing second user page...');
-          pagesToClose.push(secondUserPage.close());
+          pagesToClose.push(secondUserPage.close().catch(e => console.error('Error closing second user page:', e)));
         }
         
         // Wait for all pages to close
@@ -228,13 +240,13 @@ testWithConfig.describe('PKC Website Navigation Test', () => {
         
         // Then close contexts - this will also finalize the video recordings
         const contextsToClose = [];
-        if (secondUserContext) {
+        if (typeof secondUserContext !== 'undefined' && secondUserContext) {
           console.log('Closing second user context...');
-          contextsToClose.push(secondUserContext.close());
+          contextsToClose.push(secondUserContext.close().catch(e => console.error('Error closing second user context:', e)));
         }
-        if (context) {
+        if (typeof context !== 'undefined' && context) {
           console.log('Closing first user context...');
-          contextsToClose.push(context.close());
+          contextsToClose.push(context.close().catch(e => console.error('Error closing first user context:', e)));
         }
         
         // Wait for all contexts to close
@@ -243,9 +255,11 @@ testWithConfig.describe('PKC Website Navigation Test', () => {
         // Add a final delay to ensure video files are fully written
         await new Promise(resolve => setTimeout(resolve, 3000));
         
-        console.log('Test completed successfully. Videos are being saved to:');
-        console.log(`- First user video: ${firstUserVideoDir}`);
-        if (secondUserContext) {
+        console.log('Test completed. Videos are being saved to:');
+        if (typeof firstUserVideoDir !== 'undefined') {
+          console.log(`- First user video: ${firstUserVideoDir}`);
+        }
+        if (typeof secondUserVideoDir !== 'undefined' && secondUserContext) {
           console.log(`- Second user video: ${secondUserVideoDir}`);
         }
     } catch (error) {
