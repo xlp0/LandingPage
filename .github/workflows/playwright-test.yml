@@ -2,12 +2,11 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
   schedule:
-    # Run daily at 2 AM UTC
-    - cron: '0 2 * * *'
+    - cron: '0 2 * * *'  # Run daily at 2 AM UTC
 
 jobs:
   playwright-tests:
@@ -28,16 +27,16 @@ jobs:
 
     - name: Install Docker Compose
       run: |
-        sudo curl -L "https://github.com/docker/compose/releases/download/v2.21.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
         sudo chmod +x /usr/local/bin/docker-compose
         docker-compose --version
 
     - name: Start services with Docker Compose
-      working-directory: ./playwright-tests
       run: docker-compose up -d
+      env:
+        COMPOSE_PROJECT_NAME: landingpage-test
 
-    - name: Install PKC dependencies
-      working-directory: ./
+    - name: Install dependencies
       run: npm install
 
     - name: Wait for PKC app to be ready
@@ -46,11 +45,10 @@ jobs:
         timeout 120 bash -c 'until curl -f http://localhost:8765; do sleep 2; done' || (echo "PKC app failed to start" && exit 1)
         echo "✅ PKC app is ready"
 
-    - name: Run PKC tests
-      run: npx playwright test playwright-tests/PKC_test.spec.js
+    - name: Run Playwright tests
+      run: npx playwright test tests/test-webrtc-dashboard-create-room.spec.js
       env:
-        MCARD_BASE_URL: http://localhost:49384/v1
-      continue-on-error: false
+        BASE_URL: http://localhost:8765
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
@@ -78,15 +76,8 @@ jobs:
         path: test-results/**/*.png
         retention-days: 7
 
-    - name: Upload error context
-      uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: error-context
-        path: test-results/**/*.md
-        retention-days: 7
-
     - name: Stop services
       if: always()
-      working-directory: ./playwright-tests
       run: docker-compose down -v
+      env:
+        COMPOSE_PROJECT_NAME: landingpage-test
