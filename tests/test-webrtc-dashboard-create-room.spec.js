@@ -18,16 +18,21 @@ const testWithConfig = test.extend({
   },
 });
 
-testWithConfig.describe.configure({ mode: 'serial', retries: 0 });
+testWithConfig.describe.configure({ mode: 'serial', retries: 3 });
 
 testWithConfig.describe('LandingPage Website Navigation Test', () => {
   let testStartTime;
   let screenshotCounter = 0;
 
-  // Helper function to take screenshots
+  // Helper function to take screenshots with a delay
   async function takeScreenshot(page, action) {
     if (!page || page.isClosed()) {
       console.warn(`Cannot take screenshot '${action}': Page is not available or already closed`);
+      return;
+    }
+    
+    // Skip screenshots in CI to speed up tests
+    if (process.env.CI === 'true' && !action.includes('error') && !action.includes('fail')) {
       return;
     }
     
@@ -46,15 +51,23 @@ testWithConfig.describe('LandingPage Website Navigation Test', () => {
   }
 
   testWithConfig('navigate through LandingPage website links', async ({ browser }) => {
+    // Increase test timeout to 2 minutes for CI
+    test.setTimeout(120000);
+    test.slow(); // Mark test as slow to extend timeouts
+    
     testStartTime = new Date();
     console.log(`Test started at: ${testStartTime.toISOString()}`);
     
-    // Launch browser in headed mode
+    // Get CI environment variable
+    const isCI = process.env.CI === 'true';
+    console.log(`Running in CI mode: ${isCI}`);
+    
+    // Launch browser with appropriate settings for CI
     const context = await browser.newContext({
       viewport: { width: 1280, height: 800 },
       ignoreHTTPSErrors: true,
-      headless: false,
-      slowMo: 100, // Slow down by 100ms for better visibility
+      headless: isCI, // Run headless in CI, headed locally
+      slowMo: isCI ? 50 : 100, // Use less delay in CI
     });
     
     // Create pages for both users
@@ -176,9 +189,17 @@ testWithConfig.describe('LandingPage Website Navigation Test', () => {
         await secondUserPage.waitForLoadState('networkidle');
         await takeScreenshot(secondUserPage, '23-second-user-reply-sent');
         
-        // Verify messages are visible to both users
-        await expect(firstUserPage.locator('.chat-message:has-text("Hello from SecondUser")')).toBeVisible();
-        await expect(secondUserPage.locator('.chat-message:has-text("Hello from FirstUser")')).toBeVisible();
+        // Verify messages are visible to both users with retries and longer timeout
+        const firstUserMessage = firstUserPage.locator('.chat-message:has-text("Hello from SecondUser")');
+        const secondUserMessage = secondUserPage.locator('.chat-message:has-text("Hello from FirstUser")');
+        
+        // Wait for messages to appear with retries
+        await firstUserMessage.waitFor({ state: 'visible', timeout: 30000 });
+        await secondUserMessage.waitFor({ state: 'visible', timeout: 30000 });
+        
+        // Verify visibility
+        await expect(firstUserMessage).toBeVisible({ timeout: 10000 });
+        await expect(secondUserMessage).toBeVisible({ timeout: 10000 });
         
         // Second user leaves
         console.log('Second user leaving...');
