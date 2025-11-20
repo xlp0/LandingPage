@@ -27,15 +27,27 @@ export class WebSocketBroadcastService {
         // Get current page protocol and host
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const host = window.location.host; // includes port if present
+        const hostname = window.location.hostname;
+        
+        console.log('[WSBroadcast] 🔍 Auto-detecting WebSocket URL...');
+        console.log('[WSBroadcast] Current location:', {
+            protocol: window.location.protocol,
+            hostname: hostname,
+            host: host,
+            href: window.location.href
+        });
         
         // If running on localhost with a specific port, use that
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            // Use port 8765 for local development
-            return `${protocol}//${window.location.hostname}:8765/ws/`;
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            const wsUrl = `${protocol}//${hostname}:8765/ws/`;
+            console.log('[WSBroadcast] ✅ Detected LOCAL environment, using:', wsUrl);
+            return wsUrl;
         }
         
-        // For production (pkc.pub, etc.), use the same host
-        return `${protocol}//${host}/ws/`;
+        // For production (pkc.pub, dev.pkc.pub, etc.), use the same host
+        const wsUrl = `${protocol}//${host}/ws/`;
+        console.log('[WSBroadcast] ✅ Detected PRODUCTION environment, using:', wsUrl);
+        return wsUrl;
     }
     
     _init() {

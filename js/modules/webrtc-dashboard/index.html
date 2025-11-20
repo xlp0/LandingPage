@@ -192,12 +192,12 @@
     </button>
 
     <!-- Scripts -->
-    <script type="module" src="dashboard-manager.js?v=4.0"></script>
+    <script type="module" src="dashboard-manager.js?v=5.0"></script>
     <script type="module">
         // Initialize dashboard when page loads
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                const { DashboardManager } = await import('./dashboard-manager-v2.js?v=4.0');
+                const { DashboardManager } = await import('./dashboard-manager-v2.js?v=5.0');
                 window.dashboard = new DashboardManager();
                 await window.dashboard.init();
                 
