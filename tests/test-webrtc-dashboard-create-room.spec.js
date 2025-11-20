@@ -20,7 +20,7 @@ const testWithConfig = test.extend({
 
 testWithConfig.describe.configure({ mode: 'serial', retries: 0 });
 
-testWithConfig.describe('PKC Website Navigation Test', () => {
+testWithConfig.describe('LandingPage Website Navigation Test', () => {
   let testStartTime;
   let screenshotCounter = 0;
 
@@ -45,7 +45,7 @@ testWithConfig.describe('PKC Website Navigation Test', () => {
     }
   }
 
-  testWithConfig('navigate through PKC website links', async ({ browser }) => {
+  testWithConfig('navigate through LandingPage website links', async ({ browser }) => {
     testStartTime = new Date();
     console.log(`Test started at: ${testStartTime.toISOString()}`);
     
