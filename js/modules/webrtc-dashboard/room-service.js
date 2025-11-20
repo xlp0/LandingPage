@@ -44,8 +44,8 @@ export class RoomService {
             // Initialize broadcast service for room discovery
             this._initializeBroadcastService();
             
-            // Initialize WebRTC signaling service (for offer/answer/ICE exchange)
-            await this._initializeSignaling();
+            // NOTE: WebRTC signaling will be initialized lazily when userId is known
+            // await this._initializeSignaling(); // Removed - will do lazily
             
             // Setup cleanup on page unload
             this._setupCleanup();
@@ -77,6 +77,9 @@ export class RoomService {
         try {
             // Store current user ID for mesh network
             this.currentUserId = roomData.hostId;
+            
+            // Initialize signaling with the host's userId
+            await this._initializeSignaling(roomData.hostId);
             
             // Store room locally
             this.rooms.set(room.id, room);
@@ -119,6 +122,9 @@ export class RoomService {
         try {
             // Store current user ID for mesh network
             this.currentUserId = userData.id;
+            
+            // Initialize signaling with the joiner's userId
+            await this._initializeSignaling(userData.id);
             
             // Add user to room participants
             room.participants.push({
@@ -295,12 +301,21 @@ export class RoomService {
         console.log('[RoomService] Broadcast service initialized');
     }
     
-    async _initializeSignaling() {
+    async _initializeSignaling(userId) {
+        // Only initialize if not already done or userId changed
+        if (this.signaling && this.signaling.userId === userId) {
+            console.log('[RoomService] Signaling already initialized for user:', userId);
+            return;
+        }
+        
+        console.log('[RoomService] Initializing WebRTC signaling for user:', userId);
+        
         // Create a global signaling service for this RoomService instance
         // Individual RoomConnectionManagers will use this
-        this.signaling = new WebRTCSignaling('global', this.currentUserId || 'unknown');
+        this.signaling = new WebRTCSignaling('global', userId);
         await this.signaling.init();
-        console.log('[RoomService] WebRTC signaling initialized');
+        
+        console.log('[RoomService] ✅ WebRTC signaling initialized for user:', userId);
     }
     
     _setupP2PEventHandlers() {
