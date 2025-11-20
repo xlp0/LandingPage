@@ -262,7 +262,9 @@ body {
     flex: 1;
     display: grid;
     grid-template-columns: 250px 1fr;
+    gap: 20px;
     overflow: hidden;
+    min-height: 0; /* Critical for flex children to scroll properly */
 }
 
 /* Participants Panel */
@@ -400,15 +402,20 @@ body {
     display: flex;
     flex-direction: column;
     background: white;
+    min-height: 0; /* Critical for flex children to scroll properly */
+    height: 100%; /* Take full height of parent */
 }
 
 .chat-messages {
     flex: 1;
     padding: 20px;
     overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    min-height: 0; /* Allow scrolling */
+    max-height: 100%; /* Prevent overflow */
 }
 
 .message-item {
