@@ -26,6 +26,11 @@ testWithConfig.describe('PKC Website Navigation Test', () => {
 
   // Helper function to take screenshots
   async function takeScreenshot(page, action) {
+    if (!page || page.isClosed()) {
+      console.warn(`Cannot take screenshot '${action}': Page is not available or already closed`);
+      return;
+    }
+    
     screenshotCounter++;
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const screenshotPath = path.join(screenshotsDir, `${screenshotCounter.toString().padStart(2, '0')}-${action.replace(/\s+/g, '-').toLowerCase()}-${timestamp}.png`);
@@ -33,11 +38,11 @@ testWithConfig.describe('PKC Website Navigation Test', () => {
     try {
       await page.screenshot({ path: screenshotPath, fullPage: true });
       console.log(`Screenshot saved: ${screenshotPath}`);
+      await new Promise(resolve => setTimeout(resolve, 500)); // Shorter delay for better test performance
     } catch (error) {
-      console.error('Failed to take screenshot:', error);
+      // Don't fail the test if screenshot fails, just log it
+      console.warn(`Failed to take screenshot '${action}':`, error.message);
     }
-    
-    await page.waitForTimeout(1000); // 1 second delay after each screenshot
   }
 
   testWithConfig('navigate through PKC website links', async ({ browser }) => {
@@ -55,6 +60,8 @@ testWithConfig.describe('PKC Website Navigation Test', () => {
     // Create pages for both users
     const firstUserPage = await context.newPage();
     let roomId = '';
+    let secondUserPage = null;
+    let secondUserContext = null;
     
     try {
       // Initial page load for first user
@@ -114,14 +121,14 @@ testWithConfig.describe('PKC Website Navigation Test', () => {
 
       // Create second user context
       console.log('Setting up second user...');
-      const secondUserContext = await browser.newContext({
+      secondUserContext = await browser.newContext({
         viewport: { width: 1280, height: 800 },
         ignoreHTTPSErrors: true,
         headless: false,
         slowMo: 100,
       });
       
-      const secondUserPage = await secondUserContext.newPage();
+      secondUserPage = await secondUserContext.newPage();
       
       try {
         // Second user joins the room
@@ -175,17 +182,21 @@ testWithConfig.describe('PKC Website Navigation Test', () => {
         
         // Second user leaves
         console.log('Second user leaving...');
-        await takeScreenshot(secondUserPage, '24-second-user-before-leave');
-        await secondUserPage.locator('#leave-room-btn').click();
-        await secondUserPage.waitForLoadState('networkidle');
-        await takeScreenshot(secondUserPage, '25-second-user-left');
+        if (secondUserPage && !secondUserPage.isClosed()) {
+          await takeScreenshot(secondUserPage, '24-second-user-before-leave');
+          await secondUserPage.locator('#leave-room-btn').click();
+          await secondUserPage.waitForLoadState('networkidle');
+          await takeScreenshot(secondUserPage, '25-second-user-left');
+        }
         
         // First user leaves
         console.log('First user leaving...');
-        await takeScreenshot(firstUserPage, '26-first-user-before-leave');
-        await firstUserPage.locator('#leave-room-btn').click();
-        await firstUserPage.waitForLoadState('networkidle');
-        await takeScreenshot(firstUserPage, '27-first-user-left');
+        if (firstUserPage && !firstUserPage.isClosed()) {
+          await takeScreenshot(firstUserPage, '26-first-user-before-leave');
+          await firstUserPage.locator('#leave-room-btn').click();
+          await firstUserPage.waitForLoadState('networkidle');
+          await takeScreenshot(firstUserPage, '27-first-user-left');
+        }
         
       } finally {
         // Clean up second user context
@@ -198,8 +209,10 @@ testWithConfig.describe('PKC Website Navigation Test', () => {
       }
       
       // Final verification
-      await firstUserPage.waitForTimeout(1000);
-      await takeScreenshot(firstUserPage, '28-test-complete');
+      if (!firstUserPage.isClosed()) {
+        await firstUserPage.waitForTimeout(1000);
+        await takeScreenshot(firstUserPage, '28-test-complete');
+      }
       
       const testEndTime = new Date();
       const testDuration = (testEndTime - testStartTime) / 1000;
@@ -207,15 +220,42 @@ testWithConfig.describe('PKC Website Navigation Test', () => {
       
     } catch (error) {
       console.error('Test failed:', error);
-      await takeScreenshot(firstUserPage, 'error-test-failed');
+      if (firstUserPage && !firstUserPage.isClosed()) {
+        await takeScreenshot(firstUserPage, 'error-test-failed');
+      }
       throw error;
     } finally {
-      // Close context
-      if (firstUserPage && !firstUserPage.isClosed()) {
-        await firstUserPage.close();
-      }
-      if (context) {
-        await context.close();
+      try {
+        // Close pages first
+        const closePromises = [];
+        
+        // Close second user page if it exists
+        if (secondUserPage && !secondUserPage.isClosed()) {
+          closePromises.push(secondUserPage.close().catch(e => 
+            console.warn('Error closing second user page:', e.message)));
+        }
+        
+        // Close first user page if it exists
+        if (firstUserPage && !firstUserPage.isClosed()) {
+          closePromises.push(firstUserPage.close().catch(e => 
+            console.warn('Error closing first user page:', e.message)));
+        }
+        
+        // Close contexts
+        if (secondUserContext) {
+          closePromises.push(secondUserContext.close().catch(e => 
+            console.warn('Error closing second user context:', e.message)));
+        }
+        
+        if (context && !context.pages().length) {
+          closePromises.push(context.close().catch(e => 
+            console.warn('Error closing main context:', e.message)));
+        }
+        
+        // Wait for all close operations to complete
+        await Promise.allSettled(closePromises);
+      } catch (error) {
+        console.warn('Error during cleanup:', error.message);
       }
     }
   });
