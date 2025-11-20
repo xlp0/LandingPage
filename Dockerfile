@@ -22,5 +22,5 @@ EXPOSE 3000
 # Set environment variables
 ENV NODE_ENV=production
 
-# Start unified server (HTTP + WebSocket on same port)
-CMD ["node", "unified-server.js"]
+# Start WebSocket server (HTTP + WebSocket on same port with all fixes)
+CMD ["node", "ws-server.js"]

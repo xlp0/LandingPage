@@ -7,6 +7,7 @@ services:
       - "8765:3000"  # Unified HTTP + WebSocket server
     environment:
       - NODE_ENV=production
+      - PORT=3000
       # WebSocket URL - set this for production deployments
       # Examples:
       # - WEBSOCKET_URL=wss://dev.pkc.pub/ws/
