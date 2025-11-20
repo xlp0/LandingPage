@@ -66,17 +66,7 @@ jobs:
       with:
         name: playwright-videos
         path: test-results/**/*.webm
-        retention-days: 7
-
-    - name: Upload test screenshots
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: playwright-screenshots
-        path: |
-          test-results/**/*.png
-          tests/screenshots/**/*.png
-        retention-days: 7
+        retention-days: 7xs
 
     - name: Stop services
       if: always()
