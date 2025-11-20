@@ -5,6 +5,7 @@ import { ConnectionManager } from '../p2p-serverless/connection.js';
 import { DiscoveryManager } from '../p2p-serverless/discovery.js';
 import { resolveP2PConfig } from '../p2p-serverless/config.js';
 import { getSharedBroadcastService } from './shared-broadcast.js';
+import { RoomConnectionManager } from './managers/room-connection-manager.js';
 
 export class RoomService {
     constructor() {
@@ -76,9 +77,10 @@ export class RoomService {
             console.log('[RoomService] ✅ Room added to local storage. Local rooms:', this.localRooms.size);
             console.log('[RoomService] Local room IDs:', Array.from(this.localRooms));
             
-            // NOTE: We don't need to create a WebRTC offer here anymore
-            // WebRTC connections are now managed per-room by RoomConnectionManager
-            // This was causing Firefox compatibility issues
+            // Create RoomConnectionManager for this room (for mesh network)
+            console.log('[RoomService] 🔧 Creating RoomConnectionManager for host');
+            const roomConnectionManager = new RoomConnectionManager(room.id, this.signaling);
+            this.roomConnectionManagers.set(room.id, roomConnectionManager);
             
             // Broadcast room creation
             console.log('[RoomService] 📢 Broadcasting room-created for:', room.name);
