@@ -14,20 +14,117 @@ The WebRTC Dashboard provides a room-based chat system where:
 
 ## Architecture
 
-```
-WebRTC Dashboard Architecture:
-==============================
+### System Architecture Diagram
 
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Dashboard     │    │   Room List     │    │  Chat Room      │
-│   (Main View)   │◄──►│   (Discovery)   │◄──►│  (P2P Chat)     │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         ▼                       ▼                       ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│ Room Creation   │    │ Join Requests   │    │ Peer Management │
-│ & Management    │    │ & Approval      │    │ & Chat History  │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+```mermaid
+graph TB
+    subgraph "User Interface"
+        UI[Dashboard UI]
+        RoomList[Room List View]
+        ChatView[Chat Room View]
+    end
+    
+    subgraph "Core Managers"
+        DM[Dashboard Manager]
+        RS[Room Service]
+        ACM[Access Control Manager]
+        CM[Chat Manager]
+        RCM[Room Connection Manager]
+    end
+    
+    subgraph "Communication Layer"
+        WS[WebSocket Signaling]
+        BC[Broadcast Service]
+        WB[WebSocket Broadcast]
+    end
+    
+    subgraph "WebRTC Layer"
+        PC[Peer Connections]
+        DC[Data Channels]
+        ICE[ICE Candidates]
+    end
+    
+    UI --> DM
+    RoomList --> RS
+    ChatView --> CM
+    
+    DM --> RS
+    DM --> ACM
+    DM --> CM
+    
+    RS --> RCM
+    CM --> RCM
+    
+    RCM --> WS
+    RS --> BC
+    BC --> WB
+    WB --> WS
+    
+    RCM --> PC
+    PC --> DC
+    PC --> ICE
+    
+    style UI fill:#e1f5ff
+    style DM fill:#fff3e0
+    style RS fill:#f3e5f5
+    style WS fill:#e8f5e9
+    style PC fill:#ffebee
+```
+
+### WebRTC Connection Flow
+
+```mermaid
+sequenceDiagram
+    participant H as Host Browser
+    participant WS as WebSocket Server
+    participant J as Joiner Browser
+    
+    Note over H: User creates room
+    H->>H: Initialize RoomService
+    H->>H: Create RoomConnectionManager
+    H->>WS: Subscribe to channels
+    H->>WS: Broadcast "room-created"
+    
+    Note over J: User sees room list
+    J->>WS: Subscribe to channels
+    WS->>J: Receive "room-created"
+    J->>J: Display room in list
+    
+    Note over J: User joins room
+    J->>WS: Broadcast "user-joined-room"
+    
+    Note over H: Host receives join event
+    WS->>H: Receive "user-joined-room"
+    H->>H: _handleUserJoinedRoom()
+    H->>H: Create RTCPeerConnection
+    H->>H: Create Data Channel
+    H->>H: Generate WebRTC Offer
+    H->>WS: Send Offer via signaling
+    
+    Note over J: Joiner receives offer
+    WS->>J: Receive WebRTC Offer
+    J->>J: Create RTCPeerConnection
+    J->>J: Set Remote Description (Offer)
+    J->>J: Generate WebRTC Answer
+    J->>WS: Send Answer via signaling
+    
+    Note over H: Host receives answer
+    WS->>H: Receive WebRTC Answer
+    H->>H: Set Remote Description (Answer)
+    
+    Note over H,J: ICE Candidate Exchange
+    H->>WS: Send ICE Candidates
+    WS->>J: Forward ICE Candidates
+    J->>WS: Send ICE Candidates
+    WS->>H: Forward ICE Candidates
+    
+    Note over H,J: Connection Established
+    H-->>J: Direct P2P Data Channel Opens
+    J-->>H: Direct P2P Data Channel Opens
+    
+    Note over H,J: Chat messages flow directly P2P
+    H->>J: Send chat message (P2P)
+    J->>H: Send chat message (P2P)
 ```
 
 ## Core Components
@@ -81,6 +178,178 @@ class WebRTCConnectionHandler {
   - Manages connection state and reconnection
   - Coordinates multi-peer mesh network
 }
+```
+
+## User Interaction Diagrams
+
+### Complete User Journey
+
+```mermaid
+stateDiagram-v2
+    [*] --> Dashboard: Open App
+    Dashboard --> CreateRoom: Click "Create Room"
+    Dashboard --> BrowseRooms: View Available Rooms
+    
+    CreateRoom --> HostView: Room Created
+    BrowseRooms --> JoinRequest: Click "Join Room"
+    
+    JoinRequest --> WaitingApproval: Request Sent
+    WaitingApproval --> ParticipantView: Approved
+    WaitingApproval --> Dashboard: Rejected
+    
+    HostView --> Chatting: Send/Receive Messages
+    ParticipantView --> Chatting: Send/Receive Messages
+    
+    Chatting --> HostView: Continue as Host
+    Chatting --> ParticipantView: Continue as Participant
+    Chatting --> Dashboard: Leave Room
+    
+    HostView --> HostTransfer: Host Leaves
+    HostTransfer --> ParticipantView: New Host Assigned
+```
+
+### Multi-User Chat Interaction
+
+```mermaid
+sequenceDiagram
+    participant U1 as User 1 (Host)
+    participant U2 as User 2
+    participant U3 as User 3
+    participant WS as WebSocket Server
+    
+    Note over U1: Creates Room
+    U1->>WS: Broadcast "room-created"
+    WS->>U2: Room appears in list
+    WS->>U3: Room appears in list
+    
+    Note over U2: Joins Room
+    U2->>WS: Broadcast "user-joined-room"
+    WS->>U1: User 2 joined notification
+    U1->>U1: Create WebRTC offer for U2
+    U1->>WS: Send offer to U2
+    WS->>U2: Receive offer from U1
+    U2->>WS: Send answer to U1
+    WS->>U1: Receive answer from U2
+    U1-->>U2: P2P Connection Established
+    
+    Note over U3: Joins Room
+    U3->>WS: Broadcast "user-joined-room"
+    WS->>U1: User 3 joined notification
+    WS->>U2: User 3 joined notification
+    
+    U1->>U1: Create WebRTC offer for U3
+    U1->>WS: Send offer to U3
+    WS->>U3: Receive offer from U1
+    U3->>WS: Send answer to U1
+    WS->>U1: Receive answer from U3
+    U1-->>U3: P2P Connection Established
+    
+    Note over U2,U3: U2 and U3 connect directly
+    U2->>U2: Create WebRTC offer for U3
+    U2->>WS: Send offer to U3
+    WS->>U3: Receive offer from U2
+    U3->>WS: Send answer to U2
+    WS->>U2: Receive answer from U3
+    U2-->>U3: P2P Connection Established
+    
+    Note over U1,U3: All users connected in mesh
+    U1->>U2: Chat message (P2P)
+    U1->>U3: Chat message (P2P)
+    U2->>U1: Chat message (P2P)
+    U2->>U3: Chat message (P2P)
+    U3->>U1: Chat message (P2P)
+    U3->>U2: Chat message (P2P)
+```
+
+### Room Creation and Discovery Flow
+
+```mermaid
+flowchart TD
+    Start([User Opens Dashboard]) --> CheckRooms{Any Rooms<br/>Available?}
+    
+    CheckRooms -->|Yes| ShowList[Display Room List]
+    CheckRooms -->|No| EmptyState[Show Empty State]
+    
+    ShowList --> UserChoice{User Action?}
+    EmptyState --> UserChoice
+    
+    UserChoice -->|Create Room| EnterDetails[Enter Room Name<br/>& Settings]
+    UserChoice -->|Join Room| SelectRoom[Select Room<br/>from List]
+    
+    EnterDetails --> CreateRoom[Create Room]
+    CreateRoom --> BecomeHost[Become Host]
+    BecomeHost --> InitWebRTC[Initialize WebRTC<br/>Connection Manager]
+    InitWebRTC --> BroadcastRoom[Broadcast Room<br/>to Network]
+    BroadcastRoom --> HostDashboard[Host Dashboard<br/>View]
+    
+    SelectRoom --> SendJoinReq[Send Join Request]
+    SendJoinReq --> WaitApproval{Host<br/>Approval?}
+    
+    WaitApproval -->|Approved| EstablishConn[Establish WebRTC<br/>Connection]
+    WaitApproval -->|Rejected| ShowRejected[Show Rejection<br/>Message]
+    ShowRejected --> Start
+    
+    EstablishConn --> ParticipantView[Participant<br/>Chat View]
+    
+    HostDashboard --> ChatActive{Active<br/>Chat?}
+    ParticipantView --> ChatActive
+    
+    ChatActive -->|Yes| SendMessages[Send/Receive<br/>Messages]
+    ChatActive -->|No| Idle[Idle State]
+    
+    SendMessages --> ChatActive
+    Idle --> ChatActive
+    
+    HostDashboard --> HostLeaves{Host<br/>Leaves?}
+    HostLeaves -->|Yes| TransferHost[Transfer Host<br/>to Participant]
+    TransferHost --> ParticipantView
+    
+    style Start fill:#e1f5ff
+    style CreateRoom fill:#c8e6c9
+    style BecomeHost fill:#fff9c4
+    style HostDashboard fill:#ffccbc
+    style ParticipantView fill:#d1c4e9
+    style SendMessages fill:#b2dfdb
+```
+
+### WebRTC Signaling State Machine
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle: Initialize
+    
+    Idle --> CreatingOffer: Host creates offer
+    CreatingOffer --> OfferCreated: Offer generated
+    OfferCreated --> SendingOffer: Send via WebSocket
+    SendingOffer --> WaitingAnswer: Offer sent
+    
+    Idle --> ReceivingOffer: Joiner receives offer
+    ReceivingOffer --> ProcessingOffer: Set remote description
+    ProcessingOffer --> CreatingAnswer: Generate answer
+    CreatingAnswer --> SendingAnswer: Send via WebSocket
+    SendingAnswer --> WaitingICE: Answer sent
+    
+    WaitingAnswer --> ReceivingAnswer: Answer received
+    ReceivingAnswer --> ProcessingAnswer: Set remote description
+    ProcessingAnswer --> ExchangingICE: Start ICE exchange
+    
+    WaitingICE --> ExchangingICE: ICE candidates ready
+    
+    ExchangingICE --> Connecting: ICE candidates exchanged
+    Connecting --> Connected: Connection established
+    Connected --> DataChannelOpen: Data channel opens
+    
+    DataChannelOpen --> Active: Ready for messaging
+    Active --> Active: Send/Receive messages
+    
+    Active --> Disconnecting: User leaves
+    Disconnecting --> Closed: Connection closed
+    Closed --> [*]
+    
+    Active --> Failed: Connection error
+    Failed --> Reconnecting: Attempt reconnect
+    Reconnecting --> ExchangingICE: Retry connection
+    Reconnecting --> Closed: Max retries exceeded
 ```
 
 ## User Flow
