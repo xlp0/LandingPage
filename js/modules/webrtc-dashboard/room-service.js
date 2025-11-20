@@ -332,6 +332,10 @@ export class RoomService {
             case 'join-request':
                 this._handleJoinRequest(message.request);
                 break;
+                
+            case 'user-joined-room':
+                this._handleUserJoinedRoom(message);
+                break;
         }
     }
     
@@ -381,28 +385,48 @@ export class RoomService {
     }
     
     _handleRoomListRequest() {
-        // Send our local rooms to requester
-        console.log('[RoomService] 📋 Room list requested!');
-        console.log('[RoomService] Local rooms count:', this.localRooms.size);
-        console.log('[RoomService] Local room IDs:', Array.from(this.localRooms));
-        console.log('[RoomService] Total rooms count:', this.rooms.size);
-        console.log('[RoomService] All room IDs:', Array.from(this.rooms.keys()));
-        
+        // Only respond if we have local rooms
         if (this.localRooms.size === 0) {
-            console.log('[RoomService] ⚠️ No local rooms to share');
             return;
         }
         
-        console.log('[RoomService] 📤 Sharing', this.localRooms.size, 'local rooms...');
-        this.localRooms.forEach(roomId => {
+        console.log('[RoomService] Responding to room list request with', this.localRooms.size, 'rooms');
+        
+        // Broadcast each local room
+        for (const roomId of this.localRooms) {
             const room = this.rooms.get(roomId);
             if (room) {
-                console.log('[RoomService] 📢 Sharing local room:', room.name, 'ID:', roomId);
                 this._broadcastMessage('room-created', this._sanitizeRoomForBroadcast(room));
-            } else {
-                console.warn('[RoomService] ❌ Local room not found in rooms map:', roomId);
             }
-        });
+        }
+    }
+    
+    async _handleUserJoinedRoom(message) {
+        const { roomId, userId, userName } = message;
+        
+        console.log('[RoomService] 👥 User joined room:', { roomId, userId, userName });
+        
+        // Only handle if this is OUR room (we're the host)
+        if (!this.localRooms.has(roomId)) {
+            console.log('[RoomService] Not our room, ignoring');
+            return;
+        }
+        
+        // Get the room connection manager for this room
+        const roomConnectionManager = this.roomConnectionManagers.get(roomId);
+        if (!roomConnectionManager) {
+            console.error('[RoomService] ❌ No connection manager for room:', roomId);
+            return;
+        }
+        
+        // Initiate WebRTC connection to the new joiner
+        console.log('[RoomService] 🤝 Initiating WebRTC connection to:', userId);
+        try {
+            await roomConnectionManager.createOffer(userId);
+            console.log('[RoomService] ✅ WebRTC offer created for:', userId);
+        } catch (error) {
+            console.error('[RoomService] ❌ Failed to create offer for:', userId, error);
+        }
     }
     
     _handleJoinRequest(request) {
