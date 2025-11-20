@@ -16,10 +16,13 @@ export class RoomService {
         this.connectionManager = null;
         this.discoveryManager = null;
         this.broadcastService = null;
+        this.signaling = null;
         
         this.rooms = new Map(); // roomId -> room data
         this.localRooms = new Set(); // rooms created by this client
+        this.roomConnectionManagers = new Map(); // roomId -> RoomConnectionManager (for mesh network)
         this.eventHandlers = new Map();
+        this.currentUserId = null; // Current user's ID for mesh network
         
         this.channelName = 'webrtc-dashboard-rooms';
         this.isInitialized = false;
