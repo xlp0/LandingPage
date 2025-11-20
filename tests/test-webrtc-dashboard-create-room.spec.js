@@ -52,81 +52,154 @@ testWithConfig.describe('PKC Website Navigation Test', () => {
       slowMo: 100, // Slow down by 100ms for better visibility
     });
     
-    // Create page
-    const page = await context.newPage();
+    // Create pages for both users
+    const firstUserPage = await context.newPage();
+    let roomId = '';
     
     try {
-      // Initial page load
-      console.log('Navigating to homepage...');
-      await page.goto('http://localhost:8765');
-      await page.waitForLoadState('networkidle');
-      await takeScreenshot(page, '01-initial-page-load');
+      // Initial page load for first user
+      console.log('First user: Navigating to homepage...');
+      await firstUserPage.goto('http://localhost:8765');
+      await firstUserPage.waitForLoadState('networkidle');
+      await takeScreenshot(firstUserPage, '01-first-user-initial-page-load');
       
-      await page.waitForSelector('[data-anime="main-content"]', { timeout: 10000 });
-      await takeScreenshot(page, '02-main-content-visible');
+      await firstUserPage.waitForSelector('[data-anime="main-content"]', { timeout: 10000 });
+      await takeScreenshot(firstUserPage, '02-first-user-main-content-visible');
 
-      // WebRTC Dashboard navigation
-      console.log('Clicking WebRTC Dashboard button...');
-      await takeScreenshot(page, '03-before-dashboard-click');
-      await page.locator('a[href="js/modules/webrtc-dashboard/index.html"]').click();
-      await page.waitForLoadState('networkidle');
-      await takeScreenshot(page, '04-after-dashboard-click');
+      // WebRTC Dashboard navigation - First User
+      console.log('First user: Clicking WebRTC Dashboard button...');
+      await takeScreenshot(firstUserPage, '03-first-user-before-dashboard-click');
+      await firstUserPage.locator('a[href="js/modules/webrtc-dashboard/index.html"]').click();
+      await firstUserPage.waitForLoadState('networkidle');
+      await takeScreenshot(firstUserPage, '04-first-user-after-dashboard-click');
 
-      // User name entry
-      console.log('Entering name...');
-      await takeScreenshot(page, '05-before-name-entry');
-      await page.locator('#user-name').fill('Testing');
-      await takeScreenshot(page, '06-after-name-entry');
+      // First User - Enter name
+      console.log('First user: Entering name...');
+      await takeScreenshot(firstUserPage, '05-first-user-before-name-entry');
+      await firstUserPage.locator('#user-name').fill('FirstUser');
+      await takeScreenshot(firstUserPage, '06-first-user-after-name-entry');
 
-      // Save name
-      console.log('Clicking Save Name button...');
-      await page.locator('#save-name-btn').click();
-      await page.waitForLoadState('networkidle');
-      await takeScreenshot(page, '07-after-save-name');
+      // First User - Save name
+      console.log('First user: Clicking Save Name button...');
+      await firstUserPage.locator('#save-name-btn').click();
+      await firstUserPage.waitForLoadState('networkidle');
+      await takeScreenshot(firstUserPage, '07-first-user-after-save-name');
 
-      // Room name entry
-      console.log('Entering room name...');
-      await takeScreenshot(page, '08-before-room-name');
-      await page.locator('#room-name').fill('Testing');
-      await takeScreenshot(page, '09-after-room-name');
+      // First User - Room name entry
+      console.log('First user: Entering room name...');
+      await takeScreenshot(firstUserPage, '08-first-user-before-room-name');
+      await firstUserPage.locator('#room-name').fill('Testing');
+      await takeScreenshot(firstUserPage, '09-first-user-after-room-name');
 
-      // Room description entry
-      console.log('Entering room description...');
-      await page.locator('#room-description').fill('Testing');
-      await takeScreenshot(page, '10-after-room-description');
+      // First User - Room description entry
+      console.log('First user: Entering room description...');
+      await firstUserPage.locator('#room-description').fill('Testing');
+      await takeScreenshot(firstUserPage, '10-first-user-after-room-description');
 
-      // Create room
-      console.log('Clicking Create Room button...');
-      await takeScreenshot(page, '11-before-create-room');
-      await page.locator('#create-room-btn').click();
-      await page.waitForLoadState('networkidle');
-      await takeScreenshot(page, '12-after-create-room');
+      // First User - Create room
+      console.log('First user: Clicking Create Room button...');
+      await takeScreenshot(firstUserPage, '11-first-user-before-create-room');
+      await firstUserPage.locator('#create-room-btn').click();
+      await firstUserPage.waitForLoadState('networkidle');
+      await takeScreenshot(firstUserPage, '12-first-user-after-create-room');
       
       // Wait for room to be fully loaded
-      await page.waitForTimeout(2000);
-      await takeScreenshot(page, '13-room-loaded');
+      await firstUserPage.waitForTimeout(2000);
+      await takeScreenshot(firstUserPage, '13-first-user-room-loaded');
 
-      // Send a chat message before leaving
-      console.log('Sending chat message...');
-      await takeScreenshot(page, '14-before-chat-message');
-      await page.locator('#chat-input').fill('Testing');
-      await takeScreenshot(page, '15-chat-message-filled');
+      // Get room ID from URL for second user
+      const url = firstUserPage.url();
+      roomId = new URL(url).searchParams.get('room');
+      console.log('Room created with ID:', roomId);
+
+      // Create second user context
+      console.log('Setting up second user...');
+      const secondUserContext = await browser.newContext({
+        viewport: { width: 1280, height: 800 },
+        ignoreHTTPSErrors: true,
+        headless: false,
+        slowMo: 100,
+      });
       
-      console.log('Clicking send button...');
-      await page.locator('#send-message-btn').click();
-      await page.waitForLoadState('networkidle');
-      await takeScreenshot(page, '16-message-sent');
-
-      // Leave the room
-      console.log('Leaving the room...');
-      await takeScreenshot(page, '17-before-leave-room');
-      await page.locator('#leave-room-btn').click();
-      await page.waitForLoadState('networkidle');
-      await takeScreenshot(page, '18-after-leave-room');
+      const secondUserPage = await secondUserContext.newPage();
+      
+      try {
+        // Second user joins the room
+        console.log('Second user joining the room...');
+        await secondUserPage.goto(`http://localhost:8765/js/modules/webrtc-dashboard/index.html?room=${roomId}`);
+        await secondUserPage.waitForLoadState('networkidle');
+        await takeScreenshot(secondUserPage, '14-second-user-join-page');
+        
+        // Second user enters name and joins room
+        console.log('Second user entering name...');
+        await secondUserPage.locator('#user-name').fill('SecondUser');
+        await secondUserPage.locator('#save-name-btn').click();
+        await secondUserPage.waitForLoadState('networkidle');
+        await takeScreenshot(secondUserPage, '15-second-user-name-entered');
+        
+        console.log('Second user clicking Join Room button...');
+        await secondUserPage.locator('.join-btn').click();
+        await secondUserPage.waitForLoadState('networkidle');
+        await takeScreenshot(secondUserPage, '16-second-user-join-requested');
+        
+        // First user approves the join request
+        console.log('First user approving join request...');
+        await takeScreenshot(firstUserPage, '17-first-user-before-approval');
+        await firstUserPage.locator('.approve-btn').first().click();
+        await firstUserPage.waitForLoadState('networkidle');
+        await takeScreenshot(firstUserPage, '18-first-user-approved-request');
+        
+        // Wait for second user to be fully joined
+        await secondUserPage.waitForLoadState('networkidle');
+        await takeScreenshot(secondUserPage, '19-second-user-joined-room');
+        
+        // First user sends a message
+        console.log('First user sending message...');
+        await firstUserPage.locator('#chat-input').fill('Hello from FirstUser');
+        await takeScreenshot(firstUserPage, '20-first-user-message-typed');
+        await firstUserPage.locator('#send-message-btn').click();
+        await firstUserPage.waitForLoadState('networkidle');
+        await takeScreenshot(firstUserPage, '21-first-user-message-sent');
+        
+        // Second user sends a reply
+        console.log('Second user replying...');
+        await secondUserPage.locator('#chat-input').fill('Hello from SecondUser');
+        await takeScreenshot(secondUserPage, '22-second-user-reply-typed');
+        await secondUserPage.locator('#send-message-btn').click();
+        await secondUserPage.waitForLoadState('networkidle');
+        await takeScreenshot(secondUserPage, '23-second-user-reply-sent');
+        
+        // Verify messages are visible to both users
+        await expect(firstUserPage.locator('.chat-message:has-text("Hello from SecondUser")')).toBeVisible();
+        await expect(secondUserPage.locator('.chat-message:has-text("Hello from FirstUser")')).toBeVisible();
+        
+        // Second user leaves
+        console.log('Second user leaving...');
+        await takeScreenshot(secondUserPage, '24-second-user-before-leave');
+        await secondUserPage.locator('#leave-room-btn').click();
+        await secondUserPage.waitForLoadState('networkidle');
+        await takeScreenshot(secondUserPage, '25-second-user-left');
+        
+        // First user leaves
+        console.log('First user leaving...');
+        await takeScreenshot(firstUserPage, '26-first-user-before-leave');
+        await firstUserPage.locator('#leave-room-btn').click();
+        await firstUserPage.waitForLoadState('networkidle');
+        await takeScreenshot(firstUserPage, '27-first-user-left');
+        
+      } finally {
+        // Clean up second user context
+        if (secondUserPage && !secondUserPage.isClosed()) {
+          await secondUserPage.close();
+        }
+        if (secondUserContext) {
+          await secondUserContext.close();
+        }
+      }
       
       // Final verification
-      await page.waitForTimeout(1000);
-      await takeScreenshot(page, '16-test-complete');
+      await firstUserPage.waitForTimeout(1000);
+      await takeScreenshot(firstUserPage, '28-test-complete');
       
       const testEndTime = new Date();
       const testDuration = (testEndTime - testStartTime) / 1000;
@@ -134,12 +207,12 @@ testWithConfig.describe('PKC Website Navigation Test', () => {
       
     } catch (error) {
       console.error('Test failed:', error);
-      await takeScreenshot(page, 'error-test-failed');
+      await takeScreenshot(firstUserPage, 'error-test-failed');
       throw error;
     } finally {
       // Close context
-      if (page && !page.isClosed()) {
-        await page.close();
+      if (firstUserPage && !firstUserPage.isClosed()) {
+        await firstUserPage.close();
       }
       if (context) {
         await context.close();
