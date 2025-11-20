@@ -18,7 +18,9 @@ export class RoomService {
         
         this.rooms = new Map(); // roomId -> room data
         this.localRooms = new Set(); // rooms created by this client
+        this.roomConnectionManagers = new Map(); // roomId -> RoomConnectionManager
         this.eventHandlers = new Map();
+        this.currentUserId = null; // Current user's ID
         
         this.channelName = 'webrtc-dashboard-rooms';
         this.isInitialized = false;
