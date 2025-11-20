@@ -156,6 +156,19 @@ app.get('/api/env', (req, res) => {
     }
 });
 
+// Serve configuration endpoint (CRITICAL for WebSocket URL configuration)
+app.get('/api/config', (req, res) => {
+    const config = {
+        WEBSOCKET_URL: process.env.WEBSOCKET_URL || null,
+        NODE_ENV: process.env.NODE_ENV || 'development',
+        PORT: process.env.PORT || 3000
+    };
+    
+    console.log('[Server] Serving /api/config:', config);
+    
+    res.json(config);
+});
+
 // Start server
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, '0.0.0.0', () => {
