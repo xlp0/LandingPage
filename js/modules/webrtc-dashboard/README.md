@@ -352,6 +352,221 @@ stateDiagram-v2
     Reconnecting --> Closed: Max retries exceeded
 ```
 
+### Detailed User A & User B Connection Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant A as 👤 User A<br/>(Host)
+    participant A_UI as User A<br/>Browser UI
+    participant A_RS as User A<br/>RoomService
+    participant A_RCM as User A<br/>RoomConnectionManager
+    participant WS as 🌐 WebSocket<br/>Server
+    participant B_RS as User B<br/>RoomService
+    participant B_RCM as User B<br/>RoomConnectionManager
+    participant B_UI as User B<br/>Browser UI
+    participant B as 👤 User B<br/>(Joiner)
+    
+    Note over A,B: PHASE 1: Room Creation by User A
+    A->>A_UI: Opens dashboard
+    A->>A_UI: Clicks "Create Room"
+    A->>A_UI: Enters room name "Team Chat"
+    A_UI->>A_RS: createRoom({name: "Team Chat"})
+    A_RS->>A_RS: Generate roomId: "room-abc123"
+    A_RS->>A_RCM: Initialize RoomConnectionManager
+    A_RCM->>A_RCM: Setup WebRTC signaling handlers
+    A_RS->>WS: Subscribe to channels
+    activate WS
+    A_RS->>WS: Broadcast "room-created"
+    WS-->>B_RS: Forward "room-created"
+    deactivate WS
+    A_UI->>A: Shows "Room created! You are the host"
+    
+    Note over A,B: PHASE 2: Room Discovery by User B
+    B->>B_UI: Opens dashboard
+    B_UI->>B_RS: Request room list
+    B_RS->>WS: Subscribe to channels
+    activate WS
+    B_RS->>WS: Broadcast "room-list-request"
+    WS-->>A_RS: Forward "room-list-request"
+    A_RS->>WS: Broadcast "room-created" (response)
+    WS-->>B_RS: Forward "room-created"
+    deactivate WS
+    B_RS->>B_UI: Update room list
+    B_UI->>B: Shows "Team Chat" in available rooms
+    
+    Note over A,B: PHASE 3: User B Joins Room
+    B->>B_UI: Clicks "Join Room" on "Team Chat"
+    B_UI->>B_RS: joinRoom("room-abc123", {name: "User B"})
+    B_RS->>B_RS: Add self to room.participants
+    B_RS->>WS: Broadcast "user-joined-room"
+    activate WS
+    WS-->>A_RS: Forward "user-joined-room"
+    deactivate WS
+    B_UI->>B: Shows "Joining room..."
+    
+    Note over A,B: PHASE 4: Host Initiates WebRTC Connection
+    A_RS->>A_RS: _handleUserJoinedRoom(message)
+    A_RS->>A_RS: Check: Is this my room? ✅ Yes
+    A_RS->>A_RCM: createOffer("user-b-id")
+    A_RCM->>A_RCM: Create RTCPeerConnection
+    A_RCM->>A_RCM: Create DataChannel "chat"
+    A_RCM->>A_RCM: Generate SDP Offer
+    A_RCM->>A_RCM: Set Local Description
+    A_RCM->>WS: Send WebRTC Offer to User B
+    activate WS
+    WS-->>B_RCM: Forward WebRTC Offer
+    deactivate WS
+    A_UI->>A: Shows "User B is joining..."
+    
+    Note over A,B: PHASE 5: User B Processes Offer & Creates Answer
+    B_RCM->>B_RCM: handleOffer(offer)
+    B_RCM->>B_RCM: Create RTCPeerConnection
+    B_RCM->>B_RCM: Set Remote Description (Offer)
+    B_RCM->>B_RCM: Generate SDP Answer
+    B_RCM->>B_RCM: Set Local Description
+    B_RCM->>WS: Send WebRTC Answer to User A
+    activate WS
+    WS-->>A_RCM: Forward WebRTC Answer
+    deactivate WS
+    
+    Note over A,B: PHASE 6: Host Processes Answer
+    A_RCM->>A_RCM: handleAnswer(answer)
+    A_RCM->>A_RCM: Set Remote Description (Answer)
+    
+    Note over A,B: PHASE 7: ICE Candidate Exchange
+    A_RCM->>A_RCM: Gather ICE candidates
+    A_RCM->>WS: Send ICE candidates
+    activate WS
+    WS-->>B_RCM: Forward ICE candidates
+    deactivate WS
+    B_RCM->>B_RCM: Add ICE candidates
+    
+    B_RCM->>B_RCM: Gather ICE candidates
+    B_RCM->>WS: Send ICE candidates
+    activate WS
+    WS-->>A_RCM: Forward ICE candidates
+    deactivate WS
+    A_RCM->>A_RCM: Add ICE candidates
+    
+    Note over A,B: PHASE 8: P2P Connection Established
+    A_RCM->>A_RCM: ICE Connection: checking → connected
+    B_RCM->>B_RCM: ICE Connection: checking → connected
+    A_RCM->>A_RCM: DataChannel: connecting → open
+    B_RCM->>B_RCM: DataChannel: connecting → open
+    A_RCM->>A_UI: onPeerConnected("user-b-id")
+    B_RCM->>B_UI: onPeerConnected("user-a-id")
+    A_UI->>A: Shows "User B connected ✅"
+    B_UI->>B: Shows "Connected to room ✅"
+    
+    Note over A,B: PHASE 9: Direct P2P Messaging
+    rect rgb(200, 255, 200)
+        Note over A,B: WebSocket no longer needed for messages!
+        A->>A_UI: Types "Hello User B!"
+        A_UI->>A_RCM: sendMessage("Hello User B!")
+        A_RCM-->>B_RCM: Direct P2P DataChannel
+        B_RCM->>B_UI: Display message
+        B_UI->>B: Shows "User A: Hello User B!"
+        
+        B->>B_UI: Types "Hi User A!"
+        B_UI->>B_RCM: sendMessage("Hi User A!")
+        B_RCM-->>A_RCM: Direct P2P DataChannel
+        A_RCM->>A_UI: Display message
+        A_UI->>A: Shows "User B: Hi User A!"
+    end
+    
+    Note over A,B: ✅ Connection Complete - All messages now P2P!
+```
+
+### User A & User B Connection Timeline
+
+```mermaid
+gantt
+    title WebRTC Connection Establishment Timeline
+    dateFormat X
+    axisFormat %L ms
+    
+    section User A (Host)
+    Opens Dashboard           :a1, 0, 100
+    Creates Room              :a2, 100, 200
+    Initializes WebRTC        :a3, 200, 300
+    Broadcasts Room           :a4, 300, 400
+    Waits for Joiner          :a5, 400, 1000
+    Receives Join Event       :a6, 1000, 1100
+    Creates Offer             :a7, 1100, 1300
+    Sends Offer               :a8, 1300, 1400
+    Waits for Answer          :a9, 1400, 1700
+    Receives Answer           :a10, 1700, 1800
+    ICE Exchange              :a11, 1800, 2200
+    Connection Established    :crit, a12, 2200, 2400
+    Ready to Chat             :done, a13, 2400, 2500
+    
+    section User B (Joiner)
+    Opens Dashboard           :b1, 500, 600
+    Sees Room List            :b2, 600, 900
+    Clicks Join Room          :b3, 900, 1000
+    Broadcasts Join           :b4, 1000, 1100
+    Waits for Offer           :b5, 1100, 1400
+    Receives Offer            :b6, 1400, 1500
+    Creates Answer            :b7, 1500, 1700
+    Sends Answer              :b8, 1700, 1800
+    ICE Exchange              :b9, 1800, 2200
+    Connection Established    :crit, b10, 2200, 2400
+    Ready to Chat             :done, b11, 2400, 2500
+    
+    section WebSocket Server
+    Relays room-created       :ws1, 300, 400
+    Relays room-list-request  :ws2, 600, 700
+    Relays user-joined-room   :ws3, 1000, 1100
+    Relays WebRTC Offer       :ws4, 1300, 1400
+    Relays WebRTC Answer      :ws5, 1700, 1800
+    Relays ICE Candidates     :ws6, 1800, 2200
+    No longer needed          :done, ws7, 2200, 2500
+```
+
+### Connection State Transitions
+
+```mermaid
+graph LR
+    subgraph "User A (Host) States"
+        A1[Idle] --> A2[Room Created]
+        A2 --> A3[Waiting for Joiner]
+        A3 --> A4[Creating Offer]
+        A4 --> A5[Offer Sent]
+        A5 --> A6[Waiting Answer]
+        A6 --> A7[Answer Received]
+        A7 --> A8[ICE Exchange]
+        A8 --> A9[Connected ✅]
+        A9 --> A10[Chatting]
+    end
+    
+    subgraph "User B (Joiner) States"
+        B1[Idle] --> B2[Browsing Rooms]
+        B2 --> B3[Joining Room]
+        B3 --> B4[Join Sent]
+        B4 --> B5[Waiting Offer]
+        B5 --> B6[Offer Received]
+        B6 --> B7[Creating Answer]
+        B7 --> B8[Answer Sent]
+        B8 --> B9[ICE Exchange]
+        B9 --> B10[Connected ✅]
+        B10 --> B11[Chatting]
+    end
+    
+    subgraph "Synchronization Points"
+        A3 -.->|user-joined-room| B4
+        A5 -.->|WebRTC Offer| B5
+        B8 -.->|WebRTC Answer| A6
+        A8 <-.->|ICE Candidates| B9
+        A9 <-.->|P2P Messages| B10
+    end
+    
+    style A9 fill:#90EE90
+    style B10 fill:#90EE90
+    style A10 fill:#87CEEB
+    style B11 fill:#87CEEB
+```
+
 ## User Flow
 
 ### Room Creation Flow (Anyone can create)
