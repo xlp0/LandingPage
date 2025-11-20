@@ -1,75 +1,95 @@
-name: Playwright Tests with Node.js
+name: Playwright Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
 
 jobs:
-  test:
-    name: Run Playwright tests
+  playwright-tests:
+    timeout-minutes: 60
     runs-on: ubuntu-latest
-    container: node:18-alpine
-
-    services:
-      app:
-        image: node:18-alpine
-        ports:
-          - "3000:3000"  # HTTP server
-        env:
-          NODE_ENV: test
-        volumes:
-          - .:/app
-        working-directory: /app
-        run: |
-          apk add --no-cache curl
-          npm install
-          node unified-server.js &
-          while ! curl -s http://localhost:3000 >/dev/null; do
-            echo "Waiting for server to start..."
-            sleep 2
-          done
-          echo "Server is ready!"
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        fetch-depth: 0
+        node-version: '18'
+        cache: 'npm'
 
     - name: Install dependencies
-      run: |
-        apk add --no-cache curl
-        npm install
-        npx playwright install --with-deps
+      run: npm ci
 
-    - name: Run Playwright tests
-      env:
-        BASE_URL: http://localhost:3000
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps chromium
+
+    - name: Install Docker Compose
       run: |
-        npx playwright test tests/test-webrtc-dashboard-create-room.spec.js \
-          --workers=1 \
-          --timeout=60000 \
-          --output=test-results \
-          --reporter=html,line
+        sudo curl -L "https://github.com/docker/compose/releases/download/v2.21.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+        docker-compose --version
+
+    - name: Start services with Docker Compose
+      working-directory: ./playwright-tests
+      run: docker-compose up -d
+
+    - name: Install PKC dependencies
+      working-directory: ./
+      run: npm install
+
+    - name: Wait for PKC app to be ready
+      run: |
+        echo "Waiting for PKC app to be ready..."
+        timeout 120 bash -c 'until curl -f http://localhost:8765; do sleep 2; done' || (echo "PKC app failed to start" && exit 1)
+        echo "✅ PKC app is ready"
+
+    - name: Run PKC tests
+      run: npx playwright test playwright-tests/PKC_test.spec.js
+      env:
+        MCARD_BASE_URL: http://localhost:49384/v1
+      continue-on-error: false
 
     - name: Upload test results
+      uses: actions/upload-artifact@v4
       if: always()
-      uses: actions/upload-artifact@v3
       with:
         name: playwright-report
-        path: playwright-report/
+        path: |
+          playwright-report/
+          test-results/
         retention-days: 30
 
-    - name: Upload test screenshots
+    - name: Upload test videos
+      uses: actions/upload-artifact@v4
       if: always()
-      uses: actions/upload-artifact@v3
+      with:
+        name: playwright-videos
+        path: test-results/**/*.webm
+        retention-days: 7
+
+    - name: Upload test screenshots
+      uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: playwright-screenshots
         path: test-results/**/*.png
-        retention-days: 30
+        retention-days: 7
+
+    - name: Upload error context
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: error-context
+        path: test-results/**/*.md
+        retention-days: 7
 
     - name: Stop services
       if: always()
-      run: pkill -f "node unified-server.js"
+      working-directory: ./playwright-tests
+      run: docker-compose down -v
