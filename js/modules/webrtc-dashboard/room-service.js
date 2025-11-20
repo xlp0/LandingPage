@@ -113,14 +113,22 @@ export class RoomService {
                 isHost: false
             });
             
-            // If this is a local room, update it
-            if (this.localRooms.has(roomId)) {
-                this._broadcastMessage('room-updated', this._sanitizeRoomForBroadcast(room));
-            }
+            // Broadcast that a new user joined (so existing participants can initiate WebRTC)
+            this._broadcastMessage('user-joined-room', {
+                roomId: roomId,
+                userId: userData.id,
+                userName: userData.name
+            });
             
-            // Establish WebRTC connection if room has offer
-            if (room.webrtcOffer && !this.localRooms.has(roomId)) {
-                await this._connectToRoom(room, userData);
+            // If this is a local room (we're the host), initiate WebRTC connection to the new joiner
+            if (this.localRooms.has(roomId)) {
+                console.log('[RoomService] 🤝 Host initiating WebRTC connection to new joiner:', userData.id);
+                const roomConnectionManager = this.roomConnectionManagers.get(roomId);
+                if (roomConnectionManager) {
+                    // Create offer for the new participant
+                    await roomConnectionManager.createOffer(userData.id);
+                }
+                this._broadcastMessage('room-updated', this._sanitizeRoomForBroadcast(room));
             }
             
             this._emitRoomListUpdate();
