@@ -349,7 +349,32 @@ export class DashboardManager {
         `;
         
         card.querySelector('.join-btn').addEventListener('click', async () => {
-            await this.requestToJoin(room.id);
+            try {
+                console.log('[Dashboard] Joining room:', room.id);
+                
+                // Directly join the room (skip approval for now)
+                await this.roomService.joinRoom(room.id, this.currentUser);
+                
+                // Update room manager state
+                const joinedRoom = this.roomService.getRoom(room.id);
+                if (joinedRoom) {
+                    this.roomManager.currentRoom = joinedRoom;
+                    this.roomManager.isHost = false;
+                }
+                
+                // Join chat
+                await this.chatManager.joinRoom(room.id, this.currentUser);
+                
+                // Update UI
+                this._showChatView();
+                this._updateParticipantsList();
+                this._showNotification('✅ Joined room successfully!', 'success');
+                
+                console.log('[Dashboard] ✅ Successfully joined room via WebRTC');
+            } catch (error) {
+                console.error('[Dashboard] Failed to join room:', error);
+                this._showNotification('Failed to join room', 'error');
+            }
         });
         
         return card;
