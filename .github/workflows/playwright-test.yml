@@ -24,7 +24,7 @@ jobs:
         volumes:
           - .:/app
         working-directory: /app
-        # Install dependencies and start the servers
+        # Install dependencies and start the server
         run: |
           apk add --no-cache curl
           npm install
