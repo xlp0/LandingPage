@@ -3,7 +3,14 @@ const { WebSocketServer } = require('ws');
 const http = require('http');
 const cors = require('cors');
 const path = require('path');
-require('dotenv').config(); // Load .env file
+
+// Load .env file if it exists (optional)
+try {
+    require('dotenv').config();
+} catch (error) {
+    // dotenv not installed or .env not found - that's ok
+    // Environment variables can be set via docker-compose or system
+}
 
 const app = express();
 
