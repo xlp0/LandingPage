@@ -6,6 +6,7 @@ import { DiscoveryManager } from '../p2p-serverless/discovery.js';
 import { resolveP2PConfig } from '../p2p-serverless/config.js';
 import { getSharedBroadcastService } from './shared-broadcast.js';
 import { RoomConnectionManager } from './managers/room-connection-manager.js';
+import { WebRTCSignaling } from './managers/webrtc-signaling.js';
 
 export class RoomService {
     constructor() {
@@ -42,6 +43,9 @@ export class RoomService {
             
             // Initialize broadcast service for room discovery
             this._initializeBroadcastService();
+            
+            // Initialize WebRTC signaling service (for offer/answer/ICE exchange)
+            await this._initializeSignaling();
             
             // Setup cleanup on page unload
             this._setupCleanup();
@@ -276,6 +280,10 @@ export class RoomService {
             this._handleJoinRequest(data);
         });
         
+        this.broadcastService.on('user-joined-room', (data) => {
+            this._handleUserJoinedRoom(data);
+        });
+        
         // Test the service
         setTimeout(() => {
             console.log('[RoomService] 🧪 Testing BroadcastService...');
@@ -284,7 +292,15 @@ export class RoomService {
             });
         }, 1500);
         
-        console.log('[RoomService] BroadcastService initialized');
+        console.log('[RoomService] Broadcast service initialized');
+    }
+    
+    async _initializeSignaling() {
+        // Create a global signaling service for this RoomService instance
+        // Individual RoomConnectionManagers will use this
+        this.signaling = new WebRTCSignaling('global', this.currentUserId || 'unknown');
+        await this.signaling.init();
+        console.log('[RoomService] WebRTC signaling initialized');
     }
     
     _setupP2PEventHandlers() {
