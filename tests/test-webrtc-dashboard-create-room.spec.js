@@ -25,8 +25,6 @@ testWithConfig.describe('PKC Website Navigation Test', () => {
     
     await page.goto('http://localhost:8765');
     await page.waitForTimeout(3000);
-    await takeScreenshot('1-screenshot');
-    await page.waitForTimeout(1000);
     await page.waitForLoadState('networkidle');
     
     await page.waitForSelector('[data-anime="main-content"]', { timeout: 10000 });
