@@ -13,8 +13,8 @@ export class RoomMessageHandler {
      * Initialize message handlers
      */
     init() {
-        this.broadcaster.onMessage((type, data) => {
-            this.handleMessage(type, data);
+        this.broadcaster.onMessage((type, data, fullMessage) => {
+            this.handleMessage(type, data, fullMessage);
         });
         
         console.log('[RoomMessageHandler] Initialized');
