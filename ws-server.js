@@ -69,6 +69,7 @@ function broadcastRoomList() {
     });
 
     console.log(`[Server] 📡 Broadcasting room list: ${roomList.length} rooms`);
+    console.log(`[Server] 📋 Room list data:`, JSON.stringify(roomList, null, 2));
 
     wss.clients.forEach(client => {
         if (client.readyState === client.OPEN && 
