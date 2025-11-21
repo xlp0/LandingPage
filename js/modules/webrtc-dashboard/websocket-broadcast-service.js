@@ -73,6 +73,11 @@ export class WebSocketBroadcastService {
                     const message = JSON.parse(event.data);
                     console.log('[WSBroadcast] 📨 Message received:', message.type, 'on', this.channelName);
                     
+                    // DEBUG: Log server-room-list messages
+                    if (message.type === 'server-room-list') {
+                        console.log('[WSBroadcast] 🔍 RAW server-room-list:', JSON.stringify(message, null, 2));
+                    }
+                    
                     // Only handle messages for our channel
                     if (message.channel === this.channelName) {
                         this._handleMessage(message);
