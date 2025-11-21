@@ -8,6 +8,10 @@ const app = express();
 
 // Enable CORS for all routes
 app.use(cors());
+
+// Serve static files from the current directory
+app.use(express.static(__dirname));
+
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server, path: '/ws/' });
 
@@ -164,14 +168,19 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Basic HTTP route
-app.get('/', (req, res) => {
+// Health check endpoint
+app.get('/health', (req, res) => {
     res.json({
         message: 'PKC WebSocket Gateway Server',
         status: 'running',
-        connected_clients: connectedClients.size,
-        health_check: '/health'
+        connected_clients: connectedClients.size
     });
+});
+
+// Root route serves index.html (static middleware will handle this automatically)
+// But we keep this as fallback
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Serve .env file as JSON endpoint
