@@ -439,10 +439,10 @@ describe('Room Service Integration', () => {
 
 ```
 webrtc-dashboard/
-├── room-service-v3.js          # Main orchestrator (244 lines)
-├── room-service.js             # Legacy (655 lines) - Keep for reference
+├── room-service-v3.js          # ✅ Main orchestrator (244 lines) - IN USE
+├── room-service.old.js         # 📦 Legacy backup (655 lines) - RENAMED
 │
-└── services/                   # New modular architecture
+└── services/                   # ✅ New modular architecture - IN USE
     ├── room-state.js           # State management
     ├── room-creator.js         # Room creation
     ├── room-joiner.js          # Room joining
@@ -452,6 +452,11 @@ webrtc-dashboard/
     ├── webrtc-coordinator.js   # WebRTC coordination
     └── room-message-handler.js # Message handling
 ```
+
+**Status:** 
+- ✅ `room-service-v3.js` is now the active implementation
+- 📦 `room-service.js` renamed to `room-service.old.js` for reference
+- All imports updated to use v3
 
 ---
 
@@ -491,10 +496,12 @@ If issues arise:
 
 ```javascript
 // Revert to old version
-import { RoomService } from './room-service.js'; // Old monolithic version
+import { RoomService } from './room-service.old.js'; // Old monolithic version (renamed)
 ```
 
-The old `room-service.js` is preserved for safety.
+The old monolithic version is preserved as `room-service.old.js` for safety and reference.
+
+**Note:** As of implementation, the old file has been renamed to `room-service.old.js` to avoid confusion.
 
 ---
 
