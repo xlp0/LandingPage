@@ -46,8 +46,11 @@ class RoomMessageHandler {
         const roomData = data.data || data;
         
         try {
+            console.log('[RoomMessageHandler] 🏠 Creating room:', roomData.name);
             this.roomRegistry.createRoom(roomData);
+            console.log('[RoomMessageHandler] 📡 Broadcasting room list after creation');
             this.broadcastRoomList();
+            console.log('[RoomMessageHandler] ✅ Room creation handled');
             return true; // Handled - don't relay
         } catch (error) {
             console.error('[RoomMessageHandler] Error creating room:', error);
