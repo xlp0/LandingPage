@@ -231,32 +231,6 @@ export class DashboardManager {
         this._showDashboardView();
     }
     
-    async _reconnectToRoom() {
-        if (!this.roomManager.currentRoom) {
-            this._showNotification('Not in a room', 'error');
-            return;
-        }
-        
-        try {
-            console.log('[Dashboard] 🔄 Reconnecting to room...');
-            this._showNotification('🔄 Reconnecting...', 'info');
-            
-            const roomId = this.roomManager.currentRoom.id;
-            
-            // Re-broadcast that we're in the room
-            await this.roomService.joinRoom(roomId, this.currentUser);
-            
-            // Rejoin chat (will trigger WebRTC reconnection)
-            await this.chatManager.joinRoom(roomId, this.currentUser);
-            
-            this._showNotification('✅ Reconnected!', 'success');
-            console.log('[Dashboard] ✅ Reconnection complete');
-            
-        } catch (error) {
-            console.error('[Dashboard] Reconnection failed:', error);
-            this._showNotification('❌ Reconnection failed', 'error');
-        }
-    }
     
     // UI Methods (keeping existing implementation)
     _initializeElements() {
@@ -265,7 +239,7 @@ export class DashboardManager {
             'require-approval', 'max-participants', 'create-room-btn',
             'refresh-rooms-btn', 'search-rooms', 'rooms-list',
             'chat-room-view', 'current-room-name', 'current-room-status',
-            'share-room-btn', 'reconnect-btn', 'transfer-host-btn', 'leave-room-btn',
+            'share-room-btn', 'transfer-host-btn', 'leave-room-btn',
             'participant-count', 'participants-list', 'host-controls',
             'chat-messages', 'chat-input', 'send-message-btn',
             'connection-indicator', 'connection-text', 'room-indicator', 'room-text'
@@ -337,11 +311,6 @@ export class DashboardManager {
         // Refresh rooms button
         this.elements['refresh-rooms-btn']?.addEventListener('click', () => {
             this.roomService.refreshRooms();
-        });
-        
-        // Reconnect button
-        this.elements['reconnect-btn']?.addEventListener('click', async () => {
-            await this._reconnectToRoom();
         });
         
         // Leave room button
