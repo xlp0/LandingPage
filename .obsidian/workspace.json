@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "js/modules/webrtc-dashboard/README.md",
+                "file": "docs/cubical-logic-model-for-webrtc.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "cubical-logic-model-for-webrtc"
             }
           }
         ]
@@ -185,16 +185,33 @@
   },
   "active": "bd45ebad09a1e0e6",
   "lastOpenFiles": [
-    "tests/test-webrtc-dashboard-multiple-rooms-and-users.spec.js",
+    "STUN-CONFIG-SUMMARY.md",
+    "CONFIGURATION.md",
+    "SHARE-WITH-FRIEND.md",
+    "STUN-SERVER-SETUP.md",
+    "start-stun.sh",
+    "coturn.conf",
+    "docker-compose.stun.yml",
+    "landing-page-file.html",
+    "js/vendor/tailwind.js",
+    "js/vendor/anime.min.js",
+    "js/vendor",
+    "js/modules/webrtc-dashboard/store/store.js",
+    "js/modules/webrtc-dashboard/store/connectionSlice.js",
+    "js/modules/webrtc-dashboard/store",
+    "tests/screenshots/console log A.md",
+    "tests/screenshots/console log B.md",
+    "tests/screenshots/console log copy.md",
+    "tests/screenshots/console log.md",
+    "docs/clm-think-structure.md",
+    "js/modules/webrtc-dashboard/README.md",
     "docs/Cubical Logic Model for WebRTC.md",
     "docs/CLM_Think_Structure.md",
     "docs/CLM_Structure_Diagram.md",
     "js/modules/webrtc-dashboard/SIGNALING_FIX.md",
     "js/modules/webrtc-dashboard/CLEANUP_PLAN.md",
     "js/modules/webrtc-dashboard/ARCHITECTURE_DIAGRAM.md",
-    "js/modules/webrtc-dashboard/README.md",
     "js/modules/webrtc-dashboard/DIAGRAM_TO_CODE_MAPPING.md",
-    "js/modules/webrtc-dashboard/validate-flow.js",
     "js/modules/webrtc-dashboard/INITIALIZATION_FLOW.md"
   ]
 }
