@@ -195,7 +195,7 @@
     <!-- Scripts -->
     <script type="module">
         // Load configuration first
-        import { loadConfig } from './config.js?v=1763704161';
+        import { loadConfig } from './config.js?v=1763704802';
         
         // Initialize dashboard when page loads
         document.addEventListener('DOMContentLoaded', async () => {
@@ -203,7 +203,7 @@
                 // Load config from server (sets window.__WEBSOCKET_URL__ if available)
                 await loadConfig();
                 
-                const { DashboardManager } = await import('./dashboard-manager-v2.js?v=1763704161');
+                const { DashboardManager } = await import('./dashboard-manager-v2.js?v=1763704802');
                 window.dashboard = new DashboardManager();
                 await window.dashboard.init();
                 
