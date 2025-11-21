@@ -680,20 +680,422 @@ graph LR
 - **Host Continuity**: Seamless host handover when host disconnects
 - **Mobile Responsive**: Works on desktop and mobile
 
+## Module Architecture
+
+### Overview
+The WebRTC Dashboard is organized into functional modules, each responsible for specific aspects of the system:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    WebRTC Dashboard                          │
+├─────────────────────────────────────────────────────────────┤
+│                                                               │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  UI Layer (index.html + dashboard-manager-v2.js)       │ │
+│  │  - User interface and interaction                       │ │
+│  │  - Event handling and DOM manipulation                  │ │
+│  └────────────────────────────────────────────────────────┘ │
+│                          │                                    │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  Service Layer                                          │ │
+│  │  ├─► RoomService (room-service.js)                     │ │
+│  │  ├─► ChatManager (chat-manager.js)                     │ │
+│  │  ├─► AccessControlManager (access-control-manager.js)  │ │
+│  │  └─► ParticipantManager (participant-manager.js)       │ │
+│  └────────────────────────────────────────────────────────┘ │
+│                          │                                    │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  WebRTC Layer                                           │ │
+│  │  ├─► RoomConnectionManager (managers/)                 │ │
+│  │  ├─► WebRTCSignaling (managers/)                       │ │
+│  │  └─► Perfect Negotiation Pattern                       │ │
+│  └────────────────────────────────────────────────────────┘ │
+│                          │                                    │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  Communication Layer                                    │ │
+│  │  ├─► WebSocketBroadcastService                         │ │
+│  │  ├─► SharedBroadcast                                    │ │
+│  │  └─► P2P Serverless Infrastructure                     │ │
+│  └────────────────────────────────────────────────────────┘ │
+│                                                               │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## RoomService Module Breakdown
+
+### File: `room-service.js` (655 lines)
+
+The RoomService is the central orchestrator for room management. Here's the functional breakdown:
+
+#### 1. **Initialization Module** (Lines 1-56)
+```javascript
+// Functions:
+- constructor()           // Initialize service state
+- init()                 // Setup P2P and broadcast services
+- _initializeP2P()       // Connect to P2P infrastructure
+- _initializeBroadcastService()  // Setup WebSocket channels
+- _setupCleanup()        // Register cleanup handlers
+
+// State:
+- rooms: Map              // All discovered rooms
+- localRooms: Set         // Rooms created by this client
+- roomConnectionManagers  // WebRTC managers per room
+- currentUserId           // Current user's ID
+- isInitialized           // Initialization flag
+```
+
+**Purpose**: Bootstrap the service, connect to infrastructure, prepare for room operations.
+
+---
+
+#### 2. **Room Creation Module** (Lines 57-95)
+```javascript
+// Functions:
+- createRoom(roomData)   // Create new room and broadcast
+
+// Workflow:
+1. Generate unique roomId
+2. Store room locally
+3. Broadcast 'room-created' to network
+4. Emit room list update event
+5. Return room object
+
+// Broadcasts:
+→ 'room-created': Notify all peers of new room
+```
+
+**Purpose**: Allow users to create rooms and become hosts.
+
+---
+
+#### 3. **Room Join Module** (Lines 101-152)
+```javascript
+// Functions:
+- joinRoom(roomId, userData)  // Join existing room
+
+// Workflow:
+1. Validate room exists
+2. Get existing participants BEFORE adding new user
+3. Add new user to room.participants
+4. Broadcast 'user-joined-room' with existingParticipants list
+5. Emit room list update
+
+// Broadcasts:
+→ 'user-joined-room': {
+    roomId,
+    userId,
+    userName,
+    existingParticipants: [{id, name, joinedAt}]
+  }
+```
+
+**Purpose**: Allow users to join rooms and notify existing participants.
+
+**CRITICAL**: Must get existing participants BEFORE adding new user to send correct list to joiner.
+
+---
+
+#### 4. **Room Leave Module** (Lines 154-171)
+```javascript
+// Functions:
+- leaveRoom(roomId)      // Leave room and cleanup
+
+// Workflow:
+1. Check if room exists
+2. If local room, broadcast removal
+3. Delete from rooms map
+4. Disconnect WebRTC connections
+5. Emit room list update
+
+// Broadcasts:
+→ 'room-removed': {roomId}
+```
+
+**Purpose**: Clean exit from rooms with proper cleanup.
+
+---
+
+#### 5. **Room Discovery Module** (Lines 173-202)
+```javascript
+// Functions:
+- startDiscovery()       // Begin discovering rooms
+- refreshRooms()         // Manual refresh
+- getRooms()            // Get all active rooms
+- getRoom(roomId)       // Get specific room
+
+// Workflow:
+1. Broadcast 'room-list-request' periodically
+2. Listen for 'room-created' responses
+3. Update local rooms map
+4. Handle visibility changes (tab active/inactive)
+
+// Broadcasts:
+→ 'room-list-request': Request all peers send their rooms
+← 'room-created': Response with room data
+```
+
+**Purpose**: Find available rooms across the network.
+
+---
+
+#### 6. **Event Handler Module** (Lines 204-218)
+```javascript
+// Functions:
+- onRoomListUpdated(handler)   // Subscribe to room list changes
+- onRoomJoinRequest(handler)   // Subscribe to join requests
+- on(eventName, handler)       // Generic event subscription
+- _addEventListener()          // Internal event registration
+- _emitEvent()                // Internal event emission
+- _emitRoomListUpdate()       // Emit room list change
+
+// Events:
+- 'roomListUpdated'    // Rooms changed
+- 'roomJoinRequest'    // Someone wants to join
+- 'user-joined-room'   // User joined a room
+```
+
+**Purpose**: Provide pub/sub event system for UI updates.
+
+---
+
+#### 7. **P2P Infrastructure Module** (Lines 220-248)
+```javascript
+// Functions:
+- _initializeP2P()      // Setup P2P connections
+- _connectToPeer(roomId, peerId)  // Establish peer connection
+- _disconnectFromRoom(roomId)     // Close all connections
+
+// Dependencies:
+- ConnectionManager     // From p2p-serverless
+- DiscoveryManager      // From p2p-serverless
+- resolveP2PConfig      // Configuration resolver
+
+// State:
+- connectionManager     // P2P connection handler
+- discoveryManager      // Peer discovery handler
+```
+
+**Purpose**: Integrate with existing P2P infrastructure.
+
+---
+
+#### 8. **Broadcast Service Module** (Lines 250-350)
+```javascript
+// Functions:
+- _initializeBroadcastService()  // Setup WebSocket broadcast
+- _broadcastMessage(type, data)  // Send message to network
+- _handleBroadcastMessage()      // Process incoming messages
+
+// Message Types:
+- 'room-created'         // New room available
+- 'room-removed'         // Room closed
+- 'room-list-request'    // Query for rooms
+- 'user-joined-room'     // User joined a room
+- 'user-left-room'       // User left a room
+
+// Channels:
+- 'webrtc-dashboard-rooms'  // Main channel for room ops
+```
+
+**Purpose**: Handle cross-tab and cross-peer communication.
+
+---
+
+#### 9. **Room List Management Module** (Lines 352-385)
+```javascript
+// Functions:
+- _handleRoomCreated(data)       // Add room to local list
+- _handleRoomRemoved(data)       // Remove room from list
+- _handleRoomListRequest(data)   // Respond with our rooms
+- _updateRoomParticipants()      // Sync participant counts
+
+// State Management:
+- rooms: Map<roomId, roomData>
+- localRooms: Set<roomId>
+
+// Data Flow:
+Peer A creates room
+  → Broadcast 'room-created'
+  → Peer B receives, adds to rooms map
+  → UI shows room in list
+```
+
+**Purpose**: Maintain synchronized room list across all peers.
+
+---
+
+#### 10. **User Join Handling Module** (Lines 387-450)
+```javascript
+// Functions:
+- _handleUserJoinedRoom(data)    // Process join event
+
+// Workflow:
+1. Check if user joined OUR room
+2. Get RoomConnectionManager for this room
+3. Check if we should initiate WebRTC:
+   - If myUserId < theirUserId: We create offer
+   - If myUserId > theirUserId: We wait for offer
+4. Call createOffer() or wait
+
+// WebRTC Initiation:
+→ Lower ID peer creates WebRTC offer
+→ Higher ID peer waits for offer
+→ Prevents simultaneous offers (collision)
+
+// States:
+- roomConnectionManagers: Map<roomId, RoomConnectionManager>
+```
+
+**Purpose**: Coordinate WebRTC connection establishment when users join.
+
+**CRITICAL**: Role-based initiation (lower ID offers) prevents offer collisions.
+
+---
+
+#### 11. **WebRTC Offer/Answer Module** (Lines 452-520)
+```javascript
+// Functions:
+- _handleWebRTCOffer(data)       // Process incoming offer
+- _handleWebRTCAnswer(data)      // Process incoming answer
+- _handleICECandidate(data)      // Process ICE candidates
+
+// WebRTC Flow:
+Host (lower ID):
+  1. createOffer()
+  2. Send offer via signaling
+  3. Wait for answer
+  4. Receive answer
+  5. Add ICE candidates
+  6. Connection established
+
+Joiner (higher ID):
+  1. Receive offer
+  2. createAnswer()
+  3. Send answer via signaling
+  4. Add ICE candidates
+  5. Connection established
+
+// Signaling Channel:
+'webrtc-signaling' - Separate channel for WebRTC messages
+```
+
+**Purpose**: Handle WebRTC signaling for connection establishment.
+
+---
+
+#### 12. **Utility Functions Module** (Lines 522-580)
+```javascript
+// Functions:
+- _generateRoomId()              // Create unique room ID
+- _sanitizeRoomForBroadcast()    // Prepare room data for network
+- _validateRoomData()            // Check room data validity
+- _log()                         // Logging utility
+
+// Helpers:
+- generateId()                   // From utils.js
+- timestamp()                    // Current time
+- sanitize()                     // Remove sensitive data
+```
+
+**Purpose**: Common utilities used across modules.
+
+---
+
+#### 13. **Cleanup Module** (Lines 582-620)
+```javascript
+// Functions:
+- _setupCleanup()                // Register cleanup handlers
+- _cleanup()                     // Perform cleanup
+- destroy()                      // Full service destruction
+
+// Cleanup Tasks:
+1. Stop discovery intervals
+2. Close all WebRTC connections
+3. Unsubscribe from broadcast channels
+4. Remove event listeners
+5. Clear state maps
+
+// Triggers:
+- Page unload (beforeunload)
+- Tab close (visibilitychange)
+- Manual destroy()
+```
+
+**Purpose**: Prevent memory leaks and clean shutdown.
+
+---
+
+#### 14. **State Management Module** (Lines 622-655)
+```javascript
+// State Objects:
+- rooms: Map<roomId, {
+    id: string,
+    name: string,
+    host: string,
+    participants: Array<{id, name, joinedAt, isHost}>,
+    createdAt: Date,
+    status: 'active' | 'closed'
+  }>
+
+- localRooms: Set<roomId>        // Rooms we created
+- roomConnectionManagers: Map<roomId, RoomConnectionManager>
+- eventHandlers: Map<eventName, Set<handler>>
+- currentUserId: string          // Our ID
+
+// State Transitions:
+NULL → INITIALIZING → INITIALIZED → ACTIVE → DESTROYED
+```
+
+**Purpose**: Central state management for the service.
+
+---
+
 ## File Structure
 
 ```
 webrtc-dashboard/
-├── README.md                    # This file
-├── index.html                   # Main dashboard page
-├── dashboard-manager.js         # Main dashboard controller
-├── room-service.js             # Room creation and management
-├── access-control-manager.js   # Join requests and approval
-├── chat-manager.js             # P2P chat functionality
-├── webrtc-handler.js           # WebRTC connection management
-├── ui-components.js            # Reusable UI components
-├── styles.css                  # Dashboard styling
-└── utils.js                    # Utility functions
+├── README.md                    # This file - Architecture documentation
+├── index.html                   # Main dashboard UI
+│
+├── Core Controllers
+│   ├── dashboard-manager-v2.js  # Main application controller
+│   └── config.js                # Configuration management
+│
+├── Service Layer
+│   ├── room-service.js          # Room management (14 modules, 655 lines)
+│   ├── chat-manager.js          # P2P chat and messaging
+│   ├── access-control-manager.js # Join requests and approval
+│   ├── participant-manager.js   # Participant tracking
+│   └── room-manager.js          # Room state management
+│
+├── WebRTC Layer (managers/)
+│   ├── room-connection-manager.js  # Per-room WebRTC connections
+│   └── webrtc-signaling.js         # WebRTC offer/answer signaling
+│
+├── Communication Layer
+│   ├── websocket-broadcast-service.js # WebSocket client
+│   ├── shared-broadcast.js            # Shared service instances
+│   └── validate-flow.js               # Message validation
+│
+├── UI Components
+│   ├── ui-components.js         # Reusable UI components
+│   └── styles.css               # Dashboard styling
+│
+├── Utilities
+│   └── utils.js                 # Helper functions
+│
+└── Documentation
+    ├── CLEANUP_TODO.md          # Cleanup tasks
+    ├── PRODUCTION_VERSION.md    # Production notes
+    ├── docs/
+    │   ├── architecture/
+    │   │   ├── webrtc-communication-design.md
+    │   │   └── webrtc-connection-handshake-flow.md
+    │   └── erros/
+    │       └── webrtc-reconnect-asymmetric-messaging-2025-11-21.md
+    └── DIAGRAM_TO_CODE_MAPPING.md
 ```
 
 ## Usage Examples
