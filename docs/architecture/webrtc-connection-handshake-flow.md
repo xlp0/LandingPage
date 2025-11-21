@@ -4,6 +4,10 @@
 **Version:** 2.0  
 **Status:** Debugging Connection Issues
 
+> **Note:** This Landing Page is part of the GovTech/PKC directory and is intended to be an ultra-lightweight static experience. It is *not* tied to THKMesh and therefore avoids complex networking infrastructure—everything required should work even when the page is loaded directly from file:// (e.g., localhost file access) without extra services.
+
+It also showcases a mesh networking experiment to demonstrate that Universal Plug and Play (UPnP) patterns can emerge from static web assets with minimal coordination services (e.g., simple signaling or discovery beacons) in any contextualized network environment. The goal is to prove that even without heavyweight servers, these Landing Pages can orchestrate peer discovery, NAT traversal cues, and data channels by relying solely on lightweight coordination points while keeping the core experience static and easily deployable.
+
 ---
 
 ## Current Problem
