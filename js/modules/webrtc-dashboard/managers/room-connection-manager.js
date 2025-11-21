@@ -209,9 +209,11 @@ export class RoomConnectionManager {
         const isPolite = this.userId < peerId;
         
         // Perfect Negotiation: Handle offer collision
+        // Only check signaling state if peer connection exists
+        const existingPeer = this.peers.get(peerId);
         const offerCollision = 
             (offer.type === 'offer') &&
-            (this.makingOffer.get(peerId) || this.peers.get(peerId)?.signalingState !== 'stable');
+            (this.makingOffer.get(peerId) || (existingPeer && existingPeer.signalingState !== 'stable'));
         
         this.ignoreOffer.set(peerId, !isPolite && offerCollision);
         
