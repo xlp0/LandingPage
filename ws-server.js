@@ -323,10 +323,20 @@ app.get('/api/env', (req, res) => {
 
 // Serve configuration endpoint (CRITICAL for WebSocket URL configuration)
 app.get('/api/config', (req, res) => {
+    // Parse STUN servers from environment variable
+    // Format: STUN_SERVERS=stun:server1.com:3478,stun:server2.com:3478
+    let stunServers = [];
+    if (process.env.STUN_SERVERS) {
+        stunServers = process.env.STUN_SERVERS.split(',').map(url => ({
+            urls: url.trim()
+        }));
+    }
+    
     const config = {
         WEBSOCKET_URL: process.env.WEBSOCKET_URL || null,
         NODE_ENV: process.env.NODE_ENV || 'development',
-        PORT: process.env.PORT || 3000
+        PORT: process.env.PORT || 3000,
+        STUN_SERVERS: stunServers.length > 0 ? stunServers : null
     };
     
     console.log('[Server] Serving /api/config:', config);
