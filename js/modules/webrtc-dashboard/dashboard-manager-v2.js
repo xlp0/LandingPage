@@ -396,7 +396,13 @@ export class DashboardManager {
             try {
                 console.log('[Dashboard] Joining room:', room.id);
                 
-                // Directly join the room (skip approval for now)
+                // CRITICAL: Setup ChatManager FIRST to create connection manager
+                // This must happen BEFORE broadcasting user-joined-room
+                console.log('[Dashboard] 🔧 Setting up WebRTC connection manager...');
+                await this.chatManager.joinRoom(room.id, this.currentUser);
+                
+                // THEN join the room via RoomService (broadcasts user-joined-room)
+                console.log('[Dashboard] 📢 Broadcasting join to room...');
                 await this.roomService.joinRoom(room.id, this.currentUser);
                 
                 // Update room manager state
@@ -405,9 +411,6 @@ export class DashboardManager {
                     this.roomManager.currentRoom = joinedRoom;
                     this.roomManager.isHost = false;
                 }
-                
-                // Join chat
-                await this.chatManager.joinRoom(room.id, this.currentUser);
                 
                 // Update UI
                 this._showChatView();
