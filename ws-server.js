@@ -158,6 +158,7 @@ wss.on('connection', (ws, req) => {
                 console.log(`[Server] 🏠 Room created: ${roomData.name} (${roomData.id})`);
                 console.log(`[Server] Total rooms: ${rooms.size}`);
                 broadcastRoomList();
+                return; // Don't relay - let server-room-list handle it
             }
             
             // Handle user-joined-room
@@ -188,6 +189,7 @@ wss.on('connection', (ws, req) => {
                     console.log(`[Server] 👤 User ${userName} joined room ${room.name}`);
                     console.log(`[Server] Room ${room.name} now has ${room.participants.size} participants`);
                     broadcastRoomList();
+                    return; // Don't relay - let server-room-list handle it
                 } else {
                     console.log(`[Server] ❌ Room not found:`, roomId);
                 }
@@ -218,6 +220,7 @@ wss.on('connection', (ws, req) => {
                     }
                     
                     broadcastRoomList();
+                    return; // Don't relay - let server-room-list handle it
                 }
             }
             
