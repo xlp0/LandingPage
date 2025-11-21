@@ -64,10 +64,16 @@ export class RoomMessageHandler {
      * @private
      */
     _handleServerRoomList(data, fullMessage) {
-        // Handle both message formats:
-        // Format 1: data = { rooms: [...] } (from WebSocket relay)
-        // Format 2: fullMessage = { rooms: [...] } (from server directly)
-        const roomList = (data && data.rooms) || (fullMessage && fullMessage.rooms) || [];
+        // Server sends: { type, channel, rooms: [...], timestamp }
+        // WebSocket extracts 'data' field (which doesn't exist), so data = undefined
+        // We need to use fullMessage.rooms instead
+        const roomList = (fullMessage && fullMessage.rooms) || (data && data.rooms) || [];
+        
+        console.log('[RoomMessageHandler] 🔍 DEBUG:', { 
+            dataRooms: data?.rooms, 
+            fullMessageRooms: fullMessage?.rooms,
+            roomListLength: roomList.length 
+        });
         
         if (!roomList || roomList.length === undefined) {
             console.error('[RoomMessageHandler] ❌ Invalid server room list format:', { data, fullMessage });
