@@ -25,6 +25,7 @@ export class WebRTCCoordinator {
         const { roomId, userId, userName } = data;
         
         console.log('[WebRTCCoordinator] 🎯 User joined:', userName);
+        console.log('[WebRTCCoordinator] 🔍 Data:', { roomId, userId, userName, currentUserId: this.currentUserId });
         
         // Don't connect to ourselves
         if (userId === this.currentUserId) {
@@ -32,12 +33,17 @@ export class WebRTCCoordinator {
             return;
         }
         
+        console.log('[WebRTCCoordinator] 🔎 Looking for connection manager for room:', roomId);
+        
         // Get connection manager for this room
         const connectionManager = this.roomState.getConnectionManager(roomId);
         if (!connectionManager) {
             console.log('[WebRTCCoordinator] ❌ No connection manager for room:', roomId);
+            console.log('[WebRTCCoordinator] 📋 Available rooms:', Array.from(this.roomState.roomConnectionManagers?.keys() || []));
             return;
         }
+        
+        console.log('[WebRTCCoordinator] ✅ Found connection manager for room:', roomId);
         
         // Check if already connected
         if (connectionManager.peers && connectionManager.peers.has(userId)) {
