@@ -184,9 +184,25 @@ export class DashboardManager {
     }
     
     _updateParticipantsList() {
-        const participants = Array.from(this.chatManager.getParticipants().values());
+        // Get participants from RoomService (authoritative source)
+        let participants = [];
+        
+        if (this.roomManager && this.roomManager.currentRoom) {
+            const room = this.roomService.getRoom(this.roomManager.currentRoom.id);
+            if (room && room.participants) {
+                participants = Array.isArray(room.participants) ? room.participants : Array.from(room.participants);
+                console.log('[Dashboard] 📋 Got participants from RoomService:', participants.length);
+            }
+        }
+        
+        // Fallback to ChatManager if RoomService doesn't have data yet
+        if (participants.length === 0 && this.chatManager) {
+            participants = Array.from(this.chatManager.getParticipants().values());
+            console.log('[Dashboard] 📋 Fallback to ChatManager participants:', participants.length);
+        }
+        
         console.log('[Dashboard] Updating participants list. Count:', participants.length);
-        console.log('[Dashboard] Participants:', participants.map(p => p.name));
+        console.log('[Dashboard] Participants:', participants.map(p => p.name || p.id));
         
         this.participantManager.updateParticipantsList(participants);
         
@@ -398,7 +414,7 @@ export class DashboardManager {
             <h3>${this._escapeHtml(room.name)}</h3>
             <p>${this._escapeHtml(room.description || 'No description')}</p>
             <div class="room-info">
-                <span>👤 ${room.participants?.length || 0}/${room.maxParticipants}</span>
+                <span>👤 ${room.participantCount || room.participants?.length || 0}/${room.maxParticipants || 10}</span>
                 <span>👑 ${this._escapeHtml(room.host)}</span>
             </div>
             <button class="join-btn" data-room-id="${room.id}">Join Room</button>
