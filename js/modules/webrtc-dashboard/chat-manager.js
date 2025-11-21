@@ -105,8 +105,8 @@ export class ChatManager {
         // NOTE: Join notifications are now handled by RoomService via user-joined-room broadcast
         // ChatManager only manages chat and participant display
         
-        // Send system message
-        this._addSystemMessage(`${userData.name} joined the room`);
+        // Don't add system message here - it will be added when we receive participant-joined event
+        // This prevents duplicate "joined the room" messages
         
         this._emitEvent('participantJoined', userData);
     }
