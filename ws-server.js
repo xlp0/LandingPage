@@ -302,8 +302,8 @@ app.use(express.static(__dirname));
 
 // Periodic room list broadcast (every 5 seconds)
 setInterval(() => {
-    if (rooms.size > 0) {
-        console.log(`[Server] 📡 Periodic broadcast: ${rooms.size} rooms`);
+    if (roomRegistry.getRoomCount() > 0) {
+        console.log(`[Server] 📡 Periodic broadcast: ${roomRegistry.getRoomCount()} rooms`);
         broadcastRoomList();
     }
 }, 5000);
