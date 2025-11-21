@@ -40,21 +40,36 @@ export class RoomConnectionManager {
     }
     
     async _loadIceServers() {
+        // Priority 1: Check for global STUN servers from environment (set by config.js)
+        if (window.__STUN_SERVERS__ && window.__STUN_SERVERS__.length > 0) {
+            this.iceServers = { iceServers: window.__STUN_SERVERS__ };
+            console.log('🌐 [RoomConnectionManager] Loaded ICE servers from environment:');
+            window.__STUN_SERVERS__.forEach((server, index) => {
+                console.log(`   ${index + 1}. ${server.urls}`);
+            });
+            return;
+        }
+        
+        // Priority 2: Try to load from app-config.json (fallback for local dev)
         try {
             const response = await fetch('/app-config.json');
             if (response.ok) {
                 const config = await response.json();
                 if (config.p2p && config.p2p.iceServers) {
                     this.iceServers = { iceServers: config.p2p.iceServers };
-                    console.log('🌐 [RoomConnectionManager] Loaded ICE servers from config:');
+                    console.log('🌐 [RoomConnectionManager] Loaded ICE servers from app-config.json:');
                     config.p2p.iceServers.forEach((server, index) => {
                         console.log(`   ${index + 1}. ${server.urls}`);
                     });
+                    return;
                 }
             }
         } catch (error) {
-            console.warn('[RoomConnectionManager] Could not load ICE servers from config, using defaults:', error.message);
+            console.warn('[RoomConnectionManager] Could not load ICE servers from app-config.json:', error.message);
         }
+        
+        // Priority 3: Use defaults (Google STUN)
+        console.log('🌐 [RoomConnectionManager] Using default ICE servers (Google STUN)');
     }
     
     async setUserId(userId) {
