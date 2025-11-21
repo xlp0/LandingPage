@@ -34,6 +34,11 @@ export class RoomManager {
         this.currentRoom = room;
         this.isHost = true;
         
+        // CRITICAL: Join the room via RoomService to add to participant list
+        console.log('[RoomManager] 👤 Creator joining their own room...');
+        await this.roomService.joinRoom(room.id, currentUser);
+        
+        // Then setup ChatManager for WebRTC connections
         await this.chatManager.joinRoom(room.id, currentUser);
         
         return room;
