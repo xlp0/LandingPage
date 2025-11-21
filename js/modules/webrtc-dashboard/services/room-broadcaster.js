@@ -28,6 +28,7 @@ export class RoomBroadcaster {
         
         // Listen to all message types on this channel
         const messageTypes = [
+            'server-room-list',  // CRITICAL: Listen for server's authoritative room list
             'room-created',
             'room-removed',
             'room-list-request',

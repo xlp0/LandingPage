@@ -56,6 +56,9 @@ export class RoomService {
             // Setup cleanup
             this._setupCleanup();
             
+            // Start room discovery to sync with server
+            this.discovery.startDiscovery();
+            
             this.isInitialized = true;
             console.log('[RoomService] ✅ Initialized successfully');
             
