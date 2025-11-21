@@ -162,13 +162,21 @@ wss.on('connection', (ws, req) => {
             
             // Handle user-joined-room
             if (data.type === 'user-joined-room' && data.channel === 'webrtc-dashboard-rooms') {
-                const { roomId, userId, userName } = data.data || data;
+                // Extract data - handle both formats
+                const messageData = data.data || data;
+                const { roomId, userId, userName } = messageData;
+                
+                console.log(`[Server] 📨 user-joined-room received:`, { roomId, userId, userName });
+                
                 const room = rooms.get(roomId);
                 if (room) {
                     // Check if user already in room
                     const existingIndex = Array.from(room.participants).findIndex(p => p.id === userId);
                     if (existingIndex === -1) {
                         room.participants.add({ id: userId, name: userName });
+                        console.log(`[Server] ✅ Added user to room`);
+                    } else {
+                        console.log(`[Server] ℹ️ User already in room`);
                     }
                     
                     // Track user's rooms
@@ -180,6 +188,8 @@ wss.on('connection', (ws, req) => {
                     console.log(`[Server] 👤 User ${userName} joined room ${room.name}`);
                     console.log(`[Server] Room ${room.name} now has ${room.participants.size} participants`);
                     broadcastRoomList();
+                } else {
+                    console.log(`[Server] ❌ Room not found:`, roomId);
                 }
             }
             
@@ -374,10 +384,19 @@ app.options('/api/config', (req, res) => {
 // This prevents static file middleware from intercepting API requests
 app.use(express.static(__dirname));
 
+// Periodic room list broadcast (every 5 seconds)
+setInterval(() => {
+    if (rooms.size > 0) {
+        console.log(`[Server] 📡 Periodic broadcast: ${rooms.size} rooms`);
+        broadcastRoomList();
+    }
+}, 5000);
+
 // Start server
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`PKC WebSocket Gateway Server running on port ${PORT}`);
     console.log(`WebSocket endpoint: ws://0.0.0.0:${PORT}/ws/`);
     console.log(`Connected clients: ${connectedClients.size}`);
+    console.log(`[Server] 📡 Periodic room list broadcast enabled (every 5 seconds)`);
 });
