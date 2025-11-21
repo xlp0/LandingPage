@@ -31,6 +31,14 @@ server.on('upgrade', (req, socket, head) => {
 // Track connected clients
 let connectedClients = new Set();
 
+// SERVER-SIDE ROOM REGISTRY
+// rooms = Map<roomId, { id, name, host, participants: Set<userId>, createdAt, ... }>
+const rooms = new Map();
+
+// Track which user is in which room
+// userRooms = Map<userId, Set<roomId>>
+const userRooms = new Map();
+
 // Function to broadcast client count to all connected clients
 function broadcastClientCount() {
     const count = connectedClients.size;
@@ -47,6 +55,37 @@ function broadcastClientCount() {
     });
 
     console.log(`Broadcasting client count: ${count} clients connected`);
+}
+
+// Function to broadcast room list to all clients on webrtc-dashboard-rooms channel
+function broadcastRoomList() {
+    const roomList = Array.from(rooms.values()).map(room => ({
+        id: room.id,
+        name: room.name,
+        description: room.description,
+        host: room.host,
+        hostId: room.hostId,
+        createdAt: room.createdAt,
+        participantCount: room.participants.size,
+        participants: Array.from(room.participants)
+    }));
+
+    const message = JSON.stringify({
+        type: 'server-room-list',
+        channel: 'webrtc-dashboard-rooms',
+        rooms: roomList,
+        timestamp: new Date().toISOString()
+    });
+
+    console.log(`[Server] Broadcasting room list: ${roomList.length} rooms`);
+
+    wss.clients.forEach(client => {
+        if (client.readyState === client.OPEN && 
+            client.channels && 
+            client.channels.has('webrtc-dashboard-rooms')) {
+            client.send(message);
+        }
+    });
 }
 
 // WebSocket connection handling
@@ -103,6 +142,82 @@ wss.on('connection', (ws, req) => {
                 return;
             }
             
+            // SERVER-SIDE ROOM MANAGEMENT
+            // Handle room-created
+            if (data.type === 'room-created' && data.channel === 'webrtc-dashboard-rooms') {
+                const roomData = data.data || data;
+                rooms.set(roomData.id, {
+                    id: roomData.id,
+                    name: roomData.name,
+                    description: roomData.description || '',
+                    host: roomData.host,
+                    hostId: roomData.hostId,
+                    createdAt: roomData.createdAt || new Date().toISOString(),
+                    participants: new Set() // Empty initially
+                });
+                console.log(`[Server] 🏠 Room created: ${roomData.name} (${roomData.id})`);
+                console.log(`[Server] Total rooms: ${rooms.size}`);
+                broadcastRoomList();
+            }
+            
+            // Handle user-joined-room
+            if (data.type === 'user-joined-room' && data.channel === 'webrtc-dashboard-rooms') {
+                const { roomId, userId, userName } = data.data || data;
+                const room = rooms.get(roomId);
+                if (room) {
+                    // Check if user already in room
+                    const existingIndex = Array.from(room.participants).findIndex(p => p.id === userId);
+                    if (existingIndex === -1) {
+                        room.participants.add({ id: userId, name: userName });
+                    }
+                    
+                    // Track user's rooms
+                    if (!userRooms.has(userId)) {
+                        userRooms.set(userId, new Set());
+                    }
+                    userRooms.get(userId).add(roomId);
+                    
+                    console.log(`[Server] 👤 User ${userName} joined room ${room.name}`);
+                    console.log(`[Server] Room ${room.name} now has ${room.participants.size} participants`);
+                    broadcastRoomList();
+                }
+            }
+            
+            // Handle user-left-room
+            if (data.type === 'user-left-room' && data.channel === 'webrtc-dashboard-rooms') {
+                const { roomId, userId } = data.data || data;
+                const room = rooms.get(roomId);
+                if (room) {
+                    // Remove user from room
+                    room.participants = new Set(
+                        Array.from(room.participants).filter(p => p.id !== userId)
+                    );
+                    
+                    // Remove room from user's rooms
+                    if (userRooms.has(userId)) {
+                        userRooms.get(userId).delete(roomId);
+                    }
+                    
+                    console.log(`[Server] 👋 User left room ${room.name}`);
+                    console.log(`[Server] Room ${room.name} now has ${room.participants.size} participants`);
+                    
+                    // If room is empty, remove it
+                    if (room.participants.size === 0) {
+                        rooms.delete(roomId);
+                        console.log(`[Server] 🗑️ Removed empty room: ${room.name}`);
+                    }
+                    
+                    broadcastRoomList();
+                }
+            }
+            
+            // Handle room-list-request
+            if (data.type === 'room-list-request' && data.channel === 'webrtc-dashboard-rooms') {
+                console.log(`[Server] 📋 Room list requested by client`);
+                broadcastRoomList();
+                return; // Don't relay this message
+            }
+            
             // Broadcast message to all clients subscribed to the same channel
             if (data.channel) {
                 console.log(`Broadcasting message type "${data.type}" on channel "${data.channel}"`);
@@ -147,6 +262,14 @@ wss.on('connection', (ws, req) => {
 
 // Health check endpoint (for Kubernetes probes and debugging)
 app.get('/health', (req, res) => {
+    const roomList = Array.from(rooms.values()).map(room => ({
+        id: room.id,
+        name: room.name,
+        host: room.host,
+        participantCount: room.participants.size,
+        participants: Array.from(room.participants)
+    }));
+    
     res.json({
         status: 'ok',
         version: process.env.GIT_SHA || process.env.npm_package_version || 'unknown',
@@ -155,7 +278,8 @@ app.get('/health', (req, res) => {
         endpoints: {
             websocket: '/ws/',
             config: '/api/config',
-            env: '/api/env'
+            env: '/api/env',
+            rooms: '/api/rooms'
         },
         environment: {
             NODE_ENV: process.env.NODE_ENV || 'development',
@@ -164,16 +288,32 @@ app.get('/health', (req, res) => {
         },
         websocket: {
             connected_clients: connectedClients.size
+        },
+        rooms: {
+            total: rooms.size,
+            list: roomList
         }
     });
 });
 
-// Health check endpoint
-app.get('/health', (req, res) => {
+// Rooms API endpoint
+app.get('/api/rooms', (req, res) => {
+    const roomList = Array.from(rooms.values()).map(room => ({
+        id: room.id,
+        name: room.name,
+        description: room.description,
+        host: room.host,
+        hostId: room.hostId,
+        createdAt: room.createdAt,
+        participantCount: room.participants.size,
+        participants: Array.from(room.participants)
+    }));
+    
+    res.header('Access-Control-Allow-Origin', '*');
     res.json({
-        message: 'PKC WebSocket Gateway Server',
-        status: 'running',
-        connected_clients: connectedClients.size
+        total: rooms.size,
+        rooms: roomList,
+        timestamp: new Date().toISOString()
     });
 });
 
