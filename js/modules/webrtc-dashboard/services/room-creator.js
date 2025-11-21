@@ -1,7 +1,7 @@
 // Room Creator Module
 // Handles room creation logic
 
-import { generateId } from '../utils.js';
+import { Utils } from '../utils.js';
 
 export class RoomCreator {
     constructor(roomState, broadcaster) {
@@ -50,7 +50,7 @@ export class RoomCreator {
      * @private
      */
     _generateRoomId() {
-        return 'room_' + generateId() + '_' + Date.now();
+        return Utils.generateId('room');
     }
     
     /**
