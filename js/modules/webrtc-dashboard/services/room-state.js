@@ -75,11 +75,18 @@ export class RoomState {
     
     // Connection manager registry
     setConnectionManager(roomId, manager) {
+        console.log('[RoomState] 🔧 Setting connection manager for room:', roomId);
+        console.log('[RoomState] 📦 Manager object:', manager ? 'exists' : 'null');
         this.roomConnectionManagers.set(roomId, manager);
+        console.log('[RoomState] ✅ Connection manager set. Total rooms:', this.roomConnectionManagers.size);
+        console.log('[RoomState] 📋 All rooms with managers:', Array.from(this.roomConnectionManagers.keys()));
     }
     
     getConnectionManager(roomId) {
-        return this.roomConnectionManagers.get(roomId);
+        const manager = this.roomConnectionManagers.get(roomId);
+        console.log('[RoomState] 🔍 Getting connection manager for room:', roomId, '→', manager ? 'FOUND' : 'NOT FOUND');
+        console.log('[RoomState] 📋 Available rooms:', Array.from(this.roomConnectionManagers.keys()));
+        return manager;
     }
     
     removeConnectionManager(roomId) {
