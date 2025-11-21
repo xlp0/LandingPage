@@ -111,6 +111,32 @@ export class WebSocketBroadcastService {
         }
     }
     
+    /**
+     * Wait for WebSocket connection to be established
+     * @returns {Promise<void>}
+     */
+    async waitForConnection() {
+        if (this.isReady) {
+            return Promise.resolve();
+        }
+        
+        return new Promise((resolve) => {
+            const checkInterval = setInterval(() => {
+                if (this.isReady) {
+                    clearInterval(checkInterval);
+                    resolve();
+                }
+            }, 50); // Check every 50ms
+            
+            // Timeout after 10 seconds
+            setTimeout(() => {
+                clearInterval(checkInterval);
+                console.warn('[WSBroadcast] ⚠️ Connection timeout, proceeding anyway');
+                resolve();
+            }, 10000);
+        });
+    }
+    
     send(type, data = {}) {
         const message = {
             type,

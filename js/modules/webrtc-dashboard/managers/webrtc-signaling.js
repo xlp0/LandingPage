@@ -17,6 +17,12 @@ export class WebRTCSignaling {
         // Use WebSocket ONLY for signaling
         this.signalingService = getSharedBroadcastService(this.channelName);
         
+        // CRITICAL: Wait for WebSocket to be connected before proceeding
+        // This ensures we can receive offers immediately after joining
+        console.log('[WebRTCSignaling] Waiting for WebSocket connection...');
+        await this.signalingService.waitForConnection();
+        console.log('[WebRTCSignaling] ✅ WebSocket connected and ready');
+        
         // Setup signaling message handlers
         // NOTE: Only filter by toUserId, not roomId (roomId is 'global' for shared signaling)
         this.signalingService.on('webrtc-offer', (data) => {
