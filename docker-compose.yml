@@ -12,8 +12,8 @@ services:
       # Examples:
       # - WEBSOCKET_URL=wss://dev.pkc.pub/ws/
       # - WEBSOCKET_URL=wss://pkc.pub/ws/
-      # Leave empty or remove to use auto-detection
-      - WEBSOCKET_URL=wss://henry.pkc.pub/ws/
+      # For local network testing (same WiFi):
+      - WEBSOCKET_URL=ws://192.168.1.149:8765/ws/
     volumes:
       - ./.env:/app/.env  # Mount .env file for runtime access (if exists)
     networks:

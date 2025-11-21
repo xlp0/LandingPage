@@ -16,13 +16,16 @@ export class RoomConnectionManager {
         this.makingOffer = new Map(); // peerId -> boolean
         this.ignoreOffer = new Map(); // peerId -> boolean
         
-        // ICE servers for NAT traversal
+        // ICE servers for NAT traversal - will be loaded from config
         this.iceServers = {
             iceServers: [
                 { urls: 'stun:stun.l.google.com:19302' },
                 { urls: 'stun:stun1.l.google.com:19302' }
             ]
         };
+        
+        // Load ICE servers from config
+        this._loadIceServers();
         
         console.log(`[RoomConnectionManager] Created for room: ${roomId}`);
         
@@ -33,6 +36,24 @@ export class RoomConnectionManager {
     _log(...args) {
         if (this._debugLog) {
             console.log(`[RoomConnection:${this.roomId.substring(0, 8)}]`, ...args);
+        }
+    }
+    
+    async _loadIceServers() {
+        try {
+            const response = await fetch('/app-config.json');
+            if (response.ok) {
+                const config = await response.json();
+                if (config.p2p && config.p2p.iceServers) {
+                    this.iceServers = { iceServers: config.p2p.iceServers };
+                    console.log('🌐 [RoomConnectionManager] Loaded ICE servers from config:');
+                    config.p2p.iceServers.forEach((server, index) => {
+                        console.log(`   ${index + 1}. ${server.urls}`);
+                    });
+                }
+            }
+        } catch (error) {
+            console.warn('[RoomConnectionManager] Could not load ICE servers from config, using defaults:', error.message);
         }
     }
     
@@ -75,6 +96,12 @@ export class RoomConnectionManager {
         // Initialize negotiation state
         this.makingOffer.set(peerId, false);
         this.ignoreOffer.set(peerId, false);
+        
+        // Log STUN servers being used
+        console.log(`🌐 [RoomConnectionManager] Creating peer connection with STUN servers:`);
+        this.iceServers.iceServers.forEach((server, index) => {
+            console.log(`   ${index + 1}. ${server.urls}`);
+        });
         
         const pc = new RTCPeerConnection(this.iceServers);
         this.peers.set(peerId, pc);
