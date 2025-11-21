@@ -21,7 +21,7 @@ const wss = new WebSocketServer({ server, path: '/ws/' });
 
 // Initialize room management
 const roomRegistry = new RoomRegistry();
-let roomMessageHandler;
+const roomMessageHandler = new RoomMessageHandler(roomRegistry, () => broadcastRoomList());
 
 // Log WebSocket upgrade attempts
 server.on('upgrade', (req, socket, head) => {
@@ -131,11 +131,6 @@ wss.on('connection', (ws, req) => {
                     timestamp: new Date().toISOString()
                 }));
                 return;
-            }
-            
-            // Initialize message handler on first use
-            if (!roomMessageHandler) {
-                roomMessageHandler = new RoomMessageHandler(roomRegistry, broadcastRoomList);
             }
             
             // Try to handle as room management message
