@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PKC Landing Page (Local File Mode)</title>
-<script src="js/vendor/anime.min.js"></script>
+  <script src="js/vendor/anime.min.js"></script>
+  <script src="js/vendor/tailwind.js"></script>
   <style>
     :root {
       color-scheme: dark;
@@ -136,6 +137,99 @@
       background: rgba(8, 12, 30, 0.9);
       font-size: 0.88rem;
     }
+
+    .playground-viewport {
+      width: 220px;
+      height: 220px;
+      margin: 0 auto;
+      perspective: 900px;
+    }
+
+    .cube {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(-18deg) rotateY(26deg);
+    }
+
+    .cube-face {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      top: 50%;
+      left: 50%;
+      margin: -60px 0 0 -60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #0f172a;
+      background: rgba(248, 250, 252, 0.96);
+      border-radius: 18px;
+      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.7);
+    }
+
+    .cube-front { transform: translateZ(60px); }
+    .cube-back { transform: rotateY(180deg) translateZ(60px); }
+    .cube-right { transform: rotateY(90deg) translateZ(60px); }
+    .cube-left { transform: rotateY(-90deg) translateZ(60px); }
+    .cube-top { transform: rotateX(90deg) translateZ(60px); }
+    .cube-bottom { transform: rotateX(-90deg) translateZ(60px); }
+
+    .playground-shell {
+      display: grid;
+      grid-template-areas:
+        '. top .'
+        'left cube right'
+        '. bottom .';
+      grid-template-columns: auto 1fr auto;
+      grid-template-rows: auto auto auto;
+      column-gap: 0.75rem;
+      row-gap: 0.5rem;
+      align-items: center;
+      justify-items: center;
+    }
+
+    .slider-top { grid-area: top; text-align: center; }
+    .slider-left,
+    .slider-right {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .slider-left { grid-area: left; }
+    .slider-right { grid-area: right; }
+    .slider-bottom { grid-area: bottom; width: 100%; text-align: center; }
+
+    .slider-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #e5e7eb;
+    }
+
+    .slider-readout {
+      display: block;
+      margin-top: 2px;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .slider-vert-track {
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slider-vert-track input[type="range"] {
+      transform: rotate(-90deg);
+      width: 160px;
+    }
   </style>
 </head>
 <body>
@@ -187,6 +281,68 @@
       </section>
     </section>
 
+    <section class="note" id="anime-playground">
+      <div class="tw-space-y-3 tw-mb-3">
+        <p class="tw-text-xs tw-font-semibold tw-tracking-[0.18em] tw-uppercase tw-text-slate-300">Animation Playground</p>
+        <p class="tw-text-sm tw-text-slate-100">
+          Use the four sliders around the cube to control rotation on X, Y, Z axes and its overall scale in real time.
+        </p>
+      </div>
+      <div class="tw-flex tw-justify-center tw-items-center">
+        <div class="playground-shell">
+          <label class="slider-top">
+            <span class="slider-label">Rotate X</span><br />
+            <input id="ap-rot-x" type="range" min="-180" max="180" step="15" value="-18" />
+            <span id="ap-rot-x-value" class="slider-readout">-18°</span>
+          </label>
+          <label class="slider-left">
+            <span class="slider-label">Rotate Y</span>
+            <div class="slider-vert-track">
+              <input id="ap-rot-y" type="range" min="-180" max="180" step="15" value="26" />
+            </div>
+            <span id="ap-rot-y-value" class="slider-readout">26°</span>
+          </label>
+          <label class="slider-right">
+            <span class="slider-label">Rotate Z</span>
+            <div class="slider-vert-track">
+              <input id="ap-rot-z" type="range" min="-180" max="180" step="15" value="0" />
+            </div>
+            <span id="ap-rot-z-value" class="slider-readout">0°</span>
+          </label>
+          <label class="slider-bottom">
+            <span class="slider-label">Scale</span><br />
+            <input id="ap-scale" type="range" min="0.6" max="1.8" step="0.1" value="1" class="tw-w-full" />
+            <span id="ap-scale-value" class="slider-readout">1.0×</span>
+          </label>
+          <div class="playground-viewport" style="grid-area: cube;">
+            <div id="ap-cube" class="cube">
+              <div class="cube-face cube-front">PKC</div>
+              <div class="cube-face cube-back">Docs</div>
+              <div class="cube-face cube-right">Mesh</div>
+              <div class="cube-face cube-left">P2P</div>
+              <div class="cube-face cube-top">Local</div>
+              <div class="cube-face cube-bottom">Static</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="note">
+      <div class="tw-p-4 tw-rounded-xl tw-bg-slate-900/60 tw-border tw-border-slate-600/70 tw-space-y-1">
+        <p class="tw-text-xs tw-font-semibold tw-tracking-[0.18em] tw-uppercase tw-text-slate-300">Tailwind &amp; Anime.js Demo</p>
+        <p class="tw-text-sm tw-text-slate-100">
+          This block is styled using a local Tailwind runtime (prefixed utility classes like
+          <code>tw-bg-slate-900/60</code>) and participates in the same anime.js entrance
+          animation sequence as the rest of the layout.
+        </p>
+        <div class="tw-flex tw-gap-2 tw-pt-1">
+          <span class="tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-emerald-500/20 tw-text-emerald-200 tw-text-[11px] tw-px-2 tw-py-0.5">tw-runtime</span>
+          <span class="tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-sky-500/20 tw-text-sky-200 tw-text-[11px] tw-px-2 tw-py-0.5">anime.js</span>
+        </div>
+      </div>
+    </section>
+
     <section class="note">
       <strong>Tip:</strong> For WebRTC + WebSocket features that truly require a
       network context (e.g. STUN/TURN, signaling, or Docker-backed services),
@@ -199,24 +355,88 @@
   </main>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      if (!window.anime) return;
+      const hasAnime = typeof window.anime === 'function';
 
-      anime({
-        targets: '.card',
-        opacity: [0, 1],
-        translateY: [24, 0],
-        duration: 900,
-        easing: 'easeOutExpo'
-      });
+      if (hasAnime) {
+        anime({
+          targets: '.card',
+          opacity: [0, 1],
+          translateY: [24, 0],
+          duration: 900,
+          easing: 'easeOutExpo'
+        });
 
-      anime({
-        targets: '.links .button',
-        opacity: [0, 1],
-        translateY: [12, 0],
-        delay: anime.stagger(70, { start: 450 }),
-        duration: 650,
-        easing: 'easeOutQuad'
-      });
+        anime({
+          targets: ['.links .button', '#anime-playground', '.note .tw-p-4'],
+          opacity: [0, 1],
+          translateY: [12, 0],
+          delay: anime.stagger(70, { start: 450 }),
+          duration: 650,
+          easing: 'easeOutQuad'
+        });
+      }
+
+      const rotXInput = document.getElementById('ap-rot-x');
+      const rotYInput = document.getElementById('ap-rot-y');
+      const rotZInput = document.getElementById('ap-rot-z');
+      const scaleInput = document.getElementById('ap-scale');
+      const cube = document.getElementById('ap-cube');
+
+      const rotXValue = document.getElementById('ap-rot-x-value');
+      const rotYValue = document.getElementById('ap-rot-y-value');
+      const rotZValue = document.getElementById('ap-rot-z-value');
+      const scaleValue = document.getElementById('ap-scale-value');
+
+      if (rotXInput && rotXValue) {
+        rotXInput.addEventListener('input', () => {
+          rotXValue.textContent = rotXInput.value + '°';
+        });
+      }
+
+      if (rotYInput && rotYValue) {
+        rotYInput.addEventListener('input', () => {
+          rotYValue.textContent = rotYInput.value + '°';
+        });
+      }
+
+      if (rotZInput && rotZValue) {
+        rotZInput.addEventListener('input', () => {
+          rotZValue.textContent = rotZInput.value + '°';
+        });
+      }
+
+      if (scaleInput && scaleValue) {
+        scaleInput.addEventListener('input', () => {
+          scaleValue.textContent = Number(scaleInput.value).toFixed(1) + '×';
+        });
+      }
+
+      function updateCube() {
+        if (typeof window.anime !== 'function' || !cube) return;
+
+        const rotX = rotXInput ? parseInt(rotXInput.value, 10) || 0 : 0;
+        const rotY = rotYInput ? parseInt(rotYInput.value, 10) || 0 : 0;
+        const rotZ = rotZInput ? parseInt(rotZInput.value, 10) || 0 : 0;
+        const scale = scaleInput ? parseFloat(scaleInput.value) || 1 : 1;
+
+        anime({
+          targets: cube,
+          rotateX: rotX,
+          rotateY: rotY,
+          rotateZ: rotZ,
+          scale,
+          duration: 400,
+          easing: 'easeOutQuad'
+        });
+      }
+
+      if (cube && rotXInput && rotYInput && rotZInput && scaleInput) {
+        updateCube();
+        rotXInput.addEventListener('input', updateCube);
+        rotYInput.addEventListener('input', updateCube);
+        rotZInput.addEventListener('input', updateCube);
+        scaleInput.addEventListener('input', updateCube);
+      }
     });
   </script>
 </body>
