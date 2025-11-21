@@ -138,12 +138,6 @@ testWithConfig('navigate through PKC website links', async ({ browser }, testInf
         await secondUserPage.waitForLoadState('networkidle');
         await secondUserPage.waitForTimeout(1000);
         
-        // First user approves the join request
-        console.log('First user approving join request...');
-        await firstUserPage.locator('.approve-btn').first().click();
-        await firstUserPage.waitForLoadState('networkidle');
-        await firstUserPage.waitForTimeout(1000);
-        
         // Wait for second user to be fully joined
         await secondUserPage.waitForLoadState('networkidle');
         await secondUserPage.waitForTimeout(1000);
