@@ -66,29 +66,32 @@ export class ChatManager {
             this._handleParticipantLeft(data);
         });
         
-        // Handle peer-ready signal (initiates WebRTC connection)
-        this.broadcastService.on('peer-ready', (data) => {
-            console.log('[ChatManager] ✅ Peer ready signal received:', data);
+        // Handle user-joined-room signal (initiates WebRTC connection)
+        // This is more reliable than peer-ready because it's already working
+        // Listen on the rooms channel where this message is broadcast
+        const roomsBroadcast = getSharedBroadcastService('webrtc-dashboard-rooms');
+        roomsBroadcast.on('user-joined-room', (data) => {
+            console.log('[ChatManager] 🎯 User joined room signal received:', data);
             console.log('[ChatManager] My user ID:', this.currentUser?.id);
-            console.log('[ChatManager] Signal from user ID:', data.userId);
+            console.log('[ChatManager] Joined user ID:', data.userId);
             
-            // CRITICAL: Ignore our own peer-ready signal!
+            // CRITICAL: Ignore our own join signal!
             if (data.userId === this.currentUser?.id) {
-                console.log('[ChatManager] Ignoring own peer-ready signal');
+                console.log('[ChatManager] Ignoring own join signal');
                 return;
             }
             
             // Only handle if it's for our current room
             if (data.roomId !== this.currentRoom) {
-                console.log('[ChatManager] Ignoring peer-ready for different room');
+                console.log('[ChatManager] Ignoring join for different room');
                 return;
             }
             
-            console.log('[ChatManager] Initiating WebRTC connection to ready peer:', data.userId);
+            console.log('[ChatManager] 🚀 Initiating WebRTC connection to joined user:', data.userId);
             
-            // Add participant if not already in list (race condition fix)
+            // Add participant if not already in list
             if (!this.participants.has(data.userId)) {
-                console.log('[ChatManager] Adding participant from peer-ready signal');
+                console.log('[ChatManager] Adding participant from join signal');
                 this.participants.set(data.userId, {
                     id: data.userId,
                     name: data.userName,
@@ -114,7 +117,7 @@ export class ChatManager {
                     console.log('[ChatManager] 📤 We initiate (lower ID):', this.currentUser.id, '<', data.userId);
                     if (this.roomConnection) {
                         this.roomConnection.createOffer(data.userId).catch(error => {
-                            console.error('[ChatManager] Failed to create offer to ready peer:', error);
+                            console.error('[ChatManager] Failed to create offer to joined user:', error);
                         });
                     } else {
                         console.error('[ChatManager] No room connection available!');
@@ -169,16 +172,13 @@ export class ChatManager {
             }
         });
         
-        // CRITICAL: Send ready signal to initiate WebRTC connections with ALL existing participants
-        console.log('[ChatManager] Sending ready signal to room');
-        console.log('[ChatManager] Current participants before ready signal:', this.participants.size);
+        // NOTE: We don't send peer-ready anymore!
+        // WebRTC connection is initiated when we receive 'user-joined-room' broadcast
+        // This is more reliable because user-joined-room is sent by RoomService
+        // and uses the 'webrtc-dashboard-rooms' channel which is already working
         
-        this._broadcastMessage('peer-ready', {
-            roomId: roomId,
-            userId: userData.id,
-            userName: userData.name,
-            existingParticipants: Array.from(this.participants.keys()) // Tell others who we see
-        });
+        console.log('[ChatManager] Joined room, waiting for user-joined-room signals');
+        console.log('[ChatManager] Current participants:', this.participants.size);
         
         // Don't add system message here - it will be added when we receive participant-joined event
         // This prevents duplicate "joined the room" messages
