@@ -12,6 +12,10 @@ export class RoomConnectionManager {
         this.userId = null;
         this.signaling = null;
         
+        // Perfect Negotiation Pattern: Track negotiation state per peer
+        this.makingOffer = new Map(); // peerId -> boolean
+        this.ignoreOffer = new Map(); // peerId -> boolean
+        
         // ICE servers for NAT traversal
         this.iceServers = {
             iceServers: [
@@ -58,11 +62,19 @@ export class RoomConnectionManager {
     async createPeerConnection(peerId, isInitiator = false) {
         this._log(`🔗 Creating peer connection to: ${peerId} (initiator: ${isInitiator})`);
         
+        // Determine if we are "polite" peer (lower ID = polite)
+        const isPolite = this.userId < peerId;
+        this._log(`🎭 Role: ${isPolite ? 'POLITE' : 'IMPOLITE'} (${this.userId} vs ${peerId})`);
+        
         // Don't create duplicate connections
         if (this.peers.has(peerId)) {
             this._log(`⚠️ Connection already exists for peer: ${peerId}`);
             return this.peers.get(peerId);
         }
+        
+        // Initialize negotiation state
+        this.makingOffer.set(peerId, false);
+        this.ignoreOffer.set(peerId, false);
         
         const pc = new RTCPeerConnection(this.iceServers);
         this.peers.set(peerId, pc);
@@ -75,9 +87,11 @@ export class RoomConnectionManager {
         }
         
         // Create data channel for chat messages
+        // Only create if we are the initiator (to avoid duplicates)
         if (isInitiator) {
             const dataChannel = pc.createDataChannel('chat', { ordered: true });
             this.setupDataChannel(peerId, dataChannel);
+            this._log(`📺 Created DataChannel as initiator for: ${peerId}`);
         }
         
         // Handle incoming data channel
@@ -165,40 +179,72 @@ export class RoomConnectionManager {
     async createOffer(peerId) {
         this._log(`📤 Creating offer for: ${peerId}`);
         const pc = await this.createPeerConnection(peerId, true);
-        const offer = await pc.createOffer();
-        await pc.setLocalDescription(offer);
-        this._log(`✅ Offer created and set as local description for: ${peerId}`);
         
-        // Send offer via signaling
-        if (this.signaling) {
-            this._log(`📡 Sending offer to: ${peerId} via signaling`);
-            this.signaling.sendOffer(peerId, offer);
-        } else {
-            this._log(`❌ No signaling service available!`);
+        try {
+            // Set makingOffer flag to detect collisions
+            this.makingOffer.set(peerId, true);
+            
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            this._log(`✅ Offer created and set as local description for: ${peerId}`);
+            
+            // Send offer via signaling
+            if (this.signaling) {
+                this._log(`📡 Sending offer to: ${peerId} via signaling`);
+                this.signaling.sendOffer(peerId, offer);
+            } else {
+                this._log(`❌ No signaling service available!`);
+            }
+            
+            return offer;
+        } finally {
+            this.makingOffer.set(peerId, false);
         }
-        
-        return offer;
     }
     
     async handleOffer(peerId, offer) {
         this._log(`📥 Received offer from: ${peerId}`);
-        const pc = await this.createPeerConnection(peerId, false);
-        await pc.setRemoteDescription(new RTCSessionDescription(offer));
-        this._log(`✅ Set remote description from: ${peerId}`);
         
-        const answer = await pc.createAnswer();
-        await pc.setLocalDescription(answer);
-        this._log(`✅ Created answer for: ${peerId}`);
+        // Determine if we are polite peer
+        const isPolite = this.userId < peerId;
         
-        // Send answer via signaling
-        if (this.signaling) {
-            this._log(`📡 Sending answer to: ${peerId} via signaling`);
-            this.signaling.sendAnswer(peerId, answer);
-        } else {
-            this._log(`❌ No signaling service available!`);
+        // Perfect Negotiation: Handle offer collision
+        const offerCollision = 
+            (offer.type === 'offer') &&
+            (this.makingOffer.get(peerId) || this.peers.get(peerId)?.signalingState !== 'stable');
+        
+        this.ignoreOffer.set(peerId, !isPolite && offerCollision);
+        
+        if (this.ignoreOffer.get(peerId)) {
+            this._log(`🚫 IGNORING offer from ${peerId} (we are impolite and have collision)`);
+            return;
         }
         
-        return answer;
+        this._log(`✅ ACCEPTING offer from ${peerId} (${isPolite ? 'polite' : 'impolite'} peer)`);
+        
+        const pc = await this.createPeerConnection(peerId, false);
+        
+        try {
+            await pc.setRemoteDescription(new RTCSessionDescription(offer));
+            this._log(`✅ Set remote description from: ${peerId}`);
+            
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            this._log(`✅ Created answer for: ${peerId}`);
+            
+            // Send answer via signaling
+            if (this.signaling) {
+                this._log(`📡 Sending answer to: ${peerId} via signaling`);
+                this.signaling.sendAnswer(peerId, answer);
+            } else {
+                this._log(`❌ No signaling service available!`);
+            }
+            
+            return answer;
+        } catch (error) {
+            this._log(`❌ Error handling offer from ${peerId}:`, error);
+            throw error;
+        }
     }
     
     async handleAnswer(peerId, answer) {
