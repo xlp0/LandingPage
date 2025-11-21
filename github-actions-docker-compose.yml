@@ -1,0 +1,24 @@
+services:
+  landingpage:
+    build: .
+    container_name: landingpage-local
+    restart: unless-stopped
+    ports:
+      - "8765:3000"  # Unified HTTP + WebSocket server
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      # WebSocket URL - set this for production deployments
+      # Examples:
+      # - WEBSOCKET_URL=wss://dev.pkc.pub/ws/
+      # - WEBSOCKET_URL=wss://pkc.pub/ws/
+      # Leave empty or remove to use auto-detection
+      - WEBSOCKET_URL=ws://localhost:8765/ws/
+    volumes:
+      - ./.env:/app/.env  # Mount .env file for runtime access (if exists)
+    networks:
+      - landingpage-network
+
+networks:
+  landingpage-network:
+    driver: bridge
