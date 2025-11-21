@@ -146,22 +146,16 @@ export class ChatManager {
             if (alreadyConnected) {
                 console.log('[ChatManager] Already have connection to:', data.userId);
             } else {
-                // Perfect Negotiation: Only lower ID initiates offer
-                const shouldInitiate = this.currentUser.id < data.userId;
-                
-                if (shouldInitiate) {
-                    console.log('[ChatManager]KEY to new joiner:', data.userName);
-                    console.log('[ChatManager] 📤 We initiate (lower ID):', this.currentUser.id, '<', data.userId);
-                    if (this.roomConnection) {
-                        this.roomConnection.createOffer(data.userId).catch(error => {
-                            console.error('[ChatManager] Failed to create offer:', error);
-                        });
-                    } else {
-                        console.error('[ChatManager] No room connection available!');
-                    }
+                // IMPORTANT: When we receive user-joined-room, WE are the existing user
+                // and THEY are the new joiner. Existing users ALWAYS initiate to new joiners.
+                console.log('[ChatManager] 🔑 SENDING WebRTC KEY to new joiner:', data.userName);
+                console.log('[ChatManager] 📤 We are existing user, initiating connection');
+                if (this.roomConnection) {
+                    this.roomConnection.createOffer(data.userId).catch(error => {
+                        console.error('[ChatManager] Failed to create offer:', error);
+                    });
                 } else {
-                    console.log('[ChatManager] 📥 WAITING for WebRTC KEY from new joiner:', data.userName);
-                    console.log('[ChatManager] We wait (higher ID):', this.currentUser.id, '>', data.userId);
+                    console.error('[ChatManager] No room connection available!');
                 }
             }
         });

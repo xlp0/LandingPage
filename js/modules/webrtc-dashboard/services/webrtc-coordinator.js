@@ -51,22 +51,16 @@ export class WebRTCCoordinator {
             return;
         }
         
-        // Perfect Negotiation: Only lower ID initiates
-        // This prevents offer collisions
-        const shouldInitiate = this.currentUserId < userId;
+        // IMPORTANT: When we receive user-joined-room, WE are the existing user
+        // and THEY are the new joiner. Existing users ALWAYS initiate to new joiners.
+        // This ensures mesh network connectivity regardless of join order.
+        console.log('[WebRTCCoordinator] 🔑 SENDING WebRTC KEY to new joiner:', userName);
+        console.log('[WebRTCCoordinator] 📤 We are existing user, initiating connection');
         
-        if (shouldInitiate) {
-            console.log('[WebRTCCoordinator] 🔑 SENDING WebRTC KEY to:', userName);
-            console.log('[WebRTCCoordinator] 📤 We initiate (lower ID):', this.currentUserId, '<', userId);
-            
-            try {
-                await connectionManager.createOffer(userId);
-            } catch (error) {
-                console.error('[WebRTCCoordinator] Failed to create offer:', error);
-            }
-        } else {
-            console.log('[WebRTCCoordinator] 📥 WAITING for WebRTC KEY from:', userName);
-            console.log('[WebRTCCoordinator] We wait (higher ID):', this.currentUserId, '>', userId);
+        try {
+            await connectionManager.createOffer(userId);
+        } catch (error) {
+            console.error('[WebRTCCoordinator] Failed to create offer:', error);
         }
     }
     
