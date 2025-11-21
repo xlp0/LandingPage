@@ -105,14 +105,24 @@ export class ChatManager {
             if (alreadyConnected) {
                 console.log('[ChatManager] Already have connection to:', data.userId);
             } else {
-                // Initiate WebRTC connection
-                if (this.roomConnection) {
-                    console.log('[ChatManager] Creating new connection to:', data.userId);
-                    this.roomConnection.createOffer(data.userId).catch(error => {
-                        console.error('[ChatManager] Failed to create offer to ready peer:', error);
-                    });
+                // Perfect Negotiation: Only lower ID initiates offer
+                // This prevents both peers from creating offers simultaneously
+                const shouldInitiate = this.currentUser.id < data.userId;
+                
+                if (shouldInitiate) {
+                    // We have lower ID, we create the offer
+                    console.log('[ChatManager] 📤 We initiate (lower ID):', this.currentUser.id, '<', data.userId);
+                    if (this.roomConnection) {
+                        this.roomConnection.createOffer(data.userId).catch(error => {
+                            console.error('[ChatManager] Failed to create offer to ready peer:', error);
+                        });
+                    } else {
+                        console.error('[ChatManager] No room connection available!');
+                    }
                 } else {
-                    console.error('[ChatManager] No room connection available!');
+                    // They have lower ID, we wait for their offer
+                    console.log('[ChatManager] 📥 We wait for offer (higher ID):', this.currentUser.id, '>', data.userId);
+                    console.log('[ChatManager] Peer will initiate connection');
                 }
             }
         });
