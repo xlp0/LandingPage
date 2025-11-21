@@ -51,52 +51,78 @@ testWithConfig('navigate through PKC website links', async ({ browser }, testInf
     let roomId = '';
     
     try {
+      // Create screenshots directory if it doesn't exist
+      const screenshotsDir = path.join(testResultsDir, 'screenshots');
+      if (!fs.existsSync(screenshotsDir)) {
+        fs.mkdirSync(screenshotsDir, { recursive: true });
+      }
+      
+      // Helper function to take screenshots
+      const takeScreenshot = async (page, name) => {
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const screenshotPath = path.join(screenshotsDir, `${timestamp}-${name}.png`);
+        await page.screenshot({ path: screenshotPath, fullPage: true });
+        console.log(`Screenshot saved: ${screenshotPath}`);
+        return screenshotPath;
+      };
+
       // Initial page load for first user
       console.log('First user: Navigating to homepage...');
       await firstUserPage.goto('http://localhost:8765');
       await firstUserPage.waitForLoadState('networkidle');
+      await takeScreenshot(firstUserPage, '01-first-user-homepage');
       await firstUserPage.waitForTimeout(1000);
       
       await firstUserPage.waitForSelector('[data-anime="main-content"]', { timeout: 10000 });
       await firstUserPage.waitForTimeout(1000);
+      await takeScreenshot(firstUserPage, '02-first-user-homepage-loaded');
 
       // WebRTC Dashboard navigation - First User
       console.log('First user: Clicking WebRTC Dashboard button...');
       await firstUserPage.locator('a[href="js/modules/webrtc-dashboard/index.html"]').click();
       await firstUserPage.waitForLoadState('networkidle');
       await firstUserPage.waitForTimeout(1000);
+      await takeScreenshot(firstUserPage, '03-webrtc-dashboard-loaded');
 
       // First User - Enter name
       console.log('First user: Entering name...');
       await firstUserPage.locator('#user-name').fill('FirstUser');
       await firstUserPage.waitForTimeout(1000);
+      await takeScreenshot(firstUserPage, '04-first-user-name-entered');
 
       // First User - Save name
       console.log('First user: Clicking Save Name button...');
       await firstUserPage.locator('#save-name-btn').click();
       await firstUserPage.waitForLoadState('networkidle');
-      await firstUserPage.waitForTimeout(500);
+      await firstUserPage.waitForTimeout(1000);
+      await takeScreenshot(firstUserPage, '05-first-user-name-saved');
 
       // First User - Room name entry
       console.log('First user: Entering room name...');
       await firstUserPage.locator('#room-name').fill('Testing');
       await firstUserPage.waitForTimeout(500);
+      await takeScreenshot(firstUserPage, '06-room-name-entered');
 
       // First User - Room description entry
       console.log('First user: Entering room description...');
       await firstUserPage.locator('#room-description').fill('Testing');
       await firstUserPage.waitForTimeout(1000);
+      await takeScreenshot(firstUserPage, '07-room-description-entered');
 
       // First User - Create room
       console.log('First user: Clicking Create Room button...');
       await firstUserPage.locator('#create-room-btn').click();
       await firstUserPage.waitForLoadState('networkidle');
-      await firstUserPage.waitForTimeout(1000);
+      await firstUserPage.waitForTimeout(2000); // Extra wait for room creation
+      await takeScreenshot(firstUserPage, '08-room-created');
 
       // Get room ID from URL for second user
       const url = firstUserPage.url();
       roomId = new URL(url).searchParams.get('room');
       console.log('Room created with ID:', roomId);
+      
+      // Take full page screenshot of the room
+      await takeScreenshot(firstUserPage, '09-room-ready');
 
       // Create second user context with video recording
       console.log('Setting up second user...');
@@ -123,24 +149,31 @@ testWithConfig('navigate through PKC website links', async ({ browser }, testInf
         await secondUserPage.goto(`http://localhost:8765/js/modules/webrtc-dashboard/index.html?room=${roomId}`);
         await secondUserPage.waitForLoadState('networkidle');
         await secondUserPage.waitForTimeout(1000);
+        await takeScreenshot(secondUserPage, '10-second-user-join-page');
         
         // Second user enters name and joins room
         console.log('Second user entering name...');
         await secondUserPage.locator('#user-name').fill('SecondUser');
         await secondUserPage.waitForTimeout(1000);
+        await takeScreenshot(secondUserPage, '11-second-user-name-entered');
         
         await secondUserPage.locator('#save-name-btn').click();
         await secondUserPage.waitForLoadState('networkidle');
         await secondUserPage.waitForTimeout(1000);
+        await takeScreenshot(secondUserPage, '12-second-user-name-saved');
         
         console.log('Second user clicking Join Room button...');
         await secondUserPage.locator('.join-btn').click();
         await secondUserPage.waitForLoadState('networkidle');
-        await secondUserPage.waitForTimeout(1000);
+        await secondUserPage.waitForTimeout(2000); // Extra wait for joining
+        await takeScreenshot(secondUserPage, '13-second-user-joined-room');
         
-        // Wait for second user to be fully joined
-        await secondUserPage.waitForLoadState('networkidle');
-        await secondUserPage.waitForTimeout(1000);
+        // Take screenshot of first user's view after second user joins
+        await takeScreenshot(firstUserPage, '14-first-user-after-second-joined');
+        
+        // Wait for both users to be fully connected
+        await firstUserPage.waitForTimeout(2000);
+        await secondUserPage.waitForTimeout(2000);
         
         // First user sends a message
         console.log('First user sending message...');
@@ -151,11 +184,17 @@ testWithConfig('navigate through PKC website links', async ({ browser }, testInf
         await firstUserPage.locator('#chat-input').fill('');
         await firstUserPage.locator('#chat-input').type(firstUserMessage, { delay: 50 });
         await firstUserPage.waitForTimeout(1000);
+        await takeScreenshot(firstUserPage, '15-first-user-message-typed');
         
         // Send the message
         await firstUserPage.locator('#send-message-btn').click();
         console.log(`First user sent message: ${firstUserMessage}`);
-        await firstUserPage.waitForTimeout(3000); // Wait for message to be sent and received
+        await firstUserPage.waitForTimeout(2000); // Wait for message to be sent
+        await takeScreenshot(firstUserPage, '16-first-user-message-sent');
+        
+        // Wait for message to be received by second user
+        await secondUserPage.waitForTimeout(2000);
+        await takeScreenshot(secondUserPage, '17-second-user-message-received');
         
         // Second user sends a reply
         console.log('Second user replying...');
@@ -166,11 +205,17 @@ testWithConfig('navigate through PKC website links', async ({ browser }, testInf
         await secondUserPage.locator('#chat-input').fill('');
         await secondUserPage.locator('#chat-input').type(secondUserMessage, { delay: 50 });
         await secondUserPage.waitForTimeout(1000);
+        await takeScreenshot(secondUserPage, '18-second-user-reply-typed');
         
         // Send the reply
         await secondUserPage.locator('#send-message-btn').click();
         console.log(`Second user sent reply: ${secondUserMessage}`);
-        await secondUserPage.waitForTimeout(3000); // Wait for message to be sent and received
+        await secondUserPage.waitForTimeout(2000); // Wait for message to be sent
+        await takeScreenshot(secondUserPage, '19-second-user-reply-sent');
+        
+        // Wait for reply to be received by first user
+        await firstUserPage.waitForTimeout(2000);
+        await takeScreenshot(firstUserPage, '20-first-user-reply-received');
         
         // Verify messages are visible to both users
         console.log('Verifying messages...');
@@ -179,9 +224,9 @@ testWithConfig('navigate through PKC website links', async ({ browser }, testInf
         const firstUserChatContainer = firstUserPage.locator('.chat-messages');
         const secondUserChatContainer = secondUserPage.locator('.chat-messages');
         
-        // Take screenshots for debugging
-        await firstUserPage.screenshot({ path: 'first-user-chat-before-verification.png' });
-        await secondUserPage.screenshot({ path: 'second-user-chat-before-verification.png' });
+        // Take final screenshots of both users' chat
+        await takeScreenshot(firstUserPage, '21-first-user-final-chat');
+        await takeScreenshot(secondUserPage, '22-second-user-final-chat');
         
         // Log the page content for debugging
         const firstUserContent = await firstUserPage.content();
