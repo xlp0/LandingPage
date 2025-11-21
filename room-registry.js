@@ -94,16 +94,22 @@ class RoomRegistry {
      * Get all rooms as array
      */
     getAllRooms() {
-        return Array.from(this.rooms.values()).map(room => ({
-            id: room.id,
-            name: room.name,
-            description: room.description,
-            host: room.host,
-            hostId: room.hostId,
-            createdAt: room.createdAt,
-            participantCount: room.participants.size,
-            participants: Array.from(room.participants)
-        }));
+        console.log('[RoomRegistry] getAllRooms called, rooms.size:', this.rooms.size);
+        const roomArray = Array.from(this.rooms.values()).map(room => {
+            console.log('[RoomRegistry] Processing room:', room.id, 'participants:', room.participants.size);
+            return {
+                id: room.id,
+                name: room.name,
+                description: room.description,
+                host: room.host,
+                hostId: room.hostId,
+                createdAt: room.createdAt,
+                participantCount: room.participants.size,
+                participants: Array.from(room.participants)
+            };
+        });
+        console.log('[RoomRegistry] Returning', roomArray.length, 'rooms');
+        return roomArray;
     }
 
     /**
