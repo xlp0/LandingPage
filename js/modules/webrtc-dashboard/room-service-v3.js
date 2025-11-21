@@ -196,7 +196,8 @@ export class RoomService {
      */
     registerConnectionManager(roomId, connectionManager) {
         this.state.setConnectionManager(roomId, connectionManager);
-        console.log('[RoomService] Registered connection manager for room:', roomId);
+        console.log('[RoomService] ✅ Registered connection manager for room:', roomId);
+        console.log('[RoomService] 📋 All registered rooms:', Array.from(this.state.roomConnectionManagers?.keys() || []));
     }
     
     // ==================== Cleanup ====================

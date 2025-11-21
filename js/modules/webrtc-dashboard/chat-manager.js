@@ -150,7 +150,7 @@ export class ChatManager {
                 const shouldInitiate = this.currentUser.id < data.userId;
                 
                 if (shouldInitiate) {
-                    console.log('[ChatManager] 🔑 SENDING WebRTC KEY to new joiner:', data.userName);
+                    console.log('[ChatManager]KEY to new joiner:', data.userName);
                     console.log('[ChatManager] 📤 We initiate (lower ID):', this.currentUser.id, '<', data.userId);
                     if (this.roomConnection) {
                         this.roomConnection.createOffer(data.userId).catch(error => {
@@ -170,10 +170,13 @@ export class ChatManager {
     }
     
     async joinRoom(roomId, userData) {
-        console.log('[ChatManager] Joining room:', roomId);
+        console.log('[ChatManager] 🚪 Joining room:', roomId);
+        console.log('[ChatManager] 👤 User data:', userData);
+        console.log('[ChatManager] 🔍 RoomService available?', !!this.roomService);
         
         // Clean up previous room connection if any
         if (this.roomConnection) {
+            console.log('[ChatManager] 🧹 Cleaning up previous connection');
             this.roomConnection.destroy();
         }
         
@@ -181,15 +184,19 @@ export class ChatManager {
         this.currentUser = userData;
         
         // Create new room-specific connection manager
+        console.log('[ChatManager] 🔧 Creating RoomConnectionManager for room:', roomId);
         this.roomConnection = new RoomConnectionManager(roomId);
         await this.roomConnection.setUserId(userData.id); // Wait for signaling to initialize
+        console.log('[ChatManager] ✅ RoomConnectionManager created and initialized');
         
         // Register connection manager with RoomService (for WebRTC coordination)
         if (this.roomService) {
+            console.log('[ChatManager] 📝 Registering connection manager with RoomService...');
             this.roomService.registerConnectionManager(roomId, this.roomConnection);
             console.log('[ChatManager] ✅ Registered connection manager with RoomService');
         } else {
-            console.warn('[ChatManager] ⚠️ No RoomService available for connection registration');
+            console.error('[ChatManager] ❌ CRITICAL: No RoomService available for connection registration!');
+            console.error('[ChatManager] ❌ WebRTC coordination will NOT work!');
         }
         
         // Setup WebRTC event handlers
