@@ -29,6 +29,10 @@ export class RoomMessageHandler {
         console.log('[RoomMessageHandler] 📨 Received:', type);
         
         switch (type) {
+            case 'server-room-list':
+                this._handleServerRoomList(data);
+                break;
+                
             case 'room-created':
                 this._handleRoomCreated(data);
                 break;
@@ -52,6 +56,46 @@ export class RoomMessageHandler {
             default:
                 console.log('[RoomMessageHandler] Unknown message type:', type);
         }
+    }
+    
+    /**
+     * Handle server room list (authoritative source of truth)
+     * @private
+     */
+    _handleServerRoomList(data) {
+        console.log('[RoomMessageHandler] 📋 SERVER ROOM LIST received:', data.rooms.length, 'rooms');
+        
+        // Clear existing rooms and replace with server list
+        this.roomState.clear();
+        
+        // Add all rooms from server
+        data.rooms.forEach(room => {
+            const roomData = {
+                id: room.id,
+                name: room.name,
+                description: room.description,
+                host: room.host,
+                hostId: room.hostId,
+                createdAt: room.createdAt,
+                participants: room.participants || [],
+                status: 'active',
+                participantCount: room.participantCount
+            };
+            
+            this.roomState.addRoom(roomData);
+            
+            console.log('[RoomMessageHandler]   🏠', room.name, '- Participants:', room.participantCount);
+            if (room.participants && room.participants.length > 0) {
+                room.participants.forEach(p => {
+                    console.log('[RoomMessageHandler]     👤', p.name);
+                });
+            }
+        });
+        
+        console.log('[RoomMessageHandler] ✅ Updated room list from server');
+        
+        // Emit event for UI update
+        this.eventEmitter.emit('roomListUpdated', this.roomState.getActiveRooms());
     }
     
     /**
