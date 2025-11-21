@@ -5,7 +5,7 @@ import { getSharedBroadcastService } from './shared-broadcast.js';
 import { RoomConnectionManager } from './managers/room-connection-manager.js';
 
 export class ChatManager {
-    constructor() {
+    constructor(roomService = null) {
         this.currentRoom = null;
         this.currentUser = null;
         this.participants = new Map(); // userId -> participant data
@@ -13,6 +13,7 @@ export class ChatManager {
         
         this.broadcastService = null;
         this.roomConnection = null; // Per-room WebRTC connection manager
+        this.roomService = roomService; // Reference to RoomService for connection registration
         this.eventHandlers = new Map();
         
         this.channelName = 'webrtc-dashboard-chat';
@@ -182,6 +183,14 @@ export class ChatManager {
         // Create new room-specific connection manager
         this.roomConnection = new RoomConnectionManager(roomId);
         await this.roomConnection.setUserId(userData.id); // Wait for signaling to initialize
+        
+        // Register connection manager with RoomService (for WebRTC coordination)
+        if (this.roomService) {
+            this.roomService.registerConnectionManager(roomId, this.roomConnection);
+            console.log('[ChatManager] ✅ Registered connection manager with RoomService');
+        } else {
+            console.warn('[ChatManager] ⚠️ No RoomService available for connection registration');
+        }
         
         // Setup WebRTC event handlers
         this._setupRoomConnectionHandlers();

@@ -1,7 +1,7 @@
 // WebRTC Dashboard Manager V2
 // Simplified modular architecture
 
-import { RoomService } from './room-service.js';
+import { RoomService } from './room-service-v3.js';  // Using modular v3 architecture
 import { AccessControlManager } from './access-control-manager.js';
 import { ChatManager } from './chat-manager.js';
 import { UIComponents } from './ui-components.js';
@@ -35,11 +35,12 @@ export class DashboardManager {
             
             // Initialize core services
             this.roomService = new RoomService();
+            await this.roomService.init();
+            
             this.accessControl = new AccessControlManager();
-            this.chatManager = new ChatManager(); // Room-specific connections now
+            this.chatManager = new ChatManager(this.roomService); // Pass roomService for connection registration
             this.ui = new UIComponents();
             
-            await this.roomService.init();
             await this.accessControl.init();
             await this.chatManager.init();
             await this.ui.init();
@@ -260,21 +261,9 @@ export class DashboardManager {
     }
     
     _setupUIHandlers() {
-        // Save name button
-        this.elements['save-name-btn']?.addEventListener('click', () => {
+        // Save name button (actually creates room)
+        this.elements['save-name-btn']?.addEventListener('click', async () => {
             const name = this.elements['user-name'].value.trim();
-            if (name) {
-                this.currentUser = {
-                    id: this._generateUserId(),
-                    name: name
-                };
-                this._saveUserPreferences();
-                this._showNotification('Name saved!', 'success');
-            }
-        });
-        
-        // Create room button
-        this.elements['create-room-btn']?.addEventListener('click', async () => {
             const roomName = this.elements['room-name'].value.trim();
             if (!roomName) {
                 this._showNotification('Please enter a room name', 'error');
@@ -433,6 +422,12 @@ export class DashboardManager {
             this.currentUser = JSON.parse(saved);
             if (this.elements['user-name']) {
                 this.elements['user-name'].value = this.currentUser.name;
+            }
+            
+            // Set user ID on RoomService for WebRTC coordination
+            if (this.roomService && this.currentUser.id) {
+                this.roomService.setUserId(this.currentUser.id);
+                console.log('[Dashboard] Loaded user ID from preferences:', this.currentUser.id);
             }
         }
     }
