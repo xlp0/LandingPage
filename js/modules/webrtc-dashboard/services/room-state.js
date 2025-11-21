@@ -107,7 +107,10 @@ export class RoomState {
     clear() {
         this.rooms.clear();
         this.localRooms.clear();
-        this.roomConnectionManagers.clear();
-        console.log('[RoomState] Cleared all state');
+        // DO NOT clear roomConnectionManagers here!
+        // Connection managers are tied to active WebRTC connections
+        // and should only be removed when explicitly leaving a room
+        console.log('[RoomState] Cleared room lists (kept connection managers)');
+        console.log('[RoomState] 🔗 Active connection managers:', this.roomConnectionManagers.size);
     }
 }
