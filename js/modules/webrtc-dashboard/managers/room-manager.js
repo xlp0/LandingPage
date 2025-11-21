@@ -34,12 +34,14 @@ export class RoomManager {
         this.currentRoom = room;
         this.isHost = true;
         
-        // CRITICAL: Join the room via RoomService to add to participant list
+        // CRITICAL: Setup ChatManager FIRST to create connection manager
+        // This must happen BEFORE broadcasting user-joined-room
+        console.log('[RoomManager] 🔧 Setting up WebRTC connection manager...');
+        await this.chatManager.joinRoom(room.id, currentUser);
+        
+        // THEN join the room via RoomService (broadcasts user-joined-room)
         console.log('[RoomManager] 👤 Creator joining their own room...');
         await this.roomService.joinRoom(room.id, currentUser);
-        
-        // Then setup ChatManager for WebRTC connections
-        await this.chatManager.joinRoom(room.id, currentUser);
         
         return room;
     }
