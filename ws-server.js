@@ -4,6 +4,10 @@ const http = require('http');
 const cors = require('cors');
 const path = require('path');
 
+// Import room management modules
+const RoomRegistry = require('./room-registry.js');
+const RoomMessageHandler = require('./room-message-handler-server.js');
+
 const app = express();
 
 // Enable CORS for all routes
@@ -14,6 +18,10 @@ app.use(express.static(__dirname));
 
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server, path: '/ws/' });
+
+// Initialize room management
+const roomRegistry = new RoomRegistry();
+let roomMessageHandler;
 
 // Log WebSocket upgrade attempts
 server.on('upgrade', (req, socket, head) => {
@@ -30,14 +38,6 @@ server.on('upgrade', (req, socket, head) => {
 
 // Track connected clients
 let connectedClients = new Set();
-
-// SERVER-SIDE ROOM REGISTRY
-// rooms = Map<roomId, { id, name, host, participants: Set<userId>, createdAt, ... }>
-const rooms = new Map();
-
-// Track which user is in which room
-// userRooms = Map<userId, Set<roomId>>
-const userRooms = new Map();
 
 // Function to broadcast client count to all connected clients
 function broadcastClientCount() {
@@ -59,16 +59,7 @@ function broadcastClientCount() {
 
 // Function to broadcast room list to all clients on webrtc-dashboard-rooms channel
 function broadcastRoomList() {
-    const roomList = Array.from(rooms.values()).map(room => ({
-        id: room.id,
-        name: room.name,
-        description: room.description,
-        host: room.host,
-        hostId: room.hostId,
-        createdAt: room.createdAt,
-        participantCount: room.participants.size,
-        participants: Array.from(room.participants)
-    }));
+    const roomList = roomRegistry.getAllRooms();
 
     const message = JSON.stringify({
         type: 'server-room-list',
@@ -77,7 +68,7 @@ function broadcastRoomList() {
         timestamp: new Date().toISOString()
     });
 
-    console.log(`[Server] Broadcasting room list: ${roomList.length} rooms`);
+    console.log(`[Server] 📡 Broadcasting room list: ${roomList.length} rooms`);
 
     wss.clients.forEach(client => {
         if (client.readyState === client.OPEN && 
@@ -142,98 +133,20 @@ wss.on('connection', (ws, req) => {
                 return;
             }
             
-            // SERVER-SIDE ROOM MANAGEMENT
-            // Handle room-created
-            if (data.type === 'room-created' && data.channel === 'webrtc-dashboard-rooms') {
-                const roomData = data.data || data;
-                rooms.set(roomData.id, {
-                    id: roomData.id,
-                    name: roomData.name,
-                    description: roomData.description || '',
-                    host: roomData.host,
-                    hostId: roomData.hostId,
-                    createdAt: roomData.createdAt || new Date().toISOString(),
-                    participants: new Set() // Empty initially
-                });
-                console.log(`[Server] 🏠 Room created: ${roomData.name} (${roomData.id})`);
-                console.log(`[Server] Total rooms: ${rooms.size}`);
-                broadcastRoomList();
-                return; // Don't relay - let server-room-list handle it
+            // Initialize message handler on first use
+            if (!roomMessageHandler) {
+                roomMessageHandler = new RoomMessageHandler(roomRegistry, broadcastRoomList);
             }
             
-            // Handle user-joined-room
-            if (data.type === 'user-joined-room' && data.channel === 'webrtc-dashboard-rooms') {
-                // Extract data - handle both formats
-                const messageData = data.data || data;
-                const { roomId, userId, userName } = messageData;
-                
-                console.log(`[Server] 📨 user-joined-room received:`, { roomId, userId, userName });
-                
-                const room = rooms.get(roomId);
-                if (room) {
-                    // Check if user already in room
-                    const existingIndex = Array.from(room.participants).findIndex(p => p.id === userId);
-                    if (existingIndex === -1) {
-                        room.participants.add({ id: userId, name: userName });
-                        console.log(`[Server] ✅ Added user to room`);
-                    } else {
-                        console.log(`[Server] ℹ️ User already in room`);
-                    }
-                    
-                    // Track user's rooms
-                    if (!userRooms.has(userId)) {
-                        userRooms.set(userId, new Set());
-                    }
-                    userRooms.get(userId).add(roomId);
-                    
-                    console.log(`[Server] 👤 User ${userName} joined room ${room.name}`);
-                    console.log(`[Server] Room ${room.name} now has ${room.participants.size} participants`);
-                    broadcastRoomList();
-                    return; // Don't relay - let server-room-list handle it
-                } else {
-                    console.log(`[Server] ❌ Room not found:`, roomId);
-                }
-            }
-            
-            // Handle user-left-room
-            if (data.type === 'user-left-room' && data.channel === 'webrtc-dashboard-rooms') {
-                const { roomId, userId } = data.data || data;
-                const room = rooms.get(roomId);
-                if (room) {
-                    // Remove user from room
-                    room.participants = new Set(
-                        Array.from(room.participants).filter(p => p.id !== userId)
-                    );
-                    
-                    // Remove room from user's rooms
-                    if (userRooms.has(userId)) {
-                        userRooms.get(userId).delete(roomId);
-                    }
-                    
-                    console.log(`[Server] 👋 User left room ${room.name}`);
-                    console.log(`[Server] Room ${room.name} now has ${room.participants.size} participants`);
-                    
-                    // If room is empty, remove it
-                    if (room.participants.size === 0) {
-                        rooms.delete(roomId);
-                        console.log(`[Server] 🗑️ Removed empty room: ${room.name}`);
-                    }
-                    
-                    broadcastRoomList();
-                    return; // Don't relay - let server-room-list handle it
-                }
-            }
-            
-            // Handle room-list-request
-            if (data.type === 'room-list-request' && data.channel === 'webrtc-dashboard-rooms') {
-                console.log(`[Server] 📋 Room list requested by client`);
-                broadcastRoomList();
-                return; // Don't relay this message
+            // Try to handle as room management message
+            const handled = roomMessageHandler.handle(data);
+            if (handled) {
+                return; // Message was handled by room manager
             }
             
             // Broadcast message to all clients subscribed to the same channel
             if (data.channel) {
-                console.log(`Broadcasting message type "${data.type}" on channel "${data.channel}"`);
+                console.log(`[Server] 📤 Relaying message type "${data.type}" on channel "${data.channel}"`);
                 let broadcastCount = 0;
                 
                 wss.clients.forEach(client => {
@@ -244,7 +157,7 @@ wss.on('connection', (ws, req) => {
                     }
                 });
                 
-                console.log(`Message broadcasted to ${broadcastCount} clients on channel "${data.channel}"`);
+                console.log(`[Server] ✅ Message relayed to ${broadcastCount} clients`);
             }
             
         } catch (e) {
