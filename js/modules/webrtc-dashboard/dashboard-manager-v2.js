@@ -261,12 +261,46 @@ export class DashboardManager {
     }
     
     _setupUIHandlers() {
-        // Save name button (actually creates room)
-        this.elements['save-name-btn']?.addEventListener('click', async () => {
+        // Save name button - Actually saves the user's name
+        this.elements['save-name-btn']?.addEventListener('click', () => {
             const name = this.elements['user-name'].value.trim();
+            if (!name) {
+                this._showNotification('Please enter your name', 'error');
+                return;
+            }
+            
+            // Create or update current user
+            if (!this.currentUser) {
+                this.currentUser = {
+                    id: this._generateUserId(),
+                    name: name
+                };
+            } else {
+                this.currentUser.name = name;
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('dashboard-user', JSON.stringify(this.currentUser));
+            
+            // Set user ID on RoomService for WebRTC coordination
+            if (this.roomService) {
+                this.roomService.setUserId(this.currentUser.id);
+                console.log('[Dashboard] Set user ID on RoomService:', this.currentUser.id);
+            }
+            
+            this._showNotification('Name saved!', 'success');
+        });
+        
+        // Create room button - Actually creates a room
+        this.elements['create-room-btn']?.addEventListener('click', async () => {
             const roomName = this.elements['room-name'].value.trim();
             if (!roomName) {
                 this._showNotification('Please enter a room name', 'error');
+                return;
+            }
+            
+            if (!this.currentUser?.name) {
+                this._showNotification('Please save your name first', 'error');
                 return;
             }
             
@@ -279,7 +313,8 @@ export class DashboardManager {
                 });
                 this._showNotification('Room created!', 'success');
             } catch (error) {
-                this._showNotification('Failed to create room', 'error');
+                console.error('[Dashboard] Failed to create room:', error);
+                this._showNotification('Failed to create room: ' + error.message, 'error');
             }
         });
         
