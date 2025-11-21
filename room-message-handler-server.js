@@ -4,15 +4,16 @@
  */
 
 class RoomMessageHandler {
-    constructor(roomRegistry, broadcastRoomList) {
+    constructor(roomRegistry, broadcastRoomList, clientConnections) {
         this.roomRegistry = roomRegistry;
         this.broadcastRoomList = broadcastRoomList;
+        this.clientConnections = clientConnections;
     }
 
     /**
      * Handle incoming message
      */
-    handle(data) {
+    handle(data, ws) {
         const { type, channel } = data;
 
         // Only handle webrtc-dashboard-rooms channel
@@ -22,13 +23,13 @@ class RoomMessageHandler {
 
         switch (type) {
             case 'room-created':
-                return this._handleRoomCreated(data);
+                return this._handleRoomCreated(data, ws);
             
             case 'user-joined-room':
-                return this._handleUserJoined(data);
+                return this._handleUserJoined(data, ws);
             
             case 'user-left-room':
-                return this._handleUserLeft(data);
+                return this._handleUserLeft(data, ws);
             
             case 'room-list-request':
                 return this._handleRoomListRequest(data);
@@ -62,7 +63,7 @@ class RoomMessageHandler {
      * Handle user joining room
      * @private
      */
-    _handleUserJoined(data) {
+    _handleUserJoined(data, ws) {
         const messageData = data.data || data;
         const { roomId, userId, userName } = messageData;
 
@@ -71,6 +72,15 @@ class RoomMessageHandler {
         try {
             const room = this.roomRegistry.addUserToRoom(roomId, userId, userName);
             if (room) {
+                // Track this connection
+                const clientId = ws.clientId;
+                if (clientId && this.clientConnections.has(clientId)) {
+                    const connection = this.clientConnections.get(clientId);
+                    connection.userId = userId;
+                    connection.rooms.add(roomId);
+                    console.log(`[RoomMessageHandler] 🔗 Tracked connection: user ${userId} in room ${roomId}`);
+                }
+                
                 this.broadcastRoomList();
                 return true; // Handled - don't relay
             }

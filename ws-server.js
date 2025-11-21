@@ -19,9 +19,19 @@ app.use(express.static(__dirname));
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server, path: '/ws/' });
 
+// Track connected clients
+let connectedClients = new Set();
+
+// Track WebSocket connections: Map<clientId, { ws, userId, rooms: Set<roomId> }>
+const clientConnections = new Map();
+
 // Initialize room management
 const roomRegistry = new RoomRegistry();
-const roomMessageHandler = new RoomMessageHandler(roomRegistry, () => broadcastRoomList());
+const roomMessageHandler = new RoomMessageHandler(
+    roomRegistry, 
+    () => broadcastRoomList(),
+    clientConnections  // Pass connection tracking
+);
 
 // Log WebSocket upgrade attempts
 server.on('upgrade', (req, socket, head) => {
@@ -35,9 +45,6 @@ server.on('upgrade', (req, socket, head) => {
         }
     });
 });
-
-// Track connected clients
-let connectedClients = new Set();
 
 // Function to broadcast client count to all connected clients
 function broadcastClientCount() {
@@ -84,6 +91,14 @@ function broadcastRoomList() {
 wss.on('connection', (ws, req) => {
     const clientId = Date.now() + Math.random();
     connectedClients.add(clientId);
+    
+    // Track this connection
+    clientConnections.set(clientId, {
+        ws: ws,
+        userId: null,  // Will be set when user joins a room
+        rooms: new Set()
+    });
+    
     console.log(`[WebSocket] ✅ Client connected (${clientId}):`, req.socket.remoteAddress);
     console.log(`[WebSocket] Total clients: ${connectedClients.size}`);
     console.log(`[WebSocket] Connection details:`, {
@@ -104,6 +119,7 @@ wss.on('connection', (ws, req) => {
 
     // Track subscribed channels for this client
     ws.channels = new Set();
+    ws.clientId = clientId;  // Store clientId on ws object for easy access
     
     ws.on('message', (message) => {
         console.log('Received from client:', message.toString());
@@ -135,7 +151,7 @@ wss.on('connection', (ws, req) => {
             }
             
             // Try to handle as room management message
-            const handled = roomMessageHandler.handle(data);
+            const handled = roomMessageHandler.handle(data, ws);
             if (handled) {
                 return; // Message was handled by room manager
             }
@@ -169,15 +185,54 @@ wss.on('connection', (ws, req) => {
     });
 
     ws.on('close', () => {
+        console.log(`[WebSocket] 🔌 Client disconnected (${clientId})`);
+        
+        // Clean up user from all rooms
+        if (clientConnections.has(clientId)) {
+            const connection = clientConnections.get(clientId);
+            const { userId, rooms } = connection;
+            
+            if (userId && rooms.size > 0) {
+                console.log(`[WebSocket] 🧹 Cleaning up user ${userId} from ${rooms.size} rooms`);
+                
+                // Remove user from each room
+                rooms.forEach(roomId => {
+                    roomRegistry.removeUserFromRoom(roomId, userId);
+                    console.log(`[WebSocket] ✅ Removed user ${userId} from room ${roomId}`);
+                });
+                
+                // Broadcast updated room list
+                broadcastRoomList();
+            }
+            
+            // Remove connection tracking
+            clientConnections.delete(clientId);
+        }
+        
         connectedClients.delete(clientId);
-        console.log(`Client disconnected (${clientId})`);
-        console.log(`Total clients: ${connectedClients.size}`);
+        console.log(`[WebSocket] Total clients: ${connectedClients.size}`);
         broadcastClientCount();
     });
 
     ws.on('error', (error) => {
+        console.error(`[WebSocket] ❌ Error for client (${clientId}):`, error);
+        
+        // Clean up on error (same as close)
+        if (clientConnections.has(clientId)) {
+            const connection = clientConnections.get(clientId);
+            const { userId, rooms } = connection;
+            
+            if (userId && rooms.size > 0) {
+                rooms.forEach(roomId => {
+                    roomRegistry.removeUserFromRoom(roomId, userId);
+                });
+                broadcastRoomList();
+            }
+            
+            clientConnections.delete(clientId);
+        }
+        
         connectedClients.delete(clientId);
-        console.error('WebSocket error:', error);
         broadcastClientCount();
     });
 });
