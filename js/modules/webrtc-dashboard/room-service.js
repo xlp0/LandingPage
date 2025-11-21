@@ -117,20 +117,31 @@ export class RoomService {
                 isHost: false
             });
             
+            // Get existing participants (before adding new user)
+            const existingParticipants = room.participants.filter(p => p.id !== userData.id);
+            console.log('[RoomService] 👥 Existing participants in room:', existingParticipants.length);
+            existingParticipants.forEach(p => {
+                console.log('[RoomService]   - Participant:', p.name, '(', p.id, ')');
+            });
+            
             // Broadcast that a new user joined (so existing participants can initiate WebRTC)
-            console.log('[RoomService] 📢 Broadcasting user-joined-room:', {
+            console.log('[RoomService] 📢 Broadcasting user-joined-room to EXISTING participants:', {
                 roomId: roomId,
                 userId: userData.id,
-                userName: userData.name
+                userName: userData.name,
+                existingCount: existingParticipants.length
             });
             
             this._broadcastMessage('user-joined-room', {
                 roomId: roomId,
                 userId: userData.id,
-                userName: userData.name
+                userName: userData.name,
+                existingParticipants: existingParticipants  // Tell new user who's already there
             });
             
             this._emitRoomListUpdate();
+            
+            console.log('[RoomService] ✅ User joined successfully. Total participants:', room.participants.length);
             
             return room;
             

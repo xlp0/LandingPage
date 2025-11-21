@@ -21,6 +21,7 @@ export class WebRTCSignaling {
         // NOTE: Only filter by toUserId, not roomId (roomId is 'global' for shared signaling)
         this.signalingService.on('webrtc-offer', (data) => {
             if (data.toUserId === this.userId) {
+                console.log('🔑🔑🔑 [WebRTCSignaling] RECEIVED KEY (OFFER) from:', data.fromUserId);
                 console.log('[WebRTCSignaling] ✅ Received offer from:', data.fromUserId, 'for room:', data.roomId);
                 this.onOffer(data.fromUserId, data.offer);
             }
@@ -28,6 +29,7 @@ export class WebRTCSignaling {
         
         this.signalingService.on('webrtc-answer', (data) => {
             if (data.toUserId === this.userId) {
+                console.log('🔑🔑🔑 [WebRTCSignaling] RECEIVED JOINER\'S KEY (ANSWER) from:', data.fromUserId);
                 console.log('[WebRTCSignaling] ✅ Received answer from:', data.fromUserId, 'for room:', data.roomId);
                 this.onAnswer(data.fromUserId, data.answer);
             }

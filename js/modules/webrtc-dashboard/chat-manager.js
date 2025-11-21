@@ -75,10 +75,47 @@ export class ChatManager {
             console.log('[ChatManager] My user ID:', this.currentUser?.id);
             console.log('[ChatManager] Joined user ID:', data.userId);
             
-            // CRITICAL: Ignore our own join signal!
+            // If this is OUR join signal, process existing participants
             if (data.userId === this.currentUser?.id) {
-                console.log('[ChatManager] Ignoring own join signal');
-                return;
+                console.log('[ChatManager] 👋 This is OUR join signal!');
+                
+                // Add existing participants to our list
+                if (data.existingParticipants && data.existingParticipants.length > 0) {
+                    console.log('[ChatManager] 👥 Found', data.existingParticipants.length, 'existing participants:');
+                    
+                    data.existingParticipants.forEach(participant => {
+                        console.log('[ChatManager]   📍 Existing participant:', participant.name, '(', participant.id, ')');
+                        
+                        // Add to our participants list
+                        if (!this.participants.has(participant.id)) {
+                            this.participants.set(participant.id, {
+                                ...participant,
+                                isConnected: false,
+                                isSelf: false
+                            });
+                        }
+                        
+                        // Initiate WebRTC connection to existing participant
+                        const shouldInitiate = this.currentUser.id < participant.id;
+                        
+                        if (shouldInitiate) {
+                            console.log('[ChatManager] 🔑 SENDING WebRTC KEY to existing participant:', participant.name);
+                            console.log('[ChatManager] 📤 We initiate (lower ID):', this.currentUser.id, '<', participant.id);
+                            if (this.roomConnection) {
+                                this.roomConnection.createOffer(participant.id).catch(error => {
+                                    console.error('[ChatManager] Failed to create offer:', error);
+                                });
+                            }
+                        } else {
+                            console.log('[ChatManager] 📥 WAITING for WebRTC KEY from existing participant:', participant.name);
+                            console.log('[ChatManager] We wait (higher ID):', this.currentUser.id, '>', participant.id);
+                        }
+                    });
+                } else {
+                    console.log('[ChatManager] 👤 No existing participants - we are first in room');
+                }
+                
+                return;  // Don't process further
             }
             
             // Only handle if it's for our current room
@@ -87,11 +124,11 @@ export class ChatManager {
                 return;
             }
             
-            console.log('[ChatManager] 🚀 Initiating WebRTC connection to joined user:', data.userId);
+            console.log('[ChatManager] 🚀 NEW user joined our room:', data.userName);
             
             // Add participant if not already in list
             if (!this.participants.has(data.userId)) {
-                console.log('[ChatManager] Adding participant from join signal');
+                console.log('[ChatManager] Adding new participant:', data.userName);
                 this.participants.set(data.userId, {
                     id: data.userId,
                     name: data.userName,
@@ -109,23 +146,21 @@ export class ChatManager {
                 console.log('[ChatManager] Already have connection to:', data.userId);
             } else {
                 // Perfect Negotiation: Only lower ID initiates offer
-                // This prevents both peers from creating offers simultaneously
                 const shouldInitiate = this.currentUser.id < data.userId;
                 
                 if (shouldInitiate) {
-                    // We have lower ID, we create the offer
+                    console.log('[ChatManager] 🔑 SENDING WebRTC KEY to new joiner:', data.userName);
                     console.log('[ChatManager] 📤 We initiate (lower ID):', this.currentUser.id, '<', data.userId);
                     if (this.roomConnection) {
                         this.roomConnection.createOffer(data.userId).catch(error => {
-                            console.error('[ChatManager] Failed to create offer to joined user:', error);
+                            console.error('[ChatManager] Failed to create offer:', error);
                         });
                     } else {
                         console.error('[ChatManager] No room connection available!');
                     }
                 } else {
-                    // They have lower ID, we wait for their offer
-                    console.log('[ChatManager] 📥 We wait for offer (higher ID):', this.currentUser.id, '>', data.userId);
-                    console.log('[ChatManager] Peer will initiate connection');
+                    console.log('[ChatManager] 📥 WAITING for WebRTC KEY from new joiner:', data.userName);
+                    console.log('[ChatManager] We wait (higher ID):', this.currentUser.id, '>', data.userId);
                 }
             }
         });
