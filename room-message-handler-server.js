@@ -82,7 +82,10 @@ class RoomMessageHandler {
                 }
                 
                 this.broadcastRoomList();
-                return true; // Handled - don't relay
+                
+                // IMPORTANT: Let this message be relayed to clients for WebRTC coordination!
+                // Clients need to receive user-joined-room to initiate peer connections
+                return false; // Don't handle - allow relay for WebRTC signaling
             }
             return true; // Still handled, just room not found
         } catch (error) {
@@ -104,7 +107,10 @@ class RoomMessageHandler {
         try {
             this.roomRegistry.removeUserFromRoom(roomId, userId);
             this.broadcastRoomList();
-            return true; // Handled - don't relay
+            
+            // IMPORTANT: Let this message be relayed to clients for WebRTC cleanup!
+            // Clients need to receive user-left-room to close peer connections
+            return false; // Don't handle - allow relay for WebRTC cleanup
         } catch (error) {
             console.error('[RoomMessageHandler] Error removing user from room:', error);
             return true;
