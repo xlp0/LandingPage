@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PKC Landing Page (Local File Mode)</title>
-  <script src="js/vendor/anime.min.js"></script>
-  <script src="js/vendor/tailwind.js"></script>
   <style>
     :root {
       color-scheme: dark;
@@ -281,13 +279,20 @@
       </section>
     </section>
 
-    <section class="note" id="anime-playground">
+    <section class="note" id="anime-playground-shell">
       <div class="tw-space-y-3 tw-mb-3">
         <p class="tw-text-xs tw-font-semibold tw-tracking-[0.18em] tw-uppercase tw-text-slate-300">Animation Playground</p>
         <p class="tw-text-sm tw-text-slate-100">
-          Use the four sliders around the cube to control rotation on X, Y, Z axes and its overall scale in real time.
+          Load an interactive anime.js + Tailwind demo that lets you control a 3D cube using four sliders.
         </p>
+        <button id="ap-load" type="button" class="tw-inline-flex tw-items-center tw-justify-center tw-gap-1.5 tw-rounded-full tw-bg-emerald-500 hover:tw-bg-emerald-400 tw-text-slate-950 tw-text-xs tw-font-semibold tw-px-3.5 tw-py-1.5 tw-shadow-sm">
+          Load Animation Playground
+        </button>
       </div>
+      <div id="anime-playground-host" class="tw-mt-3"></div>
+    </section>
+
+    <template id="animation-playground-template">
       <div class="tw-flex tw-justify-center tw-items-center">
         <div class="playground-shell">
           <label class="slider-top">
@@ -326,117 +331,42 @@
           </div>
         </div>
       </div>
-    </section>
-
-    <section class="note">
-      <div class="tw-p-4 tw-rounded-xl tw-bg-slate-900/60 tw-border tw-border-slate-600/70 tw-space-y-1">
-        <p class="tw-text-xs tw-font-semibold tw-tracking-[0.18em] tw-uppercase tw-text-slate-300">Tailwind &amp; Anime.js Demo</p>
-        <p class="tw-text-sm tw-text-slate-100">
-          This block is styled using a local Tailwind runtime (prefixed utility classes like
-          <code>tw-bg-slate-900/60</code>) and participates in the same anime.js entrance
-          animation sequence as the rest of the layout.
-        </p>
-        <div class="tw-flex tw-gap-2 tw-pt-1">
-          <span class="tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-emerald-500/20 tw-text-emerald-200 tw-text-[11px] tw-px-2 tw-py-0.5">tw-runtime</span>
-          <span class="tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-sky-500/20 tw-text-sky-200 tw-text-[11px] tw-px-2 tw-py-0.5">anime.js</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="note">
-      <strong>Tip:</strong> For WebRTC + WebSocket features that truly require a
-      network context (e.g. STUN/TURN, signaling, or Docker-backed services),
-      switch to a lightweight static server such as:
-      <code>python3 -m http.server 8000</code> and open
-      <code>http://localhost:8000/</code>. Use this
-      <code>landing-page-file.html</code> mainly to validate
-      <em>file-protocol compatibility</em> and the static-first architecture.
-    </section>
+    </template>
   </main>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const hasAnime = typeof window.anime === 'function';
+      const loadBtn = document.getElementById('ap-load');
+      const host = document.getElementById('anime-playground-host');
 
-      if (hasAnime) {
-        anime({
-          targets: '.card',
-          opacity: [0, 1],
-          translateY: [24, 0],
-          duration: 900,
-          easing: 'easeOutExpo'
-        });
+      if (!loadBtn || !host) return;
 
-        anime({
-          targets: ['.links .button', '#anime-playground', '.note .tw-p-4'],
-          opacity: [0, 1],
-          translateY: [12, 0],
-          delay: anime.stagger(70, { start: 450 }),
-          duration: 650,
-          easing: 'easeOutQuad'
-        });
-      }
+      loadBtn.addEventListener('click', () => {
+        loadBtn.disabled = true;
+        loadBtn.textContent = 'Loading...';
 
-      const rotXInput = document.getElementById('ap-rot-x');
-      const rotYInput = document.getElementById('ap-rot-y');
-      const rotZInput = document.getElementById('ap-rot-z');
-      const scaleInput = document.getElementById('ap-scale');
-      const cube = document.getElementById('ap-cube');
+        function mount() {
+          if (window.PKCAnimationPlayground && typeof window.PKCAnimationPlayground.mount === 'function') {
+            window.PKCAnimationPlayground.mount(host);
+            loadBtn.textContent = 'Animation Playground Loaded';
+          } else {
+            loadBtn.disabled = false;
+            loadBtn.textContent = 'Load Animation Playground (failed, retry)';
+          }
+        }
 
-      const rotXValue = document.getElementById('ap-rot-x-value');
-      const rotYValue = document.getElementById('ap-rot-y-value');
-      const rotZValue = document.getElementById('ap-rot-z-value');
-      const scaleValue = document.getElementById('ap-scale-value');
-
-      if (rotXInput && rotXValue) {
-        rotXInput.addEventListener('input', () => {
-          rotXValue.textContent = rotXInput.value + '°';
-        });
-      }
-
-      if (rotYInput && rotYValue) {
-        rotYInput.addEventListener('input', () => {
-          rotYValue.textContent = rotYInput.value + '°';
-        });
-      }
-
-      if (rotZInput && rotZValue) {
-        rotZInput.addEventListener('input', () => {
-          rotZValue.textContent = rotZInput.value + '°';
-        });
-      }
-
-      if (scaleInput && scaleValue) {
-        scaleInput.addEventListener('input', () => {
-          scaleValue.textContent = Number(scaleInput.value).toFixed(1) + '×';
-        });
-      }
-
-      function updateCube() {
-        if (typeof window.anime !== 'function' || !cube) return;
-
-        const rotX = rotXInput ? parseInt(rotXInput.value, 10) || 0 : 0;
-        const rotY = rotYInput ? parseInt(rotYInput.value, 10) || 0 : 0;
-        const rotZ = rotZInput ? parseInt(rotZInput.value, 10) || 0 : 0;
-        const scale = scaleInput ? parseFloat(scaleInput.value) || 1 : 1;
-
-        anime({
-          targets: cube,
-          rotateX: rotX,
-          rotateY: rotY,
-          rotateZ: rotZ,
-          scale,
-          duration: 400,
-          easing: 'easeOutQuad'
-        });
-      }
-
-      if (cube && rotXInput && rotYInput && rotZInput && scaleInput) {
-        updateCube();
-        rotXInput.addEventListener('input', updateCube);
-        rotYInput.addEventListener('input', updateCube);
-        rotZInput.addEventListener('input', updateCube);
-        scaleInput.addEventListener('input', updateCube);
-      }
+        if (typeof window.PKCAnimationPlayground === 'undefined') {
+          const s = document.createElement('script');
+          s.src = 'js/components/animation-playground.js';
+          s.onload = mount;
+          s.onerror = () => {
+            loadBtn.disabled = false;
+            loadBtn.textContent = 'Load Animation Playground (failed, retry)';
+          };
+          document.head.appendChild(s);
+        } else {
+          mount();
+        }
+      });
     });
   </script>
 </body>
