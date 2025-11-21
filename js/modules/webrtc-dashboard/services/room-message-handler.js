@@ -24,13 +24,14 @@ export class RoomMessageHandler {
      * Handle incoming message
      * @param {string} type - Message type
      * @param {Object} data - Message data
+     * @param {Object} fullMessage - Full message object (optional)
      */
-    handleMessage(type, data) {
+    handleMessage(type, data, fullMessage) {
         console.log('[RoomMessageHandler] 📨 Received:', type);
         
         switch (type) {
             case 'server-room-list':
-                this._handleServerRoomList(data);
+                this._handleServerRoomList(data, fullMessage);
                 break;
                 
             case 'room-created':
@@ -62,14 +63,24 @@ export class RoomMessageHandler {
      * Handle server room list (authoritative source of truth)
      * @private
      */
-    _handleServerRoomList(data) {
-        console.log('[RoomMessageHandler] 📋 SERVER ROOM LIST received:', data.rooms.length, 'rooms');
+    _handleServerRoomList(data, fullMessage) {
+        // Handle both message formats:
+        // Format 1: data = { rooms: [...] } (from WebSocket relay)
+        // Format 2: fullMessage = { rooms: [...] } (from server directly)
+        const roomList = (data && data.rooms) || (fullMessage && fullMessage.rooms) || [];
+        
+        if (!roomList || roomList.length === undefined) {
+            console.error('[RoomMessageHandler] ❌ Invalid server room list format:', { data, fullMessage });
+            return;
+        }
+        
+        console.log('[RoomMessageHandler] 📋 SERVER ROOM LIST received:', roomList.length, 'rooms');
         
         // Clear existing rooms and replace with server list
         this.roomState.clear();
         
         // Add all rooms from server
-        data.rooms.forEach(room => {
+        roomList.forEach(room => {
             const roomData = {
                 id: room.id,
                 name: room.name,

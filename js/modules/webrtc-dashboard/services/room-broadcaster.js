@@ -37,8 +37,8 @@ export class RoomBroadcaster {
         ];
         
         messageTypes.forEach(type => {
-            this.broadcastService.on(type, (data) => {
-                handler(type, data);
+            this.broadcastService.on(type, (data, fullMessage) => {
+                handler(type, data, fullMessage);
             });
         });
     }
