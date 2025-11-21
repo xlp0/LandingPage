@@ -1,6 +1,12 @@
 # WebRTC Dashboard
 
-A serverless peer-to-peer dashboard system that allows users to create and join chat rooms with host approval.
+A peer-to-peer dashboard system that allows users to create and join chat rooms with real-time WebRTC connections.
+
+## Quick Links
+
+- **[Server Architecture](../../SERVER-ARCHITECTURE.md)** - Server-side room management and modular design
+- **[Refactoring Guide](./REFACTORING-GUIDE.md)** - Modular client architecture
+- **[Server Architecture Guide](./SERVER-ARCHITECTURE.md)** - Detailed server documentation
 
 ## Overview
 
@@ -8,9 +14,10 @@ The WebRTC Dashboard provides a room-based chat system where:
 - **Anyone** can create rooms and become the host
 - **Room creators** automatically become hosts with management privileges
 - **All participants** can invite others using shareable links
-- **Real-time chat** happens directly between peers (no server required)
-- **Host approval** system for controlled access to rooms
-- **Automatic host handover** when the current host leaves the room
+- **Real-time chat** happens directly between peers via WebRTC
+- **Server-side room registry** maintains authoritative room state
+- **Automatic synchronization** keeps all clients in sync
+- **Modular architecture** for easy maintenance and testing
 
 ## Architecture
 
