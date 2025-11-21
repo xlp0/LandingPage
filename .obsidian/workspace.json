@@ -1,0 +1,200 @@
+{
+  "main": {
+    "id": "beaacc57cb715b81",
+    "type": "split",
+    "children": [
+      {
+        "id": "70db39b158fd6253",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "bd45ebad09a1e0e6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "js/modules/webrtc-dashboard/README.md",
+                "mode": "preview",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "README"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "2c00d79d9032dd26",
+    "type": "split",
+    "children": [
+      {
+        "id": "562d2fb8166fc665",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9f364282e3147407",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "75035f9eab136dd1",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "0312eac70b4865bd",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "5acd0cd4c2e4f00c",
+    "type": "split",
+    "children": [
+      {
+        "id": "4e71d2e7d62846f9",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "36868de749ac5c39",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "js/modules/webrtc-dashboard/README.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for README"
+            }
+          },
+          {
+            "id": "c4a57b6bebc3bd88",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "js/modules/webrtc-dashboard/README.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from README"
+            }
+          },
+          {
+            "id": "f349b7cf4682ab64",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "070c111ecaed4abe",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "356a30ddad6c6285",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "js/modules/webrtc-dashboard/README.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of README"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "bd45ebad09a1e0e6",
+  "lastOpenFiles": [
+    "tests/test-webrtc-dashboard-multiple-rooms-and-users.spec.js",
+    "docs/Cubical Logic Model for WebRTC.md",
+    "docs/CLM_Think_Structure.md",
+    "docs/CLM_Structure_Diagram.md",
+    "js/modules/webrtc-dashboard/SIGNALING_FIX.md",
+    "js/modules/webrtc-dashboard/CLEANUP_PLAN.md",
+    "js/modules/webrtc-dashboard/ARCHITECTURE_DIAGRAM.md",
+    "js/modules/webrtc-dashboard/README.md",
+    "js/modules/webrtc-dashboard/DIAGRAM_TO_CODE_MAPPING.md",
+    "js/modules/webrtc-dashboard/validate-flow.js",
+    "js/modules/webrtc-dashboard/INITIALIZATION_FLOW.md"
+  ]
+}
