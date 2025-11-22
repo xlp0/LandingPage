@@ -185,6 +185,8 @@
   },
   "active": "bd45ebad09a1e0e6",
   "lastOpenFiles": [
+    "js/components/animation-playground.js",
+    "js/components",
     "STUN-CONFIG-SUMMARY.md",
     "CONFIGURATION.md",
     "SHARE-WITH-FRIEND.md",
@@ -198,7 +200,6 @@
     "js/vendor",
     "js/modules/webrtc-dashboard/store/store.js",
     "js/modules/webrtc-dashboard/store/connectionSlice.js",
-    "js/modules/webrtc-dashboard/store",
     "tests/screenshots/console log A.md",
     "tests/screenshots/console log B.md",
     "tests/screenshots/console log copy.md",
