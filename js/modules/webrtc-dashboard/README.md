@@ -114,6 +114,14 @@ The application is configured via environment variables in `docker-compose.yml`:
 
 #### 1. WebSocket URL Configuration
 
+> 🔒 **Protocol Selection:**
+> - **`ws://`** = WebSocket for HTTP connections (local development, localhost)
+> - **`wss://`** = WebSocket Secure for HTTPS connections (production, secure sites)
+> 
+> **Rule:** Always match the WebSocket protocol to your site's protocol:
+> - HTTP site → use `ws://`
+> - HTTPS site → use `wss://`
+
 **For Local Development (HTTP):**
 ```yaml
 environment:
@@ -134,7 +142,7 @@ environment:
 environment:
   - WEBSOCKET_URL=wss://henry.pkc.pub/ws/
 ```
-> ⚠️ **Important**: Use `wss://` (WebSocket Secure) for HTTPS sites, `ws://` for HTTP sites
+> ⚠️ **Important**: Production sites with HTTPS **must** use `wss://` (WebSocket Secure)
 
 #### 2. STUN Server Configuration
 
