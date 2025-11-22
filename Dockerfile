@@ -19,5 +19,8 @@ COPY . .
 # Expose the port the app runs on
 EXPOSE 3000
 
-# Run the WebSocket server
+# Set environment variables
+ENV NODE_ENV=production
+
+# Start WebSocket server (HTTP + WebSocket on same port with all fixes)
 CMD ["node", "ws-server.js"]
