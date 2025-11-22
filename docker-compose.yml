@@ -6,21 +6,18 @@ services:
     ports:
       - "8765:3000"  # Unified HTTP + WebSocket server
     environment:
-      - NODE_ENV=production
-      - PORT=3000
-      # WebSocket URL - set this for production deployments
-      # Examples:
-      # - WEBSOCKET_URL=wss://dev.pkc.pub/ws/
-      # - WEBSOCKET_URL=wss://pkc.pub/ws/
-      # For local network testing (same WiFi):
-      - WEBSOCKET_URL=ws://192.168.68.110:8765/ws/
-      # STUN Servers - comma-separated list of STUN server URLs
-      # Examples:
-      # - STUN_SERVERS=stun:stun.l.google.com:19302,stun:stun1.l.google.com:19302
-      # - STUN_SERVERS=stun:your-server.com:3478
-      # - STUN_SERVERS=stun:192.168.1.149:7302
-      # For local network testing:
-      - STUN_SERVERS=stun:stun.l.google.com:19302
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=${PORT:-3000}
+      # WebSocket URL - defaults to localhost if .env not present
+      # If .env exists, it will use the value from .env file
+      # Default: ws://localhost:8765/ws/ (for local development)
+      # Production: Set in .env as wss://your-domain.com/ws/
+      - WEBSOCKET_URL=${WEBSOCKET_URL:-ws://localhost:8765/ws/}
+      # STUN Servers - defaults to Google STUN if .env not present
+      # If .env exists, it will use the value from .env file
+      # Default: stun:stun.l.google.com:19302
+      # Custom: Set in .env as stun:your-server.com:3478
+      - STUN_SERVERS=${STUN_SERVERS:-stun:stun.l.google.com:19302}
     volumes:
       - ./.env:/app/.env  # Mount .env file for runtime access (if exists)
     networks:
