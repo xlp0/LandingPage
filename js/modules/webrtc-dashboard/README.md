@@ -25,6 +25,7 @@ A peer-to-peer dashboard system that allows users to create and join chat rooms 
 - [Browser Support](#browser-support)
 
 ### 🔗 External Links
+- **[Cubical Logic Model (CLM) Framework](../../../docs/cubical-logic-model-for-webrtc.md)** - Comprehensive CLM analysis of the WebRTC Dashboard
 - **[Server Architecture](../../SERVER-ARCHITECTURE.md)** - Server-side room management and modular design
 - **[Refactoring Guide](./REFACTORING-GUIDE.md)** - Modular client architecture
 - **[Server Architecture Guide](./SERVER-ARCHITECTURE.md)** - Detailed server documentation
