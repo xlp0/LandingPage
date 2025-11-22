@@ -190,7 +190,7 @@ If your repository has GitHub Actions configured to build and push Docker images
 ```yaml
 services:
   landingpage:
-    image: ghcr.io/xlp0/landingpage:latest  # Use pre-built image
+    image: henry768/landingpage:latest_landingpage  # Use pre-built image from Docker Hub
     container_name: landingpage-production
     restart: unless-stopped
     ports:
