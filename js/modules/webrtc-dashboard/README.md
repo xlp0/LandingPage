@@ -2,11 +2,353 @@
 
 A peer-to-peer dashboard system that allows users to create and join chat rooms with real-time WebRTC connections.
 
-## Quick Links
+## 📋 Table of Contents
 
+### 🚀 Getting Started
+- [Deployment Guide](#deployment-guide)
+  - [Quick Start](#quick-start)
+  - [Running Locally with Docker Compose](#running-locally-with-docker-compose)
+  - [Configuration Options](#configuration-options)
+  - [Building and Deploying](#building-and-deploying)
+  - [Verifying Configuration](#verifying-configuration)
+  - [Troubleshooting](#troubleshooting)
+
+### 📖 Documentation
+- [Overview](#overview)
+- [Architecture](#architecture)
+- [Core Components](#core-components)
+- [User Interaction Diagrams](#user-interaction-diagrams)
+- [Features](#features)
+- [Getting Started (User Guide)](#getting-started)
+- [Integration](#integration)
+- [Security Considerations](#security-considerations)
+- [Browser Support](#browser-support)
+
+### 🔗 External Links
 - **[Server Architecture](../../SERVER-ARCHITECTURE.md)** - Server-side room management and modular design
 - **[Refactoring Guide](./REFACTORING-GUIDE.md)** - Modular client architecture
 - **[Server Architecture Guide](./SERVER-ARCHITECTURE.md)** - Detailed server documentation
+
+---
+
+## Deployment Guide
+
+### Quick Start
+
+Get the application running in 3 simple steps:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/xlp0/LandingPage.git
+cd LandingPage
+
+# 2. Build and run with Docker Compose
+docker-compose up -d --build
+
+# 3. Access the application
+# Open: http://localhost:8765/js/modules/webrtc-dashboard/
+```
+
+### Running Locally with Docker Compose
+
+#### Prerequisites
+- Docker and Docker Compose installed
+- Port 8765 available on your machine
+
+#### Step-by-Step Local Setup
+
+1. **Clone and navigate to the project:**
+   ```bash
+   git clone https://github.com/xlp0/LandingPage.git
+   cd LandingPage
+   ```
+
+2. **Review the docker-compose.yml configuration:**
+   ```yaml
+   services:
+     landingpage:
+       build: .
+       container_name: landingpage-local
+       restart: unless-stopped
+       ports:
+         - "8765:3000"  # Host:Container port mapping
+       environment:
+         - NODE_ENV=production
+         - PORT=3000
+         - WEBSOCKET_URL=ws://localhost:8765/ws/
+         - STUN_SERVERS=stun:stun.l.google.com:19302
+   ```
+
+3. **Build the Docker image:**
+   ```bash
+   docker-compose build
+   ```
+
+4. **Start the container:**
+   ```bash
+   docker-compose up -d
+   ```
+
+5. **Verify it's running:**
+   ```bash
+   docker ps
+   # Should show: landingpage-local container running
+   
+   # Check logs
+   docker logs -f landingpage-local
+   ```
+
+6. **Access the application:**
+   - Main page: `http://localhost:8765`
+   - WebRTC Dashboard: `http://localhost:8765/js/modules/webrtc-dashboard/`
+
+7. **Stop the application:**
+   ```bash
+   docker-compose down
+   ```
+
+### Configuration Options
+
+The application is configured via environment variables in `docker-compose.yml`:
+
+#### 1. WebSocket URL Configuration
+
+**For Local Development (HTTP):**
+```yaml
+environment:
+  - WEBSOCKET_URL=ws://localhost:8765/ws/
+```
+
+**For Local Network Testing (same WiFi):**
+```yaml
+environment:
+  - WEBSOCKET_URL=ws://192.168.1.149:8765/ws/
+```
+> Replace `192.168.1.149` with your machine's local IP address. Find it with:
+> - macOS/Linux: `ifconfig | grep "inet "`
+> - Windows: `ipconfig`
+
+**For Production (HTTPS):**
+```yaml
+environment:
+  - WEBSOCKET_URL=wss://henry.pkc.pub/ws/
+```
+> ⚠️ **Important**: Use `wss://` (WebSocket Secure) for HTTPS sites, `ws://` for HTTP sites
+
+#### 2. STUN Server Configuration
+
+STUN servers help establish peer-to-peer connections by discovering public IP addresses and NAT types.
+
+**Using Google STUN Servers (Public, Reliable):**
+```yaml
+environment:
+  - STUN_SERVERS=stun:stun.l.google.com:19302
+```
+
+**Using Multiple STUN Servers (Recommended for Production):**
+```yaml
+environment:
+  - STUN_SERVERS=stun:stun.l.google.com:19302,stun:stun1.l.google.com:19302
+```
+
+**Using Local STUN Server (For LAN Testing):**
+```yaml
+environment:
+  - STUN_SERVERS=stun:192.168.1.149:7302
+```
+
+**Using Custom STUN Server:**
+```yaml
+environment:
+  - STUN_SERVERS=stun:your-server.com:3478
+```
+
+### Building and Deploying
+
+#### Option 1: Build Locally (Recommended for Development)
+
+```bash
+# Build the Docker image
+docker-compose build
+
+# Start the container
+docker-compose up -d
+
+# View logs
+docker logs -f landingpage-local
+
+# Stop the container
+docker-compose down
+```
+
+#### Option 2: Use Pre-built Image from GitHub Actions
+
+If your repository has GitHub Actions configured to build and push Docker images:
+
+**Update docker-compose.yml:**
+```yaml
+services:
+  landingpage:
+    image: ghcr.io/xlp0/landingpage:latest  # Use pre-built image
+    container_name: landingpage-production
+    restart: unless-stopped
+    ports:
+      - "8765:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - WEBSOCKET_URL=wss://henry.pkc.pub/ws/
+      - STUN_SERVERS=stun:stun.l.google.com:19302
+    networks:
+      - landingpage-network
+```
+
+**Deploy:**
+```bash
+# Pull the latest image
+docker-compose pull
+
+# Start the container
+docker-compose up -d
+```
+
+#### Updating Configuration
+
+When you change environment variables in `docker-compose.yml`:
+
+```bash
+# Restart to apply changes (no rebuild needed)
+docker-compose down && docker-compose up -d
+```
+
+### Verifying Configuration
+
+Check if environment variables are correctly loaded:
+
+```bash
+# Check environment variables inside container
+docker exec landingpage-local printenv WEBSOCKET_URL
+docker exec landingpage-local printenv STUN_SERVERS
+
+# Check API configuration endpoint
+curl http://localhost:8765/api/config | python3 -m json.tool
+```
+
+**Expected output:**
+```json
+{
+    "WEBSOCKET_URL": "ws://localhost:8765/ws/",
+    "NODE_ENV": "production",
+    "PORT": "3000",
+    "STUN_SERVERS": [
+        {
+            "urls": "stun:stun.l.google.com:19302"
+        }
+    ]
+}
+```
+
+### Setting Up Local STUN Server (Optional)
+
+For local network testing, you can run your own STUN server using coturn:
+
+1. **Start the STUN server:**
+   ```bash
+   docker-compose -f docker-compose.stun.yml up -d
+   ```
+
+2. **Update docker-compose.yml:**
+   ```yaml
+   environment:
+     - STUN_SERVERS=stun:192.168.1.149:7302
+   ```
+
+3. **Restart the application:**
+   ```bash
+   docker-compose restart
+   ```
+
+See `STUN-SERVER-SETUP.md` for detailed STUN server configuration.
+
+### Troubleshooting
+
+#### WebSocket Connection Issues
+- **Problem**: WebSocket fails to connect
+- **Solutions**:
+  - Verify `WEBSOCKET_URL` matches your deployment (use `wss://` for HTTPS)
+  - Check firewall rules allow WebSocket connections on port 8765
+  - Ensure port 8765 is not already in use: `lsof -i :8765`
+  - Check browser console for connection errors
+
+#### WebRTC Connection Issues
+- **Problem**: Peers cannot connect to each other
+- **Solutions**:
+  - Verify STUN servers are reachable
+  - Check browser console for ICE connection errors
+  - Try using Google STUN servers for testing
+  - Ensure both peers are using the same STUN configuration
+
+#### Configuration Not Applied
+- **Problem**: Changes to docker-compose.yml don't take effect
+- **Solutions**:
+  - Restart container: `docker-compose down && docker-compose up -d`
+  - Verify environment variables inside container: `docker exec landingpage-local printenv`
+  - Check `/api/config` endpoint returns correct values
+  - Rebuild if code changes were made: `docker-compose up -d --build`
+
+#### Docker Build Issues
+- **Problem**: Docker build fails
+- **Solutions**:
+  - Clear Docker cache: `docker-compose build --no-cache`
+  - Check Dockerfile is present in project root
+  - Ensure all required files are copied to container
+  - Check Docker daemon is running: `docker ps`
+
+#### Port Already in Use
+- **Problem**: Port 8765 is already in use
+- **Solutions**:
+  - Find process using port: `lsof -i :8765`
+  - Kill the process or change port in docker-compose.yml:
+    ```yaml
+    ports:
+      - "9000:3000"  # Use port 9000 instead
+    ```
+
+### Environment-Specific Configurations
+
+#### Development (localhost)
+```yaml
+environment:
+  - WEBSOCKET_URL=ws://localhost:8765/ws/
+  - STUN_SERVERS=stun:stun.l.google.com:19302
+```
+
+#### Local Network Testing (same WiFi)
+```yaml
+environment:
+  - WEBSOCKET_URL=ws://192.168.1.149:8765/ws/
+  - STUN_SERVERS=stun:192.168.1.149:7302
+```
+
+#### Staging/Production (HTTPS)
+```yaml
+environment:
+  - WEBSOCKET_URL=wss://henry.pkc.pub/ws/
+  - STUN_SERVERS=stun:stun.l.google.com:19302,stun:stun1.l.google.com:19302
+```
+
+### Production Best Practices
+
+1. **Use HTTPS/WSS**: Always use secure WebSocket (`wss://`) in production
+2. **Multiple STUN Servers**: Configure backup STUN servers for reliability
+3. **Resource Limits**: Set memory and CPU limits in docker-compose.yml
+4. **Logging**: Configure log rotation and monitoring
+5. **Backups**: Regularly backup configuration and data
+6. **Updates**: Keep Docker images updated via GitHub Actions
+7. **Monitoring**: Set up health checks and alerting
+8. **Security**: Use environment files for sensitive data, never commit secrets
+
+---
 
 ## Overview
 
@@ -1273,315 +1615,6 @@ https://yoursite.com/webrtc-dashboard?room=abc123&token=xyz789
 Instant Join Link (no approval needed):
 https://yoursite.com/webrtc-dashboard?room=abc123&token=xyz789&instant=true
 ```
-
-## Deployment Guide
-
-### Docker Compose Deployment
-
-The application can be deployed using Docker Compose with configurable environment variables for WebSocket URL and STUN servers.
-
-#### Quick Start
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/xlp0/LandingPage.git
-   cd LandingPage
-   ```
-
-2. **Build and run with Docker Compose:**
-   ```bash
-   docker-compose up -d --build
-   ```
-
-3. **Access the application:**
-   - Local: `http://localhost:8765`
-   - WebRTC Dashboard: `http://localhost:8765/js/modules/webrtc-dashboard/`
-
-#### Configuration Options
-
-The application is configured via environment variables in `docker-compose.yml`:
-
-##### 1. WebSocket URL Configuration
-
-**For Local Development (HTTP):**
-```yaml
-environment:
-  - WEBSOCKET_URL=ws://localhost:8765/ws/
-```
-
-**For Local Network Testing (same WiFi):**
-```yaml
-environment:
-  - WEBSOCKET_URL=ws://192.168.1.149:8765/ws/
-```
-> Replace `192.168.1.149` with your machine's local IP address
-
-**For Production (HTTPS):**
-```yaml
-environment:
-  - WEBSOCKET_URL=wss://henry.pkc.pub/ws/
-```
-> ⚠️ **Important**: Use `wss://` (WebSocket Secure) for HTTPS sites, `ws://` for HTTP sites
-
-##### 2. STUN Server Configuration
-
-STUN servers help establish peer-to-peer connections by discovering public IP addresses and NAT types.
-
-**Using Google STUN Servers (Public, Reliable):**
-```yaml
-environment:
-  - STUN_SERVERS=stun:stun.l.google.com:19302
-```
-
-**Using Multiple STUN Servers (Recommended for Production):**
-```yaml
-environment:
-  - STUN_SERVERS=stun:stun.l.google.com:19302,stun:stun1.l.google.com:19302
-```
-
-**Using Local STUN Server (For LAN Testing):**
-```yaml
-environment:
-  - STUN_SERVERS=stun:192.168.1.149:7302
-```
-
-**Using Custom STUN Server:**
-```yaml
-environment:
-  - STUN_SERVERS=stun:your-server.com:3478
-```
-
-#### Complete docker-compose.yml Example
-
-**Local Development:**
-```yaml
-services:
-  landingpage:
-    build: .
-    container_name: landingpage-local
-    restart: unless-stopped
-    ports:
-      - "8765:3000"
-    environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - WEBSOCKET_URL=ws://localhost:8765/ws/
-      - STUN_SERVERS=stun:stun.l.google.com:19302
-    networks:
-      - landingpage-network
-
-networks:
-  landingpage-network:
-    driver: bridge
-```
-
-**Production Deployment:**
-```yaml
-services:
-  landingpage:
-    build: .
-    container_name: landingpage-production
-    restart: unless-stopped
-    ports:
-      - "8765:3000"
-    environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - WEBSOCKET_URL=wss://henry.pkc.pub/ws/
-      - STUN_SERVERS=stun:stun.l.google.com:19302,stun:stun1.l.google.com:19302
-    networks:
-      - landingpage-network
-
-networks:
-  landingpage-network:
-    driver: bridge
-```
-
-#### Building and Deploying
-
-##### Option 1: Build Locally
-
-```bash
-# Build the Docker image
-docker-compose build
-
-# Start the container
-docker-compose up -d
-
-# View logs
-docker logs -f landingpage-local
-
-# Stop the container
-docker-compose down
-```
-
-##### Option 2: Use Pre-built Image from GitHub Actions
-
-If your repository has GitHub Actions configured to build and push Docker images:
-
-```yaml
-services:
-  landingpage:
-    image: ghcr.io/xlp0/landingpage:latest  # Use pre-built image
-    container_name: landingpage-production
-    restart: unless-stopped
-    ports:
-      - "8765:3000"
-    environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - WEBSOCKET_URL=wss://henry.pkc.pub/ws/
-      - STUN_SERVERS=stun:stun.l.google.com:19302
-    networks:
-      - landingpage-network
-```
-
-Then deploy:
-```bash
-# Pull the latest image
-docker-compose pull
-
-# Start the container
-docker-compose up -d
-```
-
-#### Updating Configuration
-
-When you change environment variables in `docker-compose.yml`:
-
-```bash
-# Restart to apply changes (no rebuild needed)
-docker-compose down && docker-compose up -d
-```
-
-#### Verifying Configuration
-
-Check if environment variables are correctly loaded:
-
-```bash
-# Check environment variables inside container
-docker exec landingpage-local printenv WEBSOCKET_URL
-docker exec landingpage-local printenv STUN_SERVERS
-
-# Check API configuration endpoint
-curl http://localhost:8765/api/config | python3 -m json.tool
-```
-
-Expected output:
-```json
-{
-    "WEBSOCKET_URL": "ws://localhost:8765/ws/",
-    "NODE_ENV": "production",
-    "PORT": "3000",
-    "STUN_SERVERS": [
-        {
-            "urls": "stun:stun.l.google.com:19302"
-        }
-    ]
-}
-```
-
-#### Setting Up Local STUN Server (Optional)
-
-For local network testing, you can run your own STUN server using coturn:
-
-1. **Start the STUN server:**
-   ```bash
-   docker-compose -f docker-compose.stun.yml up -d
-   ```
-
-2. **Update docker-compose.yml:**
-   ```yaml
-   environment:
-     - STUN_SERVERS=stun:192.168.1.149:7302
-   ```
-
-3. **Restart the application:**
-   ```bash
-   docker-compose restart
-   ```
-
-See `STUN-SERVER-SETUP.md` for detailed STUN server configuration.
-
-#### Troubleshooting
-
-**WebSocket Connection Issues:**
-- Verify `WEBSOCKET_URL` matches your deployment (use `wss://` for HTTPS)
-- Check firewall rules allow WebSocket connections
-- Ensure port 8765 is accessible
-
-**WebRTC Connection Issues:**
-- Verify STUN servers are reachable
-- Check browser console for ICE connection errors
-- Try using Google STUN servers for testing
-
-**Configuration Not Applied:**
-- Restart container after changing environment variables
-- Verify environment variables inside container
-- Check `/api/config` endpoint returns correct values
-
-**Docker Build Issues:**
-- Clear Docker cache: `docker-compose build --no-cache`
-- Check Dockerfile is present in project root
-- Ensure all required files are copied to container
-
-#### Environment-Specific Configurations
-
-**Development (localhost):**
-```yaml
-- WEBSOCKET_URL=ws://localhost:8765/ws/
-- STUN_SERVERS=stun:stun.l.google.com:19302
-```
-
-**Local Network Testing (same WiFi):**
-```yaml
-- WEBSOCKET_URL=ws://192.168.1.149:8765/ws/
-- STUN_SERVERS=stun:192.168.1.149:7302
-```
-
-**Staging/Production (HTTPS):**
-```yaml
-- WEBSOCKET_URL=wss://henry.pkc.pub/ws/
-- STUN_SERVERS=stun:stun.l.google.com:19302,stun:stun1.l.google.com:19302
-```
-
-#### Port Mapping
-
-The default port mapping is `8765:3000`:
-- `8765` = Host machine port (external access)
-- `3000` = Container internal port
-
-To change the external port:
-```yaml
-ports:
-  - "9000:3000"  # Access via http://localhost:9000
-```
-
-#### Health Checks
-
-Add health checks to monitor container status:
-
-```yaml
-services:
-  landingpage:
-    # ... other config ...
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/config"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-```
-
-#### Production Best Practices
-
-1. **Use HTTPS/WSS**: Always use secure WebSocket (`wss://`) in production
-2. **Multiple STUN Servers**: Configure backup STUN servers for reliability
-3. **Resource Limits**: Set memory and CPU limits in docker-compose.yml
-4. **Logging**: Configure log rotation and monitoring
-5. **Backups**: Regularly backup configuration and data
-6. **Updates**: Keep Docker images updated via GitHub Actions
-7. **Monitoring**: Set up health checks and alerting
 
 ---
 
