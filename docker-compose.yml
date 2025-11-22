@@ -13,7 +13,7 @@ services:
       # - WEBSOCKET_URL=wss://dev.pkc.pub/ws/
       # - WEBSOCKET_URL=wss://pkc.pub/ws/
       # For local network testing (same WiFi):
-      - WEBSOCKET_URL=wss://henry.pkc.pub/ws/
+      - WEBSOCKET_URL=ws://192.168.68.110:8765/ws/
       # STUN Servers - comma-separated list of STUN server URLs
       # Examples:
       # - STUN_SERVERS=stun:stun.l.google.com:19302,stun:stun1.l.google.com:19302

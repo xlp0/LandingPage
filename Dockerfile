@@ -19,4 +19,5 @@ COPY . .
 # Expose the port the app runs on
 EXPOSE 3000
 
-#gi
+# Run the WebSocket server
+CMD ["node", "ws-server.js"]
