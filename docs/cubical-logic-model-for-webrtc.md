@@ -60,6 +60,8 @@ graph TD
 
 3. **Signaling Service**
    - WebSocket-based communication
+     - `ws://` for HTTP connections (local development)
+     - `wss://` for HTTPS connections (production - secure)
    - Room discovery
    - Connection negotiation
    - ICE candidate exchange
@@ -80,6 +82,9 @@ graph TD
 - End-to-end encryption
 - Host approval system
 - Secure WebSocket (WSS)
+  - **Production**: Always use `wss://` (WebSocket Secure) for HTTPS sites
+  - **Development**: Use `ws://` (WebSocket) for HTTP/localhost only
+  - WSS provides TLS encryption for signaling messages
 
 #### User Experience
 - Intuitive interface
