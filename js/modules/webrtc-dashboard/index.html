@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#667eea">
     <title>WebRTC Dashboard - P2P Chat Rooms</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=1732281800">
     <!-- iOS Safari specific -->
     <meta name="format-detection" content="telephone=no">
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🌐</text></svg>">
@@ -218,7 +218,7 @@
     <!-- Scripts -->
     <script type="module">
         // Load configuration first
-        import { loadConfig } from './config.js?v=1763723311';
+        import { loadConfig } from './config.js?v=1732281800';
         
         // Initialize dashboard when page loads
         document.addEventListener('DOMContentLoaded', async () => {
@@ -226,7 +226,7 @@
                 // Load config from server (sets window.__WEBSOCKET_URL__ if available)
                 await loadConfig();
                 
-                const { DashboardManager } = await import('./dashboard-manager-v2.js?v=1763723311');
+                const { DashboardManager } = await import('./dashboard-manager-v2.js?v=1732281800');
                 window.dashboard = new DashboardManager();
                 await window.dashboard.init();
                 
