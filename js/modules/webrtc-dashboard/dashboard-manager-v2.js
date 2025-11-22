@@ -239,7 +239,7 @@ export class DashboardManager {
     _initializeElements() {
         const elementIds = [
             'user-name', 'login-btn', 'login-view', 'main-dashboard', 'current-user-name',
-            'room-name', 'room-description', 'require-approval', 'max-participants',
+            'save-user-name-btn', 'room-name', 'room-description', 'require-approval', 'max-participants',
             'create-room-btn', 'confirm-create-room-btn', 'create-room-modal',
             'refresh-rooms-btn', 'search-rooms', 'rooms-list',
             'chat-room-view', 'current-room-name', 'current-room-status',
@@ -292,6 +292,29 @@ export class DashboardManager {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 this.elements['login-btn']?.click();
+            }
+        });
+        
+        // Save user name button in header (for editing name after login)
+        this.elements['save-user-name-btn']?.addEventListener('click', () => {
+            const newName = this.elements['current-user-name']?.value.trim();
+            if (!newName) {
+                this._showNotification('Please enter a name', 'error');
+                return;
+            }
+            
+            if (this.currentUser) {
+                this.currentUser.name = newName;
+                localStorage.setItem('dashboard-user', JSON.stringify(this.currentUser));
+                this._showNotification('Name updated!', 'success');
+            }
+        });
+        
+        // Handle Enter key on header username input
+        this.elements['current-user-name']?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.elements['save-user-name-btn']?.click();
             }
         });
         
@@ -468,9 +491,9 @@ export class DashboardManager {
         this.elements['main-dashboard']?.classList.remove('hidden');
         this.elements['chat-room-view']?.classList.add('hidden');
         
-        // Update current user name display
+        // Update current user name display (now an input field)
         if (this.elements['current-user-name']) {
-            this.elements['current-user-name'].textContent = this.currentUser?.name || '';
+            this.elements['current-user-name'].value = this.currentUser?.name || '';
         }
     }
     
@@ -519,6 +542,12 @@ export class DashboardManager {
             // If user is already logged in, show main dashboard
             this._showMainDashboard();
         } else {
+            // Generate random username
+            const randomName = this._generateRandomUsername();
+            if (this.elements['user-name']) {
+                this.elements['user-name'].value = randomName;
+            }
+            
             // Show login view
             this.elements['login-view']?.classList.remove('hidden');
             this.elements['main-dashboard']?.classList.add('hidden');
@@ -534,6 +563,21 @@ export class DashboardManager {
     
     _generateUserId() {
         return 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+    }
+    
+    _generateRandomUsername() {
+        const adjectives = [
+            'Happy', 'Clever', 'Bright', 'Swift', 'Brave', 'Calm', 'Cool', 'Bold',
+            'Smart', 'Quick', 'Wise', 'Kind', 'Noble', 'Proud', 'Eager', 'Jolly'
+        ];
+        const nouns = [
+            'Panda', 'Tiger', 'Eagle', 'Dolphin', 'Fox', 'Wolf', 'Bear', 'Lion',
+            'Hawk', 'Owl', 'Deer', 'Falcon', 'Raven', 'Phoenix', 'Dragon', 'Unicorn'
+        ];
+        const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+        const noun = nouns[Math.floor(Math.random() * nouns.length)];
+        const number = Math.floor(Math.random() * 1000);
+        return `${adjective}${noun}${number}`;
     }
     
     _formatTime(timestamp) {

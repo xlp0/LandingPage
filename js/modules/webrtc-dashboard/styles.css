@@ -117,6 +117,52 @@ body {
     font-weight: 500;
 }
 
+.user-badge-editable {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f0f0f0;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.user-badge-editable span {
+    font-size: 16px;
+}
+
+.user-name-edit {
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    padding: 0;
+    min-width: 120px;
+    outline: none;
+}
+
+.user-name-edit:focus {
+    background: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.save-name-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    line-height: 1;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.save-name-btn:hover {
+    opacity: 1;
+}
+
 /* Main Dashboard Content */
 .dashboard-main {
     flex: 1;

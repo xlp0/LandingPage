@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#667eea">
     <title>WebRTC Dashboard - P2P Chat Rooms</title>
-    <link rel="stylesheet" href="styles.css?v=1732281800">
+    <link rel="stylesheet" href="styles.css?v=1732282000">
     <!-- iOS Safari specific -->
     <meta name="format-detection" content="telephone=no">
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🌐</text></svg>">
@@ -34,7 +34,11 @@
             <header class="dashboard-header">
                 <h1>🌐 WebRTC Dashboard</h1>
                 <div class="header-actions">
-                    <span class="user-badge">👤 <span id="current-user-name"></span></span>
+                    <div class="user-badge-editable">
+                        <span>👤</span>
+                        <input type="text" id="current-user-name" class="user-name-edit" placeholder="Your name..." maxlength="50">
+                        <button id="save-user-name-btn" class="save-name-btn" title="Save name">✔️</button>
+                    </div>
                     <button id="create-room-btn" class="primary-btn">➕ Create Room</button>
                 </div>
             </header>
@@ -218,7 +222,7 @@
     <!-- Scripts -->
     <script type="module">
         // Load configuration first
-        import { loadConfig } from './config.js?v=1732281800';
+        import { loadConfig } from './config.js?v=1732282000';
         
         // Initialize dashboard when page loads
         document.addEventListener('DOMContentLoaded', async () => {
@@ -226,7 +230,7 @@
                 // Load config from server (sets window.__WEBSOCKET_URL__ if available)
                 await loadConfig();
                 
-                const { DashboardManager } = await import('./dashboard-manager-v2.js?v=1732281800');
+                const { DashboardManager } = await import('./dashboard-manager-v2.js?v=1732282000');
                 window.dashboard = new DashboardManager();
                 await window.dashboard.init();
                 
