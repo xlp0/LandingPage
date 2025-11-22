@@ -183,6 +183,9 @@ docker-compose build
 # Start the container
 docker-compose up -d
 
+# Rebuild and restart (when you make code changes)
+docker-compose down && docker-compose up -d --build
+
 # View logs
 docker logs -f landingpage-local
 
@@ -223,11 +226,18 @@ docker-compose up -d
 
 #### Updating Configuration
 
-When you change environment variables in `docker-compose.yml`:
+**When you change environment variables in `docker-compose.yml` or `.env`:**
 
 ```bash
 # Restart to apply changes (no rebuild needed)
 docker-compose down && docker-compose up -d
+```
+
+**When you make code changes (Dockerfile, server files, etc.):**
+
+```bash
+# Rebuild and restart
+docker-compose down && docker-compose up -d --build
 ```
 
 ### Verifying Configuration
