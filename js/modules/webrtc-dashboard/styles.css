@@ -21,17 +21,26 @@ body {
     flex-direction: column;
 }
 
-/* Header */
-.dashboard-header {
-    background: rgba(255, 255, 255, 0.95);
+/* Login View */
+.login-view {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
     padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    text-align: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.dashboard-header h1 {
+.login-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    max-width: 450px;
+    width: 100%;
+    text-align: center;
+}
+
+.login-header h1 {
     font-size: 2.5rem;
     margin-bottom: 8px;
     background: linear-gradient(45deg, #667eea, #764ba2);
@@ -40,38 +49,77 @@ body {
     background-clip: text;
 }
 
-.dashboard-header p {
+.login-header p {
     color: #666;
     font-size: 1.1rem;
-    margin-bottom: 15px;
+    margin-bottom: 30px;
 }
 
-.user-info {
+.login-form {
     display: flex;
-    justify-content: center;
-    gap: 10px;
-    align-items: center;
+    flex-direction: column;
+    gap: 15px;
 }
 
-.user-info input {
-    padding: 8px 12px;
+.login-form input {
+    padding: 15px;
     border: 2px solid #ddd;
-    border-radius: 6px;
-    font-size: 14px;
-    min-width: 200px;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
 }
 
-.user-info input:focus {
+.login-form input:focus {
     outline: none;
     border-color: #667eea;
 }
 
 /* Main Dashboard */
+.main-dashboard {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+/* Header */
+.dashboard-header {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard-header h1 {
+    font-size: 2rem;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-badge {
+    background: #f0f0f0;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+/* Main Dashboard Content */
 .dashboard-main {
     flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 20px;
     margin-bottom: 20px;
 }
 
@@ -857,9 +905,28 @@ button:disabled {
     
     .dashboard-header {
         padding: 15px;
+        flex-direction: column;
+        gap: 15px;
     }
     
     .dashboard-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .header-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .header-actions button {
+        width: 100%;
+    }
+    
+    .login-container {
+        padding: 30px 20px;
+    }
+    
+    .login-header h1 {
         font-size: 2rem;
     }
     

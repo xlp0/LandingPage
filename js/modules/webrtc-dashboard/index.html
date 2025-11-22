@@ -14,60 +14,49 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <!-- Header -->
-        <header class="dashboard-header">
-            <h1>🌐 WebRTC Dashboard</h1>
-            <p>Serverless P2P Chat Rooms</p>
-            <div class="user-info">
-                <input type="text" id="user-name" placeholder="Enter your name..." value="">
-                <button id="save-name-btn">Save Name</button>
-            </div>
-        </header>
-
-        <!-- Main Dashboard -->
-        <main class="dashboard-main">
-            <!-- Room Creation Section -->
-            <section class="room-creation">
-                <h2>Create New Room</h2>
-                <div class="create-room-form">
-                    <input type="text" id="room-name" placeholder="Room name..." maxlength="50">
-                    <textarea id="room-description" placeholder="Room description (optional)..." maxlength="200"></textarea>
-                    <div class="room-options">
-                        <label>
-                            <input type="checkbox" id="require-approval" checked>
-                            Require host approval for new members
-                        </label>
-                        <label>
-                            Max participants: 
-                            <select id="max-participants">
-                                <option value="5">5</option>
-                                <option value="10" selected>10</option>
-                                <option value="20">20</option>
-                                <option value="50">50</option>
-                            </select>
-                        </label>
-                    </div>
-                    <button id="create-room-btn" class="primary-btn">🏠 Create Room</button>
+        <!-- Login View (Shown First) -->
+        <div id="login-view" class="login-view">
+            <div class="login-container">
+                <div class="login-header">
+                    <h1>🌐 WebRTC Dashboard</h1>
+                    <p>Serverless P2P Chat Rooms</p>
                 </div>
-            </section>
+                <div class="login-form">
+                    <input type="text" id="user-name" placeholder="Enter your name..." value="" maxlength="50">
+                    <button id="login-btn" class="primary-btn">Login</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard (Hidden Initially) -->
+        <div id="main-dashboard" class="main-dashboard hidden">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <h1>🌐 WebRTC Dashboard</h1>
+                <div class="header-actions">
+                    <span class="user-badge">👤 <span id="current-user-name"></span></span>
+                    <button id="create-room-btn" class="primary-btn">➕ Create Room</button>
+                </div>
+            </header>
 
             <!-- Available Rooms Section -->
-            <section class="available-rooms">
-                <div class="section-header">
-                    <h2>Available Rooms</h2>
-                    <div class="room-controls">
-                        <button id="refresh-rooms-btn">🔄 Refresh</button>
-                        <button id="test-broadcast-btn" style="background: #28a745; color: white;">🧪 Test Broadcast</button>
-                        <input type="text" id="search-rooms" placeholder="Search rooms...">
+            <main class="dashboard-main">
+                <section class="available-rooms">
+                    <div class="section-header">
+                        <h2>Available Rooms</h2>
+                        <div class="room-controls">
+                            <button id="refresh-rooms-btn">🔄 Refresh</button>
+                            <input type="text" id="search-rooms" placeholder="Search rooms...">
+                        </div>
                     </div>
-                </div>
-                <div id="rooms-list" class="rooms-grid">
-                    <div class="no-rooms-message">
-                        <p>No rooms available. Create one to get started!</p>
+                    <div id="rooms-list" class="rooms-grid">
+                        <div class="no-rooms-message">
+                            <p>No rooms available. Create one to get started!</p>
+                        </div>
                     </div>
-                </div>
-            </section>
-        </main>
+                </section>
+            </main>
+        </div>
 
         <!-- Chat Room View (Hidden by default) -->
         <div id="chat-room-view" class="chat-room-view hidden">
@@ -168,6 +157,41 @@
                     <div class="modal-actions">
                         <button id="confirm-transfer-btn" class="primary-btn" disabled>Transfer Host</button>
                         <button class="close-modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Room Modal -->
+        <div id="create-room-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>➕ Create New Room</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="create-room-form">
+                        <input type="text" id="room-name" placeholder="Room name..." maxlength="50">
+                        <textarea id="room-description" placeholder="Room description (optional)..." maxlength="200"></textarea>
+                        <div class="room-options">
+                            <label>
+                                <input type="checkbox" id="require-approval" checked>
+                                Require host approval for new members
+                            </label>
+                            <label>
+                                Max participants: 
+                                <select id="max-participants">
+                                    <option value="5">5</option>
+                                    <option value="10" selected>10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="modal-actions">
+                            <button id="confirm-create-room-btn" class="primary-btn">🏠 Create & Join Room</button>
+                            <button class="close-modal">Cancel</button>
+                        </div>
                     </div>
                 </div>
             </div>

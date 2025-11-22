@@ -238,8 +238,9 @@ export class DashboardManager {
     // UI Methods (keeping existing implementation)
     _initializeElements() {
         const elementIds = [
-            'user-name', 'save-name-btn', 'room-name', 'room-description',
-            'require-approval', 'max-participants', 'create-room-btn',
+            'user-name', 'login-btn', 'login-view', 'main-dashboard', 'current-user-name',
+            'room-name', 'room-description', 'require-approval', 'max-participants',
+            'create-room-btn', 'confirm-create-room-btn', 'create-room-modal',
             'refresh-rooms-btn', 'search-rooms', 'rooms-list',
             'chat-room-view', 'current-room-name', 'current-room-status',
             'share-room-btn', 'transfer-host-btn', 'leave-room-btn',
@@ -254,8 +255,8 @@ export class DashboardManager {
     }
     
     _setupUIHandlers() {
-        // Save name button - Actually saves the user's name
-        this.elements['save-name-btn']?.addEventListener('click', () => {
+        // Login button - Saves name and shows main dashboard
+        this.elements['login-btn']?.addEventListener('click', () => {
             const name = this.elements['user-name'].value.trim();
             if (!name) {
                 this._showNotification('Please enter your name', 'error');
@@ -281,11 +282,26 @@ export class DashboardManager {
                 console.log('[Dashboard] Set user ID on RoomService:', this.currentUser.id);
             }
             
-            this._showNotification('Name saved!', 'success');
+            // Show main dashboard
+            this._showMainDashboard();
+            this._showNotification(`Welcome, ${name}!`, 'success');
         });
         
-        // Create room button - Actually creates a room
-        this.elements['create-room-btn']?.addEventListener('click', async () => {
+        // Handle Enter key on username input
+        this.elements['user-name']?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.elements['login-btn']?.click();
+            }
+        });
+        
+        // Create room button - Opens modal
+        this.elements['create-room-btn']?.addEventListener('click', () => {
+            this._showCreateRoomModal();
+        });
+        
+        // Confirm create room button - Actually creates the room
+        this.elements['confirm-create-room-btn']?.addEventListener('click', async () => {
             const roomName = this.elements['room-name'].value.trim();
             if (!roomName) {
                 this._showNotification('Please enter a room name', 'error');
@@ -293,7 +309,7 @@ export class DashboardManager {
             }
             
             if (!this.currentUser?.name) {
-                this._showNotification('Please save your name first', 'error');
+                this._showNotification('Please login first', 'error');
                 return;
             }
             
@@ -304,11 +320,31 @@ export class DashboardManager {
                     requireApproval: this.elements['require-approval'].checked,
                     maxParticipants: parseInt(this.elements['max-participants'].value) || 10
                 });
-                this._showNotification('Room created!', 'success');
+                this._hideCreateRoomModal();
+                this._showNotification('Room created! Joining now...', 'success');
             } catch (error) {
                 console.error('[Dashboard] Failed to create room:', error);
                 this._showNotification('Failed to create room: ' + error.message, 'error');
             }
+        });
+        
+        // Close modal buttons
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const modal = e.target.closest('.modal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        });
+        
+        // Close modal on background click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
         });
         
         // Refresh rooms button
@@ -427,14 +463,38 @@ export class DashboardManager {
         return card;
     }
     
+    _showMainDashboard() {
+        this.elements['login-view']?.classList.add('hidden');
+        this.elements['main-dashboard']?.classList.remove('hidden');
+        this.elements['chat-room-view']?.classList.add('hidden');
+        
+        // Update current user name display
+        if (this.elements['current-user-name']) {
+            this.elements['current-user-name'].textContent = this.currentUser?.name || '';
+        }
+    }
+    
     _showChatView() {
-        document.getElementById('dashboard-view')?.classList.add('hidden');
-        document.getElementById('chat-room-view')?.classList.remove('hidden');
+        this.elements['login-view']?.classList.add('hidden');
+        this.elements['main-dashboard']?.classList.add('hidden');
+        this.elements['chat-room-view']?.classList.remove('hidden');
     }
     
     _showDashboardView() {
-        document.getElementById('dashboard-view')?.classList.remove('hidden');
-        document.getElementById('chat-room-view')?.classList.add('hidden');
+        this.elements['login-view']?.classList.add('hidden');
+        this.elements['main-dashboard']?.classList.remove('hidden');
+        this.elements['chat-room-view']?.classList.add('hidden');
+    }
+    
+    _showCreateRoomModal() {
+        this.elements['create-room-modal']?.classList.remove('hidden');
+        // Clear form
+        if (this.elements['room-name']) this.elements['room-name'].value = '';
+        if (this.elements['room-description']) this.elements['room-description'].value = '';
+    }
+    
+    _hideCreateRoomModal() {
+        this.elements['create-room-modal']?.classList.add('hidden');
     }
     
     _showNotification(message, type = 'info', duration = 3000) {
@@ -455,6 +515,14 @@ export class DashboardManager {
                 this.roomService.setUserId(this.currentUser.id);
                 console.log('[Dashboard] Loaded user ID from preferences:', this.currentUser.id);
             }
+            
+            // If user is already logged in, show main dashboard
+            this._showMainDashboard();
+        } else {
+            // Show login view
+            this.elements['login-view']?.classList.remove('hidden');
+            this.elements['main-dashboard']?.classList.add('hidden');
+            this.elements['chat-room-view']?.classList.add('hidden');
         }
     }
     
