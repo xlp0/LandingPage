@@ -271,9 +271,20 @@ export class ChatManager {
         this.roomConnection.onDataChannelOpen = async (peerId) => {
             console.log('[ChatManager] ✅ DataChannel opened with:', peerId);
             
-            // CRITICAL: Add small delay to ensure channel is fully ready
-            // The onopen event can fire slightly before readyState === 'open'
-            await new Promise(resolve => setTimeout(resolve, 50));
+            // CRITICAL: Wait for channel to be fully ready with retry logic
+            // The onopen event can fire before readyState === 'open'
+            // DataChannels are bidirectional but each direction may become ready at different times
+            let retries = 0;
+            const maxRetries = 10;
+            while (retries < maxRetries) {
+                await new Promise(resolve => setTimeout(resolve, 50));
+                const connectedPeers = this.roomConnection.getConnectedPeers();
+                if (connectedPeers.includes(peerId)) {
+                    console.log('[ChatManager] ✅ Channel fully ready after', (retries + 1) * 50, 'ms');
+                    break;
+                }
+                retries++;
+            }
             
             console.log('[ChatManager] Total connected peers:', this.roomConnection.getConnectedPeers().length);
             
