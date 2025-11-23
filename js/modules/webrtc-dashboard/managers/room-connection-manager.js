@@ -168,11 +168,16 @@ export class RoomConnectionManager {
             } else if (pc.connectionState === 'disconnected') {
                 this._log(`⚠️ PEER DISCONNECTED: ${peerId} - waiting for reconnect`);
                 // Don't immediately remove on 'disconnected', it might reconnect
-                // Only remove if still disconnected after 10 seconds
+                // Only remove if still disconnected after 10 seconds AND DataChannel is closed
                 setTimeout(() => {
-                    if (pc.connectionState === 'disconnected') {
+                    const channel = this.dataChannels.get(peerId);
+                    const channelOpen = channel && channel.readyState === 'open';
+                    
+                    if (pc.connectionState === 'disconnected' && !channelOpen) {
                         this._log(`❌ PEER STILL DISCONNECTED after timeout: ${peerId} - removing`);
                         this.removePeer(peerId);
+                    } else if (channelOpen) {
+                        this._log(`✅ PEER connectionState is 'disconnected' but DataChannel is OPEN - keeping connection`);
                     }
                 }, 10000);
             }
