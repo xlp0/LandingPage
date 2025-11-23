@@ -71,13 +71,25 @@ export class RoomManager {
             return;
         }
         
-        await this.chatManager.leaveRoom();
+        console.log('[RoomManager] 🚪 Leaving room:', this.currentRoom.id);
+        
+        // CRITICAL: Broadcast user-left-room FIRST before destroying connections
+        // This ensures the server and other clients are notified before WebSocket closes
+        console.log('[RoomManager] 📡 Broadcasting leave to server...');
         await this.roomService.leaveRoom(this.currentRoom.id);
+        
+        // Add small delay to ensure broadcast is processed
+        await new Promise(resolve => setTimeout(resolve, 100));
+        console.log('[RoomManager] ✅ Leave broadcast complete');
+        
+        // NOW destroy local connections
+        console.log('[RoomManager] 🧹 Cleaning up local connections...');
+        await this.chatManager.leaveRoom();
         
         this.currentRoom = null;
         this.isHost = false;
         
-        console.log('[RoomManager] Left room');
+        console.log('[RoomManager] ✅ Left room successfully');
     }
     
     generateRoomLink(roomId, options = {}) {
