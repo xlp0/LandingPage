@@ -647,7 +647,7 @@ button:disabled {
     color: #333;
 }
 
-.close-modal {
+.modal-header .close-modal {
     background: none;
     border: none;
     font-size: 24px;
@@ -658,6 +658,30 @@ button:disabled {
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #666;
+    transition: color 0.2s;
+}
+
+.modal-header .close-modal:hover {
+    color: #333;
+}
+
+.modal-actions .close-modal {
+    background: #f0f0f0;
+    border: 2px solid #ddd;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.modal-actions .close-modal:hover {
+    background: #e0e0e0;
+    border-color: #ccc;
+    color: #333;
 }
 
 .modal-body {
