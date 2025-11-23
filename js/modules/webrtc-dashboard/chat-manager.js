@@ -275,15 +275,23 @@ export class ChatManager {
             // The onopen event can fire before readyState === 'open'
             // DataChannels are bidirectional but each direction may become ready at different times
             let retries = 0;
-            const maxRetries = 10;
+            const maxRetries = 20; // Increased from 10 to 20 (1000ms total)
+            let channelReady = false;
+            
             while (retries < maxRetries) {
                 await new Promise(resolve => setTimeout(resolve, 50));
                 const connectedPeers = this.roomConnection.getConnectedPeers();
                 if (connectedPeers.includes(peerId)) {
                     console.log('[ChatManager] ✅ Channel fully ready after', (retries + 1) * 50, 'ms');
+                    channelReady = true;
                     break;
                 }
                 retries++;
+                console.log('[ChatManager] ⏳ Waiting for channel... attempt', retries, '/', maxRetries);
+            }
+            
+            if (!channelReady) {
+                console.warn('[ChatManager] ⚠️ Channel not ready after', maxRetries * 50, 'ms - will retry on message send');
             }
             
             console.log('[ChatManager] Total connected peers:', this.roomConnection.getConnectedPeers().length);
