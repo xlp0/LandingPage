@@ -208,10 +208,12 @@ export class RoomConnectionManager {
             if (channel.readyState === 'open') {
                 this._log(`✅ Channel readyState confirmed 'open' after ${retries * 20}ms`);
                 this.dataChannels.set(peerId, channel);
+                this._log(`📋 Added channel to map. Total channels: ${this.dataChannels.size}`);
             } else {
                 this._log(`⚠️ Channel readyState still '${channel.readyState}' after ${retries * 20}ms`);
                 // Add anyway and hope it becomes ready soon
                 this.dataChannels.set(peerId, channel);
+                this._log(`📋 Added channel to map (not ready). Total channels: ${this.dataChannels.size}`);
             }
             
             // Notify that data channel is ready
@@ -231,6 +233,7 @@ export class RoomConnectionManager {
         channel.onclose = () => {
             console.log(`[RoomConnectionManager] Data channel closed with: ${peerId}`);
             this.dataChannels.delete(peerId);
+            console.log(`[RoomConnectionManager] 📋 Removed channel from map. Total channels: ${this.dataChannels.size}`);
         };
     }
     
@@ -365,8 +368,13 @@ export class RoomConnectionManager {
     
     sendToPeer(peerId, data) {
         const channel = this.dataChannels.get(peerId);
-        if (!channel || channel.readyState !== 'open') {
-            console.error(`[RoomConnectionManager] Cannot send to ${peerId} - channel not ready`);
+        if (!channel) {
+            console.error(`[RoomConnectionManager] Cannot send to ${peerId} - channel not found in map`);
+            console.error(`[RoomConnectionManager] Available channels:`, Array.from(this.dataChannels.keys()));
+            return false;
+        }
+        if (channel.readyState !== 'open') {
+            console.error(`[RoomConnectionManager] Cannot send to ${peerId} - channel state: ${channel.readyState}`);
             return false;
         }
         
