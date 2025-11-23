@@ -268,8 +268,13 @@ export class ChatManager {
         };
         
         // Handle DataChannel open (fully ready for messaging)
-        this.roomConnection.onDataChannelOpen = (peerId) => {
+        this.roomConnection.onDataChannelOpen = async (peerId) => {
             console.log('[ChatManager] ✅ DataChannel opened with:', peerId);
+            
+            // CRITICAL: Add small delay to ensure channel is fully ready
+            // The onopen event can fire slightly before readyState === 'open'
+            await new Promise(resolve => setTimeout(resolve, 50));
+            
             console.log('[ChatManager] Total connected peers:', this.roomConnection.getConnectedPeers().length);
             
             // CRITICAL: Send our participant list to the newly connected peer
