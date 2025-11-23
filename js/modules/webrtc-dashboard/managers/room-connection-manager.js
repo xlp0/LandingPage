@@ -426,6 +426,15 @@ export class RoomConnectionManager {
     destroy() {
         console.log(`[RoomConnectionManager] Destroying all connections for room: ${this.roomId}`);
         
+        // CRITICAL: Destroy signaling first to stop receiving new offers/answers
+        if (this.signaling) {
+            console.log(`[RoomConnectionManager] Destroying signaling service`);
+            if (this.signaling.destroy) {
+                this.signaling.destroy();
+            }
+            this.signaling = null;
+        }
+        
         this.dataChannels.forEach(channel => channel.close());
         this.dataChannels.clear();
         
