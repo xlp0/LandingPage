@@ -231,26 +231,33 @@
         // Dynamic cache busting using timestamp
         const cacheBuster = Date.now();
         
-        // Load configuration first
-        import(`./config.js?v=${cacheBuster}`).then(async ({ loadConfig }) => {
-            // Initialize dashboard when page loads
-            document.addEventListener('DOMContentLoaded', async () => {
-                try {
-                    // Load config from server (sets window.__WEBSOCKET_URL__ if available)
-                    await loadConfig();
-                    
-                    const { DashboardManager } = await import(`./dashboard-manager-v2.js?v=${cacheBuster}`);
-                    window.dashboard = new DashboardManager();
-                    await window.dashboard.init();
-                    
-                    // Setup mobile participants toggle
-                    setupMobileParticipantsToggle();
-                } catch (error) {
-                    console.error('Failed to initialize dashboard:', error);
-                    document.getElementById('connection-text').textContent = 'Failed to initialize';
-                }
-            });
-        });
+        // Initialize dashboard
+        async function initDashboard() {
+            try {
+                // Load configuration first
+                const { loadConfig } = await import(`./config.js?v=${cacheBuster}`);
+                await loadConfig();
+                
+                // Load dashboard manager
+                const { DashboardManager } = await import(`./dashboard-manager-v2.js?v=${cacheBuster}`);
+                window.dashboard = new DashboardManager();
+                await window.dashboard.init();
+                
+                // Setup mobile participants toggle
+                setupMobileParticipantsToggle();
+            } catch (error) {
+                console.error('Failed to initialize dashboard:', error);
+                document.getElementById('connection-text').textContent = 'Failed to initialize';
+            }
+        }
+        
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDashboard);
+        } else {
+            // DOM already loaded
+            initDashboard();
+        }
 
         // Handle URL parameters for direct room joining
         const urlParams = new URLSearchParams(window.location.search);
