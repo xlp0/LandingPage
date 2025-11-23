@@ -194,9 +194,25 @@ export class RoomConnectionManager {
     setupDataChannel(peerId, channel) {
         this._log(`📺 Setting up data channel with: ${peerId}`);
         
-        channel.onopen = () => {
+        channel.onopen = async () => {
             this._log(`✅ DATA CHANNEL OPENED with: ${peerId}`);
-            this.dataChannels.set(peerId, channel);
+            
+            // CRITICAL: Wait for readyState to be truly 'open' before adding to map
+            // The onopen event can fire before readyState === 'open' for sending
+            let retries = 0;
+            while (retries < 50 && channel.readyState !== 'open') {
+                await new Promise(resolve => setTimeout(resolve, 20));
+                retries++;
+            }
+            
+            if (channel.readyState === 'open') {
+                this._log(`✅ Channel readyState confirmed 'open' after ${retries * 20}ms`);
+                this.dataChannels.set(peerId, channel);
+            } else {
+                this._log(`⚠️ Channel readyState still '${channel.readyState}' after ${retries * 20}ms`);
+                // Add anyway and hope it becomes ready soon
+                this.dataChannels.set(peerId, channel);
+            }
             
             // Notify that data channel is ready
             this.onDataChannelOpen(peerId);
