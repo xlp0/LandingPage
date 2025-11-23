@@ -247,28 +247,39 @@ export class RoomConnectionManager {
     async handleOffer(peerId, offer) {
         this._log(`📥 Received offer from: ${peerId}`);
         
-        // Determine if we are polite peer
-        const isPolite = this.userId < peerId;
-        
-        // Perfect Negotiation: Handle offer collision
-        // Only check signaling state if peer connection exists
-        const existingPeer = this.peers.get(peerId);
-        const offerCollision = 
-            (offer.type === 'offer') &&
-            (this.makingOffer.get(peerId) || (existingPeer && existingPeer.signalingState !== 'stable'));
-        
-        this.ignoreOffer.set(peerId, !isPolite && offerCollision);
-        
-        if (this.ignoreOffer.get(peerId)) {
-            this._log(`🚫 IGNORING offer from ${peerId} (we are impolite and have collision)`);
+        // CRITICAL: Prevent duplicate offer processing
+        // Check if we're already processing an offer from this peer
+        const processingKey = `offer_${peerId}`;
+        if (this[processingKey]) {
+            this._log(`⚠️ Already processing offer from ${peerId} - ignoring duplicate`);
             return;
         }
         
-        this._log(`✅ ACCEPTING offer from ${peerId} (${isPolite ? 'polite' : 'impolite'} peer)`);
-        
-        const pc = await this.createPeerConnection(peerId, false);
+        // Mark as processing
+        this[processingKey] = true;
         
         try {
+            // Determine if we are polite peer
+            const isPolite = this.userId < peerId;
+            
+            // Perfect Negotiation: Handle offer collision
+            // Only check signaling state if peer connection exists
+            const existingPeer = this.peers.get(peerId);
+            const offerCollision = 
+                (offer.type === 'offer') &&
+                (this.makingOffer.get(peerId) || (existingPeer && existingPeer.signalingState !== 'stable'));
+            
+            this.ignoreOffer.set(peerId, !isPolite && offerCollision);
+            
+            if (this.ignoreOffer.get(peerId)) {
+                this._log(`🚫 IGNORING offer from ${peerId} (we are impolite and have collision)`);
+                return;
+            }
+            
+            this._log(`✅ ACCEPTING offer from ${peerId} (${isPolite ? 'polite' : 'impolite'} peer)`);
+            
+            const pc = await this.createPeerConnection(peerId, false);
+            
             await pc.setRemoteDescription(new RTCSessionDescription(offer));
             this._log(`✅ Set remote description from: ${peerId}`);
             
@@ -288,6 +299,11 @@ export class RoomConnectionManager {
         } catch (error) {
             this._log(`❌ Error handling offer from ${peerId}:`, error);
             throw error;
+        } finally {
+            // Clear processing flag after a short delay to allow for answer to be sent
+            setTimeout(() => {
+                delete this[processingKey];
+            }, 1000);
         }
     }
     
