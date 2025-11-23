@@ -103,6 +103,48 @@ export class WebRTCCoordinator {
     }
     
     /**
+     * Handle user left room event
+     * Cleans up peer connection for the user who left
+     * @param {Object} data - Leave event data
+     */
+    async handleUserLeft(data) {
+        const { roomId, userId } = data;
+        
+        console.log('[WebRTCCoordinator] 👋 User left:', userId);
+        console.log('[WebRTCCoordinator] 🔍 Room:', roomId);
+        
+        // Don't process our own leave
+        if (userId === this.currentUserId) {
+            console.log('[WebRTCCoordinator] Ignoring own leave signal');
+            return;
+        }
+        
+        // Get connection manager for this room
+        const connectionManager = this.roomState.getConnectionManager(roomId);
+        if (!connectionManager) {
+            console.log('[WebRTCCoordinator] No connection manager for room:', roomId);
+            return;
+        }
+        
+        // Remove peer connection for the user who left
+        if (connectionManager.peers && connectionManager.peers.has(userId)) {
+            console.log('[WebRTCCoordinator] 🧹 Removing peer connection for:', userId);
+            
+            // Close the peer connection
+            const peer = connectionManager.peers.get(userId);
+            if (peer && peer.connection) {
+                peer.connection.close();
+            }
+            
+            // Remove from peers map
+            connectionManager.peers.delete(userId);
+            console.log('[WebRTCCoordinator] ✅ Peer connection removed');
+        } else {
+            console.log('[WebRTCCoordinator] No peer connection found for:', userId);
+        }
+    }
+    
+    /**
      * Disconnect from a room
      * @param {string} roomId - Room to disconnect from
      */

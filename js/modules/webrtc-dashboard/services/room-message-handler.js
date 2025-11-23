@@ -17,6 +17,11 @@ export class RoomMessageHandler {
             this.handleMessage(type, data, fullMessage);
         });
         
+        // Setup WebRTC coordinator event listeners
+        this.eventEmitter.on('user-left-room', (data) => {
+            this.webrtcCoordinator.handleUserLeft(data);
+        });
+        
         console.log('[RoomMessageHandler] Initialized');
     }
     
