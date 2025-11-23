@@ -159,10 +159,16 @@ export class RoomConnectionManager {
             } else if (pc.connectionState === 'failed') {
                 this._log(`❌ PEER FAILED: ${peerId} - will retry`);
                 // Don't immediately remove on 'failed', give it a chance to reconnect
+                // Only remove if still failed after 5 seconds AND DataChannel is closed
                 setTimeout(() => {
-                    if (pc.connectionState === 'failed') {
+                    const channel = this.dataChannels.get(peerId);
+                    const channelOpen = channel && channel.readyState === 'open';
+                    
+                    if (pc.connectionState === 'failed' && !channelOpen) {
                         this._log(`❌ PEER STILL FAILED after timeout: ${peerId} - removing`);
                         this.removePeer(peerId);
+                    } else if (channelOpen) {
+                        this._log(`✅ PEER connectionState is 'failed' but DataChannel is OPEN - keeping connection`);
                     }
                 }, 5000);
             } else if (pc.connectionState === 'disconnected') {
