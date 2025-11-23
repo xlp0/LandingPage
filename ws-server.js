@@ -13,6 +13,17 @@ const app = express();
 // Enable CORS for all routes
 app.use(cors());
 
+// Add cache control headers to prevent browser caching issues
+app.use((req, res, next) => {
+    // Disable caching for HTML, JS, and CSS files
+    if (req.url.endsWith('.html') || req.url.endsWith('.js') || req.url.endsWith('.css')) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+    }
+    next();
+});
+
 // Serve static files from the current directory
 app.use(express.static(__dirname));
 
