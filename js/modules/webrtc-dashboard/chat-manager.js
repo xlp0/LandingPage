@@ -180,8 +180,20 @@ export class ChatManager {
         // Create new room-specific connection manager
         console.log('[ChatManager] 🔧 Creating RoomConnectionManager for room:', roomId);
         this.roomConnection = new RoomConnectionManager(roomId);
-        await this.roomConnection.setUserId(userData.id); // Wait for signaling to initialize
+        
+        // CRITICAL: Wait for signaling to be fully initialized before proceeding
+        console.log('[ChatManager] ⏳ Waiting for signaling initialization...');
+        await this.roomConnection.setUserId(userData.id);
+        
+        // Add extra delay to ensure WebSocket is fully ready
+        await new Promise(resolve => setTimeout(resolve, 100));
         console.log('[ChatManager] ✅ RoomConnectionManager created and initialized');
+        
+        // Setup WebRTC event handlers BEFORE registering with RoomService
+        // This ensures handlers are ready when offers/answers arrive
+        console.log('[ChatManager] 🎯 Setting up WebRTC event handlers...');
+        this._setupRoomConnectionHandlers();
+        console.log('[ChatManager] ✅ WebRTC event handlers ready');
         
         // Register connection manager with RoomService (for WebRTC coordination)
         if (this.roomService) {
@@ -192,9 +204,6 @@ export class ChatManager {
             console.error('[ChatManager] ❌ CRITICAL: No RoomService available for connection registration!');
             console.error('[ChatManager] ❌ WebRTC coordination will NOT work!');
         }
-        
-        // Setup WebRTC event handlers
-        this._setupRoomConnectionHandlers();
         
         // Clear participants and add self
         this.participants.clear();
