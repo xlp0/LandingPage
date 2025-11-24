@@ -307,7 +307,16 @@ export class RoomConnectionManager {
     async handleOffer(peerId, offer) {
         this._log(`📥 Received offer from: ${peerId}`);
         
-        // CRITICAL: Prevent duplicate offer processing with fingerprinting
+        // CRITICAL: Set processing lock FIRST to prevent race condition
+        // Check if we're currently processing ANY offer from this peer
+        if (this.offerProcessingLocks.get(peerId)) {
+            this._log(`⚠️ Already processing an offer from ${peerId} - ignoring concurrent offer`);
+            return;
+        }
+        
+        // IMMEDIATELY set lock before any async operations
+        this.offerProcessingLocks.set(peerId, true);
+        
         // Create a fingerprint of this offer to detect exact duplicates
         const offerFingerprint = JSON.stringify(offer).substring(0, 100); // First 100 chars as fingerprint
         
@@ -318,18 +327,13 @@ export class RoomConnectionManager {
         
         if (this.processedOffers.get(peerId).has(offerFingerprint)) {
             this._log(`⚠️ Already processed this exact offer from ${peerId} - ignoring duplicate`);
+            // Clear lock since we're not processing
+            this.offerProcessingLocks.set(peerId, false);
             return;
         }
         
-        // Check if we're currently processing ANY offer from this peer
-        if (this.offerProcessingLocks.get(peerId)) {
-            this._log(`⚠️ Already processing an offer from ${peerId} - ignoring concurrent offer`);
-            return;
-        }
-        
-        // Mark this offer as processed and lock processing
+        // Mark this offer as processed
         this.processedOffers.get(peerId).add(offerFingerprint);
-        this.offerProcessingLocks.set(peerId, true);
         
         try {
             // Determine if we are polite peer
