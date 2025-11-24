@@ -455,7 +455,24 @@ export class DashboardManager {
             try {
                 console.log('[Dashboard] Joining room:', room.id);
                 
-                // CRITICAL: Setup ChatManager FIRST to create connection manager
+                // CRITICAL: Validate username FIRST before setting up any connections
+                // This prevents wasting resources on WebRTC setup if username is duplicate
+                console.log('[Dashboard] 🔍 Validating username against existing participants...');
+                const roomObj = this.roomService.getRoom(room.id);
+                if (roomObj && roomObj.participants) {
+                    const duplicateUser = roomObj.participants.find(p => 
+                        p.name && p.name.toLowerCase() === this.currentUser.name.toLowerCase()
+                    );
+                    if (duplicateUser) {
+                        const errorMsg = `Username "${this.currentUser.name}" already exists in this room. Please choose a different name.`;
+                        console.error('[Dashboard] ❌ Duplicate username detected:', errorMsg);
+                        this._showNotification(`❌ ${errorMsg}`, 'error', 5000);
+                        return; // Exit early - don't proceed with join
+                    }
+                }
+                console.log('[Dashboard] ✅ Username validation passed');
+                
+                // NOW setup ChatManager to create connection manager
                 // This must happen BEFORE broadcasting user-joined-room
                 console.log('[Dashboard] 🔧 Setting up WebRTC connection manager...');
                 await this.chatManager.joinRoom(room.id, this.currentUser);
