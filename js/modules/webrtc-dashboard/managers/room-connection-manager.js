@@ -129,8 +129,14 @@ export class RoomConnectionManager {
                 return existingPc;
             }
             
-            // Otherwise, close the old connection and create a new one
-            // DON'T call removePeer() as it clears processing locks
+            // If connection is actively connecting, keep it (don't interrupt)
+            // This prevents duplicate offers from disrupting an in-progress connection
+            if (existingState === 'connecting' || existingState === 'new') {
+                this._log(`✅ Keeping existing connection that is actively connecting`);
+                return existingPc;
+            }
+            
+            // Only close if connection is failed/disconnected/closed
             this._log(`🔄 Closing old connection (state: ${existingState}) to create fresh one`);
             
             // Stop health monitoring
