@@ -222,9 +222,11 @@ sequenceDiagram
     S-->>A: Forward ICE
     
     Note over A,B: Phase 5: Direct Connection
-    A<-->B: Peer Connection Established
-    A<-->B: DataChannel Open
-    A<-->B: Direct P2P Communication
+    A->>B: Peer Connection Established
+    B->>A: Acknowledge Connection
+    A->>B: DataChannel Open
+    B->>A: DataChannel Ready
+    Note over A,B: Direct P2P Communication Active
 ```
 
 ### Reconnection Flow (Fixed Issues)

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "js/modules/webrtc-dashboard/README.md",
+                "file": "docs/webrtc-dashboard-architecture.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "webrtc-dashboard-architecture"
             }
           }
         ]
@@ -185,8 +185,8 @@
   },
   "active": "bd45ebad09a1e0e6",
   "lastOpenFiles": [
-    "js/modules/webrtc-dashboard/SERVER-ARCHITECTURE.md",
     "js/modules/webrtc-dashboard/README.md",
+    "js/modules/webrtc-dashboard/SERVER-ARCHITECTURE.md",
     "js/modules/webrtc-dashboard/REFACTORING-GUIDE.md",
     "docs/cubical-logic-model-for-webrtc.md",
     "js/components/animation-playground.js",
