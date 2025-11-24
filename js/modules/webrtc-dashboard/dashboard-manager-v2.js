@@ -479,7 +479,17 @@ export class DashboardManager {
                 console.log('[Dashboard] ✅ Successfully joined room via WebRTC');
             } catch (error) {
                 console.error('[Dashboard] Failed to join room:', error);
-                this._showNotification('Failed to join room', 'error');
+                
+                // Check if it's a duplicate username error
+                if (error.message && error.message.includes('already exists in this room')) {
+                    this._showNotification(
+                        `❌ ${error.message}`,
+                        'error',
+                        5000
+                    );
+                } else {
+                    this._showNotification('Failed to join room: ' + error.message, 'error');
+                }
             }
         });
         
