@@ -419,8 +419,21 @@ export class RoomConnectionManager {
             this._log(`❌ No connection found for: ${peerId}`);
             return;
         }
-        await pc.setRemoteDescription(new RTCSessionDescription(answer));
-        this._log(`✅ Set remote description (answer) from: ${peerId}`);
+        
+        // Check if we're in the correct state to receive an answer
+        // Answer can only be set when signalingState is 'have-local-offer'
+        if (pc.signalingState !== 'have-local-offer') {
+            this._log(`⚠️ Ignoring answer from ${peerId} - wrong signaling state: ${pc.signalingState} (expected: have-local-offer)`);
+            return;
+        }
+        
+        try {
+            await pc.setRemoteDescription(new RTCSessionDescription(answer));
+            this._log(`✅ Set remote description (answer) from: ${peerId}`);
+        } catch (error) {
+            this._log(`❌ Error setting remote description (answer) from ${peerId}:`, error.message);
+            // Don't throw - just log and continue
+        }
     }
     
     async handleIceCandidate(peerId, candidate) {
