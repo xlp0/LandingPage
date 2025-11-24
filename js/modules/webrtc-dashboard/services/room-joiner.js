@@ -12,6 +12,7 @@ export class RoomJoiner {
      * @param {string} roomId - Room to join
      * @param {Object} userData - User information
      * @returns {Object} Room object
+     * @throws {Error} If username already exists in room
      */
     async joinRoom(roomId, userData) {
         console.log('[RoomJoiner] 🔥 JOIN ROOM CALLED:', roomId);
@@ -31,6 +32,19 @@ export class RoomJoiner {
             existingParticipants.forEach(p => {
                 console.log('[RoomJoiner]   📍', p.name, '(', p.id, ')');
             });
+            
+            // ✅ VALIDATION: Check for duplicate username in room
+            const duplicateUser = existingParticipants.find(p => 
+                p.name.toLowerCase() === userData.name.toLowerCase()
+            );
+            
+            if (duplicateUser) {
+                const errorMsg = `Username "${userData.name}" already exists in this room. Please choose a different name.`;
+                console.error('[RoomJoiner] ❌ Duplicate username detected:', errorMsg);
+                throw new Error(errorMsg);
+            }
+            
+            console.log('[RoomJoiner] ✅ Username validation passed - no duplicates');
             
             // NOW add new user to room
             const participant = {

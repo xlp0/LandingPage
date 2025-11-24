@@ -350,6 +350,37 @@ graph TB
     end
 ```
 
+### Username Validation (Prevent Duplicates)
+
+```mermaid
+flowchart TD
+    Start[User Attempts to Join Room] --> GetName[Get User's Name]
+    GetName --> GetExisting[Get Existing Participants]
+    GetExisting --> Check{Username Already<br/>Exists in Room?}
+    
+    Check -->|Yes - Case Insensitive| Error["❌ Error: Username Already Exists<br/>Please Choose Different Name"]
+    Error --> Reject[Reject Join Request]
+    Reject --> End1[User Stays Out]
+    
+    Check -->|No - Unique| Valid["✅ Username Valid"]
+    Valid --> Add[Add User to Room]
+    Add --> Broadcast[Broadcast User Joined]
+    Broadcast --> Connect[Establish WebRTC Connections]
+    Connect --> Success[User Successfully Joined]
+    Success --> End2[User in Room]
+```
+
+**Implementation Details:**
+- ✅ Case-insensitive username check (Henry = henry)
+- ✅ Checked BEFORE user is added to room
+- ✅ Prevents duplicate usernames in same room
+- ✅ Clear error message to user
+- ✅ User can retry with different name
+
+**Code Location:** `/js/modules/webrtc-dashboard/services/room-joiner.js` (lines 36-47)
+
+---
+
 ### Leave and Rejoin Flow (Complete Lifecycle)
 
 ```mermaid
