@@ -4,7 +4,8 @@
   "wsPath": "/ws/",
   "p2p": {
     "iceServers": [
-      { "urls": "stun:192.168.1.149:7302" }
+      { "urls": "stun:stun.l.google.com:19302" },
+      { "urls": "stun:stun1.l.google.com:19302" }
     ]
   }
 }
