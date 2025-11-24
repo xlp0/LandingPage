@@ -170,6 +170,14 @@ export class RoomConnectionManager {
                 // Don't immediately remove on 'failed', give it a chance to reconnect
                 // Only remove if still failed after 5 seconds AND DataChannel is closed
                 setTimeout(() => {
+                    // CRITICAL: Check if this is still the current peer connection
+                    // A new connection might have been created during the timeout
+                    const currentPc = this.peers.get(peerId);
+                    if (currentPc !== pc) {
+                        this._log(`✅ New peer connection created for ${peerId} - ignoring old timeout`);
+                        return;
+                    }
+                    
                     const channel = this.dataChannels.get(peerId);
                     const channelOpen = channel && channel.readyState === 'open';
                     
@@ -185,6 +193,14 @@ export class RoomConnectionManager {
                 // Don't immediately remove on 'disconnected', it might reconnect
                 // Only remove if still disconnected after 10 seconds AND DataChannel is closed
                 setTimeout(() => {
+                    // CRITICAL: Check if this is still the current peer connection
+                    // A new connection might have been created during the timeout
+                    const currentPc = this.peers.get(peerId);
+                    if (currentPc !== pc) {
+                        this._log(`✅ New peer connection created for ${peerId} - ignoring old timeout`);
+                        return;
+                    }
+                    
                     const channel = this.dataChannels.get(peerId);
                     const channelOpen = channel && channel.readyState === 'open';
                     
