@@ -412,7 +412,18 @@ export class RoomConnectionManager {
             
             this._log(`✅ ACCEPTING offer from ${peerId} (${isPolite ? 'polite' : 'impolite'} peer)`);
             
+            // Check if peer connection already exists before creating
+            const existingPc = this.peers.get(peerId);
+            const wasExisting = !!existingPc;
+            
             const pc = await this.createPeerConnection(peerId, false);
+            
+            // If we're reusing an existing connection that's already connecting,
+            // don't process the offer again (it's already been processed)
+            if (wasExisting && existingPc === pc) {
+                this._log(`⏭️ Skipping offer processing - connection already being established`);
+                return;
+            }
             
             await pc.setRemoteDescription(new RTCSessionDescription(offer));
             this._log(`✅ Set remote description from: ${peerId}`);
