@@ -114,10 +114,24 @@ export class RoomConnectionManager {
         const isPolite = this.userId < peerId;
         this._log(`🎭 Role: ${isPolite ? 'POLITE' : 'IMPOLITE'} (${this.userId} vs ${peerId})`);
         
-        // Don't create duplicate connections
+        // Check if connection already exists
         if (this.peers.has(peerId)) {
+            const existingPc = this.peers.get(peerId);
+            const existingState = existingPc.connectionState;
+            const existingSignalingState = existingPc.signalingState;
+            
             this._log(`⚠️ Connection already exists for peer: ${peerId}`);
-            return this.peers.get(peerId);
+            this._log(`   Connection state: ${existingState}, Signaling state: ${existingSignalingState}`);
+            
+            // If connection is fully established and stable, keep it
+            if (existingState === 'connected' && existingSignalingState === 'stable') {
+                this._log(`✅ Keeping existing stable connection`);
+                return existingPc;
+            }
+            
+            // Otherwise, remove the old connection and create a new one
+            this._log(`🔄 Removing old connection (state: ${existingState}) to create fresh one`);
+            this.removePeer(peerId);
         }
         
         // Initialize negotiation state
