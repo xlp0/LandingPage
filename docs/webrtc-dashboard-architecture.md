@@ -185,6 +185,199 @@ graph LR
 | **room-state.js** | State management | 149 | event-emitter |
 | **room-event-emitter.js** | Event system | 54 | None |
 
+### Detailed Component Architecture
+
+#### 1. DashboardManager (Orchestrator)
+```javascript
+class DashboardManager {
+    // Coordinates all services
+    // Manages UI state transitions
+    // Handles user authentication
+    // Routes events between components
+    
+    constructor() {
+        // Core services
+        this.roomService = null;
+        this.accessControl = null;
+        this.chatManager = null;
+        this.ui = null;
+        
+        // Managers
+        this.roomManager = null;
+        this.participantManager = null;
+        
+        // State
+        this.currentUser = null;
+        this.elements = {};
+        this.eventHandlers = new Map();
+    }
+}
+```
+
+**Key Responsibilities:**
+- 🎯 Main application orchestrator
+- 🔄 Manages UI state transitions (Login → Dashboard → Chat)
+- 📋 Coordinates between all services
+- 👤 Handles user authentication and preferences
+- 🎨 Manages UI component lifecycle
+
+#### 2. RoomService (Room Management)
+```javascript
+class RoomService {
+    // Creates and manages rooms
+    // Coordinates WebRTC connections
+    // Handles room state synchronization
+    // Manages participant lists
+    
+    constructor() {
+        // Modular components
+        this.state = new RoomState();
+        this.creator = new RoomCreator(this.state);
+        this.joiner = new RoomJoiner(this.state);
+        this.broadcaster = new RoomBroadcaster('webrtc-dashboard-rooms');
+        this.discovery = new RoomDiscovery(this.broadcaster);
+        this.eventEmitter = new RoomEventEmitter();
+        this.webrtcCoordinator = new WebRTCCoordinator(this.state);
+        this.messageHandler = new RoomMessageHandler(
+            this.state, this.broadcaster, this.eventEmitter, this.webrtcCoordinator
+        );
+    }
+}
+```
+
+**Key Responsibilities:**
+- 🏠 Room creation and management
+- 🌐 WebRTC connection coordination
+- 📊 Room state synchronization
+- 👥 Participant list management
+- 🔄 Event handling and broadcasting
+
+#### 3. RoomConnectionManager (WebRTC Core)
+```javascript
+class RoomConnectionManager {
+    constructor(roomId) {
+        this.roomId = roomId;
+        this.peers = new Map(); // peerId -> RTCPeerConnection
+        this.dataChannels = new Map(); // peerId -> RTCDataChannel
+        this.localStream = null;
+        this.userId = null;
+        this.signaling = null;
+        
+        // Perfect Negotiation Pattern
+        this.makingOffer = new Map(); // peerId -> boolean
+        this.ignoreOffer = new Map(); // peerId -> boolean
+        
+        // Robustness features
+        this.connectionHealthChecks = new Map();
+        this.reconnectAttempts = new Map();
+        this.processedOffers = new Map();
+        this.offerProcessingLocks = new Map();
+        
+        // ICE servers configuration
+        this.iceServers = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+            ]
+        };
+    }
+}
+```
+
+**Key Responsibilities:**
+- 🌐 Per-room WebRTC connection management
+- 🔗 RTCPeerConnection instance management
+- 🧊 ICE candidate exchange
+- 📡 Data channel establishment and maintenance
+- 🔄 Connection health monitoring and reconnection
+
+#### 4. WebSocketBroadcastService (Signaling)
+```javascript
+class WebSocketBroadcastService {
+    constructor(channelName, wsUrl = null) {
+        this.channelName = channelName;
+        this.wsUrl = wsUrl || this._getWebSocketUrl();
+        this.ws = null;
+        this.listeners = new Map();
+        this.messageQueue = [];
+        this.isReady = false;
+        this.reconnectAttempts = 0;
+        this.maxReconnectAttempts = 5;
+    }
+    
+    _getWebSocketUrl() {
+        // Auto-detect WebSocket URL based on current location
+        if (window.__WEBSOCKET_URL__) {
+            return window.__WEBSOCKET_URL__;
+        }
+        
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const host = window.location.host;
+        return `${protocol}//${host}/ws/`;
+    }
+}
+```
+
+**Key Responsibilities:**
+- 📡 WebSocket communication management
+- 📨 Message broadcasting and reception
+- 🏠 Room discovery signaling
+- 🔄 WebRTC offer/answer relay
+- 🔌 Automatic reconnection with backoff
+
+---
+
+## Network Architecture
+
+```mermaid
+graph TB
+    subgraph "Browser A"
+        UIA[Dashboard UI]
+        RBCA[RoomConnectionManager]
+        PCA[RTCPeerConnection]
+        DCA[DataChannel]
+    end
+    
+    subgraph "Browser B"
+        UIB[Dashboard UI]
+        RBCB[RoomConnectionManager]
+        PCB[RTCPeerConnection]
+        DCB[DataChannel]
+    end
+    
+    subgraph "WebSocket Server"
+        WSS[WebSocket Endpoint /ws/]
+        RR[Room Registry]
+        MSG[Message Relay]
+    end
+    
+    subgraph "STUN Infrastructure"
+        STUN1[stun:stun.l.google.com:19302]
+        STUN2[stun:stun1.l.google.com:19302]
+    end
+    
+    UIA --> RBCA
+    RBCA --> PCA
+    PCA --> DCA
+    
+    UIB --> RBCB
+    RBCB --> PCB
+    PCB --> DCB
+    
+    RBCA -.->|Signaling| WSS
+    RBCB -.->|Signaling| WSS
+    WSS --> RR
+    WSS --> MSG
+    
+    PCA -.->|ICE Candidates| STUN1
+    PCA -.->|ICE Candidates| STUN2
+    PCB -.->|ICE Candidates| STUN1
+    PCB -.->|ICE Candidates| STUN2
+    
+    PCA <-->|Direct P2P| PCB
+    DCA <-->|P2P Data| DCB
+```
+
 ---
 
 ## WebRTC Connection Flow
