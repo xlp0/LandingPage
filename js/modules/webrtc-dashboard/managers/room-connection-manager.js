@@ -25,6 +25,9 @@ export class RoomConnectionManager {
         this.processedOffers = new Map(); // peerId -> Set of offer fingerprints
         this.offerProcessingLocks = new Map(); // peerId -> boolean
         
+        // Duplicate answer prevention: Track answer processing
+        this.answerProcessingLocks = new Map(); // peerId -> boolean
+        
         // ICE servers for NAT traversal - will be loaded from config
         this.iceServers = {
             iceServers: [
@@ -414,25 +417,40 @@ export class RoomConnectionManager {
     
     async handleAnswer(peerId, answer) {
         this._log(`📥 Received answer from: ${peerId}`);
-        const pc = this.peers.get(peerId);
-        if (!pc) {
-            this._log(`❌ No connection found for: ${peerId}`);
+        
+        // CRITICAL: Check if we're already processing an answer from this peer
+        if (this.answerProcessingLocks.get(peerId)) {
+            this._log(`⚠️ Already processing answer from ${peerId} - ignoring duplicate`);
             return;
         }
         
-        // Check if we're in the correct state to receive an answer
-        // Answer can only be set when signalingState is 'have-local-offer'
-        if (pc.signalingState !== 'have-local-offer') {
-            this._log(`⚠️ Ignoring answer from ${peerId} - wrong signaling state: ${pc.signalingState} (expected: have-local-offer)`);
-            return;
-        }
+        // IMMEDIATELY set lock before any async operations
+        this.answerProcessingLocks.set(peerId, true);
         
         try {
+            const pc = this.peers.get(peerId);
+            if (!pc) {
+                this._log(`❌ No connection found for: ${peerId}`);
+                return;
+            }
+            
+            // Check if we're in the correct state to receive an answer
+            // Answer can only be set when signalingState is 'have-local-offer'
+            if (pc.signalingState !== 'have-local-offer') {
+                this._log(`⚠️ Ignoring answer from ${peerId} - wrong signaling state: ${pc.signalingState} (expected: have-local-offer)`);
+                return;
+            }
+            
             await pc.setRemoteDescription(new RTCSessionDescription(answer));
             this._log(`✅ Set remote description (answer) from: ${peerId}`);
         } catch (error) {
             this._log(`❌ Error setting remote description (answer) from ${peerId}:`, error.message);
             // Don't throw - just log and continue
+        } finally {
+            // Clear lock after a delay
+            setTimeout(() => {
+                this.answerProcessingLocks.set(peerId, false);
+            }, 1000);
         }
     }
     
@@ -495,9 +513,10 @@ export class RoomConnectionManager {
         // Clear reconnect attempts
         this.reconnectAttempts.delete(peerId);
         
-        // Clear offer processing state
+        // Clear offer and answer processing state
         this.processedOffers.delete(peerId);
         this.offerProcessingLocks.delete(peerId);
+        this.answerProcessingLocks.delete(peerId);
         
         const pc = this.peers.get(peerId);
         if (pc) {
@@ -603,9 +622,10 @@ export class RoomConnectionManager {
         // Clear all reconnect attempts
         this.reconnectAttempts.clear();
         
-        // Clear offer processing state
+        // Clear offer and answer processing state
         this.processedOffers.clear();
         this.offerProcessingLocks.clear();
+        this.answerProcessingLocks.clear();
         
         // CRITICAL: Destroy signaling first to stop receiving new offers/answers
         if (this.signaling) {
