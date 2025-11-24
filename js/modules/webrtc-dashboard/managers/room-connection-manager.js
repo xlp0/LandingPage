@@ -129,9 +129,27 @@ export class RoomConnectionManager {
                 return existingPc;
             }
             
-            // Otherwise, remove the old connection and create a new one
-            this._log(`🔄 Removing old connection (state: ${existingState}) to create fresh one`);
-            this.removePeer(peerId);
+            // Otherwise, close the old connection and create a new one
+            // DON'T call removePeer() as it clears processing locks
+            this._log(`🔄 Closing old connection (state: ${existingState}) to create fresh one`);
+            
+            // Stop health monitoring
+            this.stopConnectionHealthCheck(peerId);
+            
+            // Close and remove the old peer connection
+            existingPc.close();
+            this.peers.delete(peerId);
+            
+            // Close and remove the old data channel
+            const existingChannel = this.dataChannels.get(peerId);
+            if (existingChannel) {
+                existingChannel.close();
+                this.dataChannels.delete(peerId);
+            }
+            
+            // Clear negotiation state (but keep processing locks!)
+            this.makingOffer.delete(peerId);
+            this.ignoreOffer.delete(peerId);
         }
         
         // Initialize negotiation state
