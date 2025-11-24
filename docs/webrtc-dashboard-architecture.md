@@ -205,6 +205,8 @@ sequenceDiagram
     B->>S: Join Room
     S-->>A: User Joined Signal
     S-->>B: Existing Participants
+    S-->>A: Room Status (2 users total)
+    S-->>B: Room Status (2 users total)
     
     Note over A,B: Phase 3: WebRTC Negotiation
     A->>A: Create Offer
