@@ -158,6 +158,13 @@ export class RoomConnectionManager {
             this.ignoreOffer.delete(peerId);
         }
         
+        // Create the peer connection
+        const pc = new RTCPeerConnection(this.iceServers);
+        
+        // CRITICAL: Add to map IMMEDIATELY to prevent race conditions
+        // This must happen BEFORE any async operations or other offers can interfere
+        this.peers.set(peerId, pc);
+        
         // Initialize negotiation state
         this.makingOffer.set(peerId, false);
         this.ignoreOffer.set(peerId, false);
@@ -167,9 +174,6 @@ export class RoomConnectionManager {
         this.iceServers.iceServers.forEach((server, index) => {
             console.log(`   ${index + 1}. ${server.urls}`);
         });
-        
-        const pc = new RTCPeerConnection(this.iceServers);
-        this.peers.set(peerId, pc);
         
         // Add local stream if available (for video/audio)
         if (this.localStream) {
