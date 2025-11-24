@@ -416,16 +416,12 @@ export class RoomConnectionManager {
             
             this._log(`✅ ACCEPTING offer from ${peerId} (${isPolite ? 'polite' : 'impolite'} peer)`);
             
-            // Check if peer connection already exists before creating
-            const existingPc = this.peers.get(peerId);
-            const wasExisting = !!existingPc;
-            
             const pc = await this.createPeerConnection(peerId, false);
             
-            // If we're reusing an existing connection that's already connecting,
-            // don't process the offer again (it's already been processed)
-            if (wasExisting && existingPc === pc) {
-                this._log(`⏭️ Skipping offer processing - connection already being established`);
+            // CRITICAL: If the peer connection is already in 'have-remote-offer' or 'stable' state,
+            // it means another offer is already being processed. Skip this duplicate.
+            if (pc.signalingState === 'have-remote-offer' || pc.signalingState === 'stable') {
+                this._log(`⏭️ Skipping offer processing - peer already has remote description (state: ${pc.signalingState})`);
                 return;
             }
             
