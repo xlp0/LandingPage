@@ -185,6 +185,8 @@
   },
   "active": "bd45ebad09a1e0e6",
   "lastOpenFiles": [
+    "room-message-handler-server.js",
+    "room-registry.js",
     "docs/stun-server-setup.md",
     "docs/stun-config-summary.md",
     "ws-test.html",
@@ -192,8 +194,6 @@
     "tic-tac-toe.html",
     "test-ws-client.js",
     "test-connection.html",
-    "room-registry.js",
-    "room-message-handler-server.js",
     "mermaid-test.html",
     "landing-page-file.html",
     "js/modules/webrtc-dashboard/SERVER-ARCHITECTURE.md",

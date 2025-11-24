@@ -107,12 +107,16 @@ class RoomMessageHandler {
 
             if (duplicateUser) {
                 console.warn(`[RoomMessageHandler] ⚠️ Duplicate username: ${userName} in room ${roomId}`);
-                // Send error back to client
+                // Send error back to client - REJECT the join
                 ws.send(JSON.stringify({
-                    type: 'error',
-                    message: `Username "${userName}" already exists in this room`,
-                    roomId: roomId
+                    type: 'join-rejected',
+                    channel: 'webrtc-dashboard-rooms',
+                    message: `Username "${userName}" already exists in this room. Please choose a different name.`,
+                    roomId: roomId,
+                    userId: userId,
+                    reason: 'DUPLICATE_USERNAME'
                 }));
+                console.error(`[RoomMessageHandler] ❌ REJECTED join: ${userName} - duplicate username in room ${roomId}`);
                 return true;
             }
 

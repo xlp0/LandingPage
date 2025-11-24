@@ -471,7 +471,7 @@ export class DashboardManager {
                     this.roomManager.isHost = false;
                 }
                 
-                // Update UI
+                // Update UI - ONLY if join was successful
                 this._showChatView();
                 this._updateParticipantsList();
                 this._showNotification('✅ Joined room successfully!', 'success');
@@ -479,6 +479,12 @@ export class DashboardManager {
                 console.log('[Dashboard] ✅ Successfully joined room via WebRTC');
             } catch (error) {
                 console.error('[Dashboard] Failed to join room:', error);
+                
+                // Clean up ChatManager connection on error
+                if (this.chatManager && this.chatManager.roomConnection) {
+                    this.chatManager.roomConnection.destroy();
+                    this.chatManager.roomConnection = null;
+                }
                 
                 // Check if it's a duplicate username error
                 if (error.message && error.message.includes('already exists in this room')) {
@@ -490,6 +496,9 @@ export class DashboardManager {
                 } else {
                     this._showNotification('Failed to join room: ' + error.message, 'error');
                 }
+                
+                // Make sure we stay on dashboard, not chat view
+                this._showMainDashboard();
             }
         });
         

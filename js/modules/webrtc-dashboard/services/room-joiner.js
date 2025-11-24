@@ -25,17 +25,17 @@ export class RoomJoiner {
         console.log('[RoomJoiner] Joining room:', roomId);
         
         try {
-            // CRITICAL: Get existing participants BEFORE adding new user
-            const existingParticipants = this.roomState.getExistingParticipants(roomId);
+            // CRITICAL: Get ALL participants in room (including host)
+            const allParticipants = room.participants || [];
             
-            console.log('[RoomJoiner] 👥 Existing participants (BEFORE adding):', existingParticipants.length);
-            existingParticipants.forEach(p => {
+            console.log('[RoomJoiner] 👥 All participants in room (BEFORE adding):', allParticipants.length);
+            allParticipants.forEach(p => {
                 console.log('[RoomJoiner]   📍', p.name, '(', p.id, ')');
             });
             
-            // ✅ VALIDATION: Check for duplicate username in room
-            const duplicateUser = existingParticipants.find(p => 
-                p.name.toLowerCase() === userData.name.toLowerCase()
+            // ✅ VALIDATION: Check for duplicate username in room (case-insensitive)
+            const duplicateUser = allParticipants.find(p => 
+                p.name && p.name.toLowerCase() === userData.name.toLowerCase()
             );
             
             if (duplicateUser) {
@@ -61,14 +61,14 @@ export class RoomJoiner {
                 roomId,
                 userId: userData.id,
                 userName: userData.name,
-                existingCount: existingParticipants.length
+                existingCount: allParticipants.length
             });
             
             await this.broadcaster.broadcastUserJoined({
                 roomId,
                 userId: userData.id,
                 userName: userData.name,
-                existingParticipants  // Tell joiner who's already there
+                existingParticipants: allParticipants  // Tell joiner who's already there
             });
             
             console.log('[RoomJoiner] ✅ User joined. Total participants:', room.participants.length);
