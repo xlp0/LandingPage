@@ -231,6 +231,59 @@ sequenceDiagram
     Note over A,B: Direct P2P Communication Active
 ```
 
+### Leave and Rejoin Flow (Complete Lifecycle)
+
+```mermaid
+sequenceDiagram
+    participant A as User A (Still in Room)
+    participant S as Signaling Server
+    participant B as User B (Leaves & Rejoins)
+    
+    Note over A,B: Phase 1: User B Leaves
+    B->>S: Leave Room
+    S-->>A: User Left Signal
+    S-->>A: Room Status (1 user total)
+    B->>B: Destroy All Connections
+    B->>B: Clear DataChannels
+    B->>B: Stop Media Streams
+    
+    Note over B: User B is Offline
+    
+    Note over A,B: Phase 2: User B Rejoins
+    B->>S: Join Room (same room_id)
+    S-->>A: User Rejoined Signal
+    S-->>B: Existing Participants (User A)
+    S-->>A: Room Status (2 users total)
+    S-->>B: Room Status (2 users total)
+    
+    Note over A,B: Phase 3: WebRTC Reconnection
+    A->>A: Create New Offer
+    A->>S: Send Offer
+    S-->>B: Forward Offer
+    
+    Note over B: Check Existing Connections
+    Note over B: None exist (cleaned up on leave)
+    B->>B: Create New Peer Connection
+    B->>B: Add to Peers Map (IMMEDIATELY)
+    
+    B->>B: Create Answer
+    B->>S: Send Answer
+    S-->>A: Forward Answer
+    
+    Note over A,B: Phase 4: ICE Candidate Exchange
+    A->>S: ICE Candidates
+    S-->>B: Forward ICE
+    B->>S: ICE Candidates
+    S-->>A: Forward ICE
+    
+    Note over A,B: Phase 5: Reconnection Complete
+    A->>B: Peer Connection Established
+    B->>A: Acknowledge Connection
+    A->>B: DataChannel Open
+    B->>A: DataChannel Ready
+    Note over A,B: Direct P2P Communication Restored
+```
+
 ### Reconnection Flow (Fixed Issues)
 
 ```mermaid
