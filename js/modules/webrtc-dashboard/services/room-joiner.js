@@ -33,6 +33,13 @@ export class RoomJoiner {
                 console.log('[RoomJoiner]   📍', p.name, '(', p.id, ')');
             });
             
+            // Check if user is already in the room (e.g., host joining their own room)
+            const alreadyInRoom = allParticipants.find(p => p.id === userData.id);
+            if (alreadyInRoom) {
+                console.log('[RoomJoiner] ℹ️ User already in room:', userData.name);
+                return room; // Already added, just return
+            }
+            
             // ✅ VALIDATION: Check for duplicate username in room (case-insensitive)
             const duplicateUser = allParticipants.find(p => 
                 p.name && p.name.toLowerCase() === userData.name.toLowerCase()

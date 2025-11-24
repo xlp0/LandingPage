@@ -30,6 +30,19 @@ export class RoomCreator {
             this.roomState.addRoom(room);
             this.roomState.addLocalRoom(room.id);
             
+            // CRITICAL: Add host to participants list immediately
+            // This ensures duplicate username validation works for the host
+            if (roomData.hostId && roomData.host) {
+                const hostParticipant = {
+                    id: roomData.hostId,
+                    name: roomData.host,
+                    joinedAt: new Date(),
+                    isHost: true
+                };
+                this.roomState.addParticipantToRoom(room.id, hostParticipant);
+                console.log('[RoomCreator] ✅ Added host to participants:', roomData.host);
+            }
+            
             // Broadcast room creation to network
             console.log('[RoomCreator] 📢 Broadcasting room-created for:', room.name);
             await this.broadcaster.broadcastRoomCreated(this._sanitizeRoom(room));
