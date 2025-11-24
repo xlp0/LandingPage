@@ -241,9 +241,9 @@ sequenceDiagram
     participant C as User C (New)
     participant D as User D (New)
     
-    Note over A,B,C,D: Current State: A & B connected (2 users)
+    Note over A,B: Current State: A & B connected (2 users)
     
-    Note over A,B,C,D: Phase 1: User C Joins
+    Note over C: Phase 1: User C Joins
     C->>S: Join Room
     S-->>A: User Joined Signal (User C)
     S-->>B: User Joined Signal (User C)
@@ -252,7 +252,7 @@ sequenceDiagram
     S-->>B: Room Status (3 users total)
     S-->>C: Room Status (3 users total)
     
-    Note over A,B,C,D: Phase 2: User C Connects to All
+    Note over A,C: Phase 2: User C Connects to All
     A->>A: Create Offer for C
     A->>S: Send Offer
     S-->>C: Forward Offer
@@ -260,6 +260,7 @@ sequenceDiagram
     C->>S: Send Answer
     S-->>A: Forward Answer
     
+    Note over B,C: User C connects to B
     B->>B: Create Offer for C
     B->>S: Send Offer
     S-->>C: Forward Offer
@@ -267,21 +268,22 @@ sequenceDiagram
     C->>S: Send Answer
     S-->>B: Forward Answer
     
-    Note over A,B,C,D: Phase 3: ICE Exchange (A-C & B-C)
+    Note over A,C: Phase 3: ICE Exchange (A-C & B-C)
     A->>S: ICE Candidates
     S-->>C: Forward ICE
     C->>S: ICE Candidates
     S-->>A: Forward ICE
     
+    Note over B,C: ICE Exchange B-C
     B->>S: ICE Candidates
     S-->>C: Forward ICE
     C->>S: ICE Candidates
     S-->>B: Forward ICE
     
-    Note over A,B,C,D: Phase 4: User C Connected to Both
-    Note over A,B,C,D: Mesh: A↔B, A↔C, B↔C (3 connections total)
+    Note over A,B: Phase 4: User C Connected to Both
+    Note over A,B: Mesh: A↔B, A↔C, B↔C (3 connections total)
     
-    Note over A,B,C,D: Phase 5: User D Joins
+    Note over D: Phase 5: User D Joins
     D->>S: Join Room
     S-->>A: User Joined Signal (User D)
     S-->>B: User Joined Signal (User D)
@@ -292,25 +294,27 @@ sequenceDiagram
     S-->>C: Room Status (4 users total)
     S-->>D: Room Status (4 users total)
     
-    Note over A,B,C,D: Phase 6: User D Connects to All
+    Note over A,D: Phase 6: User D Connects to All
     A->>S: Send Offer to D
     S-->>D: Forward Offer
     D->>S: Send Answer
     S-->>A: Forward Answer
     
+    Note over B,D: User D connects to B
     B->>S: Send Offer to D
     S-->>D: Forward Offer
     D->>S: Send Answer
     S-->>B: Forward Answer
     
+    Note over C,D: User D connects to C
     C->>S: Send Offer to D
     S-->>D: Forward Offer
     D->>S: Send Answer
     S-->>C: Forward Answer
     
-    Note over A,B,C,D: Phase 7: Final Mesh Topology
-    Note over A,B,C,D: 6 connections: A↔B, A↔C, A↔D, B↔C, B↔D, C↔D
-    Note over A,B,C,D: All users can communicate directly P2P
+    Note over A,B: Phase 7: Final Mesh Topology
+    Note over A,B: 6 connections: A↔B, A↔C, A↔D, B↔C, B↔D, C↔D
+    Note over A,B: All users can communicate directly P2P
 ```
 
 ### Mesh Topology Growth
