@@ -621,11 +621,113 @@ const options = {
 | 5 | 10 | 8 Mbps | ⚠️ Caution |
 | 6+ | 15+ | 10+ Mbps | ❌ Use SFU |
 
+### Comparison: Mesh vs SFU (Jitsi Approach)
+
+#### Current Architecture: Mesh Topology
+
+```
+Your WebRTC Dashboard (Mesh):
+- Direct P2P connections between all users
+- Each user encodes 1 stream, decodes (N-1) streams
+- Upload: (N-1) × bitrate per user
+- Download: (N-1) × bitrate per user
+- Server role: Signaling only (WebSocket)
+- Latency: 50-100ms (direct P2P)
+- Cost: Minimal server infrastructure
+- Scalability: Limited to 4-6 users
+```
+
+#### Jitsi Approach: SFU (Selective Forwarding Unit)
+
+```
+Jitsi Meet (SFU via Jitsi Videobridge):
+- Central media server routes streams
+- Each user encodes 1 stream, decodes (N-1) streams
+- Upload: 1 × bitrate per user (to server)
+- Download: (N-1) × bitrate per user (from server)
+- Server role: Media routing (no transcoding)
+- Latency: 100-200ms (via server)
+- Cost: Server bandwidth intensive
+- Scalability: 500-1000+ users per server
+- Clustering: 10,000+ users possible
+```
+
+### Architecture Comparison Table
+
+| Aspect | Mesh (Your Current) | SFU (Jitsi) | MCU |
+|--------|-------------------|-----------|-----|
+| **Connections** | N(N-1)/2 | N to 1 | N to 1 |
+| **User Limit** | 2-6 users | 500-1000+ | 100-500 |
+| **Client Upload** | (N-1)×bitrate | 1×bitrate | 1×bitrate |
+| **Client Download** | (N-1)×bitrate | (N-1)×bitrate | 1×bitrate |
+| **Server CPU** | Minimal | Low (routing) | High (mixing) |
+| **Latency** | 50-100ms | 100-200ms | 150-300ms |
+| **E2E Encryption** | ✅ Yes | ✅ Yes | ❌ No |
+| **Bandwidth/User** | High | Medium | Low |
+| **Server Cost** | Low | Medium | High |
+| **Complexity** | Low | Medium | High |
+
 ### Scaling Strategies
 
-1. **Selective Forwarding Unit (SFU)** - For large rooms
-2. **Simulcast** - Multiple quality streams
-3. **Dynamic Quality Adjustment** - Based on network conditions
+1. **Mesh (Current - 2-6 users)**
+   - Direct P2P connections
+   - Zero server infrastructure needed
+   - Perfect for small teams
+   - Lowest latency
+
+2. **SFU (Jitsi Model - 6-1000+ users)**
+   - Central media server routes streams
+   - Reduces client bandwidth consumption
+   - Enables flexible layouts
+   - Scales horizontally with clustering
+
+3. **MCU (Not Recommended - 100-500 users)**
+   - Server mixes all streams into one
+   - Highest server CPU cost
+   - Lowest client bandwidth
+   - Breaks E2E encryption
+
+### Migration Path: Mesh → SFU
+
+```javascript
+// Your current system (Mesh)
+if (room.participants.length <= 6) {
+  connectViaMesh(room);  // Current implementation
+} else {
+  // Future: Switch to SFU mode
+  connectViaSFU(room);   // Jitsi-like approach
+}
+```
+
+### Jitsi Architecture Components
+
+**Jitsi Meet Stack:**
+1. **Jicofo** - Focus component (signaling & room management)
+2. **Jitsi Videobridge** - SFU media server (stream routing)
+3. **Prosody** - XMPP server (presence & messaging)
+4. **Web Frontend** - React-based UI
+
+**Your Current Stack:**
+1. **Node.js Server** - Signaling (room management)
+2. **WebSocket** - Real-time messaging
+3. **Web Frontend** - HTML/CSS/JS UI
+4. **Peer Connections** - Direct P2P (mesh)
+
+### When to Migrate to SFU
+
+**Keep Mesh if:**
+- ✅ 2-6 users per room
+- ✅ Low latency critical
+- ✅ Minimal server costs
+- ✅ E2E encryption required
+- ✅ Simple architecture preferred
+
+**Migrate to SFU if:**
+- ❌ More than 6 users per room
+- ❌ Client bandwidth limited
+- ❌ Flexible layouts needed
+- ❌ Mobile clients prevalent
+- ❌ Scalability to 100+ users needed
 
 ---
 
