@@ -185,6 +185,8 @@
   },
   "active": "bd45ebad09a1e0e6",
   "lastOpenFiles": [
+    "docs/stun-server-setup.md",
+    "docs/stun-config-summary.md",
     "PKC as the Network.pdf",
     "js/modules/webrtc-dashboard/README.md",
     "js/modules/webrtc-dashboard/SERVER-ARCHITECTURE.md",
@@ -203,7 +205,6 @@
     "js/vendor/tailwind.js",
     "js/vendor/anime.min.js",
     "js/vendor",
-    "js/modules/webrtc-dashboard/store/store.js",
     "tests/screenshots/console log A.md",
     "tests/screenshots/console log B.md",
     "tests/screenshots/console log copy.md",
