@@ -21,6 +21,10 @@ export class RoomConnectionManager {
         this.reconnectAttempts = new Map(); // peerId -> count
         this.maxReconnectAttempts = 3;
         
+        // Duplicate offer prevention: Track processed offers by fingerprint
+        this.processedOffers = new Map(); // peerId -> Set of offer fingerprints
+        this.offerProcessingLocks = new Map(); // peerId -> boolean
+        
         // ICE servers for NAT traversal - will be loaded from config
         this.iceServers = {
             iceServers: [
@@ -303,16 +307,29 @@ export class RoomConnectionManager {
     async handleOffer(peerId, offer) {
         this._log(`📥 Received offer from: ${peerId}`);
         
-        // CRITICAL: Prevent duplicate offer processing
-        // Check if we're already processing an offer from this peer
-        const processingKey = `offer_${peerId}`;
-        if (this[processingKey]) {
-            this._log(`⚠️ Already processing offer from ${peerId} - ignoring duplicate`);
+        // CRITICAL: Prevent duplicate offer processing with fingerprinting
+        // Create a fingerprint of this offer to detect exact duplicates
+        const offerFingerprint = JSON.stringify(offer).substring(0, 100); // First 100 chars as fingerprint
+        
+        // Check if we've already processed this exact offer
+        if (!this.processedOffers.has(peerId)) {
+            this.processedOffers.set(peerId, new Set());
+        }
+        
+        if (this.processedOffers.get(peerId).has(offerFingerprint)) {
+            this._log(`⚠️ Already processed this exact offer from ${peerId} - ignoring duplicate`);
             return;
         }
         
-        // Mark as processing
-        this[processingKey] = true;
+        // Check if we're currently processing ANY offer from this peer
+        if (this.offerProcessingLocks.get(peerId)) {
+            this._log(`⚠️ Already processing an offer from ${peerId} - ignoring concurrent offer`);
+            return;
+        }
+        
+        // Mark this offer as processed and lock processing
+        this.processedOffers.get(peerId).add(offerFingerprint);
+        this.offerProcessingLocks.set(peerId, true);
         
         try {
             // Determine if we are polite peer
@@ -348,18 +365,30 @@ export class RoomConnectionManager {
                 this._log(`📡 Sending answer to: ${peerId} via signaling`);
                 this.signaling.sendAnswer(peerId, answer);
             } else {
-                this._log(`❌ No signaling service available!`);
+                this._log(`❌ No signaling service available! (might be destroyed)`);
+                // Don't throw error, connection might still work if already established
             }
             
             return answer;
         } catch (error) {
             this._log(`❌ Error handling offer from ${peerId}:`, error);
+            // Remove from processed offers on error so it can be retried
+            if (this.processedOffers.has(peerId)) {
+                this.processedOffers.get(peerId).delete(offerFingerprint);
+            }
             throw error;
         } finally {
-            // Clear processing flag after a short delay to allow for answer to be sent
+            // Clear processing lock after a delay to prevent rapid re-processing
             setTimeout(() => {
-                delete this[processingKey];
-            }, 1000);
+                this.offerProcessingLocks.set(peerId, false);
+            }, 2000); // Increased from 1000ms to 2000ms
+            
+            // Clean up old offer fingerprints after 10 seconds to prevent memory leak
+            setTimeout(() => {
+                if (this.processedOffers.has(peerId)) {
+                    this.processedOffers.get(peerId).delete(offerFingerprint);
+                }
+            }, 10000);
         }
     }
     
@@ -432,6 +461,10 @@ export class RoomConnectionManager {
         
         // Clear reconnect attempts
         this.reconnectAttempts.delete(peerId);
+        
+        // Clear offer processing state
+        this.processedOffers.delete(peerId);
+        this.offerProcessingLocks.delete(peerId);
         
         const pc = this.peers.get(peerId);
         if (pc) {
@@ -536,6 +569,10 @@ export class RoomConnectionManager {
         
         // Clear all reconnect attempts
         this.reconnectAttempts.clear();
+        
+        // Clear offer processing state
+        this.processedOffers.clear();
+        this.offerProcessingLocks.clear();
         
         // CRITICAL: Destroy signaling first to stop receiving new offers/answers
         if (this.signaling) {
