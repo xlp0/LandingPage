@@ -16,6 +16,11 @@ export class RoomConnectionManager {
         this.makingOffer = new Map(); // peerId -> boolean
         this.ignoreOffer = new Map(); // peerId -> boolean
         
+        // Robustness: Track connection health and retry attempts
+        this.connectionHealthChecks = new Map(); // peerId -> interval ID
+        this.reconnectAttempts = new Map(); // peerId -> count
+        this.maxReconnectAttempts = 3;
+        
         // ICE servers for NAT traversal - will be loaded from config
         this.iceServers = {
             iceServers: [
@@ -192,6 +197,27 @@ export class RoomConnectionManager {
         // Also log ICE connection state
         pc.oniceconnectionstatechange = () => {
             this._log(`🧊 ICE connection state with ${peerId}: ${pc.iceConnectionState}`);
+            
+            // Handle ICE failures with restart capability
+            if (pc.iceConnectionState === 'failed') {
+                this._log(`🔄 ICE FAILED for ${peerId} - attempting ICE restart`);
+                this.attemptIceRestart(peerId, pc);
+            } else if (pc.iceConnectionState === 'disconnected') {
+                this._log(`⚠️ ICE DISCONNECTED for ${peerId} - monitoring`);
+                // Give it time to reconnect naturally
+                setTimeout(() => {
+                    if (pc.iceConnectionState === 'disconnected') {
+                        this._log(`🔄 ICE still disconnected for ${peerId} - attempting restart`);
+                        this.attemptIceRestart(peerId, pc);
+                    }
+                }, 3000);
+            } else if (pc.iceConnectionState === 'connected' || pc.iceConnectionState === 'completed') {
+                this._log(`✅ ICE CONNECTED for ${peerId}`);
+                // Reset reconnect attempts on successful connection
+                this.reconnectAttempts.set(peerId, 0);
+                // Start health monitoring
+                this.startConnectionHealthCheck(peerId);
+            }
         };
         
         // Log signaling state
@@ -401,6 +427,12 @@ export class RoomConnectionManager {
     removePeer(peerId) {
         console.log(`[RoomConnectionManager] Removing peer: ${peerId}`);
         
+        // Stop health monitoring
+        this.stopConnectionHealthCheck(peerId);
+        
+        // Clear reconnect attempts
+        this.reconnectAttempts.delete(peerId);
+        
         const pc = this.peers.get(peerId);
         if (pc) {
             pc.close();
@@ -413,7 +445,14 @@ export class RoomConnectionManager {
             this.dataChannels.delete(peerId);
         }
         
-        this.onPeerDisconnected(peerId);
+        // Clear negotiation state
+        this.makingOffer.delete(peerId);
+        this.ignoreOffer.delete(peerId);
+        
+        // Notify that peer disconnected
+        if (this.onPeerDisconnected) {
+            this.onPeerDisconnected(peerId);
+        }
     }
     
     getConnectedPeers() {
@@ -423,8 +462,80 @@ export class RoomConnectionManager {
         });
     }
     
+    // ICE restart for failed connections
+    async attemptIceRestart(peerId, pc) {
+        const attempts = this.reconnectAttempts.get(peerId) || 0;
+        
+        if (attempts >= this.maxReconnectAttempts) {
+            this._log(`❌ Max reconnect attempts reached for ${peerId} - giving up`);
+            return;
+        }
+        
+        this.reconnectAttempts.set(peerId, attempts + 1);
+        this._log(`🔄 ICE restart attempt ${attempts + 1}/${this.maxReconnectAttempts} for ${peerId}`);
+        
+        try {
+            // Create new offer with ICE restart
+            const offer = await pc.createOffer({ iceRestart: true });
+            await pc.setLocalDescription(offer);
+            
+            if (this.signaling) {
+                this._log(`📡 Sending ICE restart offer to ${peerId}`);
+                this.signaling.sendOffer(peerId, offer);
+            }
+        } catch (error) {
+            this._log(`❌ ICE restart failed for ${peerId}:`, error);
+        }
+    }
+    
+    // Monitor connection health with periodic checks
+    startConnectionHealthCheck(peerId) {
+        // Clear any existing health check
+        this.stopConnectionHealthCheck(peerId);
+        
+        // Check connection health every 5 seconds
+        const intervalId = setInterval(() => {
+            const pc = this.peers.get(peerId);
+            const channel = this.dataChannels.get(peerId);
+            
+            if (!pc || !channel) {
+                this.stopConnectionHealthCheck(peerId);
+                return;
+            }
+            
+            // Check if connection is healthy
+            const isHealthy = 
+                (pc.connectionState === 'connected' || pc.connectionState === 'new') &&
+                (pc.iceConnectionState === 'connected' || pc.iceConnectionState === 'completed') &&
+                channel.readyState === 'open';
+            
+            if (!isHealthy) {
+                this._log(`⚠️ Health check failed for ${peerId}: conn=${pc.connectionState}, ice=${pc.iceConnectionState}, channel=${channel.readyState}`);
+            }
+        }, 5000);
+        
+        this.connectionHealthChecks.set(peerId, intervalId);
+    }
+    
+    stopConnectionHealthCheck(peerId) {
+        const intervalId = this.connectionHealthChecks.get(peerId);
+        if (intervalId) {
+            clearInterval(intervalId);
+            this.connectionHealthChecks.delete(peerId);
+        }
+    }
+    
     destroy() {
         console.log(`[RoomConnectionManager] Destroying all connections for room: ${this.roomId}`);
+        
+        // Stop all health checks
+        this.connectionHealthChecks.forEach((intervalId, peerId) => {
+            clearInterval(intervalId);
+        });
+        this.connectionHealthChecks.clear();
+        
+        // Clear all reconnect attempts
+        this.reconnectAttempts.clear();
         
         // CRITICAL: Destroy signaling first to stop receiving new offers/answers
         if (this.signaling) {
@@ -440,6 +551,10 @@ export class RoomConnectionManager {
         
         this.peers.forEach(pc => pc.close());
         this.peers.clear();
+        
+        // Clear negotiation state
+        this.makingOffer.clear();
+        this.ignoreOffer.clear();
         
         if (this.localStream) {
             this.localStream.getTracks().forEach(track => track.stop());
