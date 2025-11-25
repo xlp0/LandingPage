@@ -97,6 +97,13 @@ testWithConfig('navigate through PKC website links', async ({ browser }, testInf
       await firstUserPage.waitForTimeout(1000);
       await takeScreenshot(firstUserPage, '05-first-user-name-saved');
 
+      // First User - Create room
+      console.log('First user: Clicking Create Room button...');
+      await firstUserPage.locator('#create-room-btn').click();
+      await firstUserPage.waitForLoadState('networkidle');
+      await firstUserPage.waitForTimeout(2000); // Extra wait for room creation
+      await takeScreenshot(firstUserPage, '08-room-created');
+
       // First User - Room name entry
       console.log('First user: Entering room name...');
       await firstUserPage.locator('#room-name').fill('Testing');
@@ -111,7 +118,7 @@ testWithConfig('navigate through PKC website links', async ({ browser }, testInf
 
       // First User - Create room
       console.log('First user: Clicking Create Room button...');
-      await firstUserPage.locator('#create-room-btn').click();
+      await firstUserPage.locator('#confirm-create-room-btn').click();
       await firstUserPage.waitForLoadState('networkidle');
       await firstUserPage.waitForTimeout(2000); // Extra wait for room creation
       await takeScreenshot(firstUserPage, '08-room-created');
