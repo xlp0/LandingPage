@@ -1,26 +1,24 @@
-# Use Node.js 18 Alpine as the base image
-FROM node:18-alpine
+# Multi-stage build for optimized landing page
+FROM nginx:alpine
 
-# Set the working directory
-WORKDIR /app
+# Set working directory
+WORKDIR /usr/share/nginx/html
 
-# Copy package files
-COPY package*.json ./
+# Copy all landing page files
+COPY landing-enhanced.html .
+COPY landing.html .
+COPY auth-callback-enhanced.html .
+COPY auth-callback.html .
+COPY config.js .
+COPY js/ ./js/
+COPY assets/ ./assets/
 
-# Install dependencies
-RUN npm install
+# Expose port
+EXPOSE 80
 
-# Install http-server globally
-RUN npm install -g http-server
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost/landing-enhanced.html || exit 1
 
-# Copy the rest of the application
-COPY . .
-
-# Expose the port the app runs on
-EXPOSE 3000
-
-# Set environment variables
-ENV NODE_ENV=production
-
-# Start WebSocket server (HTTP + WebSocket on same port with all fixes)
-CMD ["node", "ws-server.js"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

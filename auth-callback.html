@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication - THK Mesh</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center text-white">
+    <div class="text-center">
+        <div class="mb-6">
+            <div class="inline-block">
+                <div class="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+            </div>
+        </div>
+        <h1 class="text-3xl font-bold mb-2">Processing Authentication</h1>
+        <p class="text-lg opacity-75">Please wait while we complete your login...</p>
+        <div id="error" class="mt-8 p-4 bg-red-500/20 border border-red-500 rounded-lg hidden">
+            <p id="error-message" class="text-red-200"></p>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - these should be set from environment
+        const CONFIG = {
+            ZITADEL_CLIENT_ID: 'YOUR_ZITADEL_CLIENT_ID',
+            ZITADEL_CLIENT_SECRET: 'YOUR_ZITADEL_CLIENT_SECRET', // Should be handled server-side only
+            ZITADEL_DOMAIN: 'zit.pkc.pub',
+            REDIRECT_URI: window.location.origin + '/auth-callback.html'
+        };
+
+        async function handleAuthCallback() {
+            try {
+                // Get authorization code from URL
+                const params = new URLSearchParams(window.location.search);
+                const code = params.get('code');
+                const state = params.get('state');
+                const error = params.get('error');
+                const errorDescription = params.get('error_description');
+
+                if (error) {
+                    throw new Error(`${error}: ${errorDescription || 'Unknown error'}`);
+                }
+
+                if (!code) {
+                    throw new Error('No authorization code received');
+                }
+
+                console.log('[AuthCallback] Received code:', code);
+
+                // In a real application, you would exchange the code for a token
+                // This should be done server-side to keep the client secret secure
+                // For now, we'll simulate the token exchange
+                
+                // Mock user data (in production, this comes from Zitadel)
+                const userData = {
+                    id: 'user-' + Date.now(),
+                    name: 'User',
+                    email: 'user@example.com',
+                    authenticated: true,
+                    authenticatedAt: new Date().toISOString()
+                };
+
+                // Store user data in localStorage
+                localStorage.setItem('thk-mesh-user', JSON.stringify(userData));
+                localStorage.setItem('thk-mesh-auth-token', code);
+
+                console.log('[AuthCallback] User authenticated:', userData);
+
+                // Redirect back to landing page
+                setTimeout(() => {
+                    window.location.href = '/landing.html';
+                }, 1500);
+
+            } catch (err) {
+                console.error('[AuthCallback] Error:', err);
+                document.getElementById('error').classList.remove('hidden');
+                document.getElementById('error-message').textContent = err.message;
+            }
+        }
+
+        // Handle callback when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            handleAuthCallback();
+        });
+    </script>
+</body>
+</html>

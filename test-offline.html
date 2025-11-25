@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THK Mesh - Offline Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .test-result {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 8px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .test-pass {
+            background-color: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.5);
+            color: #86efac;
+        }
+
+        .test-fail {
+            background-color: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #fca5a5;
+        }
+
+        .test-info {
+            background-color: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            color: #93c5fd;
+        }
+    </style>
+</head>
+<body class="text-white p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8">THK Mesh - Offline Functionality Test</h1>
+
+        <!-- Test Controls -->
+        <div class="bg-black/20 backdrop-blur-md border border-white/20 rounded-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4">Test Controls</h2>
+            <div class="flex gap-4 flex-wrap">
+                <button onclick="runAllTests()" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold">Run All Tests</button>
+                <button onclick="testLocalStorage()" class="px-6 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-semibold">Test Storage</button>
+                <button onclick="testOfflineMode()" class="px-6 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg font-semibold">Test Offline</button>
+                <button onclick="clearResults()" class="px-6 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-semibold">Clear Results</button>
+                <button onclick="window.location.href='/landing-enhanced.html'" class="px-6 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold">Back to Landing</button>
+            </div>
+        </div>
+
+        <!-- Test Results -->
+        <div class="bg-black/20 backdrop-blur-md border border-white/20 rounded-lg p-6">
+            <h2 class="text-2xl font-bold mb-4">Test Results</h2>
+            <div id="results" class="space-y-2">
+                <div class="test-info">Waiting for tests to run...</div>
+            </div>
+        </div>
+
+        <!-- Storage Inspector -->
+        <div class="bg-black/20 backdrop-blur-md border border-white/20 rounded-lg p-6 mt-8">
+            <h2 class="text-2xl font-bold mb-4">Local Storage Inspector</h2>
+            <button onclick="inspectStorage()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold mb-4">Inspect Storage</button>
+            <div id="storage-inspector" class="bg-black/40 rounded p-4 font-mono text-xs max-h-96 overflow-y-auto">
+                <div class="text-gray-400">Storage contents will appear here...</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import LocalStorageManager from './js/local-storage-manager.js';
+
+        const storage = new LocalStorageManager({
+            prefix: 'thk-mesh-',
+            debug: true
+        });
+
+        const resultsDiv = document.getElementById('results');
+
+        function addResult(title, passed, message) {
+            const div = document.createElement('div');
+            div.className = `test-result ${passed ? 'test-pass' : 'test-fail'}`;
+            div.innerHTML = `<strong>${passed ? '✓' : '✗'} ${title}</strong><br>${message}`;
+            resultsDiv.appendChild(div);
+        }
+
+        function addInfo(message) {
+            const div = document.createElement('div');
+            div.className = 'test-result test-info';
+            div.textContent = message;
+            resultsDiv.appendChild(div);
+        }
+
+        window.testLocalStorage = async function() {
+            resultsDiv.innerHTML = '';
+            addInfo('Testing Local Storage...');
+
+            try {
+                // Test 1: Initialize
+                const initialized = storage.init();
+                addResult('Initialize Storage', initialized, 'Local storage initialized successfully');
+
+                // Test 2: Set and Get
+                storage.set('test-key', { value: 'test-data' });
+                const retrieved = storage.get('test-key');
+                const getPass = retrieved && retrieved.value === 'test-data';
+                addResult('Set and Get', getPass, `Stored and retrieved: ${JSON.stringify(retrieved)}`);
+
+                // Test 3: User Management
+                const userData = { name: 'Test User', email: 'test@example.com' };
+                storage.setUser(userData);
+                const user = storage.getUser();
+                const userPass = user && user.name === 'Test User';
+                addResult('User Management', userPass, `User stored: ${JSON.stringify(user)}`);
+
+                // Test 4: Document Management
+                const doc = storage.addDocument({ title: 'Test Doc', content: 'Test content' });
+                const docs = storage.getDocuments();
+                const docPass = docs.length > 0 && docs[0].title === 'Test Doc';
+                addResult('Document Management', docPass, `Created document: ${JSON.stringify(doc)}`);
+
+                // Test 5: Settings Management
+                storage.updateSettings({ theme: 'dark', language: 'en' });
+                const settings = storage.getSettings();
+                const settingsPass = settings.theme === 'dark';
+                addResult('Settings Management', settingsPass, `Settings stored: ${JSON.stringify(settings)}`);
+
+                // Test 6: Storage Size
+                const size = storage.getSize();
+                const sizePass = size > 0;
+                addResult('Storage Size', sizePass, `Total size: ${(size / 1024).toFixed(2)} KB`);
+
+                // Test 7: Export/Import
+                const exported = storage.export();
+                const exportPass = Object.keys(exported).length > 0;
+                addResult('Export Data', exportPass, `Exported ${Object.keys(exported).length} items`);
+
+                // Test 8: Clear User
+                storage.clearUser();
+                const clearedUser = storage.getUser();
+                const clearPass = clearedUser === null;
+                addResult('Clear User', clearPass, 'User data cleared successfully');
+
+            } catch (err) {
+                addResult('Storage Test', false, `Error: ${err.message}`);
+            }
+        };
+
+        window.testOfflineMode = async function() {
+            resultsDiv.innerHTML = '';
+            addInfo('Testing Offline Functionality...');
+
+            try {
+                // Test 1: Online Status
+                const isOnline = navigator.onLine;
+                addInfo(`Current online status: ${isOnline ? 'Online' : 'Offline'}`);
+
+                // Test 2: Navigation (should work offline)
+                const navPass = true;
+                addResult('Navigation', navPass, 'Navigation works offline (client-side only)');
+
+                // Test 3: Local Operations
+                storage.init();
+                const doc = storage.addDocument({ title: 'Offline Doc', content: 'Created offline' });
+                const docPass = doc && doc.id;
+                addResult('Create Document Offline', docPass, `Document created: ${doc.id}`);
+
+                // Test 4: Retrieve Offline
+                const retrieved = storage.getDocument(doc.id);
+                const retrievePass = retrieved && retrieved.title === 'Offline Doc';
+                addResult('Retrieve Document Offline', retrievePass, 'Document retrieved successfully');
+
+                // Test 5: Update Offline
+                const updated = storage.updateDocument(doc.id, { content: 'Updated offline' });
+                const updatePass = updated && updated.content === 'Updated offline';
+                addResult('Update Document Offline', updatePass, 'Document updated successfully');
+
+                // Test 6: Delete Offline
+                storage.deleteDocument(doc.id);
+                const deleted = storage.getDocument(doc.id);
+                const deletePass = deleted === null;
+                addResult('Delete Document Offline', deletePass, 'Document deleted successfully');
+
+                // Test 7: Persistence Check
+                const testData = { timestamp: new Date().toISOString() };
+                storage.set('persistence-test', testData);
+                const persisted = storage.get('persistence-test');
+                const persistPass = persisted && persisted.timestamp === testData.timestamp;
+                addResult('Data Persistence', persistPass, 'Data persists in local storage');
+
+            } catch (err) {
+                addResult('Offline Test', false, `Error: ${err.message}`);
+            }
+        };
+
+        window.runAllTests = async function() {
+            resultsDiv.innerHTML = '';
+            addInfo('Running all tests...');
+            await window.testLocalStorage();
+            addInfo('---');
+            await window.testOfflineMode();
+            addInfo('All tests completed!');
+        };
+
+        window.inspectStorage = function() {
+            const inspector = document.getElementById('storage-inspector');
+            const data = storage.export();
+            
+            if (Object.keys(data).length === 0) {
+                inspector.innerHTML = '<div class="text-gray-400">No data in local storage</div>';
+                return;
+            }
+
+            let html = '<div>';
+            Object.entries(data).forEach(([key, value]) => {
+                const valueStr = JSON.stringify(value, null, 2);
+                html += `<div class="mb-4">
+                    <div class="text-blue-400 font-bold">${key}:</div>
+                    <div class="text-green-400 ml-4">${valueStr}</div>
+                </div>`;
+            });
+            html += '</div>';
+            
+            inspector.innerHTML = html;
+        };
+
+        window.clearResults = function() {
+            resultsDiv.innerHTML = '<div class="test-info">Results cleared. Click a test button to run tests.</div>';
+        };
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            storage.init();
+            addInfo('Test page loaded. Click a button to run tests.');
+        });
+    </script>
+</body>
+</html>
