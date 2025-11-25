@@ -1361,5 +1361,187 @@ For complete Redux implementation details, see `docs/redux/`:
 
 ---
 
+## State Machine Architecture (Moore & Mealy Machines)
+
+### Overview
+
+The WebRTC Dashboard uses **state machines** to manage complex state transitions in a predictable, testable way. Two complementary approaches are used:
+
+- **Moore Machine** - Output depends only on current state
+- **Mealy Machine** - Output depends on current state AND input (events)
+
+### Moore Machine: Connection State
+
+The RTC Connection Slice uses a **Moore Machine** where the output (UI display, available actions) depends only on the current connection state:
+
+```
+States: idle → connecting → connected → disconnected → failed → reconnecting → connected
+
+For each state, the output is deterministic:
+- idle: Show "Join" button, disable media controls
+- connecting: Show spinner, disable join button
+- connected: Show "Leave" button, enable media controls, show participant list
+- disconnected: Show "Reconnect" button, disable media controls
+- failed: Show error message, enable retry
+- reconnecting: Show reconnecting spinner
+```
+
+**Benefits:**
+- Simple to understand and test
+- Output is predictable given the state
+- Easy to add new states without affecting logic
+- Suitable for UI state management
+
+### Mealy Machine: Connection Decisions
+
+The RTC Middleware uses a **Mealy Machine** where decisions depend on both current state AND the incoming event:
+
+```
+Current State: connected
+Event: peer-ice-candidate
+Action: Process ICE candidate based on connection state
+Output: Update connection stats, emit stats-updated event
+
+Current State: connecting
+Event: timeout-error
+Action: Attempt reconnection
+Output: Dispatch reconnect action, update error state
+
+Current State: connected
+Event: network-change
+Action: Evaluate connection quality
+Output: Trigger adaptive bitrate adjustment or reconnection
+```
+
+**Benefits:**
+- Captures complex decision logic
+- Handles context-dependent behavior
+- Enables sophisticated connection management
+- Supports graceful degradation
+
+### Application to WebRTC Dashboard
+
+#### 1. **Auth State Machine (Moore)**
+```
+States: unauthenticated → authenticating → authenticated → token-expired → logging-out → unauthenticated
+
+State → Output Mapping:
+- unauthenticated: Show login page, disable room access
+- authenticating: Show loading spinner
+- authenticated: Show dashboard, enable room creation/joining
+- token-expired: Show re-login prompt
+- logging-out: Show logout spinner
+```
+
+#### 2. **Room State Machine (Moore)**
+```
+States: no-room → creating → created → joining → joined → leaving → left
+
+State → Output Mapping:
+- no-room: Show room list, enable create/join buttons
+- creating: Show creation spinner, disable buttons
+- created: Show room info, enable participant list
+- joining: Show joining spinner
+- joined: Show video grid, enable media controls
+- leaving: Show leaving spinner
+- left: Return to room list
+```
+
+#### 3. **Peer Connection State Machine (Mealy)**
+```
+State: idle, Event: add-peer → Action: Create RTCPeerConnection, Output: dispatch(addPeerConnection)
+State: connecting, Event: offer-received → Action: Create answer, Output: dispatch(updateConnectionStatus)
+State: connected, Event: ice-candidate → Action: Add ICE candidate, Output: dispatch(updateConnectionStats)
+State: connected, Event: connection-error → Action: Attempt reconnection, Output: dispatch(reconnectPeer)
+State: failed, Event: retry → Action: Reset and reconnect, Output: dispatch(addPeerConnection)
+```
+
+#### 4. **Participant State Machine (Moore)**
+```
+States: joining → active → idle → away → disconnected
+
+State → Output Mapping:
+- joining: Show "joining..." badge, gray out participant
+- active: Show green indicator, enable interaction
+- idle: Show yellow indicator, reduce update frequency
+- away: Show gray indicator, disable interaction
+- disconnected: Show "offline" badge, remove from active list
+```
+
+### State Transition Rules
+
+#### Allowed Transitions
+
+**Connection States:**
+- idle → connecting (user action)
+- connecting → connected (success)
+- connecting → failed (timeout/error)
+- connected → disconnected (network loss)
+- disconnected → reconnecting (auto-retry)
+- reconnecting → connected (success)
+- reconnecting → failed (max retries exceeded)
+- failed → idle (user reset)
+
+**Room States:**
+- no-room → creating (user action)
+- creating → created (success)
+- created → joining (user action)
+- joining → joined (success)
+- joined → leaving (user action)
+- leaving → left (complete)
+- left → no-room (cleanup)
+
+#### Prevented Transitions
+
+Invalid transitions are rejected by the state machine:
+- connected → connecting (already connected)
+- idle → connected (must go through connecting)
+- joined → created (must go through leaving)
+- failed → connected (must reset first)
+
+### Implementation Pattern
+
+```javascript
+// Moore Machine - State determines output
+const connectionStateOutputs = {
+  idle: { canJoin: true, canLeave: false, showSpinner: false },
+  connecting: { canJoin: false, canLeave: false, showSpinner: true },
+  connected: { canJoin: false, canLeave: true, showSpinner: false },
+  disconnected: { canJoin: false, canLeave: true, showSpinner: false },
+  failed: { canJoin: true, canLeave: false, showSpinner: false }
+};
+
+// Mealy Machine - State + Event determines action
+const connectionEventHandlers = {
+  connecting: {
+    'offer-received': (state, event) => handleOfferInConnecting(event),
+    'timeout': (state, event) => handleTimeoutInConnecting(event)
+  },
+  connected: {
+    'ice-candidate': (state, event) => handleICEInConnected(event),
+    'connection-error': (state, event) => handleErrorInConnected(event)
+  }
+};
+```
+
+### Benefits for WebRTC Dashboard
+
+✅ **Predictable Behavior** - State machines eliminate ambiguous states  
+✅ **Testability** - Each state transition can be unit tested  
+✅ **Debuggability** - Clear state history aids debugging  
+✅ **Maintainability** - New states/transitions are explicit  
+✅ **Error Prevention** - Invalid transitions are caught early  
+✅ **Documentation** - State diagrams serve as living documentation  
+
+### State Machine Visualization
+
+See `docs/redux/slices/rtc-connection-slice.md` for detailed state diagrams showing:
+- Connection state lifecycle
+- Participant status transitions
+- Room state progression
+- Error recovery paths
+
+---
+
 *Document Version: 4.1 | Last Updated: November 25, 2025*
 *Redux integration added for centralized state management*
