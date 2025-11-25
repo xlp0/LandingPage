@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PKC Landing Page (Local File Mode)</title>
-<script src="js/vendor/anime.min.js"></script>
   <style>
     :root {
       color-scheme: dark;
@@ -136,6 +135,99 @@
       background: rgba(8, 12, 30, 0.9);
       font-size: 0.88rem;
     }
+
+    .playground-viewport {
+      width: 220px;
+      height: 220px;
+      margin: 0 auto;
+      perspective: 900px;
+    }
+
+    .cube {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(-18deg) rotateY(26deg);
+    }
+
+    .cube-face {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      top: 50%;
+      left: 50%;
+      margin: -60px 0 0 -60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #0f172a;
+      background: rgba(248, 250, 252, 0.96);
+      border-radius: 18px;
+      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.7);
+    }
+
+    .cube-front { transform: translateZ(60px); }
+    .cube-back { transform: rotateY(180deg) translateZ(60px); }
+    .cube-right { transform: rotateY(90deg) translateZ(60px); }
+    .cube-left { transform: rotateY(-90deg) translateZ(60px); }
+    .cube-top { transform: rotateX(90deg) translateZ(60px); }
+    .cube-bottom { transform: rotateX(-90deg) translateZ(60px); }
+
+    .playground-shell {
+      display: grid;
+      grid-template-areas:
+        '. top .'
+        'left cube right'
+        '. bottom .';
+      grid-template-columns: auto 1fr auto;
+      grid-template-rows: auto auto auto;
+      column-gap: 0.75rem;
+      row-gap: 0.5rem;
+      align-items: center;
+      justify-items: center;
+    }
+
+    .slider-top { grid-area: top; text-align: center; }
+    .slider-left,
+    .slider-right {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .slider-left { grid-area: left; }
+    .slider-right { grid-area: right; }
+    .slider-bottom { grid-area: bottom; width: 100%; text-align: center; }
+
+    .slider-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #e5e7eb;
+    }
+
+    .slider-readout {
+      display: block;
+      margin-top: 2px;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .slider-vert-track {
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slider-vert-track input[type="range"] {
+      transform: rotate(-90deg);
+      width: 160px;
+    }
   </style>
 </head>
 <body>
@@ -187,35 +279,93 @@
       </section>
     </section>
 
-    <section class="note">
-      <strong>Tip:</strong> For WebRTC + WebSocket features that truly require a
-      network context (e.g. STUN/TURN, signaling, or Docker-backed services),
-      switch to a lightweight static server such as:
-      <code>python3 -m http.server 8000</code> and open
-      <code>http://localhost:8000/</code>. Use this
-      <code>landing-page-file.html</code> mainly to validate
-      <em>file-protocol compatibility</em> and the static-first architecture.
+    <section class="note" id="anime-playground-shell">
+      <div class="tw-space-y-3 tw-mb-3">
+        <p class="tw-text-xs tw-font-semibold tw-tracking-[0.18em] tw-uppercase tw-text-slate-300">Animation Playground</p>
+        <p class="tw-text-sm tw-text-slate-100">
+          Load an interactive anime.js + Tailwind demo that lets you control a 3D cube using four sliders.
+        </p>
+        <button id="ap-load" type="button" class="tw-inline-flex tw-items-center tw-justify-center tw-gap-1.5 tw-rounded-full tw-bg-emerald-500 hover:tw-bg-emerald-400 tw-text-slate-950 tw-text-xs tw-font-semibold tw-px-3.5 tw-py-1.5 tw-shadow-sm">
+          Load Animation Playground
+        </button>
+      </div>
+      <div id="anime-playground-host" class="tw-mt-3"></div>
     </section>
+
+    <template id="animation-playground-template">
+      <div class="tw-flex tw-justify-center tw-items-center">
+        <div class="playground-shell">
+          <label class="slider-top">
+            <span class="slider-label">Rotate X</span><br />
+            <input id="ap-rot-x" type="range" min="-180" max="180" step="15" value="-18" />
+            <span id="ap-rot-x-value" class="slider-readout">-18°</span>
+          </label>
+          <label class="slider-left">
+            <span class="slider-label">Rotate Y</span>
+            <div class="slider-vert-track">
+              <input id="ap-rot-y" type="range" min="-180" max="180" step="15" value="26" />
+            </div>
+            <span id="ap-rot-y-value" class="slider-readout">26°</span>
+          </label>
+          <label class="slider-right">
+            <span class="slider-label">Rotate Z</span>
+            <div class="slider-vert-track">
+              <input id="ap-rot-z" type="range" min="-180" max="180" step="15" value="0" />
+            </div>
+            <span id="ap-rot-z-value" class="slider-readout">0°</span>
+          </label>
+          <label class="slider-bottom">
+            <span class="slider-label">Scale</span><br />
+            <input id="ap-scale" type="range" min="0.6" max="1.8" step="0.1" value="1" class="tw-w-full" />
+            <span id="ap-scale-value" class="slider-readout">1.0×</span>
+          </label>
+          <div class="playground-viewport" style="grid-area: cube;">
+            <div id="ap-cube" class="cube">
+              <div class="cube-face cube-front">PKC</div>
+              <div class="cube-face cube-back">Docs</div>
+              <div class="cube-face cube-right">Mesh</div>
+              <div class="cube-face cube-left">P2P</div>
+              <div class="cube-face cube-top">Local</div>
+              <div class="cube-face cube-bottom">Static</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
   </main>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      if (!window.anime) return;
+      const loadBtn = document.getElementById('ap-load');
+      const host = document.getElementById('anime-playground-host');
 
-      anime({
-        targets: '.card',
-        opacity: [0, 1],
-        translateY: [24, 0],
-        duration: 900,
-        easing: 'easeOutExpo'
-      });
+      if (!loadBtn || !host) return;
 
-      anime({
-        targets: '.links .button',
-        opacity: [0, 1],
-        translateY: [12, 0],
-        delay: anime.stagger(70, { start: 450 }),
-        duration: 650,
-        easing: 'easeOutQuad'
+      loadBtn.addEventListener('click', () => {
+        loadBtn.disabled = true;
+        loadBtn.textContent = 'Loading...';
+
+        function mount() {
+          if (window.PKCAnimationPlayground && typeof window.PKCAnimationPlayground.mount === 'function') {
+            window.PKCAnimationPlayground.mount(host);
+            loadBtn.textContent = 'Animation Playground Loaded';
+          } else {
+            loadBtn.disabled = false;
+            loadBtn.textContent = 'Load Animation Playground (failed, retry)';
+          }
+        }
+
+        if (typeof window.PKCAnimationPlayground === 'undefined') {
+          const s = document.createElement('script');
+          s.src = 'js/components/animation-playground.js';
+          s.onload = mount;
+          s.onerror = () => {
+            loadBtn.disabled = false;
+            loadBtn.textContent = 'Load Animation Playground (failed, retry)';
+          };
+          document.head.appendChild(s);
+        } else {
+          mount();
+        }
       });
     });
   </script>
