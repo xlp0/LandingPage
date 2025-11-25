@@ -318,7 +318,8 @@
 
             getAuthorizationUrl() {
                 const state = this.generateState();
-                sessionStorage.setItem('oauth-state', state);
+                // Store state in localStorage (works across origins)
+                localStorage.setItem('oauth-state', state);
 
                 const params = new URLSearchParams({
                     client_id: this.clientId,

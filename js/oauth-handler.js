@@ -21,8 +21,8 @@ export class OAuth2Handler {
     getAuthorizationUrl(state = null) {
         if (!state) {
             state = this.generateState();
-            // Store state in session storage for verification
-            sessionStorage.setItem('oauth-state', state);
+            // Store state in local storage for verification (works across origins)
+            localStorage.setItem('oauth-state', state);
         }
 
         const params = new URLSearchParams({
@@ -63,10 +63,12 @@ export class OAuth2Handler {
             }
 
             // Verify state
-            const storedState = sessionStorage.getItem('oauth-state');
+            const storedState = localStorage.getItem('oauth-state');
             if (state !== storedState) {
                 throw new Error('State mismatch - possible CSRF attack');
             }
+            // Clear state after verification
+            localStorage.removeItem('oauth-state');
 
             if (!code) {
                 throw new Error('No authorization code received');
