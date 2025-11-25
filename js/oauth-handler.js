@@ -33,7 +33,7 @@ export class OAuth2Handler {
             state: state
         });
 
-        const url = `https://${this.domain}/oauth/v2/authorization?${params.toString()}`;
+        const url = `https://${this.domain}/oauth/v2/authorize?${params.toString()}`;
         this.log('Authorization URL:', url);
         return url;
     }
