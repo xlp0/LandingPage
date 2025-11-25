@@ -92,7 +92,7 @@ testWithConfig('navigate through PKC website links', async ({ browser }, testInf
 
       // First User - Save name
       console.log('First user: Clicking Save Name button...');
-      await firstUserPage.locator('#save-name-btn').click();
+      await firstUserPage.locator('#login-btn').click();
       await firstUserPage.waitForLoadState('networkidle');
       await firstUserPage.waitForTimeout(1000);
       await takeScreenshot(firstUserPage, '05-first-user-name-saved');
