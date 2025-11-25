@@ -6,7 +6,7 @@
 
 export class OAuth2Handler {
     constructor(config = {}) {
-        this.domain = config.domain || 'zit.pkc.pub';
+        this.domain = config.domain || 'vpn.pkc.pub';
         this.clientId = config.clientId;
         this.clientSecret = config.clientSecret;
         this.redirectUri = config.redirectUri || window.location.origin + '/auth-callback.html';
