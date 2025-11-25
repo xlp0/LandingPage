@@ -1288,5 +1288,277 @@ The system is ready for production deployment and positioned for continuous enha
 
 ---
 
-*Document Version: 4.0 | Last Updated: November 24, 2025*
-*This comprehensive document supersedes all previous individual documentation files.*
+## Redux State Management Integration
+
+### Overview
+Redux serves as the **centralized state manager** for all client-side connection decisions, user state, and room management. This ensures predictable state updates and enables time-travel debugging.
+
+### Redux Slices for WebRTC Dashboard
+
+#### 1. **Auth Slice** - User Authentication
+```javascript
+{
+  isAuthenticated: boolean,
+  user: { id, name, email, avatar, status },
+  token: string,
+  loading: boolean,
+  error: string | null
+}
+```
+**Manages:** Zitadel login, token refresh, user profile  
+**Dispatches:** `loginWithZitadel()`, `logout()`, `updateUserProfile()`
+
+#### 2. **RTC Connection Slice** - WebRTC Connections
+```javascript
+{
+  connections: {
+    [peerId]: {
+      status: 'connecting' | 'connected' | 'disconnected' | 'failed',
+      stats: { latency, bandwidth, packetLoss },
+      error: string | null
+    }
+  },
+  localStream: MediaStream | null,
+  audioEnabled: boolean,
+  videoEnabled: boolean,
+  screenSharing: boolean
+}
+```
+**Manages:** Peer connections, connection status, media controls  
+**Dispatches:** `addPeerConnection()`, `updateConnectionStatus()`, `toggleAudio()`, `toggleVideo()`
+
+#### 3. **Participants Slice** - Connected Users
+```javascript
+{
+  list: [
+    {
+      id, userId, name, email, avatar,
+      status: 'active' | 'idle' | 'away',
+      audioEnabled, videoEnabled, screenSharing,
+      connectionStatus, latency, isModerator
+    }
+  ],
+  localParticipant: Participant | null,
+  selectedParticipantId: string | null
+}
+```
+**Manages:** Participant list, status, media, permissions  
+**Dispatches:** `addParticipant()`, `updateParticipantStatus()`, `updateParticipantMedia()`
+
+#### 4. **Invitations Slice** - Room Invitations
+```javascript
+{
+  sent: Invitation[],
+  received: Invitation[],
+  filter: { type, status, search }
+}
+```
+**Manages:** Sent/received invitations, responses, expiry  
+**Dispatches:** `sendInvitation()`, `acceptInvitation()`, `rejectInvitation()`
+
+#### 5. **Room Slice** - Room Management
+```javascript
+{
+  list: Room[],
+  currentRoomId: string | null,
+  currentRoom: Room | null,
+  filter: { search, sortBy },
+  loading: boolean,
+  error: string | null
+}
+```
+**Manages:** Room list, current room, filters  
+**Dispatches:** `fetchRooms()`, `createRoom()`, `joinRoom()`, `leaveRoom()`
+
+#### 6. **Messages Slice** - Chat Messages
+```javascript
+{
+  byRoom: { [roomId]: Message[] },
+  currentRoomMessages: Message[],
+  unreadCount: number,
+  loading: boolean
+}
+```
+**Manages:** Messages, history, unread count  
+**Dispatches:** `addMessage()`, `fetchMessages()`, `markAsRead()`
+
+#### 7. **Dashboard Slice** - UI State
+```javascript
+{
+  currentPage: 'login' | 'dashboard' | 'room' | 'settings',
+  sidebarOpen: boolean,
+  theme: 'light' | 'dark',
+  notifications: Notification[],
+  loading: boolean
+}
+```
+**Manages:** Navigation, UI state, theme, notifications  
+**Dispatches:** `navigateTo()`, `toggleSidebar()`, `setTheme()`, `addNotification()`
+
+### Redux Integration with WebRTC Modules
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                Redux Store                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
+│  │ Auth Slice   │  │ RTC Slice    │  │ Participants │  │
+│  └──────────────┘  └──────────────┘  └──────────────┘  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
+│  │ Rooms Slice  │  │ Messages     │  │ Dashboard    │  │
+│  └──────────────┘  └──────────────┘  └──────────────┘  │
+└────────────┬────────────────────────────────────────────┘
+             │
+             ├─ Selectors (memoized)
+             │
+┌────────────v────────────────────────────────────────────┐
+│          React Components                               │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
+│  │ Dashboard    │  │ Room View    │  │ Video Grid   │  │
+│  │ Manager      │  │              │  │              │  │
+│  └──────────────┘  └──────────────┘  └──────────────┘  │
+└────────────┬────────────────────────────────────────────┘
+             │
+             ├─ dispatch(action)
+             │
+┌────────────v────────────────────────────────────────────┐
+│          Middleware                                     │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
+│  │ Auth MW      │  │ RTC MW       │  │ Sync MW      │  │
+│  └──────────────┘  └──────────────┘  └──────────────┘  │
+└────────────┬────────────────────────────────────────────┘
+             │
+             ├─ WebSocket events
+             ├─ WebRTC operations
+             ├─ API calls
+             │
+┌────────────v────────────────────────────────────────────┐
+│          WebRTC Modules                                 │
+│  ┌──────────────────────────────────────────────────┐   │
+│  │ RoomConnectionManager                            │   │
+│  │ - Manages peer connections                       │   │
+│  │ - Dispatches connection status updates           │   │
+│  │ - Handles ICE candidates                         │   │
+│  └──────────────────────────────────────────────────┘   │
+│  ┌──────────────────────────────────────────────────┐   │
+│  │ RoomService                                      │   │
+│  │ - Creates/joins rooms                            │   │
+│  │ - Dispatches room state updates                  │   │
+│  │ - Manages participants                           │   │
+│  └──────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Connection Decision Flow
+
+```
+User Action (Click Join)
+  ↓
+dispatch(joinRoom(roomId))
+  ↓
+Middleware intercepts action
+  ↓
+RoomService.joinRoom() called
+  ↓
+dispatch(setCurrentRoom(room))
+  ↓
+dispatch(setLocalParticipant(user))
+  ↓
+RoomConnectionManager.initialize()
+  ↓
+For each existing peer:
+  dispatch(addPeerConnection(peerId))
+  ↓
+WebRTC negotiation starts
+  ↓
+dispatch(updateConnectionStatus(peerId, 'connecting'))
+  ↓
+Connection established
+  ↓
+dispatch(updateConnectionStatus(peerId, 'connected'))
+  ↓
+dispatch(updateConnectionStats(peerId, stats))
+  ↓
+UI re-renders with updated state
+```
+
+### Middleware for Connection Management
+
+#### RTC Middleware
+```javascript
+// Handles WebRTC lifecycle events
+- Listens for connection status changes
+- Collects connection statistics
+- Handles reconnection logic
+- Dispatches connection updates to Redux
+```
+
+#### Sync Middleware
+```javascript
+// Syncs state with WebSocket server
+- Broadcasts connection status
+- Receives peer updates
+- Handles room events
+- Keeps Redux state in sync
+```
+
+#### Auth Middleware
+```javascript
+// Manages authentication state
+- Token refresh on expiry
+- Auto-logout on auth failure
+- Persist auth to localStorage
+- Sync across tabs
+```
+
+### Selectors for Connection Decisions
+
+```javascript
+// Get all connected peers
+selectConnectedPeers(state)
+
+// Get connection status for specific peer
+selectConnectionStatus(state, peerId)
+
+// Get connection statistics
+selectConnectionStats(state, peerId)
+
+// Get all participants with video
+selectParticipantsWithVideo(state)
+
+// Get connection quality (latency-based)
+selectHighLatencyParticipants(state, threshold)
+
+// Get failed connections
+selectFailedConnections(state)
+
+// Get local participant
+selectLocalParticipant(state)
+
+// Get current room
+selectCurrentRoom(state)
+```
+
+### Benefits of Redux Integration
+
+✅ **Predictable State** - Single source of truth for all connection state  
+✅ **Time-Travel Debugging** - Redux DevTools for debugging connection issues  
+✅ **Decoupled Components** - UI components don't directly manage WebRTC  
+✅ **Testable** - Easy to test connection logic with mock state  
+✅ **Scalable** - Handles complex state transitions  
+✅ **Performance** - Memoized selectors prevent unnecessary re-renders  
+
+### Related Documentation
+
+See `docs/redux/` for complete Redux documentation:
+- `REDUX_ARCHITECTURE.md` - Complete Redux state tree
+- `slices/auth-slice.md` - Authentication state
+- `slices/rtc-connection-slice.md` - WebRTC connection state
+- `slices/participants-slice.md` - Participant state
+- `slices/invitations-slice.md` - Invitation state
+- `slices/room-slice.md` - Room management state
+- `slices/messages-slice.md` - Chat message state
+
+---
+
+*Document Version: 4.1 | Last Updated: November 25, 2025*
+*Redux integration added for centralized state management*
