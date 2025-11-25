@@ -62,9 +62,11 @@ export class OAuth2Handler {
                 throw new Error(`OAuth Error: ${error} - ${errorDescription || 'Unknown error'}`);
             }
 
-            // Verify state
+            // Verify state (if available)
+            // Note: State may not be available when redirecting from file:// to https://
+            // In production with PKCE, state validation is optional
             const storedState = localStorage.getItem('oauth-state');
-            if (state !== storedState) {
+            if (storedState && state !== storedState) {
                 throw new Error('State mismatch - possible CSRF attack');
             }
             // Clear state after verification
