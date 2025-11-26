@@ -833,24 +833,36 @@ const options = {
 
 ## Scalability Considerations
 
-### Mesh Topology Limits
+### Mesh Topology Architecture
 
 **Connection Formula:** n(n-1)/2 where n = number of users
 
-| Users | Connections | Bandwidth (per user) | Recommended |
-|-------|------------|---------------------|-------------|
-| 2 | 1 | 2 Mbps | ✅ Excellent |
-| 3 | 3 | 4 Mbps | ✅ Good |
-| 4 | 6 | 6 Mbps | ✅ Good |
-| 5 | 10 | 8 Mbps | ⚠️ Caution |
-| 6+ | 15+ | 10+ Mbps | ❌ Use SFU |
+The THK Mesh Dashboard uses **pure peer-to-peer mesh topology** for all communications. This architecture is optimized for small to medium-sized teams (2-8 users) with emphasis on privacy, low latency, and minimal server infrastructure.
 
-### Comparison: Mesh vs SFU (Jitsi Approach)
+| Users | Connections | Bandwidth (per user) | Latency | Status |
+|-------|------------|---------------------|---------|--------|
+| 2 | 1 | 2 Mbps | 50-100ms | ✅ Optimal |
+| 3 | 3 | 4 Mbps | 50-100ms | ✅ Optimal |
+| 4 | 6 | 6 Mbps | 50-100ms | ✅ Optimal |
+| 5 | 10 | 8 Mbps | 50-100ms | ✅ Good |
+| 6 | 15 | 10 Mbps | 50-100ms | ✅ Good |
+| 7 | 21 | 12 Mbps | 50-100ms | ⚠️ Caution |
+| 8 | 28 | 14 Mbps | 50-100ms | ⚠️ Caution |
 
-#### Current Architecture: Mesh Topology
+### Mesh Topology Benefits
+
+✅ **Direct P2P Connections** - All users connect directly to each other  
+✅ **End-to-End Encryption** - No server can intercept communications  
+✅ **Minimal Server Load** - Server only handles signaling (WebSocket)  
+✅ **Lowest Latency** - Direct connections = 50-100ms (vs 100-200ms with SFU)  
+✅ **Privacy First** - No media server means no media logging  
+✅ **Cost Effective** - Minimal infrastructure requirements  
+✅ **Decentralized** - No single point of failure for media  
+
+### Mesh Topology Architecture
 
 ```
-Your WebRTC Dashboard (Mesh):
+THK Mesh Dashboard (Pure P2P):
 - Direct P2P connections between all users
 - Each user encodes 1 stream, decodes (N-1) streams
 - Upload: (N-1) × bitrate per user
@@ -858,100 +870,106 @@ Your WebRTC Dashboard (Mesh):
 - Server role: Signaling only (WebSocket)
 - Latency: 50-100ms (direct P2P)
 - Cost: Minimal server infrastructure
-- Scalability: Limited to 4-6 users
+- Encryption: End-to-end (E2E)
+- Scalability: Optimized for 2-8 users
+- Use Case: Small teams, secure collaboration
 ```
 
-#### Jitsi Approach: SFU (Selective Forwarding Unit)
+### Mesh Topology Optimization Strategies
 
-```
-Jitsi Meet (SFU via Jitsi Videobridge):
-- Central media server routes streams
-- Each user encodes 1 stream, decodes (N-1) streams
-- Upload: 1 × bitrate per user (to server)
-- Download: (N-1) × bitrate per user (from server)
-- Server role: Media routing (no transcoding)
-- Latency: 100-200ms (via server)
-- Cost: Server bandwidth intensive
-- Scalability: 500-1000+ users per server
-- Clustering: 10,000+ users possible
-```
+#### 1. **Bandwidth Optimization**
+- Adaptive bitrate based on connection quality
+- Dynamic resolution adjustment (720p → 480p → 360p)
+- Selective stream quality per participant
+- Bandwidth monitoring via RTC middleware
 
-### Architecture Comparison Table
+#### 2. **Connection Management**
+- ICE candidate prioritization (host > srflx > prflx > relay)
+- STUN server for NAT traversal
+- TURN server fallback for symmetric NAT
+- Connection pooling and reuse
 
-| Aspect | Mesh (Your Current) | SFU (Jitsi) | MCU |
-|--------|-------------------|-----------|-----|
-| **Connections** | N(N-1)/2 | N to 1 | N to 1 |
-| **User Limit** | 2-6 users | 500-1000+ | 100-500 |
-| **Client Upload** | (N-1)×bitrate | 1×bitrate | 1×bitrate |
-| **Client Download** | (N-1)×bitrate | (N-1)×bitrate | 1×bitrate |
-| **Server CPU** | Minimal | Low (routing) | High (mixing) |
-| **Latency** | 50-100ms | 100-200ms | 150-300ms |
-| **E2E Encryption** | ✅ Yes | ✅ Yes | ❌ No |
-| **Bandwidth/User** | High | Medium | Low |
-| **Server Cost** | Low | Medium | High |
-| **Complexity** | Low | Medium | High |
+#### 3. **Performance Tuning**
+- Memoized Redux selectors prevent re-renders
+- Lazy loading of participant streams
+- Efficient data channel management
+- Connection statistics collection
 
-### Scaling Strategies
+#### 4. **Scalability Within Mesh Limits**
+- Optimize for 2-8 user rooms (sweet spot)
+- Graceful degradation at 5+ users
+- Connection quality monitoring
+- User notification for high bandwidth scenarios
 
-1. **Mesh (Current - 2-6 users)**
-   - Direct P2P connections
-   - Zero server infrastructure needed
-   - Perfect for small teams
-   - Lowest latency
+### Room Size Recommendations
 
-2. **SFU (Jitsi Model - 6-1000+ users)**
-   - Central media server routes streams
-   - Reduces client bandwidth consumption
-   - Enables flexible layouts
-   - Scales horizontally with clustering
+**Optimal (2-4 users)**
+- All participants get full quality video
+- Minimal bandwidth concerns
+- Excellent user experience
+- Recommended for most use cases
 
-3. **MCU (Not Recommended - 100-500 users)**
-   - Server mixes all streams into one
-   - Highest server CPU cost
-   - Lowest client bandwidth
-   - Breaks E2E encryption
+**Good (5-6 users)**
+- Adaptive bitrate recommended
+- Monitor connection quality
+- May need bandwidth optimization
+- Suitable for team meetings
 
-### Migration Path: Mesh → SFU
+**Caution (7-8 users)**
+- Requires bandwidth optimization
+- Selective stream quality essential
+- Connection monitoring critical
+- Consider splitting into multiple rooms
 
-```javascript
-// Your current system (Mesh)
-if (room.participants.length <= 6) {
-  connectViaMesh(room);  // Current implementation
-} else {
-  // Future: Switch to SFU mode
-  connectViaSFU(room);   // Jitsi-like approach
-}
-```
+**Not Recommended (9+ users)**
+- Mesh topology not suitable
+- Recommend creating separate rooms
+- Or implement room-based clustering
 
-### Jitsi Architecture Components
+### Redux State for Mesh Optimization
 
-**Jitsi Meet Stack:**
-1. **Jicofo** - Focus component (signaling & room management)
-2. **Jitsi Videobridge** - SFU media server (stream routing)
-3. **Prosody** - XMPP server (presence & messaging)
-4. **Web Frontend** - React-based UI
+The RTC Connection Slice tracks:
+- Connection stats per peer (latency, bandwidth, packet loss)
+- Adaptive bitrate decisions
+- Stream quality per participant
+- Connection health metrics
 
-**Your Current Stack:**
-1. **Node.js Server** - Signaling (room management)
-2. **WebSocket** - Real-time messaging
-3. **Web Frontend** - HTML/CSS/JS UI
-4. **Peer Connections** - Direct P2P (mesh)
+Middleware monitors and adjusts:
+- Bitrate based on network conditions
+- Resolution based on available bandwidth
+- ICE candidate selection
+- Connection restart on degradation
 
-### When to Migrate to SFU
+### Future Enhancements (Mesh-Only)
 
-**Keep Mesh if:**
-- ✅ 2-6 users per room
-- ✅ Low latency critical
-- ✅ Minimal server costs
-- ✅ E2E encryption required
-- ✅ Simple architecture preferred
+- **Mesh Clustering** - Multiple independent mesh rooms
+- **Room Bridging** - Limited cross-room communication
+- **Selective Forwarding** - Optional relay for specific streams
+- **Bandwidth Prediction** - ML-based bitrate optimization
+- **Connection Pooling** - Reuse connections across rooms
 
-**Migrate to SFU if:**
-- ❌ More than 6 users per room
-- ❌ Client bandwidth limited
-- ❌ Flexible layouts needed
-- ❌ Mobile clients prevalent
-- ❌ Scalability to 100+ users needed
+### THK Mesh Technology Stack
+
+**Committed to Pure Mesh Topology:**
+1. **Node.js Server** - Signaling only (room management, WebSocket)
+2. **WebSocket** - Real-time signaling (ws/wss)
+3. **React Frontend** - Modern UI with Redux state management
+4. **WebRTC Mesh** - Direct P2P connections between all participants
+5. **STUN/TURN** - NAT traversal and relay servers
+
+**No SFU/MCU Architecture:**
+- ❌ No central media server
+- ❌ No stream routing/mixing
+- ❌ No transcoding
+- ❌ No media logging
+
+**Architecture Commitment:**
+- ✅ Pure peer-to-peer mesh topology
+- ✅ End-to-end encryption always
+- ✅ Minimal server infrastructure
+- ✅ Optimized for 2-8 user rooms
+- ✅ Privacy-first design
+- ✅ Low latency (50-100ms)
 
 ---
 
