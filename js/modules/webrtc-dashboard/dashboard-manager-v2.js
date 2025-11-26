@@ -64,8 +64,8 @@ export class DashboardManager {
             // Initialize UI references
             this._initializeElements();
             
-            // Initialize core services
-            this.roomService = new RoomService();
+            // Initialize core services with Redux store
+            this.roomService = new RoomService(this.store);
             await this.roomService.init();
             
             this.accessControl = new AccessControlManager();

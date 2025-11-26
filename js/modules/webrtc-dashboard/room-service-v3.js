@@ -11,19 +11,27 @@ import { WebRTCCoordinator } from './services/webrtc-coordinator.js';
 import { RoomMessageHandler } from './services/room-message-handler.js';
 
 export class RoomService {
-    constructor() {
+    constructor(reduxStore = null) {
         this.instanceId = 'room-service-v3-' + Math.random().toString(36).substr(2, 9);
         console.log('🔥🔥🔥 [RoomService] V3.0 MODULAR VERSION LOADED! 🔥🔥🔥');
         console.log('[RoomService] Instance:', this.instanceId);
         
+        // Redux Store
+        this.store = reduxStore;
+        if (this.store) {
+            console.log('[RoomService] ✅ Redux store connected');
+        } else {
+            console.warn('[RoomService] ⚠️ No Redux store - running without Redux');
+        }
+        
         // Initialize all modules
         this.state = new RoomState();
         this.broadcaster = new RoomBroadcaster('webrtc-dashboard-rooms');
-        this.creator = new RoomCreator(this.state, this.broadcaster);
-        this.joiner = new RoomJoiner(this.state, this.broadcaster);
+        this.creator = new RoomCreator(this.state, this.broadcaster, this.store);
+        this.joiner = new RoomJoiner(this.state, this.broadcaster, this.store);
         this.discovery = new RoomDiscovery(this.broadcaster);
         this.eventEmitter = new RoomEventEmitter();
-        this.webrtcCoordinator = new WebRTCCoordinator(this.state);
+        this.webrtcCoordinator = new WebRTCCoordinator(this.state, this.store);
         this.messageHandler = new RoomMessageHandler(
             this.state,
             this.broadcaster,
