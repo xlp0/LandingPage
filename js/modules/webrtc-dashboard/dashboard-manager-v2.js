@@ -578,10 +578,28 @@ export class DashboardManager {
             // If user is already logged in, show main dashboard
             this._showMainDashboard();
         } else {
-            // Generate random username
-            const randomName = this._generateRandomUsername();
+            // Check for authenticated user from main site
+            let userName = '';
+            try {
+                const userStr = localStorage.getItem('user');
+                const token = localStorage.getItem('auth_token');
+                if (userStr && token) {
+                    const user = JSON.parse(userStr);
+                    userName = user.name || user.email?.split('@')[0] || '';
+                    console.log('[Dashboard] Found authenticated user:', userName);
+                }
+            } catch (error) {
+                console.error('[Dashboard] Error reading authenticated user:', error);
+            }
+            
+            // Fallback to random username if no authenticated user
+            if (!userName) {
+                userName = this._generateRandomUsername();
+                console.log('[Dashboard] No authenticated user, using random name:', userName);
+            }
+            
             if (this.elements['user-name']) {
-                this.elements['user-name'].value = randomName;
+                this.elements['user-name'].value = userName;
             }
             
             // Show login view
