@@ -149,6 +149,25 @@ const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+
+    // Set auth state directly (for loading from localStorage)
+    setAuth: (state, action) => {
+      const { user, token, refreshToken } = action.payload;
+      state.isAuthenticated = true;
+      state.user = user;
+      state.token = token;
+      state.refreshToken = refreshToken || null;
+      state.loginMethod = 'restored';
+    },
+
+    clearAuth: (state) => {
+      state.isAuthenticated = false;
+      state.user = null;
+      state.token = null;
+      state.refreshToken = null;
+      state.loginMethod = null;
+      state.error = null;
+    },
   },
 
   extraReducers: (builder) => {
@@ -241,7 +260,7 @@ const authSlice = createSlice({
 });
 
 // Actions
-export const { loginStart, setUserStatus, updateUserProfile, clearError } = authSlice.actions;
+export const { loginStart, setUserStatus, updateUserProfile, clearError, setAuth, clearAuth } = authSlice.actions;
 
 // Selectors
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;

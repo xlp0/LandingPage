@@ -324,10 +324,10 @@
                 // Load existing auth state from localStorage
                 const userStr = localStorage.getItem('user');
                 const token = localStorage.getItem('auth_token');
+                const refreshToken = localStorage.getItem('refresh_token');
                 if (userStr && token) {
                     const user = JSON.parse(userStr);
-                    store.dispatch(authModule.setUser(user));
-                    store.dispatch(authModule.setToken(token));
+                    store.dispatch(authModule.setAuth({ user, token, refreshToken }));
                     console.log('[Dashboard] Redux auth state loaded:', user);
                 }
                 
