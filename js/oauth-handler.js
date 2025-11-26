@@ -1,19 +1,21 @@
 /**
  * OAuth2 Handler
  * 
- * Manages OAuth2 authentication flow with Zitadel
+ * Handles OAuth2 authentication flow with Zitadel
+ * Manages authorization, token exchange, and callback handling
  */
 
-export class OAuth2Handler {
-    constructor(config = {}) {
-        this.domain = config.domain || 'vpn.pkc.pub';
-        this.clientId = config.clientId;
-        this.clientSecret = config.clientSecret;
-        this.redirectUri = config.redirectUri || window.location.origin + '/auth-callback.html';
-        this.scopes = config.scopes || ['openid', 'profile', 'email'];
-        this.responseType = config.responseType || 'code';
-        this.debug = config.debug || false;
-    }
+(function(global) {
+    class OAuth2Handler {
+        constructor(config = {}) {
+            this.domain = config.domain || 'vpn.pkc.pub';
+            this.clientId = config.clientId;
+            this.clientSecret = config.clientSecret;
+            this.redirectUri = config.redirectUri || window.location.origin + '/auth-callback.html';
+            this.scopes = config.scopes || ['openid', 'profile', 'email'];
+            this.responseType = config.responseType || 'code';
+            this.debug = config.debug || false;
+        }
 
     /**
      * Generate authorization URL
@@ -193,10 +195,6 @@ export class OAuth2Handler {
     }
 }
 
-// Export as default
-export default OAuth2Handler;
-
-// Also export to window for non-module usage
-if (typeof window !== 'undefined') {
-    window.OAuth2Handler = OAuth2Handler;
-}
+    // Export to global
+    global.OAuth2Handler = OAuth2Handler;
+})(typeof window !== 'undefined' ? window : global);

@@ -5,7 +5,8 @@
  * Provides a unified interface for storing and retrieving data
  */
 
-export class LocalStorageManager {
+(function(global) {
+    class LocalStorageManager {
     constructor(config = {}) {
         this.prefix = config.prefix || 'thk-mesh-';
         this.debug = config.debug || false;
@@ -273,10 +274,6 @@ export class LocalStorageManager {
     }
 }
 
-// Export as default
-export default LocalStorageManager;
-
-// Also export to window for non-module usage
-if (typeof window !== 'undefined') {
-    window.LocalStorageManager = LocalStorageManager;
-}
+    // Export to global
+    global.LocalStorageManager = LocalStorageManager;
+})(typeof window !== 'undefined' ? window : global);
