@@ -223,6 +223,16 @@
     <script type="module">
         import LocalStorageManager from './js/local-storage-manager.js';
         import OAuth2Handler from './js/oauth-handler.js';
+        import store from './js/modules/webrtc-dashboard/store/store.js';
+        import { 
+            loginWithZitadel, 
+            logoutUser, 
+            restoreAuth,
+            selectIsAuthenticated,
+            selectUser,
+            selectUserName,
+            selectAuthLoading
+        } from './js/modules/webrtc-dashboard/store/authSlice.js';
 
         // Initialize managers
         const storage = new LocalStorageManager({
@@ -243,14 +253,27 @@
             isOnline: navigator.onLine,
             storage: storage,
             oauth: oauth,
+            store: store,
+            unsubscribe: null,
 
             init() {
                 storage.init();
                 this.setupEventListeners();
                 this.updateStatus();
                 this.updateStorageInfo();
-                this.checkAuthStatus();
-                console.log('[App] Initialized');
+                
+                // Restore auth from Redux store
+                store.dispatch(restoreAuth()).then(() => {
+                    this.updateAuthUI();
+                    console.log('[App] Auth restored from store');
+                });
+
+                // Subscribe to Redux store changes
+                this.unsubscribe = store.subscribe(() => {
+                    this.updateAuthUI();
+                });
+
+                console.log('[App] Initialized with Redux store');
             },
 
             setupEventListeners() {
@@ -293,6 +316,42 @@
                 `;
             },
 
+            updateAuthUI() {
+                const state = store.getState();
+                const isAuthenticated = selectIsAuthenticated(state);
+                const user = selectUser(state);
+                const userName = selectUserName(state);
+                const isLoading = selectAuthLoading(state);
+                const authButton = document.getElementById('auth-button-container');
+                
+                if (isLoading) {
+                    authButton.innerHTML = `
+                        <button class="nav-button px-6 py-2 bg-white text-purple-600 rounded-lg font-semibold opacity-50 cursor-not-allowed">
+                            Loading...
+                        </button>
+                    `;
+                } else if (isAuthenticated && user) {
+                    authButton.innerHTML = `
+                        <div class="flex gap-2 items-center">
+                            <div class="flex items-center gap-2">
+                                ${user.avatar ? `<img src="${user.avatar}" alt="${userName}" class="w-8 h-8 rounded-full">` : '<div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-xs">👤</div>'}
+                                <span class="text-sm opacity-90">${userName || 'User'}</span>
+                            </div>
+                            <button onclick="app.logout()" class="nav-button px-4 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition">
+                                Logout
+                            </button>
+                        </div>
+                    `;
+                    console.log('[App] User authenticated via Redux:', userName);
+                } else {
+                    authButton.innerHTML = `
+                        <button onclick="app.login()" class="nav-button px-6 py-2 bg-white text-purple-600 rounded-lg font-semibold hover:bg-white/90 transition">
+                            Login
+                        </button>
+                    `;
+                }
+            },
+
             navigate(page) {
                 // Hide all pages
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -306,21 +365,6 @@
                 }
             },
 
-            checkAuthStatus() {
-                const user = storage.getUser();
-                const authButton = document.getElementById('auth-button-container');
-                
-                if (user) {
-                    authButton.innerHTML = `
-                        <div class="flex gap-2 items-center">
-                            <span class="text-sm opacity-75">Welcome, ${user.name || 'User'}</span>
-                            <button onclick="app.logout()" class="nav-button px-6 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600">Logout</button>
-                        </div>
-                    `;
-                    console.log('[App] User authenticated:', user.name);
-                }
-            },
-
             login() {
                 // Redirect to Zitadel login
                 console.log('[App] Initiating login flow...');
@@ -328,16 +372,25 @@
             },
 
             logout() {
-                storage.clearUser();
-                this.checkAuthStatus();
-                this.navigate('home');
-                console.log('[App] Logged out');
+                store.dispatch(logoutUser()).then(() => {
+                    storage.clearUser();
+                    this.updateAuthUI();
+                    this.navigate('home');
+                    console.log('[App] Logged out from Redux store');
+                });
             }
         };
 
         // Initialize app when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
             app.init();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (app.unsubscribe) {
+                app.unsubscribe();
+            }
         });
     </script>
 </body>
