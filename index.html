@@ -8,6 +8,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Redux from CDN -->
+    <script crossorigin src="https://unpkg.com/redux@4/dist/redux.js"></script>
+    <script crossorigin src="https://unpkg.com/@reduxjs/toolkit@1.9.7/dist/redux-toolkit.umd.js"></script>
+    <!-- Local modules -->
+    <script src="./js/local-storage-manager.js?v=4"></script>
+    <script src="./js/oauth-handler.js?v=4"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -29,6 +35,16 @@
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center font-sans text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <!-- Auth Status Bar -->
+    <div id="auth-status-bar" class="fixed top-4 right-4 px-4 py-2 bg-black/30 backdrop-blur-md rounded-full border border-white/20 text-sm z-50 flex items-center gap-3">
+      <span id="auth-user-info" class="hidden">
+        <span id="auth-user-name" class="font-semibold"></span>
+      </span>
+      <button id="auth-button" onclick="app.login()" class="px-4 py-1.5 bg-white text-pkc-primary rounded-full font-semibold hover:bg-white/90 transition-colors">
+        Login
+      </button>
+    </div>
+    
     <div class="max-w-4xl mx-auto px-8 py-16 text-center" data-anime="main-content">
       <p id="pkc-title-text" class="text-xl md:text-2xl font-semibold mb-4 opacity-0 translate-y-8" data-anime="env-title"></p>
       <h1 class="text-4xl md:text-5xl font-bold mb-4 opacity-0 translate-y-8" data-anime="title">PKC Landing Page</h1>
@@ -239,6 +255,237 @@
       }
       
       PKC.load('/modules.json');
+    </script>
+    
+    <!-- Authentication Integration -->
+    <script>
+      // Initialize OAuth handler and storage
+      const storage = new LocalStorageManager({
+        appName: 'PKC',
+        version: '1.0.0'
+      });
+      
+      const oauth = new OAuth2Handler({
+        clientId: '348373619962871815',
+        domain: 'vpn.pkc.pub',
+        redirectUri: window.location.origin + '/auth-callback-enhanced.html',
+        scopes: ['openid', 'profile', 'email'],
+        debug: true
+      });
+      
+      // Redux store for auth state
+      const { configureStore, createSlice } = window.RTK;
+      
+      const authSlice = createSlice({
+        name: 'auth',
+        initialState: {
+          isAuthenticated: false,
+          user: null,
+          token: null,
+          refreshToken: null,
+          loading: false,
+          error: null,
+          loginMethod: null
+        },
+        reducers: {
+          setAuth: (state, action) => {
+            state.isAuthenticated = action.payload.isAuthenticated;
+            state.user = action.payload.user;
+            state.token = action.payload.token;
+            state.refreshToken = action.payload.refreshToken;
+            state.loginMethod = action.payload.loginMethod;
+          },
+          clearAuth: (state) => {
+            state.isAuthenticated = false;
+            state.user = null;
+            state.token = null;
+            state.refreshToken = null;
+            state.loginMethod = null;
+          }
+        }
+      });
+      
+      const store = configureStore({
+        reducer: {
+          auth: authSlice.reducer
+        }
+      });
+      
+      // App object for global access
+      window.app = {
+        async login() {
+          console.log('[App] Initiating login flow...');
+          await oauth.redirectToLogin();
+        },
+        
+        async logout() {
+          console.log('[App] Logging out...');
+          
+          // Clear Redux state
+          store.dispatch(authSlice.actions.clearAuth());
+          
+          // Clear local storage
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('auth_code');
+          localStorage.removeItem('pkce_code_verifier');
+          storage.clearUser();
+          
+          // Update UI
+          updateAuthUI();
+          
+          // Redirect to Zitadel logout
+          const logoutUrl = `https://vpn.pkc.pub/oidc/v1/end_session?post_logout_redirect_uri=${encodeURIComponent(window.location.origin)}`;
+          window.location.href = logoutUrl;
+        },
+        
+        getUser() {
+          return store.getState().auth.user;
+        },
+        
+        isAuthenticated() {
+          return store.getState().auth.isAuthenticated;
+        }
+      };
+      
+      // Update auth UI
+      function updateAuthUI() {
+        const authButton = document.getElementById('auth-button');
+        const authUserInfo = document.getElementById('auth-user-info');
+        const authUserName = document.getElementById('auth-user-name');
+        
+        const state = store.getState().auth;
+        
+        if (state.isAuthenticated && state.user) {
+          // Show user info
+          authUserName.textContent = state.user.name || state.user.email;
+          authUserInfo.classList.remove('hidden');
+          
+          // Change button to logout
+          authButton.textContent = 'Logout';
+          authButton.onclick = () => app.logout();
+          authButton.classList.remove('bg-white', 'text-pkc-primary');
+          authButton.classList.add('bg-red-500', 'text-white');
+          
+          console.log('[App] User authenticated:', state.user);
+        } else {
+          // Hide user info
+          authUserInfo.classList.add('hidden');
+          
+          // Change button to login
+          authButton.textContent = 'Login';
+          authButton.onclick = () => app.login();
+          authButton.classList.remove('bg-red-500', 'text-white');
+          authButton.classList.add('bg-white', 'text-pkc-primary');
+        }
+      }
+      
+      // Check for existing auth on page load
+      async function checkExistingAuth() {
+        console.log('[App] Checking for existing auth...');
+        
+        const token = localStorage.getItem('auth_token');
+        const userStr = localStorage.getItem('user');
+        
+        if (token && userStr) {
+          try {
+            const user = JSON.parse(userStr);
+            
+            // Update Redux store
+            store.dispatch(authSlice.actions.setAuth({
+              isAuthenticated: true,
+              user: user,
+              token: token,
+              refreshToken: localStorage.getItem('refresh_token'),
+              loginMethod: 'zitadel'
+            }));
+            
+            console.log('[App] Restored auth session:', user);
+          } catch (error) {
+            console.error('[App] Failed to restore auth:', error);
+          }
+        }
+        
+        // Update UI
+        updateAuthUI();
+        
+        // Check if we need to exchange code
+        const code = localStorage.getItem('auth_code');
+        const codeVerifier = localStorage.getItem('pkce_code_verifier');
+        
+        if (code && codeVerifier) {
+          await exchangeCodeForToken();
+        }
+      }
+      
+      // Exchange authorization code for token
+      async function exchangeCodeForToken() {
+        const code = localStorage.getItem('auth_code');
+        const codeVerifier = localStorage.getItem('pkce_code_verifier');
+        
+        if (!code) {
+          console.log('[App] No code to exchange');
+          return;
+        }
+        
+        try {
+          console.log('[App] Exchanging authorization code for token...');
+          
+          const response = await fetch('/api/auth/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              code: code,
+              codeVerifier: codeVerifier,
+              redirectUri: window.location.origin + '/auth-callback-enhanced.html'
+            })
+          });
+          
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.details || `Backend returned ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          console.log('[App] Real user data received:', data.user);
+          
+          // Update Redux store
+          store.dispatch(authSlice.actions.setAuth({
+            isAuthenticated: true,
+            user: data.user,
+            token: data.token,
+            refreshToken: data.refreshToken,
+            loginMethod: 'zitadel'
+          }));
+          
+          // Save to localStorage
+          localStorage.setItem('auth_token', data.token);
+          localStorage.setItem('refresh_token', data.refreshToken);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          storage.setUser(data.user);
+          
+          // Clear auth code
+          localStorage.removeItem('auth_code');
+          
+          // Update UI
+          updateAuthUI();
+          
+          console.log('[App] Authentication complete!');
+        } catch (error) {
+          console.error('[App] Token exchange failed:', error);
+        }
+      }
+      
+      // Initialize auth on page load
+      document.addEventListener('DOMContentLoaded', () => {
+        checkExistingAuth();
+      });
+      
+      // Subscribe to Redux store changes
+      store.subscribe(() => {
+        updateAuthUI();
+      });
     </script>
 </body>
 </html>
