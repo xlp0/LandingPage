@@ -59,18 +59,23 @@
      * Generate authorization URL
      */
     async getAuthorizationUrl(state = null) {
-        if (!state) {
-            state = this.generateState();
-            // Store state in local storage for verification (works across origins)
-            localStorage.setItem('oauth-state', state);
-        }
-
-        // Generate PKCE parameters
+        // Generate PKCE parameters FIRST
         const { codeVerifier, codeChallenge } = await this.generatePKCE();
         
-        // Store code verifier in localStorage (sessionStorage gets cleared on redirect)
+        // Store code verifier in localStorage
         localStorage.setItem('pkce_code_verifier', codeVerifier);
-        this.log('PKCE code verifier stored in localStorage:', codeVerifier.substring(0, 20) + '...');
+        this.log('PKCE code verifier stored in localStorage:', codeVerifier ? (codeVerifier.substring(0, 20) + '...') : 'UNDEFINED!');
+        
+        if (!state) {
+            // Encode code verifier in state so it survives the redirect
+            const stateData = {
+                random: this.generateState(),
+                cv: codeVerifier // Store code verifier in state
+            };
+            state = btoa(JSON.stringify(stateData));
+            // Store state in local storage for verification
+            localStorage.setItem('oauth-state', state);
+        }
 
         const params = new URLSearchParams({
             client_id: this.clientId,

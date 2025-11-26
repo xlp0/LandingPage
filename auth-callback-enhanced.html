@@ -69,8 +69,21 @@
                 const result = await oauth.handleCallback(params);
                 console.log('[AuthCallback] Authorization code verified');
 
-                // Get PKCE code verifier from localStorage (stored during login)
-                const codeVerifier = localStorage.getItem('pkce_code_verifier');
+                // Extract code verifier from state parameter
+                let codeVerifier = localStorage.getItem('pkce_code_verifier');
+                if (state) {
+                    try {
+                        const stateData = JSON.parse(atob(state));
+                        if (stateData.cv) {
+                            codeVerifier = stateData.cv;
+                            console.log('[AuthCallback] Code verifier extracted from state');
+                            // Store it in localStorage for the token exchange
+                            localStorage.setItem('pkce_code_verifier', codeVerifier);
+                        }
+                    } catch (e) {
+                        console.log('[AuthCallback] Could not parse state, using localStorage');
+                    }
+                }
                 console.log('[AuthCallback] PKCE code verifier:', codeVerifier ? 'present' : 'missing');
 
                 // Store the code for backend exchange
