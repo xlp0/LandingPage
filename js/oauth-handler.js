@@ -68,9 +68,9 @@
         // Generate PKCE parameters
         const { codeVerifier, codeChallenge } = await this.generatePKCE();
         
-        // Store code verifier in sessionStorage for later use in callback
-        sessionStorage.setItem('pkce_code_verifier', codeVerifier);
-        this.log('PKCE code verifier stored');
+        // Store code verifier in localStorage (sessionStorage gets cleared on redirect)
+        localStorage.setItem('pkce_code_verifier', codeVerifier);
+        this.log('PKCE code verifier stored in localStorage');
 
         const params = new URLSearchParams({
             client_id: this.clientId,

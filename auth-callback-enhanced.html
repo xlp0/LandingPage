@@ -69,15 +69,12 @@
                 const result = await oauth.handleCallback(params);
                 console.log('[AuthCallback] Authorization code verified');
 
-                // Get PKCE code verifier from sessionStorage (stored during login)
-                const codeVerifier = sessionStorage.getItem('pkce_code_verifier');
+                // Get PKCE code verifier from localStorage (stored during login)
+                const codeVerifier = localStorage.getItem('pkce_code_verifier');
                 console.log('[AuthCallback] PKCE code verifier:', codeVerifier ? 'present' : 'missing');
 
-                // Store the code and code verifier for backend exchange
+                // Store the code for backend exchange
                 localStorage.setItem('auth_code', code);
-                if (codeVerifier) {
-                    localStorage.setItem('pkce_code_verifier', codeVerifier);
-                }
                 
                 // For now, we'll store the code and indicate that backend exchange is needed
                 const userData = {
