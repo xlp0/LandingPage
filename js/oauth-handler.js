@@ -70,7 +70,7 @@
         
         // Store code verifier in localStorage (sessionStorage gets cleared on redirect)
         localStorage.setItem('pkce_code_verifier', codeVerifier);
-        this.log('PKCE code verifier stored in localStorage');
+        this.log('PKCE code verifier stored in localStorage:', codeVerifier.substring(0, 20) + '...');
 
         const params = new URLSearchParams({
             client_id: this.clientId,

@@ -502,6 +502,12 @@
             const codeVerifier = localStorage.getItem('pkce_code_verifier');
             const user = storage.getUser();
             
+            console.log('[App] localStorage contents:', {
+                auth_code: localStorage.getItem('auth_code') ? 'present' : 'missing',
+                pkce_code_verifier: localStorage.getItem('pkce_code_verifier') ? 'present' : 'missing',
+                all_keys: Object.keys(localStorage)
+            });
+            
             // Only exchange if we have a code and haven't already done so
             if (!code || !user?.requiresBackendExchange) {
                 console.log('[App] No code to exchange or already exchanged');
@@ -511,14 +517,18 @@
             try {
                 console.log('[App] Exchanging authorization code for real user data...');
                 console.log('[App] Code:', code ? `present (${code.substring(0, 20)}...)` : 'missing');
-                console.log('[App] Code verifier:', codeVerifier ? `present (${codeVerifier.substring(0, 20)}...)` : 'missing');
+                console.log('[App] Code verifier from localStorage:', codeVerifier ? `present (${codeVerifier.substring(0, 20)}...)` : 'MISSING!');
                 
                 const payload = {
                     code: code,
                     codeVerifier: codeVerifier,
                     redirectUri: window.location.origin + '/auth-callback-enhanced.html'
                 };
-                console.log('[App] Sending payload to backend:', payload);
+                console.log('[App] Sending payload to backend:', {
+                    code: code ? code.substring(0, 20) + '...' : 'missing',
+                    codeVerifier: codeVerifier ? codeVerifier.substring(0, 20) + '...' : 'MISSING',
+                    redirectUri: payload.redirectUri
+                });
                 
                 const response = await fetch('/api/auth/token', {
                     method: 'POST',
