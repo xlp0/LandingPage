@@ -323,24 +323,25 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Serve .env file as JSON endpoint
+// Serve environment variables as JSON endpoint
+// Uses process.env instead of reading .env file directly
+// This ensures Docker environment variables are used
 app.get('/api/env', (req, res) => {
-    const fs = require('fs');
-    const path = require('path');
     try {
-        const envPath = path.join(__dirname, '.env');
-        const envContent = fs.readFileSync(envPath, 'utf8');
-        const envObj = {};
-        envContent.split('\n').forEach(line => {
-            const [key, value] = line.split('=');
-            if (key && key.trim()) {
-                envObj[key.trim()] = value ? value.trim() : '';
-            }
-        });
+        // Return relevant environment variables
+        const envObj = {
+            WEBSOCKET_URL: process.env.WEBSOCKET_URL || '',
+            STUN_SERVERS: process.env.STUN_SERVERS || '',
+            ZITADEL_CLIENT_ID: process.env.ZITADEL_CLIENT_ID || '',
+            ZITADEL_DOMAIN: process.env.ZITADEL_DOMAIN || '',
+            REDIRECT_URI: process.env.REDIRECT_URI || '',
+            PKC_Title_Text: process.env.PKC_Title_Text || 'PKC Landing Page',
+            NODE_ENV: process.env.NODE_ENV || 'development'
+        };
         res.json(envObj);
     } catch (err) {
-        console.error('Error reading .env file:', err);
-        res.status(500).json({ error: 'Failed to read .env file' });
+        console.error('Error reading environment variables:', err);
+        res.status(500).json({ error: 'Failed to read environment variables' });
     }
 });
 
