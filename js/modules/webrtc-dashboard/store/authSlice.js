@@ -1,4 +1,8 @@
 // Use Redux Toolkit from global window.RTK (loaded via CDN)
+// Wait for RTK to be available if not loaded yet
+if (!window.RTK) {
+    throw new Error('Redux Toolkit (window.RTK) not loaded! Make sure the CDN script loads before this module.');
+}
 const { createSlice, createAsyncThunk } = window.RTK;
 
 // Async Thunks

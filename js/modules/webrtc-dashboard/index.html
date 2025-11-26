@@ -278,7 +278,7 @@
         👥
     </button>
 
-    <!-- Redux Toolkit -->
+    <!-- Redux Toolkit - Load synchronously before modules -->
     <script src="https://unpkg.com/@reduxjs/toolkit@2.0.1/dist/redux-toolkit.umd.min.js"></script>
     
     <!-- Scripts -->
@@ -292,6 +292,20 @@
         async function initReduxStore() {
             try {
                 console.log('[Dashboard] Initializing Redux store...');
+                
+                // Wait for Redux Toolkit to be available
+                if (!window.RTK) {
+                    console.error('[Dashboard] ❌ Redux Toolkit not loaded! Waiting...');
+                    await new Promise(resolve => {
+                        const checkRTK = setInterval(() => {
+                            if (window.RTK) {
+                                clearInterval(checkRTK);
+                                console.log('[Dashboard] ✅ Redux Toolkit loaded');
+                                resolve();
+                            }
+                        }, 100);
+                    });
+                }
                 
                 // Import Redux slices (from local store directory)
                 const authModule = await import(`./store/authSlice.js?v=${cacheBuster}`);
