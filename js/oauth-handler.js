@@ -20,15 +20,20 @@
     /**
      * Generate PKCE code challenge
      */
-    generatePKCE() {
-        // Generate random code verifier (43-128 characters)
-        const codeVerifier = this.generateRandomString(128);
-        
-        // Generate code challenge from verifier using SHA-256
-        const encoder = new TextEncoder();
-        const data = encoder.encode(codeVerifier);
-        
-        return crypto.subtle.digest('SHA-256', data).then(hashBuffer => {
+    async generatePKCE() {
+        console.log('[OAuth] generatePKCE() called');
+        try {
+            console.log('[OAuth] Generating random string...');
+            // Generate random code verifier (43-128 characters)
+            const codeVerifier = this.generateRandomString(128);
+            console.log('[OAuth] Code verifier generated:', codeVerifier ? codeVerifier.substring(0, 20) + '...' : 'NULL');
+            
+            // Generate code challenge from verifier using SHA-256
+            const encoder = new TextEncoder();
+            const data = encoder.encode(codeVerifier);
+            
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            
             // Convert to base64url
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             const hashString = String.fromCharCode.apply(null, hashArray);
@@ -37,8 +42,13 @@
                 .replace(/\//g, '_')
                 .replace(/=/g, '');
             
+            console.log('[OAuth] Code challenge generated:', codeChallenge.substring(0, 20) + '...');
+            
             return { codeVerifier, codeChallenge };
-        });
+        } catch (error) {
+            console.error('[OAuth] Error generating PKCE:', error);
+            throw error;
+        }
     }
 
     /**
@@ -62,9 +72,16 @@
         // Generate PKCE parameters FIRST
         const { codeVerifier, codeChallenge } = await this.generatePKCE();
         
+        console.log('[OAuth] Generated code verifier:', codeVerifier);
+        console.log('[OAuth] Generated code challenge:', codeChallenge);
+        
+        if (!codeVerifier || !codeChallenge) {
+            throw new Error('Failed to generate PKCE parameters');
+        }
+        
         // Store code verifier in localStorage
         localStorage.setItem('pkce_code_verifier', codeVerifier);
-        this.log('PKCE code verifier stored in localStorage:', codeVerifier ? (codeVerifier.substring(0, 20) + '...') : 'UNDEFINED!');
+        this.log('PKCE code verifier stored in localStorage:', codeVerifier.substring(0, 20) + '...');
         
         if (!state) {
             // Encode code verifier in state so it survives the redirect
@@ -213,28 +230,6 @@
         const array = new Uint8Array(32);
         crypto.getRandomValues(array);
         return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-    }
-
-    /**
-     * Generate PKCE code verifier and challenge
-     */
-    generatePKCE() {
-        const verifier = this.generateState();
-        const encoder = new TextEncoder();
-        const data = encoder.encode(verifier);
-        
-        return crypto.subtle.digest('SHA-256', data).then(hashBuffer => {
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const challenge = btoa(String.fromCharCode.apply(null, hashArray))
-                .replace(/\+/g, '-')
-                .replace(/\//g, '_')
-                .replace(/=/g, '');
-            
-            return {
-                verifier: verifier,
-                challenge: challenge
-            };
-        });
     }
 
     /**

@@ -6,8 +6,8 @@
     <title>Authentication - THK Mesh</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Local modules -->
-    <script src="./js/local-storage-manager.js"></script>
-    <script src="./js/oauth-handler.js"></script>
+    <script src="./js/local-storage-manager.js?v=4"></script>
+    <script src="./js/oauth-handler.js?v=4"></script>
     <style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -71,20 +71,27 @@
 
                 // Extract code verifier from state parameter
                 let codeVerifier = localStorage.getItem('pkce_code_verifier');
+                console.log('[AuthCallback] Code verifier from localStorage:', codeVerifier);
+                
                 if (state) {
                     try {
+                        console.log('[AuthCallback] Parsing state parameter...');
                         const stateData = JSON.parse(atob(state));
+                        console.log('[AuthCallback] State data:', stateData);
+                        
                         if (stateData.cv) {
                             codeVerifier = stateData.cv;
-                            console.log('[AuthCallback] Code verifier extracted from state');
+                            console.log('[AuthCallback] Code verifier extracted from state:', codeVerifier.substring(0, 20) + '...');
                             // Store it in localStorage for the token exchange
                             localStorage.setItem('pkce_code_verifier', codeVerifier);
+                        } else {
+                            console.log('[AuthCallback] No code verifier in state data');
                         }
                     } catch (e) {
-                        console.log('[AuthCallback] Could not parse state, using localStorage');
+                        console.log('[AuthCallback] Could not parse state:', e.message);
                     }
                 }
-                console.log('[AuthCallback] PKCE code verifier:', codeVerifier ? 'present' : 'missing');
+                console.log('[AuthCallback] Final code verifier:', codeVerifier ? (typeof codeVerifier === 'string' ? codeVerifier.substring(0, 20) + '...' : codeVerifier) : 'MISSING');
 
                 // Store the code for backend exchange
                 localStorage.setItem('auth_code', code);
