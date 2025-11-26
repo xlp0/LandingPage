@@ -472,10 +472,10 @@
                 }
             },
 
-            login() {
+            async login() {
                 // Redirect to Zitadel login
                 console.log('[App] Initiating login flow...');
-                oauth.redirectToLogin();
+                await oauth.redirectToLogin();
             },
 
             logout() {
