@@ -496,9 +496,70 @@
             }
         };
 
+        // Exchange authorization code for real user data
+        async function exchangeCodeForToken() {
+            const code = localStorage.getItem('auth_code');
+            const user = storage.getUser();
+            
+            // Only exchange if we have a code and haven't already done so
+            if (!code || !user?.requiresBackendExchange) {
+                console.log('[App] No code to exchange or already exchanged');
+                return;
+            }
+            
+            try {
+                console.log('[App] Exchanging authorization code for real user data...');
+                
+                const response = await fetch('/api/auth/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        code: code,
+                        redirectUri: window.location.origin + '/auth-callback-enhanced.html'
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.details || `Backend returned ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                console.log('[App] Real user data received:', data.user);
+                
+                // Update Redux store with REAL user data
+                store.dispatch(authSlice.actions.setAuth({
+                    isAuthenticated: true,
+                    user: data.user,
+                    token: data.token,
+                    refreshToken: data.refreshToken,
+                    loginMethod: 'zitadel'
+                }));
+                
+                // Update localStorage
+                localStorage.setItem('auth_token', data.token);
+                localStorage.setItem('refresh_token', data.refreshToken);
+                storage.setUser(data.user);
+                
+                // Remove the code since we've used it
+                localStorage.removeItem('auth_code');
+                
+                console.log('[App] Redux store updated with real user data');
+                console.log('[App] Redux auth state:', store.getState().auth);
+            } catch (error) {
+                console.error('[App] Token exchange failed:', error);
+                // Keep temporary data if exchange fails
+            }
+        }
+
         // Initialize app when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
             app.init();
+            // Exchange code for real user data after a short delay
+            setTimeout(() => {
+                exchangeCodeForToken();
+            }, 500);
         });
 
         // Cleanup on page unload

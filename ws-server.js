@@ -3,15 +3,24 @@ const { WebSocketServer } = require('ws');
 const http = require('http');
 const cors = require('cors');
 const path = require('path');
+require('dotenv').config();
 
 // Import room management modules
 const RoomRegistry = require('./room-registry.js');
 const RoomMessageHandler = require('./room-message-handler-server.js');
+const authRoutes = require('./routes/auth.js');
 
 const app = express();
 
 // Enable CORS for all routes
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://henry.pkc.pub'],
+  credentials: true
+}));
+
+// Parse JSON bodies
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Add cache control headers to prevent browser caching issues
 app.use((req, res, next) => {
@@ -23,6 +32,9 @@ app.use((req, res, next) => {
     }
     next();
 });
+
+// Auth routes
+app.use('/api/auth', authRoutes);
 
 // Serve static files from the current directory
 app.use(express.static(__dirname));
