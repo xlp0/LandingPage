@@ -54,40 +54,54 @@
 
                 // Get URL parameters
                 const params = new URLSearchParams(window.location.search);
+                const code = params.get('code');
+                const state = params.get('state');
                 
+                console.log('[AuthCallback] Received OAuth callback');
+                console.log('[AuthCallback] Code:', code ? 'present' : 'missing');
+                console.log('[AuthCallback] State:', state ? 'present' : 'missing');
+
+                if (!code) {
+                    throw new Error('No authorization code received from Zitadel');
+                }
+
                 // Handle callback
                 const result = await oauth.handleCallback(params);
+                console.log('[AuthCallback] Authorization code verified');
 
-                console.log('[AuthCallback] Authorization code received');
-
-                // In a real application, you would:
-                // 1. Send the code to your backend
-                // 2. Backend exchanges code for token (keeping client secret secure)
-                // 3. Backend retrieves user info from Zitadel
-                // 4. Backend returns user data and token to frontend
+                // TODO: In production, send code to backend to exchange for real token
+                // Backend should:
+                // 1. Exchange code for access token using client secret
+                // 2. Use access token to fetch user info from Zitadel userinfo endpoint
+                // 3. Return user data and token to frontend
                 
-                // For this demo, we'll simulate the user data
+                // For now, we'll store the code and indicate that backend exchange is needed
                 const userData = {
-                    id: 'user-' + Date.now(),
-                    name: 'Authenticated User',
-                    email: 'user@example.com',
+                    id: 'pending-' + Date.now(), // Will be replaced with real user ID from backend
+                    name: 'User', // Will be replaced with real name from Zitadel
+                    email: 'pending@example.com', // Will be replaced with real email from Zitadel
                     authenticated: true,
                     authenticatedAt: new Date().toISOString(),
-                    code: result.code // Store the auth code for backend exchange
+                    code: code, // Authorization code for backend exchange
+                    requiresBackendExchange: true, // Flag indicating backend needs to exchange code
+                    notes: 'This user data is temporary. Backend must exchange the code for real user info.'
                 };
 
                 // Store user data and token
                 storage.setUser(userData);
-                storage.setAuthToken(result.code);
+                storage.setAuthToken(code);
                 
                 // Also store directly to localStorage for Redux to find
-                localStorage.setItem('auth_token', result.code);
-                localStorage.setItem('refresh_token', result.code);
+                localStorage.setItem('auth_token', code);
+                localStorage.setItem('refresh_token', code);
+                localStorage.setItem('auth_code', code); // Store code for backend exchange
 
-                console.log('[AuthCallback] User authenticated:', userData);
+                console.log('[AuthCallback] User authenticated (pending backend exchange):', userData);
+                console.log('[AuthCallback] Authorization code stored for backend exchange');
+                console.log('[AuthCallback] Backend should exchange code at: /api/auth/token');
                 console.log('[AuthCallback] Stored to localStorage:', {
                     user: userData,
-                    token: result.code
+                    code: code
                 });
 
                 // Show success message
