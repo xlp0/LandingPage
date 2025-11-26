@@ -11,8 +11,9 @@ The landing page uses OAuth2 with Zitadel for authentication. The frontend handl
 ### 1. Frontend: Authorization Request
 ```
 User clicks "Login" → Redirects to Zitadel
+https://vpn.pkc.pub/oauth/v2/authorize?client_id=348213051452882951&...
 Zitadel: User authenticates and grants permissions
-Zitadel: Redirects to /auth-callback-enhanced.html?code=XXX&state=YYY
+Zitadel: Redirects to https://henry.pkc.pub/auth-callback-enhanced.html?code=XXX&state=YYY
 ```
 
 ### 2. Frontend: Authorization Code Received
@@ -26,8 +27,8 @@ Redirects to landing-enhanced.html
 ### 3. Backend: Token Exchange (REQUIRED)
 ```
 Frontend sends code to backend: POST /api/auth/token
-Backend exchanges code for access token (using client secret)
-Backend fetches user info from Zitadel userinfo endpoint
+Backend exchanges code for access token at: https://vpn.pkc.pub/oauth/v2/token
+Backend fetches user info from: https://vpn.pkc.pub/oidc/v1/userinfo
 Backend returns real user data and token to frontend
 Frontend updates Redux store with real user data
 ```
@@ -66,6 +67,7 @@ Frontend updates Redux store with real user data
 
 1. **Exchange Authorization Code for Access Token**
 ```javascript
+// POST to Zitadel token endpoint
 const response = await fetch('https://vpn.pkc.pub/oauth/v2/token', {
   method: 'POST',
   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -74,16 +76,24 @@ const response = await fetch('https://vpn.pkc.pub/oauth/v2/token', {
     code: code,
     client_id: '348213051452882951',
     client_secret: process.env.ZITADEL_CLIENT_SECRET, // Keep secret on backend!
-    redirect_uri: redirectUri
+    redirect_uri: 'https://henry.pkc.pub/auth-callback-enhanced.html'
   })
 });
 
 const tokenData = await response.json();
-// tokenData contains: access_token, token_type, expires_in, etc.
+// Response:
+// {
+//   access_token: "eyJhbGc...",
+//   token_type: "Bearer",
+//   expires_in: 3600,
+//   refresh_token: "...",
+//   id_token: "..."
+// }
 ```
 
 2. **Fetch User Info from Zitadel**
 ```javascript
+// GET from Zitadel userinfo endpoint
 const userResponse = await fetch('https://vpn.pkc.pub/oidc/v1/userinfo', {
   headers: {
     'Authorization': `Bearer ${tokenData.access_token}`
@@ -91,7 +101,15 @@ const userResponse = await fetch('https://vpn.pkc.pub/oidc/v1/userinfo', {
 });
 
 const userData = await userResponse.json();
-// userData contains: sub, name, email, picture, etc.
+// Response:
+// {
+//   sub: "user-id-from-zitadel",
+//   name: "John Doe",
+//   email: "john.doe@example.com",
+//   email_verified: true,
+//   picture: "https://...",
+//   locale: "en"
+// }
 ```
 
 3. **Return to Frontend**
