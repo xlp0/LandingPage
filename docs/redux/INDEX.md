@@ -1,7 +1,6 @@
 # Redux Documentation Index
 
-**Version:** 1.0  
-**Last Updated:** November 25, 2025
+**Version:** 1.0
 
 ---
 

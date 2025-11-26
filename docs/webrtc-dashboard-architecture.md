@@ -1,7 +1,6 @@
 # WebRTC Dashboard - Complete Architecture Document
 
-**Version:** 4.0  
-**Date:** November 24, 2025  
+**Version:** 4.1  
 **Status:** Production Ready with Modular Architecture
 
 ---
@@ -1631,5 +1630,5 @@ See `docs/redux/slices/rtc-connection-slice.md` for detailed state diagrams show
 
 ---
 
-*Document Version: 4.1 | Last Updated: November 25, 2025*
-*Redux integration added for centralized state management*
+*Document Version: 4.1*
+*Redux integration and state machine architecture included*
