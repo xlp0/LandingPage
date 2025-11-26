@@ -79,8 +79,16 @@
                 // Store user data and token
                 storage.setUser(userData);
                 storage.setAuthToken(result.code);
+                
+                // Also store directly to localStorage for Redux to find
+                localStorage.setItem('auth_token', result.code);
+                localStorage.setItem('refresh_token', result.code);
 
                 console.log('[AuthCallback] User authenticated:', userData);
+                console.log('[AuthCallback] Stored to localStorage:', {
+                    user: userData,
+                    token: result.code
+                });
 
                 // Show success message
                 document.querySelector('.text-center').innerHTML = `

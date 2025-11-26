@@ -345,18 +345,27 @@
                     }
 
                     // Restore auth from localStorage
-                    const token = localStorage.getItem('auth_token');
                     const user = storage.getUser();
+                    const token = localStorage.getItem('auth_token');
+                    const refreshToken = localStorage.getItem('refresh_token');
                     
-                    if (token && user) {
+                    console.log('[App] Checking localStorage for auth data...');
+                    console.log('[App] User:', user);
+                    console.log('[App] Token:', token ? 'exists' : 'not found');
+                    
+                    if (user && (token || user.authenticated)) {
+                        console.log('[App] Restoring auth from localStorage');
                         store.dispatch(authSlice.actions.setAuth({
                             isAuthenticated: true,
                             user: user,
-                            token: token,
-                            refreshToken: localStorage.getItem('refresh_token'),
+                            token: token || user.code,
+                            refreshToken: refreshToken,
                             loginMethod: 'zitadel'
                         }));
-                        console.log('[App] Auth restored from localStorage');
+                        console.log('[App] Auth restored to Redux store');
+                        console.log('[App] Redux state:', store.getState().auth);
+                    } else {
+                        console.log('[App] No auth data found in localStorage');
                     }
 
                     // Subscribe to Redux store changes
