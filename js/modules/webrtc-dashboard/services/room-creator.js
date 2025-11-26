@@ -34,8 +34,8 @@ export class RoomCreator {
             // Dispatch to Redux
             if (this.store && window.reduxStore) {
                 const state = window.reduxStore.getState();
-                // Import actions dynamically
-                import('../../store/roomsSlice.js').then(module => {
+                // Import actions dynamically (from shared store at root level)
+                import('../../../store/roomsSlice.js').then(module => {
                     this.store.dispatch(module.addRoom(room));
                     this.store.dispatch(module.markRoomAsLocal(room.id));
                     console.log('[RoomCreator] ✅ Redux: Room added to store');
@@ -56,7 +56,7 @@ export class RoomCreator {
                 
                 // Dispatch to Redux
                 if (this.store && window.reduxStore) {
-                    import('../../store/roomsSlice.js').then(module => {
+                    import('../../../store/roomsSlice.js').then(module => {
                         this.store.dispatch(module.addParticipant({ 
                             roomId: room.id, 
                             participant: hostParticipant 
