@@ -263,11 +263,24 @@ export class DashboardManager {
                 return;
             }
             
+            // Check if user is authenticated from main site
+            let isAuthenticatedUser = false;
+            try {
+                const userStr = localStorage.getItem('user');
+                const token = localStorage.getItem('auth_token');
+                if (userStr && token) {
+                    isAuthenticatedUser = true;
+                }
+            } catch (error) {
+                console.error('[Dashboard] Error checking auth:', error);
+            }
+            
             // Create or update current user
             if (!this.currentUser) {
                 this.currentUser = {
                     id: this._generateUserId(),
-                    name: name
+                    name: name,
+                    isAuthenticated: isAuthenticatedUser
                 };
             } else {
                 this.currentUser.name = name;
@@ -530,6 +543,32 @@ export class DashboardManager {
         // Update current user name display (now an input field)
         if (this.elements['current-user-name']) {
             this.elements['current-user-name'].value = this.currentUser?.name || '';
+            
+            // Disable editing if user is authenticated from main site
+            if (this.currentUser?.isAuthenticated) {
+                this.elements['current-user-name'].disabled = true;
+                this.elements['current-user-name'].style.cursor = 'not-allowed';
+                this.elements['current-user-name'].style.opacity = '0.7';
+                this.elements['current-user-name'].title = 'Authenticated user - name cannot be changed';
+                
+                // Hide save button for authenticated users
+                if (this.elements['save-user-name-btn']) {
+                    this.elements['save-user-name-btn'].style.display = 'none';
+                }
+                
+                console.log('[Dashboard] Username locked for authenticated user');
+            } else {
+                // Enable editing for non-authenticated users
+                this.elements['current-user-name'].disabled = false;
+                this.elements['current-user-name'].style.cursor = 'text';
+                this.elements['current-user-name'].style.opacity = '1';
+                this.elements['current-user-name'].title = 'Click to edit your name';
+                
+                // Show save button for non-authenticated users
+                if (this.elements['save-user-name-btn']) {
+                    this.elements['save-user-name-btn'].style.display = 'block';
+                }
+            }
         }
     }
     
