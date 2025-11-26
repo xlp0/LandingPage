@@ -473,8 +473,12 @@
             },
 
             async login() {
+                // Store current page URL so callback knows where to return
+                localStorage.setItem('auth_return_url', window.location.pathname);
+                
                 // Redirect to Zitadel login
                 console.log('[App] Initiating login flow...');
+                console.log('[App] Will return to:', window.location.pathname);
                 await oauth.redirectToLogin();
             },
 

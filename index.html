@@ -265,13 +265,8 @@
         version: '1.0.0'
       });
       
-      const oauth = new OAuth2Handler({
-        clientId: '348373619962871815',
-        domain: 'vpn.pkc.pub',
-        redirectUri: window.location.origin + '/auth-callback-enhanced.html',
-        scopes: ['openid', 'profile', 'email'],
-        debug: true
-      });
+      // OAuth handler will be initialized after loading config from backend
+      let oauth = null;
       
       // Redux store for auth state
       const { configureStore, createSlice } = window.RTK;
@@ -311,10 +306,68 @@
         }
       });
       
+      // Load OAuth config from backend
+      async function loadOAuthConfig() {
+        try {
+          console.log('[App] Loading OAuth config from backend...');
+          
+          // Try to get config from backend API
+          const response = await fetch('/api/env', { cache: 'no-cache' });
+          
+          if (response.ok) {
+            const env = await response.json();
+            
+            // Initialize OAuth with backend config
+            oauth = new OAuth2Handler({
+              clientId: env.ZITADEL_CLIENT_ID || '348213051452882951',
+              domain: env.ZITADEL_DOMAIN || 'vpn.pkc.pub',
+              redirectUri: env.REDIRECT_URI || window.location.origin + '/auth-callback-enhanced.html',
+              scopes: ['openid', 'profile', 'email'],
+              debug: true
+            });
+            
+            console.log('[App] OAuth config loaded:', {
+              clientId: env.ZITADEL_CLIENT_ID,
+              domain: env.ZITADEL_DOMAIN,
+              redirectUri: env.REDIRECT_URI
+            });
+          } else {
+            // Fallback to default config
+            console.warn('[App] Could not load config from backend, using defaults');
+            oauth = new OAuth2Handler({
+              clientId: '348213051452882951',
+              domain: 'vpn.pkc.pub',
+              redirectUri: window.location.origin + '/auth-callback-enhanced.html',
+              scopes: ['openid', 'profile', 'email'],
+              debug: true
+            });
+          }
+        } catch (error) {
+          console.error('[App] Failed to load OAuth config:', error);
+          // Fallback to default config
+          oauth = new OAuth2Handler({
+            clientId: '348213051452882951',
+            domain: 'vpn.pkc.pub',
+            redirectUri: window.location.origin + '/auth-callback-enhanced.html',
+            scopes: ['openid', 'profile', 'email'],
+            debug: true
+          });
+        }
+      }
+      
       // App object for global access
       window.app = {
         async login() {
+          if (!oauth) {
+            console.log('[App] OAuth not initialized, loading config first...');
+            await loadOAuthConfig();
+          }
+          
+          // Store current page URL so callback knows where to return
+          localStorage.setItem('auth_return_url', window.location.pathname);
+          
           console.log('[App] Initiating login flow...');
+          console.log('[App] Will return to:', window.location.pathname);
           await oauth.redirectToLogin();
         },
         
@@ -478,8 +531,12 @@
       }
       
       // Initialize auth on page load
-      document.addEventListener('DOMContentLoaded', () => {
-        checkExistingAuth();
+      document.addEventListener('DOMContentLoaded', async () => {
+        // Load OAuth config from backend first
+        await loadOAuthConfig();
+        
+        // Then check for existing auth
+        await checkExistingAuth();
       });
       
       // Subscribe to Redux store changes

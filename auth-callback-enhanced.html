@@ -135,12 +135,16 @@
                     </div>
                     <h1 class="text-3xl font-bold mb-2">Authentication Successful!</h1>
                     <p class="text-lg opacity-75">Welcome, ${userData.name}</p>
-                    <p class="text-sm opacity-50 mt-4">Redirecting to home page...</p>
+                    <p class="text-sm opacity-50 mt-4">Redirecting back...</p>
                 `;
 
-                // Redirect back to landing page
+                // Redirect back to the page that initiated login
+                // Check if there's a returnUrl in state, otherwise default to index.html
+                const returnUrl = localStorage.getItem('auth_return_url') || '/index.html';
+                localStorage.removeItem('auth_return_url'); // Clean up
+                
                 setTimeout(() => {
-                    window.location.href = '/landing-enhanced.html';
+                    window.location.href = returnUrl;
                 }, 2000);
 
             } catch (err) {
