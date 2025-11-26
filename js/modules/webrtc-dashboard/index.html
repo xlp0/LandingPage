@@ -278,21 +278,68 @@
         👥
     </button>
 
+    <!-- Redux Toolkit -->
+    <script src="https://unpkg.com/@reduxjs/toolkit@2.0.1/dist/redux-toolkit.umd.min.js"></script>
+    
     <!-- Scripts -->
     <script type="module">
         // Dynamic cache busting using timestamp
         const cacheBuster = Date.now();
         
+        // Initialize Redux Store
+        let store = null;
+        
+        async function initReduxStore() {
+            try {
+                console.log('[Dashboard] Initializing Redux store...');
+                
+                // Import Redux slices
+                const authModule = await import(`../../store/authSlice.js?v=${cacheBuster}`);
+                const connectionModule = await import(`../../store/connectionSlice.js?v=${cacheBuster}`);
+                
+                // Create store
+                const { configureStore } = window.RTK;
+                store = configureStore({
+                    reducer: {
+                        auth: authModule.default,
+                        connection: connectionModule.default
+                    }
+                });
+                
+                // Load existing auth state from localStorage
+                const userStr = localStorage.getItem('user');
+                const token = localStorage.getItem('auth_token');
+                if (userStr && token) {
+                    const user = JSON.parse(userStr);
+                    store.dispatch(authModule.setUser(user));
+                    store.dispatch(authModule.setToken(token));
+                    console.log('[Dashboard] Redux auth state loaded:', user);
+                }
+                
+                // Make store globally available
+                window.reduxStore = store;
+                
+                console.log('[Dashboard] ✅ Redux store initialized');
+                return store;
+            } catch (error) {
+                console.error('[Dashboard] ❌ Failed to initialize Redux store:', error);
+                throw error;
+            }
+        }
+        
         // Initialize dashboard
         async function initDashboard() {
             try {
-                // Load configuration first
+                // Initialize Redux first
+                await initReduxStore();
+                
+                // Load configuration
                 const { loadConfig } = await import(`./config.js?v=${cacheBuster}`);
                 await loadConfig();
                 
                 // Load dashboard manager
                 const { DashboardManager } = await import(`./dashboard-manager-v2.js?v=${cacheBuster}`);
-                window.dashboard = new DashboardManager();
+                window.dashboard = new DashboardManager(store);
                 await window.dashboard.init();
                 
                 // Setup mobile participants toggle
