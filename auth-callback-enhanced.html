@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Authentication - THK Mesh</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Local modules -->
+    <script src="./js/local-storage-manager.js"></script>
+    <script src="./js/oauth-handler.js"></script>
     <style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -27,9 +30,10 @@
         </div>
     </div>
 
-    <script type="module">
-        import LocalStorageManager from './js/local-storage-manager.js';
-        import OAuth2Handler from './js/oauth-handler.js';
+    <script>
+        // Get modules from window
+        const LocalStorageManager = window.LocalStorageManager;
+        const OAuth2Handler = window.OAuth2Handler;
 
         async function handleAuthCallback() {
             try {
