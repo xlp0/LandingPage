@@ -1365,15 +1365,85 @@ Three middleware layers handle side effects:
 ✅ **Scalable** - Handles complex state transitions  
 ✅ **Performance** - Memoized selectors prevent unnecessary re-renders  
 
+### Redux Thunks for Async Operations
+
+**Yes, Redux Thunks are used extensively** for all asynchronous operations including API calls, WebRTC setup, and server communication.
+
+#### Thunk Usage by Slice
+
+**Auth Slice Thunks:**
+- `loginWithZitadel(code, state)` - Exchange OAuth code for tokens
+- `refreshToken()` - Refresh expired token
+- `logoutUser()` - Logout and clear auth state
+
+**RTC Connection Slice Thunks:**
+- `initializeLocalStream()` - Get user media (camera/microphone)
+- `addPeerConnection(peerId)` - Create WebRTC peer connection
+- `updateConnectionStats(peerId, stats)` - Update connection statistics
+
+**Participants Slice Thunks:**
+- `fetchParticipants(roomId)` - Fetch participant list from server
+- `updateParticipantOnServer(participantId, data)` - Update participant status
+
+**Invitations Slice Thunks:**
+- `sendInvitationToServer(recipientId, roomId, message)` - Send invitation
+- `respondToInvitation(invitationId, response)` - Accept/reject invitation
+- `fetchInvitations()` - Fetch all invitations
+
+**Room Slice Thunks:**
+- `fetchRooms()` - Fetch room list
+- `createRoom(roomData)` - Create new room
+- `joinRoom(roomId)` - Join existing room
+- `leaveRoom(roomId)` - Leave room
+
+**Messages Slice Thunks:**
+- `fetchMessages(roomId)` - Fetch message history
+- `addMessage(roomId, message)` - Send message
+- `markAsRead(roomId)` - Mark messages as read
+
+#### Thunk Pattern
+
+```javascript
+export const asyncAction = createAsyncThunk(
+  'slice/asyncAction',
+  async (payload, { getState, rejectWithValue }) => {
+    try {
+      // Async operation (API call, WebRTC, etc.)
+      const result = await performAsyncOperation(payload);
+      return result;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+```
+
+#### Middleware Integration
+
+Thunks are intercepted by middleware which:
+- Dispatches pending action (sets loading = true)
+- Handles async operation
+- Dispatches fulfilled action (sets loading = false, updates state)
+- Or dispatches rejected action (sets error, loading = false)
+- Coordinates with WebRTC modules for side effects
+
+#### Benefits
+
+✅ **Centralized Async Logic** - All API calls in one place  
+✅ **Loading States** - Automatic loading/error state management  
+✅ **Error Handling** - Consistent error handling across app  
+✅ **Testability** - Easy to mock async operations  
+✅ **Middleware Coordination** - Thunks trigger middleware actions  
+
 ### Related Documentation
 
 For complete Redux implementation details, see `docs/redux/`:
 - `INDEX.md` - Redux documentation index and quick reference
 - `REDUX_ARCHITECTURE.md` - Complete Redux state tree and architecture
-- `slices/auth-slice.md` - Authentication state, actions, and selectors
-- `slices/rtc-connection-slice.md` - WebRTC connection state and management
-- `slices/participants-slice.md` - Participant state and lifecycle
-- `slices/invitations-slice.md` - Invitation state and responses
+- `slices/auth-slice.md` - Authentication state, actions, thunks, and selectors
+- `slices/rtc-connection-slice.md` - WebRTC connection state and thunks
+- `slices/participants-slice.md` - Participant state and thunks
+- `slices/invitations-slice.md` - Invitation state and thunks
 - `slices/room-slice.md` - Room management state (TODO)
 - `slices/messages-slice.md` - Chat message state (TODO)
 
