@@ -8,6 +8,9 @@
     <!-- Redux from CDN -->
     <script crossorigin src="https://unpkg.com/redux@4/dist/redux.js"></script>
     <script crossorigin src="https://unpkg.com/@reduxjs/toolkit@1.9.7/dist/redux-toolkit.umd.js"></script>
+    <!-- Local modules -->
+    <script src="./js/local-storage-manager.js"></script>
+    <script src="./js/oauth-handler.js"></script>
     <style>
         :root {
             --primary: #667eea;
@@ -224,13 +227,12 @@
     </div>
 
     <script>
-        // Import local modules
-        const LocalStorageManager = window.LocalStorageManager || class {};
-        const OAuth2Handler = window.OAuth2Handler || class {};
+        // Get local modules from window
+        const LocalStorageManager = window.LocalStorageManager;
+        const OAuth2Handler = window.OAuth2Handler;
         
         // Redux from CDN globals
-        const { configureStore, createSlice, createAsyncThunk } = window.RTK;
-        const { createSelector } = window.Redux;
+        const { configureStore, createSlice } = window.RTK;
 
         // Initialize managers
         const storage = new LocalStorageManager({

@@ -195,3 +195,8 @@ export class OAuth2Handler {
 
 // Export as default
 export default OAuth2Handler;
+
+// Also export to window for non-module usage
+if (typeof window !== 'undefined') {
+    window.OAuth2Handler = OAuth2Handler;
+}

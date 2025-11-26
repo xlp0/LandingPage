@@ -275,3 +275,8 @@ export class LocalStorageManager {
 
 // Export as default
 export default LocalStorageManager;
+
+// Also export to window for non-module usage
+if (typeof window !== 'undefined') {
+    window.LocalStorageManager = LocalStorageManager;
+}
