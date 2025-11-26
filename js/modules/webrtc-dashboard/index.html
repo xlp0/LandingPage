@@ -18,6 +18,54 @@
     <!-- iOS Safari specific -->
     <meta name="format-detection" content="telephone=no">
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🌐</text></svg>">
+    
+    <!-- Check for existing authentication -->
+    <script>
+        // Check if user is already authenticated from main site
+        function checkExistingAuth() {
+            try {
+                const userStr = localStorage.getItem('user');
+                const token = localStorage.getItem('auth_token');
+                
+                if (userStr && token) {
+                    const user = JSON.parse(userStr);
+                    console.log('[WebRTC Dashboard] Found authenticated user:', user);
+                    return user;
+                }
+            } catch (error) {
+                console.error('[WebRTC Dashboard] Error checking auth:', error);
+            }
+            return null;
+        }
+        
+        // Pre-populate user name if authenticated
+        window.addEventListener('DOMContentLoaded', () => {
+            const user = checkExistingAuth();
+            if (user) {
+                const userNameInput = document.getElementById('user-name');
+                const authStatus = document.getElementById('auth-status');
+                const authUserDisplay = document.getElementById('auth-user-display');
+                
+                let displayName = '';
+                
+                if (user.name) {
+                    displayName = user.name;
+                    if (userNameInput) userNameInput.value = user.name;
+                    console.log('[WebRTC Dashboard] Pre-populated user name:', user.name);
+                } else if (user.email) {
+                    displayName = user.email.split('@')[0];
+                    if (userNameInput) userNameInput.value = displayName;
+                    console.log('[WebRTC Dashboard] Pre-populated from email:', user.email);
+                }
+                
+                // Show auth status badge
+                if (authStatus && authUserDisplay && displayName) {
+                    authUserDisplay.textContent = displayName;
+                    authStatus.style.display = 'block';
+                }
+            }
+        });
+    </script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -27,10 +75,14 @@
                 <div class="login-header">
                     <h1>🌐 WebRTC Dashboard</h1>
                     <p>Serverless P2P Chat Rooms</p>
+                    <div id="auth-status" style="margin-top: 10px; padding: 8px 12px; background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.5); border-radius: 6px; font-size: 14px; display: none;">
+                        ✓ Authenticated as <span id="auth-user-display"></span>
+                    </div>
                 </div>
                 <div class="login-form">
                     <input type="text" id="user-name" placeholder="Enter your name..." value="" maxlength="50">
                     <button id="login-btn" class="primary-btn">Login</button>
+                    <a href="/index.html" style="display: block; margin-top: 12px; color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 14px;">← Back to Home</a>
                 </div>
             </div>
         </div>
