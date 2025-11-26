@@ -510,16 +510,20 @@
             
             try {
                 console.log('[App] Exchanging authorization code for real user data...');
-                console.log('[App] Code verifier:', codeVerifier ? 'present' : 'missing');
+                console.log('[App] Code:', code ? `present (${code.substring(0, 20)}...)` : 'missing');
+                console.log('[App] Code verifier:', codeVerifier ? `present (${codeVerifier.substring(0, 20)}...)` : 'missing');
+                
+                const payload = {
+                    code: code,
+                    codeVerifier: codeVerifier,
+                    redirectUri: window.location.origin + '/auth-callback-enhanced.html'
+                };
+                console.log('[App] Sending payload to backend:', payload);
                 
                 const response = await fetch('/api/auth/token', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        code: code,
-                        codeVerifier: codeVerifier,
-                        redirectUri: window.location.origin + '/auth-callback-enhanced.html'
-                    })
+                    body: JSON.stringify(payload)
                 });
                 
                 if (!response.ok) {

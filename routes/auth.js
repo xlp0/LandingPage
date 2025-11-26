@@ -20,7 +20,8 @@ router.post('/token', async (req, res) => {
     }
 
     console.log('[Auth] Exchanging code for token...');
-    console.log('[Auth] Code verifier:', codeVerifier ? 'present' : 'missing');
+    console.log('[Auth] Code verifier:', codeVerifier ? `present (${codeVerifier.substring(0, 20)}...)` : 'missing');
+    console.log('[Auth] Code:', code ? `present (${code.substring(0, 20)}...)` : 'missing');
 
     // Step 1: Exchange code for access token
     const tokenParams = {
@@ -34,6 +35,9 @@ router.post('/token', async (req, res) => {
     // Add PKCE code verifier if provided
     if (codeVerifier) {
       tokenParams.code_verifier = codeVerifier;
+      console.log('[Auth] Including code_verifier in token request');
+    } else {
+      console.log('[Auth] WARNING: No code_verifier provided!');
     }
 
     const tokenResponse = await axios.post(
