@@ -19,7 +19,7 @@ export class RoomCreator {
         const room = {
             id: this._generateRoomId(),
             ...roomData,
-            createdAt: new Date(),
+            createdAt: new Date().toISOString(), // Convert to ISO string for Redux serialization
             participants: [],
             status: 'active'
         };
@@ -48,7 +48,7 @@ export class RoomCreator {
                 const hostParticipant = {
                     id: roomData.hostId,
                     name: roomData.host,
-                    joinedAt: new Date(),
+                    joinedAt: new Date().toISOString(), // Convert to ISO string for Redux serialization
                     isHost: true
                 };
                 this.roomState.addParticipantToRoom(room.id, hostParticipant);
