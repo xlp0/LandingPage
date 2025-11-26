@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THK Mesh - Modular Landing Page</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Anime.js for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#667eea',
+                        'secondary': '#764ba2',
+                        'accent': '#ffd700'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="text-white font-sans">
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-16">
+        <!-- Header -->
+        <header class="text-center mb-16">
+            <div id="env-title" class="text-xl md:text-2xl font-semibold mb-4 opacity-0"></div>
+            <h1 class="text-5xl md:text-6xl font-bold mb-4 opacity-0">THK Mesh</h1>
+            <p class="text-xl md:text-2xl opacity-75 opacity-0">Modular. Local-first. Decentralized.</p>
+        </header>
+        
+        <!-- Module Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-16">
+            <!-- Auth Module -->
+            <a href="#" data-module="auth" class="module-card group bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 opacity-0">
+                <div class="text-4xl mb-4">🔐</div>
+                <h3 class="text-xl font-bold mb-2">Authentication</h3>
+                <p class="text-sm opacity-75">Zitadel OAuth2 + PKCE</p>
+                <div class="mt-4 text-xs opacity-50">Click to login</div>
+            </a>
+            
+            <!-- WebRTC Dashboard -->
+            <a href="js/modules/webrtc-dashboard/index.html" class="module-card group bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 opacity-0">
+                <div class="text-4xl mb-4">🌐</div>
+                <h3 class="text-xl font-bold mb-2">WebRTC Dashboard</h3>
+                <p class="text-sm opacity-75">Real-time video & audio</p>
+                <div class="mt-4 text-xs opacity-50">Open module →</div>
+            </a>
+            
+            <!-- Video Meeting -->
+            <a href="js/modules/video-meeting/index.html" class="module-card group bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 opacity-0">
+                <div class="text-4xl mb-4">🎥</div>
+                <h3 class="text-xl font-bold mb-2">Video Meeting</h3>
+                <p class="text-sm opacity-75">P2P video conferencing</p>
+                <div class="mt-4 text-xs opacity-50">Open module →</div>
+            </a>
+            
+            <!-- P2P Serverless -->
+            <a href="js/modules/p2p-serverless/example.html" class="module-card group bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 opacity-0">
+                <div class="text-4xl mb-4">🔗</div>
+                <h3 class="text-xl font-bold mb-2">P2P Serverless</h3>
+                <p class="text-sm opacity-75">Direct peer connections</p>
+                <div class="mt-4 text-xs opacity-50">Open module →</div>
+            </a>
+            
+            <!-- Tic-Tac-Toe -->
+            <a href="tic-tac-toe.html" class="module-card group bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 opacity-0">
+                <div class="text-4xl mb-4">🎮</div>
+                <h3 class="text-xl font-bold mb-2">Tic-Tac-Toe P2P</h3>
+                <p class="text-sm opacity-75">Multiplayer game demo</p>
+                <div class="mt-4 text-xs opacity-50">Open module →</div>
+            </a>
+            
+            <!-- Documentation -->
+            <a href="pkc-docs-index.html" class="module-card group bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 opacity-0">
+                <div class="text-4xl mb-4">📚</div>
+                <h3 class="text-xl font-bold mb-2">Documentation</h3>
+                <p class="text-sm opacity-75">Browse all docs</p>
+                <div class="mt-4 text-xs opacity-50">Open module →</div>
+            </a>
+            
+            <!-- PKC Viewer -->
+            <a href="pkc-viewer.html" class="module-card group bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 opacity-0">
+                <div class="text-4xl mb-4">📄</div>
+                <h3 class="text-xl font-bold mb-2">PKC Viewer</h3>
+                <p class="text-sm opacity-75">Markdown + LaTeX renderer</p>
+                <div class="mt-4 text-xs opacity-50">Open module →</div>
+            </a>
+            
+            <!-- GitHub -->
+            <a href="https://github.com/xlp0/LandingPage" target="_blank" rel="noopener" class="module-card group bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 opacity-0">
+                <div class="text-4xl mb-4">💻</div>
+                <h3 class="text-xl font-bold mb-2">GitHub</h3>
+                <p class="text-sm opacity-75">Source code repository</p>
+                <div class="mt-4 text-xs opacity-50">Open external →</div>
+            </a>
+        </div>
+        
+        <!-- Status Panel Toggle -->
+        <div class="fixed bottom-4 right-4 flex gap-2 z-50">
+            <button id="toggle-status" class="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20 hover:bg-white/20 transition-all text-sm font-medium">
+                📊 Status
+            </button>
+        </div>
+    </div>
+    
+    <!-- Modular Status Panel (Hidden by default) -->
+    <div id="status-panel" class="fixed left-4 bottom-4 w-80 max-h-[60vh] bg-black/30 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden z-40 hidden">
+        <div class="p-4 border-b border-white/20">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold">System Status</h3>
+                <button id="close-status" class="text-white/50 hover:text-white">✕</button>
+            </div>
+        </div>
+        <div class="p-4 overflow-y-auto max-h-[50vh]">
+            <!-- Status content loaded dynamically -->
+            <div id="status-content" class="space-y-4 text-sm">
+                <div class="flex justify-between items-center">
+                    <span>WebSocket</span>
+                    <span id="ws-status" class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-gray-400"></span>
+                        <span>Idle</span>
+                    </span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>P2P Peers</span>
+                    <span id="peer-count">0</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>Auth Status</span>
+                    <span id="auth-status">Not logged in</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Load Modular Scripts -->
+    <script type="module">
+        // Import only core PKC functionality
+        import { PKC } from './js/pkc-core.js';
+        
+        // Initialize PKC
+        const pkc = new PKC();
+        
+        // Load environment title
+        async function loadEnvTitle() {
+            try {
+                const response = await fetch('/api/env', { cache: 'no-cache' });
+                if (response.ok) {
+                    const env = await response.json();
+                    if (env.PKC_Title_Text) {
+                        document.getElementById('env-title').textContent = env.PKC_Title_Text;
+                    }
+                }
+            } catch (err) {
+                console.log('[Landing] No env title available');
+            }
+        }
+        
+        loadEnvTitle();
+        
+        // Page animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const tl = anime.timeline({
+                easing: 'easeOutExpo',
+                duration: 800
+            });
+            
+            tl.add({
+                targets: '#env-title',
+                opacity: [0, 1],
+                translateY: [20, 0]
+            })
+            .add({
+                targets: 'h1',
+                opacity: [0, 1],
+                translateY: [30, 0],
+                duration: 1000
+            }, '-=400')
+            .add({
+                targets: 'header p',
+                opacity: [0, 1],
+                translateY: [20, 0]
+            }, '-=600')
+            .add({
+                targets: '.module-card',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                delay: anime.stagger(100)
+            }, '-=400');
+            
+            // Card hover animations
+            document.querySelectorAll('.module-card').forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    anime({
+                        targets: card,
+                        scale: 1.05,
+                        duration: 300,
+                        easing: 'easeOutQuad'
+                    });
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    anime({
+                        targets: card,
+                        scale: 1,
+                        duration: 300,
+                        easing: 'easeOutQuad'
+                    });
+                });
+            });
+        });
+        
+        // Status panel toggle
+        const statusPanel = document.getElementById('status-panel');
+        const toggleBtn = document.getElementById('toggle-status');
+        const closeBtn = document.getElementById('close-status');
+        
+        toggleBtn.addEventListener('click', () => {
+            statusPanel.classList.toggle('hidden');
+            if (!statusPanel.classList.contains('hidden')) {
+                anime({
+                    targets: statusPanel,
+                    translateX: [-300, 0],
+                    opacity: [0, 1],
+                    duration: 400,
+                    easing: 'easeOutExpo'
+                });
+            }
+        });
+        
+        closeBtn.addEventListener('click', () => {
+            anime({
+                targets: statusPanel,
+                translateX: [0, -300],
+                opacity: [1, 0],
+                duration: 400,
+                easing: 'easeOutExpo',
+                complete: () => {
+                    statusPanel.classList.add('hidden');
+                }
+            });
+        });
+        
+        // Auth module handler
+        document.querySelector('[data-module="auth"]').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            // Dynamically load auth module
+            const { default: AuthModule } = await import('./js/modules/auth-module.js');
+            const auth = new AuthModule();
+            await auth.login();
+        });
+        
+        // Update status from PKC events
+        pkc.on('ws:connected', () => {
+            const statusEl = document.getElementById('ws-status');
+            statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-green-400"></span><span>Connected</span>';
+        });
+        
+        pkc.on('ws:disconnected', () => {
+            const statusEl = document.getElementById('ws-status');
+            statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-400"></span><span>Disconnected</span>';
+        });
+        
+        pkc.on('peer:count', (count) => {
+            document.getElementById('peer-count').textContent = count;
+        });
+        
+        console.log('[Landing] Modular landing page initialized');
+    </script>
+</body>
+</html>
