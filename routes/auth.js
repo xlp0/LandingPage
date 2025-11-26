@@ -13,24 +13,32 @@ const REDIRECT_URI = process.env.REDIRECT_URI || 'https://henry.pkc.pub/auth-cal
  */
 router.post('/token', async (req, res) => {
   try {
-    const { code, redirectUri } = req.body;
+    const { code, codeVerifier, redirectUri } = req.body;
 
     if (!code) {
       return res.status(400).json({ error: 'Authorization code is required' });
     }
 
     console.log('[Auth] Exchanging code for token...');
+    console.log('[Auth] Code verifier:', codeVerifier ? 'present' : 'missing');
 
     // Step 1: Exchange code for access token
+    const tokenParams = {
+      grant_type: 'authorization_code',
+      code: code,
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      redirect_uri: redirectUri || REDIRECT_URI
+    };
+
+    // Add PKCE code verifier if provided
+    if (codeVerifier) {
+      tokenParams.code_verifier = codeVerifier;
+    }
+
     const tokenResponse = await axios.post(
       `https://${ZITADEL_DOMAIN}/oauth/v2/token`,
-      new URLSearchParams({
-        grant_type: 'authorization_code',
-        code: code,
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
-        redirect_uri: redirectUri || REDIRECT_URI
-      }),
+      new URLSearchParams(tokenParams),
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'

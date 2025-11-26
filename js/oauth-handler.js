@@ -18,21 +18,68 @@
         }
 
     /**
+     * Generate PKCE code challenge
+     */
+    generatePKCE() {
+        // Generate random code verifier (43-128 characters)
+        const codeVerifier = this.generateRandomString(128);
+        
+        // Generate code challenge from verifier using SHA-256
+        const encoder = new TextEncoder();
+        const data = encoder.encode(codeVerifier);
+        
+        return crypto.subtle.digest('SHA-256', data).then(hashBuffer => {
+            // Convert to base64url
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashString = String.fromCharCode.apply(null, hashArray);
+            const codeChallenge = btoa(hashString)
+                .replace(/\+/g, '-')
+                .replace(/\//g, '_')
+                .replace(/=/g, '');
+            
+            return { codeVerifier, codeChallenge };
+        });
+    }
+
+    /**
+     * Generate random string for PKCE
+     */
+    generateRandomString(length) {
+        const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+        let result = '';
+        const randomValues = new Uint8Array(length);
+        crypto.getRandomValues(randomValues);
+        for (let i = 0; i < length; i++) {
+            result += charset[randomValues[i] % charset.length];
+        }
+        return result;
+    }
+
+    /**
      * Generate authorization URL
      */
-    getAuthorizationUrl(state = null) {
+    async getAuthorizationUrl(state = null) {
         if (!state) {
             state = this.generateState();
             // Store state in local storage for verification (works across origins)
             localStorage.setItem('oauth-state', state);
         }
 
+        // Generate PKCE parameters
+        const { codeVerifier, codeChallenge } = await this.generatePKCE();
+        
+        // Store code verifier in sessionStorage for later use in callback
+        sessionStorage.setItem('pkce_code_verifier', codeVerifier);
+        this.log('PKCE code verifier stored');
+
         const params = new URLSearchParams({
             client_id: this.clientId,
             redirect_uri: this.redirectUri,
             response_type: this.responseType,
             scope: this.scopes.join(' '),
-            state: state
+            state: state,
+            code_challenge: codeChallenge,
+            code_challenge_method: 'S256'
         });
 
         const url = `https://${this.domain}/oauth/v2/authorize?${params.toString()}`;
@@ -43,8 +90,8 @@
     /**
      * Redirect to authorization endpoint
      */
-    redirectToLogin() {
-        const authUrl = this.getAuthorizationUrl();
+    async redirectToLogin() {
+        const authUrl = await this.getAuthorizationUrl();
         this.log('Redirecting to login...');
         window.location.href = authUrl;
     }

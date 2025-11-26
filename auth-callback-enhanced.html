@@ -69,11 +69,15 @@
                 const result = await oauth.handleCallback(params);
                 console.log('[AuthCallback] Authorization code verified');
 
-                // TODO: In production, send code to backend to exchange for real token
-                // Backend should:
-                // 1. Exchange code for access token using client secret
-                // 2. Use access token to fetch user info from Zitadel userinfo endpoint
-                // 3. Return user data and token to frontend
+                // Get PKCE code verifier from sessionStorage (stored during login)
+                const codeVerifier = sessionStorage.getItem('pkce_code_verifier');
+                console.log('[AuthCallback] PKCE code verifier:', codeVerifier ? 'present' : 'missing');
+
+                // Store the code and code verifier for backend exchange
+                localStorage.setItem('auth_code', code);
+                if (codeVerifier) {
+                    localStorage.setItem('pkce_code_verifier', codeVerifier);
+                }
                 
                 // For now, we'll store the code and indicate that backend exchange is needed
                 const userData = {
@@ -94,14 +98,15 @@
                 // Also store directly to localStorage for Redux to find
                 localStorage.setItem('auth_token', code);
                 localStorage.setItem('refresh_token', code);
-                localStorage.setItem('auth_code', code); // Store code for backend exchange
 
                 console.log('[AuthCallback] User authenticated (pending backend exchange):', userData);
                 console.log('[AuthCallback] Authorization code stored for backend exchange');
+                console.log('[AuthCallback] PKCE code verifier stored for backend exchange');
                 console.log('[AuthCallback] Backend should exchange code at: /api/auth/token');
                 console.log('[AuthCallback] Stored to localStorage:', {
                     user: userData,
-                    code: code
+                    code: code,
+                    codeVerifier: codeVerifier ? 'present' : 'missing'
                 });
 
                 // Show success message

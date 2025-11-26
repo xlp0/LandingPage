@@ -499,6 +499,7 @@
         // Exchange authorization code for real user data
         async function exchangeCodeForToken() {
             const code = localStorage.getItem('auth_code');
+            const codeVerifier = localStorage.getItem('pkce_code_verifier');
             const user = storage.getUser();
             
             // Only exchange if we have a code and haven't already done so
@@ -509,12 +510,14 @@
             
             try {
                 console.log('[App] Exchanging authorization code for real user data...');
+                console.log('[App] Code verifier:', codeVerifier ? 'present' : 'missing');
                 
                 const response = await fetch('/api/auth/token', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         code: code,
+                        codeVerifier: codeVerifier,
                         redirectUri: window.location.origin + '/auth-callback-enhanced.html'
                     })
                 });
