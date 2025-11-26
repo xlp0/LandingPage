@@ -257,23 +257,36 @@
             unsubscribe: null,
 
             init() {
-                storage.init();
-                this.setupEventListeners();
-                this.updateStatus();
-                this.updateStorageInfo();
-                
-                // Restore auth from Redux store
-                store.dispatch(restoreAuth()).then(() => {
-                    this.updateAuthUI();
-                    console.log('[App] Auth restored from store');
-                });
+                try {
+                    storage.init();
+                    this.setupEventListeners();
+                    this.updateStatus();
+                    this.updateStorageInfo();
+                    
+                    // Verify store exists
+                    if (!store || !store.getState) {
+                        throw new Error('Redux store not initialized');
+                    }
 
-                // Subscribe to Redux store changes
-                this.unsubscribe = store.subscribe(() => {
-                    this.updateAuthUI();
-                });
+                    // Restore auth from Redux store
+                    store.dispatch(restoreAuth()).then(() => {
+                        this.updateAuthUI();
+                        console.log('[App] Auth restored from store');
+                    }).catch((error) => {
+                        console.error('[App] Auth restore error:', error);
+                        this.updateAuthUI();
+                    });
 
-                console.log('[App] Initialized with Redux store');
+                    // Subscribe to Redux store changes
+                    this.unsubscribe = store.subscribe(() => {
+                        this.updateAuthUI();
+                    });
+
+                    console.log('[App] Initialized with Redux store');
+                } catch (error) {
+                    console.error('[App] Initialization error:', error);
+                    this.updateAuthUI();
+                }
             },
 
             setupEventListeners() {
@@ -372,12 +385,28 @@
             },
 
             logout() {
-                store.dispatch(logoutUser()).then(() => {
+                console.log('[App] Logout initiated');
+                try {
+                    // Dispatch logout thunk
+                    store.dispatch(logoutUser()).then(() => {
+                        console.log('[App] Redux logout completed');
+                        storage.clearUser();
+                        this.updateAuthUI();
+                        this.navigate('home');
+                        console.log('[App] Logged out from Redux store');
+                    }).catch((error) => {
+                        console.error('[App] Logout error:', error);
+                        // Clear auth even if logout fails
+                        storage.clearUser();
+                        this.updateAuthUI();
+                        this.navigate('home');
+                    });
+                } catch (error) {
+                    console.error('[App] Logout exception:', error);
                     storage.clearUser();
                     this.updateAuthUI();
                     this.navigate('home');
-                    console.log('[App] Logged out from Redux store');
-                });
+                }
             }
         };
 
