@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+// Use Redux Toolkit from global window.RTK (loaded via CDN)
+const { createSlice } = window.RTK;
 
 const initialState = {
   peers: {},
