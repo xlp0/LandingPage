@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THK Mesh - Local First</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Redux from CDN -->
+    <script crossorigin src="https://unpkg.com/redux@4/dist/redux.js"></script>
+    <script crossorigin src="https://unpkg.com/@reduxjs/toolkit@1.9.7/dist/redux-toolkit.umd.js"></script>
     <style>
         :root {
             --primary: #667eea;
@@ -220,19 +223,14 @@
         </div>
     </div>
 
-    <script type="module">
-        import LocalStorageManager from './js/local-storage-manager.js';
-        import OAuth2Handler from './js/oauth-handler.js';
-        import store from './js/modules/webrtc-dashboard/store/store.js';
-        import { 
-            loginWithZitadel, 
-            logoutUser, 
-            restoreAuth,
-            selectIsAuthenticated,
-            selectUser,
-            selectUserName,
-            selectAuthLoading
-        } from './js/modules/webrtc-dashboard/store/authSlice.js';
+    <script>
+        // Import local modules
+        const LocalStorageManager = window.LocalStorageManager || class {};
+        const OAuth2Handler = window.OAuth2Handler || class {};
+        
+        // Redux from CDN globals
+        const { configureStore, createSlice, createAsyncThunk } = window.RTK;
+        const { createSelector } = window.Redux;
 
         // Initialize managers
         const storage = new LocalStorageManager({
@@ -246,6 +244,82 @@
             redirectUri: window.location.origin + '/auth-callback-enhanced.html',
             debug: true
         });
+
+        // Create Redux Auth Slice inline
+        const authSlice = createSlice({
+            name: 'auth',
+            initialState: {
+                isAuthenticated: false,
+                user: null,
+                token: null,
+                refreshToken: null,
+                loading: false,
+                error: null,
+                loginMethod: null,
+            },
+            reducers: {
+                setAuth: (state, action) => {
+                    state.isAuthenticated = action.payload.isAuthenticated;
+                    state.user = action.payload.user;
+                    state.token = action.payload.token;
+                    state.refreshToken = action.payload.refreshToken;
+                    state.loginMethod = action.payload.loginMethod;
+                },
+                clearAuth: (state) => {
+                    state.isAuthenticated = false;
+                    state.user = null;
+                    state.token = null;
+                    state.refreshToken = null;
+                    state.loginMethod = null;
+                },
+                setLoading: (state, action) => {
+                    state.loading = action.payload;
+                },
+                setError: (state, action) => {
+                    state.error = action.payload;
+                },
+            },
+        });
+
+        // Create Redux Connection Slice inline
+        const connectionSlice = createSlice({
+            name: 'connection',
+            initialState: {
+                peers: {},
+                localStream: null,
+                audioEnabled: true,
+                videoEnabled: true,
+                screenSharing: false,
+                connectionStatus: 'idle',
+                error: null,
+            },
+            reducers: {
+                addPeer: (state, action) => {
+                    state.peers[action.payload.peerId] = action.payload;
+                },
+                removePeer: (state, action) => {
+                    delete state.peers[action.payload];
+                },
+            },
+        });
+
+        // Create Redux Store
+        const store = configureStore({
+            reducer: {
+                auth: authSlice.reducer,
+                connection: connectionSlice.reducer,
+            },
+            middleware: (getDefaultMiddleware) =>
+                getDefaultMiddleware({
+                    serializableCheck: false,
+                }),
+        });
+
+        // Selectors
+        const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
+        const selectUser = (state) => state.auth.user;
+        const selectUserName = (state) => state.auth.user?.name;
+        const selectAuthLoading = (state) => state.auth.loading;
 
         // Application State Manager
         window.app = {
@@ -268,19 +342,28 @@
                         throw new Error('Redux store not initialized');
                     }
 
-                    // Restore auth from Redux store
-                    store.dispatch(restoreAuth()).then(() => {
-                        this.updateAuthUI();
-                        console.log('[App] Auth restored from store');
-                    }).catch((error) => {
-                        console.error('[App] Auth restore error:', error);
-                        this.updateAuthUI();
-                    });
+                    // Restore auth from localStorage
+                    const token = localStorage.getItem('auth_token');
+                    const user = storage.getUser();
+                    
+                    if (token && user) {
+                        store.dispatch(authSlice.actions.setAuth({
+                            isAuthenticated: true,
+                            user: user,
+                            token: token,
+                            refreshToken: localStorage.getItem('refresh_token'),
+                            loginMethod: 'zitadel'
+                        }));
+                        console.log('[App] Auth restored from localStorage');
+                    }
 
                     // Subscribe to Redux store changes
                     this.unsubscribe = store.subscribe(() => {
                         this.updateAuthUI();
                     });
+
+                    // Initial UI update
+                    this.updateAuthUI();
 
                     console.log('[App] Initialized with Redux store');
                 } catch (error) {
@@ -387,20 +470,12 @@
             logout() {
                 console.log('[App] Logout initiated');
                 try {
-                    // Dispatch logout thunk
-                    store.dispatch(logoutUser()).then(() => {
-                        console.log('[App] Redux logout completed');
-                        storage.clearUser();
-                        this.updateAuthUI();
-                        this.navigate('home');
-                        console.log('[App] Logged out from Redux store');
-                    }).catch((error) => {
-                        console.error('[App] Logout error:', error);
-                        // Clear auth even if logout fails
-                        storage.clearUser();
-                        this.updateAuthUI();
-                        this.navigate('home');
-                    });
+                    // Dispatch logout action
+                    store.dispatch(authSlice.actions.clearAuth());
+                    storage.clearUser();
+                    this.updateAuthUI();
+                    this.navigate('home');
+                    console.log('[App] Logged out from Redux store');
                 } catch (error) {
                     console.error('[App] Logout exception:', error);
                     storage.clearUser();
