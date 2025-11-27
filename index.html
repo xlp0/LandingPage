@@ -24,16 +24,24 @@
       }
 
       .dashboard-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: auto 1fr 1fr;
+        display: flex;
+        flex-direction: column;
         gap: 20px;
         padding: 20px;
         height: 100vh;
+        overflow: hidden;
+      }
+
+      .components-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        flex: 1;
+        overflow-y: auto;
+        padding-bottom: 20px;
       }
 
       .dashboard-header {
-        grid-column: 1 / -1;
         background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(10px);
         border-radius: 12px;
@@ -42,6 +50,7 @@
         justify-content: space-between;
         align-items: center;
         border: 1px solid rgba(255, 255, 255, 0.1);
+        flex-shrink: 0;
       }
 
       .dashboard-title {
@@ -109,8 +118,22 @@
         border: none;
       }
 
-      .grid-2col {
-        grid-column: span 2;
+      .components-grid::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .components-grid::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+      }
+
+      .components-grid::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+      }
+
+      .components-grid::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
       }
 
       .loading-overlay {
@@ -166,12 +189,12 @@
       <div class="dashboard-header">
         <div class="dashboard-title">
           <span>🏢</span>
-          <span>Account Management Dashboard</span>
+          <span>CLM Dashboard</span>
           <span class="clm-badge">CLM + REDUX</span>
         </div>
         <div style="display: flex; align-items: center; gap: 20px;">
           <div style="font-size: 12px; opacity: 0.7;">
-            Modularized Components with Failure Isolation
+            <span id="componentCount">Loading...</span> Components • Auto-Layout
           </div>
           <button id="loginBtn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: transform 0.2s;">
             🔐 Login
@@ -179,49 +202,9 @@
         </div>
       </div>
 
-      <!-- User List Component (2 columns) -->
-      <div class="component-frame grid-2col">
-        <div class="component-label">
-          <span class="status-dot" id="status-user-list"></span>
-          <span>User List [Redux: users]</span>
-        </div>
-        <iframe id="iframe-user-list" sandbox="allow-scripts"></iframe>
-      </div>
-
-      <!-- Redux State Viewer -->
-      <div class="component-frame">
-        <div class="component-label">
-          <span class="status-dot" id="status-redux-viewer"></span>
-          <span>Redux Monitor</span>
-        </div>
-        <iframe id="iframe-redux-viewer" sandbox="allow-scripts"></iframe>
-      </div>
-
-      <!-- User Detail Component -->
-      <div class="component-frame">
-        <div class="component-label">
-          <span class="status-dot" id="status-user-detail"></span>
-          <span>User Detail [Redux: users]</span>
-        </div>
-        <iframe id="iframe-user-detail" sandbox="allow-scripts"></iframe>
-      </div>
-
-      <!-- Auth Status Component -->
-      <div class="component-frame">
-        <div class="component-label">
-          <span class="status-dot" id="status-auth-status"></span>
-          <span>Auth Status [Redux: auth]</span>
-        </div>
-        <iframe id="iframe-auth-status" sandbox="allow-scripts"></iframe>
-      </div>
-
-      <!-- Crash Test Component -->
-      <div class="component-frame">
-        <div class="component-label">
-          <span class="status-dot error" id="status-crash-test"></span>
-          <span>Failure Test (Isolated)</span>
-        </div>
-        <iframe id="iframe-crash-test" sandbox="allow-scripts"></iframe>
+      <!-- Dynamic Components Grid -->
+      <div class="components-grid" id="componentsGrid">
+        <!-- Components will be dynamically inserted here -->
       </div>
     </div>
 
@@ -317,14 +300,29 @@
       // Check auth status on load
       checkAuthStatus();
 
-      // Component configuration for dashboard
-      const dashboardComponents = [
-        { id: 'user-list', iframeId: 'iframe-user-list' },
-        { id: 'user-detail', iframeId: 'iframe-user-detail' },
-        { id: 'auth-status', iframeId: 'iframe-auth-status' },
-        { id: 'redux-state-viewer', iframeId: 'iframe-redux-viewer' },
-        { id: 'crash-test', iframeId: 'iframe-crash-test' }
-      ];
+      // Create component frame dynamically
+      function createComponentFrame(component) {
+        const iframeId = `iframe-${component.id}`;
+        const statusId = `status-${component.id}`;
+        
+        // Determine display name
+        const displayName = component.name || component.id;
+        const reduxSlice = component.concrete?.redux_slice || component.redux_slice;
+        const label = reduxSlice ? `${displayName} [Redux: ${reduxSlice}]` : displayName;
+        const isExpectedFailure = component.balanced?.expected_failure;
+        
+        const frame = document.createElement('div');
+        frame.className = 'component-frame';
+        frame.innerHTML = `
+          <div class="component-label">
+            <span class="status-dot ${isExpectedFailure ? 'error' : ''}" id="${statusId}"></span>
+            <span>${label}</span>
+          </div>
+          <iframe id="${iframeId}" sandbox="${component.concrete?.sandbox || 'allow-scripts'}"></iframe>
+        `;
+        
+        return { frame, iframeId, statusId };
+      }
 
       // Load all components using Redux
       async function loadDashboard() {
@@ -336,42 +334,45 @@
             const registry = registryAction.payload;
             console.log('[Dashboard] Registry loaded via Redux:', registry);
 
-            // Load each component via Redux
-            for (const comp of dashboardComponents) {
-              const componentConfig = registry.components.find(c => c.id === comp.id);
-              if (componentConfig) {
-                // Dispatch load action
-                const loadAction = await store.dispatch(
-                  loadCLMComponent({ 
-                    componentId: comp.id, 
-                    iframeId: comp.iframeId 
-                  })
-                );
+            const componentsGrid = document.getElementById('componentsGrid');
+            const componentCount = document.getElementById('componentCount');
+            
+            // Update component count
+            componentCount.textContent = registry.components.length;
 
-                if (loadCLMComponent.fulfilled.match(loadAction)) {
-                  // Actually load the iframe
-                  const iframe = document.getElementById(comp.iframeId);
+            // Load each component from registry
+            for (const componentConfig of registry.components) {
+              // Create component frame
+              const { frame, iframeId, statusId } = createComponentFrame(componentConfig);
+              componentsGrid.appendChild(frame);
+
+              // Dispatch load action
+              const loadAction = await store.dispatch(
+                loadCLMComponent({ 
+                  componentId: componentConfig.id, 
+                  iframeId: iframeId 
+                })
+              );
+
+              if (loadCLMComponent.fulfilled.match(loadAction)) {
+                console.log('[Dashboard] Loaded component via Redux:', componentConfig.id);
+                
+                // Set iframe src
+                const iframe = document.getElementById(iframeId);
+                if (iframe) {
                   iframe.src = componentConfig.url;
                   
-                  // Mark as loaded in Redux
-                  store.dispatch(componentLoaded({
-                    componentId: comp.id,
-                    iframeId: comp.iframeId,
-                    url: componentConfig.url
-                  }));
-                  
-                  console.log(`[Dashboard] Loaded component via Redux: ${comp.id}`);
+                  // Dispatch componentLoaded when iframe loads
+                  iframe.onload = () => {
+                    store.dispatch(componentLoaded({
+                      componentId: componentConfig.id,
+                      iframeId: iframeId,
+                      url: componentConfig.url
+                    }));
+                  };
                 }
               }
             }
-
-            // Hide loading overlay
-            setTimeout(() => {
-              document.getElementById('loadingOverlay').classList.add('hidden');
-            }, 1000);
-
-          } else {
-            throw new Error('Failed to fetch registry');
           }
 
         } catch (error) {
