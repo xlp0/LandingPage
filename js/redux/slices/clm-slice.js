@@ -15,7 +15,8 @@ export const fetchCLMRegistry = createAsyncThunk(
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      return data;
+      // API returns { success: true, registry: {...} }
+      return data.registry || data;
     } catch (error) {
       console.error('[CLM Slice] Failed to fetch registry:', error);
       return rejectWithValue(error.message);
@@ -218,7 +219,7 @@ const clmSlice = createSlice({
       .addCase(fetchCLMRegistry.fulfilled, (state, action) => {
         state.loading.registry = false;
         state.registry = action.payload;
-        state.metrics.totalComponents = action.payload.components.length;
+        state.metrics.totalComponents = action.payload.components?.length || 0;
         console.log('[CLM Slice] Registry loaded:', action.payload);
       })
       .addCase(fetchCLMRegistry.rejected, (state, action) => {
