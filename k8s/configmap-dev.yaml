@@ -11,6 +11,15 @@ data:
   NODE_ENV: "production"
   PORT: "3000"
   
+  # STUN Servers for WebRTC
+  STUN_SERVERS: "stun:stun.l.google.com:19302"
+  
+  # Zitadel OAuth2 Configuration
+  ZITADEL_CLIENT_ID: "348373619962871815"
+  ZITADEL_CLIENT_SECRET: "fCrdXDYTQYPIsYv0WRVNnjnVz2BjpyHsyMmNEFc56iGH55rCQwa3cySqDZHUYu0Y"
+  ZITADEL_DOMAIN: "vpn.pkc.pub"
+  REDIRECT_URI: "https://dev.pkc.pub/auth-callback-enhanced.html"
+  
   # Optional: Add more config as needed
   # LOG_LEVEL: "info"
   # MAX_CONNECTIONS: "1000"
