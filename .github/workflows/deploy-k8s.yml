@@ -1,0 +1,53 @@
+name: Deploy to Kubernetes
+
+on:
+  workflow_run:
+    workflows: ["Build and Push Docker Image LandingPage"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Configure kubectl
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          mkdir -p $HOME/.kube
+          echo "$KUBE_CONFIG" | base64 -d > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+
+      - name: Apply Kubernetes deployment
+        run: |
+          kubectl apply -f k8s/deployment-dev-with-configmap.yaml
+          
+      - name: Restart deployment to pick up new image and DNS config
+        run: |
+          kubectl rollout restart deployment/landingpage-dev
+          
+      - name: Wait for rollout to complete
+        run: |
+          kubectl rollout status deployment/landingpage-dev --timeout=5m
+          
+      - name: Get deployment status
+        run: |
+          kubectl get pods -l app=landingpage-dev
+          kubectl describe deployment landingpage-dev
+
+      - name: Verify DNS resolution
+        run: |
+          echo "Testing DNS resolution inside pod..."
+          POD_NAME=$(kubectl get pods -l app=landingpage-dev -o jsonpath='{.items[0].metadata.name}')
+          kubectl exec $POD_NAME -- nslookup vpn.pkc.pub || echo "DNS test failed"
