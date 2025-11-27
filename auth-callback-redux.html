@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication - CLM Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center text-white">
+    <div class="text-center">
+        <div class="mb-6">
+            <div class="inline-block">
+                <div class="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+            </div>
+        </div>
+        <h1 class="text-3xl font-bold mb-2">Processing Authentication</h1>
+        <p class="text-lg opacity-75" id="statusText">Please wait while we complete your login...</p>
+        <div id="error" class="mt-8 p-4 bg-red-500/20 border border-red-500 rounded-lg hidden">
+            <p id="error-message" class="text-red-200"></p>
+            <button onclick="window.location.href='/'" class="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white">Back to Dashboard</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import store from './js/redux/store.js';
+        import { loginWithZitadel } from './js/redux/slices/auth-slice.js';
+
+        async function handleAuthCallback() {
+            try {
+                // Get URL parameters
+                const params = new URLSearchParams(window.location.search);
+                const code = params.get('code');
+                const state = params.get('state');
+                
+                console.log('[Auth Callback] Received OAuth callback');
+                console.log('[Auth Callback] Code:', code ? 'present' : 'missing');
+                console.log('[Auth Callback] State:', state ? 'present' : 'missing');
+
+                if (!code) {
+                    throw new Error('No authorization code received from Zitadel');
+                }
+
+                // Get code verifier from localStorage
+                const codeVerifier = localStorage.getItem('pkce_code_verifier');
+                console.log('[Auth Callback] Code verifier:', codeVerifier ? 'present' : 'missing');
+                
+                if (!codeVerifier) {
+                    throw new Error('No PKCE code verifier found. Please try logging in again.');
+                }
+
+                // Update status
+                document.getElementById('statusText').textContent = 'Exchanging authorization code for tokens...';
+
+                // Dispatch Redux login action
+                const redirectUri = window.location.origin + '/auth-callback-redux.html';
+                const resultAction = await store.dispatch(loginWithZitadel({
+                    code,
+                    codeVerifier,
+                    redirectUri
+                }));
+
+                // Check if login was successful
+                if (loginWithZitadel.fulfilled.match(resultAction)) {
+                    console.log('[Auth Callback] Login successful via Redux');
+                    document.getElementById('statusText').textContent = 'Login successful! Redirecting...';
+                    
+                    // Clear code verifier
+                    localStorage.removeItem('pkce_code_verifier');
+                    
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1000);
+                } else {
+                    throw new Error(resultAction.payload || 'Login failed');
+                }
+
+            } catch (error) {
+                console.error('[Auth Callback] Error:', error);
+                document.getElementById('error-message').textContent = error.message;
+                document.getElementById('error').classList.remove('hidden');
+                document.querySelector('.animate-spin').style.display = 'none';
+            }
+        }
+
+        // Start authentication process
+        handleAuthCallback();
+    </script>
+</body>
+</html>

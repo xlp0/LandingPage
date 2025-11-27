@@ -1,19 +1,20 @@
 /**
  * Redux Store Configuration
- * Combines all slices including CLM management
+ * Combines CLM and Auth slices with middleware
  */
 
+import { configureStore } from 'https://unpkg.com/@reduxjs/toolkit@1.9.7/dist/redux-toolkit.esm.js';
 import clmReducer from './slices/clm-slice.js';
+import authReducer from './slices/auth-slice.js';
 import clmMiddleware from './middleware/clm-middleware.js';
-
-const { configureStore } = window.RTK;
 
 // Create Redux store
 const store = configureStore({
   reducer: {
     // CLM slice for component management
     clm: clmReducer,
-    
+    // Auth slice for authentication management
+    auth: authReducer,
     // Future slices can be added here:
     // auth: authReducer,
     // users: usersReducer,

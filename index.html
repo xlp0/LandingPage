@@ -222,6 +222,12 @@
         loadCLMComponent,
         componentLoaded 
       } from './js/redux/slices/clm-slice.js';
+      import { 
+        loginWithZitadel, 
+        logoutUser,
+        selectUser,
+        selectIsAuthenticated 
+      } from './js/redux/slices/auth-slice.js';
 
       console.log('[Dashboard] Initializing CLM Account Management Dashboard with Redux...');
 
@@ -232,42 +238,44 @@
       const oauth = new window.OAuth2Handler({
         domain: 'vpn.pkc.pub',
         clientId: '348213051452882951',
-        redirectUri: window.location.origin + '/auth-callback-enhanced.html',
+        redirectUri: window.location.origin + '/auth-callback-redux.html',
         scopes: ['openid', 'profile', 'email'],
         debug: true
       });
 
-      // Check if user is already logged in
+      // Check if user is already logged in from Redux
       function checkAuthStatus() {
-        const accessToken = localStorage.getItem('thk-mesh-access_token');
-        const user = localStorage.getItem('thk-mesh-user');
+        const state = store.getState();
+        const isAuthenticated = selectIsAuthenticated(state);
+        const user = selectUser(state);
         const loginBtn = document.getElementById('loginBtn');
         
-        if (accessToken && user) {
-          try {
-            const userData = JSON.parse(user);
-            loginBtn.innerHTML = `👤 ${userData.name || userData.email || 'User'}`;
-            loginBtn.style.background = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)';
-            console.log('[Dashboard] User is logged in:', userData);
-          } catch (e) {
-            console.error('[Dashboard] Error parsing user data:', e);
-          }
+        if (isAuthenticated && user) {
+          loginBtn.innerHTML = `👤 ${user.name || user.email || 'User'}`;
+          loginBtn.style.background = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)';
+          console.log('[Dashboard] User is logged in (Redux):', user);
+        } else {
+          loginBtn.innerHTML = '🔐 Login';
+          loginBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         }
       }
 
+      // Subscribe to auth state changes
+      store.subscribe(() => {
+        checkAuthStatus();
+      });
+
       // Login button handler
       document.getElementById('loginBtn').addEventListener('click', async () => {
-        const accessToken = localStorage.getItem('thk-mesh-access_token');
+        const state = store.getState();
+        const isAuthenticated = selectIsAuthenticated(state);
         
-        // If already logged in, show user info or logout
-        if (accessToken) {
+        // If already logged in, logout via Redux
+        if (isAuthenticated) {
           const logout = confirm('You are already logged in. Do you want to logout?');
           if (logout) {
-            localStorage.removeItem('thk-mesh-access_token');
-            localStorage.removeItem('thk-mesh-refresh_token');
-            localStorage.removeItem('thk-mesh-user');
-            localStorage.removeItem('pkce_code_verifier');
-            window.location.reload();
+            await store.dispatch(logoutUser());
+            console.log('[Dashboard] Logged out via Redux');
           }
           return;
         }
