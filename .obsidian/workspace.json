@@ -185,6 +185,7 @@
   },
   "active": "bd45ebad09a1e0e6",
   "lastOpenFiles": [
+    "BACKEND_IMPLEMENTATION.md",
     "docs/PKCE_ZITADEL_CONFIG.md",
     "docs/FIND_REGENERATE_SECRET.md",
     "docs/ZITADEL_CLIENT_SECRET_GUIDE.md",
@@ -198,7 +199,6 @@
     "docs/REDUX_AUTH_TESTING.md",
     "docs/OAUTH_BACKEND_INTEGRATION.md",
     "docs/BACKEND_IMPLEMENTATION.md",
-    "BACKEND_IMPLEMENTATION.md",
     "OAUTH_BACKEND_INTEGRATION.md",
     "REDUX_FIX_SUMMARY.md",
     "node_modules/@mathjax/mathjax-newcm-font/def/mathjax-newcm.ts",
