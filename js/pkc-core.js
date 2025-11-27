@@ -17,8 +17,20 @@ export const PKC = {
     if (!def || !def.id) throw new Error('Module definition requires an id');
     this.registry.set(def.id, def);
   },
-  async load(manifestUrl = '/modules.json') {
+
+  async init(config = {}) {
     // Load app-level configuration once
+    await this._loadAppConfig();
+
+    if (config && config.modules && Array.isArray(config.modules)) {
+        return this._loadModules(config.modules);
+    }
+    
+    // Support legacy load behavior if config is string or empty
+    return this.load(typeof config === 'string' ? config : '/modules.json');
+  },
+
+  async _loadAppConfig() {
     try {
       const appRes = await fetch(`/app-config.json?t=${Date.now()}`, { cache: 'no-cache' });
       if (appRes.ok) {
@@ -29,12 +41,22 @@ export const PKC = {
     } catch {
       this.ctx.appConfig = {};
     }
+  },
+
+  async load(manifestUrl = '/modules.json') {
+    await this._loadAppConfig();
 
     this.ctx.log('Loading manifest', manifestUrl);
     const res = await fetch(`${manifestUrl}?t=${Date.now()}`, { cache: 'no-cache' });
     if (!res.ok) throw new Error(`Failed to load manifest: ${res.status}`);
     const manifest = await res.json();
     const modules = (manifest && manifest.modules) || [];
+    
+    return this._loadModules(modules);
+  },
+
+  async _loadModules(modules) {
+    const loadedModules = {};
 
     for (const m of modules) {
       if (m.enabled === false) continue;
@@ -76,10 +98,15 @@ export const PKC = {
         await api.start();
         console.log(`[PKC] Module ${m.id} started successfully`);
         this.ctx.log(`Started module: ${m.id}`);
+        
+        loadedModules[m.id] = api;
+
       } catch (e) {
         console.error(`[PKC] Failed to load module ${m.id}`, e);
       }
     }
+    
+    return loadedModules;
   },
   _checkCondition(key) {
     switch (key) {
