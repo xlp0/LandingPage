@@ -76,6 +76,51 @@ components:
       health_check: "/health/crash-test"
       expected_load_time_ms: 100
       expected_failure: true
+
+  - id: "user-list"
+    name: "User Account List"
+    url: "https://henry.pkc.pub/components/user-list.html"
+    abstract:
+      context: "Account management dashboard"
+      goal: "Display list of user accounts with status"
+    concrete:
+      implementation: "https://henry.pkc.pub/components/user-list.html"
+      sandbox: "allow-scripts allow-same-origin"
+      redux_slice: "users"
+    balanced:
+      metrics_endpoint: "/metrics/user-list"
+      health_check: "/health/user-list"
+      expected_load_time_ms: 400
+
+  - id: "user-detail"
+    name: "User Account Detail"
+    url: "https://henry.pkc.pub/components/user-detail.html"
+    abstract:
+      context: "Account detail view"
+      goal: "Show detailed user information and actions"
+    concrete:
+      implementation: "https://henry.pkc.pub/components/user-detail.html"
+      sandbox: "allow-scripts allow-same-origin"
+      redux_slice: "users"
+    balanced:
+      metrics_endpoint: "/metrics/user-detail"
+      health_check: "/health/user-detail"
+      expected_load_time_ms: 300
+
+  - id: "redux-state-viewer"
+    name: "Redux Store Monitor"
+    url: "https://henry.pkc.pub/components/redux-state-viewer.html"
+    abstract:
+      context: "Redux state visualization"
+      goal: "Monitor Redux store and CLM module connections"
+    concrete:
+      implementation: "https://henry.pkc.pub/components/redux-state-viewer.html"
+      sandbox: "allow-scripts allow-same-origin"
+      redux_slice: "all"
+    balanced:
+      metrics_endpoint: "/metrics/redux-viewer"
+      health_check: "/health/redux-viewer"
+      expected_load_time_ms: 200
       
 # Observability Configuration
 observability:

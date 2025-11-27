@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User List Component</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      color: white;
+    }
+    .user-list-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    h3 {
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-item {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 12px 15px;
+      margin: 8px 0;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .user-item:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateX(5px);
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .user-details {
+      display: flex;
+      flex-direction: column;
+    }
+    .user-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .user-email {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+    .user-status {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .status-active {
+      background: rgba(46, 213, 115, 0.3);
+      color: #2ed573;
+    }
+    .status-inactive {
+      background: rgba(255, 71, 87, 0.3);
+      color: #ff4757;
+    }
+    .stats {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .stat-item {
+      flex: 1;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .stat-label {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="user-list-container">
+    <h3>
+      <span>👥</span>
+      <span>User Accounts</span>
+    </h3>
+    <div id="userList"></div>
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-value" id="totalUsers">0</div>
+        <div class="stat-label">Total Users</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="activeUsers">0</div>
+        <div class="stat-label">Active</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="inactiveUsers">0</div>
+        <div class="stat-label">Inactive</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    console.log('[User List Component] Initializing...');
+
+    // Mock user data (in real app, this comes from Redux store)
+    const users = [
+      { id: 1, name: 'Alice Johnson', email: 'alice@example.com', status: 'active', avatar: 'AJ' },
+      { id: 2, name: 'Bob Smith', email: 'bob@example.com', status: 'active', avatar: 'BS' },
+      { id: 3, name: 'Carol White', email: 'carol@example.com', status: 'inactive', avatar: 'CW' },
+      { id: 4, name: 'David Brown', email: 'david@example.com', status: 'active', avatar: 'DB' },
+      { id: 5, name: 'Eve Davis', email: 'eve@example.com', status: 'inactive', avatar: 'ED' }
+    ];
+
+    function renderUsers() {
+      const userListEl = document.getElementById('userList');
+      userListEl.innerHTML = users.map(user => `
+        <div class="user-item" onclick="selectUser(${user.id})">
+          <div class="user-info">
+            <div class="user-avatar">${user.avatar}</div>
+            <div class="user-details">
+              <div class="user-name">${user.name}</div>
+              <div class="user-email">${user.email}</div>
+            </div>
+          </div>
+          <div class="user-status status-${user.status}">
+            ${user.status.toUpperCase()}
+          </div>
+        </div>
+      `).join('');
+
+      // Update stats
+      const activeCount = users.filter(u => u.status === 'active').length;
+      document.getElementById('totalUsers').textContent = users.length;
+      document.getElementById('activeUsers').textContent = activeCount;
+      document.getElementById('inactiveUsers').textContent = users.length - activeCount;
+    }
+
+    function selectUser(userId) {
+      console.log('[User List] User selected:', userId);
+      // Send event to parent (Redux action)
+      window.parent.postMessage({
+        type: 'clm_event',
+        componentId: 'user-list',
+        event: 'user_selected',
+        data: { userId }
+      }, '*');
+    }
+
+    // Listen for Redux state updates from parent
+    window.addEventListener('message', (event) => {
+      if (event.data.type === 'redux_state_update' && event.data.slice === 'users') {
+        console.log('[User List] Received Redux state update:', event.data.state);
+        // Update local state with Redux data
+        // users = event.data.state.users;
+        // renderUsers();
+      }
+    });
+
+    // Initial render
+    renderUsers();
+
+    // Send heartbeat to parent
+    setInterval(() => {
+      window.parent.postMessage({
+        type: 'clm_heartbeat',
+        componentId: 'user-list',
+        timestamp: Date.now(),
+        metrics: {
+          usersDisplayed: users.length,
+          activeUsers: users.filter(u => u.status === 'active').length
+        }
+      }, '*');
+    }, 3000);
+
+    console.log('[User List Component] Ready');
+  </script>
+</body>
+</html>
