@@ -23,6 +23,8 @@ const store = configureStore({
   
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
+      // Disable development-only middleware that requires Node.js process
+      immutableCheck: false,
       serializableCheck: {
         // Ignore these action types for serialization check
         ignoredActions: ['clm/componentEvent', 'clm/componentHeartbeat'],
