@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P2P Status Component</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: monospace;
+      background: #34495e;
+      color: white;
+    }
+    .p2p-panel {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 15px;
+    }
+    h3 {
+      margin: 0 0 15px 0;
+      font-size: 1.2em;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .stat-label {
+      opacity: 0.8;
+    }
+    .stat-value {
+      font-weight: bold;
+      color: #3498db;
+    }
+  </style>
+</head>
+<body>
+  <div class="p2p-panel">
+    <h3>📡 P2P Network Status</h3>
+    <div class="stat-row">
+      <span class="stat-label">Connected Peers:</span>
+      <span class="stat-value" id="peerCount">0</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Active Connections:</span>
+      <span class="stat-value" id="connectionCount">0</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Network Status:</span>
+      <span class="stat-value" id="networkStatus">Initializing...</span>
+    </div>
+  </div>
+
+  <script>
+    // Simulate P2P stats
+    let peerCount = 0;
+    let connectionCount = 0;
+
+    function updateStats() {
+      // Simulate random peer connections
+      peerCount = Math.floor(Math.random() * 5);
+      connectionCount = Math.floor(Math.random() * 10);
+
+      document.getElementById('peerCount').textContent = peerCount;
+      document.getElementById('connectionCount').textContent = connectionCount;
+      document.getElementById('networkStatus').textContent = peerCount > 0 ? 'Connected' : 'Waiting for peers';
+    }
+
+    // Update stats every 5 seconds
+    setInterval(updateStats, 5000);
+    updateStats();
+
+    // Send heartbeat to parent
+    setInterval(() => {
+      window.parent.postMessage({
+        type: 'clm_heartbeat',
+        componentId: 'p2p-status',
+        timestamp: Date.now()
+      }, '*');
+    }, 3000);
+
+    console.log('[P2P Status Component] Loaded successfully');
+  </script>
+</body>
+</html>

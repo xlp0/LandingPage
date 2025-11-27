@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hero Component</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: white;
+      text-align: center;
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    h1 {
+      font-size: 3em;
+      margin: 0 0 20px 0;
+      animation: slideIn 1s ease-out;
+    }
+    p {
+      font-size: 1.2em;
+      opacity: 0.9;
+      max-width: 600px;
+      line-height: 1.6;
+      animation: fadeIn 1.5s ease-out;
+    }
+    .cta-button {
+      margin-top: 30px;
+      padding: 15px 40px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      animation: fadeIn 2s ease-out;
+    }
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Personal Knowledge Container</h1>
+  <p>
+    A decentralized, peer-to-peer platform for secure knowledge sharing and collaboration.
+    Built on Cubical Logic Model principles with guaranteed observability.
+  </p>
+  <button class="cta-button" onclick="handleCTA()">Get Started</button>
+
+  <script>
+    function handleCTA() {
+      console.log('[Hero Component] CTA clicked');
+      
+      window.parent.postMessage({
+        type: 'clm_event',
+        componentId: 'hero-content',
+        event: 'cta_clicked',
+        data: { timestamp: Date.now() }
+      }, '*');
+    }
+
+    // Send heartbeat to parent
+    setInterval(() => {
+      window.parent.postMessage({
+        type: 'clm_heartbeat',
+        componentId: 'hero-content',
+        timestamp: Date.now()
+      }, '*');
+    }, 3000);
+
+    console.log('[Hero Component] Loaded successfully');
+  </script>
+</body>
+</html>

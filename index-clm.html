@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PKC Landing - CLM Architecture</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #1a1a2e;
+      color: white;
+      min-height: 100vh;
+    }
+
+    .clm-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .clm-header {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .clm-header h1 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+      color: #3498db;
+    }
+
+    .clm-header p {
+      opacity: 0.8;
+      font-size: 0.9em;
+    }
+
+    .component-grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: 1fr;
+    }
+
+    .component-slot {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s;
+    }
+
+    .component-slot:hover {
+      border-color: rgba(52, 152, 219, 0.5);
+      box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+    }
+
+    .component-label {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 8px 15px;
+      font-size: 0.85em;
+      font-family: monospace;
+      color: #3498db;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .observability-panel {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px solid #3498db;
+      border-radius: 8px;
+      padding: 15px;
+      min-width: 250px;
+      font-family: monospace;
+      font-size: 0.85em;
+      z-index: 10000;
+    }
+
+    .observability-panel h4 {
+      margin: 0 0 10px 0;
+      color: #3498db;
+      font-size: 1em;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .metric-label {
+      opacity: 0.7;
+    }
+
+    .metric-value {
+      color: #2ecc71;
+      font-weight: bold;
+    }
+
+    .metric-value.error {
+      color: #e74c3c;
+    }
+
+    @media (min-width: 768px) {
+      .component-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s;
+    }
+
+    .loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loading-content {
+      text-align: center;
+    }
+
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <h2>Loading CLM Components...</h2>
+      <p style="opacity: 0.7; margin-top: 10px;">Initializing Cubical Logic Model</p>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="clm-container">
+    <!-- Header -->
+    <div class="clm-header">
+      <h1>🔷 PKC Landing - Cubical Logic Model Architecture</h1>
+      <p>
+        Components are isolated in iframes. When one fails, others continue to function.
+        All components are loaded from the CLM YAML registry with guaranteed observability.
+      </p>
+    </div>
+
+    <!-- Component Grid -->
+    <div class="component-grid">
+      <!-- Welcome Component -->
+      <div class="component-slot">
+        <div class="component-label">Component: welcome</div>
+        <div id="welcome-container"></div>
+      </div>
+
+      <!-- Auth Status Component -->
+      <div class="component-slot">
+        <div class="component-label">Component: auth-status</div>
+        <div id="auth-status-container"></div>
+      </div>
+
+      <!-- Hero Content Component -->
+      <div class="component-slot" style="grid-column: 1 / -1;">
+        <div class="component-label">Component: hero-content</div>
+        <div id="hero-container"></div>
+      </div>
+
+      <!-- P2P Status Component -->
+      <div class="component-slot">
+        <div class="component-label">Component: p2p-status</div>
+        <div id="p2p-status-container"></div>
+      </div>
+
+      <!-- Crash Test Component -->
+      <div class="component-slot">
+        <div class="component-label">Component: crash-test (Will Fail!)</div>
+        <div id="crash-test-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Observability Panel -->
+  <div class="observability-panel">
+    <h4>📊 Observability Sidecar</h4>
+    <div class="metric-row">
+      <span class="metric-label">Components Loaded:</span>
+      <span class="metric-value" id="componentsLoaded">0</span>
+    </div>
+    <div class="metric-row">
+      <span class="metric-label">Components Failed:</span>
+      <span class="metric-value error" id="componentsFailed">0</span>
+    </div>
+    <div class="metric-row">
+      <span class="metric-label">Total Load Time:</span>
+      <span class="metric-value" id="totalLoadTime">0ms</span>
+    </div>
+    <div class="metric-row">
+      <span class="metric-label">Heartbeats Received:</span>
+      <span class="metric-value" id="heartbeatsReceived">0</span>
+    </div>
+  </div>
+
+  <!-- Load CLM Iframe Loader -->
+  <script src="/js/clm-iframe-loader.js"></script>
+
+  <script>
+    // Initialize CLM Iframe Loader
+    const clmLoader = new CLMIframeLoader();
+    
+    // Observability metrics
+    let metrics = {
+      componentsLoaded: 0,
+      componentsFailed: 0,
+      totalLoadTime: 0,
+      heartbeatsReceived: 0
+    };
+
+    // Update observability panel
+    function updateMetrics() {
+      document.getElementById('componentsLoaded').textContent = metrics.componentsLoaded;
+      document.getElementById('componentsFailed').textContent = metrics.componentsFailed;
+      document.getElementById('totalLoadTime').textContent = `${metrics.totalLoadTime.toFixed(0)}ms`;
+      document.getElementById('heartbeatsReceived').textContent = metrics.heartbeatsReceived;
+    }
+
+    // Listen for component events
+    window.addEventListener('message', (event) => {
+      if (event.data.type === 'clm_heartbeat') {
+        metrics.heartbeatsReceived++;
+        updateMetrics();
+      }
+      
+      if (event.data.type === 'clm_event') {
+        console.log('[CLM Main] Component event:', event.data);
+      }
+    });
+
+    // Load all components
+    async function loadAllComponents() {
+      const startTime = performance.now();
+      
+      try {
+        await clmLoader.init();
+        
+        // Define container mapping
+        const containerMap = {
+          'welcome': document.getElementById('welcome-container'),
+          'auth-status': document.getElementById('auth-status-container'),
+          'hero-content': document.getElementById('hero-container'),
+          'p2p-status': document.getElementById('p2p-status-container'),
+          'crash-test': document.getElementById('crash-test-container')
+        };
+
+        // Load all components
+        const loadPromises = Object.entries(containerMap).map(async ([id, container]) => {
+          try {
+            await clmLoader.loadComponent(id, container, { height: '200px' });
+            metrics.componentsLoaded++;
+          } catch (error) {
+            console.error(`[CLM Main] Failed to load ${id}:`, error);
+            metrics.componentsFailed++;
+          }
+        });
+
+        await Promise.allSettled(loadPromises);
+        
+        metrics.totalLoadTime = performance.now() - startTime;
+        updateMetrics();
+
+        // Hide loading overlay
+        setTimeout(() => {
+          document.getElementById('loadingOverlay').classList.add('hidden');
+        }, 500);
+
+        console.log('[CLM Main] All components loaded');
+        console.log('[CLM Main] Metrics:', metrics);
+
+      } catch (error) {
+        console.error('[CLM Main] Failed to initialize:', error);
+        alert('Failed to load CLM registry. Please check console for details.');
+      }
+    }
+
+    // Start loading when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadAllComponents);
+    } else {
+      loadAllComponents();
+    }
+
+    // Send telemetry to server every 10 seconds
+    setInterval(async () => {
+      try {
+        await fetch('/api/clm/telemetry', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            component_id: 'main-page',
+            event_type: 'metrics_update',
+            data: metrics,
+            timestamp: new Date().toISOString()
+          })
+        });
+      } catch (error) {
+        console.error('[CLM Main] Failed to send telemetry:', error);
+      }
+    }, 10000);
+  </script>
+</body>
+</html>

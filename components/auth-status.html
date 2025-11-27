@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auth Status Component</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 15px;
+      font-family: monospace;
+      background: #2c3e50;
+      color: white;
+    }
+    .auth-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+    .auth-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #e74c3c;
+      animation: pulse 2s infinite;
+    }
+    .status-indicator.authenticated {
+      background: #2ecc71;
+    }
+    button {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: monospace;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-status">
+      <div class="status-indicator" id="statusIndicator"></div>
+      <span id="statusText">Anonymous</span>
+    </div>
+    <button id="authButton">Login with Zitadel</button>
+  </div>
+
+  <script>
+    // Simulate auth state (in real app, check localStorage/Redux)
+    let isAuthenticated = false;
+
+    const statusIndicator = document.getElementById('statusIndicator');
+    const statusText = document.getElementById('statusText');
+    const authButton = document.getElementById('authButton');
+
+    function updateAuthUI() {
+      if (isAuthenticated) {
+        statusIndicator.classList.add('authenticated');
+        statusText.textContent = 'Authenticated';
+        authButton.textContent = 'Logout';
+      } else {
+        statusIndicator.classList.remove('authenticated');
+        statusText.textContent = 'Anonymous';
+        authButton.textContent = 'Login with Zitadel';
+      }
+    }
+
+    authButton.addEventListener('click', () => {
+      isAuthenticated = !isAuthenticated;
+      updateAuthUI();
+      
+      console.log('[Auth Component] Auth state changed:', isAuthenticated);
+      
+      // Send event to parent
+      window.parent.postMessage({
+        type: 'clm_event',
+        componentId: 'auth-status',
+        event: 'auth_state_changed',
+        data: { authenticated: isAuthenticated }
+      }, '*');
+    });
+
+    // Send heartbeat to parent
+    setInterval(() => {
+      window.parent.postMessage({
+        type: 'clm_heartbeat',
+        componentId: 'auth-status',
+        timestamp: Date.now()
+      }, '*');
+    }, 3000);
+
+    updateAuthUI();
+    console.log('[Auth Status Component] Loaded successfully');
+  </script>
+</body>
+</html>

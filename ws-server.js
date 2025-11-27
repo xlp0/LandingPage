@@ -9,6 +9,7 @@ require('dotenv').config();
 const RoomRegistry = require('./room-registry.js');
 const RoomMessageHandler = require('./room-message-handler-server.js');
 const authRoutes = require('./routes/auth.js');
+const clmRoutes = require('./routes/clm.js');
 
 const app = express();
 
@@ -35,6 +36,9 @@ app.use((req, res, next) => {
 
 // Auth routes
 app.use('/api/auth', authRoutes);
+
+// CLM routes
+app.use('/api/clm', clmRoutes);
 
 // Serve static files from the current directory
 app.use(express.static(__dirname));

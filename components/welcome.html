@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome Component</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      min-height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .welcome-content {
+      text-align: center;
+      animation: fadeIn 1s ease-in;
+    }
+    h1 {
+      margin: 0 0 10px 0;
+      font-size: 2em;
+    }
+    p {
+      margin: 0;
+      opacity: 0.9;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="welcome-content">
+    <h1>🎯 Welcome to PKC Landing</h1>
+    <p>Cubical Logic Model - Iframe Isolation Architecture</p>
+  </div>
+
+  <script>
+    // Send heartbeat to parent
+    setInterval(() => {
+      window.parent.postMessage({
+        type: 'clm_heartbeat',
+        componentId: 'welcome',
+        timestamp: Date.now()
+      }, '*');
+    }, 3000);
+
+    console.log('[Welcome Component] Loaded successfully');
+  </script>
+</body>
+</html>

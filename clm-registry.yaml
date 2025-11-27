@@ -1,0 +1,101 @@
+# CLM Component Registry
+# Simplified structure: hyperlinks instead of hashes
+# Each component is isolated in iframe for failure containment
+
+version: "2.0.0"
+registry_url: "https://henry.pkc.pub/clm"
+
+components:
+  - id: "welcome"
+    name: "Welcome Component"
+    url: "https://henry.pkc.pub/components/welcome.html"
+    abstract:
+      context: "Entry point for user interaction"
+      goal: "Greet user and set narrative tone"
+    concrete:
+      implementation: "https://henry.pkc.pub/components/welcome.html"
+      sandbox: "allow-scripts allow-same-origin"
+    balanced:
+      metrics_endpoint: "/metrics/welcome"
+      health_check: "/health/welcome"
+      expected_load_time_ms: 500
+      
+  - id: "auth-status"
+    name: "Authentication Status"
+    url: "https://henry.pkc.pub/components/auth-status.html"
+    abstract:
+      context: "User identity and session management"
+      goal: "Display auth state and enable OAuth login"
+    concrete:
+      implementation: "https://henry.pkc.pub/components/auth-status.html"
+      sandbox: "allow-scripts allow-same-origin allow-popups"
+    balanced:
+      metrics_endpoint: "/metrics/auth"
+      health_check: "/health/auth"
+      expected_load_time_ms: 300
+      
+  - id: "hero-content"
+    name: "Hero Content"
+    url: "https://henry.pkc.pub/components/hero.html"
+    abstract:
+      context: "Main content presentation"
+      goal: "Display primary message with animation"
+    concrete:
+      implementation: "https://henry.pkc.pub/components/hero.html"
+      sandbox: "allow-scripts allow-same-origin"
+    balanced:
+      metrics_endpoint: "/metrics/hero"
+      health_check: "/health/hero"
+      expected_load_time_ms: 800
+      
+  - id: "p2p-status"
+    name: "P2P Status Panel"
+    url: "https://henry.pkc.pub/components/p2p-status.html"
+    abstract:
+      context: "WebRTC peer connection monitoring"
+      goal: "Show active peers and connection health"
+    concrete:
+      implementation: "https://henry.pkc.pub/components/p2p-status.html"
+      sandbox: "allow-scripts allow-same-origin"
+    balanced:
+      metrics_endpoint: "/metrics/p2p"
+      health_check: "/health/p2p"
+      expected_load_time_ms: 400
+      
+  - id: "crash-test"
+    name: "Intentional Failure Component"
+    url: "https://henry.pkc.pub/components/crash-test.html"
+    abstract:
+      context: "Testing failure isolation"
+      goal: "Demonstrate that component failure doesn't crash main page"
+    concrete:
+      implementation: "https://henry.pkc.pub/components/crash-test.html"
+      sandbox: "allow-scripts allow-same-origin"
+    balanced:
+      metrics_endpoint: "/metrics/crash-test"
+      health_check: "/health/crash-test"
+      expected_load_time_ms: 100
+      expected_failure: true
+      
+# Observability Configuration
+observability:
+  prometheus:
+    endpoint: "/metrics"
+    scrape_interval: "15s"
+  loki:
+    endpoint: "/loki/api/v1/push"
+    labels:
+      app: "pkc-landing"
+      environment: "production"
+  grafana:
+    dashboard_url: "https://henry.pkc.pub/grafana/d/clm-overview"
+    
+# Sidecar Configuration
+sidecar:
+  enabled: true
+  telemetry_collector: "https://henry.pkc.pub/telemetry"
+  health_check_interval_ms: 5000
+  failure_recovery:
+    auto_reload: true
+    max_retries: 3
+    backoff_ms: 1000
