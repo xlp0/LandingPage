@@ -23,16 +23,10 @@ const store = configureStore({
   
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      // Disable development-only middleware that requires Node.js process
+      // Disable ALL development-only middleware that requires Node.js process
       immutableCheck: false,
-      serializableCheck: {
-        // Ignore these action types for serialization check
-        ignoredActions: ['clm/componentEvent', 'clm/componentHeartbeat'],
-        // Ignore these field paths in all actions
-        ignoredActionPaths: ['payload.timestamp', 'meta.arg'],
-        // Ignore these paths in the state
-        ignoredPaths: ['clm.heartbeats', 'clm.events']
-      }
+      serializableCheck: false,
+      actionCreatorCheck: false
     }).concat(clmMiddleware),
   
   devTools: true // Enable Redux DevTools
