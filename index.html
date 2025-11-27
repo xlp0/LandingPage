@@ -169,8 +169,13 @@
           <span>Account Management Dashboard</span>
           <span class="clm-badge">CLM + REDUX</span>
         </div>
-        <div style="font-size: 12px; opacity: 0.7;">
-          Modularized Components with Failure Isolation
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <div style="font-size: 12px; opacity: 0.7;">
+            Modularized Components with Failure Isolation
+          </div>
+          <button id="loginBtn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: transform 0.2s;">
+            🔐 Login
+          </button>
         </div>
       </div>
 
@@ -220,6 +225,10 @@
       </div>
     </div>
 
+    <!-- OAuth Handler -->
+    <script src="./js/oauth-handler.js"></script>
+    <script src="./js/local-storage-manager.js"></script>
+
     <!-- Redux Store -->
     <script type="module">
       import store from './js/redux/store.js';
@@ -233,6 +242,80 @@
 
       // Make store globally available
       window.reduxStore = store;
+
+      // Initialize OAuth handler
+      const oauth = new window.OAuth2Handler({
+        domain: 'vpn.pkc.pub',
+        clientId: '348213051452882951',
+        redirectUri: window.location.origin + '/auth-callback-enhanced.html',
+        scopes: ['openid', 'profile', 'email'],
+        debug: true
+      });
+
+      // Check if user is already logged in
+      function checkAuthStatus() {
+        const accessToken = localStorage.getItem('thk-mesh-access_token');
+        const user = localStorage.getItem('thk-mesh-user');
+        const loginBtn = document.getElementById('loginBtn');
+        
+        if (accessToken && user) {
+          try {
+            const userData = JSON.parse(user);
+            loginBtn.innerHTML = `👤 ${userData.name || userData.email || 'User'}`;
+            loginBtn.style.background = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)';
+            console.log('[Dashboard] User is logged in:', userData);
+          } catch (e) {
+            console.error('[Dashboard] Error parsing user data:', e);
+          }
+        }
+      }
+
+      // Login button handler
+      document.getElementById('loginBtn').addEventListener('click', async () => {
+        const accessToken = localStorage.getItem('thk-mesh-access_token');
+        
+        // If already logged in, show user info or logout
+        if (accessToken) {
+          const logout = confirm('You are already logged in. Do you want to logout?');
+          if (logout) {
+            localStorage.removeItem('thk-mesh-access_token');
+            localStorage.removeItem('thk-mesh-refresh_token');
+            localStorage.removeItem('thk-mesh-user');
+            localStorage.removeItem('pkce_code_verifier');
+            window.location.reload();
+          }
+          return;
+        }
+        
+        console.log('[Dashboard] Login button clicked');
+        try {
+          // Generate PKCE challenge
+          const { codeVerifier, codeChallenge } = await oauth.generatePKCE();
+          
+          // Store code verifier for callback
+          localStorage.setItem('pkce_code_verifier', codeVerifier);
+          
+          // Build authorization URL
+          const authUrl = `https://${oauth.domain}/oauth/v2/authorize?` + new URLSearchParams({
+            client_id: oauth.clientId,
+            redirect_uri: oauth.redirectUri,
+            response_type: 'code',
+            scope: oauth.scopes.join(' '),
+            code_challenge: codeChallenge,
+            code_challenge_method: 'S256',
+            state: btoa(JSON.stringify({ timestamp: Date.now() }))
+          });
+          
+          console.log('[Dashboard] Redirecting to OAuth login...');
+          window.location.href = authUrl;
+        } catch (error) {
+          console.error('[Dashboard] Login error:', error);
+          alert('Login failed: ' + error.message);
+        }
+      });
+
+      // Check auth status on load
+      checkAuthStatus();
 
       // Component configuration for dashboard
       const dashboardComponents = [
