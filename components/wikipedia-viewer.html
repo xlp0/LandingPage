@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wikipedia Viewer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: white;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .wiki-header {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 12px 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+
+    .wiki-logo {
+      font-size: 20px;
+    }
+
+    .search-container {
+      flex: 1;
+      display: flex;
+      gap: 8px;
+    }
+
+    input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: white;
+      font-size: 13px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    input:focus {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: #667eea;
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .wiki-frame-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: white;
+    }
+
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .popular-topics {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .topic-tag {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .topic-tag:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .status-bar {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 6px 15px;
+      font-size: 11px;
+      opacity: 0.7;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wiki-header">
+    <span class="wiki-logo">📚</span>
+    <div class="search-container">
+      <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Search Wikipedia (e.g., 'Artificial Intelligence', 'Blockchain')..."
+        value="Personal_knowledge_container"
+      >
+      <button id="searchBtn">Search</button>
+    </div>
+  </div>
+
+  <div class="popular-topics">
+    <span style="opacity: 0.5; margin-left: 15px;">Quick:</span>
+    <span class="topic-tag" data-topic="Artificial_intelligence">AI</span>
+    <span class="topic-tag" data-topic="Blockchain">Blockchain</span>
+    <span class="topic-tag" data-topic="Machine_learning">ML</span>
+    <span class="topic-tag" data-topic="Quantum_computing">Quantum</span>
+    <span class="topic-tag" data-topic="Personal_knowledge_container">PKC</span>
+  </div>
+
+  <div class="wiki-frame-container">
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <div>Loading Wikipedia...</div>
+    </div>
+    <iframe id="wikiFrame" style="display: none;"></iframe>
+  </div>
+
+  <div class="status-bar" id="statusBar">
+    Ready to search Wikipedia
+  </div>
+
+  <script>
+    console.log('[Wikipedia Viewer] Initializing...');
+
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const wikiFrame = document.getElementById('wikiFrame');
+    const loading = document.getElementById('loading');
+    const statusBar = document.getElementById('statusBar');
+
+    // Load Wikipedia article
+    function loadWikipedia(topic) {
+      console.log('[Wikipedia Viewer] Loading:', topic);
+      
+      // Show loading
+      loading.style.display = 'block';
+      wikiFrame.style.display = 'none';
+      statusBar.textContent = `Loading: ${topic.replace(/_/g, ' ')}...`;
+
+      // Wikipedia mobile site works better in iframes
+      const url = `https://en.m.wikipedia.org/wiki/${encodeURIComponent(topic)}`;
+      
+      wikiFrame.onload = () => {
+        loading.style.display = 'none';
+        wikiFrame.style.display = 'block';
+        statusBar.textContent = `Viewing: ${topic.replace(/_/g, ' ')}`;
+        
+        // Send heartbeat
+        sendHeartbeat();
+      };
+
+      wikiFrame.onerror = () => {
+        loading.style.display = 'none';
+        statusBar.textContent = 'Failed to load Wikipedia article';
+      };
+
+      wikiFrame.src = url;
+    }
+
+    // Search button
+    searchBtn.addEventListener('click', () => {
+      const query = searchInput.value.trim();
+      if (query) {
+        loadWikipedia(query.replace(/ /g, '_'));
+      }
+    });
+
+    // Enter key
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        searchBtn.click();
+      }
+    });
+
+    // Popular topics
+    document.querySelectorAll('.topic-tag').forEach(tag => {
+      tag.addEventListener('click', () => {
+        const topic = tag.getAttribute('data-topic');
+        searchInput.value = topic;
+        loadWikipedia(topic);
+      });
+    });
+
+    // Send heartbeat to parent
+    function sendHeartbeat() {
+      window.parent.postMessage({
+        type: 'clm_heartbeat',
+        componentId: 'wikipedia-viewer',
+        timestamp: Date.now(),
+        metrics: {
+          currentArticle: searchInput.value,
+          loaded: true
+        }
+      }, '*');
+    }
+
+    // Send heartbeat every 3 seconds
+    setInterval(sendHeartbeat, 3000);
+
+    // Load default article
+    setTimeout(() => {
+      loadWikipedia('Personal_knowledge_container');
+    }, 500);
+
+    console.log('[Wikipedia Viewer] Ready');
+  </script>
+</body>
+</html>
