@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>External Crash Test</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: monospace;
+      background: #e74c3c;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="loading">
+    <h3>⚠️ Loading Problematic External Content...</h3>
+    <p>This will fail to load or crash</p>
+  </div>
+
+  <script>
+    console.log('[External Crash Test] Attempting to load problematic content...');
+    
+    // Try to load a non-existent script that will cause errors
+    const script = document.createElement('script');
+    script.src = 'https://this-domain-does-not-exist-12345.com/broken.js';
+    script.onerror = () => {
+      console.error('[External Crash Test] Failed to load external script');
+      // Then cause a real crash
+      const crash = null;
+      crash.trigger.error.now();
+    };
+    document.head.appendChild(script);
+    
+    // Also try to access a broken API
+    fetch('https://api.broken-endpoint-that-does-not-exist.com/data')
+      .then(response => response.json())
+      .catch(error => {
+        console.error('[External Crash Test] API call failed:', error);
+        // Cause another crash
+        throw new Error('External API failure caused crash');
+      });
+    
+    // Immediately crash with syntax error
+    setTimeout(() => {
+      const nullObj = null;
+      nullObj.method.call.crash();
+    }, 100);
+  </script>
+</body>
+</html>

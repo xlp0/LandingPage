@@ -22,22 +22,6 @@
     h3 {
       margin: 0 0 15px 0;
     }
-    button {
-      background: #c0392b;
-      color: white;
-      border: 2px solid white;
-      padding: 15px 30px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-family: monospace;
-      font-size: 1.1em;
-      margin: 10px;
-      transition: all 0.3s;
-    }
-    button:hover {
-      background: #a93226;
-      transform: scale(1.05);
-    }
     .warning {
       background: rgba(255, 255, 255, 0.2);
       padding: 10px;
@@ -50,57 +34,27 @@
 <body>
   <div class="crash-panel">
     <h3>⚠️ Crash Test Component</h3>
-    <p>This component demonstrates failure isolation.</p>
+    <p>This component will crash automatically.</p>
     <div class="warning">
-      ⚡ When this component crashes, the rest of the page continues to work normally.
+      ⚡ This component is intentionally broken to demonstrate iframe isolation.
+      The rest of the page will continue to work normally.
     </div>
-    
-    <button onclick="causeInfiniteLoop()">Infinite Loop</button>
-    <button onclick="throwError()">Throw Error</button>
-    <button onclick="accessUndefined()">Access Undefined</button>
-    <button onclick="causeMemoryLeak()">Memory Leak</button>
   </div>
 
   <script>
-    console.log('[Crash Test Component] Loaded - Ready to fail!');
+    console.log('[Crash Test Component] Loaded - Will crash immediately!');
 
-    function causeInfiniteLoop() {
-      console.error('[Crash Test] Triggering infinite loop...');
-      while(true) {
-        // This will freeze the iframe but not the parent page
-        console.log('Looping...');
-      }
-    }
-
-    function throwError() {
-      console.error('[Crash Test] Throwing error...');
-      throw new Error('Intentional error for testing failure isolation!');
-    }
-
-    function accessUndefined() {
-      console.error('[Crash Test] Accessing undefined property...');
-      const obj = null;
-      console.log(obj.property.that.does.not.exist);
-    }
-
-    function causeMemoryLeak() {
-      console.error('[Crash Test] Creating memory leak...');
-      const leakyArray = [];
-      setInterval(() => {
-        leakyArray.push(new Array(1000000).fill('leak'));
-        console.log('Memory leak size:', leakyArray.length);
-      }, 100);
-    }
-
-    // Automatically crash after 3 seconds to demonstrate isolation
-    setTimeout(() => {
-      console.error('[Crash Test] Auto-crashing in 3 seconds...');
-      setTimeout(() => {
-        throwError();
-      }, 3000);
-    }, 0);
-
-    // Try to send heartbeat (will stop after crash)
+    // REAL CRASH: Immediately access undefined property
+    // This will cause an uncaught error and stop all script execution
+    const brokenObject = null;
+    
+    // This line will crash the entire component
+    const result = brokenObject.someProperty.deepProperty.value;
+    
+    // Everything below this line will NEVER execute
+    console.log('This will never print');
+    
+    // Heartbeat will never be sent because the script crashed
     setInterval(() => {
       window.parent.postMessage({
         type: 'clm_heartbeat',
