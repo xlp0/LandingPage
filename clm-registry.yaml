@@ -14,7 +14,7 @@ components:
       goal: "Greet user and set narrative tone"
     concrete:
       implementation: "https://henry.pkc.pub/components/welcome.html"
-      sandbox: "allow-scripts allow-same-origin"
+      sandbox: "allow-scripts"
     balanced:
       metrics_endpoint: "/metrics/welcome"
       health_check: "/health/welcome"
@@ -28,7 +28,7 @@ components:
       goal: "Display auth state and enable OAuth login"
     concrete:
       implementation: "https://henry.pkc.pub/components/auth-status.html"
-      sandbox: "allow-scripts allow-same-origin allow-popups"
+      sandbox: "allow-scripts allow-popups"
     balanced:
       metrics_endpoint: "/metrics/auth"
       health_check: "/health/auth"
@@ -42,7 +42,7 @@ components:
       goal: "Display primary message with animation"
     concrete:
       implementation: "https://henry.pkc.pub/components/hero.html"
-      sandbox: "allow-scripts allow-same-origin"
+      sandbox: "allow-scripts"
     balanced:
       metrics_endpoint: "/metrics/hero"
       health_check: "/health/hero"
@@ -56,7 +56,7 @@ components:
       goal: "Show active peers and connection health"
     concrete:
       implementation: "https://henry.pkc.pub/components/p2p-status.html"
-      sandbox: "allow-scripts allow-same-origin"
+      sandbox: "allow-scripts"
     balanced:
       metrics_endpoint: "/metrics/p2p"
       health_check: "/health/p2p"
@@ -70,7 +70,7 @@ components:
       goal: "Demonstrate that component failure doesn't crash main page"
     concrete:
       implementation: "https://henry.pkc.pub/components/crash-test.html"
-      sandbox: "allow-scripts allow-same-origin"
+      sandbox: "allow-scripts"
     balanced:
       metrics_endpoint: "/metrics/crash-test"
       health_check: "/health/crash-test"
@@ -85,7 +85,7 @@ components:
       goal: "Display list of user accounts with status"
     concrete:
       implementation: "https://henry.pkc.pub/components/user-list.html"
-      sandbox: "allow-scripts allow-same-origin"
+      sandbox: "allow-scripts"
       redux_slice: "users"
     balanced:
       metrics_endpoint: "/metrics/user-list"
@@ -100,7 +100,7 @@ components:
       goal: "Show detailed user information and actions"
     concrete:
       implementation: "https://henry.pkc.pub/components/user-detail.html"
-      sandbox: "allow-scripts allow-same-origin"
+      sandbox: "allow-scripts"
       redux_slice: "users"
     balanced:
       metrics_endpoint: "/metrics/user-detail"
@@ -115,7 +115,7 @@ components:
       goal: "Monitor Redux store and CLM module connections"
     concrete:
       implementation: "https://henry.pkc.pub/components/redux-state-viewer.html"
-      sandbox: "allow-scripts allow-same-origin"
+      sandbox: "allow-scripts"
       redux_slice: "all"
     balanced:
       metrics_endpoint: "/metrics/redux-viewer"

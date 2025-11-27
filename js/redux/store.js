@@ -36,7 +36,9 @@ const store = configureStore({
 });
 
 // Subscribe to store changes for debugging
-if (process.env.NODE_ENV !== 'production') {
+// Enable in development (browser environment)
+const isDevelopment = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+if (isDevelopment) {
   store.subscribe(() => {
     const state = store.getState();
     console.log('[Redux Store] State updated:', {
