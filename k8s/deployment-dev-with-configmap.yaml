@@ -14,6 +14,21 @@ spec:
       labels:
         app: landingpage-dev
     spec:
+      # DNS configuration for resolving external domains (e.g., vpn.pkc.pub)
+      dnsPolicy: "None"
+      dnsConfig:
+        nameservers:
+          - 8.8.8.8
+          - 8.8.4.4
+        searches:
+          - default.svc.cluster.local
+          - svc.cluster.local
+          - cluster.local
+        options:
+          - name: ndots
+            value: "2"
+          - name: edns0
+      
       containers:
       - name: landingpage
         image: henry768/landingpage:latest_landingpage
