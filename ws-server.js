@@ -373,6 +373,56 @@ app.get('/api/config', (req, res) => {
     res.json(config);
 });
 
+// Serve app-config.json dynamically from environment variables
+app.get('/app-config.json', (req, res) => {
+    try {
+        // Parse WebSocket URL from environment
+        const wsUrl = process.env.WEBSOCKET_URL || 'ws://localhost:8765/ws/';
+        const wsUrlObj = new URL(wsUrl);
+        
+        // Extract host and port
+        const wsHost = wsUrlObj.hostname;
+        const wsPort = wsUrlObj.port || (wsUrlObj.protocol === 'wss:' ? 443 : 80);
+        const wsPath = wsUrlObj.pathname;
+        
+        // Parse STUN servers from environment variable
+        let iceServers = [];
+        if (process.env.STUN_SERVERS) {
+            iceServers = process.env.STUN_SERVERS.split(',').map(url => ({
+                urls: url.trim()
+            }));
+        } else {
+            // Default STUN servers
+            iceServers = [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+            ];
+        }
+        
+        const config = {
+            wsHost: wsHost,
+            wsPort: parseInt(wsPort),
+            wsPath: wsPath,
+            p2p: {
+                iceServers: iceServers
+            }
+        };
+        
+        console.log('[Server] Serving /app-config.json from environment:', config);
+        
+        // Set CORS headers
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Content-Type');
+        res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+        
+        res.json(config);
+    } catch (err) {
+        console.error('[Server] Error generating app-config.json:', err);
+        res.status(500).json({ error: 'Failed to generate configuration' });
+    }
+});
+
 // Handle OPTIONS requests for CORS preflight
 app.options('/api/config', (req, res) => {
     res.header('Access-Control-Allow-Origin', '*');
