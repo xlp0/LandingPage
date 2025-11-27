@@ -3,11 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authentication - THK Mesh</title>
+    <title>Authentication - CLM Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Local modules -->
-    <script src="./js/local-storage-manager.js?v=4"></script>
-    <script src="./js/oauth-handler.js?v=4"></script>
     <style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -23,141 +20,77 @@
             </div>
         </div>
         <h1 class="text-3xl font-bold mb-2">Processing Authentication</h1>
-        <p class="text-lg opacity-75">Please wait while we complete your login...</p>
+        <p class="text-lg opacity-75" id="statusText">Please wait while we complete your login...</p>
         <div id="error" class="mt-8 p-4 bg-red-500/20 border border-red-500 rounded-lg hidden">
             <p id="error-message" class="text-red-200"></p>
-            <button onclick="window.location.href='/landing-enhanced.html'" class="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white">Back to Home</button>
+            <button onclick="window.location.href='/'" class="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white">Back to Dashboard</button>
         </div>
     </div>
 
-    <script>
-        // Get modules from window
-        const LocalStorageManager = window.LocalStorageManager;
-        const OAuth2Handler = window.OAuth2Handler;
+    <script type="module">
+        import store from './js/redux/store.js';
+        import { loginWithZitadel } from './js/redux/slices/auth-slice.js';
 
         async function handleAuthCallback() {
             try {
-                // Initialize managers
-                const storage = new LocalStorageManager({
-                    prefix: 'thk-mesh-',
-                    debug: true
-                });
-
-                const oauth = new OAuth2Handler({
-                    domain: 'vpn.pkc.pub',
-                    clientId: '348213051452882951',
-                    redirectUri: window.location.origin + '/auth-callback-enhanced.html',
-                    debug: true
-                });
-
-                storage.init();
-
                 // Get URL parameters
                 const params = new URLSearchParams(window.location.search);
                 const code = params.get('code');
                 const state = params.get('state');
                 
-                console.log('[AuthCallback] Received OAuth callback');
-                console.log('[AuthCallback] Code:', code ? 'present' : 'missing');
-                console.log('[AuthCallback] State:', state ? 'present' : 'missing');
+                console.log('[Auth Callback] Received OAuth callback');
+                console.log('[Auth Callback] Code:', code ? 'present' : 'missing');
+                console.log('[Auth Callback] State:', state ? 'present' : 'missing');
 
                 if (!code) {
                     throw new Error('No authorization code received from Zitadel');
                 }
 
-                // Handle callback
-                const result = await oauth.handleCallback(params);
-                console.log('[AuthCallback] Authorization code verified');
-
-                // Extract code verifier from state parameter
-                let codeVerifier = localStorage.getItem('pkce_code_verifier');
-                console.log('[AuthCallback] Code verifier from localStorage:', codeVerifier);
+                // Get code verifier from localStorage
+                const codeVerifier = localStorage.getItem('pkce_code_verifier');
+                console.log('[Auth Callback] Code verifier:', codeVerifier ? 'present' : 'missing');
                 
-                if (state) {
-                    try {
-                        console.log('[AuthCallback] Parsing state parameter...');
-                        const stateData = JSON.parse(atob(state));
-                        console.log('[AuthCallback] State data:', stateData);
-                        
-                        if (stateData.cv) {
-                            codeVerifier = stateData.cv;
-                            console.log('[AuthCallback] Code verifier extracted from state:', codeVerifier.substring(0, 20) + '...');
-                            // Store it in localStorage for the token exchange
-                            localStorage.setItem('pkce_code_verifier', codeVerifier);
-                        } else {
-                            console.log('[AuthCallback] No code verifier in state data');
-                        }
-                    } catch (e) {
-                        console.log('[AuthCallback] Could not parse state:', e.message);
-                    }
+                if (!codeVerifier) {
+                    throw new Error('No PKCE code verifier found. Please try logging in again.');
                 }
-                console.log('[AuthCallback] Final code verifier:', codeVerifier ? (typeof codeVerifier === 'string' ? codeVerifier.substring(0, 20) + '...' : codeVerifier) : 'MISSING');
 
-                // Store the code for backend exchange
-                localStorage.setItem('auth_code', code);
-                
-                // For now, we'll store the code and indicate that backend exchange is needed
-                const userData = {
-                    id: 'pending-' + Date.now(), // Will be replaced with real user ID from backend
-                    name: 'User', // Will be replaced with real name from Zitadel
-                    email: 'pending@example.com', // Will be replaced with real email from Zitadel
-                    authenticated: true,
-                    authenticatedAt: new Date().toISOString(),
-                    code: code, // Authorization code for backend exchange
-                    requiresBackendExchange: true, // Flag indicating backend needs to exchange code
-                    notes: 'This user data is temporary. Backend must exchange the code for real user info.'
-                };
+                // Update status
+                document.getElementById('statusText').textContent = 'Exchanging authorization code for tokens...';
 
-                // Store user data and token
-                storage.setUser(userData);
-                storage.setAuthToken(code);
-                
-                // Also store directly to localStorage for Redux to find
-                localStorage.setItem('auth_token', code);
-                localStorage.setItem('refresh_token', code);
+                // Dispatch Redux login action
+                const redirectUri = window.location.origin + '/auth-callback-enhanced.html';
+                const resultAction = await store.dispatch(loginWithZitadel({
+                    code,
+                    codeVerifier,
+                    redirectUri
+                }));
 
-                console.log('[AuthCallback] User authenticated (pending backend exchange):', userData);
-                console.log('[AuthCallback] Authorization code stored for backend exchange');
-                console.log('[AuthCallback] PKCE code verifier stored for backend exchange');
-                console.log('[AuthCallback] Backend should exchange code at: /api/auth/token');
-                console.log('[AuthCallback] Stored to localStorage:', {
-                    user: userData,
-                    code: code,
-                    codeVerifier: codeVerifier ? 'present' : 'missing'
-                });
+                // Check if login was successful
+                if (loginWithZitadel.fulfilled.match(resultAction)) {
+                    console.log('[Auth Callback] Login successful via Redux');
+                    document.getElementById('statusText').textContent = 'Login successful! Redirecting...';
+                    
+                    // Clear code verifier
+                    localStorage.removeItem('pkce_code_verifier');
+                    
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1000);
+                } else {
+                    throw new Error(resultAction.payload || 'Login failed');
+                }
 
-                // Show success message
-                document.querySelector('.text-center').innerHTML = `
-                    <div class="mb-6">
-                        <div class="inline-block">
-                            <div class="w-12 h-12 text-green-400">✓</div>
-                        </div>
-                    </div>
-                    <h1 class="text-3xl font-bold mb-2">Authentication Successful!</h1>
-                    <p class="text-lg opacity-75">Welcome, ${userData.name}</p>
-                    <p class="text-sm opacity-50 mt-4">Redirecting back...</p>
-                `;
-
-                // Redirect back to the page that initiated login
-                // Check if there's a returnUrl in state, otherwise default to index.html
-                const returnUrl = localStorage.getItem('auth_return_url') || '/index.html';
-                localStorage.removeItem('auth_return_url'); // Clean up
-                
-                setTimeout(() => {
-                    window.location.href = returnUrl;
-                }, 2000);
-
-            } catch (err) {
-                console.error('[AuthCallback] Error:', err);
+            } catch (error) {
+                console.error('[Auth Callback] Error:', error);
+                document.getElementById('error-message').textContent = error.message;
                 document.getElementById('error').classList.remove('hidden');
-                document.getElementById('error-message').textContent = err.message;
+                document.querySelector('.animate-spin').style.display = 'none';
             }
         }
 
-        // Handle callback when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            handleAuthCallback();
-        });
+        // Start authentication process
+        handleAuthCallback();
     </script>
 </body>
 </html>
