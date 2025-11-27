@@ -130,32 +130,17 @@
   <script>
     console.log('[Redux State Viewer] Initializing...');
 
-    // Mock Redux state
-    const reduxState = {
-      auth: {
-        isAuthenticated: false,
-        user: null,
-        loading: false
-      },
-      users: {
-        list: [],
-        selectedUser: null,
-        loading: false
-      },
-      ui: {
-        theme: 'dark',
-        sidebarOpen: true
-      }
-    };
-
-    const clmModules = [
-      { id: 'user-list', name: 'User List', status: 'active', slice: 'users' },
-      { id: 'user-detail', name: 'User Detail', status: 'active', slice: 'users' },
-      { id: 'auth-status', name: 'Auth Status', status: 'active', slice: 'auth' },
-      { id: 'redux-state-viewer', name: 'Redux Monitor', status: 'active', slice: 'all' }
-    ];
-
+    let reduxState = null;
+    let clmModules = [];
     const recentActions = [];
+
+    // Request Redux state from parent
+    function requestReduxState() {
+      window.parent.postMessage({
+        type: 'request_redux_state',
+        componentId: 'redux-state-viewer'
+      }, '*');
+    }
 
     function addAction(type, payload = {}) {
       const action = {
@@ -170,21 +155,33 @@
 
     function renderCLMModules() {
       const modulesEl = document.getElementById('clmModules');
+      if (clmModules.length === 0) {
+        modulesEl.innerHTML = '<div style="opacity: 0.5;">Loading modules...</div>';
+        return;
+      }
       modulesEl.innerHTML = clmModules.map(module => `
         <div class="clm-module">
-          <span class="module-name">${module.name}</span>
-          <span class="module-status">Redux: ${module.slice}</span>
+          <span class="module-name">${module.name || module.id}</span>
+          <span class="module-status">Redux: ${module.reduxSlice || 'N/A'}</span>
         </div>
       `).join('');
     }
 
     function renderReduxSlices() {
       const slicesEl = document.getElementById('reduxSlices');
-      slicesEl.textContent = JSON.stringify(reduxState, null, 2);
+      if (!reduxState) {
+        slicesEl.textContent = 'Waiting for Redux state...';
+        return;
+      }
+      slicesEl.textContent = JSON.stringify(reduxState.clm || reduxState, null, 2);
     }
 
     function renderActionLog() {
       const logEl = document.getElementById('actionLog');
+      if (recentActions.length === 0) {
+        logEl.innerHTML = '<div style="opacity: 0.5;">No actions yet</div>';
+        return;
+      }
       logEl.innerHTML = recentActions.map(action => `
         <div class="action-item">
           <span class="action-type">${action.type}</span>
@@ -193,17 +190,34 @@
       `).join('');
     }
 
-    // Listen for CLM events and convert to Redux actions
+    // Listen for Redux state updates from parent
     window.addEventListener('message', (event) => {
+      if (event.data.type === 'redux_state_update') {
+        // Update local state
+        reduxState = event.data.state || window.parent.reduxStore?.getState();
+        
+        if (reduxState && reduxState.clm) {
+          // Extract CLM modules from Redux state
+          clmModules = Object.values(reduxState.clm.components || {});
+          
+          // Extract recent events as actions
+          if (reduxState.clm.events && reduxState.clm.events.length > 0) {
+            reduxState.clm.events.slice(0, 10).forEach(event => {
+              const actionType = `${event.componentId}/${event.event}`;
+              if (!recentActions.find(a => a.type === actionType && a.timestamp === event.timestamp)) {
+                addAction(actionType, event.data);
+              }
+            });
+          }
+        }
+        
+        renderCLMModules();
+        renderReduxSlices();
+      }
+
       if (event.data.type === 'clm_event') {
         const actionType = `${event.data.componentId}/${event.data.event}`;
         addAction(actionType, event.data.data);
-        
-        // Simulate Redux state update
-        if (event.data.event === 'user_selected') {
-          reduxState.users.selectedUser = event.data.data.userId;
-          renderReduxSlices();
-        }
       }
     });
 
@@ -212,9 +226,16 @@
     renderReduxSlices();
     renderActionLog();
 
-    // Simulate some initial actions
-    setTimeout(() => addAction('@@INIT'), 500);
-    setTimeout(() => addAction('clm/COMPONENTS_LOADED'), 1000);
+    // Request initial state
+    setTimeout(() => {
+      requestReduxState();
+      addAction('@@INIT');
+    }, 500);
+
+    // Periodically request Redux state updates
+    setInterval(() => {
+      requestReduxState();
+    }, 2000);
 
     // Send heartbeat
     setInterval(() => {

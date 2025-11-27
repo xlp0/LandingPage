@@ -220,14 +220,19 @@
       </div>
     </div>
 
-    <!-- CLM Iframe Loader -->
-    <script src="/js/clm-iframe-loader.js"></script>
+    <!-- Redux Store -->
+    <script type="module">
+      import store from './js/redux/store.js';
+      import { 
+        fetchCLMRegistry, 
+        loadCLMComponent,
+        componentLoaded 
+      } from './js/redux/slices/clm-slice.js';
 
-    <script>
-      console.log('[Dashboard] Initializing CLM Account Management Dashboard...');
+      console.log('[Dashboard] Initializing CLM Account Management Dashboard with Redux...');
 
-      // Initialize CLM Loader
-      const clmLoader = new CLMIframeLoader();
+      // Make store globally available
+      window.reduxStore = store;
 
       // Component configuration for dashboard
       const dashboardComponents = [
@@ -238,26 +243,53 @@
         { id: 'crash-test', iframeId: 'iframe-crash-test' }
       ];
 
-      // Load all components
+      // Load all components using Redux
       async function loadDashboard() {
         try {
-          const registry = await clmLoader.fetchRegistry();
-          console.log('[Dashboard] Registry loaded:', registry);
+          // Fetch registry via Redux thunk
+          const registryAction = await store.dispatch(fetchCLMRegistry());
+          
+          if (fetchCLMRegistry.fulfilled.match(registryAction)) {
+            const registry = registryAction.payload;
+            console.log('[Dashboard] Registry loaded via Redux:', registry);
 
-          // Load each component
-          for (const comp of dashboardComponents) {
-            const componentConfig = registry.components.find(c => c.id === comp.id);
-            if (componentConfig) {
-              const iframe = document.getElementById(comp.iframeId);
-              await clmLoader.loadComponent(componentConfig, iframe);
-              console.log(`[Dashboard] Loaded component: ${comp.id}`);
+            // Load each component via Redux
+            for (const comp of dashboardComponents) {
+              const componentConfig = registry.components.find(c => c.id === comp.id);
+              if (componentConfig) {
+                // Dispatch load action
+                const loadAction = await store.dispatch(
+                  loadCLMComponent({ 
+                    componentId: comp.id, 
+                    iframeId: comp.iframeId 
+                  })
+                );
+
+                if (loadCLMComponent.fulfilled.match(loadAction)) {
+                  // Actually load the iframe
+                  const iframe = document.getElementById(comp.iframeId);
+                  iframe.src = componentConfig.url;
+                  
+                  // Mark as loaded in Redux
+                  store.dispatch(componentLoaded({
+                    componentId: comp.id,
+                    iframeId: comp.iframeId,
+                    url: componentConfig.url
+                  }));
+                  
+                  console.log(`[Dashboard] Loaded component via Redux: ${comp.id}`);
+                }
+              }
             }
-          }
 
-          // Hide loading overlay
-          setTimeout(() => {
-            document.getElementById('loadingOverlay').classList.add('hidden');
-          }, 1000);
+            // Hide loading overlay
+            setTimeout(() => {
+              document.getElementById('loadingOverlay').classList.add('hidden');
+            }, 1000);
+
+          } else {
+            throw new Error('Failed to fetch registry');
+          }
 
         } catch (error) {
           console.error('[Dashboard] Failed to load:', error);
@@ -265,37 +297,43 @@
         }
       }
 
-      // Handle component events (Redux actions)
+      // Monitor heartbeats and update UI
       window.addEventListener('message', (event) => {
-        if (event.data.type === 'clm_event') {
-          console.log('[Dashboard] CLM Event:', event.data);
-          
-          // Broadcast to all iframes (simulating Redux dispatch)
-          dashboardComponents.forEach(comp => {
-            const iframe = document.getElementById(comp.iframeId);
-            if (iframe && iframe.contentWindow) {
-              iframe.contentWindow.postMessage({
-                type: 'redux_state_update',
-                action: event.data,
-                timestamp: Date.now()
-              }, '*');
-            }
-          });
-        }
-
-        // Monitor heartbeats
         if (event.data.type === 'clm_heartbeat') {
           const statusDot = document.getElementById(`status-${event.data.componentId}`);
           if (statusDot) {
             statusDot.style.background = '#4caf50';
           }
         }
+
+        // Handle Redux state requests from components
+        if (event.data.type === 'request_redux_state') {
+          const state = store.getState();
+          const iframe = document.getElementById(`iframe-${event.data.componentId}`);
+          if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.postMessage({
+              type: 'redux_state_update',
+              state: state,
+              timestamp: Date.now()
+            }, '*');
+          }
+        }
+      });
+
+      // Subscribe to Redux store for debugging
+      store.subscribe(() => {
+        const state = store.getState();
+        console.log('[Dashboard] Redux State:', {
+          loadedComponents: Object.keys(state.clm.components).length,
+          totalEvents: state.clm.events.length,
+          metrics: state.clm.metrics
+        });
       });
 
       // Start loading
       loadDashboard();
 
-      console.log('[Dashboard] CLM Dashboard initialized');
+      console.log('[Dashboard] CLM Dashboard with Redux initialized');
     </script>
 </body>
 </html>
