@@ -3,7 +3,7 @@
  * Manages Cubical Logic Model component state, events, and lifecycle
  */
 
-const { createSlice, createAsyncThunk } = window.RTK;
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Async thunk to fetch CLM registry
 export const fetchCLMRegistry = createAsyncThunk(

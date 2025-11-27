@@ -3,7 +3,7 @@
  * Manages authentication state with Zitadel OAuth2
  */
 
-import { createSlice, createAsyncThunk } from 'https://unpkg.com/@reduxjs/toolkit@1.9.7/dist/redux-toolkit.esm.js';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Async thunk to login with Zitadel
 export const loginWithZitadel = createAsyncThunk(

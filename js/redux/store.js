@@ -3,7 +3,7 @@
  * Combines CLM and Auth slices with middleware
  */
 
-import { configureStore } from 'https://unpkg.com/@reduxjs/toolkit@1.9.7/dist/redux-toolkit.esm.js';
+import { configureStore } from '@reduxjs/toolkit';
 import clmReducer from './slices/clm-slice.js';
 import authReducer from './slices/auth-slice.js';
 import clmMiddleware from './middleware/clm-middleware.js';
