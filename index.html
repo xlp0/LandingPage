@@ -373,11 +373,24 @@
                 }
               }
             }
+
+            // Hide loading overlay after all components are loaded
+            setTimeout(() => {
+              const loadingOverlay = document.querySelector('.loading-overlay');
+              if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+              }
+              console.log('[Dashboard] All components loaded, hiding overlay');
+            }, 1000);
           }
 
         } catch (error) {
           console.error('[Dashboard] Failed to load:', error);
-          document.querySelector('.loading-text').textContent = 'Failed to load components';
+          const loadingOverlay = document.querySelector('.loading-overlay');
+          if (loadingOverlay) {
+            loadingOverlay.style.display = 'none';
+          }
+          alert('Failed to load components: ' + error.message);
         }
       }
 

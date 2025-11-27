@@ -85,11 +85,12 @@ components:
       goal: "Display Wikipedia articles in iframe for knowledge reference"
     concrete:
       implementation: "https://henry.pkc.pub/components/wikipedia-viewer.html"
-      sandbox: "allow-scripts allow-same-origin"
+      sandbox: "allow-scripts"
     balanced:
       metrics_endpoint: "/metrics/wikipedia"
       health_check: "/health/wikipedia"
       expected_load_time_ms: 1500
+      expected_failure: false
 
   - id: "user-list"
     name: "User Account List"
