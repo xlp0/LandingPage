@@ -24,6 +24,9 @@ services:
       - ZITADEL_DOMAIN=${ZITADEL_DOMAIN}
       - REDIRECT_URI=${REDIRECT_URI}
       - PKC_Title_Text=${PKC_Title_Text:-PKC Landing Page}
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     networks:
       - landingpage-network
 
