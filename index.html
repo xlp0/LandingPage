@@ -365,7 +365,7 @@
         if (isAuthenticated && user) {
           loginBtn.innerHTML = `👤 ${user.name || user.email || 'User'}`;
           loginBtn.style.background = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)';
-          console.log('[Dashboard] User is logged in (Redux):', user);
+          // Reduced logging - only log on initial load
         } else {
           loginBtn.innerHTML = '🔐 Login';
           loginBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
@@ -587,14 +587,22 @@
         }
       });
 
-      // Subscribe to Redux store for debugging
+      // Subscribe to Redux state changes for debugging (reduced verbosity)
+      let lastComponentCount = 0;
       store.subscribe(() => {
         const state = store.getState();
-        console.log('[Dashboard] Redux State:', {
-          loadedComponents: Object.keys(state.clm.components).length,
-          totalEvents: state.clm.events.length,
-          metrics: state.clm.metrics
-        });
+        const clmState = selectCLMState(state);
+        const currentCount = Object.keys(clmState.components).length;
+        
+        // Only log when component count changes
+        if (currentCount !== lastComponentCount) {
+          console.log('[Dashboard] Redux State:', {
+            loadedComponents: currentCount,
+            totalEvents: clmState.events.length,
+            metrics: clmState.metrics
+          });
+          lastComponentCount = currentCount;
+        }
       });
 
       // Start loading
