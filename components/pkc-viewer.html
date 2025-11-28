@@ -408,17 +408,25 @@ $$
         };
 
         function loadExample(type) {
+            hideError();
+            hideLoading();
             const content = samples[type];
             renderMarkdown(content);
             document.getElementById('docUrl').value = `Sample ${type}`;
+            showContent();
         }
 
         async function loadDocument() {
             const url = document.getElementById('docUrl').value.trim();
             
             if (!url) {
-                showError('Please enter a document URL');
+                showError('Please enter a document URL or try a sample document');
                 return;
+            }
+
+            // Check if it's a sample
+            if (url.startsWith('Sample ')) {
+                return; // Already loaded by loadExample
             }
 
             showLoading();
@@ -447,7 +455,7 @@ $$
                 showContent();
             } catch (error) {
                 hideLoading();
-                showError(`Failed to load document: ${error.message}`);
+                showError(`Failed to load document: ${error.message}. Try using a sample document instead.`);
             }
         }
 
