@@ -291,6 +291,7 @@ export const {
 } = clmSlice.actions;
 
 // Selectors
+export const selectCLMState = (state) => state.clm;
 export const selectCLMRegistry = (state) => state.clm.registry;
 export const selectActiveComponent = (state) => state.clm.activeComponent;
 export const selectCLMComponents = (state) => state.clm.components;
