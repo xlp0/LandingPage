@@ -136,6 +136,21 @@ components:
       metrics_endpoint: "/metrics/redux-viewer"
       health_check: "/health/redux-viewer"
       expected_load_time_ms: 200
+
+  - id: "wikipedia-search"
+    name: "Wikipedia Search"
+    url: "https://henry.pkc.pub/components/wikipedia-search.html"
+    abstract:
+      context: "Knowledge base search and article viewer"
+      goal: "Search Wikipedia and display article summaries"
+    concrete:
+      implementation: "https://henry.pkc.pub/components/wikipedia-search.html"
+      sandbox: "allow-scripts"
+    balanced:
+      metrics_endpoint: "/metrics/wikipedia-search"
+      health_check: "/health/wikipedia-search"
+      expected_load_time_ms: 400
+      expected_failure: false
       
 # Observability Configuration
 observability:
