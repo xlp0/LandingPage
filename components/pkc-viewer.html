@@ -508,7 +508,7 @@ $$
             const mathBlocks = [];
             let processedMarkdown = markdown.replace(/\$\$([\s\S]*?)\$\$/g, (match, math) => {
                 mathBlocks.push(math);
-                return `___MATH_BLOCK_${mathBlocks.length - 1}___`;
+                return `MATHBLOCKPLACEHOLDER${mathBlocks.length - 1}ENDPLACEHOLDER`;
             });
             
             // Configure marked
@@ -526,8 +526,8 @@ $$
             // Render markdown
             let html = marked.parse(processedMarkdown);
             
-            // Restore display math blocks
-            html = html.replace(/___MATH_BLOCK_(\d+)___/g, (match, index) => {
+            // Restore display math blocks (handle both plain and wrapped in tags)
+            html = html.replace(/(?:<[^>]*>)*MATHBLOCKPLACEHOLDER(\d+)ENDPLACEHOLDER(?:<\/[^>]*>)*/g, (match, index) => {
                 return `<div class="math-display">$$${mathBlocks[index]}$$</div>`;
             });
             
