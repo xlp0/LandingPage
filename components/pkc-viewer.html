@@ -243,10 +243,38 @@
         }
 
         /* LaTeX Math Styles */
+        .math-display {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f7fafc;
+            border-radius: 6px;
+            overflow-x: auto;
+            text-align: center;
+        }
+
         .katex-display {
             margin: 1rem 0;
             overflow-x: auto;
             overflow-y: hidden;
+        }
+
+        /* TikZ diagram container */
+        .tikz-container {
+            background: #f7fafc;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            text-align: center;
+        }
+
+        .tikz-container pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 4px;
+            text-align: left;
+            font-size: 0.85rem;
         }
 
         .example-docs {
@@ -404,6 +432,20 @@ $$
 $$
 \\int_0^\\infty e^{-x^2} dx = \\frac{\\sqrt{\\pi}}{2}
 $$
+
+## TikZ Diagram Example
+
+\`\`\`tikz
+\\begin{tikzpicture}
+  \\draw[thick,->] (0,0) -- (4,0) node[anchor=north west] {x axis};
+  \\draw[thick,->] (0,0) -- (0,4) node[anchor=south east] {y axis};
+  \\draw[blue,thick] (0,0) -- (3,3);
+  \\filldraw[red] (0,0) circle (2pt) node[anchor=north east] {Origin};
+  \\filldraw[red] (3,3) circle (2pt) node[anchor=south west] {Point};
+\\end{tikzpicture}
+\`\`\`
+
+**Note:** TikZ diagrams show as code blocks. For full rendering, use a LaTeX compiler or TikZ-to-SVG converter.
 `
         };
 
@@ -462,6 +504,13 @@ $$
         function renderMarkdown(markdown) {
             const contentDiv = document.getElementById('content');
             
+            // Protect display math from being processed by Marked
+            const mathBlocks = [];
+            let processedMarkdown = markdown.replace(/\$\$([\s\S]*?)\$\$/g, (match, math) => {
+                mathBlocks.push(math);
+                return `___MATH_BLOCK_${mathBlocks.length - 1}___`;
+            });
+            
             // Configure marked
             marked.setOptions({
                 breaks: true,
@@ -475,11 +524,20 @@ $$
             });
 
             // Render markdown
-            let html = marked.parse(markdown);
+            let html = marked.parse(processedMarkdown);
+            
+            // Restore display math blocks
+            html = html.replace(/___MATH_BLOCK_(\d+)___/g, (match, index) => {
+                return `<div class="math-display">$$${mathBlocks[index]}$$</div>`;
+            });
             
             // Handle mermaid diagrams
             html = html.replace(/<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g, 
                 '<div class="mermaid">$1</div>');
+            
+            // Handle TikZ diagrams
+            html = html.replace(/<pre><code class="language-tikz">([\s\S]*?)<\/code><\/pre>/g, 
+                '<div class="tikz-container"><pre class="tikz">$1</pre></div>');
             
             contentDiv.innerHTML = html;
 
