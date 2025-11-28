@@ -331,7 +331,8 @@
       import { 
         fetchCLMRegistry, 
         loadCLMComponent,
-        componentLoaded 
+        componentLoaded,
+        setActiveComponent 
       } from './js/redux/slices/clm-slice.js';
       import { 
         loginWithZitadel, 
@@ -466,6 +467,9 @@
         if (selectedItem) {
           selectedItem.classList.add('active');
         }
+        
+        // Update Redux state
+        store.dispatch(setActiveComponent(componentHash));
         
         console.log('[Dashboard] Switched to component:', componentHash);
       }

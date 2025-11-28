@@ -59,6 +59,10 @@ const initialState = {
     sidecar: null
   },
   
+  // Active component selection
+  activeComponent: null,
+  // Example: 'welcome' or 'google-maps'
+  
   // Component instances
   components: {},
   // Example: { 'user-list': { id: 'user-list', status: 'loaded', iframeId: 'iframe-user-list', ... } }
@@ -132,6 +136,19 @@ const clmSlice = createSlice({
         state.metrics.loadedComponents -= 1;
       }
       console.log(`[CLM Slice] Component unloaded: ${componentId}`);
+    },
+
+    // Set active component
+    setActiveComponent: (state, action) => {
+      const componentHash = action.payload;
+      state.activeComponent = componentHash;
+      console.log(`[CLM Slice] Active component set to: ${componentHash}`);
+    },
+
+    // Clear active component
+    clearActiveComponent: (state) => {
+      state.activeComponent = null;
+      console.log(`[CLM Slice] Active component cleared`);
     },
 
     // Event handling
@@ -264,6 +281,8 @@ export const {
   componentLoaded,
   componentFailed,
   componentUnloaded,
+  setActiveComponent,
+  clearActiveComponent,
   componentEvent,
   componentHeartbeat,
   detectFailedComponents,
@@ -273,6 +292,7 @@ export const {
 
 // Selectors
 export const selectCLMRegistry = (state) => state.clm.registry;
+export const selectActiveComponent = (state) => state.clm.activeComponent;
 export const selectCLMComponents = (state) => state.clm.components;
 export const selectCLMEvents = (state) => state.clm.events;
 export const selectCLMHeartbeats = (state) => state.clm.heartbeats;
