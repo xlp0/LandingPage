@@ -25,7 +25,7 @@ components:
       context: "Entry point for user interaction"
       goal: "Greet user and set narrative tone"
     concrete:
-      implementation: "https://henry.pkc.pub/components/welcome.html"
+      implementation: "components/welcome.html"
       sandbox: "allow-scripts"
     balanced:
       metrics_endpoint: "/metrics/welcome"
@@ -38,7 +38,7 @@ components:
       context: "Main content presentation"
       goal: "Display primary message with animation"
     concrete:
-      implementation: "https://henry.pkc.pub/components/hero.html"
+      implementation: "components/hero.html"
       sandbox: "allow-scripts"
     balanced:
       metrics_endpoint: "/metrics/hero"
@@ -51,7 +51,7 @@ components:
       context: "WebRTC peer connection monitoring"
       goal: "Show active peers and connection health"
     concrete:
-      implementation: "https://henry.pkc.pub/components/p2p-status.html"
+      implementation: "components/p2p-status.html"
       sandbox: "allow-scripts"
     balanced:
       metrics_endpoint: "/metrics/p2p"
@@ -64,7 +64,7 @@ components:
       context: "Testing failure isolation"
       goal: "Demonstrate that component failure doesn't crash main page"
     concrete:
-      implementation: "https://henry.pkc.pub/components/crash-test.html"
+      implementation: "components/crash-test.html"
       sandbox: "allow-scripts"
     balanced:
       metrics_endpoint: "/metrics/crash-test"
@@ -78,7 +78,7 @@ components:
       context: "External content integration"
       goal: "Display Wikipedia articles in iframe for knowledge reference"
     concrete:
-      implementation: "https://henry.pkc.pub/components/wikipedia-viewer.html"
+      implementation: "components/wikipedia-viewer.html"
       sandbox: "allow-scripts"
     balanced:
       metrics_endpoint: "/metrics/wikipedia"
@@ -92,7 +92,7 @@ components:
       context: "Account management dashboard"
       goal: "Display list of user accounts with status"
     concrete:
-      implementation: "https://henry.pkc.pub/components/user-list.html"
+      implementation: "components/user-list.html"
       sandbox: "allow-scripts"
       redux_slice: "users"
     balanced:
@@ -106,7 +106,7 @@ components:
       context: "Account detail view"
       goal: "Show detailed user information and actions"
     concrete:
-      implementation: "https://henry.pkc.pub/components/user-detail.html"
+      implementation: "components/user-detail.html"
       sandbox: "allow-scripts"
       redux_slice: "users"
     balanced:
@@ -120,7 +120,7 @@ components:
       context: "Redux state visualization"
       goal: "Monitor Redux store and CLM module connections"
     concrete:
-      implementation: "https://henry.pkc.pub/components/redux-state-viewer.html"
+      implementation: "components/redux-state-viewer.html"
       sandbox: "allow-scripts"
       redux_slice: "all"
     balanced:
@@ -134,7 +134,7 @@ components:
       context: "Knowledge base search and article viewer"
       goal: "Search Wikipedia and display article summaries"
     concrete:
-      implementation: "https://henry.pkc.pub/components/wikipedia-search.html"
+      implementation: "components/wikipedia-search.html"
       sandbox: "allow-scripts"
     balanced:
       metrics_endpoint: "/metrics/wikipedia-search"
@@ -176,7 +176,7 @@ components:
       context: "Document rendering and visualization"
       goal: "Render Markdown and LaTeX documents with math, diagrams, and syntax highlighting"
     concrete:
-      implementation: "https://henry.pkc.pub/components/pkc-viewer.html"
+      implementation: "components/pkc-viewer.html"
       sandbox: "allow-scripts allow-same-origin"
     balanced:
       metrics_endpoint: "/metrics/pkc-viewer"

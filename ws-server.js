@@ -340,6 +340,7 @@ app.get('/api/env', (req, res) => {
             ZITADEL_DOMAIN: process.env.ZITADEL_DOMAIN || '',
             REDIRECT_URI: process.env.REDIRECT_URI || '',
             PKC_Title_Text: process.env.PKC_Title_Text || 'PKC Landing Page',
+            BASE_URL: process.env.BASE_URL || 'https://henry.pkc.pub',
             NODE_ENV: process.env.NODE_ENV || 'development'
         };
         res.json(envObj);

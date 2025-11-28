@@ -5,20 +5,68 @@
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
+// Helper function to resolve component URLs
+// If URL is relative (doesn't start with http:// or https://), prepend BASE_URL
+function resolveComponentURL(url, baseURL) {
+  if (!url) return url;
+  
+  // If URL is absolute (starts with http:// or https://), return as-is
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  
+  // If URL is relative, prepend BASE_URL
+  // Remove trailing slash from baseURL and leading slash from url if present
+  const cleanBaseURL = baseURL.replace(/\/$/, '');
+  const cleanURL = url.startsWith('/') ? url : `/${url}`;
+  
+  return `${cleanBaseURL}${cleanURL}`;
+}
+
 // Async thunk to fetch CLM registry
 export const fetchCLMRegistry = createAsyncThunk(
   'clm/fetchRegistry',
   async (_, { rejectWithValue }) => {
     try {
+      console.log('[CLM Slice] Fetching registry...');
+      
+      // Fetch BASE_URL from environment
+      const envResponse = await fetch('/api/env');
+      const envData = await envResponse.json();
+      const baseURL = envData.BASE_URL || window.location.origin;
+      
+      console.log('[CLM Slice] BASE_URL:', baseURL);
+      
+      // Fetch registry
       const response = await fetch('/api/clm/registry');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      // API returns { success: true, registry: {...} }
-      return data.registry || data;
+      const registry = data.registry || data;
+      
+      // Resolve relative URLs in components
+      if (registry.components && Array.isArray(registry.components)) {
+        registry.components = registry.components.map(component => {
+          if (component.concrete && component.concrete.implementation) {
+            const resolvedURL = resolveComponentURL(component.concrete.implementation, baseURL);
+            console.log(`[CLM Slice] Resolved ${component.hash}: ${component.concrete.implementation} → ${resolvedURL}`);
+            return {
+              ...component,
+              concrete: {
+                ...component.concrete,
+                implementation: resolvedURL
+              }
+            };
+          }
+          return component;
+        });
+      }
+      
+      console.log('[CLM Slice] Registry loaded:', registry.components.length, 'components');
+      return registry;
     } catch (error) {
-      console.error('[CLM Slice] Failed to fetch registry:', error);
+      console.error('[CLM Slice] Registry fetch failed:', error);
       return rejectWithValue(error.message);
     }
   }
