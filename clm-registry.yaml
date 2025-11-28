@@ -155,6 +155,20 @@ components:
       health_check: "/health/external-site"
       expected_load_time_ms: 2000
       expected_failure: false
+
+  - hash: "google-maps"
+    name: "Google Maps"
+    abstract:
+      context: "Location and mapping service integration"
+      goal: "Embed Google Maps to show geographic data visualization"
+    concrete:
+      implementation: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127641.04923321933!2d103.70415!3d1.3521!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31da11238a8b9375%3A0x887869cf52abf5c4!2sSingapore!5e0!3m2!1sen!2ssg!4v1234567890"
+      sandbox: "allow-scripts allow-same-origin"
+    balanced:
+      metrics_endpoint: "/metrics/google-maps"
+      health_check: "/health/google-maps"
+      expected_load_time_ms: 1500
+      expected_failure: false
       
 # Observability Configuration
 observability:
