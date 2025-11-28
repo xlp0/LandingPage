@@ -12,16 +12,15 @@
 #   - Images, nested models, complex documents, etc.
 #   - The context itself can be a very long article
 #
-# Simplified structure: hyperlinks instead of hashes
+# Note: "hash" field represents the unique identifier (can be actual hash or semantic ID)
 # Each component is isolated in iframe for failure containment
 
 version: "2.0.0"
 registry_url: "https://henry.pkc.pub/clm"
 
 components:
-  - id: "welcome"
+  - hash: "welcome"
     name: "Welcome Component"
-    url: "https://henry.pkc.pub/components/welcome.html"
     abstract:
       context: "Entry point for user interaction"
       goal: "Greet user and set narrative tone"
@@ -33,23 +32,8 @@ components:
       health_check: "/health/welcome"
       expected_load_time_ms: 500
       
-  - id: "auth-status"
-    name: "Authentication Status"
-    url: "https://henry.pkc.pub/components/auth-status.html"
-    abstract:
-      context: "User identity and session management"
-      goal: "Display auth state and enable OAuth login"
-    concrete:
-      implementation: "https://henry.pkc.pub/components/auth-status.html"
-      sandbox: "allow-scripts allow-popups"
-    balanced:
-      metrics_endpoint: "/metrics/auth"
-      health_check: "/health/auth"
-      expected_load_time_ms: 300
-      
-  - id: "hero-content"
+  - hash: "hero-content"
     name: "Hero Content"
-    url: "https://henry.pkc.pub/components/hero.html"
     abstract:
       context: "Main content presentation"
       goal: "Display primary message with animation"
@@ -61,9 +45,8 @@ components:
       health_check: "/health/hero"
       expected_load_time_ms: 800
       
-  - id: "p2p-status"
+  - hash: "p2p-status"
     name: "P2P Status Panel"
-    url: "https://henry.pkc.pub/components/p2p-status.html"
     abstract:
       context: "WebRTC peer connection monitoring"
       goal: "Show active peers and connection health"
@@ -75,9 +58,8 @@ components:
       health_check: "/health/p2p"
       expected_load_time_ms: 400
       
-  - id: "crash-test"
+  - hash: "crash-test"
     name: "Intentional Failure Component"
-    url: "https://henry.pkc.pub/components/crash-test.html"
     abstract:
       context: "Testing failure isolation"
       goal: "Demonstrate that component failure doesn't crash main page"
@@ -90,9 +72,8 @@ components:
       expected_load_time_ms: 100
       expected_failure: true
 
-  - id: "wikipedia-viewer"
+  - hash: "wikipedia-viewer"
     name: "Wikipedia Knowledge Base"
-    url: "https://henry.pkc.pub/components/wikipedia-viewer.html"
     abstract:
       context: "External content integration"
       goal: "Display Wikipedia articles in iframe for knowledge reference"
@@ -105,9 +86,8 @@ components:
       expected_load_time_ms: 1500
       expected_failure: false
 
-  - id: "user-list"
+  - hash: "user-list"
     name: "User Account List"
-    url: "https://henry.pkc.pub/components/user-list.html"
     abstract:
       context: "Account management dashboard"
       goal: "Display list of user accounts with status"
@@ -120,9 +100,8 @@ components:
       health_check: "/health/user-list"
       expected_load_time_ms: 400
 
-  - id: "user-detail"
+  - hash: "user-detail"
     name: "User Account Detail"
-    url: "https://henry.pkc.pub/components/user-detail.html"
     abstract:
       context: "Account detail view"
       goal: "Show detailed user information and actions"
@@ -135,9 +114,8 @@ components:
       health_check: "/health/user-detail"
       expected_load_time_ms: 300
 
-  - id: "redux-state-viewer"
+  - hash: "redux-state-viewer"
     name: "Redux Store Monitor"
-    url: "https://henry.pkc.pub/components/redux-state-viewer.html"
     abstract:
       context: "Redux state visualization"
       goal: "Monitor Redux store and CLM module connections"
@@ -150,9 +128,8 @@ components:
       health_check: "/health/redux-viewer"
       expected_load_time_ms: 200
 
-  - id: "wikipedia-search"
+  - hash: "wikipedia-search"
     name: "Wikipedia Search"
-    url: "https://henry.pkc.pub/components/wikipedia-search.html"
     abstract:
       context: "Knowledge base search and article viewer"
       goal: "Search Wikipedia and display article summaries"

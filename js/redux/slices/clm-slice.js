@@ -30,7 +30,7 @@ export const loadCLMComponent = createAsyncThunk(
   async ({ componentId, iframeId }, { getState, rejectWithValue }) => {
     try {
       const state = getState();
-      const component = state.clm.registry.components.find(c => c.id === componentId);
+      const component = state.clm.registry.components.find(c => c.hash === componentId);
       
       if (!component) {
         throw new Error(`Component ${componentId} not found in registry`);

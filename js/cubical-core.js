@@ -66,7 +66,7 @@ export class CubicalApp {
      * @param {CubicalComponent} component 
      */
     addComponent(component) {
-        this.components.set(component.id, component);
+        this.components.set(component.hash, component);
         this.root.appendChild(component.render());
     }
 

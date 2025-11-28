@@ -322,11 +322,11 @@
 
       // Create component frame dynamically
       function createComponentFrame(component) {
-        const iframeId = `iframe-${component.id}`;
-        const statusId = `status-${component.id}`;
+        const iframeId = `iframe-${component.hash}`;
+        const statusId = `status-${component.hash}`;
         
         // Determine display name
-        const displayName = component.name || component.id;
+        const displayName = component.name || component.hash;
         const reduxSlice = component.concrete?.redux_slice || component.redux_slice;
         const label = reduxSlice ? `${displayName} [Redux: ${reduxSlice}]` : displayName;
         const isExpectedFailure = component.balanced?.expected_failure;
@@ -369,23 +369,23 @@
               // Dispatch load action
               const loadAction = await store.dispatch(
                 loadCLMComponent({ 
-                  componentId: componentConfig.id, 
+                  componentId: componentConfig.hash, 
                   iframeId: iframeId 
                 })
               );
 
               if (loadCLMComponent.fulfilled.match(loadAction)) {
-                console.log('[Dashboard] Loaded component via Redux:', componentConfig.id);
+                console.log('[Dashboard] Loaded component via Redux:', componentConfig.hash);
                 
                 // Set iframe src
                 const iframe = document.getElementById(iframeId);
                 if (iframe) {
-                  iframe.src = componentConfig.url;
+                  iframe.src = componentConfig.concrete?.implementation || componentConfig.url;
                   
                   // Dispatch componentLoaded when iframe loads
                   iframe.onload = () => {
                     store.dispatch(componentLoaded({
-                      componentId: componentConfig.id,
+                      componentId: componentConfig.hash,
                       iframeId: iframeId,
                       url: componentConfig.url
                     }));
