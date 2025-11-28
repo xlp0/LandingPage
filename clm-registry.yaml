@@ -1,4 +1,17 @@
 # CLM Component Registry
+# Based on Cubic Logic Model (CLM) - 三套東西 (Three Sets)
+#
+# Core Principle: Each component is a function f(goal, process) → output
+# 
+# Three Sets Structure:
+#   1. Abstract (Context): The situation/environment - "contact"
+#   2. Concrete (Goal): The objective/implementation - "goal"  
+#   3. Balanced (Success): The outcome/metrics - "success"
+#
+# Details are represented as hash values (URLs) pointing to:
+#   - Images, nested models, complex documents, etc.
+#   - The context itself can be a very long article
+#
 # Simplified structure: hyperlinks instead of hashes
 # Each component is isolated in iframe for failure containment
 
