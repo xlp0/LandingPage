@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PKC Document Viewer</title>
+    
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- KaTeX for LaTeX math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- Mermaid.js for diagram rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    
+    <!-- Highlight.js for code syntax highlighting -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .viewer-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .controls h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .input-group button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-weight: 600;
+        }
+
+        .input-group button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #fee;
+            border: 2px solid #fcc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            color: #c33;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .content {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            line-height: 1.8;
+            border: 1px solid #e2e8f0;
+        }
+
+        .content h1 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        .content h2 {
+            color: #34495e;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 0.3rem;
+        }
+
+        .content h3 {
+            color: #4a5568;
+            margin-top: 1.2rem;
+            margin-bottom: 0.6rem;
+            font-size: 1.2rem;
+        }
+
+        .content p {
+            margin-bottom: 1rem;
+            color: #4a5568;
+        }
+
+        .content ul, .content ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .content li {
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+
+        .content code {
+            background: #f7fafc;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+            font-size: 0.9em;
+        }
+
+        .content pre {
+            background: #2d3748;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .content pre code {
+            background: none;
+            padding: 0;
+            color: #e2e8f0;
+            font-size: 0.85rem;
+        }
+
+        .content blockquote {
+            border-left: 4px solid #667eea;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: #5a6978;
+            font-style: italic;
+        }
+
+        .content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .content table th {
+            background: #667eea;
+            color: white;
+            padding: 0.6rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .content table td {
+            padding: 0.6rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .content table tr:hover {
+            background: #f7fafc;
+        }
+
+        .content a {
+            color: #667eea;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .content a:hover {
+            border-bottom-color: #667eea;
+        }
+
+        .content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin: 1rem 0;
+        }
+
+        .mermaid {
+            background: #f7fafc;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        /* LaTeX Math Styles */
+        .katex-display {
+            margin: 1rem 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        .example-docs {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .example-docs a {
+            color: white;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+
+        .example-docs a:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="viewer-container">
+        <div class="controls">
+            <h3>📄 PKC Document Viewer</h3>
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="docUrl" 
+                    placeholder="Enter document URL (Markdown or LaTeX)"
+                    value="">
+                <button onclick="loadDocument()">Load Document</button>
+            </div>
+            <div class="example-docs">
+                <strong>Examples:</strong>
+                <a onclick="loadExample('markdown')">Sample Markdown</a>
+                <a onclick="loadExample('latex')">Sample LaTeX</a>
+            </div>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p>Loading document...</p>
+        </div>
+        
+        <div id="error" class="error" style="display: none;"></div>
+        
+        <div id="content" class="content" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ 
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+
+        // Sample documents
+        const samples = {
+            markdown: `# Sample Markdown Document
+
+## Introduction
+
+This is a **sample document** demonstrating *Markdown* rendering with LaTeX math support.
+
+### Features
+
+- **Bold** and *italic* text
+- Lists and nested items
+  - Subitem 1
+  - Subitem 2
+- Code blocks
+- Math equations
+- Tables
+
+### Inline Math
+
+The quadratic formula is $x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$.
+
+### Display Math
+
+$$
+\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}
+$$
+
+### Code Example
+
+\`\`\`javascript
+function hello() {
+    console.log("Hello, World!");
+}
+\`\`\`
+
+### Table
+
+| Name | Value | Description |
+|------|-------|-------------|
+| Alpha | 1.0 | First value |
+| Beta | 2.5 | Second value |
+| Gamma | 3.14 | Third value |
+
+### Mermaid Diagram
+
+\`\`\`mermaid
+graph LR
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Action 1]
+    B -->|No| D[Action 2]
+    C --> E[End]
+    D --> E
+\`\`\`
+
+## Conclusion
+
+This demonstrates the full rendering capabilities!
+`,
+            latex: `# LaTeX Math Examples
+
+## Basic Equations
+
+Inline: $E = mc^2$
+
+Display:
+$$
+F = ma
+$$
+
+## Complex Equations
+
+$$
+\\nabla \\times \\vec{E} = -\\frac{\\partial \\vec{B}}{\\partial t}
+$$
+
+$$
+\\nabla \\cdot \\vec{B} = 0
+$$
+
+## Matrices
+
+$$
+\\begin{bmatrix}
+a & b \\\\
+c & d
+\\end{bmatrix}
+$$
+
+## Summations
+
+$$
+\\sum_{i=1}^{n} i = \\frac{n(n+1)}{2}
+$$
+
+## Integrals
+
+$$
+\\int_0^\\infty e^{-x^2} dx = \\frac{\\sqrt{\\pi}}{2}
+$$
+`
+        };
+
+        function loadExample(type) {
+            const content = samples[type];
+            renderMarkdown(content);
+            document.getElementById('docUrl').value = `Sample ${type}`;
+        }
+
+        async function loadDocument() {
+            const url = document.getElementById('docUrl').value.trim();
+            
+            if (!url) {
+                showError('Please enter a document URL');
+                return;
+            }
+
+            showLoading();
+            hideError();
+            hideContent();
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const content = await response.text();
+                const contentType = response.headers.get('content-type') || '';
+
+                if (contentType.includes('text/markdown') || url.endsWith('.md')) {
+                    renderMarkdown(content);
+                } else if (contentType.includes('text/x-tex') || url.endsWith('.tex')) {
+                    renderLatex(content);
+                } else {
+                    // Try as markdown by default
+                    renderMarkdown(content);
+                }
+
+                hideLoading();
+                showContent();
+            } catch (error) {
+                hideLoading();
+                showError(`Failed to load document: ${error.message}`);
+            }
+        }
+
+        function renderMarkdown(markdown) {
+            const contentDiv = document.getElementById('content');
+            
+            // Configure marked
+            marked.setOptions({
+                breaks: true,
+                gfm: true,
+                highlight: function(code, lang) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        return hljs.highlight(code, { language: lang }).value;
+                    }
+                    return hljs.highlightAuto(code).value;
+                }
+            });
+
+            // Render markdown
+            let html = marked.parse(markdown);
+            
+            // Handle mermaid diagrams
+            html = html.replace(/<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g, 
+                '<div class="mermaid">$1</div>');
+            
+            contentDiv.innerHTML = html;
+
+            // Render math with KaTeX
+            renderMathInElement(contentDiv, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\[', right: '\\]', display: true},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError: false
+            });
+
+            // Render mermaid diagrams
+            mermaid.run({
+                querySelector: '.mermaid'
+            });
+
+            // Highlight code blocks
+            contentDiv.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        }
+
+        function renderLatex(latex) {
+            // Convert LaTeX to Markdown-like format for rendering
+            const markdown = `# LaTeX Document\n\n${latex}`;
+            renderMarkdown(markdown);
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+
+        function showContent() {
+            document.getElementById('content').style.display = 'block';
+        }
+
+        function hideContent() {
+            document.getElementById('content').style.display = 'none';
+        }
+
+        // Load sample markdown on page load
+        window.addEventListener('load', () => {
+            loadExample('markdown');
+        });
+    </script>
+</body>
+</html>

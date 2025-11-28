@@ -169,6 +169,20 @@ components:
       health_check: "/health/google-maps"
       expected_load_time_ms: 1500
       expected_failure: false
+
+  - hash: "pkc-viewer"
+    name: "PKC Document Viewer"
+    abstract:
+      context: "Document rendering and visualization"
+      goal: "Render Markdown and LaTeX documents with math, diagrams, and syntax highlighting"
+    concrete:
+      implementation: "https://henry.pkc.pub/components/pkc-viewer.html"
+      sandbox: "allow-scripts allow-same-origin"
+    balanced:
+      metrics_endpoint: "/metrics/pkc-viewer"
+      health_check: "/health/pkc-viewer"
+      expected_load_time_ms: 800
+      expected_failure: false
       
 # Observability Configuration
 observability:
