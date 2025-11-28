@@ -141,6 +141,20 @@ components:
       health_check: "/health/wikipedia-search"
       expected_load_time_ms: 400
       expected_failure: false
+
+  - hash: "external-site-demo"
+    name: "External Website Demo"
+    abstract:
+      context: "Third-party website integration"
+      goal: "Demonstrate CLM can embed external websites that allow iframe"
+    concrete:
+      implementation: "https://example.com"
+      sandbox: "allow-scripts allow-same-origin"
+    balanced:
+      metrics_endpoint: "/metrics/external-site"
+      health_check: "/health/external-site"
+      expected_load_time_ms: 2000
+      expected_failure: false
       
 # Observability Configuration
 observability:
