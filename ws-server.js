@@ -15,7 +15,7 @@ const app = express();
 
 // Enable CORS for all routes
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://henry.pkc.pub'],
+  origin: ['http://localhost:3000', 'https://henry.pkc.pub', 'https://dev.pkc.pub'],
   credentials: true
 }));
 
@@ -340,7 +340,7 @@ app.get('/api/env', (req, res) => {
             ZITADEL_DOMAIN: process.env.ZITADEL_DOMAIN || '',
             REDIRECT_URI: process.env.REDIRECT_URI || '',
             PKC_Title_Text: process.env.PKC_Title_Text || 'PKC Landing Page',
-            BASE_URL: process.env.BASE_URL || 'https://henry.pkc.pub',
+            BASE_URL: process.env.BASE_URL || '', // Empty string triggers client-side fallback to window.location.origin
             NODE_ENV: process.env.NODE_ENV || 'development'
         };
         res.json(envObj);
