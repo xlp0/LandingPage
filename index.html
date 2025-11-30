@@ -347,14 +347,42 @@
       // Make store globally available
       window.reduxStore = store;
 
-      // Initialize OAuth handler
-      const oauth = new window.OAuth2Handler({
-        domain: 'vpn.pkc.pub',
-        clientId: '348213051452882951',
-        redirectUri: window.location.origin + '/auth-callback-enhanced.html',
-        scopes: ['openid', 'profile', 'email'],
-        debug: true
-      });
+      // Fetch OAuth configuration from environment
+      let oauth;
+      async function initializeOAuth() {
+        try {
+          const envResponse = await fetch('/api/env');
+          const envData = await envResponse.json();
+          
+          // Initialize OAuth handler with environment config
+          oauth = new window.OAuth2Handler({
+            domain: envData.ZITADEL_DOMAIN || 'vpn.pkc.pub',
+            clientId: envData.ZITADEL_CLIENT_ID || '348213051452882951',
+            redirectUri: envData.REDIRECT_URI || (window.location.origin + '/auth-callback-enhanced.html'),
+            scopes: ['openid', 'profile', 'email'],
+            debug: true
+          });
+          
+          console.log('[Dashboard] OAuth initialized with:', {
+            domain: oauth.domain,
+            clientId: oauth.clientId,
+            redirectUri: oauth.redirectUri
+          });
+          
+          return oauth;
+        } catch (error) {
+          console.error('[Dashboard] Failed to fetch OAuth config, using defaults:', error);
+          // Fallback to defaults
+          oauth = new window.OAuth2Handler({
+            domain: 'vpn.pkc.pub',
+            clientId: '348213051452882951',
+            redirectUri: window.location.origin + '/auth-callback-enhanced.html',
+            scopes: ['openid', 'profile', 'email'],
+            debug: true
+          });
+          return oauth;
+        }
+      }
 
       // Check if user is already logged in from Redux
       function checkAuthStatus() {
@@ -395,6 +423,12 @@
         
         console.log('[Dashboard] Login button clicked');
         try {
+          // Ensure OAuth is initialized
+          if (!oauth) {
+            console.log('[Dashboard] OAuth not initialized, initializing now...');
+            await initializeOAuth();
+          }
+          
           // Generate PKCE challenge
           const { codeVerifier, codeChallenge } = await oauth.generatePKCE();
           
@@ -606,8 +640,11 @@
         }
       });
 
-      // Start loading
-      loadDashboard();
+      // Initialize OAuth and start loading
+      (async () => {
+        await initializeOAuth();
+        loadDashboard();
+      })();
 
       console.log('[Dashboard] CLM Dashboard with Redux initialized');
     </script>
