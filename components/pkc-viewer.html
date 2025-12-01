@@ -829,7 +829,7 @@ C \\arrow[rr] & & D \\arrow[from=uu, crossing over]
                     console.log('[PKC Viewer] Auto-wrapped TikZ code with tikzpicture environment');
                 }
                 
-                // Create iframe with TikZJax and the diagram (optimized)
+                // Create iframe with TikZJax and the diagram (optimized with auto-resize)
                 const iframeDoc = `<!DOCTYPE html>
 <html>
 <head>
@@ -837,9 +837,44 @@ C \\arrow[rr] & & D \\arrow[from=uu, crossing over]
     <link rel="stylesheet" href="https://tikzjax.com/v1/fonts.css">
     <script src="https://tikzjax.com/v1/tikzjax.js"><\/script>
     <style>
-        body { margin: 0; padding: 5px; display: flex; justify-content: center; align-items: center; min-height: 100px; }
-        svg { max-width: 100%; height: auto; }
+        body { 
+            margin: 0; 
+            padding: 10px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100px;
+            overflow: visible;
+        }
+        svg { 
+            max-width: 100%; 
+            height: auto;
+            display: block;
+        }
     </style>
+    <script>
+        // Auto-resize iframe when SVG is rendered
+        window.addEventListener('load', () => {
+            const observer = new MutationObserver(() => {
+                const svg = document.querySelector('svg');
+                if (svg) {
+                    observer.disconnect();
+                    // Wait a bit for SVG to fully render
+                    setTimeout(() => {
+                        const height = svg.getBoundingClientRect().height;
+                        const width = svg.getBoundingClientRect().width;
+                        // Send height to parent
+                        window.parent.postMessage({
+                            type: 'tikz-resize',
+                            height: height + 30,
+                            width: width
+                        }, '*');
+                    }, 100);
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    <\/script>
 </head>
 <body>
     <script type="text/tikz">
@@ -851,30 +886,24 @@ ${formattedCode}
                 // Create iframe element with lazy loading
                 const iframe = document.createElement('iframe');
                 iframe.style.width = '100%';
-                iframe.style.height = '250px';
+                iframe.style.height = '400px'; // Increased default height
                 iframe.style.border = 'none';
+                iframe.style.overflow = 'hidden';
                 iframe.loading = 'lazy'; // Lazy load iframes for better performance
                 iframe.srcdoc = iframeDoc;
+                
+                // Listen for resize messages from iframe
+                const resizeHandler = (event) => {
+                    if (event.data.type === 'tikz-resize') {
+                        iframe.style.height = event.data.height + 'px';
+                        console.log(`[PKC Viewer] Resized ${containerId} to ${event.data.height}px`);
+                    }
+                };
+                window.addEventListener('message', resizeHandler);
                 
                 // Clear container and add iframe
                 container.innerHTML = '';
                 container.appendChild(iframe);
-                
-                // Auto-adjust iframe height after content loads
-                iframe.onload = () => {
-                    try {
-                        const iframeBody = iframe.contentDocument?.body;
-                        if (iframeBody) {
-                            const svg = iframeBody.querySelector('svg');
-                            if (svg) {
-                                const height = svg.getBoundingClientRect().height;
-                                iframe.style.height = Math.max(height + 20, 100) + 'px';
-                            }
-                        }
-                    } catch (e) {
-                        // Cross-origin restrictions, keep default height
-                    }
-                };
                 
                 console.log(`[PKC Viewer] ✓ TikZ iframe created for ${containerId}`);
                 console.log('[PKC Viewer] TikZJax will process on iframe load');
