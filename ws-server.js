@@ -40,6 +40,16 @@ app.use('/api/auth', authRoutes);
 // CLM routes
 app.use('/api/clm', clmRoutes);
 
+// Add cache control headers for HTML files to prevent aggressive caching
+app.use((req, res, next) => {
+    if (req.path.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+    }
+    next();
+});
+
 // Serve static files from the current directory
 app.use(express.static(__dirname));
 
