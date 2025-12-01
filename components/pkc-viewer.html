@@ -597,10 +597,8 @@ $$
                 console.log(`[PKC Viewer] Rendering TikZ for ${containerId}`);
                 console.log('[PKC Viewer] TikZ Code:', tikzCode);
                 
-                // Create a script tag with type="text/tikz" for TikZJax
-                // TikZJax automatically processes these when added to DOM (no global object check needed)
-                const script = document.createElement('script');
-                script.type = 'text/tikz';
+                // TikZJax only processes scripts on initial page load, not dynamically added ones
+                // Solution: Use iframe with srcdoc (like Pluto.jl approach)
                 
                 // Ensure the TikZ code is properly formatted
                 let formattedCode = tikzCode.trim();
@@ -611,33 +609,39 @@ $$
                     console.log('[PKC Viewer] Auto-wrapped TikZ code with tikzpicture environment');
                 }
                 
-                script.textContent = formattedCode;
+                // Create iframe with TikZJax and the diagram
+                const iframeDoc = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
+    <script src="https://tikzjax.com/v1/tikzjax.js"></script>
+    <style>
+        body { margin: 0; padding: 10px; display: flex; justify-content: center; align-items: center; }
+        svg { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+    <script type="text/tikz">
+${formattedCode}
+    </script>
+</body>
+</html>`;
                 
-                // Clear loading message and append script
+                // Create iframe element
+                const iframe = document.createElement('iframe');
+                iframe.style.width = '100%';
+                iframe.style.height = '300px';
+                iframe.style.border = 'none';
+                iframe.srcdoc = iframeDoc;
+                
+                // Clear container and add iframe
                 container.innerHTML = '';
-                container.appendChild(script);
+                container.appendChild(iframe);
                 
-                console.log(`[PKC Viewer] TikZ script added to DOM for ${containerId}`);
-                console.log('[PKC Viewer] TikZJax will automatically process this script tag');
-                
-                // Give TikZJax time to process (it runs asynchronously)
-                setTimeout(() => {
-                    // Check if SVG was created
-                    const svg = container.querySelector('svg');
-                    console.log(`[PKC Viewer] Checking for SVG in ${containerId}:`, svg);
-                    
-                    if (!svg) {
-                        console.warn(`[PKC Viewer] No SVG generated for ${containerId} after 5 seconds`);
-                        // Keep the script tag in place, TikZJax might still be processing
-                        const stillProcessing = container.querySelector('script[type="text/tikz"]');
-                        if (stillProcessing) {
-                            console.log('[PKC Viewer] Script tag still present, TikZJax may still be processing...');
-                        }
-                    } else {
-                        console.log(`[PKC Viewer] ✓ SVG rendered successfully for ${containerId}`);
-                        console.log('[PKC Viewer] SVG dimensions:', svg.getAttribute('width'), 'x', svg.getAttribute('height'));
-                    }
-                }, 5000); // Wait 5 seconds for TikZJax to process
+                console.log(`[PKC Viewer] ✓ TikZ iframe created for ${containerId}`);
+                console.log('[PKC Viewer] TikZJax will process on iframe load')
                 
             } catch (error) {
                 console.error(`[PKC Viewer] TikZ rendering error for ${containerId}:`, error);
