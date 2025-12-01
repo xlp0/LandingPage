@@ -587,23 +587,61 @@ $$
             if (!container) return;
 
             try {
+                console.log(`[PKC Viewer] Rendering TikZ for ${containerId}`);
+                console.log('[PKC Viewer] TikZ Code:', tikzCode);
+                
                 // Create a script tag with type="text/tikz" for TikZJax
+                // TikZJax automatically processes these when added to DOM
                 const script = document.createElement('script');
                 script.type = 'text/tikz';
-                script.textContent = tikzCode;
+                
+                // Ensure the TikZ code is properly formatted
+                let formattedCode = tikzCode.trim();
+                
+                // If code doesn't start with \begin{tikzpicture}, wrap it
+                if (!formattedCode.includes('\\begin{tikzpicture}')) {
+                    formattedCode = `\\begin{tikzpicture}\n${formattedCode}\n\\end{tikzpicture}`;
+                }
+                
+                script.textContent = formattedCode;
                 
                 // Clear loading message and append script
                 container.innerHTML = '';
                 container.appendChild(script);
                 
-                // TikZJax will automatically process the script tag
-                console.log(`[PKC Viewer] Rendering TikZ diagram: ${containerId}`);
+                console.log(`[PKC Viewer] TikZ script added to DOM for ${containerId}`);
+                
+                // Give TikZJax a moment to process
+                setTimeout(() => {
+                    // Check if SVG was created
+                    const svg = container.querySelector('svg');
+                    if (!svg) {
+                        console.warn(`[PKC Viewer] No SVG generated for ${containerId}, showing code`);
+                        container.innerHTML = `
+                            <div style="padding: 1rem; text-align: left;">
+                                <strong style="color: #f59e0b;">⚠️ TikZ Rendering Pending</strong>
+                                <p style="margin-top: 0.5rem; font-size: 0.9rem;">TikZJax is processing this diagram. If it doesn't appear, the code may have syntax errors.</p>
+                                <details style="margin-top: 0.5rem;">
+                                    <summary style="cursor: pointer; color: #667eea;">Show TikZ Code</summary>
+                                    <pre style="margin-top: 0.5rem; font-size: 0.85rem; background: #2d3748; color: #e2e8f0; padding: 1rem; border-radius: 4px; overflow-x: auto;">${formattedCode}</pre>
+                                </details>
+                            </div>
+                        `;
+                    } else {
+                        console.log(`[PKC Viewer] ✓ SVG rendered successfully for ${containerId}`);
+                    }
+                }, 2000); // Wait 2 seconds for TikZJax to process
+                
             } catch (error) {
                 console.error(`[PKC Viewer] TikZ rendering error for ${containerId}:`, error);
                 container.innerHTML = `
-                    <div style="color: #e53e3e; padding: 1rem;">
+                    <div style="color: #e53e3e; padding: 1rem; text-align: left;">
                         <strong>TikZ Rendering Error</strong>
-                        <pre style="margin-top: 0.5rem; font-size: 0.85rem;">${tikzCode}</pre>
+                        <pre style="margin-top: 0.5rem; font-size: 0.85rem;">${error.message}</pre>
+                        <details style="margin-top: 0.5rem;">
+                            <summary style="cursor: pointer;">Show TikZ Code</summary>
+                            <pre style="margin-top: 0.5rem; font-size: 0.85rem; background: #2d3748; color: #e2e8f0; padding: 1rem; border-radius: 4px; overflow-x: auto;">${tikzCode}</pre>
+                        </details>
                     </div>
                 `;
             }
