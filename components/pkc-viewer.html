@@ -321,6 +321,7 @@
                 <strong>Examples:</strong>
                 <a onclick="loadExample('markdown')">Sample Markdown</a>
                 <a onclick="loadExample('latex')">Sample LaTeX</a>
+                <a onclick="loadExample('tikz')">Sample TikZ Diagrams</a>
             </div>
         </div>
 
@@ -443,19 +444,169 @@ $$
 \\int_0^\\infty e^{-x^2} dx = \\frac{\\sqrt{\\pi}}{2}
 $$
 
-## TikZ Diagram Example
+This demonstrates LaTeX math rendering capabilities!
+`,
+            tikz: `# TikZ-CD Examples - Complete Gallery
+
+Comprehensive collection of **TikZ-CD** examples for commutative diagrams.
+
+---
+
+## Basic Shapes
+
+### The Simplest Arrow
 
 \`\`\`tikz
-\\begin{tikzpicture}
-  \\draw[thick,->] (0,0) -- (4,0) node[anchor=north west] {x axis};
-  \\draw[thick,->] (0,0) -- (0,4) node[anchor=south east] {y axis};
-  \\draw[blue,thick] (0,0) -- (3,3);
-  \\filldraw[red] (0,0) circle (2pt) node[anchor=north east] {Origin};
-  \\filldraw[red] (3,3) circle (2pt) node[anchor=south west] {Point};
-\\end{tikzpicture}
+\\begin{tikzcd}
+    X \\arrow[r, "f"] & Y
+\\end{tikzcd}
 \`\`\`
 
-**Note:** TikZ diagrams show as code blocks. For full rendering, use a LaTeX compiler or TikZ-to-SVG converter.
+### Simple Product (Cospan)
+
+\`\`\`tikz
+\\begin{tikzcd}
+    A \\arrow[rd] \\arrow[r, "\\phi"] & B \\\\
+                                   & C
+\\end{tikzcd}
+\`\`\`
+
+### Three Objects (Span)
+
+\`\`\`tikz
+\\begin{tikzcd}
+   A \\arrow[r, "f"] \\arrow[dr, "h"'] & B \\arrow[d, "g"] \\\\ & C
+\\end{tikzcd}
+\`\`\`
+
+### Equilateral Triangle
+
+\`\`\`tikz
+\\begin{tikzcd}
+   A \\arrow[dr, "h"'] \\arrow[rr, thick, "Apply\\\\ Argument"] & & B \\arrow[dl, "g"] \\\\ & C &
+\\end{tikzcd}
+\`\`\`
+
+---
+
+## Intermediate Patterns
+
+### Commutative Square
+
+\`\`\`tikz
+\\begin{tikzcd}
+A \\arrow[r, "\\phi"] \\arrow[d, red] 
+  & B \\arrow[d, "\\psi" yellow] \\\\ 
+C \\arrow[r, red, "\\eta" red] 
+  & |[red, rotate=-45]| D
+\\end{tikzcd}
+\`\`\`
+
+### Pullback Square
+
+\`\`\`tikz
+\\begin{tikzcd}
+    X 
+    \\arrow[r, "g"] 
+    \\arrow[d, "f"'] & Q 
+    \\arrow[d, "\\phi"] \\\\ 
+    P \\arrow[r, "\\pi"'] & Z
+\\end{tikzcd}
+\`\`\`
+
+### Fiber Product with Universal Property
+
+\`\`\`tikz
+\\begin{tikzcd}
+    T
+    \\arrow[drr, bend left, "x"]
+    \\arrow[ddr, bend right, "y"]
+    \\arrow[dr, dotted, "{(x,y)}" description] & & \\\\
+    K & X \\times_Z Y \\arrow[r, "p"] \\arrow[d, "q"]
+    & X \\arrow[d, "f"] \\\\
+    & Y \\arrow[r, "g"]
+    & Z
+\\end{tikzcd}
+\`\`\`
+
+### Natural Transformation (2-Cell)
+
+\`\`\`tikz
+\\begin{tikzcd} 
+A \\arrow[r, bend left=50, ""{name=U, below, draw=red}] \\arrow[r, bend 
+right=50, ""{name=D, draw=red}] & B \\arrow[Rightarrow, from=U, to=D]
+\\end{tikzcd}
+\`\`\`
+
+---
+
+## Advanced Patterns
+
+### Complex Pullback with Labels
+
+\`\`\`tikz
+\\begin{tikzcd}
+    X \\times_Z Q \\arrow[r, "g"] \\arrow[d, "f"'] & Q \\arrow[d, "\\pi_Q"] \\\\
+    P \\arrow[r, "\\pi_P"'] & Z
+\\end{tikzcd}
+\`\`\`
+
+### Seifert-van Kampen Theorem
+
+\`\`\`tikz
+\\begin{tikzcd} [column sep=tiny] 
+& \\pi_1(U_1) \\ar[dr] \\ar[drr, "j_1", bend left=20] & &[1.5em] \\\\ 
+\\pi_1(U_1\\cap U_2) \\ar[ur, "i_1"] \\ar[dr, "i_2"'] & & \\pi_1(U_1) \\ast_{ \\pi_1(U_1\\cap U_2)} \\pi_1(U_2) \\ar[r, dashed, "\\simeq"] & \\pi_1(X) \\\\ 
+& \\pi_1(U_2) \\ar[ur]\\ar[urr, "j_2"', bend right=20] & & 
+\\end{tikzcd}
+\`\`\`
+
+### Custom Path Routing
+
+\`\`\`tikz
+\\begin{tikzcd} 
+A \\arrow[dr, controls={+(1.5,0.5) and +(-1,0.8)}] \\arrow[dr, dashed, to path=|- (\\tikztotarget)] & \\\\ & B \\arrow[loop right]
+\\end{tikzcd}
+\`\`\`
+
+---
+
+## Scaled Examples
+
+### Scaled Commutative Square
+*Original square scaled 2x for readability*
+
+\`\`\`tikz
+\\begin{tikzcd}[row sep=3cm, column sep=3cm, nodes={scale=2}]
+A \\arrow[r, "\\phi"] \\arrow[d, red] 
+  & B \\arrow[d, "\\psi" yellow] \\\\ 
+C \\arrow[r, red, "\\eta" red] 
+  & |[red, rotate=-45]| D
+\\end{tikzcd}
+\`\`\`
+
+### Scaled Natural Transformation
+*2-cell diagram with bent arrows*
+
+\`\`\`tikz
+\\begin{tikzcd}[row sep=3cm, column sep=3cm, nodes={scale=2}] 
+A \\arrow[r, bend left=50, ""{name=U, below, draw=red}] \\arrow[r, bend 
+right=50, ""{name=D, draw=red}] & B \\arrow[Rightarrow, from=U, to=D]
+\\end{tikzcd}
+\`\`\`
+
+### Scaled Adjunction
+*Standard adjunction with turnstile symbol*
+
+\`\`\`tikz
+\\begin{tikzcd}[row sep=3cm, column sep=3cm, nodes={scale=2}]
+\\mathcal{C} \\arrow[r, bend left=30, "F"] \\arrow[r, phantom, "\\bot"] & \\mathcal{D} \\arrow[l, bend left=30, "G"]
+\\end{tikzcd}
+\`\`\`
+
+---
+
+**Note:** All TikZ diagrams are rendered using TikZJax in isolated iframes for proper rendering.
 `
         };
 
