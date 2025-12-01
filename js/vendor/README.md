@@ -23,7 +23,6 @@ This directory contains local copies of external JavaScript libraries to ensure:
 | **katex/** | 0.16.9 | LaTeX math rendering | MIT |
 | **mermaid/** | 10.x | Diagram rendering | MIT |
 | **highlight/** | 11.9.0 | Code syntax highlighting | BSD-3-Clause |
-| **tikzjax/** | 1.0 | TikZ diagram rendering | MIT |
 
 ## Updating Libraries
 
@@ -66,10 +65,23 @@ For reference, here are the original CDN URLs:
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 
-<!-- TikZJax -->
+```
+
+## Not Vendored
+
+### TikZJax (CDN Only)
+
+**Why not vendored:**
+TikZJax uses WebAssembly and requires multiple dynamic resources (core.dump.gz, WASM files) that must be loaded from the same directory as the script. Vendoring these files is complex and error-prone.
+
+**CDN URLs:**
+```html
+<!-- TikZJax - Kept on CDN -->
 <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
 <script src="https://tikzjax.com/v1/tikzjax.js"></script>
 ```
+
+**Note:** TikZJax requires an internet connection to work. If offline TikZ rendering is needed, consider using a server-side LaTeX-to-SVG converter instead.
 
 ## File Structure
 
@@ -85,20 +97,17 @@ js/vendor/
 │   └── auto-render.min.js      # Auto-rendering extension
 ├── mermaid/
 │   └── mermaid.min.js          # Diagram rendering
-├── highlight/
-│   ├── github.min.css          # GitHub theme
-│   └── highlight.min.js        # Syntax highlighter
-└── tikzjax/
-    ├── fonts.css               # TikZ fonts
-    └── tikzjax.js              # TikZ to SVG compiler
+└── highlight/
+    ├── github.min.css          # GitHub theme
+    └── highlight.min.js        # Syntax highlighter
 ```
 
 ## Notes
 
-- All libraries are minified for production use
+- All vendored libraries are minified for production use
 - Source maps are not included (add if needed for debugging)
 - Libraries are loaded synchronously in the HTML head
-- TikZJax includes WebAssembly binaries (loaded automatically)
+- TikZJax is NOT vendored - it loads from CDN and requires internet connection
 
 ## License Compliance
 
