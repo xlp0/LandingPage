@@ -176,7 +176,7 @@ components:
       context: "Document rendering and visualization"
       goal: "Render Markdown and LaTeX documents with math, diagrams, and syntax highlighting"
     concrete:
-      implementation: "components/pkc-viewer.html?v=3"
+      implementation: "components/pkc-viewer.html?v=5"
       # Removed sandbox to allow TikZJax WebAssembly to work
       # sandbox: "allow-scripts allow-same-origin"
     balanced:
