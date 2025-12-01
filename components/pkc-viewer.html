@@ -487,6 +487,14 @@ Comprehensive collection of **TikZ-CD** examples for commutative diagrams.
 \\end{tikzcd}
 \`\`\`
 
+### Cospan Diagram
+
+\`\`\`tikz
+\\begin{tikzcd}
+   A \\arrow[dr, "h"'] & & B \\arrow[dl, "g"] \\\\ & C &
+\\end{tikzcd}
+\`\`\`
+
 ---
 
 ## Intermediate Patterns
@@ -538,6 +546,15 @@ right=50, ""{name=D, draw=red}] & B \\arrow[Rightarrow, from=U, to=D]
 \\end{tikzcd}
 \`\`\`
 
+### Wiring Diagram
+
+\`\`\`tikz
+\\begin{tikzcd}
+& X \\arrow[dr, "Q"] \\\\
+Y & & Z 
+\\end{tikzcd}
+\`\`\`
+
 ---
 
 ## Advanced Patterns
@@ -548,6 +565,30 @@ right=50, ""{name=D, draw=red}] & B \\arrow[Rightarrow, from=U, to=D]
 \\begin{tikzcd}
     X \\times_Z Q \\arrow[r, "g"] \\arrow[d, "f"'] & Q \\arrow[d, "\\pi_Q"] \\\\
     P \\arrow[r, "\\pi_P"'] & Z
+\\end{tikzcd}
+\`\`\`
+
+### Two Diagrams Side-by-Side
+
+\`\`\`tikz
+\\begin{tikzcd}
+    T
+    \\arrow[drr, bend left, "x"]
+    \\arrow[ddr, bend right, "y"]
+    \\arrow[dr, dotted, "{(x,y)}" description] & & \\\\
+    K & X \\times_Z Y \\arrow[r, "p"] \\arrow[d, "q"]
+    & X \\arrow[d, "f"] \\\\
+    & Y \\arrow[r, "g"]
+    & Z
+\\end{tikzcd}
+\\quad \\quad
+\\begin{tikzcd}[row sep=2.5em]
+A' \\arrow[rr,"f'"] \\arrow[dr,swap,"a"] \\arrow[dd,swap,"g'"] &&
+  B' \\arrow[dd,swap,"h'" near start] \\arrow[dr,"b"] \\\\
+& A \\arrow[rr,crossing over,"f" near start] &&
+  B \\arrow[dd,"h"] \\\\
+C' \\arrow[rr,"k'" near end] \\arrow[dr,swap,"c"] && D' \\arrow[dr,swap,"d"] \\\\
+& C \\arrow[rr,"k"] \\arrow[uu,<-,crossing over,"g" near end]&& D
 \\end{tikzcd}
 \`\`\`
 
@@ -566,6 +607,22 @@ right=50, ""{name=D, draw=red}] & B \\arrow[Rightarrow, from=U, to=D]
 \`\`\`tikz
 \\begin{tikzcd} 
 A \\arrow[dr, controls={+(1.5,0.5) and +(-1,0.8)}] \\arrow[dr, dashed, to path=|- (\\tikztotarget)] & \\\\ & B \\arrow[loop right]
+\\end{tikzcd}
+\`\`\`
+
+### Sequential Path with Corners
+
+\`\`\`tikz
+\\begin{tikzcd} 
+A \\arrow[r] & B \\arrow[r] \\arrow[d, phantom, ""{coordinate, name=Z}] & C \\arrow[dll, "\\delta", rounded corners, to path={ -- ([xshift=2ex]\\tikztostart.east) |- (Z) [near end]\\tikztonodes -| ([xshift=-2ex]\\tikztotarget.west) -- (\\tikztotarget)}] \\\\ D \\arrow[r] & E \\arrow[r] & F
+\\end{tikzcd}
+\`\`\`
+
+### Trisection (Aliasing)
+
+\`\`\`tikz
+\\begin{tikzcd} 
+A \\arrow[to=Z, red] \\arrow[to=2-2, blue] & B \\\\ |[alias=Z]| C & D \\arrow[from=ul, to=1-2, purple]
 \\end{tikzcd}
 \`\`\`
 
@@ -592,6 +649,18 @@ C \\arrow[r, red, "\\eta" red]
 \\begin{tikzcd}[row sep=3cm, column sep=3cm, nodes={scale=2}] 
 A \\arrow[r, bend left=50, ""{name=U, below, draw=red}] \\arrow[r, bend 
 right=50, ""{name=D, draw=red}] & B \\arrow[Rightarrow, from=U, to=D]
+\\end{tikzcd}
+\`\`\`
+
+### Scaled 3D Cube
+*Complex 3D commutative cube with crossing arrows*
+
+\`\`\`tikz
+\\begin{tikzcd}[row sep=2.5cm, column sep=2.5cm, nodes={scale=1.5}]
+& A' \\arrow[rr] \\arrow[dd] \\arrow[ld] & & B' \\arrow[dd] \\arrow[ld] \\\\
+A \\arrow[rr, crossing over] \\arrow[dd] & & B \\\\
+& C' \\arrow[rr] \\arrow[ld] & & D' \\arrow[ld] \\\\
+C \\arrow[rr] & & D \\arrow[from=uu, crossing over]
 \\end{tikzcd}
 \`\`\`
 
