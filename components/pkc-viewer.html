@@ -754,21 +754,21 @@ right=50, ""{name=D, draw=red}] & B \\arrow[Rightarrow, from=U, to=D]
                 // Ensure the TikZ code is properly formatted
                 let formattedCode = tikzCode.trim();
                 
-                // If code doesn't start with \begin{tikzpicture}, wrap it
-                if (!formattedCode.includes('\\begin{tikzpicture}')) {
+                // Only wrap if it's not already a tikz environment (tikzpicture or tikzcd)
+                if (!formattedCode.includes('\\begin{tikzpicture}') && !formattedCode.includes('\\begin{tikzcd}')) {
                     formattedCode = `\\begin{tikzpicture}\n${formattedCode}\n\\end{tikzpicture}`;
                     console.log('[PKC Viewer] Auto-wrapped TikZ code with tikzpicture environment');
                 }
                 
-                // Create iframe with TikZJax and the diagram
+                // Create iframe with TikZJax and the diagram (optimized)
                 const iframeDoc = `<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
+    <link rel="stylesheet" href="https://tikzjax.com/v1/fonts.css">
     <script src="https://tikzjax.com/v1/tikzjax.js"><\/script>
     <style>
-        body { margin: 0; padding: 10px; display: flex; justify-content: center; align-items: center; }
+        body { margin: 0; padding: 5px; display: flex; justify-content: center; align-items: center; min-height: 100px; }
         svg { max-width: 100%; height: auto; }
     </style>
 </head>
@@ -779,16 +779,33 @@ ${formattedCode}
 </body>
 </html>`;
                 
-                // Create iframe element
+                // Create iframe element with lazy loading
                 const iframe = document.createElement('iframe');
                 iframe.style.width = '100%';
-                iframe.style.height = '300px';
+                iframe.style.height = '250px';
                 iframe.style.border = 'none';
+                iframe.loading = 'lazy'; // Lazy load iframes for better performance
                 iframe.srcdoc = iframeDoc;
                 
                 // Clear container and add iframe
                 container.innerHTML = '';
                 container.appendChild(iframe);
+                
+                // Auto-adjust iframe height after content loads
+                iframe.onload = () => {
+                    try {
+                        const iframeBody = iframe.contentDocument?.body;
+                        if (iframeBody) {
+                            const svg = iframeBody.querySelector('svg');
+                            if (svg) {
+                                const height = svg.getBoundingClientRect().height;
+                                iframe.style.height = Math.max(height + 20, 100) + 'px';
+                            }
+                        }
+                    } catch (e) {
+                        // Cross-origin restrictions, keep default height
+                    }
+                };
                 
                 console.log(`[PKC Viewer] ✓ TikZ iframe created for ${containerId}`);
                 console.log('[PKC Viewer] TikZJax will process on iframe load');
