@@ -20,6 +20,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     
+    <!-- TikZJax for TikZ diagram rendering -->
+    <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
+    <script src="https://tikzjax.com/v1/tikzjax.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -266,15 +270,21 @@
             margin: 1.5rem 0;
             overflow-x: auto;
             text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
         }
 
-        .tikz-container pre {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 1rem;
-            border-radius: 4px;
-            text-align: left;
-            font-size: 0.85rem;
+        .tikz-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* TikZ loading state */
+        .tikz-loading {
+            color: #667eea;
+            font-style: italic;
         }
 
         .example-docs {
@@ -535,9 +545,13 @@ $$
             html = html.replace(/<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g, 
                 '<div class="mermaid">$1</div>');
             
-            // Handle TikZ diagrams
-            html = html.replace(/<pre><code class="language-tikz">([\s\S]*?)<\/code><\/pre>/g, 
-                '<div class="tikz-container"><pre class="tikz">$1</pre></div>');
+            // Handle TikZ diagrams - extract code for TikZJax processing
+            const tikzBlocks = [];
+            html = html.replace(/<pre><code class="language-tikz">([\s\S]*?)<\/code><\/pre>/g, (match, code) => {
+                const id = `tikz-${tikzBlocks.length}`;
+                tikzBlocks.push({ id, code: code.trim() });
+                return `<div class="tikz-container" id="${id}"><span class="tikz-loading">Rendering TikZ diagram...</span></div>`;
+            });
             
             contentDiv.innerHTML = html;
 
@@ -561,6 +575,38 @@ $$
             contentDiv.querySelectorAll('pre code').forEach((block) => {
                 hljs.highlightElement(block);
             });
+
+            // Render TikZ diagrams with TikZJax
+            tikzBlocks.forEach(({ id, code }) => {
+                renderTikZ(id, code);
+            });
+        }
+
+        async function renderTikZ(containerId, tikzCode) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            try {
+                // Create a script tag with type="text/tikz" for TikZJax
+                const script = document.createElement('script');
+                script.type = 'text/tikz';
+                script.textContent = tikzCode;
+                
+                // Clear loading message and append script
+                container.innerHTML = '';
+                container.appendChild(script);
+                
+                // TikZJax will automatically process the script tag
+                console.log(`[PKC Viewer] Rendering TikZ diagram: ${containerId}`);
+            } catch (error) {
+                console.error(`[PKC Viewer] TikZ rendering error for ${containerId}:`, error);
+                container.innerHTML = `
+                    <div style="color: #e53e3e; padding: 1rem;">
+                        <strong>TikZ Rendering Error</strong>
+                        <pre style="margin-top: 0.5rem; font-size: 0.85rem;">${tikzCode}</pre>
+                    </div>
+                `;
+            }
         }
 
         function renderLatex(latex) {
