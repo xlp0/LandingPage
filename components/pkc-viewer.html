@@ -549,7 +549,15 @@ $$
             const tikzBlocks = [];
             html = html.replace(/<pre><code class="language-tikz">([\s\S]*?)<\/code><\/pre>/g, (match, code) => {
                 const id = `tikz-${tikzBlocks.length}`;
-                tikzBlocks.push({ id, code: code.trim() });
+                // Decode HTML entities in the code
+                const decodedCode = code
+                    .replace(/&lt;/g, '<')
+                    .replace(/&gt;/g, '>')
+                    .replace(/&amp;/g, '&')
+                    .replace(/&quot;/g, '"')
+                    .replace(/&#39;/g, "'")
+                    .trim();
+                tikzBlocks.push({ id, code: decodedCode });
                 return `<div class="tikz-container" id="${id}"><span class="tikz-loading">Rendering TikZ diagram...</span></div>`;
             });
             
