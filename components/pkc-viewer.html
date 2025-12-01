@@ -584,11 +584,51 @@ $$
 
         async function renderTikZ(containerId, tikzCode) {
             const container = document.getElementById(containerId);
-            if (!container) return;
+            if (!container) {
+                console.error(`[PKC Viewer] Container ${containerId} not found`);
+                return;
+            }
 
             try {
                 console.log(`[PKC Viewer] Rendering TikZ for ${containerId}`);
                 console.log('[PKC Viewer] TikZ Code:', tikzCode);
+                console.log('[PKC Viewer] TikZJax available:', typeof window.tikzjax !== 'undefined');
+                
+                // Check if TikZJax is loaded
+                if (typeof window.tikzjax === 'undefined') {
+                    console.warn('[PKC Viewer] TikZJax not loaded yet, waiting...');
+                    container.innerHTML = `
+                        <div style="padding: 1rem; text-align: left;">
+                            <strong style="color: #f59e0b;">⚠️ Loading TikZJax...</strong>
+                            <p style="margin-top: 0.5rem; font-size: 0.9rem;">TikZJax library is still loading. Please wait...</p>
+                        </div>
+                    `;
+                    
+                    // Wait up to 5 seconds for TikZJax to load
+                    let attempts = 0;
+                    const checkInterval = setInterval(() => {
+                        attempts++;
+                        if (typeof window.tikzjax !== 'undefined') {
+                            clearInterval(checkInterval);
+                            console.log('[PKC Viewer] TikZJax loaded, retrying render');
+                            renderTikZ(containerId, tikzCode); // Retry
+                        } else if (attempts > 50) { // 5 seconds
+                            clearInterval(checkInterval);
+                            console.error('[PKC Viewer] TikZJax failed to load');
+                            container.innerHTML = `
+                                <div style="color: #e53e3e; padding: 1rem; text-align: left;">
+                                    <strong>❌ TikZJax Failed to Load</strong>
+                                    <p style="margin-top: 0.5rem; font-size: 0.9rem;">The TikZJax library could not be loaded. Check your internet connection or browser console for errors.</p>
+                                    <details style="margin-top: 0.5rem;">
+                                        <summary style="cursor: pointer;">Show TikZ Code</summary>
+                                        <pre style="margin-top: 0.5rem; font-size: 0.85rem; background: #2d3748; color: #e2e8f0; padding: 1rem; border-radius: 4px; overflow-x: auto;">${tikzCode}</pre>
+                                    </details>
+                                </div>
+                            `;
+                        }
+                    }, 100);
+                    return;
+                }
                 
                 // Create a script tag with type="text/tikz" for TikZJax
                 // TikZJax automatically processes these when added to DOM
@@ -601,6 +641,7 @@ $$
                 // If code doesn't start with \begin{tikzpicture}, wrap it
                 if (!formattedCode.includes('\\begin{tikzpicture}')) {
                     formattedCode = `\\begin{tikzpicture}\n${formattedCode}\n\\end{tikzpicture}`;
+                    console.log('[PKC Viewer] Auto-wrapped TikZ code with tikzpicture environment');
                 }
                 
                 script.textContent = formattedCode;
@@ -610,17 +651,28 @@ $$
                 container.appendChild(script);
                 
                 console.log(`[PKC Viewer] TikZ script added to DOM for ${containerId}`);
+                console.log('[PKC Viewer] Script element:', script);
+                console.log('[PKC Viewer] Container children:', container.children);
                 
                 // Give TikZJax a moment to process
                 setTimeout(() => {
                     // Check if SVG was created
                     const svg = container.querySelector('svg');
+                    console.log(`[PKC Viewer] Checking for SVG in ${containerId}:`, svg);
+                    console.log('[PKC Viewer] Container HTML:', container.innerHTML.substring(0, 200));
+                    
                     if (!svg) {
-                        console.warn(`[PKC Viewer] No SVG generated for ${containerId}, showing code`);
+                        console.warn(`[PKC Viewer] No SVG generated for ${containerId} after 3 seconds`);
                         container.innerHTML = `
                             <div style="padding: 1rem; text-align: left;">
-                                <strong style="color: #f59e0b;">⚠️ TikZ Rendering Pending</strong>
-                                <p style="margin-top: 0.5rem; font-size: 0.9rem;">TikZJax is processing this diagram. If it doesn't appear, the code may have syntax errors.</p>
+                                <strong style="color: #f59e0b;">⚠️ TikZ Rendering Issue</strong>
+                                <p style="margin-top: 0.5rem; font-size: 0.9rem;">TikZJax did not generate an SVG. This could be due to:</p>
+                                <ul style="margin: 0.5rem 0 0.5rem 1.5rem; font-size: 0.9rem;">
+                                    <li>Syntax errors in the TikZ code</li>
+                                    <li>Missing TikZ libraries</li>
+                                    <li>Browser compatibility issues</li>
+                                </ul>
+                                <p style="margin-top: 0.5rem; font-size: 0.85rem; color: #666;">Check the browser console for detailed error messages.</p>
                                 <details style="margin-top: 0.5rem;">
                                     <summary style="cursor: pointer; color: #667eea;">Show TikZ Code</summary>
                                     <pre style="margin-top: 0.5rem; font-size: 0.85rem; background: #2d3748; color: #e2e8f0; padding: 1rem; border-radius: 4px; overflow-x: auto;">${formattedCode}</pre>
@@ -629,8 +681,9 @@ $$
                         `;
                     } else {
                         console.log(`[PKC Viewer] ✓ SVG rendered successfully for ${containerId}`);
+                        console.log('[PKC Viewer] SVG dimensions:', svg.getAttribute('width'), 'x', svg.getAttribute('height'));
                     }
-                }, 2000); // Wait 2 seconds for TikZJax to process
+                }, 3000); // Wait 3 seconds for TikZJax to process
                 
             } catch (error) {
                 console.error(`[PKC Viewer] TikZ rendering error for ${containerId}:`, error);
@@ -679,8 +732,22 @@ $$
             document.getElementById('content').style.display = 'none';
         }
 
-        // Load sample markdown on page load
+        // Check TikZJax availability on load
         window.addEventListener('load', () => {
+            console.log('[PKC Viewer] Page loaded');
+            console.log('[PKC Viewer] Checking TikZJax availability...');
+            console.log('[PKC Viewer] window.tikzjax:', typeof window.tikzjax);
+            console.log('[PKC Viewer] TikZJax script element:', document.querySelector('script[src*="tikzjax"]'));
+            
+            // Check if TikZJax loaded
+            setTimeout(() => {
+                if (typeof window.tikzjax === 'undefined') {
+                    console.warn('[PKC Viewer] ⚠️ TikZJax not loaded after 1 second');
+                } else {
+                    console.log('[PKC Viewer] ✓ TikZJax is available');
+                }
+            }, 1000);
+            
             loadExample('markdown');
         });
     </script>
