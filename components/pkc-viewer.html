@@ -610,13 +610,12 @@ $$
                 }
                 
                 // Create iframe with TikZJax and the diagram
-                const iframeDoc = `
-<!DOCTYPE html>
+                const iframeDoc = `<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
-    <script src="https://tikzjax.com/v1/tikzjax.js"></script>
+    <script src="https://tikzjax.com/v1/tikzjax.js"><\/script>
     <style>
         body { margin: 0; padding: 10px; display: flex; justify-content: center; align-items: center; }
         svg { max-width: 100%; height: auto; }
@@ -625,7 +624,7 @@ $$
 <body>
     <script type="text/tikz">
 ${formattedCode}
-    </script>
+    <\/script>
 </body>
 </html>`;
                 
@@ -641,7 +640,7 @@ ${formattedCode}
                 container.appendChild(iframe);
                 
                 console.log(`[PKC Viewer] ✓ TikZ iframe created for ${containerId}`);
-                console.log('[PKC Viewer] TikZJax will process on iframe load')
+                console.log('[PKC Viewer] TikZJax will process on iframe load');
                 
             } catch (error) {
                 console.error(`[PKC Viewer] TikZ rendering error for ${containerId}:`, error);
