@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>TikZJax Test</title>
+    <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
+    <script src="https://tikzjax.com/v1/tikzjax.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>TikZJax Standalone Test</h1>
+    <p>This page tests TikZJax rendering without any iframe or complex setup.</p>
+
+    <div class="test-section">
+        <h2>Test 1: Simple Circle (Official Example)</h2>
+        <script type="text/tikz">
+            \begin{tikzpicture}
+                \draw (0,0) circle (1in);
+            \end{tikzpicture}
+        </script>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Your Axes Example</h2>
+        <script type="text/tikz">
+            \begin{tikzpicture}
+                \draw[thick,->] (0,0) -- (4,0) node[anchor=north west] {x axis};
+                \draw[thick,->] (0,0) -- (0,4) node[anchor=south east] {y axis};
+                \draw[blue,thick] (0,0) -- (3,3);
+                \filldraw[red] (0,0) circle (2pt) node[anchor=north east] {Origin};
+                \filldraw[red] (3,3) circle (2pt) node[anchor=south west] {Point};
+            \end{tikzpicture}
+        </script>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Commutative Diagram (From tikzjax.com)</h2>
+        <script type="text/tikz">
+            \begin{tikzcd}
+                A \arrow[r, "\phi"] \arrow[d, red] & B \arrow[d, "\psi" red] \\
+                C \arrow[r, red, "\eta" blue] & D
+            \end{tikzcd}
+        </script>
+    </div>
+
+    <script>
+        console.log('[TikZ Test] Page loaded');
+        console.log('[TikZ Test] TikZJax available:', typeof window.tikzjax);
+        
+        // Check after 5 seconds
+        setTimeout(() => {
+            const scripts = document.querySelectorAll('script[type="text/tikz"]');
+            const svgs = document.querySelectorAll('svg');
+            console.log('[TikZ Test] TikZ scripts found:', scripts.length);
+            console.log('[TikZ Test] SVGs rendered:', svgs.length);
+            
+            if (svgs.length === 0) {
+                console.error('[TikZ Test] ❌ No SVGs rendered!');
+            } else {
+                console.log('[TikZ Test] ✅ TikZ rendering successful!');
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
