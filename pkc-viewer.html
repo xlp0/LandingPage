@@ -53,13 +53,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 1rem;
         }
 
         .navbar h1 {
             font-size: 1.5rem;
+            flex: 1;
         }
 
-        .back-btn {
+        .navbar-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .back-btn, .edit-btn {
             background: rgba(255,255,255,0.2);
             color: white;
             padding: 0.5rem 1.5rem;
@@ -67,10 +74,20 @@
             text-decoration: none;
             transition: background 0.3s ease;
             border: 1px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            font-size: 0.9rem;
         }
 
-        .back-btn:hover {
+        .back-btn:hover, .edit-btn:hover {
             background: rgba(255,255,255,0.3);
+        }
+
+        .edit-btn {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .edit-btn.active {
+            background: rgba(255,255,255,0.4);
         }
 
         .container {
@@ -300,13 +317,114 @@
         strong {
             color: #2c3e50;
         }
+
+        /* Source Editor Styles */
+        .source-editor {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        }
+
+        .source-editor.active {
+            display: block;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .editor-header h3 {
+            color: #667eea;
+            margin: 0;
+        }
+
+        .editor-info {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        #source-textarea {
+            width: 100%;
+            min-height: 500px;
+            padding: 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            resize: vertical;
+            background: #f7fafc;
+            color: #2d3748;
+        }
+
+        #source-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+
+        .editor-footer {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-stats {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
     </style>
 </head>
 <body>
     <div class="navbar">
         <div class="navbar-content">
             <h1 id="doc-title">Loading...</h1>
-            <a href="pkc-docs-index.html" class="back-btn">← Back to Index</a>
+            <div class="navbar-actions">
+                <button id="toggle-edit-btn" class="edit-btn" onclick="toggleEditMode()" style="display: none;">
+                    📝 Edit Source
+                </button>
+                <a href="pkc-docs-index.html" class="back-btn">← Back to Index</a>
+            </div>
         </div>
     </div>
 
@@ -316,6 +434,28 @@
             <p>Loading document...</p>
         </div>
         <div id="error" class="error" style="display: none;"></div>
+        
+        <!-- Source Editor -->
+        <div id="source-editor" class="source-editor">
+            <div class="editor-header">
+                <h3>📝 Edit Source</h3>
+                <div class="editor-info">
+                    Markdown, LaTeX, TikZ, and Mermaid supported
+                </div>
+            </div>
+            <textarea id="source-textarea" spellcheck="false" placeholder="Enter your Markdown, LaTeX, or TikZ code here..."></textarea>
+            <div class="editor-footer">
+                <div class="editor-stats">
+                    <span id="char-count">0</span> characters | 
+                    <span id="line-count">0</span> lines
+                </div>
+                <div class="editor-actions">
+                    <button class="btn btn-secondary" onclick="resetSource()">↺ Reset</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Rendered Content -->
         <div id="content" class="content" style="display: none;"></div>
     </div>
 
@@ -331,6 +471,11 @@
             }
         });
 
+        // State management
+        let isEditMode = false;
+        let originalMarkdown = '';
+        let currentMarkdown = '';
+
         // Get document name from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const docName = urlParams.get('doc');
@@ -340,6 +485,66 @@
         } else {
             loadDocument(docName);
         }
+
+        // Toggle between Edit and View mode
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const toggleBtn = document.getElementById('toggle-edit-btn');
+            const sourceEditor = document.getElementById('source-editor');
+            const contentDiv = document.getElementById('content');
+            
+            if (isEditMode) {
+                // Switch to Edit mode
+                toggleBtn.textContent = '👁️ View';
+                toggleBtn.classList.add('active');
+                sourceEditor.classList.add('active');
+                contentDiv.style.display = 'none';
+                
+                // Update textarea with current markdown
+                document.getElementById('source-textarea').value = currentMarkdown;
+                updateEditorStats();
+            } else {
+                // Switch to View mode - re-render
+                toggleBtn.textContent = '📝 Edit Source';
+                toggleBtn.classList.remove('active');
+                sourceEditor.classList.remove('active');
+                contentDiv.style.display = 'block';
+                
+                // Get updated markdown from textarea
+                currentMarkdown = document.getElementById('source-textarea').value;
+                
+                // Re-render the markdown
+                renderMarkdown(currentMarkdown);
+            }
+        }
+
+        // Reset to original source
+        function resetSource() {
+            if (confirm('Reset to original source? This will discard your changes.')) {
+                currentMarkdown = originalMarkdown;
+                document.getElementById('source-textarea').value = originalMarkdown;
+                updateEditorStats();
+            }
+        }
+
+        // Update editor statistics
+        function updateEditorStats() {
+            const textarea = document.getElementById('source-textarea');
+            const text = textarea.value;
+            const charCount = text.length;
+            const lineCount = text.split('\n').length;
+            
+            document.getElementById('char-count').textContent = charCount.toLocaleString();
+            document.getElementById('line-count').textContent = lineCount.toLocaleString();
+        }
+
+        // Listen to textarea changes
+        document.addEventListener('DOMContentLoaded', () => {
+            const textarea = document.getElementById('source-textarea');
+            if (textarea) {
+                textarea.addEventListener('input', updateEditorStats);
+            }
+        });
 
         async function loadDocument(filename) {
             try {
@@ -355,12 +560,17 @@
                 
                 const markdownText = await response.text();
                 
+                // Store original markdown
+                originalMarkdown = markdownText;
+                currentMarkdown = markdownText;
+                
                 // Parse and render the markdown
                 await renderMarkdown(markdownText);
                 
-                // Hide loading, show content
+                // Hide loading, show content, show edit button
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('content').style.display = 'block';
+                document.getElementById('toggle-edit-btn').style.display = 'block';
                 
             } catch (error) {
                 console.error('Error loading document:', error);
