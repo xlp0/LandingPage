@@ -648,5 +648,124 @@
 
       console.log('[Dashboard] CLM Dashboard with Redux initialized');
     </script>
+
+    <!-- Grafana Faro Web SDK for Real User Monitoring -->
+    <script src="https://unpkg.com/@grafana/faro-web-sdk@^1.3.0/dist/bundle/faro-web-sdk.iife.js"></script>
+    <script>
+      // Initialize Grafana Faro
+      (function() {
+        try {
+          const faro = window.GrafanaFaroWebSdk.initializeFaro({
+            url: 'https://faro-collector-prod-032.grafana.net/collect/lckoo1230',
+            app: {
+              name: 'THK Mesh Landing Page',
+              version: '1.0.0',
+              environment: 'production'
+            },
+            instrumentations: [
+              // Automatic instrumentation for web vitals, errors, etc.
+              ...window.GrafanaFaroWebSdk.getWebInstrumentations({
+                captureConsole: true,
+                captureConsoleDisabledLevels: []
+              })
+            ]
+          });
+
+          // Make Faro globally available
+          window.faro = faro;
+
+          console.log('[Faro] ✓ Initialized successfully');
+          console.log('[Faro] Tracking: Web Vitals, Errors, User Interactions');
+
+          // Track initial page load
+          faro.api.pushEvent('page_loaded', {
+            page: 'dashboard',
+            timestamp: Date.now(),
+            user_agent: navigator.userAgent,
+            screen_width: window.innerWidth,
+            screen_height: window.innerHeight
+          });
+
+        } catch (error) {
+          console.error('[Faro] Failed to initialize:', error);
+        }
+      })();
+
+      // Add Faro middleware to Redux store
+      const faroMiddleware = store => next => action => {
+        const result = next(action);
+        
+        if (window.faro) {
+          // Track component navigation
+          if (action.type === 'clm/setActiveComponent') {
+            const state = store.getState();
+            const clmState = selectCLMState(state);
+            const component = clmState.registry?.components?.find(
+              c => c.hash === action.payload
+            );
+            
+            if (component) {
+              window.faro.api.pushEvent('clm_component_visit', {
+                component_hash: component.hash,
+                component_name: component.name,
+                timestamp: Date.now(),
+                previous_component: clmState.activeComponent || 'none'
+              });
+              
+              console.log('[Faro] Tracked component visit:', component.name);
+            }
+          }
+          
+          // Track component load success
+          if (action.type === 'clm/componentLoaded') {
+            const { hash, loadTime } = action.payload || {};
+            if (hash) {
+              window.faro.api.pushEvent('clm_component_loaded', {
+                component_hash: hash,
+                load_time_ms: loadTime || 0,
+                timestamp: Date.now()
+              });
+              
+              console.log('[Faro] Tracked component load:', hash, loadTime + 'ms');
+            }
+          }
+          
+          // Track component errors
+          if (action.type === 'clm/componentFailed') {
+            const { hash, error } = action.payload || {};
+            if (hash) {
+              window.faro.api.pushError(
+                new Error(`Component ${hash} failed: ${error}`),
+                {
+                  context: {
+                    component_hash: hash,
+                    error_type: 'component_load_failure',
+                    error_message: error
+                  }
+                }
+              );
+              
+              console.error('[Faro] Tracked component error:', hash, error);
+            }
+          }
+        }
+        
+        return result;
+      };
+
+      // Recreate store with Faro middleware
+      const storeWithFaro = configureStore({
+        reducer: {
+          clm: clmReducer
+        },
+        middleware: (getDefaultMiddleware) =>
+          getDefaultMiddleware().concat(faroMiddleware)
+      });
+
+      // Replace global store reference
+      window.store = storeWithFaro;
+
+      console.log('[Faro] Middleware added to Redux store');
+    </script>
 </body>
 </html>
