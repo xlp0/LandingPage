@@ -184,6 +184,28 @@ components:
       health_check: "/health/pkc-viewer"
       expected_load_time_ms: 800
       expected_failure: false
+
+  - hash: "grafana-faro"
+    name: "Grafana Faro - Real User Monitoring"
+    abstract:
+      context: "Frontend observability and real user monitoring"
+      goal: "Track user interactions, component visits, errors, and performance metrics"
+    concrete:
+      implementation: "components/grafana-faro.html"
+      sandbox: "allow-scripts allow-same-origin"
+    balanced:
+      metrics_endpoint: "/metrics/grafana-faro"
+      health_check: "/health/grafana-faro"
+      expected_load_time_ms: 600
+      observability:
+        tracks:
+          - "Component visits and navigation"
+          - "User journey and session replay"
+          - "JavaScript errors and exceptions"
+          - "Web vitals (LCP, FID, CLS)"
+          - "API calls and performance"
+        integration: "Grafana Cloud Faro"
+        endpoint: "https://faro-collector-prod-us-central-0.grafana.net/collect"
       
 # Observability Configuration
 observability:

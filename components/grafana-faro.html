@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grafana Faro - Real User Monitoring</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .status-badge.active {
+            background: rgba(46, 213, 115, 0.3);
+            border: 2px solid #2ed573;
+        }
+
+        .status-badge.inactive {
+            background: rgba(255, 71, 87, 0.3);
+            border: 2px solid #ff4757;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+        }
+
+        .metric {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .setup-section {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .setup-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .setup-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            border-left: 4px solid #2ed573;
+        }
+
+        .step-number {
+            background: #2ed573;
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .code-block {
+            background: rgba(0,0,0,0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .code-block code {
+            color: #2ed573;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .button.primary {
+            background: #2ed573;
+            border-color: #2ed573;
+        }
+
+        .button.primary:hover {
+            background: #26de81;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .feature {
+            background: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+        }
+
+        .logs-section {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .logs-section h3 {
+            margin-bottom: 1rem;
+        }
+
+        .log-entry {
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+
+        .log-entry.error {
+            border-left: 3px solid #ff4757;
+        }
+
+        .log-entry.info {
+            border-left: 3px solid #2ed573;
+        }
+
+        .log-entry.warning {
+            border-left: 3px solid #ffa502;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Grafana Faro</h1>
+            <p class="subtitle">Real User Monitoring for THK Mesh</p>
+            <div class="status-badge" id="statusBadge">
+                <span id="statusText">⚪ Not Configured</span>
+            </div>
+        </div>
+
+        <!-- Metrics Cards -->
+        <div class="cards">
+            <div class="card">
+                <h3><span class="card-icon">👥</span> Active Users</h3>
+                <div class="metric" id="activeUsers">-</div>
+                <div class="metric-label">Currently online</div>
+            </div>
+
+            <div class="card">
+                <h3><span class="card-icon">📄</span> Page Views</h3>
+                <div class="metric" id="pageViews">-</div>
+                <div class="metric-label">Last 24 hours</div>
+            </div>
+
+            <div class="card">
+                <h3><span class="card-icon">⚠️</span> Errors</h3>
+                <div class="metric" id="errorCount">-</div>
+                <div class="metric-label">Last 24 hours</div>
+            </div>
+
+            <div class="card">
+                <h3><span class="card-icon">⚡</span> Performance</h3>
+                <div class="metric" id="avgLoadTime">-</div>
+                <div class="metric-label">Avg load time (ms)</div>
+            </div>
+        </div>
+
+        <!-- Setup Section -->
+        <div class="setup-section">
+            <h2>🚀 Quick Setup Guide</h2>
+            
+            <div class="setup-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Install Grafana Faro SDK</h4>
+                        <p>Add the Faro Web SDK to your application:</p>
+                        <div class="code-block">
+                            <code>npm install @grafana/faro-web-sdk</code>
+                        </div>
+                        <p>Or use CDN:</p>
+                        <div class="code-block">
+                            <code>&lt;script src="https://unpkg.com/@grafana/faro-web-sdk@^1.0.0/dist/bundle/faro-web-sdk.iife.js"&gt;&lt;/script&gt;</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Initialize Faro in Your App</h4>
+                        <p>Add this to your main JavaScript file (e.g., index.html):</p>
+                        <div class="code-block">
+<code>import { initializeFaro } from '@grafana/faro-web-sdk';
+
+const faro = initializeFaro({
+  url: 'https://faro-collector-prod-us-central-0.grafana.net/collect/YOUR_APP_ID',
+  app: {
+    name: 'THK Mesh Landing Page',
+    version: '1.0.0',
+    environment: 'production'
+  },
+  instrumentations: [
+    // Automatic instrumentation
+    ...getWebInstrumentations(),
+  ],
+});
+
+// Track custom events
+faro.api.pushEvent('component_loaded', {
+  component: 'pkc-viewer',
+  loadTime: 1234
+});</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Get Your Faro Endpoint</h4>
+                        <p>Sign up for Grafana Cloud and get your Faro endpoint:</p>
+                        <a href="https://grafana.com/auth/sign-up/create-user" target="_blank" class="button primary">
+                            Sign Up for Grafana Cloud (Free)
+                        </a>
+                        <p style="margin-top: 1rem;">After signup, go to: <strong>Frontend Observability</strong> → <strong>Create App</strong></p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Track CLM Component Visits</h4>
+                        <p>Integrate with your Redux store to track component navigation:</p>
+                        <div class="code-block">
+<code>// In your Redux middleware
+const faroMiddleware = store => next => action => {
+  if (action.type === 'clm/setActiveComponent') {
+    faro.api.pushEvent('clm_component_visit', {
+      component_hash: action.payload,
+      component_name: getComponentName(action.payload),
+      timestamp: Date.now()
+    });
+  }
+  return next(action);
+};</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="setup-section">
+            <h2>✨ What Faro Tracks Automatically</h2>
+            
+            <div class="features">
+                <div class="feature">
+                    <span class="feature-icon">🌐</span>
+                    <div>
+                        <strong>Web Vitals</strong>
+                        <p>LCP, FID, CLS, TTFB</p>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">🐛</span>
+                    <div>
+                        <strong>JavaScript Errors</strong>
+                        <p>Unhandled exceptions & stack traces</p>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">🔗</span>
+                    <div>
+                        <strong>API Calls</strong>
+                        <p>XHR/Fetch requests & responses</p>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">🖱️</span>
+                    <div>
+                        <strong>User Interactions</strong>
+                        <p>Clicks, navigation, sessions</p>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">📱</span>
+                    <div>
+                        <strong>Device Info</strong>
+                        <p>Browser, OS, screen size</p>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">🌍</span>
+                    <div>
+                        <strong>Geo Location</strong>
+                        <p>Country, region, city</p>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">📊</span>
+                    <div>
+                        <strong>Session Replay</strong>
+                        <p>Visual playback of user sessions</p>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">⏱️</span>
+                    <div>
+                        <strong>Performance</strong>
+                        <p>Load times, resource timing</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example Queries -->
+        <div class="setup-section">
+            <h2>🔍 Example Queries for CLM Tracking</h2>
+            
+            <div class="step">
+                <div class="step-content">
+                    <h4>Most Visited Components</h4>
+                    <div class="code-block">
+<code>// In Grafana Explore
+{app="THK Mesh Landing Page", kind="event", event_name="clm_component_visit"}
+| json
+| count by component_name
+| sort desc</code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-content">
+                    <h4>User Journey Visualization</h4>
+                    <div class="code-block">
+<code>// Track component navigation flow
+{app="THK Mesh Landing Page", kind="event", event_name="clm_component_visit"}
+| json
+| line_format "{{.session_id}}: {{.component_name}}"</code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-content">
+                    <h4>Component Load Errors</h4>
+                    <div class="code-block">
+<code>// Find components that fail to load
+{app="THK Mesh Landing Page", kind="exception"}
+| json
+| filter component_hash != ""
+| count by component_hash</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Logs Section -->
+        <div class="logs-section">
+            <h3>📝 Live Event Log (Demo)</h3>
+            <div id="logsContainer">
+                <div class="log-entry info">
+                    <strong>[INFO]</strong> Faro initialized successfully
+                </div>
+                <div class="log-entry info">
+                    <strong>[INFO]</strong> User visited component: pkc-viewer
+                </div>
+                <div class="log-entry info">
+                    <strong>[INFO]</strong> Component loaded in 234ms
+                </div>
+                <div class="log-entry warning">
+                    <strong>[WARN]</strong> Slow API response: /api/registry (1234ms)
+                </div>
+                <div class="log-entry info">
+                    <strong>[INFO]</strong> User navigated to: account-management
+                </div>
+            </div>
+        </div>
+
+        <!-- Resources -->
+        <div class="setup-section">
+            <h2>📚 Resources</h2>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <a href="https://grafana.com/docs/grafana-cloud/monitor-applications/frontend-observability/" target="_blank" class="button">
+                    📖 Faro Documentation
+                </a>
+                <a href="https://grafana.com/docs/grafana-cloud/monitor-applications/frontend-observability/instrument/web-sdk/" target="_blank" class="button">
+                    🔧 Web SDK Guide
+                </a>
+                <a href="https://github.com/grafana/faro-web-sdk" target="_blank" class="button">
+                    💻 GitHub Repository
+                </a>
+                <a href="https://play.grafana.org/d/000000066/frontend-observability" target="_blank" class="button">
+                    🎮 Live Demo
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulate metrics (in production, these would come from Faro API)
+        function updateMetrics() {
+            const metrics = {
+                activeUsers: Math.floor(Math.random() * 50) + 10,
+                pageViews: Math.floor(Math.random() * 1000) + 500,
+                errorCount: Math.floor(Math.random() * 10),
+                avgLoadTime: Math.floor(Math.random() * 500) + 200
+            };
+
+            document.getElementById('activeUsers').textContent = metrics.activeUsers;
+            document.getElementById('pageViews').textContent = metrics.pageViews.toLocaleString();
+            document.getElementById('errorCount').textContent = metrics.errorCount;
+            document.getElementById('avgLoadTime').textContent = metrics.avgLoadTime + 'ms';
+        }
+
+        // Check if Faro is configured
+        function checkFaroStatus() {
+            // In production, check if window.faro exists
+            const isConfigured = false; // Change to true when configured
+            
+            const badge = document.getElementById('statusBadge');
+            const statusText = document.getElementById('statusText');
+            
+            if (isConfigured) {
+                badge.classList.remove('inactive');
+                badge.classList.add('active');
+                statusText.innerHTML = '🟢 Active & Tracking';
+            } else {
+                badge.classList.remove('active');
+                badge.classList.add('inactive');
+                statusText.innerHTML = '⚪ Not Configured';
+            }
+        }
+
+        // Simulate live logs
+        function addLiveLog() {
+            const logsContainer = document.getElementById('logsContainer');
+            const logTypes = ['info', 'warning', 'error'];
+            const messages = [
+                { type: 'info', msg: 'User visited component: dashboard' },
+                { type: 'info', msg: 'Component loaded successfully' },
+                { type: 'warning', msg: 'Slow network detected' },
+                { type: 'error', msg: 'Failed to load resource: image.png' },
+                { type: 'info', msg: 'User interaction: button click' }
+            ];
+
+            const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${randomMsg.type}`;
+            logEntry.innerHTML = `<strong>[${randomMsg.type.toUpperCase()}]</strong> ${timestamp} - ${randomMsg.msg}`;
+            
+            logsContainer.insertBefore(logEntry, logsContainer.firstChild);
+            
+            // Keep only last 10 logs
+            while (logsContainer.children.length > 10) {
+                logsContainer.removeChild(logsContainer.lastChild);
+            }
+        }
+
+        // Initialize
+        checkFaroStatus();
+        updateMetrics();
+        
+        // Update metrics every 5 seconds
+        setInterval(updateMetrics, 5000);
+        
+        // Add live log every 3 seconds
+        setInterval(addLiveLog, 3000);
+
+        // Log component load
+        console.log('[Grafana Faro CLM] Component loaded successfully');
+        
+        // Notify parent window
+        if (window.parent !== window) {
+            window.parent.postMessage({
+                type: 'component-loaded',
+                component: 'grafana-faro',
+                timestamp: Date.now()
+            }, '*');
+        }
+    </script>
+</body>
+</html>
