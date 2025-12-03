@@ -376,12 +376,12 @@
               Loading...
             </span>
           </div>
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; max-width: 400px;">
+          <div style="display: flex; align-items: center; gap: 12px; flex: 1; max-width: 500px; justify-content: center;">
             <div id="testStatusText" style="font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, 0.9);">
               Loading test status...
             </div>
             <a id="testStatusLink" href="#" target="_blank" style="display: none; padding: 6px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 600; transition: all 0.3s ease;">
-              📊 View GitHub Actions
+              View GitHub Actions
             </a>
           </div>
           <div style="display: flex; align-items: center; gap: 20px;">
@@ -992,10 +992,10 @@
             testRunBadge.title = `Test run #${testData.test_run} - ${statusText}`;
           }
           
-          // Update test status text (center top)
+          // Update test status text (center, before button)
           const testStatusText = document.getElementById('testStatusText');
           if (testStatusText) {
-            testStatusText.innerHTML = `${statusIcon} Latest Test: <span style="color: ${statusTextColor};">${statusText}</span>`;
+            testStatusText.innerHTML = `Latest Test: <span style="color: ${statusTextColor};">${statusText}</span>`;
             testStatusText.title = `Status: ${statusText}\nDate: ${formattedDate}\nBranch: ${testData.branch}\nCommit: ${testData.commit_sha.substring(0, 7)}`;
           }
           
@@ -1030,7 +1030,7 @@
           // Update status text
           const testStatusText = document.getElementById('testStatusText');
           if (testStatusText) {
-            testStatusText.innerHTML = '⚠️ No test data available';
+            testStatusText.innerHTML = 'No test data available';
             testStatusText.style.color = 'rgba(255, 193, 7, 0.9)';
           }
           
