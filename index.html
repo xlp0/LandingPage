@@ -942,11 +942,19 @@
 
     <!-- CLM Test Status Loader -->
     <script>
-      // Load and display test status from JSON file
-      async function loadTestStatus() {
+      // Global variable to track current component
+      window.currentComponentHash = 'welcome';
+
+      // Load and display test status from JSON file for specific component
+      async function loadTestStatus(componentHash) {
+        // Use current component if no hash provided
+        if (!componentHash) {
+          componentHash = window.currentComponentHash || 'welcome';
+        }
+        
         try {
-          console.log('[Test Status] Loading test results...');
-          const response = await fetch('/tests/test-components/welcome.json');
+          console.log(`[Test Status] Loading test results for ${componentHash}...`);
+          const response = await fetch(`/tests/test-components/${componentHash}.json`);
           
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -1044,13 +1052,46 @@
       
       // Load test status when page loads
       if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', loadTestStatus);
+        document.addEventListener('DOMContentLoaded', () => loadTestStatus('welcome'));
       } else {
-        loadTestStatus();
+        loadTestStatus('welcome');
       }
       
-      // Refresh test status every 5 minutes
-      setInterval(loadTestStatus, 5 * 60 * 1000);
+      // Listen to Redux store changes for active component
+      if (window.reduxStore) {
+        let previousComponentHash = null;
+        
+        window.reduxStore.subscribe(() => {
+          const state = window.reduxStore.getState();
+          const currentHash = state.clm?.activeComponent;
+          
+          if (currentHash && currentHash !== previousComponentHash) {
+            console.log(`[Test Status] Component changed to: ${currentHash}`);
+            previousComponentHash = currentHash;
+            window.currentComponentHash = currentHash;
+            loadTestStatus(currentHash);
+          }
+        });
+        
+        console.log('[Test Status] Redux store listener attached');
+      }
+      
+      // Also listen to global postMessage for component changes
+      window.addEventListener('message', (event) => {
+        if (event.data.type === 'clm_component_loaded') {
+          const componentHash = event.data.componentId;
+          if (componentHash) {
+            console.log(`[Test Status] Component loaded via postMessage: ${componentHash}`);
+            window.currentComponentHash = componentHash;
+            loadTestStatus(componentHash);
+          }
+        }
+      });
+      
+      // Refresh test status for current component every 5 minutes
+      setInterval(() => {
+        loadTestStatus(window.currentComponentHash);
+      }, 5 * 60 * 1000);
     </script>
 </body>
 </html>
