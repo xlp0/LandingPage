@@ -1055,15 +1055,18 @@ C \\arrow[rr] & & D \\arrow[from=uu, crossing over]
                         
                         if (tikzCode) {
                             console.log(`[PKC Viewer] TikZ diagram ${containerId} entered viewport - rendering...`);
-                            renderTikZ(containerId, tikzCode);
+                            // Delay rendering slightly to let page settle
+                            setTimeout(() => {
+                                renderTikZ(containerId, tikzCode);
+                            }, 100);
                             tikzRenderQueue.delete(containerId); // Remove from queue
                             observer.unobserve(entry.target); // Stop observing
                         }
                     }
                 });
             }, {
-                rootMargin: '200px', // Start rendering 200px before entering viewport
-                threshold: 0.01
+                rootMargin: '0px', // Only render when actually visible (not before)
+                threshold: 0.1 // Require 10% visible before triggering
             });
             
             // Observe all TikZ containers
