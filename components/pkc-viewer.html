@@ -1016,10 +1016,11 @@ C \\arrow[rr] & & D \\arrow[from=uu, crossing over]
                 hljs.highlightElement(block);
             });
 
-            // Render TikZ diagrams with TikZJax
-            tikzBlocks.forEach(({ id, code }) => {
-                renderTikZ(id, code);
-            });
+            // ========================================
+            // LAZY RENDER: Only render visible TikZ diagrams
+            // ========================================
+            // Set up Intersection Observer to render diagrams when they enter viewport
+            setupLazyTikZRendering(tikzBlocks);
         }
 
         // ========================================
@@ -1036,6 +1037,45 @@ C \\arrow[rr] & & D \\arrow[from=uu, crossing over]
         let tikzJaxLoaded = false;   // Track if TikZJax is loaded
         let tikzJaxLoading = false;  // Track if TikZJax is currently loading
         let tikzLoadPromise = null;  // Promise for TikZJax loading
+        const tikzRenderQueue = new Map(); // Track which diagrams need rendering
+        
+        // Setup lazy rendering with Intersection Observer
+        function setupLazyTikZRendering(tikzBlocks) {
+            // Store all TikZ blocks in queue
+            tikzBlocks.forEach(({ id, code }) => {
+                tikzRenderQueue.set(id, code);
+            });
+            
+            // Create Intersection Observer to detect when diagrams enter viewport
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const containerId = entry.target.id;
+                        const tikzCode = tikzRenderQueue.get(containerId);
+                        
+                        if (tikzCode) {
+                            console.log(`[PKC Viewer] TikZ diagram ${containerId} entered viewport - rendering...`);
+                            renderTikZ(containerId, tikzCode);
+                            tikzRenderQueue.delete(containerId); // Remove from queue
+                            observer.unobserve(entry.target); // Stop observing
+                        }
+                    }
+                });
+            }, {
+                rootMargin: '200px', // Start rendering 200px before entering viewport
+                threshold: 0.01
+            });
+            
+            // Observe all TikZ containers
+            tikzBlocks.forEach(({ id }) => {
+                const container = document.getElementById(id);
+                if (container) {
+                    observer.observe(container);
+                }
+            });
+            
+            console.log(`[PKC Viewer] Lazy rendering enabled for ${tikzBlocks.length} TikZ diagrams`);
+        }
         
         // Generate hash for TikZ code (for caching)
         function hashTikZCode(code) {
