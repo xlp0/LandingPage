@@ -49,12 +49,14 @@ export const fetchCLMRegistry = createAsyncThunk(
       if (registry.components && Array.isArray(registry.components)) {
         registry.components = registry.components.map(component => {
           if (component.concrete && component.concrete.implementation) {
-            const resolvedURL = resolveComponentURL(component.concrete.implementation, baseURL);
-            console.log(`[CLM Slice] Resolved ${component.hash}: ${component.concrete.implementation} → ${resolvedURL}`);
+            const originalImpl = component.concrete.implementation;
+            const resolvedURL = resolveComponentURL(originalImpl, baseURL);
+            console.log(`[CLM Slice] Resolved ${component.hash}: ${originalImpl} → ${resolvedURL}`);
             return {
               ...component,
               concrete: {
                 ...component.concrete,
+                originalImplementation: originalImpl,  // Keep original for categorization
                 implementation: resolvedURL
               }
             };

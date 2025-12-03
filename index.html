@@ -581,12 +581,19 @@
         const external = [];
         
         components.forEach(comp => {
-          const impl = comp.concrete?.implementation || '';
+          // Use originalImplementation if available (before URL resolution)
+          // Otherwise fall back to implementation
+          const impl = comp.concrete?.originalImplementation || comp.concrete?.implementation || '';
+          
+          console.log(`[Dashboard] Categorizing ${comp.hash}: "${impl}"`);
+          
           // External if starts with http:// or https://
           if (impl.startsWith('http://') || impl.startsWith('https://')) {
             external.push(comp);
+            console.log(`[Dashboard] → External`);
           } else {
             internal.push(comp);
+            console.log(`[Dashboard] → Internal`);
           }
         });
         
