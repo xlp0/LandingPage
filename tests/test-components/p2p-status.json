@@ -1,10 +1,11 @@
 {
   "hash": "p2p-status",
-  "timestamp": "2025-12-03T05:03:10.004Z",
-  "test_run": 1,
-  "status": "success",
-  "github_actions_url": "https://github.com/xlp0/LandingPage/actions/runs/sample-p2p-status",
-  "commit_sha": "sample-commit-sha",
+  "name": "P2P Status Panel",
+  "timestamp": "2025-12-03T05:59:56Z",
+  "test_run": 3,
+  "status": "failure",
+  "github_actions_url": "https://github.com/xlp0/LandingPage/actions/runs/19884028227",
+  "commit_sha": "6a3e58d8e8d6a01661c32a3d77e9376cdbae24f1",
   "branch": "main",
-  "actor": "local-testing"
+  "actor": "alessandrorumampuk"
 }
