@@ -373,6 +373,9 @@
             <span>CLM Dashboard</span>
             <span class="clm-badge">SINGLE VIEW</span>
           </div>
+          <div id="testStatusBadge" style="display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: rgba(255, 255, 255, 0.1); border-radius: 8px; font-size: 12px; flex: 1; justify-content: center; max-width: 500px;">
+            <span style="opacity: 0.7;">Loading test status...</span>
+          </div>
           <div style="display: flex; align-items: center; gap: 20px;">
             <button id="loginBtn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: transform 0.2s;">
               🔐 Login
@@ -927,6 +930,96 @@
       window.store = storeWithFaro;
 
       console.log('[Faro] Middleware added to Redux store');
+    </script>
+
+    <!-- CLM Test Status Loader -->
+    <script>
+      // Load and display test status from JSON file
+      async function loadTestStatus() {
+        try {
+          console.log('[Test Status] Loading test results...');
+          const response = await fetch('/tests/test-components/welcome.json');
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          
+          const testData = await response.json();
+          console.log('[Test Status] Test data loaded:', testData);
+          
+          const badge = document.getElementById('testStatusBadge');
+          if (!badge) return;
+          
+          // Determine status icon and color
+          let statusIcon = '❓';
+          let statusColor = 'rgba(255, 255, 255, 0.3)';
+          let statusText = 'Unknown';
+          
+          if (testData.status === 'success') {
+            statusIcon = '✅';
+            statusColor = 'rgba(46, 204, 113, 0.3)';
+            statusText = 'Passed';
+          } else if (testData.status === 'failure') {
+            statusIcon = '❌';
+            statusColor = 'rgba(231, 76, 60, 0.3)';
+            statusText = 'Failed';
+          }
+          
+          // Format timestamp
+          const date = new Date(testData.timestamp);
+          const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+          
+          // Update badge with test info
+          badge.style.background = statusColor;
+          badge.style.cursor = 'pointer';
+          badge.style.transition = 'all 0.3s ease';
+          badge.innerHTML = `
+            <span style="font-weight: 600;">${statusIcon} ${testData.hash}</span>
+            <span style="opacity: 0.8;">•</span>
+            <span style="opacity: 0.8;">Run #${testData.test_run}</span>
+            <span style="opacity: 0.8;">•</span>
+            <span style="opacity: 0.8;">${statusText}</span>
+          `;
+          
+          // Add hover effect
+          badge.onmouseover = () => {
+            badge.style.transform = 'scale(1.02)';
+            badge.style.background = statusColor.replace('0.3', '0.4');
+          };
+          badge.onmouseout = () => {
+            badge.style.transform = 'scale(1)';
+            badge.style.background = statusColor;
+          };
+          
+          // Add click handler to open GitHub Actions
+          badge.onclick = () => {
+            window.open(testData.github_actions_url, '_blank');
+            console.log('[Test Status] Opening GitHub Actions:', testData.github_actions_url);
+          };
+          
+          // Add tooltip
+          badge.title = `Test Run #${testData.test_run}\nStatus: ${statusText}\nDate: ${formattedDate}\nBranch: ${testData.branch}\nClick to view details`;
+          
+          console.log('[Test Status] Badge updated successfully');
+        } catch (error) {
+          console.error('[Test Status] Failed to load test results:', error);
+          const badge = document.getElementById('testStatusBadge');
+          if (badge) {
+            badge.innerHTML = `<span style="opacity: 0.5;">⚠️ No test data available</span>`;
+            badge.style.background = 'rgba(255, 193, 7, 0.2)';
+          }
+        }
+      }
+      
+      // Load test status when page loads
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadTestStatus);
+      } else {
+        loadTestStatus();
+      }
+      
+      // Refresh test status every 5 minutes
+      setInterval(loadTestStatus, 5 * 60 * 1000);
     </script>
 </body>
 </html>

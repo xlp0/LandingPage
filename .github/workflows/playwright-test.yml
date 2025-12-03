@@ -1,15 +1,15 @@
 name: Playwright Tests
 
 on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main, develop]
-  schedule:
-    - cron: '0 2 * * *'  # Run daily at 2 AM UTC
+  workflow_run:
+    workflows: ["CLM Component Tests"]
+    types:
+      - completed
+  workflow_dispatch:
 
 jobs:
   playwright-tests:
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure' || github.event_name == 'workflow_dispatch' }}
     timeout-minutes: 60
     runs-on: ubuntu-latest
 
