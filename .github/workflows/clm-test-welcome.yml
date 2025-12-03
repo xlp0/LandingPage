@@ -100,20 +100,16 @@ jobs:
         echo "✅ Test results saved to tests/test-components/welcome.json"
         cat tests/test-components/welcome.json
 
-    - name: Commit test results
+    - name: Commit and Push results
       if: always()
       run: |
-        git config --local user.email "github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
-        git add tests/test-components/welcome.json
-        git diff --staged --quiet || git commit -m "Update CLM test results for welcome component [run ${{ github.run_number }}]"
-
-    - name: Push test results
-      if: always()
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ github.ref }}
+        chmod +x .github/scripts/push-test-results.sh
+        .github/scripts/push-test-results.sh \
+          "welcome" \
+          "${{ github.run_number }}" \
+          "${{ secrets.GITHUB_TOKEN }}" \
+          "${{ github.repository }}" \
+          "${{ github.ref }}"
 
     - name: Upload test screenshots
       uses: actions/upload-artifact@v4
