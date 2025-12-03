@@ -684,7 +684,13 @@
                   <div class="component-item-name">${componentConfig.name}</div>
                   <div class="component-item-hash">${componentConfig.hash}</div>
                 `;
-                item.onclick = () => switchToComponent(componentConfig.hash);
+                item.onclick = () => {
+                  switchToComponent(componentConfig.hash);
+                  // Update test status when component is clicked
+                  if (window.loadTestStatus) {
+                    window.loadTestStatus(componentConfig.hash);
+                  }
+                };
                 internalItems.appendChild(item);
               });
             }
@@ -704,7 +710,13 @@
                   <div class="component-item-name">${componentConfig.name}</div>
                   <div class="component-item-hash">${componentConfig.hash}</div>
                 `;
-                item.onclick = () => switchToComponent(componentConfig.hash);
+                item.onclick = () => {
+                  switchToComponent(componentConfig.hash);
+                  // Update test status when component is clicked
+                  if (window.loadTestStatus) {
+                    window.loadTestStatus(componentConfig.hash);
+                  }
+                };
                 externalItems.appendChild(item);
               });
             }
@@ -946,7 +958,7 @@
       window.currentComponentHash = 'welcome';
 
       // Load and display test status from JSON file for specific component
-      async function loadTestStatus(componentHash) {
+      window.loadTestStatus = async function(componentHash) {
         // Use current component if no hash provided
         if (!componentHash) {
           componentHash = window.currentComponentHash || 'welcome';
@@ -1048,13 +1060,13 @@
             testStatusLink.style.display = 'none';
           }
         }
-      }
+      };
       
       // Load test status when page loads
       if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => loadTestStatus('welcome'));
+        document.addEventListener('DOMContentLoaded', () => window.loadTestStatus('welcome'));
       } else {
-        loadTestStatus('welcome');
+        window.loadTestStatus('welcome');
       }
       
       // Listen to Redux store changes for active component
@@ -1069,7 +1081,7 @@
             console.log(`[Test Status] Component changed to: ${currentHash}`);
             previousComponentHash = currentHash;
             window.currentComponentHash = currentHash;
-            loadTestStatus(currentHash);
+            window.loadTestStatus(currentHash);
           }
         });
         
@@ -1083,14 +1095,14 @@
           if (componentHash) {
             console.log(`[Test Status] Component loaded via postMessage: ${componentHash}`);
             window.currentComponentHash = componentHash;
-            loadTestStatus(componentHash);
+            window.loadTestStatus(componentHash);
           }
         }
       });
       
       // Refresh test status for current component every 5 minutes
       setInterval(() => {
-        loadTestStatus(window.currentComponentHash);
+        window.loadTestStatus(window.currentComponentHash);
       }, 5 * 60 * 1000);
     </script>
 </body>
