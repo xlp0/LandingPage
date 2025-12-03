@@ -1168,14 +1168,16 @@ C \\arrow[rr] & & D \\arrow[from=uu, crossing over]
                 console.log('[PKC Viewer] TikZ Code:', tikzCode);
                 
                 // ========================================
-                // OPTIMIZATION 2: Lazy Load TikZJax
+                // OPTIMIZATION 2: Lazy Load TikZJax (ONCE)
                 // ========================================
                 // Only load TikZJax WebAssembly when we actually need it
                 // This saves ~2-3 seconds on pages without TikZ diagrams
                 await ensureTikZJaxLoaded();
                 
-                // TikZJax only processes scripts on initial page load, not dynamically added ones
-                // Solution: Use iframe with srcdoc (like Pluto.jl approach)
+                // ========================================
+                // FAST DIRECT RENDERING (No iframes!)
+                // ========================================
+                // Render directly in the page - TikZJax loads once, all diagrams share it
                 
                 // Ensure the TikZ code is properly formatted
                 let formattedCode = tikzCode.trim();
@@ -1186,110 +1188,44 @@ C \\arrow[rr] & & D \\arrow[from=uu, crossing over]
                     console.log('[PKC Viewer] Auto-wrapped TikZ code with tikzpicture environment');
                 }
                 
-                // Create iframe with TikZJax and the diagram (optimized with auto-resize)
-                const iframeDoc = `<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://tikzjax.com/v1/fonts.css">
-    <script src="https://tikzjax.com/v1/tikzjax.js"><\/script>
-    <style>
-        body { 
-            margin: 0; 
-            padding: 10px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100px;
-            overflow: visible;
-        }
-        svg { 
-            max-width: 100%; 
-            height: auto;
-            display: block;
-        }
-    </style>
-    <script>
-        // Track TikZ rendering start time
-        const tikzStartTime = performance.now();
-        
-        // Auto-resize iframe when SVG is rendered
-        window.addEventListener('load', () => {
-            const observer = new MutationObserver(() => {
-                const svg = document.querySelector('svg');
-                if (svg) {
-                    observer.disconnect();
-                    // Wait a bit for SVG to fully render
-                    setTimeout(() => {
-                        const height = svg.getBoundingClientRect().height;
-                        const width = svg.getBoundingClientRect().width;
-                        const renderTime = performance.now() - tikzStartTime;
-                        
-                        // Send height, performance data, AND SVG to parent
-                        window.parent.postMessage({
-                            type: 'tikz-resize',
-                            height: height + 30,
-                            width: width,
-                            renderTime: renderTime,
-                            svgContent: svg.outerHTML, // Send SVG for caching
-                            containerId: '${containerId}'
-                        }, '*');
-                    }, 100);
-                }
-            });
-            observer.observe(document.body, { childList: true, subtree: true });
-        });
-    <\/script>
-</head>
-<body>
-    <script type="text/tikz">
-${formattedCode}
-    <\/script>
-</body>
-</html>`;
+                // Create script tag for TikZJax to process
+                const script = document.createElement('script');
+                script.type = 'text/tikz';
+                script.textContent = formattedCode;
+                script.id = `${containerId}-script`;
                 
-                // Create iframe element with lazy loading
-                const iframe = document.createElement('iframe');
-                iframe.style.width = '100%';
-                iframe.style.height = '400px'; // Increased default height
-                iframe.style.border = 'none';
-                iframe.style.overflow = 'hidden';
-                iframe.loading = 'lazy'; // Lazy load iframes for better performance
-                iframe.srcdoc = iframeDoc;
+                // Clear container and add script
+                container.innerHTML = '';
+                container.appendChild(script);
                 
-                // Listen for resize messages from iframe
-                const messageHandler = (event) => {
-                    if (event.data.type === 'tikz-resize' && event.data.containerId === containerId) {
-                        iframe.style.height = event.data.height + 'px';
-                        console.log(`[PKC Viewer] Auto-resized TikZ iframe to ${event.data.height}px`);
+                // Wait for TikZJax to process and render
+                // TikZJax replaces the script tag with SVG
+                const checkInterval = setInterval(() => {
+                    const svg = container.querySelector('svg');
+                    if (svg) {
+                        clearInterval(checkInterval);
                         
-                        // Calculate total render time
+                        // Calculate render time
                         const totalTime = performance.now() - startTime;
-                        const iframeRenderTime = event.data.renderTime || 0;
                         
-                        // ========================================
-                        // OPTIMIZATION 3: Cache the SVG
-                        // ========================================
-                        // Cache the SVG sent from iframe (avoids CORS issues)
-                        if (event.data.svgContent) {
-                            tikzCache.set(codeHash, event.data.svgContent);
-                            console.log(`[PKC Viewer] ✓ Cached SVG (hash: ${codeHash}, size: ${event.data.svgContent.length} bytes)`);
-                            
-                            // Track cache store with Faro
-                            if (window.faro) {
-                                window.faro.api.pushEvent('tikz_cache_store', {
-                                    code_hash: codeHash,
-                                    svg_size_bytes: event.data.svgContent.length,
-                                    cache_size: tikzCache.size,
-                                    timestamp: Date.now()
-                                });
-                            }
+                        // Cache the SVG
+                        const svgContent = svg.outerHTML;
+                        tikzCache.set(codeHash, svgContent);
+                        console.log(`[PKC Viewer] ✓ Cached SVG (hash: ${codeHash}, size: ${svgContent.length} bytes)`);
+                        
+                        // Track cache store with Faro
+                        if (window.faro) {
+                            window.faro.api.pushEvent('tikz_cache_store', {
+                                code_hash: codeHash,
+                                svg_size_bytes: svgContent.length,
+                                cache_size: tikzCache.size,
+                                timestamp: Date.now()
+                            });
                         }
                         
                         console.log(`[PKC Viewer] TikZ render complete:`, {
                             container: containerId,
                             totalTime: `${totalTime.toFixed(2)}ms`,
-                            iframeRenderTime: `${iframeRenderTime.toFixed(2)}ms`,
                             codeLength: tikzCodeLength,
                             cached: false
                         });
@@ -1299,11 +1235,8 @@ ${formattedCode}
                             window.faro.api.pushEvent('tikz_render_complete', {
                                 container_id: containerId,
                                 total_time_ms: Math.round(totalTime),
-                                iframe_render_time_ms: Math.round(iframeRenderTime),
                                 code_length: tikzCodeLength,
                                 code_hash: codeHash,
-                                svg_height: event.data.height,
-                                svg_width: event.data.width,
                                 from_cache: false,
                                 timestamp: Date.now()
                             });
@@ -1313,25 +1246,24 @@ ${formattedCode}
                                 type: 'tikz_render_duration',
                                 values: {
                                     duration: totalTime,
-                                    iframe_duration: iframeRenderTime,
                                     code_length: tikzCodeLength
                                 }
                             });
                         }
-                        
-                        // Clean up event listener
-                        window.removeEventListener('message', messageHandler);
                     }
-                };
+                }, 100); // Check every 100ms
                 
-                window.addEventListener('message', messageHandler);
+                // Timeout after 60 seconds
+                setTimeout(() => {
+                    clearInterval(checkInterval);
+                    if (!container.querySelector('svg')) {
+                        console.error(`[PKC Viewer] TikZ render timeout for ${containerId}`);
+                        container.innerHTML = '<p style="color: red;">TikZ rendering timed out</p>';
+                    }
+                }, 60000);
                 
-                // Clear container and add iframe
-                container.innerHTML = '';
-                container.appendChild(iframe);
-                
-                console.log(`[PKC Viewer] ✓ TikZ iframe created for ${containerId}`);
-                console.log('[PKC Viewer] TikZJax will process on iframe load');
+                console.log(`[PKC Viewer] ✓ TikZ script created for ${containerId}`);
+                console.log('[PKC Viewer] TikZJax will process script tag');
                 
             } catch (error) {
                 console.error('[PKC Viewer] Error rendering TikZ:', error);
