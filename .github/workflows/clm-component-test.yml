@@ -1,4 +1,4 @@
-name: CLM Component Tests
+name: CLM Test - Welcome
 on:
   push:
     branches: [main, develop]
@@ -78,10 +78,11 @@ jobs:
         cat > tests/test-components/welcome.json << EOF
         {
           "hash": "welcome",
-          "timestamp": "${TIMESTAMP}",
-          "test_run": ${TEST_RUN},
-          "status": "${TEST_STATUS}",
-          "github_actions_url": "${GITHUB_ACTIONS_URL}",
+          "name": "Welcome Component",
+          "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+          "test_run": ${{ github.run_number }},
+          "status": "${{ steps.clm_test.outcome == 'success' && 'success' || 'failure' }}",
+          "github_actions_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
           "commit_sha": "${{ github.sha }}",
           "branch": "${{ github.ref_name }}",
           "actor": "${{ github.actor }}"

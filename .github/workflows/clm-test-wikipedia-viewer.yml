@@ -1,4 +1,5 @@
-name: CLM Test - Hero Content
+name: CLM Test - Wikipedia Viewer
+
 on:
   push:
     branches: [main, develop]
@@ -7,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-hero-content:
+  test-wikipedia-viewer:
     timeout-minutes: 60
     runs-on: ubuntu-latest
 
@@ -41,16 +42,16 @@ jobs:
     - name: Run test
       id: test
       continue-on-error: true
-      run: npx playwright test tests/test-clm-hero-content.spec.js
+      run: npx playwright test tests/test-clm-wikipedia-viewer.spec.js
 
     - name: Save results
       if: always()
       run: |
         mkdir -p tests/test-components
-        cat > tests/test-components/hero-content.json << EOF
+        cat > tests/test-components/wikipedia-viewer.json << EOF
         {
-          "hash": "hero-content",
-          "name": "Hero Content",
+          "hash": "wikipedia-viewer",
+          "name": "Wikipedia Knowledge Base",
           "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
           "test_run": ${{ github.run_number }},
           "status": "${{ steps.test.outcome == 'success' && 'success' || 'failure' }}",
@@ -66,8 +67,8 @@ jobs:
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add tests/test-components/hero-content.json
-        git diff --staged --quiet || git commit -m "Update test results for hero-content [run ${{ github.run_number }}]"
+        git add tests/test-components/wikipedia-viewer.json
+        git diff --staged --quiet || git commit -m "Update test results for wikipedia-viewer [run ${{ github.run_number }}]"
 
     - name: Push results
       if: always()
@@ -80,7 +81,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: hero-content-screenshots
+        name: wikipedia-viewer-screenshots
         path: tests/test-results/*.png
         retention-days: 7
         
@@ -91,10 +92,10 @@ jobs:
     - name: Test Summary
       if: always()
       run: |
-        echo "### CLM Component Test Summary - Hero Content 🧪" >> $GITHUB_STEP_SUMMARY
+        echo "### CLM Component Test Summary - Wikipedia Viewer 🧪" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "- **Component**: Hero Content" >> $GITHUB_STEP_SUMMARY
-        echo "- **Hash**: hero-content" >> $GITHUB_STEP_SUMMARY
+        echo "- **Component**: Wikipedia Knowledge Base" >> $GITHUB_STEP_SUMMARY
+        echo "- **Hash**: wikipedia-viewer" >> $GITHUB_STEP_SUMMARY
         echo "- **Status**: ${{ steps.test.outcome }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Test Run**: ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
