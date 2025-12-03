@@ -372,9 +372,17 @@
             <span>🏢</span>
             <span>CLM Dashboard</span>
             <span class="clm-badge">SINGLE VIEW</span>
+            <span id="testRunBadge" class="clm-badge" style="background: rgba(100, 149, 237, 0.3); margin-left: 8px; font-size: 11px;">
+              Loading...
+            </span>
           </div>
-          <div id="testStatusBadge" style="display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: rgba(255, 255, 255, 0.1); border-radius: 8px; font-size: 12px; flex: 1; justify-content: center; max-width: 500px;">
-            <span style="opacity: 0.7;">Loading test status...</span>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; max-width: 400px;">
+            <div id="testStatusText" style="font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, 0.9);">
+              Loading test status...
+            </div>
+            <a id="testStatusLink" href="#" target="_blank" style="display: none; padding: 6px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 600; transition: all 0.3s ease;">
+              📊 View GitHub Actions
+            </a>
           </div>
           <div style="display: flex; align-items: center; gap: 20px;">
             <button id="loginBtn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: transform 0.2s;">
@@ -947,66 +955,89 @@
           const testData = await response.json();
           console.log('[Test Status] Test data loaded:', testData);
           
-          const badge = document.getElementById('testStatusBadge');
-          if (!badge) return;
-          
           // Determine status icon and color
           let statusIcon = '❓';
           let statusColor = 'rgba(255, 255, 255, 0.3)';
           let statusText = 'Unknown';
+          let statusTextColor = 'rgba(255, 255, 255, 0.9)';
           
           if (testData.status === 'success') {
             statusIcon = '✅';
             statusColor = 'rgba(46, 204, 113, 0.3)';
-            statusText = 'Passed';
+            statusText = 'Success';
+            statusTextColor = '#2ecc71';
           } else if (testData.status === 'failure') {
             statusIcon = '❌';
             statusColor = 'rgba(231, 76, 60, 0.3)';
-            statusText = 'Failed';
+            statusText = 'Error';
+            statusTextColor = '#e74c3c';
           }
           
           // Format timestamp
           const date = new Date(testData.timestamp);
           const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
           
-          // Update badge with test info
-          badge.style.background = statusColor;
-          badge.style.cursor = 'pointer';
-          badge.style.transition = 'all 0.3s ease';
-          badge.innerHTML = `
-            <span style="font-weight: 600;">${statusIcon} ${testData.hash}</span>
-            <span style="opacity: 0.8;">•</span>
-            <span style="opacity: 0.8;">Run #${testData.test_run}</span>
-            <span style="opacity: 0.8;">•</span>
-            <span style="opacity: 0.8;">${statusText}</span>
-          `;
+          // Update test run badge (next to SINGLE VIEW)
+          const testRunBadge = document.getElementById('testRunBadge');
+          if (testRunBadge) {
+            // Determine ordinal suffix (1st, 2nd, 3rd, 4th, etc.)
+            const getOrdinal = (n) => {
+              const s = ['th', 'st', 'nd', 'rd'];
+              const v = n % 100;
+              return n + (s[(v - 20) % 10] || s[v] || s[0]);
+            };
+            
+            testRunBadge.innerHTML = `${getOrdinal(testData.test_run)} testing`;
+            testRunBadge.style.background = statusColor;
+            testRunBadge.title = `Test run #${testData.test_run} - ${statusText}`;
+          }
           
-          // Add hover effect
-          badge.onmouseover = () => {
-            badge.style.transform = 'scale(1.02)';
-            badge.style.background = statusColor.replace('0.3', '0.4');
-          };
-          badge.onmouseout = () => {
-            badge.style.transform = 'scale(1)';
-            badge.style.background = statusColor;
-          };
+          // Update test status text (center top)
+          const testStatusText = document.getElementById('testStatusText');
+          if (testStatusText) {
+            testStatusText.innerHTML = `${statusIcon} Latest Test: <span style="color: ${statusTextColor};">${statusText}</span>`;
+            testStatusText.title = `Status: ${statusText}\nDate: ${formattedDate}\nBranch: ${testData.branch}\nCommit: ${testData.commit_sha.substring(0, 7)}`;
+          }
           
-          // Add click handler to open GitHub Actions
-          badge.onclick = () => {
-            window.open(testData.github_actions_url, '_blank');
-            console.log('[Test Status] Opening GitHub Actions:', testData.github_actions_url);
-          };
+          // Update GitHub Actions link button (below status text)
+          const testStatusLink = document.getElementById('testStatusLink');
+          if (testStatusLink) {
+            testStatusLink.href = testData.github_actions_url;
+            testStatusLink.style.display = 'inline-block';
+            
+            // Add hover effect
+            testStatusLink.onmouseover = () => {
+              testStatusLink.style.transform = 'scale(1.05)';
+              testStatusLink.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
+            };
+            testStatusLink.onmouseout = () => {
+              testStatusLink.style.transform = 'scale(1)';
+              testStatusLink.style.boxShadow = 'none';
+            };
+          }
           
-          // Add tooltip
-          badge.title = `Test Run #${testData.test_run}\nStatus: ${statusText}\nDate: ${formattedDate}\nBranch: ${testData.branch}\nClick to view details`;
-          
-          console.log('[Test Status] Badge updated successfully');
+          console.log('[Test Status] UI updated successfully');
         } catch (error) {
           console.error('[Test Status] Failed to load test results:', error);
-          const badge = document.getElementById('testStatusBadge');
-          if (badge) {
-            badge.innerHTML = `<span style="opacity: 0.5;">⚠️ No test data available</span>`;
-            badge.style.background = 'rgba(255, 193, 7, 0.2)';
+          
+          // Update test run badge
+          const testRunBadge = document.getElementById('testRunBadge');
+          if (testRunBadge) {
+            testRunBadge.innerHTML = 'No data';
+            testRunBadge.style.background = 'rgba(255, 193, 7, 0.2)';
+          }
+          
+          // Update status text
+          const testStatusText = document.getElementById('testStatusText');
+          if (testStatusText) {
+            testStatusText.innerHTML = '⚠️ No test data available';
+            testStatusText.style.color = 'rgba(255, 193, 7, 0.9)';
+          }
+          
+          // Hide link button
+          const testStatusLink = document.getElementById('testStatusLink');
+          if (testStatusLink) {
+            testStatusLink.style.display = 'none';
           }
         }
       }
