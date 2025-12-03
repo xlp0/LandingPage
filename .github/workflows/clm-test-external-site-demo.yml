@@ -3,8 +3,14 @@ name: CLM Test - External Site Demo
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'tests/test-clm-external-site-demo.spec.js'
+      - '.github/workflows/clm-test-external-site-demo.yml'
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'tests/test-clm-external-site-demo.spec.js'
+      - '.github/workflows/clm-test-external-site-demo.yml'
   workflow_dispatch:
 
 jobs:

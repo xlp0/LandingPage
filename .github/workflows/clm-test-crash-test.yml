@@ -3,8 +3,16 @@ name: CLM Test - Crash Test
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'components/crash-test.html'
+      - 'tests/test-clm-crash-test.spec.js'
+      - '.github/workflows/clm-test-crash-test.yml'
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'components/crash-test.html'
+      - 'tests/test-clm-crash-test.spec.js'
+      - '.github/workflows/clm-test-crash-test.yml'
   workflow_dispatch:
 
 jobs:

@@ -2,8 +2,16 @@ name: CLM Test - Hero Content
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'components/hero.html'
+      - 'tests/test-clm-hero-content.spec.js'
+      - '.github/workflows/clm-test-hero-content.yml'
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'components/hero.html'
+      - 'tests/test-clm-hero-content.spec.js'
+      - '.github/workflows/clm-test-hero-content.yml'
   workflow_dispatch:
 
 jobs:

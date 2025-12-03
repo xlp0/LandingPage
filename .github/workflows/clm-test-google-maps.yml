@@ -3,8 +3,14 @@ name: CLM Test - Google Maps
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'tests/test-clm-google-maps.spec.js'
+      - '.github/workflows/clm-test-google-maps.yml'
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'tests/test-clm-google-maps.spec.js'
+      - '.github/workflows/clm-test-google-maps.yml'
   workflow_dispatch:
 
 jobs:

@@ -3,8 +3,16 @@ name: CLM Test - Grafana Faro
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'components/grafana-faro.html'
+      - 'tests/test-clm-grafana-faro.spec.js'
+      - '.github/workflows/clm-test-grafana-faro.yml'
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'components/grafana-faro.html'
+      - 'tests/test-clm-grafana-faro.spec.js'
+      - '.github/workflows/clm-test-grafana-faro.yml'
   workflow_dispatch:
 
 jobs:

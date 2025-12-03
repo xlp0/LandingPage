@@ -3,8 +3,16 @@ name: CLM Test - PKC Viewer
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'components/pkc-viewer.html'
+      - 'tests/test-clm-pkc-viewer.spec.js'
+      - '.github/workflows/clm-test-pkc-viewer.yml'
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'components/pkc-viewer.html'
+      - 'tests/test-clm-pkc-viewer.spec.js'
+      - '.github/workflows/clm-test-pkc-viewer.yml'
   workflow_dispatch:
 
 jobs:

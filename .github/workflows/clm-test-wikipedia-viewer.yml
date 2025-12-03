@@ -3,8 +3,16 @@ name: CLM Test - Wikipedia Viewer
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'components/wikipedia-viewer.html'
+      - 'tests/test-clm-wikipedia-viewer.spec.js'
+      - '.github/workflows/clm-test-wikipedia-viewer.yml'
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'components/wikipedia-viewer.html'
+      - 'tests/test-clm-wikipedia-viewer.spec.js'
+      - '.github/workflows/clm-test-wikipedia-viewer.yml'
   workflow_dispatch:
 
 jobs:

@@ -3,8 +3,16 @@ name: CLM Test - User List
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'components/user-list.html'
+      - 'tests/test-clm-user-list.spec.js'
+      - '.github/workflows/clm-test-user-list.yml'
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'components/user-list.html'
+      - 'tests/test-clm-user-list.spec.js'
+      - '.github/workflows/clm-test-user-list.yml'
   workflow_dispatch:
 
 jobs:

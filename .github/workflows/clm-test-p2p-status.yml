@@ -3,8 +3,16 @@ name: CLM Test - P2P Status
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'components/p2p-status.html'
+      - 'tests/test-clm-p2p-status.spec.js'
+      - '.github/workflows/clm-test-p2p-status.yml'
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'components/p2p-status.html'
+      - 'tests/test-clm-p2p-status.spec.js'
+      - '.github/workflows/clm-test-p2p-status.yml'
   workflow_dispatch:
 
 jobs:

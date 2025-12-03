@@ -2,8 +2,16 @@ name: CLM Test - Welcome
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'components/welcome.html'
+      - 'tests/test-clm-welcome.spec.js'
+      - '.github/workflows/clm-test-welcome.yml'
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'components/welcome.html'
+      - 'tests/test-clm-welcome.spec.js'
+      - '.github/workflows/clm-test-welcome.yml'
   workflow_dispatch:
 
 jobs:

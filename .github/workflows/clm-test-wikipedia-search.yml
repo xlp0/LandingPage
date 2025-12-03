@@ -3,8 +3,16 @@ name: CLM Test - Wikipedia Search
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'components/wikipedia-search.html'
+      - 'tests/test-clm-wikipedia-search.spec.js'
+      - '.github/workflows/clm-test-wikipedia-search.yml'
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'components/wikipedia-search.html'
+      - 'tests/test-clm-wikipedia-search.spec.js'
+      - '.github/workflows/clm-test-wikipedia-search.yml'
   workflow_dispatch:
 
 jobs:
