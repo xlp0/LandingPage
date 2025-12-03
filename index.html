@@ -76,14 +76,79 @@
         padding: 10px;
       }
 
-      .component-item {
+      /* Category styles */
+      .component-category {
+        margin-bottom: 16px;
+      }
+
+      .category-header {
         padding: 12px 16px;
-        margin-bottom: 8px;
-        background: rgba(255, 255, 255, 0.03);
+        background: rgba(255, 255, 255, 0.08);
         border-radius: 8px;
         cursor: pointer;
         transition: all 0.2s;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        user-select: none;
+      }
+
+      .category-header:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .category-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .category-icon {
+        font-size: 16px;
+      }
+
+      .category-count {
+        font-size: 11px;
+        opacity: 0.7;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2px 8px;
+        border-radius: 12px;
+      }
+
+      .category-chevron {
+        font-size: 12px;
+        transition: transform 0.2s;
+      }
+
+      .category-header.expanded .category-chevron {
+        transform: rotate(90deg);
+      }
+
+      .category-items {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        padding-left: 12px;
+      }
+
+      .category-items.expanded {
+        max-height: 2000px;
+        transition: max-height 0.5s ease-in;
+      }
+
+      .component-item {
+        padding: 10px 16px;
+        margin: 6px 0;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
         border: 1px solid rgba(255, 255, 255, 0.05);
+        border-left: 3px solid transparent;
       }
 
       .component-item:hover {
@@ -95,6 +160,7 @@
       .component-item.active {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border-color: rgba(255, 255, 255, 0.3);
+        border-left-color: #fff;
         transform: translateX(4px);
       }
 
@@ -509,6 +575,58 @@
         console.log('[Dashboard] Switched to component:', componentHash);
       }
 
+      // Categorize components automatically
+      function categorizeComponents(components) {
+        const internal = [];
+        const external = [];
+        
+        components.forEach(comp => {
+          const impl = comp.concrete?.implementation || '';
+          // External if starts with http:// or https://
+          if (impl.startsWith('http://') || impl.startsWith('https://')) {
+            external.push(comp);
+          } else {
+            internal.push(comp);
+          }
+        });
+        
+        return { internal, external };
+      }
+
+      // Create category section
+      function createCategorySection(categoryName, icon, components, isExpanded = true) {
+        const category = document.createElement('div');
+        category.className = 'component-category';
+        
+        const header = document.createElement('div');
+        header.className = `category-header ${isExpanded ? 'expanded' : ''}`;
+        header.innerHTML = `
+          <div class="category-title">
+            <span class="category-icon">${icon}</span>
+            <span>${categoryName}</span>
+            <span class="category-count">${components.length}</span>
+          </div>
+          <span class="category-chevron">▶</span>
+        `;
+        
+        const itemsContainer = document.createElement('div');
+        itemsContainer.className = `category-items ${isExpanded ? 'expanded' : ''}`;
+        
+        // Toggle category on click
+        header.onclick = () => {
+          const isCurrentlyExpanded = header.classList.contains('expanded');
+          header.classList.toggle('expanded');
+          itemsContainer.classList.toggle('expanded');
+          
+          console.log(`[Dashboard] ${categoryName} ${isCurrentlyExpanded ? 'collapsed' : 'expanded'}`);
+        };
+        
+        category.appendChild(header);
+        category.appendChild(itemsContainer);
+        
+        return { category, itemsContainer };
+      }
+
       // Load all components using Redux
       async function loadDashboard() {
         try {
@@ -526,20 +644,56 @@
             // Update component count
             componentCount.textContent = registry.components.length;
 
-            // Load each component from registry
+            // Categorize components
+            const { internal, external } = categorizeComponents(registry.components);
+            console.log('[Dashboard] Categorized:', { internal: internal.length, external: external.length });
+
+            // Clear component list
+            componentList.innerHTML = '';
+
+            // Create Internal Components category
+            if (internal.length > 0) {
+              const { category: internalCategory, itemsContainer: internalItems } = 
+                createCategorySection('Internal Components', '🏠', internal, true);
+              componentList.appendChild(internalCategory);
+              
+              // Add internal component items
+              internal.forEach(componentConfig => {
+                const item = document.createElement('div');
+                item.className = 'component-item';
+                item.id = `item-${componentConfig.hash}`;
+                item.innerHTML = `
+                  <div class="component-item-name">${componentConfig.name}</div>
+                  <div class="component-item-hash">${componentConfig.hash}</div>
+                `;
+                item.onclick = () => switchToComponent(componentConfig.hash);
+                internalItems.appendChild(item);
+              });
+            }
+
+            // Create External Components category
+            if (external.length > 0) {
+              const { category: externalCategory, itemsContainer: externalItems } = 
+                createCategorySection('External Components', '🌐', external, true);
+              componentList.appendChild(externalCategory);
+              
+              // Add external component items
+              external.forEach(componentConfig => {
+                const item = document.createElement('div');
+                item.className = 'component-item';
+                item.id = `item-${componentConfig.hash}`;
+                item.innerHTML = `
+                  <div class="component-item-name">${componentConfig.name}</div>
+                  <div class="component-item-hash">${componentConfig.hash}</div>
+                `;
+                item.onclick = () => switchToComponent(componentConfig.hash);
+                externalItems.appendChild(item);
+              });
+            }
+
+            // Load each component from registry (create iframes)
             for (let i = 0; i < registry.components.length; i++) {
               const componentConfig = registry.components[i];
-              
-              // Create sidebar item
-              const item = document.createElement('div');
-              item.className = 'component-item';
-              item.id = `item-${componentConfig.hash}`;
-              item.innerHTML = `
-                <div class="component-item-name">${componentConfig.name}</div>
-                <div class="component-item-hash">${componentConfig.hash}</div>
-              `;
-              item.onclick = () => switchToComponent(componentConfig.hash);
-              componentList.appendChild(item);
               
               // Create component frame
               const { frame, iframeId, statusId } = createComponentFrame(componentConfig);
