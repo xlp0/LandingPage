@@ -1225,12 +1225,13 @@ C \\arrow[rr] & & D \\arrow[from=uu, crossing over]
                         const width = svg.getBoundingClientRect().width;
                         const renderTime = performance.now() - tikzStartTime;
                         
-                        // Send height and performance data to parent
+                        // Send height, performance data, AND SVG to parent
                         window.parent.postMessage({
                             type: 'tikz-resize',
                             height: height + 30,
                             width: width,
                             renderTime: renderTime,
+                            svgContent: svg.outerHTML, // Send SVG for caching
                             containerId: '${containerId}'
                         }, '*');
                     }, 100);
@@ -1269,26 +1270,21 @@ ${formattedCode}
                         // ========================================
                         // OPTIMIZATION 3: Cache the SVG
                         // ========================================
-                        // Extract and cache the rendered SVG for future use
-                        setTimeout(() => {
-                            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                            const svg = iframeDoc.querySelector('svg');
-                            if (svg) {
-                                const svgString = svg.outerHTML;
-                                tikzCache.set(codeHash, svgString);
-                                console.log(`[PKC Viewer] ✓ Cached SVG (hash: ${codeHash}, size: ${svgString.length} bytes)`);
-                                
-                                // Track cache store with Faro
-                                if (window.faro) {
-                                    window.faro.api.pushEvent('tikz_cache_store', {
-                                        code_hash: codeHash,
-                                        svg_size_bytes: svgString.length,
-                                        cache_size: tikzCache.size,
-                                        timestamp: Date.now()
-                                    });
-                                }
+                        // Cache the SVG sent from iframe (avoids CORS issues)
+                        if (event.data.svgContent) {
+                            tikzCache.set(codeHash, event.data.svgContent);
+                            console.log(`[PKC Viewer] ✓ Cached SVG (hash: ${codeHash}, size: ${event.data.svgContent.length} bytes)`);
+                            
+                            // Track cache store with Faro
+                            if (window.faro) {
+                                window.faro.api.pushEvent('tikz_cache_store', {
+                                    code_hash: codeHash,
+                                    svg_size_bytes: event.data.svgContent.length,
+                                    cache_size: tikzCache.size,
+                                    timestamp: Date.now()
+                                });
                             }
-                        }, 200);
+                        }
                         
                         console.log(`[PKC Viewer] TikZ render complete:`, {
                             container: containerId,
