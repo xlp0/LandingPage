@@ -20,7 +20,68 @@ on:
   workflow_dispatch:
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      welcome: ${{ steps.filter.outputs.welcome }}
+      hero-content: ${{ steps.filter.outputs.hero-content }}
+      p2p-status: ${{ steps.filter.outputs.p2p-status }}
+      crash-test: ${{ steps.filter.outputs.crash-test }}
+      wikipedia-viewer: ${{ steps.filter.outputs.wikipedia-viewer }}
+      user-list: ${{ steps.filter.outputs.user-list }}
+      user-detail: ${{ steps.filter.outputs.user-detail }}
+      redux-state-viewer: ${{ steps.filter.outputs.redux-state-viewer }}
+      wikipedia-search: ${{ steps.filter.outputs.wikipedia-search }}
+      external-site-demo: ${{ steps.filter.outputs.external-site-demo }}
+      google-maps: ${{ steps.filter.outputs.google-maps }}
+      pkc-viewer: ${{ steps.filter.outputs.pkc-viewer }}
+      grafana-faro: ${{ steps.filter.outputs.grafana-faro }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            welcome:
+              - 'components/welcome.html'
+              - 'tests/test-clm-welcome.spec.js'
+            hero-content:
+              - 'components/hero.html'
+              - 'tests/test-clm-hero-content.spec.js'
+            p2p-status:
+              - 'components/p2p-status.html'
+              - 'tests/test-clm-p2p-status.spec.js'
+            crash-test:
+              - 'components/crash-test.html'
+              - 'tests/test-clm-crash-test.spec.js'
+            wikipedia-viewer:
+              - 'components/wikipedia-viewer.html'
+              - 'tests/test-clm-wikipedia-viewer.spec.js'
+            user-list:
+              - 'components/user-list.html'
+              - 'tests/test-clm-user-list.spec.js'
+            user-detail:
+              - 'components/user-detail.html'
+              - 'tests/test-clm-user-detail.spec.js'
+            redux-state-viewer:
+              - 'components/redux-state-viewer.html'
+              - 'tests/test-clm-redux-state-viewer.spec.js'
+            wikipedia-search:
+              - 'components/wikipedia-search.html'
+              - 'tests/test-clm-wikipedia-search.spec.js'
+            external-site-demo:
+              - 'tests/test-clm-external-site-demo.spec.js'
+            google-maps:
+              - 'tests/test-clm-google-maps.spec.js'
+            pkc-viewer:
+              - 'components/pkc-viewer.html'
+              - 'tests/test-clm-pkc-viewer.spec.js'
+            grafana-faro:
+              - 'components/grafana-faro.html'
+              - 'tests/test-clm-grafana-faro.spec.js'
+
   test-components:
+    needs: detect-changes
     timeout-minutes: 60
     runs-on: ubuntu-latest
     
@@ -31,44 +92,58 @@ jobs:
           - hash: welcome
             name: Welcome Component
             file: components/welcome.html
+            changed: ${{ needs.detect-changes.outputs.welcome }}
           - hash: hero-content
             name: Hero Content
             file: components/hero.html
+            changed: ${{ needs.detect-changes.outputs.hero-content }}
           - hash: p2p-status
             name: P2P Network Status
             file: components/p2p-status.html
+            changed: ${{ needs.detect-changes.outputs.p2p-status }}
           - hash: crash-test
             name: Intentional Failure Component
             file: components/crash-test.html
+            changed: ${{ needs.detect-changes.outputs.crash-test }}
           - hash: wikipedia-viewer
             name: Wikipedia Article Viewer
             file: components/wikipedia-viewer.html
+            changed: ${{ needs.detect-changes.outputs.wikipedia-viewer }}
           - hash: user-list
             name: User Account List
             file: components/user-list.html
+            changed: ${{ needs.detect-changes.outputs.user-list }}
           - hash: user-detail
             name: User Account Detail
             file: components/user-detail.html
+            changed: ${{ needs.detect-changes.outputs.user-detail }}
           - hash: redux-state-viewer
             name: Redux State Viewer
             file: components/redux-state-viewer.html
+            changed: ${{ needs.detect-changes.outputs.redux-state-viewer }}
           - hash: wikipedia-search
             name: Wikipedia Search
             file: components/wikipedia-search.html
+            changed: ${{ needs.detect-changes.outputs.wikipedia-search }}
           - hash: external-site-demo
             name: External Site Demo
             file: external
+            changed: ${{ needs.detect-changes.outputs.external-site-demo }}
           - hash: google-maps
             name: Google Maps Demo
             file: external
+            changed: ${{ needs.detect-changes.outputs.google-maps }}
           - hash: pkc-viewer
             name: PKC Document Viewer
             file: components/pkc-viewer.html
+            changed: ${{ needs.detect-changes.outputs.pkc-viewer }}
           - hash: grafana-faro
             name: Grafana Faro Integration
             file: components/grafana-faro.html
+            changed: ${{ needs.detect-changes.outputs.grafana-faro }}
 
     name: Test ${{ matrix.component.name }}
+    if: matrix.component.changed == 'true'
 
     steps:
       - uses: actions/checkout@v4
