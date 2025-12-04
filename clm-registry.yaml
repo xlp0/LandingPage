@@ -244,6 +244,36 @@ components:
         - "No custom wrapper"
         - "Native YouTube controls"
         - "External component example"
+
+  - hash: "grafana-k8s-networking"
+    name: "Grafana Kubernetes Networking Dashboard"
+    abstract:
+      context: "Kubernetes cluster monitoring and observability"
+      goal: "Display real-time Kubernetes pod networking metrics and performance data"
+    concrete:
+      implementation: "https://grafana.pkc.pub/d/7a18067ce943a40ae25454675c19ff5c/kubernetes-networking-pod?orgId=1&from=now-1h&to=now&timezone=utc&var-datasource=default&var-cluster=$__all&var-namespace=$__all&var-pod=$__all&refresh=10s"
+      sandbox: "allow-scripts allow-same-origin"
+    balanced:
+      metrics_endpoint: "/metrics/grafana-k8s"
+      health_check: "/health/grafana-k8s"
+      expected_load_time_ms: 2000
+      expected_failure: false
+      features:
+        - "Real-time Kubernetes pod networking metrics"
+        - "Auto-refresh every 10 seconds"
+        - "Multi-cluster support"
+        - "Namespace and pod filtering"
+        - "1-hour time window"
+        - "UTC timezone"
+      observability:
+        dashboard_type: "Kubernetes Networking"
+        refresh_interval: "10s"
+        time_range: "1h"
+        variables:
+          - "datasource: default"
+          - "cluster: $__all"
+          - "namespace: $__all"
+          - "pod: $__all"
       
 # Observability Configuration
 observability:
