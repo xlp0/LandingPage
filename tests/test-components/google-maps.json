@@ -1,10 +1,11 @@
 {
   "hash": "google-maps",
-  "timestamp": "2025-12-03T05:03:10.005Z",
-  "test_run": 1,
-  "status": "success",
-  "github_actions_url": "https://github.com/xlp0/LandingPage/actions/runs/sample-google-maps",
-  "commit_sha": "sample-commit-sha",
+  "name": "Google Maps",
+  "timestamp": "2025-12-04T03:47:46Z",
+  "test_run": 6,
+  "status": "failure",
+  "github_actions_url": "https://github.com/xlp0/LandingPage/actions/runs/19916959403",
+  "commit_sha": "053fd511d706c30724cc449ac3032b8a48ef86f7",
   "branch": "main",
-  "actor": "local-testing"
+  "actor": "alessandrorumampuk"
 }
