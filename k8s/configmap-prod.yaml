@@ -2,7 +2,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: landingpage-pkc-config
-  namespace: default
 data:
   # WebSocket Configuration
   WEBSOCKET_URL: "wss://pkc.pub/ws/"
