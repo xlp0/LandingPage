@@ -1,10 +1,11 @@
 {
   "hash": "redux-state-viewer",
-  "timestamp": "2025-12-03T05:03:10.004Z",
-  "test_run": 1,
-  "status": "success",
-  "github_actions_url": "https://github.com/xlp0/LandingPage/actions/runs/sample-redux-state-viewer",
-  "commit_sha": "sample-commit-sha",
+  "name": "Redux Store Monitor",
+  "timestamp": "2025-12-04T03:42:49Z",
+  "test_run": 8,
+  "status": "failure",
+  "github_actions_url": "https://github.com/xlp0/LandingPage/actions/runs/19916881912",
+  "commit_sha": "b519b3c11d81a709d0f236e9fbc8be906798ac5a",
   "branch": "main",
-  "actor": "local-testing"
+  "actor": "alessandrorumampuk"
 }
