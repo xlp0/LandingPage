@@ -36,6 +36,7 @@ jobs:
       google-maps: ${{ steps.filter.outputs.google-maps }}
       pkc-viewer: ${{ steps.filter.outputs.pkc-viewer }}
       grafana-faro: ${{ steps.filter.outputs.grafana-faro }}
+      youtube-viewer: ${{ steps.filter.outputs.youtube-viewer }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v2
@@ -79,6 +80,9 @@ jobs:
             grafana-faro:
               - 'components/grafana-faro.html'
               - 'tests/test-clm-grafana-faro.spec.js'
+            youtube-viewer:
+              - 'components/youtube-viewer.html'
+              - 'tests/test-clm-youtube-viewer.spec.js'
 
   test-components:
     needs: detect-changes
@@ -141,6 +145,10 @@ jobs:
             name: Grafana Faro Integration
             file: components/grafana-faro.html
             changed: ${{ needs.detect-changes.outputs.grafana-faro }}
+          - hash: youtube-viewer
+            name: YouTube Video Viewer
+            file: components/youtube-viewer.html
+            changed: ${{ needs.detect-changes.outputs.youtube-viewer }}
 
     name: Test ${{ matrix.component.name }}
 
