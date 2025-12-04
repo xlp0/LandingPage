@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: thkmesh-landingpage-prod
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  labels:
+    environment: prod
+    app: thkmesh-landingpage
+spec:
+  project: default
+  
+  source:
+    repoURL: https://github.com/xlp0/LandingPage.git
+    # Use a specific tag or branch for production
+    targetRevision: main
+    path: k8s
+    
+    kustomize:
+      namePrefix: prod-
+      commonLabels:
+        environment: prod
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: production
+  
+  syncPolicy:
+    # Manual sync for production (more control)
+    automated:
+      prune: false
+      selfHeal: false
+    syncOptions:
+      - CreateNamespace=true
+      - Validate=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 5m

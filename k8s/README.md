@@ -1,8 +1,8 @@
-# Kubernetes Deployment with ConfigMap
+# Kubernetes Deployment with ConfigMap & ArgoCD
 
 ## Overview
 
-This directory contains Kubernetes manifests for deploying the LandingPage application with **ConfigMap-based configuration**. This approach allows you to change configuration without rebuilding Docker images.
+This directory contains Kubernetes manifests for deploying the LandingPage application with **ConfigMap-based configuration** and **ArgoCD GitOps deployment**. This approach allows you to change configuration without rebuilding Docker images and enables automated continuous deployment.
 
 ---
 
@@ -14,12 +14,59 @@ k8s/
 ├── configmap-test.yaml             # Test environment config
 ├── configmap-prod.yaml             # Production environment config
 ├── deployment-dev-with-configmap.yaml  # Example deployment using ConfigMap
+├── service.yaml                    # Service definition
+├── ingress.yaml                    # Ingress configuration
+├── kustomization.yaml              # Kustomize configuration
+├── argocd-application.yaml         # Main ArgoCD application
+├── argocd-application-dev.yaml     # Dev environment ArgoCD app
+├── argocd-application-prod.yaml    # Prod environment ArgoCD app
+├── argocd-simple.yaml              # Simple ArgoCD config for UI
+├── ARGOCD_QUICK_START.md           # Quick start guide
+├── ARGOCD_DEPLOYMENT_GUIDE.md      # Complete ArgoCD guide
 └── README.md                       # This file
 ```
 
 ---
 
-## Quick Start
+## 🚀 ArgoCD Deployment (Recommended)
+
+### Quick Deploy with ArgoCD
+
+**Copy and paste this YAML into ArgoCD UI:**
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: thkmesh-landingpage
+spec:
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+  source:
+    path: k8s
+    repoURL: https://github.com/xlp0/LandingPage.git
+    targetRevision: HEAD
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+```
+
+**Or use kubectl:**
+
+```bash
+kubectl apply -f k8s/argocd-simple.yaml
+```
+
+**📚 For complete ArgoCD documentation, see:**
+- [ARGOCD_QUICK_START.md](./ARGOCD_QUICK_START.md) - Quick reference
+- [ARGOCD_DEPLOYMENT_GUIDE.md](./ARGOCD_DEPLOYMENT_GUIDE.md) - Complete guide
+
+---
+
+## Manual Deployment (Alternative)
 
 ### 1. Apply ConfigMap
 

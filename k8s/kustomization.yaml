@@ -1,0 +1,55 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Namespace for all resources
+namespace: default
+
+# Common labels applied to all resources
+commonLabels:
+  app: landingpage
+  managed-by: argocd
+
+# Common annotations
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "0"
+
+# Resources to deploy
+resources:
+  - deployment-dev-with-configmap.yaml
+  - configmap-dev.yaml
+  - service.yaml
+  - ingress.yaml
+
+# ConfigMap generator (alternative to configmap-dev.yaml)
+# configMapGenerator:
+#   - name: landingpage-dev-config
+#     literals:
+#       - WEBSOCKET_URL=wss://dev.pkc.pub/ws/
+#       - NODE_ENV=production
+#       - PORT=3000
+
+# Secret generator (for sensitive data)
+# secretGenerator:
+#   - name: landingpage-secrets
+#     literals:
+#       - ZITADEL_CLIENT_SECRET=your-secret-here
+
+# Images to use (for image tag management)
+images:
+  - name: henry768/landingpage
+    newTag: latest_landingpage
+
+# Replicas (can be overridden per environment)
+replicas:
+  - name: landingpage-dev
+    count: 1
+
+# Patches for environment-specific changes
+# patches:
+#   - target:
+#       kind: Deployment
+#       name: landingpage-dev
+#     patch: |-
+#       - op: replace
+#         path: /spec/replicas
+#         value: 2

@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: landingpage-argocd-test
+spec:
+  destination:
+    namespace: landingpage-argocd
+    server: https://kubernetes.default.svc
+  source:
+    path: k8s
+    repoURL: https://github.com/xlp0/LandingPage.git
+    targetRevision: HEAD
+    kustomize:
+      namePrefix: argocd-test-
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
