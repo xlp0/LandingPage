@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grafana Dashboard Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 28px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .grafana-icon {
+            color: #f5576c;
+        }
+
+        .iframe-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            min-height: 600px;
+        }
+
+        .iframe-wrapper {
+            position: relative;
+            width: 100%;
+            height: 700px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #1a1a1a;
+        }
+
+        .iframe-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .error-message {
+            padding: 30px;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .error-message h3 {
+            color: #856404;
+            font-size: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-message p {
+            color: #856404;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .error-message ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        .error-message li {
+            margin-bottom: 8px;
+        }
+
+        .alternative-access {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .alternative-access h3 {
+            color: #2d3748;
+            font-size: 18px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .access-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .access-card {
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border-left: 4px solid #f5576c;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .access-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .access-card h4 {
+            color: #2d3748;
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .access-card p {
+            color: #4a5568;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .access-card a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            background: #f5576c;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .access-card a:hover {
+            background: #e04858;
+        }
+
+        .technical-info {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .technical-info h3 {
+            color: #2d3748;
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        .technical-info pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .technical-info code {
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .iframe-wrapper {
+                height: 500px;
+            }
+
+            .access-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <svg class="grafana-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 3v18h18"/>
+                    <path d="M18 17V9"/>
+                    <path d="M13 17V5"/>
+                    <path d="M8 17v-3"/>
+                </svg>
+                Grafana Dashboard Viewer
+            </h1>
+            <p>Kubernetes Networking & Pod Monitoring</p>
+        </div>
+
+        <div class="error-message" id="errorMessage" style="display: none;">
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                Grafana Dashboard Cannot Be Embedded
+            </h3>
+            <p><strong>Why this happens:</strong></p>
+            <ul>
+                <li>Grafana server has <code>X-Frame-Options</code> set to <code>DENY</code> or <code>SAMEORIGIN</code></li>
+                <li>Content Security Policy (CSP) prevents iframe embedding</li>
+                <li>This is a security feature to prevent clickjacking attacks</li>
+            </ul>
+            <p><strong>Solution:</strong> Use one of the alternative access methods below to view the dashboard.</p>
+        </div>
+
+        <div class="iframe-container">
+            <div class="loading active" id="loading">
+                <p>⏳ Attempting to load Grafana dashboard...</p>
+                <p style="font-size: 12px; margin-top: 8px;">If this takes too long, the dashboard may not allow iframe embedding.</p>
+            </div>
+            <div class="iframe-wrapper" id="iframeWrapper" style="display: none;">
+                <iframe 
+                    id="grafanaFrame"
+                    src=""
+                    allow="fullscreen"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="alternative-access">
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Alternative Access Methods
+            </h3>
+            <div class="access-options">
+                <div class="access-card">
+                    <h4>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        Open in New Tab
+                    </h4>
+                    <p>View the full Grafana dashboard in a new browser tab with all features enabled.</p>
+                    <a href="https://grafana.pkc.pub/d/7a18067ce943a40ae25454675c19ff5c/kubernetes-networking-pod?orgId=1&from=now-1h&to=now&timezone=utc&var-datasource=default&var-cluster=$__all&var-namespace=$__all&var-pod=$__all&refresh=10s" target="_blank" rel="noopener noreferrer">
+                        Open Dashboard
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="access-card">
+                    <h4>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        Copy Dashboard URL
+                    </h4>
+                    <p>Copy the direct link to share or bookmark the Kubernetes networking dashboard.</p>
+                    <a href="#" onclick="copyDashboardUrl(); return false;">
+                        Copy URL
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="access-card">
+                    <h4>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Dashboard Details
+                    </h4>
+                    <p>View configuration details and parameters for this Grafana dashboard.</p>
+                    <a href="#technical-info" onclick="document.getElementById('technical-info').scrollIntoView({behavior: 'smooth'}); return false;">
+                        View Details
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="technical-info" id="technical-info">
+            <h3>Dashboard Configuration</h3>
+            <pre><code>Dashboard: Kubernetes Networking - Pod
+URL: https://grafana.pkc.pub/d/7a18067ce943a40ae25454675c19ff5c/kubernetes-networking-pod
+
+Parameters:
+  - Organization ID: 1
+  - Time Range: Last 1 hour (now-1h to now)
+  - Timezone: UTC
+  - Auto-refresh: 10 seconds
+  
+Variables:
+  - datasource: default
+  - cluster: $__all (all clusters)
+  - namespace: $__all (all namespaces)
+  - pod: $__all (all pods)
+
+Metrics Displayed:
+  - Pod network traffic (ingress/egress)
+  - Bandwidth utilization
+  - Connection statistics
+  - Network performance data
+  - Packet loss and errors
+
+Access: Requires Grafana authentication
+Security: HTTPS only, X-Frame-Options may prevent embedding</code></pre>
+        </div>
+    </div>
+
+    <script>
+        console.log('[Grafana Viewer] Component loaded');
+
+        const dashboardUrl = 'https://grafana.pkc.pub/d/7a18067ce943a40ae25454675c19ff5c/kubernetes-networking-pod?orgId=1&from=now-1h&to=now&timezone=utc&var-datasource=default&var-cluster=$__all&var-namespace=$__all&var-pod=$__all&refresh=10s';
+
+        // Try to load the iframe
+        const iframe = document.getElementById('grafanaFrame');
+        const loading = document.getElementById('loading');
+        const iframeWrapper = document.getElementById('iframeWrapper');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Set iframe source
+        iframe.src = dashboardUrl;
+
+        // Check if iframe loads successfully
+        let loadTimeout = setTimeout(() => {
+            console.log('[Grafana Viewer] Iframe load timeout - likely blocked by X-Frame-Options');
+            loading.classList.remove('active');
+            errorMessage.style.display = 'block';
+            
+            // Track error with Faro
+            if (window.faro) {
+                window.faro.api.pushEvent('grafana_iframe_blocked', {
+                    dashboard_url: dashboardUrl,
+                    error: 'X-Frame-Options or CSP blocking',
+                    timestamp: Date.now()
+                });
+            }
+        }, 5000);
+
+        iframe.onload = () => {
+            console.log('[Grafana Viewer] Iframe loaded successfully');
+            clearTimeout(loadTimeout);
+            loading.classList.remove('active');
+            iframeWrapper.style.display = 'block';
+            
+            // Track successful load with Faro
+            if (window.faro) {
+                window.faro.api.pushEvent('grafana_dashboard_loaded', {
+                    dashboard_url: dashboardUrl,
+                    timestamp: Date.now()
+                });
+            }
+        };
+
+        iframe.onerror = () => {
+            console.error('[Grafana Viewer] Iframe failed to load');
+            clearTimeout(loadTimeout);
+            loading.classList.remove('active');
+            errorMessage.style.display = 'block';
+            
+            // Track error with Faro
+            if (window.faro) {
+                window.faro.api.pushError(new Error('Grafana iframe load failed'), {
+                    dashboard_url: dashboardUrl,
+                    timestamp: Date.now()
+                });
+            }
+        };
+
+        // Copy dashboard URL to clipboard
+        function copyDashboardUrl() {
+            navigator.clipboard.writeText(dashboardUrl).then(() => {
+                alert('✅ Dashboard URL copied to clipboard!');
+                console.log('[Grafana Viewer] URL copied to clipboard');
+                
+                // Track with Faro
+                if (window.faro) {
+                    window.faro.api.pushEvent('grafana_url_copied', {
+                        dashboard_url: dashboardUrl,
+                        timestamp: Date.now()
+                    });
+                }
+            }).catch(err => {
+                console.error('[Grafana Viewer] Failed to copy URL:', err);
+                alert('❌ Failed to copy URL. Please copy manually from the technical info section.');
+            });
+        }
+
+        // Track component load with Faro
+        if (window.faro) {
+            window.faro.api.pushEvent('grafana_viewer_loaded', {
+                dashboard_url: dashboardUrl,
+                timestamp: Date.now()
+            });
+        }
+    </script>
+</body>
+</html>
