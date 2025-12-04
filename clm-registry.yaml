@@ -206,6 +206,44 @@ components:
           - "API calls and performance"
         integration: "Grafana Cloud Faro"
         endpoint: "https://faro-collector-prod-us-central-0.grafana.net/collect"
+
+  - hash: "youtube-viewer"
+    name: "YouTube Video Viewer"
+    abstract:
+      context: "Video content integration and playback"
+      goal: "Embed and play YouTube videos with custom controls and video switching"
+    concrete:
+      implementation: "components/youtube-viewer.html"
+      sandbox: "allow-scripts allow-same-origin"
+    balanced:
+      metrics_endpoint: "/metrics/youtube-viewer"
+      health_check: "/health/youtube-viewer"
+      expected_load_time_ms: 800
+      expected_failure: false
+      features:
+        - "YouTube embed player"
+        - "Video ID extraction from URLs"
+        - "Dynamic video loading"
+        - "Responsive 16:9 aspect ratio"
+
+  - hash: "youtube-external"
+    name: "YouTube Direct Embed"
+    abstract:
+      context: "Direct YouTube video embedding"
+      goal: "Embed specific YouTube video directly via external URL"
+    concrete:
+      implementation: "https://www.youtube.com/embed/qxIzZMNsd84?enablejsapi=1"
+      sandbox: "allow-scripts allow-same-origin"
+    balanced:
+      metrics_endpoint: "/metrics/youtube-external"
+      health_check: "/health/youtube-external"
+      expected_load_time_ms: 1200
+      expected_failure: false
+      features:
+        - "Direct YouTube embed"
+        - "No custom wrapper"
+        - "Native YouTube controls"
+        - "External component example"
       
 # Observability Configuration
 observability:

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 28px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .video-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-info {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .video-info h2 {
+            color: #2d3748;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .video-info p {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .video-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .meta-item svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls h3 {
+            color: #2d3748;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-group button {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .input-group button:hover {
+            background: #5568d3;
+        }
+
+        .help-text {
+            color: #718096;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .youtube-icon {
+            color: #FF0000;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .video-container {
+                padding: 20px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .input-group button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <svg class="youtube-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+                YouTube Video Viewer
+            </h1>
+            <p>Watch and embed YouTube videos with custom controls</p>
+        </div>
+
+        <div class="video-container">
+            <div class="video-wrapper" id="videoWrapper">
+                <iframe 
+                    id="youtubePlayer"
+                    src="https://www.youtube.com/embed/qxIzZMNsd84?enablejsapi=1"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <div class="video-info">
+                <h2 id="videoTitle">Current Video</h2>
+                <p id="videoDescription">Loading video information...</p>
+                <div class="video-meta">
+                    <div class="meta-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <span id="videoId">qxIzZMNsd84</span>
+                    </div>
+                    <div class="meta-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <span>Embedded Player</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <h3>Load Different Video</h3>
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="videoInput" 
+                    placeholder="Enter YouTube URL or Video ID"
+                    value="https://www.youtube.com/watch?v=qxIzZMNsd84"
+                >
+                <button onclick="loadVideo()">Load Video</button>
+            </div>
+            <p class="help-text">
+                Examples: https://www.youtube.com/watch?v=qxIzZMNsd84 or just qxIzZMNsd84
+            </p>
+        </div>
+    </div>
+
+    <script>
+        console.log('[YouTube Viewer] Component loaded');
+
+        // Extract video ID from various YouTube URL formats
+        function extractVideoId(input) {
+            if (!input) return null;
+
+            // If it's already just an ID (11 characters)
+            if (/^[a-zA-Z0-9_-]{11}$/.test(input.trim())) {
+                return input.trim();
+            }
+
+            // Try to extract from URL
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+                /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/
+            ];
+
+            for (const pattern of patterns) {
+                const match = input.match(pattern);
+                if (match && match[1]) {
+                    return match[1];
+                }
+            }
+
+            return null;
+        }
+
+        // Load video by ID or URL
+        function loadVideo() {
+            const input = document.getElementById('videoInput').value;
+            const videoId = extractVideoId(input);
+
+            if (!videoId) {
+                alert('Invalid YouTube URL or Video ID. Please check your input.');
+                return;
+            }
+
+            console.log('[YouTube Viewer] Loading video:', videoId);
+
+            // Update iframe src
+            const iframe = document.getElementById('youtubePlayer');
+            iframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
+
+            // Update video info
+            document.getElementById('videoId').textContent = videoId;
+            document.getElementById('videoTitle').textContent = 'Video: ' + videoId;
+            document.getElementById('videoDescription').textContent = 'YouTube video loaded successfully. Video ID: ' + videoId;
+
+            // Track with Faro if available
+            if (window.faro) {
+                window.faro.api.pushEvent('youtube_video_loaded', {
+                    video_id: videoId,
+                    timestamp: Date.now()
+                });
+            }
+
+            console.log('[YouTube Viewer] Video loaded successfully');
+        }
+
+        // Initialize with default video info
+        window.addEventListener('load', () => {
+            const defaultVideoId = 'qxIzZMNsd84';
+            document.getElementById('videoId').textContent = defaultVideoId;
+            document.getElementById('videoTitle').textContent = 'Default Video';
+            document.getElementById('videoDescription').textContent = 'This is the default YouTube video. Use the controls below to load a different video.';
+
+            console.log('[YouTube Viewer] Initialized with video:', defaultVideoId);
+
+            // Track component load with Faro if available
+            if (window.faro) {
+                window.faro.api.pushEvent('youtube_viewer_loaded', {
+                    default_video_id: defaultVideoId,
+                    timestamp: Date.now()
+                });
+            }
+        });
+
+        // Handle URL parameters for video ID
+        const urlParams = new URLSearchParams(window.location.search);
+        const videoParam = urlParams.get('v') || urlParams.get('video');
+        if (videoParam) {
+            document.getElementById('videoInput').value = videoParam;
+            // Auto-load after a short delay to ensure DOM is ready
+            setTimeout(() => loadVideo(), 100);
+        }
+    </script>
+</body>
+</html>
