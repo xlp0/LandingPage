@@ -5,6 +5,9 @@ on:
     workflows: ["CLM Test - All Components"]
     types:
       - completed
+    branches:
+      - main
+      - develop
   workflow_dispatch:
 
 env:
@@ -12,7 +15,7 @@ env:
 
 jobs:
   build-and-push:
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure' || github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     environment: docker
     
