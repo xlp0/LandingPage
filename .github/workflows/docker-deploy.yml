@@ -2,7 +2,7 @@ name: Build and Push Docker Image LandingPage
 
 on:
   workflow_run:
-    workflows: ["CLM Component Tests"]
+    workflows: ["CLM Test - All Components"]
     types:
       - completed
   workflow_dispatch:
