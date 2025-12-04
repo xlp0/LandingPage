@@ -372,16 +372,16 @@
             <span>🏢</span>
             <span>CLM Dashboard</span>
             <span class="clm-badge">SINGLE VIEW</span>
-            <span id="testRunBadge" class="clm-badge" style="background: rgba(100, 149, 237, 0.3); margin-left: 8px; font-size: 11px;">
-              Loading...
-            </span>
           </div>
           <div style="display: flex; align-items: center; gap: 12px; flex: 1; max-width: 500px; justify-content: center;">
+            <span id="testRunBadge" class="clm-badge" style="background: rgba(100, 149, 237, 0.3); font-size: 11px; padding: 4px 10px;">
+              Loading...
+            </span>
             <div id="testStatusText" style="font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, 0.9);">
               Loading test status...
             </div>
             <a id="testStatusLink" href="#" target="_blank" style="display: none; padding: 6px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 600; transition: all 0.3s ease;">
-              View GitHub Actions
+              View Logs
             </a>
           </div>
           <div style="display: flex; align-items: center; gap: 20px;">
@@ -1000,14 +1000,8 @@
           // Update test run badge (next to SINGLE VIEW)
           const testRunBadge = document.getElementById('testRunBadge');
           if (testRunBadge) {
-            // Determine ordinal suffix (1st, 2nd, 3rd, 4th, etc.)
-            const getOrdinal = (n) => {
-              const s = ['th', 'st', 'nd', 'rd'];
-              const v = n % 100;
-              return n + (s[(v - 20) % 10] || s[v] || s[0]);
-            };
-            
-            testRunBadge.innerHTML = `${getOrdinal(testData.test_run)} testing`;
+            const timesText = testData.test_run === 1 ? 'Time' : 'Times';
+            testRunBadge.innerHTML = `Tested ${testData.test_run} ${timesText}`;
             testRunBadge.style.background = statusColor;
             testRunBadge.title = `Test run #${testData.test_run} - ${statusText}`;
           }
