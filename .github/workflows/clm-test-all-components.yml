@@ -143,27 +143,31 @@ jobs:
             changed: ${{ needs.detect-changes.outputs.grafana-faro }}
 
     name: Test ${{ matrix.component.name }}
-    if: matrix.component.changed == 'true'
 
     steps:
       - uses: actions/checkout@v4
+        if: ${{ matrix.component.changed == 'true' }}
 
       - name: Setup Node.js
+        if: ${{ matrix.component.changed == 'true' }}
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
 
       - name: Install Playwright Browsers
+        if: ${{ matrix.component.changed == 'true' }}
         run: npx playwright install --with-deps chromium
 
       - name: Install Docker Compose
+        if: ${{ matrix.component.changed == 'true' }}
         run: |
           sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
 
       - name: Start services
+        if: ${{ matrix.component.changed == 'true' }}
         run: |
           docker-compose up -d
           echo "Waiting for services to be ready..."
@@ -173,6 +177,7 @@ jobs:
           COMPOSE_PROJECT_NAME: landingpage-test
 
       - name: Run Playwright test for ${{ matrix.component.name }}
+        if: ${{ matrix.component.changed == 'true' }}
         id: test
         continue-on-error: true
         run: npx playwright test tests/test-clm-${{ matrix.component.hash }}.spec.js --reporter=json
@@ -180,7 +185,7 @@ jobs:
           CI: true
 
       - name: Save test results to JSON
-        if: always()
+        if: ${{ always() && matrix.component.changed == 'true' }}
         run: |
           mkdir -p tests/test-components
           
@@ -202,7 +207,7 @@ jobs:
           cat tests/test-components/${{ matrix.component.hash }}.json
 
       - name: Commit and Push results
-        if: always()
+        if: ${{ always() && matrix.component.changed == 'true' }}
         run: |
           chmod +x .github/scripts/push-test-results.sh
           .github/scripts/push-test-results.sh \
@@ -214,18 +219,18 @@ jobs:
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
-        if: always()
+        if: ${{ always() && matrix.component.changed == 'true' }}
         with:
           name: ${{ matrix.component.hash }}-screenshots
           path: tests/test-results/*.png
           retention-days: 7
           
       - name: Stop services
-        if: always()
+        if: ${{ always() && matrix.component.changed == 'true' }}
         run: docker-compose down -v
 
       - name: Test Summary
-        if: always()
+        if: ${{ always() && matrix.component.changed == 'true' }}
         run: |
           echo "### CLM Component Test Summary - ${{ matrix.component.name }} 🧪" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
