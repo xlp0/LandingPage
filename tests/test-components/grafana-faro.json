@@ -1,10 +1,11 @@
 {
   "hash": "grafana-faro",
-  "timestamp": "2025-12-03T05:03:10.005Z",
-  "test_run": 1,
-  "status": "success",
-  "github_actions_url": "https://github.com/xlp0/LandingPage/actions/runs/sample-grafana-faro",
-  "commit_sha": "sample-commit-sha",
+  "name": "Grafana Faro - Real User Monitoring",
+  "timestamp": "2025-12-04T03:44:27Z",
+  "test_run": 7,
+  "status": "failure",
+  "github_actions_url": "https://github.com/xlp0/LandingPage/actions/runs/19916909258",
+  "commit_sha": "ae7c4317066d982a35eb3f8fb1b288774ce16b36",
   "branch": "main",
-  "actor": "local-testing"
+  "actor": "alessandrorumampuk"
 }
