@@ -1,0 +1,164 @@
+name: CLM Test - All Components
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'components/**/*.html'
+      - 'tests/test-clm-*.spec.js'
+      - '.github/workflows/clm-test-all-components.yml'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'components/**/*.html'
+      - 'tests/test-clm-*.spec.js'
+      - '.github/workflows/clm-test-all-components.yml'
+  workflow_dispatch:
+
+jobs:
+  test-components:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        component:
+          - hash: welcome
+            name: Welcome Component
+            file: components/welcome.html
+          - hash: hero-content
+            name: Hero Content
+            file: components/hero.html
+          - hash: p2p-status
+            name: P2P Network Status
+            file: components/p2p-status.html
+          - hash: crash-test
+            name: Intentional Failure Component
+            file: components/crash-test.html
+          - hash: wikipedia-viewer
+            name: Wikipedia Article Viewer
+            file: components/wikipedia-viewer.html
+          - hash: user-list
+            name: User Account List
+            file: components/user-list.html
+          - hash: user-detail
+            name: User Account Detail
+            file: components/user-detail.html
+          - hash: redux-state-viewer
+            name: Redux State Viewer
+            file: components/redux-state-viewer.html
+          - hash: wikipedia-search
+            name: Wikipedia Search
+            file: components/wikipedia-search.html
+          - hash: external-site-demo
+            name: External Site Demo
+            file: external
+          - hash: google-maps
+            name: Google Maps Demo
+            file: external
+          - hash: pkc-viewer
+            name: PKC Document Viewer
+            file: components/pkc-viewer.html
+          - hash: grafana-faro
+            name: Grafana Faro Integration
+            file: components/grafana-faro.html
+
+    name: Test ${{ matrix.component.name }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version
+
+      - name: Start services
+        run: |
+          docker-compose up -d
+          echo "Waiting for services to be ready..."
+          sleep 10
+          docker-compose ps
+        env:
+          COMPOSE_PROJECT_NAME: landingpage-test
+
+      - name: Run Playwright test for ${{ matrix.component.name }}
+        id: test
+        continue-on-error: true
+        run: npx playwright test tests/test-clm-${{ matrix.component.hash }}.spec.js --reporter=json
+        env:
+          CI: true
+
+      - name: Save test results to JSON
+        if: always()
+        run: |
+          mkdir -p tests/test-components
+          
+          cat > tests/test-components/${{ matrix.component.hash }}.json << EOF
+          {
+            "hash": "${{ matrix.component.hash }}",
+            "name": "${{ matrix.component.name }}",
+            "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "test_run": ${{ github.run_number }},
+            "status": "${{ steps.test.outcome == 'success' && 'success' || 'failure' }}",
+            "github_actions_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+            "commit_sha": "${{ github.sha }}",
+            "branch": "${{ github.ref_name }}",
+            "actor": "${{ github.actor }}"
+          }
+          EOF
+          
+          echo "✅ Test results saved to tests/test-components/${{ matrix.component.hash }}.json"
+          cat tests/test-components/${{ matrix.component.hash }}.json
+
+      - name: Commit and Push results
+        if: always()
+        run: |
+          chmod +x .github/scripts/push-test-results.sh
+          .github/scripts/push-test-results.sh \
+            "${{ matrix.component.hash }}" \
+            "${{ github.run_number }}" \
+            "${{ secrets.GITHUB_TOKEN }}" \
+            "${{ github.repository }}" \
+            "${{ github.ref }}"
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ matrix.component.hash }}-screenshots
+          path: tests/test-results/*.png
+          retention-days: 7
+          
+      - name: Stop services
+        if: always()
+        run: docker-compose down -v
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "### CLM Component Test Summary - ${{ matrix.component.name }} 🧪" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Component**: ${{ matrix.component.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Hash**: ${{ matrix.component.hash }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ steps.test.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Test Run**: ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📊 [View detailed results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
