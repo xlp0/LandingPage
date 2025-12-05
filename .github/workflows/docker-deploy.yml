@@ -1,10 +1,6 @@
 name: Build and Push Docker Image LandingPage
 
 on:
-  push:
-    branches:
-      - main
-      - develop
   workflow_run:
     workflows: ["CLM Test - All Components"]
     types:
@@ -19,7 +15,7 @@ env:
 
 jobs:
   build-and-push:
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' || github.event_name == 'push' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     environment: docker
     
