@@ -64,3 +64,9 @@ debug-screenshot.png
 fixed-screenshot.png
 tests/screenshots/
 tests/videos/
+
+# Secrets and credentials (NEVER commit these!)
+k8s/secret-r2-credentials-real.yaml
+*-credentials-real.yaml
+*.secret.yaml
+.secrets/

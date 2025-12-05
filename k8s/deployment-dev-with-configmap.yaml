@@ -41,6 +41,10 @@ spec:
         envFrom:
         - configMapRef:
             name: landingpage-dev-config
+        # Load Cloudflare R2 credentials from Secret
+        - secretRef:
+            name: cloudflare-r2-credentials
+            optional: true  # Optional to avoid breaking if secret doesn't exist
         
         # Health checks using the new /health endpoint
         livenessProbe:
