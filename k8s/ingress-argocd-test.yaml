@@ -14,7 +14,7 @@ metadata:
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-origin: "*"
     # Certificate manager (if using cert-manager)
-    # cert-manager.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx
   rules:
@@ -29,7 +29,7 @@ spec:
                 port:
                   number: 80
   # TLS configuration (uncomment if using HTTPS)
-  # tls:
-  #   - hosts:
-  #       - argocd-test.pkc.pub
-  #     secretName: landingpage-argocd-test-tls
+  tls:
+    - hosts:
+        - argocd-test.pkc.pub
+      secretName: landingpage-argocd-test-tls
