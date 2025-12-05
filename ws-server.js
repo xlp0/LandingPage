@@ -276,13 +276,8 @@ wss.on('connection', (ws, req) => {
 
 // Health check endpoint (for Kubernetes probes and debugging)
 app.get('/health', (req, res) => {
-    const roomList = roomRegistry.getAllRooms().map(room => ({
-        id: room.id,
-        name: room.name,
-        host: room.host,
-        participantCount: room.participants ? room.participants.size : 0,
-        participants: room.participants ? Array.from(room.participants) : []
-    }));
+    // getAllRooms() already returns formatted room data
+    const roomList = roomRegistry.getAllRooms();
     
     res.json({
         status: 'ok',
