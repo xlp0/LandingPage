@@ -16,7 +16,7 @@ on:
 
 env:
   DOCKER_HUB_REPOSITORY: henry768/landingpage
-  IMAGE_TAG: latest_landingpage
+  IMAGE_TAG: argocd-latest
 
 jobs:
   build-and-push:
