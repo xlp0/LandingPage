@@ -281,6 +281,42 @@ components:
           - "iframe (may be blocked)"
           - "new tab"
           - "copy URL"
+
+  - hash: "youtube-argocd-gitops-tutorial"
+    name: "ArgoCD GitOps Tutorial - Kubernetes Deployment"
+    abstract:
+      context: "GitOps and ArgoCD deployment tutorial"
+      goal: "Learn ArgoCD GitOps workflow and Kubernetes deployment automation"
+    concrete:
+      implementation: "https://www.youtube.com/embed/MeU5_k9ssrs?start=1955"
+      sandbox: "allow-scripts allow-same-origin allow-presentation"
+    balanced:
+      metrics_endpoint: "/metrics/youtube-argocd"
+      health_check: "/health/youtube-argocd"
+      expected_load_time_ms: 1500
+      expected_failure: false
+      features:
+        - "YouTube video embed with timestamp"
+        - "GitOps concepts and best practices"
+        - "ArgoCD installation and configuration"
+        - "Kubernetes deployment automation"
+        - "CI/CD pipeline integration"
+        - "Auto-sync and self-healing demos"
+        - "Rollback and version control"
+      video_info:
+        platform: "YouTube"
+        video_id: "MeU5_k9ssrs"
+        start_time: "1955s"
+        topics:
+          - "GitOps principles"
+          - "ArgoCD architecture"
+          - "Kubernetes deployments"
+          - "Automated sync"
+          - "Application management"
+        related_docs:
+          - "docs/ARGOCD_DEPLOYMENT.md"
+          - "docs/ARGOCD_QUICK_GUIDE.md"
+          - "docs/ARGOCD_PRESENTATION.md"
       
 # Observability Configuration
 observability:
