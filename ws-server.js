@@ -299,7 +299,7 @@ app.get('/health', (req, res) => {
             connected_clients: connectedClients.size
         },
         rooms: {
-            total: rooms.size,
+            total: roomRegistry.getRoomCount(),
             list: roomList
         }
     });
@@ -307,20 +307,11 @@ app.get('/health', (req, res) => {
 
 // Rooms API endpoint
 app.get('/api/rooms', (req, res) => {
-    const roomList = Array.from(rooms.values()).map(room => ({
-        id: room.id,
-        name: room.name,
-        description: room.description,
-        host: room.host,
-        hostId: room.hostId,
-        createdAt: room.createdAt,
-        participantCount: room.participants.size,
-        participants: Array.from(room.participants)
-    }));
+    const roomList = roomRegistry.getAllRooms();
     
     res.header('Access-Control-Allow-Origin', '*');
     res.json({
-        total: rooms.size,
+        total: roomRegistry.getRoomCount(),
         rooms: roomList,
         timestamp: new Date().toISOString()
     });
