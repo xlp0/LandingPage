@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: landingpage-argocd-test-ingress
+  annotations:
+    # Nginx ingress annotations
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # WebSocket support
+    nginx.ingress.kubernetes.io/websocket-services: argocd-test-landingpage-dev
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    # CORS support
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    # Certificate manager (if using cert-manager)
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: argocd-test.pkc.pub  # New subdomain for ArgoCD test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-test-landingpage-dev  # Matches the prefixed service name
+                port:
+                  number: 80
+  # TLS configuration (uncomment if using HTTPS)
+  # tls:
+  #   - hosts:
+  #       - argocd-test.pkc.pub
+  #     secretName: landingpage-argocd-test-tls

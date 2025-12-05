@@ -19,6 +19,7 @@ resources:
   - configmap-dev.yaml
   - service.yaml
   - ingress.yaml
+  - ingress-argocd-test.yaml
 
 # ConfigMap generator (alternative to configmap-dev.yaml)
 # configMapGenerator:
