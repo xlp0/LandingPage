@@ -328,6 +328,52 @@ components:
           - "Hardcore mode"
           - "Aircraft combat"
 
+  - hash: "krunker-io-game"
+    name: "Krunker.io - Fast-Paced FPS Browser Game"
+    abstract:
+      context: "High-speed competitive FPS browser game"
+      goal: "Demonstrate fast-paced multiplayer FPS gaming in browser"
+    concrete:
+      implementation: "https://krunker.io/"
+      sandbox: "allow-scripts allow-same-origin allow-pointer-lock allow-popups"
+    balanced:
+      metrics_endpoint: "/metrics/krunker-io"
+      health_check: "/health/krunker-io"
+      expected_load_time_ms: 3000
+      expected_failure: false
+      features:
+        - "Fast-paced competitive FPS"
+        - "Browser-based 3D graphics"
+        - "No download required"
+        - "Multiple game modes"
+        - "Custom maps and mods"
+        - "Weapon skins and customization"
+        - "Ranked competitive play"
+        - "Quick matchmaking"
+        - "Low-poly art style"
+        - "High frame rate gameplay"
+      game_details:
+        genre: "FPS (First Person Shooter)"
+        platform: "WebGL"
+        multiplayer: true
+        controls:
+          - "WASD: Move"
+          - "Mouse: Aim and shoot"
+          - "Spacebar: Jump"
+          - "Shift: Sprint"
+          - "C: Crouch"
+          - "R: Reload"
+          - "Q: Switch weapon"
+          - "E: Interact"
+          - "1-9: Select weapon"
+        features:
+          - "Multiple classes"
+          - "Custom lobbies"
+          - "Map editor"
+          - "Mod support"
+          - "Competitive ranked"
+          - "Clan wars"
+
   - hash: "youtube-argocd-gitops-tutorial"
     name: "ArgoCD GitOps Tutorial - Kubernetes Deployment"
     abstract:
