@@ -1137,7 +1137,7 @@
             typesList.innerHTML = '';
             
             const types = [
-              { id: 'all', name: 'All Components', icon: '📦', components: registry.components },
+              { id: 'all', name: 'All MCards', icon: '📦', components: registry.components },
               { id: 'internal', name: 'Internal', icon: '🏠', components: componentsByType.internal },
               { id: 'external', name: 'External', icon: '🌐', components: componentsByType.external },
               { id: 'games', name: 'Games', icon: '🎮', components: componentsByType.games },
@@ -1163,7 +1163,7 @@
               }
             });
 
-            // Select "All Components" by default
+            // Select "All MCards" by default
             showComponentsForType(types[0]);
 
             // Load each component from registry (create iframes)
