@@ -1278,10 +1278,20 @@
       console.log('[Dashboard] CLM Dashboard with Redux initialized');
     </script>
 
+    <!-- Web LLM from CDN -->
+    <script type="module">
+      // Import Web LLM from CDN
+      import * as webllm from "https://esm.run/@mlc-ai/web-llm";
+      
+      // Make it globally available
+      window.webllm = webllm;
+    </script>
+
     <!-- Agentic Workflow Chat JavaScript with Web LLM -->
     <script type="module">
-      import { getLLMManager } from './js/modules/web-llm/llm-manager.js';
-      import { ModelStatus } from './js/modules/web-llm/config.js';
+      // Import local modules
+      const { getLLMManager } = await import('./js/modules/web-llm/llm-manager.js');
+      const { ModelStatus } = await import('./js/modules/web-llm/config.js');
 
       // Chat functionality
       const chatPanel = document.getElementById('chatPanel');

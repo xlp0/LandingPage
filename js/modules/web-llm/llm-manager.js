@@ -3,8 +3,10 @@
  * Manages Web LLM initialization, model loading, and response generation
  */
 
-import * as webllm from "@mlc-ai/web-llm";
 import { LLM_CONFIG, ModelStatus, LLMError } from './config.js';
+
+// Get webllm from global scope (loaded via CDN)
+const getWebLLM = () => window.webllm;
 
 export class LLMManager {
   constructor() {
@@ -56,6 +58,12 @@ export class LLMManager {
       this.currentModel = modelId;
 
       console.log(`[LLM] Initializing model: ${modelId}`);
+
+      // Get webllm from global scope
+      const webllm = getWebLLM();
+      if (!webllm) {
+        throw new Error('Web LLM library not loaded');
+      }
 
       // Create engine with progress callback
       this.engine = await webllm.CreateMLCEngine(
