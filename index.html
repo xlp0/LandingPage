@@ -612,8 +612,8 @@
         return { frame, iframeId, statusId };
       }
 
-      // Toggle fullscreen mode
-      function toggleFullscreen(componentHash) {
+      // Toggle fullscreen mode (make it global)
+      window.toggleFullscreen = function(componentHash) {
         const frame = document.getElementById(`frame-${componentHash}`);
         if (!frame) return;
         
@@ -648,7 +648,7 @@
             });
           }
         }
-      }
+      };
       
       // Handle ESC key to exit fullscreen
       document.addEventListener('keydown', (e) => {
