@@ -10,8 +10,6 @@ spec:
     path: k8s
     repoURL: https://github.com/xlp0/LandingPage.git
     targetRevision: HEAD
-    kustomize:
-      namePrefix: argocd-test-
   project: default
   syncPolicy:
     automated:
