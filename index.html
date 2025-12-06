@@ -1278,8 +1278,11 @@
       console.log('[Dashboard] CLM Dashboard with Redux initialized');
     </script>
 
-    <!-- Agentic Workflow Chat JavaScript -->
-    <script>
+    <!-- Agentic Workflow Chat JavaScript with Web LLM -->
+    <script type="module">
+      import { getLLMManager } from './js/modules/web-llm/llm-manager.js';
+      import { ModelStatus } from './js/modules/web-llm/config.js';
+
       // Chat functionality
       const chatPanel = document.getElementById('chatPanel');
       const chatToggleBtn = document.getElementById('chatToggleBtn');
@@ -1287,6 +1290,64 @@
       const chatInput = document.getElementById('chatInput');
       const chatSendBtn = document.getElementById('chatSendBtn');
       const chatMessages = document.getElementById('chatMessages');
+
+      // Initialize LLM Manager
+      const llmManager = getLLMManager();
+      let isGenerating = false;
+      let currentStreamingMessage = null;
+
+      // Update chat title with model status
+      function updateChatTitle(status, progress = null) {
+        const chatTitle = document.querySelector('.chat-title span:last-child');
+        if (!chatTitle) return;
+
+        switch (status) {
+          case ModelStatus.LOADING:
+            chatTitle.textContent = progress ? `Loading... ${progress}` : 'Loading Model...';
+            break;
+          case ModelStatus.READY:
+            const model = llmManager.getCurrentModel();
+            chatTitle.textContent = `Agentic Workflow (${model?.name || 'Ready'})`;
+            break;
+          case ModelStatus.ERROR:
+            chatTitle.textContent = 'Agentic Workflow (Error)';
+            break;
+          default:
+            chatTitle.textContent = 'Agentic Workflow';
+        }
+      }
+
+      // Setup LLM status listener
+      llmManager.onStatusChange = (status) => {
+        updateChatTitle(status);
+        console.log('[Chat] LLM Status:', status);
+      };
+
+      // Setup LLM progress listener
+      llmManager.onProgress = (progress) => {
+        const progressText = progress.text || '';
+        const progressPercent = progress.progress ? Math.round(progress.progress * 100) : null;
+        const displayText = progressPercent ? `${progressPercent}%` : progressText;
+        updateChatTitle(ModelStatus.LOADING, displayText);
+      };
+
+      // Initialize LLM when chat opens
+      async function initializeLLM() {
+        if (llmManager.getStatus() === ModelStatus.UNLOADED) {
+          try {
+            addMessage('🤖 Initializing AI model... This may take a moment on first load.', false);
+            await llmManager.initialize();
+            addMessage('✅ AI model loaded! How can I help you?', false);
+          } catch (error) {
+            console.error('[Chat] LLM initialization failed:', error);
+            if (error.message.includes('webgpu')) {
+              addMessage('⚠️ WebGPU is not available in your browser. Please use Chrome 113+ or Edge 113+ for AI features.', false);
+            } else {
+              addMessage('⚠️ Failed to load AI model. Using fallback responses.', false);
+            }
+          }
+        }
+      }
 
       // Toggle chat panel
       function toggleChat() {
@@ -1296,6 +1357,9 @@
         // Focus input when opening
         if (chatPanel.classList.contains('open')) {
           setTimeout(() => chatInput.focus(), 300);
+          
+          // Initialize LLM if not already loaded
+          initializeLLM();
           
           // Track with Faro
           if (window.faro) {
@@ -1337,19 +1401,47 @@
         
         // Scroll to bottom
         chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        return messageDiv;
+      }
+
+      // Add streaming message (for LLM responses)
+      function addStreamingMessage() {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-message assistant';
+        messageDiv.innerHTML = `
+          <div class="message-bubble"></div>
+          <div class="message-time">${formatTime()}</div>
+        `;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        currentStreamingMessage = messageDiv.querySelector('.message-bubble');
+        return currentStreamingMessage;
+      }
+
+      // Update streaming message with new token
+      function updateStreamingMessage(token) {
+        if (currentStreamingMessage) {
+          currentStreamingMessage.textContent += token;
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
       }
 
       // Send message
-      function sendMessage() {
+      async function sendMessage() {
         const message = chatInput.value.trim();
-        if (!message) return;
+        if (!message || isGenerating) return;
 
         // Add user message
         addMessage(message, true);
         chatInput.value = '';
-        
-        // Auto-resize textarea
         chatInput.style.height = 'auto';
+
+        // Disable input while generating
+        isGenerating = true;
+        chatInput.disabled = true;
+        chatSendBtn.disabled = true;
 
         // Track with Faro
         if (window.faro) {
@@ -1359,25 +1451,45 @@
           });
         }
 
-        // Simulate assistant response (replace with actual API call)
-        setTimeout(() => {
-          const responses = [
-            "I understand. Let me help you with that.",
-            "That's a great question! Here's what I can tell you...",
-            "I'm processing your request. This might take a moment.",
-            "Thanks for sharing that information. Let me analyze it.",
-            "I can help you with that workflow. Let's break it down step by step."
-          ];
-          const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-          addMessage(randomResponse, false);
-          
-          // Track with Faro
-          if (window.faro) {
-            window.faro.api.pushEvent('chat_response_received', {
-              timestamp: Date.now()
+        try {
+          // Check if LLM is ready
+          if (llmManager.isReady()) {
+            // Generate response with LLM
+            const streamingBubble = addStreamingMessage();
+            
+            await llmManager.generateResponse(message, (token) => {
+              updateStreamingMessage(token);
             });
+
+            // Track with Faro
+            if (window.faro) {
+              window.faro.api.pushEvent('chat_llm_response_received', {
+                timestamp: Date.now()
+              });
+            }
+          } else {
+            // Fallback to simulated response
+            setTimeout(() => {
+              const responses = [
+                "I'm still loading. Please wait a moment...",
+                "AI model is initializing. Try again in a few seconds.",
+                "Loading AI capabilities... Please be patient."
+              ];
+              const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+              addMessage(randomResponse, false);
+            }, 500);
           }
-        }, 1000);
+        } catch (error) {
+          console.error('[Chat] Generation error:', error);
+          addMessage('⚠️ Sorry, I encountered an error generating a response. Please try again.', false);
+        } finally {
+          // Re-enable input
+          isGenerating = false;
+          chatInput.disabled = false;
+          chatSendBtn.disabled = false;
+          chatInput.focus();
+          currentStreamingMessage = null;
+        }
       }
 
       // Send button click
@@ -1397,7 +1509,7 @@
         this.style.height = Math.min(this.scrollHeight, 120) + 'px';
       });
 
-      console.log('[Chat] Agentic Workflow chat initialized');
+      console.log('[Chat] Agentic Workflow chat with Web LLM initialized');
     </script>
 
     <!-- Grafana Faro Web SDK for Real User Monitoring -->

@@ -31,6 +31,7 @@
     "@playwright/test": "^1.40.0"
   },
   "dependencies": {
+    "@mlc-ai/web-llm": "^0.2.80",
     "@reduxjs/toolkit": "^1.9.7",
     "animejs": "^4.2.2",
     "axios": "^1.6.0",
