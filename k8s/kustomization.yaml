@@ -43,7 +43,7 @@ images:
 # Replicas (can be overridden per environment)
 replicas:
   - name: landingpage-dev
-    count: 1
+    count: 3  # High availability: 3 replicas across nodes
 
 # Patches for environment-specific changes
 # patches:
