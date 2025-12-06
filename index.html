@@ -223,6 +223,217 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        position: relative;
+      }
+
+      /* Agentic Workflow Chat Panel */
+      .chat-panel {
+        position: fixed;
+        right: 0;
+        top: 0;
+        height: 100vh;
+        width: 400px;
+        background: rgba(20, 20, 30, 0.95);
+        backdrop-filter: blur(20px);
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        flex-direction: column;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+        box-shadow: -4px 0 24px rgba(0, 0, 0, 0.3);
+      }
+
+      .chat-panel.open {
+        transform: translateX(0);
+      }
+
+      .chat-header {
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .chat-title {
+        font-size: 18px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .chat-close-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+
+      .chat-close-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+      }
+
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .chat-message {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .chat-message.user {
+        align-items: flex-end;
+      }
+
+      .chat-message.assistant {
+        align-items: flex-start;
+      }
+
+      .message-bubble {
+        max-width: 80%;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        line-height: 1.5;
+        word-wrap: break-word;
+      }
+
+      .chat-message.user .message-bubble {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .chat-message.assistant .message-bubble {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .message-time {
+        font-size: 11px;
+        opacity: 0.6;
+        padding: 0 8px;
+      }
+
+      .chat-input-container {
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .chat-input-wrapper {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+      }
+
+      .chat-input {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 12px 16px;
+        color: white;
+        font-size: 14px;
+        resize: none;
+        min-height: 44px;
+        max-height: 120px;
+        font-family: inherit;
+      }
+
+      .chat-input:focus {
+        outline: none;
+        border-color: #667eea;
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .chat-input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .chat-send-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        flex-shrink: 0;
+      }
+
+      .chat-send-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      .chat-send-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* Chat toggle button */
+      .chat-toggle-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s;
+        z-index: 999;
+      }
+
+      .chat-toggle-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 24px rgba(102, 126, 234, 0.6);
+      }
+
+      .chat-toggle-btn.hidden {
+        display: none;
       }
 
       .components-grid {
@@ -501,6 +712,47 @@
         </div>
       </div>
     </div>
+
+    <!-- Agentic Workflow Chat Panel -->
+    <div class="chat-panel" id="chatPanel">
+      <div class="chat-header">
+        <div class="chat-title">
+          <span>🤖</span>
+          <span>Agentic Workflow</span>
+        </div>
+        <button class="chat-close-btn" id="chatCloseBtn">✕</button>
+      </div>
+      
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-message assistant">
+          <div class="message-bubble">
+            👋 Hello! I'm your Agentic Workflow assistant. How can I help you today?
+          </div>
+          <div class="message-time">Just now</div>
+        </div>
+      </div>
+      
+      <div class="chat-input-container">
+        <div class="chat-input-wrapper">
+          <textarea 
+            class="chat-input" 
+            id="chatInput" 
+            placeholder="Type your message..."
+            rows="1"
+          ></textarea>
+          <button class="chat-send-btn" id="chatSendBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Toggle Button -->
+    <button class="chat-toggle-btn" id="chatToggleBtn">
+      💬
+    </button>
 
     <!-- OAuth Handler -->
     <script src="./js/oauth-handler.js"></script>
@@ -1024,6 +1276,128 @@
       })();
 
       console.log('[Dashboard] CLM Dashboard with Redux initialized');
+    </script>
+
+    <!-- Agentic Workflow Chat JavaScript -->
+    <script>
+      // Chat functionality
+      const chatPanel = document.getElementById('chatPanel');
+      const chatToggleBtn = document.getElementById('chatToggleBtn');
+      const chatCloseBtn = document.getElementById('chatCloseBtn');
+      const chatInput = document.getElementById('chatInput');
+      const chatSendBtn = document.getElementById('chatSendBtn');
+      const chatMessages = document.getElementById('chatMessages');
+
+      // Toggle chat panel
+      function toggleChat() {
+        chatPanel.classList.toggle('open');
+        chatToggleBtn.classList.toggle('hidden');
+        
+        // Focus input when opening
+        if (chatPanel.classList.contains('open')) {
+          setTimeout(() => chatInput.focus(), 300);
+          
+          // Track with Faro
+          if (window.faro) {
+            window.faro.api.pushEvent('chat_opened', {
+              timestamp: Date.now()
+            });
+          }
+        } else {
+          // Track with Faro
+          if (window.faro) {
+            window.faro.api.pushEvent('chat_closed', {
+              timestamp: Date.now()
+            });
+          }
+        }
+      }
+
+      chatToggleBtn.addEventListener('click', toggleChat);
+      chatCloseBtn.addEventListener('click', toggleChat);
+
+      // Format time
+      function formatTime() {
+        const now = new Date();
+        return now.toLocaleTimeString('en-US', { 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        });
+      }
+
+      // Add message to chat
+      function addMessage(text, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${isUser ? 'user' : 'assistant'}`;
+        messageDiv.innerHTML = `
+          <div class="message-bubble">${text}</div>
+          <div class="message-time">${formatTime()}</div>
+        `;
+        chatMessages.appendChild(messageDiv);
+        
+        // Scroll to bottom
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      // Send message
+      function sendMessage() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        // Add user message
+        addMessage(message, true);
+        chatInput.value = '';
+        
+        // Auto-resize textarea
+        chatInput.style.height = 'auto';
+
+        // Track with Faro
+        if (window.faro) {
+          window.faro.api.pushEvent('chat_message_sent', {
+            message_length: message.length,
+            timestamp: Date.now()
+          });
+        }
+
+        // Simulate assistant response (replace with actual API call)
+        setTimeout(() => {
+          const responses = [
+            "I understand. Let me help you with that.",
+            "That's a great question! Here's what I can tell you...",
+            "I'm processing your request. This might take a moment.",
+            "Thanks for sharing that information. Let me analyze it.",
+            "I can help you with that workflow. Let's break it down step by step."
+          ];
+          const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+          addMessage(randomResponse, false);
+          
+          // Track with Faro
+          if (window.faro) {
+            window.faro.api.pushEvent('chat_response_received', {
+              timestamp: Date.now()
+            });
+          }
+        }, 1000);
+      }
+
+      // Send button click
+      chatSendBtn.addEventListener('click', sendMessage);
+
+      // Enter key to send (Shift+Enter for new line)
+      chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+
+      // Auto-resize textarea
+      chatInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+      });
+
+      console.log('[Chat] Agentic Workflow chat initialized');
     </script>
 
     <!-- Grafana Faro Web SDK for Real User Monitoring -->
