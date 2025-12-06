@@ -39,15 +39,113 @@
         overflow: hidden;
       }
 
-      /* Sidebar for component selection */
+      /* Sidebar for component selection - Finder style */
       .component-sidebar {
-        width: 280px;
+        width: 560px;
         background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(10px);
         border-right: 1px solid rgba(255, 255, 255, 0.1);
         display: flex;
         flex-direction: column;
         overflow: hidden;
+      }
+
+      /* Two-column layout container */
+      .sidebar-columns {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+      }
+
+      /* First column - Types/Categories */
+      .types-column {
+        width: 180px;
+        background: rgba(255, 255, 255, 0.03);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .types-column-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        opacity: 0.7;
+        letter-spacing: 0.5px;
+      }
+
+      .types-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 8px;
+      }
+
+      .type-item {
+        padding: 10px 12px;
+        margin: 4px 0;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .type-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .type-item.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .type-item-content {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+      }
+
+      .type-icon {
+        font-size: 16px;
+      }
+
+      .type-name {
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .type-count {
+        font-size: 10px;
+        opacity: 0.7;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 2px 6px;
+        border-radius: 10px;
+      }
+
+      /* Second column - Components */
+      .components-column {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .components-column-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        opacity: 0.7;
+        letter-spacing: 0.5px;
       }
 
       .sidebar-header {
@@ -73,71 +171,14 @@
       .component-list {
         flex: 1;
         overflow-y: auto;
-        padding: 10px;
+        padding: 8px;
       }
 
-      /* Category styles */
-      .component-category {
-        margin-bottom: 16px;
-      }
-
-      .category-header {
-        padding: 12px 16px;
-        background: rgba(255, 255, 255, 0.08);
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.2s;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        user-select: none;
-      }
-
-      .category-header:hover {
-        background: rgba(255, 255, 255, 0.12);
-        border-color: rgba(255, 255, 255, 0.2);
-      }
-
-      .category-title {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 600;
-        font-size: 14px;
-      }
-
-      .category-icon {
-        font-size: 16px;
-      }
-
-      .category-count {
-        font-size: 11px;
-        opacity: 0.7;
-        background: rgba(255, 255, 255, 0.1);
-        padding: 2px 8px;
-        border-radius: 12px;
-      }
-
-      .category-chevron {
-        font-size: 12px;
-        transition: transform 0.2s;
-      }
-
-      .category-header.expanded .category-chevron {
-        transform: rotate(90deg);
-      }
-
-      .category-items {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out;
-        padding-left: 12px;
-      }
-
-      .category-items.expanded {
-        max-height: 2000px;
-        transition: max-height 0.5s ease-in;
+      .component-list-empty {
+        padding: 40px 20px;
+        text-align: center;
+        opacity: 0.5;
+        font-size: 13px;
       }
 
       .component-item {
@@ -395,7 +436,7 @@
 
     <!-- Dashboard Container -->
     <div class="dashboard-container">
-      <!-- Sidebar -->
+      <!-- Sidebar - Finder Style Two-Column Layout -->
       <div class="component-sidebar">
         <div class="sidebar-header">
           <div class="sidebar-title">
@@ -406,8 +447,24 @@
             <span id="componentCount">0</span> CLM Modules
           </div>
         </div>
-        <div class="component-list" id="componentList">
-          <!-- Component items will be dynamically inserted here -->
+        
+        <!-- Two-column layout -->
+        <div class="sidebar-columns">
+          <!-- First Column: Types -->
+          <div class="types-column">
+            <div class="types-column-header">Types</div>
+            <div class="types-list" id="typesList">
+              <!-- Type items will be dynamically inserted here -->
+            </div>
+          </div>
+          
+          <!-- Second Column: Components -->
+          <div class="components-column">
+            <div class="components-column-header" id="componentsColumnHeader">Components</div>
+            <div class="component-list" id="componentList">
+              <div class="component-list-empty">Select a type to view components</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -690,29 +747,82 @@
         console.log('[Dashboard] Switched to component:', componentHash);
       }
 
-      // Categorize components automatically
-      function categorizeComponents(components) {
+      // Categorize components by type (Finder-style)
+      function categorizeComponentsByType(components) {
         const internal = [];
         const external = [];
+        const games = [];
+        const dashboards = [];
+        const videos = [];
+        const tools = [];
         
         components.forEach(comp => {
-          // Use originalImplementation if available (before URL resolution)
-          // Otherwise fall back to implementation
           const impl = comp.concrete?.originalImplementation || comp.concrete?.implementation || '';
+          const name = (comp.name || '').toLowerCase();
+          const hash = (comp.hash || '').toLowerCase();
           
-          console.log(`[Dashboard] Categorizing ${comp.hash}: "${impl}"`);
+          // Categorize by type
+          if (name.includes('game') || hash.includes('game') || hash.includes('-io') || 
+              name.includes('repuls') || name.includes('krunker') || name.includes('octagon')) {
+            games.push(comp);
+          } else if (name.includes('grafana') || name.includes('dashboard') || hash.includes('dashboard')) {
+            dashboards.push(comp);
+          } else if (name.includes('youtube') || name.includes('video') || hash.includes('youtube')) {
+            videos.push(comp);
+          } else if (name.includes('viewer') || name.includes('search') || name.includes('redux')) {
+            tools.push(comp);
+          }
           
-          // External if starts with http:// or https://
+          // Also categorize by internal/external
           if (impl.startsWith('http://') || impl.startsWith('https://')) {
             external.push(comp);
-            console.log(`[Dashboard] → External`);
           } else {
             internal.push(comp);
-            console.log(`[Dashboard] → Internal`);
           }
         });
         
-        return { internal, external };
+        return { internal, external, games, dashboards, videos, tools };
+      }
+
+      // Show components for selected type (Finder-style second column)
+      function showComponentsForType(type) {
+        const componentList = document.getElementById('componentList');
+        const componentsColumnHeader = document.getElementById('componentsColumnHeader');
+        
+        // Update active type
+        document.querySelectorAll('.type-item').forEach(item => item.classList.remove('active'));
+        const typeItem = document.getElementById(`type-${type.id}`);
+        if (typeItem) typeItem.classList.add('active');
+        
+        // Update header
+        componentsColumnHeader.textContent = type.name;
+        
+        // Clear and populate component list
+        componentList.innerHTML = '';
+        
+        if (type.components.length === 0) {
+          componentList.innerHTML = '<div class="component-list-empty">No components in this category</div>';
+          return;
+        }
+        
+        type.components.forEach(comp => {
+          const item = document.createElement('div');
+          item.className = 'component-item';
+          item.id = `item-${comp.hash}`;
+          item.innerHTML = `
+            <div class="component-item-name">${comp.name}</div>
+            <div class="component-item-hash">${comp.hash}</div>
+          `;
+          item.onclick = () => {
+            switchToComponent(comp.hash);
+            if (window.loadTestStatus) {
+              window.loadTestStatus(comp.hash);
+            }
+          };
+          componentList.appendChild(item);
+        });
+        
+        console.log('[Dashboard] Showing components for type:', type.name, type.components.length);
       }
 
       // Create category section
@@ -766,64 +876,43 @@
             // Update component count
             componentCount.textContent = registry.components.length;
 
-            // Categorize components
-            const { internal, external } = categorizeComponents(registry.components);
-            console.log('[Dashboard] Categorized:', { internal: internal.length, external: external.length });
+            // Categorize components by type
+            const componentsByType = categorizeComponentsByType(registry.components);
+            console.log('[Dashboard] Categorized by type:', componentsByType);
 
-            // Clear component list
-            componentList.innerHTML = '';
+            // Populate types column (first column)
+            const typesList = document.getElementById('typesList');
+            typesList.innerHTML = '';
+            
+            const types = [
+              { id: 'all', name: 'All Components', icon: '📦', components: registry.components },
+              { id: 'internal', name: 'Internal', icon: '🏠', components: componentsByType.internal },
+              { id: 'external', name: 'External', icon: '🌐', components: componentsByType.external },
+              { id: 'games', name: 'Games', icon: '🎮', components: componentsByType.games },
+              { id: 'dashboards', name: 'Dashboards', icon: '📊', components: componentsByType.dashboards },
+              { id: 'videos', name: 'Videos', icon: '🎥', components: componentsByType.videos },
+              { id: 'tools', name: 'Tools', icon: '🔧', components: componentsByType.tools }
+            ];
 
-            // Create Internal Components category
-            if (internal.length > 0) {
-              const { category: internalCategory, itemsContainer: internalItems } = 
-                createCategorySection('Internal Components', '🏠', internal, true);
-              componentList.appendChild(internalCategory);
-              
-              // Add internal component items
-              internal.forEach(componentConfig => {
-                const item = document.createElement('div');
-                item.className = 'component-item';
-                item.id = `item-${componentConfig.hash}`;
-                item.innerHTML = `
-                  <div class="component-item-name">${componentConfig.name}</div>
-                  <div class="component-item-hash">${componentConfig.hash}</div>
+            types.forEach(type => {
+              if (type.components.length > 0) {
+                const typeItem = document.createElement('div');
+                typeItem.className = 'type-item';
+                typeItem.id = `type-${type.id}`;
+                typeItem.innerHTML = `
+                  <div class="type-item-content">
+                    <span class="type-icon">${type.icon}</span>
+                    <span class="type-name">${type.name}</span>
+                  </div>
+                  <span class="type-count">${type.components.length}</span>
                 `;
-                item.onclick = () => {
-                  switchToComponent(componentConfig.hash);
-                  // Update test status when component is clicked
-                  if (window.loadTestStatus) {
-                    window.loadTestStatus(componentConfig.hash);
-                  }
-                };
-                internalItems.appendChild(item);
-              });
-            }
+                typeItem.onclick = () => showComponentsForType(type);
+                typesList.appendChild(typeItem);
+              }
+            });
 
-            // Create External Components category
-            if (external.length > 0) {
-              const { category: externalCategory, itemsContainer: externalItems } = 
-                createCategorySection('External Components', '🌐', external, true);
-              componentList.appendChild(externalCategory);
-              
-              // Add external component items
-              external.forEach(componentConfig => {
-                const item = document.createElement('div');
-                item.className = 'component-item';
-                item.id = `item-${componentConfig.hash}`;
-                item.innerHTML = `
-                  <div class="component-item-name">${componentConfig.name}</div>
-                  <div class="component-item-hash">${componentConfig.hash}</div>
-                `;
-                item.onclick = () => {
-                  switchToComponent(componentConfig.hash);
-                  // Update test status when component is clicked
-                  if (window.loadTestStatus) {
-                    window.loadTestStatus(componentConfig.hash);
-                  }
-                };
-                externalItems.appendChild(item);
-              });
-            }
+            // Select "All Components" by default
+            showComponentsForType(types[0]);
 
             // Load each component from registry (create iframes)
             for (let i = 0; i < registry.components.length; i++) {
