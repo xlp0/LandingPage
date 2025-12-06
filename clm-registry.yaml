@@ -374,6 +374,46 @@ components:
           - "Competitive ranked"
           - "Clan wars"
 
+  - hash: "sacred-octagon-game"
+    name: "Sacred Octagon - Rhythm Action Game"
+    abstract:
+      context: "Rhythm-based action browser game"
+      goal: "Showcase rhythm and reflex-based gaming in browser"
+    concrete:
+      implementation: "https://play.sacredoctagon.id/"
+      sandbox: "allow-scripts allow-same-origin allow-pointer-lock allow-popups"
+    balanced:
+      metrics_endpoint: "/metrics/sacred-octagon"
+      health_check: "/health/sacred-octagon"
+      expected_load_time_ms: 2000
+      expected_failure: false
+      features:
+        - "Rhythm-based gameplay"
+        - "Fast reflexes required"
+        - "Browser-based WebGL"
+        - "No download required"
+        - "Progressive difficulty"
+        - "Score tracking"
+        - "Minimalist design"
+        - "Addictive gameplay"
+        - "Quick sessions"
+        - "High score challenges"
+      game_details:
+        genre: "Rhythm Action"
+        platform: "WebGL"
+        multiplayer: false
+        controls:
+          - "Arrow Keys: Navigate/Dodge"
+          - "Mouse: Click to start"
+          - "Spacebar: Action"
+        features:
+          - "Rhythm-based mechanics"
+          - "Progressive difficulty"
+          - "Score leaderboards"
+          - "Minimalist aesthetics"
+          - "Quick gameplay sessions"
+          - "Reflex training"
+
   - hash: "youtube-argocd-gitops-tutorial"
     name: "ArgoCD GitOps Tutorial - Kubernetes Deployment"
     abstract:
