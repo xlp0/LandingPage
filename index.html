@@ -258,6 +258,53 @@
         gap: 6px;
       }
 
+      .fullscreen-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(10px);
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 600;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+      }
+
+      .fullscreen-button:hover {
+        background: rgba(0, 0, 0, 0.8);
+        border-color: rgba(255, 255, 255, 0.4);
+        transform: scale(1.05);
+      }
+
+      .fullscreen-button svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      /* Fullscreen mode styles */
+      .component-frame.fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 9999;
+        border-radius: 0;
+        margin: 0;
+      }
+
+      .component-frame.fullscreen .fullscreen-button {
+        background: rgba(0, 0, 0, 0.8);
+      }
+
       .status-dot {
         width: 8px;
         height: 8px;
@@ -547,22 +594,79 @@
         
         const frame = document.createElement('div');
         frame.className = 'component-frame';
+        frame.id = `frame-${component.hash}`;
         frame.innerHTML = `
           <div class="component-label">
             <span class="status-dot ${isExpectedFailure ? 'error' : ''}" id="${statusId}"></span>
             <span>${label}</span>
           </div>
+          <button class="fullscreen-button" onclick="toggleFullscreen('${component.hash}')" title="Toggle Fullscreen">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+            </svg>
+            <span class="fullscreen-text">Fullscreen</span>
+          </button>
           <iframe id="${iframeId}" sandbox="${component.concrete?.sandbox || 'allow-scripts'}"></iframe>
         `;
         
         return { frame, iframeId, statusId };
       }
 
+      // Toggle fullscreen mode
+      function toggleFullscreen(componentHash) {
+        const frame = document.getElementById(`frame-${componentHash}`);
+        if (!frame) return;
+        
+        const isFullscreen = frame.classList.contains('fullscreen');
+        
+        if (isFullscreen) {
+          // Exit fullscreen
+          frame.classList.remove('fullscreen');
+          const button = frame.querySelector('.fullscreen-button .fullscreen-text');
+          if (button) button.textContent = 'Fullscreen';
+          console.log('[Dashboard] Exited fullscreen for:', componentHash);
+          
+          // Track with Faro
+          if (window.faro) {
+            window.faro.api.pushEvent('clm_fullscreen_exit', {
+              component_hash: componentHash,
+              timestamp: Date.now()
+            });
+          }
+        } else {
+          // Enter fullscreen
+          frame.classList.add('fullscreen');
+          const button = frame.querySelector('.fullscreen-button .fullscreen-text');
+          if (button) button.textContent = 'Exit Fullscreen';
+          console.log('[Dashboard] Entered fullscreen for:', componentHash);
+          
+          // Track with Faro
+          if (window.faro) {
+            window.faro.api.pushEvent('clm_fullscreen_enter', {
+              component_hash: componentHash,
+              timestamp: Date.now()
+            });
+          }
+        }
+      }
+      
+      // Handle ESC key to exit fullscreen
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const fullscreenFrame = document.querySelector('.component-frame.fullscreen');
+          if (fullscreenFrame) {
+            const componentHash = fullscreenFrame.id.replace('frame-', '');
+            toggleFullscreen(componentHash);
+          }
+        }
+      });
+
       // Switch to a component
       function switchToComponent(componentHash) {
         // Hide all component frames
         document.querySelectorAll('.component-frame').forEach(frame => {
           frame.classList.remove('active');
+          frame.classList.remove('fullscreen'); // Exit fullscreen when switching
         });
         
         // Show selected component frame
