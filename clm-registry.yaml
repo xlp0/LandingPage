@@ -282,6 +282,52 @@ components:
           - "new tab"
           - "copy URL"
 
+  - hash: "repuls-io-game"
+    name: "Repuls.io - Multiplayer FPS Browser Game"
+    abstract:
+      context: "Interactive Unity.io browser game demonstration"
+      goal: "Showcase Unity WebGL multiplayer FPS game capabilities in browser"
+    concrete:
+      implementation: "https://repuls.io/"
+      sandbox: "allow-scripts allow-same-origin allow-pointer-lock allow-popups"
+    balanced:
+      metrics_endpoint: "/metrics/repuls-io"
+      health_check: "/health/repuls-io"
+      expected_load_time_ms: 5000
+      expected_failure: false
+      features:
+        - "Free multiplayer FPS browser game"
+        - "Unity WebGL powered"
+        - "No download required"
+        - "Vehicle combat and warfare"
+        - "Team-based gameplay"
+        - "Weapon customization and skins"
+        - "RPG progression system"
+        - "Grappling hook mechanics"
+        - "Large open world maps"
+        - "Real-time multiplayer action"
+      game_details:
+        genre: "FPS (First Person Shooter)"
+        platform: "Unity WebGL"
+        multiplayer: true
+        controls:
+          - "WASD: Move"
+          - "Mouse: Aim and shoot"
+          - "1: Change weapons"
+          - "2: Use grenades"
+          - "R: Reload"
+          - "Q: Melee strike"
+          - "E: Use/Pick up items"
+          - "Spacebar: Jump"
+          - "Right Mouse: Aim rifles"
+        features:
+          - "Squad-based combat"
+          - "Vehicle warfare"
+          - "Weapon skins and charms"
+          - "Clan system"
+          - "Hardcore mode"
+          - "Aircraft combat"
+
   - hash: "youtube-argocd-gitops-tutorial"
     name: "ArgoCD GitOps Tutorial - Kubernetes Deployment"
     abstract:
