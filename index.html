@@ -1211,35 +1211,6 @@
             // Select "All MCards" by default
             showComponentsForType(types[0]);
 
-            // Create component items for each component
-            registry.components.forEach(component => {
-              const componentItem = document.createElement('div');
-              componentItem.className = 'component-item';
-              componentItem.innerHTML = `
-                <div class="component-icon">${component.abstract?.icon || '📄'}</div>
-                <div class="component-info">
-                  <div class="component-name">${component.name}</div>
-                  <div class="component-desc">${component.abstract?.context || ''}</div>
-                </div>
-                <div class="component-status">
-                  <div class="status-dot" id="status-${component.hash}"></div>
-                </div>
-              `;
-              
-              componentItem.addEventListener('click', () => {
-                switchToComponent(component.hash);
-              });
-              
-              componentViewer.appendChild(componentItem);
-              
-              // DON'T create iframe yet - will be created on-demand when user clicks
-            })
-
-            // Show first component by default
-            if (registry.components.length > 0) {
-              switchToComponent(registry.components[0].hash);
-            }
-
             // Hide loading overlay after all components are loaded
             setTimeout(() => {
               const loadingOverlay = document.querySelector('.loading-overlay');
