@@ -38,11 +38,16 @@ export const fetchCLMRegistry = createAsyncThunk(
       console.log('[CLM Slice] BASE_URL:', baseURL);
       
       // Fetch registry
+      console.log('[CLM Slice] Attempting to fetch from /api/clm/registry...');
       const response = await fetch('/api/clm/registry');
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorMsg = `API returned ${response.status}. Please check server logs.`;
+        console.error('[CLM Slice]', errorMsg);
+        throw new Error(errorMsg);
       }
       const data = await response.json();
+      console.log('[CLM Slice] Successfully fetched from API');
+      
       const registry = data.registry || data;
       
       // Resolve relative URLs in components

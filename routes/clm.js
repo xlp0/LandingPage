@@ -18,8 +18,18 @@ const registryPath = path.join(__dirname, '..', 'clm-registry.yaml');
  */
 router.get('/registry', (req, res) => {
   try {
+    console.log('[CLM Server] Loading registry from:', registryPath);
+    
+    // Check if file exists
+    if (!fs.existsSync(registryPath)) {
+      throw new Error(`Registry file not found at: ${registryPath}`);
+    }
+    
     const registryContent = fs.readFileSync(registryPath, 'utf8');
+    console.log('[CLM Server] Registry file loaded, size:', registryContent.length, 'bytes');
+    
     const registry = yaml.load(registryContent);
+    console.log('[CLM Server] YAML parsed successfully, components:', registry.components?.length || 0);
     
     res.json({
       success: true,
@@ -27,11 +37,15 @@ router.get('/registry', (req, res) => {
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    console.error('CLM Registry Error:', error);
+    console.error('[CLM Server] Registry Error:', error);
+    console.error('[CLM Server] Registry path:', registryPath);
+    console.error('[CLM Server] Error stack:', error.stack);
+    
     res.status(500).json({
       success: false,
       error: 'Failed to load CLM registry',
-      details: error.message
+      details: error.message,
+      path: registryPath
     });
   }
 });
