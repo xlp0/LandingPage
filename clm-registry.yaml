@@ -466,17 +466,6 @@ components:
           - "Progress timer (0.0s / 5.0s)"
           - "Play/pause toggle"
           - "Status indicator"
-        start_time: "1955s"
-        topics:
-          - "GitOps principles"
-          - "ArgoCD architecture"
-          - "Kubernetes deployments"
-          - "Automated sync"
-          - "Application management"
-        related_docs:
-          - "docs/ARGOCD_DEPLOYMENT.md"
-          - "docs/ARGOCD_QUICK_GUIDE.md"
-          - "docs/ARGOCD_PRESENTATION.md"
       
 # Observability Configuration
 observability:
