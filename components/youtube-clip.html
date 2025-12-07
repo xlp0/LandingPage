@@ -199,7 +199,7 @@
       <span>🎬</span>
       YouTube Clip Viewer
     </h1>
-    <p>Playing a precise 5-second segment from the video</p>
+    <p>Auto-playing and looping a 5-second segment continuously</p>
     
     <div class="clip-info">
       <div class="clip-info-item">
@@ -237,15 +237,12 @@
     </div>
 
     <div class="controls">
-      <button class="btn btn-primary" id="replayBtn">
-        <span>🔄</span>
-        Replay Clip
-      </button>
       <div class="timer" id="timer">0.0s / 5.0s</div>
-      <button class="btn" id="pauseBtn">
-        <span>⏸️</span>
-        Pause
-      </button>
+      <div class="btn" style="background: rgba(76, 175, 80, 0.3); cursor: default;">
+        <span>🔁</span>
+        Auto-Loop Active
+      </div>
+      <div style="font-size: 12px; opacity: 0.8;">Loop #<span id="loopCount">1</span></div>
     </div>
   </div>
 
@@ -255,12 +252,14 @@
       videoId: 'zsjvFFKOm3c',
       startTime: 5,       // Start at 5 seconds
       endTime: 10,        // End at 10 seconds
-      duration: 5         // 5 second clip
+      duration: 5,        // 5 second clip
+      autoLoop: true      // Automatically loop the clip
     };
 
     let player;
     let isPlaying = false;
     let checkInterval;
+    let loopCount = 0;
 
     // Load YouTube IFrame API
     const tag = document.createElement('script');
@@ -315,8 +314,14 @@
         stopTimeCheck();
       } else if (event.data === YT.PlayerState.ENDED) {
         isPlaying = false;
-        updateStatus('Clip ended');
+        updateStatus('Restarting loop...');
         stopTimeCheck();
+        // Auto-restart the clip
+        if (CONFIG.autoLoop) {
+          setTimeout(() => {
+            playClip();
+          }, 200);
+        }
       } else if (event.data === YT.PlayerState.BUFFERING) {
         updateStatus('Buffering...');
       } else if (event.data === YT.PlayerState.CUED) {
@@ -354,12 +359,22 @@
         // Update timer display
         updateTimer(clipProgress);
         
-        // Stop when we reach the end time
+        // Stop when we reach the end time and restart
         if (currentTime >= CONFIG.endTime) {
-          console.log('[YouTube Clip] Reached end time, pausing');
-          player.pauseVideo();
+          console.log('[YouTube Clip] Reached end time, restarting loop');
+          loopCount++;
+          updateLoopCount();
           stopTimeCheck();
           updateTimer(CONFIG.duration);
+          
+          // Auto-restart the clip
+          if (CONFIG.autoLoop) {
+            setTimeout(() => {
+              playClip();
+            }, 200);
+          } else {
+            player.pauseVideo();
+          }
         }
       }, 100); // Check every 100ms for precision
     }
@@ -381,23 +396,15 @@
       document.getElementById('statusText').textContent = text;
     }
 
-    // Button controls
-    document.getElementById('replayBtn').addEventListener('click', () => {
-      console.log('[YouTube Clip] Replay button clicked');
-      playClip();
-    });
-
-    document.getElementById('pauseBtn').addEventListener('click', () => {
-      if (!player) return;
-      
-      if (isPlaying) {
-        player.pauseVideo();
-        document.getElementById('pauseBtn').innerHTML = '<span>▶️</span> Play';
-      } else {
-        player.playVideo();
-        document.getElementById('pauseBtn').innerHTML = '<span>⏸️</span> Pause';
+    function updateLoopCount() {
+      const loopCountEl = document.getElementById('loopCount');
+      if (loopCountEl) {
+        loopCountEl.textContent = loopCount;
       }
-    });
+    }
+
+    // Auto-loop is active, no manual controls needed
+    console.log('[YouTube Clip] Auto-loop mode enabled');
 
     // Cleanup on unload
     window.addEventListener('beforeunload', () => {
