@@ -191,6 +191,69 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    .click-to-start {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1000;
+      transition: opacity 0.3s;
+    }
+
+    .click-to-start:hover {
+      background: rgba(0, 0, 0, 0.9);
+    }
+
+    .click-to-start.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .play-icon {
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      transition: all 0.3s;
+      border: 3px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .click-to-start:hover .play-icon {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+      border-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .play-icon svg {
+      width: 50px;
+      height: 50px;
+      fill: white;
+      margin-left: 8px;
+    }
+
+    .start-text {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .start-subtext {
+      font-size: 14px;
+      opacity: 0.8;
+    }
   </style>
 </head>
 <body>
@@ -233,6 +296,17 @@
       <div class="loading" id="loading">
         <div class="spinner"></div>
         <p>Loading YouTube Player...</p>
+      </div>
+
+      <!-- Click to Start Overlay -->
+      <div class="click-to-start" id="clickToStart">
+        <div class="play-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </div>
+        <div class="start-text">Click to Start Auto-Loop</div>
+        <div class="start-subtext">Video will play and loop automatically</div>
       </div>
     </div>
 
@@ -293,12 +367,25 @@
     function onPlayerReady(event) {
       console.log('[YouTube Clip] Player Ready');
       document.getElementById('loading').style.display = 'none';
-      updateStatus('Ready to play');
+      updateStatus('Click to start');
       
-      // Small delay before auto-play to ensure player is fully ready
-      setTimeout(() => {
-        playClip();
-      }, 500);
+      // Show click-to-start overlay
+      const clickOverlay = document.getElementById('clickToStart');
+      clickOverlay.style.display = 'flex';
+      
+      // Start playing when user clicks
+      clickOverlay.addEventListener('click', () => {
+        console.log('[YouTube Clip] User clicked to start');
+        clickOverlay.classList.add('hidden');
+        setTimeout(() => {
+          clickOverlay.style.display = 'none';
+        }, 300);
+        
+        // Start the auto-loop
+        setTimeout(() => {
+          playClip();
+        }, 100);
+      }, { once: true });
     }
 
     function onPlayerStateChange(event) {
@@ -405,6 +492,10 @@
 
     // Auto-loop is active, no manual controls needed
     console.log('[YouTube Clip] Auto-loop mode enabled');
+    console.log('[YouTube Clip] User must click to start due to browser autoplay policy');
+    
+    // Hide click-to-start initially
+    document.getElementById('clickToStart').style.display = 'none';
 
     // Cleanup on unload
     window.addEventListener('beforeunload', () => {
