@@ -466,17 +466,6 @@ components:
           - "Progress timer (0.0s / 5.0s)"
           - "Play/pause toggle"
           - "Status indicator"
-      features:
-        - "YouTube video embed with timestamp"
-        - "GitOps concepts and best practices"
-        - "ArgoCD installation and configuration"
-        - "Kubernetes deployment automation"
-        - "CI/CD pipeline integration"
-        - "Auto-sync and self-healing demos"
-        - "Rollback and version control"
-      video_info:
-        platform: "YouTube"
-        video_id: "MeU5_k9ssrs"
         start_time: "1955s"
         topics:
           - "GitOps principles"
