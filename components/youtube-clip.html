@@ -204,11 +204,11 @@
     <div class="clip-info">
       <div class="clip-info-item">
         <strong>Start:</strong>
-        <span>1:11 (71s)</span>
+        <span>0:05 (5s)</span>
       </div>
       <div class="clip-info-item">
         <strong>End:</strong>
-        <span>1:16 (76s)</span>
+        <span>0:10 (10s)</span>
       </div>
       <div class="clip-info-item">
         <strong>Duration:</strong>
@@ -253,8 +253,8 @@
     // YouTube clip configuration
     const CONFIG = {
       videoId: 'zsjvFFKOm3c',
-      startTime: 71,      // Start at 71 seconds (1:11)
-      endTime: 76,        // End at 76 seconds (1:16)
+      startTime: 5,       // Start at 5 seconds
+      endTime: 10,        // End at 10 seconds
       duration: 5         // 5 second clip
     };
 
@@ -296,11 +296,15 @@
       document.getElementById('loading').style.display = 'none';
       updateStatus('Ready to play');
       
-      // Auto-play the clip
-      playClip();
+      // Small delay before auto-play to ensure player is fully ready
+      setTimeout(() => {
+        playClip();
+      }, 500);
     }
 
     function onPlayerStateChange(event) {
+      console.log('[YouTube Clip] State changed:', event.data);
+      
       if (event.data === YT.PlayerState.PLAYING) {
         isPlaying = true;
         updateStatus('Playing clip');
@@ -313,17 +317,29 @@
         isPlaying = false;
         updateStatus('Clip ended');
         stopTimeCheck();
+      } else if (event.data === YT.PlayerState.BUFFERING) {
+        updateStatus('Buffering...');
+      } else if (event.data === YT.PlayerState.CUED) {
+        updateStatus('Ready');
       }
     }
 
     function playClip() {
-      if (!player || !player.seekTo) return;
+      if (!player || !player.seekTo) {
+        console.error('[YouTube Clip] Player not ready');
+        return;
+      }
       
       console.log(`[YouTube Clip] Playing from ${CONFIG.startTime}s to ${CONFIG.endTime}s`);
       
-      // Seek to start time and play
-      player.seekTo(CONFIG.startTime, true);
-      player.playVideo();
+      try {
+        // Seek to start time and play
+        player.seekTo(CONFIG.startTime, true);
+        player.playVideo();
+      } catch (error) {
+        console.error('[YouTube Clip] Error playing clip:', error);
+        updateStatus('Error playing');
+      }
     }
 
     function startTimeCheck() {

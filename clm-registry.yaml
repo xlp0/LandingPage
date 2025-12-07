@@ -454,14 +454,14 @@ components:
         - "Responsive design"
       video_details:
         video_id: "zsjvFFKOm3c"
-        start_time: 71
-        end_time: 76
+        start_time: 5
+        end_time: 10
         duration: 5
         format: "Embedded YouTube Player"
         controls: "Custom overlay controls"
         features:
-          - "Automatic start at 71 seconds"
-          - "Automatic stop at 76 seconds"
+          - "Automatic start at 5 seconds"
+          - "Automatic stop at 10 seconds"
           - "Replay button for clip"
           - "Progress timer (0.0s / 5.0s)"
           - "Play/pause toggle"
