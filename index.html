@@ -1290,6 +1290,43 @@
           loadingOverlay.style.display = 'none';
         }
         
+        // Populate sidebar with categories immediately (but don't load components yet)
+        const typesList = document.getElementById('typesList');
+        if (typesList) {
+          const categories = [
+            { id: 'all', name: 'All MCards', icon: '📦' },
+            { id: 'internal', name: 'Internal', icon: '🏠' },
+            { id: 'external', name: 'External', icon: '🌐' },
+            { id: 'games', name: 'Games', icon: '🎮' },
+            { id: 'dashboards', name: 'Dashboards', icon: '📊' },
+            { id: 'videos', name: 'Videos', icon: '🎥' },
+            { id: 'tools', name: 'Tools', icon: '🔧' }
+          ];
+          
+          typesList.innerHTML = '';
+          categories.forEach(cat => {
+            const typeItem = document.createElement('div');
+            typeItem.className = 'type-item';
+            typeItem.innerHTML = `
+              <span class="type-icon">${cat.icon}</span>
+              <span class="type-name">${cat.name}</span>
+            `;
+            typeItem.addEventListener('click', () => {
+              // Remove active class from all items
+              document.querySelectorAll('.type-item').forEach(item => {
+                item.classList.remove('active');
+              });
+              typeItem.classList.add('active');
+              
+              // Trigger lazy load
+              lazyLoadDashboard();
+            });
+            typesList.appendChild(typeItem);
+          });
+          
+          console.log('[Dashboard] Sidebar categories populated');
+        }
+        
         // Show welcome message in component list
         const componentList = document.getElementById('componentList');
         if (componentList) {
@@ -1345,9 +1382,8 @@
         }
       }
       
-      // Attach lazy loading to sidebar interactions
-      document.getElementById('typesList')?.addEventListener('click', lazyLoadDashboard, { once: true });
-      document.getElementById('componentList')?.addEventListener('click', lazyLoadDashboard, { once: true });
+      // Lazy loading is now attached to individual category items
+      // No need for global event listeners
 
       console.log('[Dashboard] CLM Dashboard with Redux initialized');
     </script>
