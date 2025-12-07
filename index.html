@@ -1114,8 +1114,15 @@
       // Load all components using Redux
       async function loadDashboard() {
         try {
-          // Fetch registry via Redux thunk
-          const registryAction = await store.dispatch(fetchCLMRegistry());
+          console.log('[Dashboard] Fetching CLM registry...');
+          
+          // Fetch registry via Redux thunk with timeout
+          const registryAction = await Promise.race([
+            store.dispatch(fetchCLMRegistry()),
+            new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Registry fetch timeout')), 10000)
+            )
+          ]);
           
           if (fetchCLMRegistry.fulfilled.match(registryAction)) {
             const registry = registryAction.payload;
@@ -1269,11 +1276,45 @@
         }
       });
 
-      // Initialize OAuth and start loading
+      // Initialize OAuth but DON'T load dashboard immediately
+      // Dashboard will load lazily when user interacts with sidebar
+      let dashboardLoaded = false;
+      
       (async () => {
         await initializeOAuth();
-        loadDashboard();
+        console.log('[Dashboard] OAuth initialized - Dashboard will load on first interaction');
       })();
+      
+      // Lazy load dashboard on first sidebar interaction
+      async function lazyLoadDashboard() {
+        if (dashboardLoaded) return;
+        
+        console.log('[Dashboard] Lazy loading CLM registry...');
+        dashboardLoaded = true;
+        
+        try {
+          await loadDashboard();
+        } catch (error) {
+          console.error('[Dashboard] Failed to load CLM registry:', error);
+          // Show error message to user
+          const componentList = document.getElementById('componentList');
+          if (componentList) {
+            componentList.innerHTML = `
+              <div style="padding: 20px; text-align: center; color: #ff6b6b;">
+                <p style="font-size: 18px; margin-bottom: 10px;">⚠️ Failed to Load Components</p>
+                <p style="font-size: 14px; opacity: 0.8;">The CLM registry could not be loaded.</p>
+                <button onclick="location.reload()" style="margin-top: 15px; padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                  Retry
+                </button>
+              </div>
+            `;
+          }
+        }
+      }
+      
+      // Attach lazy loading to sidebar interactions
+      document.getElementById('typesList')?.addEventListener('click', lazyLoadDashboard, { once: true });
+      document.getElementById('componentList')?.addEventListener('click', lazyLoadDashboard, { once: true });
 
       console.log('[Dashboard] CLM Dashboard with Redux initialized');
     </script>
@@ -1627,6 +1668,7 @@
       };
 
       // Recreate store with Faro middleware
+      const { configureStore } = RTK;
       const storeWithFaro = configureStore({
         reducer: {
           clm: clmReducer
