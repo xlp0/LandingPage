@@ -427,6 +427,45 @@ components:
       health_check: "/health/youtube-argocd"
       expected_load_time_ms: 1500
       expected_failure: false
+
+  - hash: "youtube-clip-5sec"
+    name: "YouTube Clip - 5 Second Segment"
+    abstract:
+      context: "Precise 5-second YouTube video clip viewer"
+      goal: "Demonstrate precise video segment playback with automatic start/stop"
+    concrete:
+      implementation: "components/youtube-clip.html"
+      sandbox: "allow-scripts allow-same-origin allow-presentation"
+    balanced:
+      metrics_endpoint: "/metrics/youtube-clip"
+      health_check: "/health/youtube-clip"
+      expected_load_time_ms: 1500
+      expected_failure: false
+      features:
+        - "Precise time control (71s-76s)"
+        - "5-second clip playback"
+        - "Auto-stop at end time"
+        - "Replay functionality"
+        - "Real-time progress timer"
+        - "Play/pause controls"
+        - "YouTube IFrame API integration"
+        - "Automatic time monitoring"
+        - "Visual status indicators"
+        - "Responsive design"
+      video_details:
+        video_id: "zsjvFFKOm3c"
+        start_time: 71
+        end_time: 76
+        duration: 5
+        format: "Embedded YouTube Player"
+        controls: "Custom overlay controls"
+        features:
+          - "Automatic start at 71 seconds"
+          - "Automatic stop at 76 seconds"
+          - "Replay button for clip"
+          - "Progress timer (0.0s / 5.0s)"
+          - "Play/pause toggle"
+          - "Status indicator"
       features:
         - "YouTube video embed with timestamp"
         - "GitOps concepts and best practices"
