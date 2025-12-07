@@ -1283,6 +1283,27 @@
       (async () => {
         await initializeOAuth();
         console.log('[Dashboard] OAuth initialized - Dashboard will load on first interaction');
+        
+        // Hide loading overlay immediately - page is ready
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay) {
+          loadingOverlay.style.display = 'none';
+        }
+        
+        // Show welcome message in component list
+        const componentList = document.getElementById('componentList');
+        if (componentList) {
+          componentList.innerHTML = `
+            <div style="padding: 40px 20px; text-align: center; color: #667eea;">
+              <div style="font-size: 48px; margin-bottom: 16px;">📦</div>
+              <p style="font-size: 20px; font-weight: 600; margin-bottom: 12px;">Welcome to CLM Dashboard</p>
+              <p style="font-size: 14px; opacity: 0.8; margin-bottom: 24px;">Click a category on the left to browse components</p>
+              <div style="font-size: 12px; opacity: 0.6;">
+                <p>💡 Components load on-demand for faster page loading</p>
+              </div>
+            </div>
+          `;
+        }
       })();
       
       // Lazy load dashboard on first sidebar interaction
@@ -1292,17 +1313,29 @@
         console.log('[Dashboard] Lazy loading CLM registry...');
         dashboardLoaded = true;
         
+        // Show loading message
+        const componentList = document.getElementById('componentList');
+        if (componentList) {
+          componentList.innerHTML = `
+            <div style="padding: 40px 20px; text-align: center; color: #667eea;">
+              <div class="loader" style="margin: 0 auto 20px;"></div>
+              <p style="font-size: 16px; font-weight: 600;">Loading Components...</p>
+              <p style="font-size: 12px; opacity: 0.6; margin-top: 8px;">Fetching CLM registry</p>
+            </div>
+          `;
+        }
+        
         try {
           await loadDashboard();
         } catch (error) {
           console.error('[Dashboard] Failed to load CLM registry:', error);
           // Show error message to user
-          const componentList = document.getElementById('componentList');
           if (componentList) {
             componentList.innerHTML = `
               <div style="padding: 20px; text-align: center; color: #ff6b6b;">
                 <p style="font-size: 18px; margin-bottom: 10px;">⚠️ Failed to Load Components</p>
                 <p style="font-size: 14px; opacity: 0.8;">The CLM registry could not be loaded.</p>
+                <p style="font-size: 12px; opacity: 0.6; margin-top: 8px;">${error.message}</p>
                 <button onclick="location.reload()" style="margin-top: 15px; padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">
                   Retry
                 </button>
