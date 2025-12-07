@@ -970,33 +970,71 @@
         }
       });
 
-      // Switch to a component
+      // Switch to a component (lazy load iframe on-demand)
       function switchToComponent(componentHash) {
-        // Hide all component frames
-        document.querySelectorAll('.component-frame').forEach(frame => {
-          frame.classList.remove('active');
-          frame.classList.remove('fullscreen'); // Exit fullscreen when switching
+        console.log('[Dashboard] Switching to component:', componentHash);
+        
+        // Hide all iframes
+        document.querySelectorAll('.component-iframe').forEach(iframe => {
+          iframe.style.display = 'none';
         });
         
-        // Show selected component frame
-        const selectedFrame = document.getElementById(`frame-${componentHash}`);
-        if (selectedFrame) {
-          selectedFrame.classList.add('active');
+        // Check if iframe already exists
+        let iframe = document.getElementById(`iframe-${componentHash}`);
+        
+        if (!iframe) {
+          // Create iframe on-demand (lazy loading)
+          console.log('[Dashboard] Creating iframe for:', componentHash);
+          
+          const state = store.getState();
+          const registry = state.clm.registry;
+          const component = registry?.components?.find(c => c.hash === componentHash);
+          
+          if (component && component.concrete && component.concrete.implementation) {
+            const componentViewer = document.getElementById('componentViewer');
+            if (componentViewer) {
+              iframe = document.createElement('iframe');
+              iframe.id = `iframe-${componentHash}`;
+              iframe.className = 'component-iframe';
+              iframe.src = component.concrete.implementation;
+              iframe.sandbox = component.concrete.sandbox || 'allow-scripts allow-same-origin';
+              iframe.style.width = '100%';
+              iframe.style.height = '100%';
+              iframe.style.border = 'none';
+              
+              componentViewer.appendChild(iframe);
+              
+              // Dispatch componentLoaded when iframe loads
+              iframe.onload = () => {
+                store.dispatch(componentLoaded({
+                  componentId: component.hash,
+                  iframeId: iframe.id,
+                  url: component.concrete.implementation
+                }));
+                console.log('[Dashboard] Component loaded:', component.hash);
+              };
+            }
+          }
+        }
+        
+        // Show the iframe
+        if (iframe) {
+          iframe.style.display = 'block';
         }
         
         // Update sidebar selection
         document.querySelectorAll('.component-item').forEach(item => {
           item.classList.remove('active');
         });
-        const selectedItem = document.getElementById(`item-${componentHash}`);
+        const selectedItem = Array.from(document.querySelectorAll('.component-item'))
+          .find(item => item.textContent.includes(componentHash) || 
+                        item.querySelector('.component-name')?.textContent.includes(componentHash));
         if (selectedItem) {
           selectedItem.classList.add('active');
         }
         
         // Update Redux state
         store.dispatch(setActiveComponent(componentHash));
-        
-        console.log('[Dashboard] Switched to component:', componentHash);
       }
 
       // Categorize components by type (Finder-style)
@@ -1173,42 +1211,29 @@
             // Select "All MCards" by default
             showComponentsForType(types[0]);
 
-            // Load each component from registry (create iframes)
-            for (let i = 0; i < registry.components.length; i++) {
-              const componentConfig = registry.components[i];
+            // Create component items for each component
+            registry.components.forEach(component => {
+              const componentItem = document.createElement('div');
+              componentItem.className = 'component-item';
+              componentItem.innerHTML = `
+                <div class="component-icon">${component.abstract?.icon || '📄'}</div>
+                <div class="component-info">
+                  <div class="component-name">${component.name}</div>
+                  <div class="component-desc">${component.abstract?.context || ''}</div>
+                </div>
+                <div class="component-status">
+                  <div class="status-dot" id="status-${component.hash}"></div>
+                </div>
+              `;
               
-              // Create component frame
-              const { frame, iframeId, statusId } = createComponentFrame(componentConfig);
-              frame.id = `frame-${componentConfig.hash}`;
-              componentViewer.appendChild(frame);
-
-              // Dispatch load action
-              const loadAction = await store.dispatch(
-                loadCLMComponent({ 
-                  componentId: componentConfig.hash, 
-                  iframeId: iframeId 
-                })
-              );
-
-              if (loadCLMComponent.fulfilled.match(loadAction)) {
-                console.log('[Dashboard] Loaded component via Redux:', componentConfig.hash);
-                
-                // Set iframe src
-                const iframe = document.getElementById(iframeId);
-                if (iframe) {
-                  iframe.src = componentConfig.concrete?.implementation || componentConfig.url;
-                  
-                  // Dispatch componentLoaded when iframe loads
-                  iframe.onload = () => {
-                    store.dispatch(componentLoaded({
-                      componentId: componentConfig.hash,
-                      iframeId: iframeId,
-                      url: componentConfig.url
-                    }));
-                  };
-                }
-              }
-            }
+              componentItem.addEventListener('click', () => {
+                switchToComponent(component.hash);
+              });
+              
+              componentViewer.appendChild(componentItem);
+              
+              // DON'T create iframe yet - will be created on-demand when user clicks
+            })
 
             // Show first component by default
             if (registry.components.length > 0) {
@@ -1276,114 +1301,11 @@
         }
       });
 
-      // Initialize OAuth but DON'T load dashboard immediately
-      // Dashboard will load lazily when user interacts with sidebar
-      let dashboardLoaded = false;
-      
+      // Initialize OAuth and start loading
       (async () => {
         await initializeOAuth();
-        console.log('[Dashboard] OAuth initialized - Dashboard will load on first interaction');
-        
-        // Hide loading overlay immediately - page is ready
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        if (loadingOverlay) {
-          loadingOverlay.style.display = 'none';
-        }
-        
-        // Populate sidebar with categories immediately (but don't load components yet)
-        const typesList = document.getElementById('typesList');
-        if (typesList) {
-          const categories = [
-            { id: 'all', name: 'All MCards', icon: '📦' },
-            { id: 'internal', name: 'Internal', icon: '🏠' },
-            { id: 'external', name: 'External', icon: '🌐' },
-            { id: 'games', name: 'Games', icon: '🎮' },
-            { id: 'dashboards', name: 'Dashboards', icon: '📊' },
-            { id: 'videos', name: 'Videos', icon: '🎥' },
-            { id: 'tools', name: 'Tools', icon: '🔧' }
-          ];
-          
-          typesList.innerHTML = '';
-          categories.forEach(cat => {
-            const typeItem = document.createElement('div');
-            typeItem.className = 'type-item';
-            typeItem.innerHTML = `
-              <span class="type-icon">${cat.icon}</span>
-              <span class="type-name">${cat.name}</span>
-            `;
-            typeItem.addEventListener('click', () => {
-              // Remove active class from all items
-              document.querySelectorAll('.type-item').forEach(item => {
-                item.classList.remove('active');
-              });
-              typeItem.classList.add('active');
-              
-              // Trigger lazy load
-              lazyLoadDashboard();
-            });
-            typesList.appendChild(typeItem);
-          });
-          
-          console.log('[Dashboard] Sidebar categories populated');
-        }
-        
-        // Show welcome message in component list
-        const componentList = document.getElementById('componentList');
-        if (componentList) {
-          componentList.innerHTML = `
-            <div style="padding: 40px 20px; text-align: center; color: #667eea;">
-              <div style="font-size: 48px; margin-bottom: 16px;">📦</div>
-              <p style="font-size: 20px; font-weight: 600; margin-bottom: 12px;">Welcome to CLM Dashboard</p>
-              <p style="font-size: 14px; opacity: 0.8; margin-bottom: 24px;">Click a category on the left to browse components</p>
-              <div style="font-size: 12px; opacity: 0.6;">
-                <p>💡 Components load on-demand for faster page loading</p>
-              </div>
-            </div>
-          `;
-        }
+        loadDashboard();
       })();
-      
-      // Lazy load dashboard on first sidebar interaction
-      async function lazyLoadDashboard() {
-        if (dashboardLoaded) return;
-        
-        console.log('[Dashboard] Lazy loading CLM registry...');
-        dashboardLoaded = true;
-        
-        // Show loading message
-        const componentList = document.getElementById('componentList');
-        if (componentList) {
-          componentList.innerHTML = `
-            <div style="padding: 40px 20px; text-align: center; color: #667eea;">
-              <div class="loader" style="margin: 0 auto 20px;"></div>
-              <p style="font-size: 16px; font-weight: 600;">Loading Components...</p>
-              <p style="font-size: 12px; opacity: 0.6; margin-top: 8px;">Fetching CLM registry</p>
-            </div>
-          `;
-        }
-        
-        try {
-          await loadDashboard();
-        } catch (error) {
-          console.error('[Dashboard] Failed to load CLM registry:', error);
-          // Show error message to user
-          if (componentList) {
-            componentList.innerHTML = `
-              <div style="padding: 20px; text-align: center; color: #ff6b6b;">
-                <p style="font-size: 18px; margin-bottom: 10px;">⚠️ Failed to Load Components</p>
-                <p style="font-size: 14px; opacity: 0.8;">The CLM registry could not be loaded.</p>
-                <p style="font-size: 12px; opacity: 0.6; margin-top: 8px;">${error.message}</p>
-                <button onclick="location.reload()" style="margin-top: 15px; padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">
-                  Retry
-                </button>
-              </div>
-            `;
-          }
-        }
-      }
-      
-      // Lazy loading is now attached to individual category items
-      // No need for global event listeners
 
       console.log('[Dashboard] CLM Dashboard with Redux initialized');
     </script>
