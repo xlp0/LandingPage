@@ -494,6 +494,59 @@ function detectRenderType(mimeType, fileName) {
   return 'text'; // Default fallback
 }
 
+// Get content type badge HTML
+function getContentTypeBadge(renderType) {
+  const badges = {
+    'markdown': {
+      label: 'Markdown',
+      icon: 'file-text',
+      color: '#4fc3f7'
+    },
+    'image': {
+      label: 'Image',
+      icon: 'image',
+      color: '#66bb6a'
+    },
+    'pdf': {
+      label: 'PDF',
+      icon: 'file',
+      color: '#ef5350'
+    },
+    'text': {
+      label: 'Text',
+      icon: 'file-text',
+      color: '#ffa726'
+    },
+    'code': {
+      label: 'Code',
+      icon: 'code',
+      color: '#ab47bc'
+    }
+  };
+  
+  const badge = badges[renderType] || badges['text'];
+  
+  return `
+    <span style="
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: ${badge.color}22;
+      border: 1px solid ${badge.color}44;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: ${badge.color};
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    ">
+      <i data-lucide="${badge.icon}" style="width: 12px; height: 12px;"></i>
+      ${badge.label}
+    </span>
+  `;
+}
+
 // View card details in viewer column
 window.viewCard = async function(hash) {
   try {
@@ -512,12 +565,19 @@ window.viewCard = async function(hash) {
     const viewerActions = document.getElementById('viewerActions');
     const viewerContent = document.getElementById('viewerContent');
     
-    viewerTitle.textContent = metadata.fileName;
-    viewerActions.style.display = 'flex';
-    
     // Detect content type for rendering
     const renderType = detectRenderType(metadata.fileType, metadata.fileName);
     console.log('[MCard] Rendering as:', renderType, 'for', metadata.fileName);
+    
+    // Update title with content type badge
+    const contentTypeBadge = getContentTypeBadge(renderType);
+    viewerTitle.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span>${metadata.fileName}</span>
+        ${contentTypeBadge}
+      </div>
+    `;
+    viewerActions.style.display = 'flex';
     
     // Prepare content for rendering
     let content = card.content;
