@@ -700,10 +700,16 @@
   </div>
 
   <script type="module">
-    // Import MCard-JS from CDN (using jsdelivr with correct paths)
-    import { MCard } from 'https://cdn.jsdelivr.net/npm/mcard-js@2.0.1/dist/model/MCard.js';
-    import { IndexedDBEngine } from 'https://cdn.jsdelivr.net/npm/mcard-js@2.0.1/dist/storage/IndexedDBEngine.js';
-    import { CardCollection } from 'https://cdn.jsdelivr.net/npm/mcard-js@2.0.1/dist/model/CardCollection.js';
+    // Import MCard-JS from CDN using main entry point with import map
+    // Note: We need to use importmap to handle bare module specifiers
+    const importMap = {
+      imports: {
+        "mcard-js": "https://cdn.jsdelivr.net/npm/mcard-js@2.0.1/+esm"
+      }
+    };
+    
+    // Use dynamic import with esm.run which handles dependencies
+    const { MCard, IndexedDBEngine, CardCollection } = await import('https://esm.run/mcard-js@2.0.1');
 
     // Global state
     let db, collection;
