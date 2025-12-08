@@ -631,6 +631,9 @@ window.viewCard = async function(hash) {
     // Render content using the type from Redux
     let renderedHTML = '';
     try {
+      console.log('[MCard] Has renderer for', renderType, ':', rendererRegistry.hasRenderer(renderType));
+      console.log('[MCard] window.marked available:', !!window.marked);
+      
       if (rendererRegistry.hasRenderer(renderType)) {
         renderedHTML = await rendererRegistry.render(renderType, content, {
           fileName: `${typeInfo.displayName}-${card.hash.substring(0, 8)}`,
