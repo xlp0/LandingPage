@@ -1567,82 +1567,67 @@
         }
       })();
 
-      // Add Faro middleware to Redux store
-      const faroMiddleware = store => next => action => {
-        const result = next(action);
+      // Add Faro tracking to existing Redux store
+      // Note: We'll track actions via store subscription instead of middleware
+      // to avoid recreating the store (which would break existing references)
+      
+      if (window.store) {
+        let previousState = window.store.getState();
         
-        if (window.faro) {
-          // Track component navigation
-          if (action.type === 'clm/setActiveComponent') {
-            const state = store.getState();
-            const clmState = selectCLMState(state);
-            const component = clmState.registry?.components?.find(
-              c => c.hash === action.payload
-            );
-            
-            if (component) {
-              window.faro.api.pushEvent('clm_component_visit', {
-                component_hash: component.hash,
-                component_name: component.name,
-                timestamp: Date.now(),
-                previous_component: clmState.activeComponent || 'none'
-              });
-              
-              console.log('[Faro] Tracked component visit:', component.name);
-            }
-          }
+        window.store.subscribe(() => {
+          const currentState = window.store.getState();
+          const clmState = currentState.clm || {};
+          const prevClmState = previousState.clm || {};
           
-          // Track component load success
-          if (action.type === 'clm/componentLoaded') {
-            const { hash, loadTime } = action.payload || {};
-            if (hash) {
-              window.faro.api.pushEvent('clm_component_loaded', {
-                component_hash: hash,
-                load_time_ms: loadTime || 0,
-                timestamp: Date.now()
-              });
-              
-              console.log('[Faro] Tracked component load:', hash, loadTime + 'ms');
-            }
-          }
-          
-          // Track component errors
-          if (action.type === 'clm/componentFailed') {
-            const { hash, error } = action.payload || {};
-            if (hash) {
-              window.faro.api.pushError(
-                new Error(`Component ${hash} failed: ${error}`),
-                {
-                  context: {
-                    component_hash: hash,
-                    error_type: 'component_load_failure',
-                    error_message: error
-                  }
-                }
+          if (window.faro) {
+            // Track component navigation
+            if (clmState.activeComponent !== prevClmState.activeComponent && clmState.activeComponent) {
+              const component = clmState.registry?.components?.find(
+                c => c.hash === clmState.activeComponent
               );
               
-              console.error('[Faro] Tracked component error:', hash, error);
+              if (component) {
+                window.faro.api.pushEvent('clm_component_visit', {
+                  component_hash: component.hash,
+                  component_name: component.name,
+                  timestamp: Date.now(),
+                  previous_component: prevClmState.activeComponent || 'none'
+                });
+                
+                console.log('[Faro] Tracked component visit:', component.name);
+              }
+            }
+            
+            // Track registry fetch status changes
+            if (clmState.status !== prevClmState.status) {
+              if (clmState.status === 'succeeded') {
+                window.faro.api.pushEvent('clm_registry_loaded', {
+                  component_count: clmState.registry?.components?.length || 0,
+                  timestamp: Date.now()
+                });
+                console.log('[Faro] Tracked registry load success');
+              } else if (clmState.status === 'failed') {
+                window.faro.api.pushError(
+                  new Error(`Registry fetch failed: ${clmState.error}`),
+                  {
+                    context: {
+                      error_type: 'registry_fetch_failure',
+                      error_message: clmState.error
+                    }
+                  }
+                );
+                console.error('[Faro] Tracked registry error:', clmState.error);
+              }
             }
           }
-        }
+          
+          previousState = currentState;
+        });
         
-        return result;
-      };
-
-      // Recreate store with Faro middleware
-      const { configureStore } = RTK;
-      const storeWithFaro = configureStore({
-        reducer: {
-          clm: clmReducer
-        },
-        middleware: (getDefaultMiddleware) =>
-          getDefaultMiddleware().concat(faroMiddleware)
-      });
-
-      // Replace global store reference
-      window.store = storeWithFaro;
-
-      console.log('[Faro] Middleware added to Redux store');
+        console.log('[Faro] Store subscription added for tracking');
+      } else {
+        console.warn('[Faro] Redux store not found, skipping tracking setup');
+      }
     </script>
 
     <!-- CLM Test Status Loader -->
