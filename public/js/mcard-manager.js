@@ -675,11 +675,15 @@ window.viewCard = async function(hash) {
     
     // Display rendered content
     viewerContent.innerHTML = renderedHTML;
-    console.log('[MCard] Viewer content updated, Redux state:', {
+    console.log('[MCard] Viewer content updated');
+    console.log('[MCard] Rendered HTML preview:', renderedHTML.substring(0, 200));
+    console.log('[MCard] Redux state:', {
       currentType: state.contentRenderer.currentType,
       currentHash: state.contentRenderer.currentHash,
       hasHandles: Object.keys(state.contentRenderer.handles).length > 0
     });
+    console.log('[MCard] Viewer element:', viewerContent);
+    console.log('[MCard] Viewer innerHTML length:', viewerContent.innerHTML.length);
     
     // Initialize Lucide icons after DOM update
     if (window.lucide) {
