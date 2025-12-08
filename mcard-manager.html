@@ -700,10 +700,10 @@
   </div>
 
   <script type="module">
-    // Import MCard-JS from CDN (using unpkg)
-    import { MCard } from 'https://unpkg.com/mcard-js@latest/dist/esm/model/MCard.js';
-    import { IndexedDBEngine } from 'https://unpkg.com/mcard-js@latest/dist/esm/storage/IndexedDBEngine.js';
-    import { CardCollection } from 'https://unpkg.com/mcard-js@latest/dist/esm/storage/CardCollection.js';
+    // Import MCard-JS from CDN (using esm.sh which supports CORS)
+    import { MCard } from 'https://esm.sh/mcard-js@2.0.1/dist/esm/model/MCard.js';
+    import { IndexedDBEngine } from 'https://esm.sh/mcard-js@2.0.1/dist/esm/storage/IndexedDBEngine.js';
+    import { CardCollection } from 'https://esm.sh/mcard-js@2.0.1/dist/esm/storage/CardCollection.js';
 
     // Global state
     let db, collection;
