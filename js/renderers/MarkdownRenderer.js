@@ -173,21 +173,21 @@ export class MarkdownRenderer extends BaseRenderer {
     
     // Custom renderer for links if handles are enabled
     if (enableHandles) {
-      const renderer = new window.marked.Renderer();
-      const originalLink = renderer.link.bind(renderer);
-      
-      renderer.link = (href, title, text) => {
-        // Check if it's a handle link (already processed)
-        if (href.startsWith('#mcard-')) {
-          return originalLink(href, title, text);
+      const renderer = {
+        link(href, title, text) {
+          // Check if it's a handle link (already processed)
+          if (href.startsWith('#mcard-')) {
+            return `<a href="${href}" title="${title || ''}">${text}</a>`;
+          }
+          
+          // Add target="_blank" for external links
+          if (href.startsWith('http://') || href.startsWith('https://')) {
+            return `<a href="${href}" title="${title || ''}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+          }
+          
+          // Default link
+          return `<a href="${href}" title="${title || ''}">${text}</a>`;
         }
-        
-        // Add target="_blank" for external links
-        if (href.startsWith('http://') || href.startsWith('https://')) {
-          return `<a href="${href}" title="${title || ''}" target="_blank" rel="noopener noreferrer">${text}</a>`;
-        }
-        
-        return originalLink(href, title, text);
       };
       
       window.marked.use({ renderer });
