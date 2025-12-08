@@ -12,11 +12,25 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>
-        <i data-lucide="package" style="width: 32px; height: 32px;"></i>
-        MCard File Manager
-      </h1>
-      <p>Content-addressable storage with cryptographic fingerprints</p>
+      <div class="header-left">
+        <i data-lucide="package" style="width: 20px; height: 20px;"></i>
+        <h1>MCard File Manager</h1>
+      </div>
+      <div class="header-right">
+        <button class="header-btn" onclick="document.getElementById('fileInput').click()">
+          <i data-lucide="upload" style="width: 16px; height: 16px;"></i>
+          Upload
+        </button>
+        <button class="header-btn" onclick="createTextCard()">
+          <i data-lucide="file-text" style="width: 16px; height: 16px;"></i>
+          New Text
+        </button>
+        <button class="header-btn" onclick="toggleChat()">
+          <i data-lucide="message-square" style="width: 16px; height: 16px;"></i>
+          Chat
+        </button>
+      </div>
+      <input type="file" id="fileInput" multiple style="display: none;">
     </div>
 
     <div class="main-content">
@@ -24,17 +38,6 @@
       <div class="sidebar">
         <div class="sidebar-header">
           <h3>File Types</h3>
-          <div style="display: flex; gap: 8px; margin-top: 12px;">
-            <button class="btn" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="document.getElementById('fileInput').click()">
-              <i data-lucide="upload" style="width: 16px; height: 16px;"></i>
-              Upload
-            </button>
-            <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="createTextCard()">
-              <i data-lucide="file-text" style="width: 16px; height: 16px;"></i>
-              Text
-            </button>
-          </div>
-          <input type="file" id="fileInput" multiple style="display: none;">
         </div>
         <div class="type-list" id="typeList">
           <!-- File types will be populated here -->
@@ -94,6 +97,39 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Chat Panel -->
+      <div class="chat-panel hidden" id="chatPanel">
+        <div class="chat-header">
+          <h3>
+            <i data-lucide="message-square" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
+            Chat Assistant
+          </h3>
+          <button class="chat-close-btn" onclick="toggleChat()">
+            <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+          </button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-message assistant">
+            <div class="chat-message-bubble">
+              👋 Hello! I'm your MCard assistant. I can help you manage your files, answer questions about content-addressable storage, or just chat!
+            </div>
+            <div class="chat-message-time">Just now</div>
+          </div>
+        </div>
+        <div class="chat-input-container">
+          <textarea 
+            class="chat-input" 
+            id="chatInput" 
+            placeholder="Type your message here..."
+            rows="3"
+          ></textarea>
+          <button class="chat-send-btn" onclick="sendChatMessage()">
+            <i data-lucide="send" style="width: 14px; height: 14px;"></i>
+            Send Message
+          </button>
         </div>
       </div>
     </div>

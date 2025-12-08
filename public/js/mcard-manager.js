@@ -702,6 +702,97 @@ document.getElementById('searchBox').addEventListener('input', (e) => {
   }
 });
 
+// Chat functionality
+window.toggleChat = function() {
+  const chatPanel = document.getElementById('chatPanel');
+  chatPanel.classList.toggle('hidden');
+  
+  // Initialize icons when opening
+  if (!chatPanel.classList.contains('hidden') && window.lucide) {
+    lucide.createIcons();
+  }
+};
+
+window.sendChatMessage = function() {
+  const input = document.getElementById('chatInput');
+  const message = input.value.trim();
+  
+  if (!message) return;
+  
+  // Add user message
+  const chatMessages = document.getElementById('chatMessages');
+  const userMessageDiv = document.createElement('div');
+  userMessageDiv.className = 'chat-message user';
+  userMessageDiv.innerHTML = `
+    <div class="chat-message-bubble">${escapeHtml(message)}</div>
+    <div class="chat-message-time">${new Date().toLocaleTimeString()}</div>
+  `;
+  chatMessages.appendChild(userMessageDiv);
+  
+  // Clear input
+  input.value = '';
+  
+  // Scroll to bottom
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  
+  // Simulate assistant response
+  setTimeout(() => {
+    const assistantMessageDiv = document.createElement('div');
+    assistantMessageDiv.className = 'chat-message assistant';
+    assistantMessageDiv.innerHTML = `
+      <div class="chat-message-bubble">${getAssistantResponse(message)}</div>
+      <div class="chat-message-time">${new Date().toLocaleTimeString()}</div>
+    `;
+    chatMessages.appendChild(assistantMessageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }, 500);
+};
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function getAssistantResponse(message) {
+  const lowerMessage = message.toLowerCase();
+  
+  if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
+    return '👋 Hello! How can I help you with your MCards today?';
+  }
+  
+  if (lowerMessage.includes('upload') || lowerMessage.includes('add')) {
+    return '📤 To upload files, click the "Upload" button in the header or drag & drop files into the upload area. All files are stored with SHA-256 content addressing!';
+  }
+  
+  if (lowerMessage.includes('search') || lowerMessage.includes('find')) {
+    return '🔍 Use the search box in the middle column to find MCards by filename, hash, or content. You can also filter by file type in the left sidebar!';
+  }
+  
+  if (lowerMessage.includes('hash') || lowerMessage.includes('sha')) {
+    return '🔐 MCards use SHA-256 hashing for content-addressable storage. Each file gets a unique hash based on its content, ensuring data integrity and deduplication!';
+  }
+  
+  if (lowerMessage.includes('delete') || lowerMessage.includes('remove')) {
+    return '🗑️ To delete an MCard, select it from the list and click the "Delete" button in the viewer. The file and its metadata will be permanently removed from IndexedDB.';
+  }
+  
+  return `I received your message: "${message}". I'm a simple chat assistant. Try asking about uploading, searching, or MCard features!`;
+}
+
+// Handle Enter key in chat input
+document.addEventListener('DOMContentLoaded', () => {
+  const chatInput = document.getElementById('chatInput');
+  if (chatInput) {
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendChatMessage();
+      }
+    });
+  }
+});
+
 // Initialize on page load
 initMCard();
 
