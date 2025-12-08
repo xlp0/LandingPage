@@ -212,52 +212,19 @@ function categorizeCards() {
   };
 
   allCards.forEach(card => {
-    const metadata = getMetadata(card.hash);
-    const type = metadata.fileType.toLowerCase();
-    const fileName = metadata.fileName || '';
-    const ext = fileName.split('.').pop()?.toLowerCase() || '';
+    const typeInfo = detectContentType(card);
+    const type = typeInfo.type;
     
     categories.all.push(card);
     
-    // Text files (including markdown, code files)
-    if (type.startsWith('text/') || 
-        type.includes('json') || 
-        type.includes('javascript') || 
-        type.includes('html') ||
-        type.includes('markdown') ||
-        ['md', 'markdown', 'txt', 'js', 'py', 'java', 'cpp', 'c', 'css', 'html', 'xml', 'json', 'yml', 'yaml'].includes(ext)) {
+    // Categorize by detected type
+    if (type === 'text' || type === 'markdown' || type === 'json') {
       categories.text.push(card);
-    } 
-    // Images
-    else if (type.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext)) {
+    } else if (type === 'image') {
       categories.images.push(card);
-    } 
-    // Videos
-    else if (type.startsWith('video/') || ['mp4', 'webm', 'ogg', 'mov', 'avi'].includes(ext)) {
-      categories.videos.push(card);
-    } 
-    // Audio
-    else if (type.startsWith('audio/') || ['mp3', 'wav', 'ogg', 'flac', 'm4a'].includes(ext)) {
-      categories.audio.push(card);
-    } 
-    // Documents (PDF, Office files)
-    else if (type.includes('pdf') || 
-             type.includes('document') || 
-             type.includes('word') || 
-             type.includes('excel') ||
-             ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(ext)) {
+    } else if (type === 'pdf') {
       categories.documents.push(card);
-    } 
-    // Archives
-    else if (type.includes('zip') || 
-             type.includes('tar') || 
-             type.includes('gz') || 
-             type.includes('archive') ||
-             ['zip', 'tar', 'gz', 'rar', '7z', 'bz2'].includes(ext)) {
-      categories.archives.push(card);
-    } 
-    // Other
-    else {
+    } else {
       categories.other.push(card);
     }
   });
@@ -381,16 +348,8 @@ async function uploadFile(file) {
     // Store in database
     await db.add(card);
     
-    // Store metadata (file name, type)
-    const metadata = {
-      fileName: file.name,
-      fileType: file.type,
-      fileSize: file.size
-    };
-    localStorage.setItem(`mcard_meta_${card.hash}`, JSON.stringify(metadata));
-    
     console.log(`[MCard] File uploaded successfully: ${card.hash}`);
-    showToast(`✓ ${file.name} uploaded successfully!`, 'success');
+    showToast(`✓ File uploaded: ${card.hash.substring(0, 12)}...`, 'success');
     
     // Reload cards
     await loadCards();
@@ -409,15 +368,7 @@ window.createTextCard = async function() {
     const card = await MCard.create(text);
     await db.add(card);
     
-    // Store metadata
-    const metadata = {
-      fileName: 'Text Note',
-      fileType: 'text/plain',
-      fileSize: text.length
-    };
-    localStorage.setItem(`mcard_meta_${card.hash}`, JSON.stringify(metadata));
-    
-    showToast('Text card created!', 'success');
+    showToast(`Text card created: ${card.hash.substring(0, 12)}...`, 'success');
     await loadCards();
   } catch (error) {
     console.error('[MCard] Error creating text card:', error);
@@ -426,39 +377,65 @@ window.createTextCard = async function() {
 };
 
 /**
- * Get metadata from localStorage
+ * Detect content type from MCard content
+ * Pure MCard approach - no metadata storage
  * 
- * IMPORTANT: MCard only stores content and hash, NOT filename!
- * 
- * How filenames are stored:
- * 1. When you upload a file, we store the MCard (content + hash) in IndexedDB
- * 2. We ALSO store metadata (filename, MIME type, size) in localStorage
- * 3. The metadata is keyed by hash: `mcard_meta_${hash}`
- * 
- * Why separate storage?
- * - MCard is content-addressable: same content = same hash
- * - But the same content can have different filenames
- * - Example: "report.pdf" and "final-report.pdf" with identical content
- *   → Same MCard hash, but different metadata
- * 
- * Storage locations:
- * - MCard content: IndexedDB (db.put(card))
- * - Metadata: localStorage (`mcard_meta_${hash}`)
- * 
- * @param {string} hash - The MCard hash
- * @returns {Object} Metadata object with fileName, fileType, fileSize
+ * @param {MCard} card - The MCard object
+ * @returns {Object} Detected type information
  */
-function getMetadata(hash) {
-  const stored = localStorage.getItem(`mcard_meta_${hash}`);
-  if (stored) {
-    return JSON.parse(stored);
+function detectContentType(card) {
+  try {
+    const content = card.getContent();
+    
+    // Try to decode as text
+    try {
+      const text = card.getContentAsText();
+      
+      // Check for markdown patterns
+      if (text.match(/^#+ |\*\*|\[.*\]\(.*\)/m)) {
+        return { type: 'markdown', displayName: 'Markdown' };
+      }
+      
+      // Check for JSON
+      if (text.trim().startsWith('{') || text.trim().startsWith('[')) {
+        try {
+          JSON.parse(text);
+          return { type: 'json', displayName: 'JSON' };
+        } catch {}
+      }
+      
+      // Default to text
+      return { type: 'text', displayName: 'Text' };
+    } catch {
+      // Not text, check binary signatures
+      const bytes = new Uint8Array(content);
+      
+      // PNG: 89 50 4E 47
+      if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
+        return { type: 'image', displayName: 'PNG Image' };
+      }
+      
+      // JPEG: FF D8 FF
+      if (bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF) {
+        return { type: 'image', displayName: 'JPEG Image' };
+      }
+      
+      // PDF: 25 50 44 46
+      if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) {
+        return { type: 'pdf', displayName: 'PDF' };
+      }
+      
+      // GIF: 47 49 46 38
+      if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x38) {
+        return { type: 'image', displayName: 'GIF Image' };
+      }
+      
+      return { type: 'binary', displayName: 'Binary' };
+    }
+  } catch (error) {
+    console.error('[MCard] Error detecting content type:', error);
+    return { type: 'unknown', displayName: 'Unknown' };
   }
-  // Default metadata if not found
-  return {
-    fileName: 'Unknown',
-    fileType: 'application/octet-stream',
-    fileSize: 0
-  };
 }
 
 // Get content preview
@@ -471,14 +448,12 @@ function getContentPreview(card) {
   }
 }
 
-// Get file icon based on type
+// Get file icon based on detected type
 function getFileIcon(type) {
-  if (type.startsWith('image/')) return '<i data-lucide="image" style="width: 24px; height: 24px;"></i>';
-  if (type.startsWith('video/')) return '<i data-lucide="video" style="width: 24px; height: 24px;"></i>';
-  if (type.startsWith('audio/')) return '<i data-lucide="music" style="width: 24px; height: 24px;"></i>';
-  if (type.startsWith('text/')) return '<i data-lucide="file-text" style="width: 24px; height: 24px;"></i>';
-  if (type.includes('pdf')) return '<i data-lucide="file" style="width: 24px; height: 24px;"></i>';
-  if (type.includes('zip') || type.includes('archive')) return '<i data-lucide="archive" style="width: 24px; height: 24px;"></i>';
+  if (type === 'image') return '<i data-lucide="image" style="width: 24px; height: 24px;"></i>';
+  if (type === 'pdf') return '<i data-lucide="file-text" style="width: 24px; height: 24px;"></i>';
+  if (type === 'text' || type === 'markdown' || type === 'json') return '<i data-lucide="file-text" style="width: 24px; height: 24px;"></i>';
+  if (type === 'binary') return '<i data-lucide="file" style="width: 24px; height: 24px;"></i>';
   return '<i data-lucide="file" style="width: 24px; height: 24px;"></i>';
 }
 
@@ -518,11 +493,11 @@ async function initRenderers() {
 
 // Detect content type for rendering
 function detectRenderType(mimeType, fileName) {
-  const mime = (mimeType || '').toLowerCase();
+  const typeStr = mimeType.toLowerCase();
   const ext = fileName ? fileName.split('.').pop()?.toLowerCase() : '';
   
   // Markdown
-  if (mime.includes('markdown') || ext === 'md' || ext === 'markdown') {
+  if (mimeType.includes('markdown') || ext === 'md' || ext === 'markdown') {
     return 'markdown';
   }
   
@@ -609,7 +584,7 @@ window.viewCard = async function(hash) {
     await initRenderers();
     
     const card = await db.get(hash);
-    const metadata = getMetadata(hash);
+    const typeInfo = detectContentType(card);
     currentCard = card;
     
     // Update active state in list
@@ -622,10 +597,7 @@ window.viewCard = async function(hash) {
     
     // Prepare content for Redux dispatch
     let content = card.content;
-    const isTextBased = metadata.fileType.startsWith('text/') || 
-                        metadata.fileType.includes('markdown') ||
-                        metadata.fileType.includes('json') ||
-                        metadata.fileName.match(/\.(md|txt|js|py|java|cpp|c|css|html|xml|json|yml|yaml)$/i);
+    const isTextBased = typeInfo.type === 'text' || typeInfo.type === 'markdown' || typeInfo.type === 'json';
     
     if (isTextBased) {
       // Convert to text for text-based content
@@ -637,20 +609,20 @@ window.viewCard = async function(hash) {
     const result = await store.dispatch(renderContent({
       hash: card.hash,
       content: content,
-      mimeType: metadata.fileType,
-      fileName: metadata.fileName
+      mimeType: typeInfo.type,
+      fileName: `${typeInfo.displayName}-${card.hash.substring(0, 8)}`
     }));
     
     // Get the detected type from Redux state
     const state = store.getState();
     const renderType = state.contentRenderer.currentType;
-    console.log('[MCard] Redux detected type:', renderType, 'for', metadata.fileName);
+    console.log('[MCard] Redux detected type:', renderType, 'for hash:', card.hash.substring(0, 12));
     
     // Update title with content type badge from Redux state
     const contentTypeBadge = getContentTypeBadge(renderType);
     viewerTitle.innerHTML = `
       <div style="display: flex; align-items: center; gap: 12px;">
-        <span>${metadata.fileName}</span>
+        <span>${typeInfo.displayName} • ${card.hash.substring(0, 12)}...</span>
         ${contentTypeBadge}
       </div>
     `;
@@ -661,8 +633,8 @@ window.viewCard = async function(hash) {
     try {
       if (rendererRegistry.hasRenderer(renderType)) {
         renderedHTML = await rendererRegistry.render(renderType, content, {
-          fileName: metadata.fileName,
-          mimeType: metadata.fileType,
+          fileName: `${typeInfo.displayName}-${card.hash.substring(0, 8)}`,
+          mimeType: typeInfo.type,
           enableHandles: true,
           onHandleClick: (targetHash) => {
             console.log('[MCard] Handle clicked:', targetHash);
@@ -685,7 +657,7 @@ window.viewCard = async function(hash) {
         renderedHTML = `
           <div class="text-content">
             <div class="text-header">
-              <span class="text-filename">${metadata.fileName}</span>
+              <span class="text-filename">${typeInfo.displayName} • ${card.hash.substring(0, 12)}...</span>
             </div>
             <pre class="text-body preserve-whitespace">${preview}</pre>
           </div>
@@ -759,13 +731,13 @@ window.deleteCurrentCard = async function() {
 window.downloadCard = async function(hash) {
   try {
     const card = await db.get(hash);
-    const metadata = getMetadata(hash);
+    const typeInfo = detectContentType(card);
     
-    const blob = new Blob([card.getContent()], { type: metadata.fileType });
+    const blob = new Blob([card.getContent()], { type: 'application/octet-stream' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = metadata.fileName;
+    a.download = `mcard-${card.hash.substring(0, 12)}.${typeInfo.type === 'image' ? 'png' : typeInfo.type === 'pdf' ? 'pdf' : 'txt'}`;
     a.click();
     URL.revokeObjectURL(url);
     
@@ -782,7 +754,6 @@ window.deleteCard = async function(hash) {
   
   try {
     await db.delete(hash);
-    localStorage.removeItem(`mcard_meta_${hash}`);
     showToast('Card deleted', 'success');
     await loadCards();
   } catch (error) {
@@ -816,8 +787,7 @@ async function updateStats() {
   try {
     const count = await db.count();
     const totalSize = allCards.reduce((sum, card) => {
-      const meta = getMetadata(card.hash);
-      return sum + meta.fileSize;
+      return sum + card.getContent().byteLength;
     }, 0);
     
     console.log('[MCard] Stats:', { count, totalSize: formatBytes(totalSize) });
@@ -873,10 +843,8 @@ document.getElementById('searchBox').addEventListener('input', (e) => {
   
   if (query) {
     cards = cards.filter(card => {
-      const metadata = getMetadata(card.hash);
       const content = getContentPreview(card).toLowerCase();
       return card.hash.toLowerCase().includes(query) ||
-             metadata.fileName.toLowerCase().includes(query) ||
              content.includes(query);
     });
   }
