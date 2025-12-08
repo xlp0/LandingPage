@@ -49,7 +49,205 @@
     }
 
     .main-content {
+      display: flex;
+      height: calc(100vh - 140px);
+      overflow: hidden;
+    }
+
+    /* Three-column Finder-style layout */
+    .sidebar {
+      width: 250px;
+      background: #f8f9fa;
+      border-right: 1px solid #e0e0e0;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .middle-column {
+      width: 300px;
+      background: white;
+      border-right: 1px solid #e0e0e0;
+      overflow-y: auto;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .viewer-column {
+      flex: 1;
+      background: #fafafa;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Sidebar - File Types */
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid #e0e0e0;
+      background: white;
+    }
+
+    .sidebar-header h3 {
+      font-size: 14px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .type-list {
+      padding: 10px;
+    }
+
+    .type-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 4px;
+    }
+
+    .type-item:hover {
+      background: #e8eaf6;
+    }
+
+    .type-item.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .type-item-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .type-icon {
+      font-size: 20px;
+    }
+
+    .type-name {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .type-count {
+      font-size: 12px;
+      background: rgba(0, 0, 0, 0.1);
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+
+    .type-item.active .type-count {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Middle Column - MCard List */
+    .column-header {
+      padding: 20px;
+      border-bottom: 1px solid #e0e0e0;
+      background: white;
+      flex-shrink: 0;
+    }
+
+    .column-header h3 {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .mcard-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .mcard-item {
+      padding: 16px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .mcard-item:hover {
+      background: #f8f9fa;
+    }
+
+    .mcard-item.active {
+      background: #e8eaf6;
+      border-left: 3px solid #667eea;
+    }
+
+    .mcard-item-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .mcard-item-icon {
+      font-size: 24px;
+    }
+
+    .mcard-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .mcard-item-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mcard-item-hash {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: #667eea;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mcard-item-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    /* Viewer Column */
+    .viewer-header {
+      padding: 20px;
+      border-bottom: 1px solid #e0e0e0;
+      background: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .viewer-header h3 {
+      font-size: 16px;
+      color: #333;
+    }
+
+    .viewer-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .viewer-content {
+      flex: 1;
       padding: 30px;
+      overflow-y: auto;
     }
 
     .upload-section {
@@ -58,7 +256,6 @@
       border-radius: 12px;
       padding: 40px;
       text-align: center;
-      margin-bottom: 30px;
       transition: all 0.3s ease;
     }
 
@@ -415,48 +612,68 @@
     </div>
 
     <div class="main-content">
-      <!-- Stats -->
-      <div class="stats">
-        <div class="stat-card">
-          <div class="stat-value" id="totalCards">0</div>
-          <div class="stat-label">Total MCards</div>
+      <!-- Left Sidebar: File Types -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <h3>File Types</h3>
+          <div style="display: flex; gap: 8px; margin-top: 12px;">
+            <button class="btn" style="font-size: 12px; padding: 8px 16px;" onclick="document.getElementById('fileInput').click()">
+              📁 Upload
+            </button>
+            <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px;" onclick="createTextCard()">
+              📝 Text
+            </button>
+          </div>
+          <input type="file" id="fileInput" multiple style="display: none;">
         </div>
-        <div class="stat-card">
-          <div class="stat-value" id="totalSize">0 KB</div>
-          <div class="stat-label">Total Size</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="dbStatus">Ready</div>
-          <div class="stat-label">Database Status</div>
+        <div class="type-list" id="typeList">
+          <!-- File types will be populated here -->
         </div>
       </div>
 
-      <!-- Upload Section -->
-      <div class="upload-section" id="uploadSection">
-        <div class="upload-icon">📤</div>
-        <h2>Upload Files</h2>
-        <p>Drag & drop files here or click to browse</p>
-        <input type="file" id="fileInput" multiple>
-        <button class="btn" onclick="document.getElementById('fileInput').click()">
-          <span>📁</span>
-          Choose Files
-        </button>
-        <button class="btn btn-secondary" onclick="createTextCard()">
-          <span>📝</span>
-          Create Text Card
-        </button>
-      </div>
-
-      <!-- Cards Section -->
-      <div class="cards-section">
-        <div class="cards-header">
-          <h2>📚 Your MCards</h2>
-          <input type="text" class="search-box" placeholder="🔍 Search by hash or content..." id="searchBox">
+      <!-- Middle Column: MCard List -->
+      <div class="middle-column">
+        <div class="column-header">
+          <h3 id="columnTitle">All MCards</h3>
+          <input type="text" class="search-box" placeholder="🔍 Search..." id="searchBox" style="width: 100%; margin-top: 8px;">
         </div>
-        <div class="cards-grid" id="cardsGrid">
+        <div class="mcard-list" id="mcardList">
           <div class="empty-state">
             <div class="empty-state-icon">📦</div>
             <p>No MCards yet. Upload some files to get started!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Viewer -->
+      <div class="viewer-column">
+        <div class="viewer-header">
+          <h3 id="viewerTitle">Select an MCard</h3>
+          <div class="viewer-actions" id="viewerActions" style="display: none;">
+            <button class="btn" style="font-size: 12px; padding: 8px 16px;" onclick="downloadCurrentCard()">
+              💾 Download
+            </button>
+            <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px;" onclick="deleteCurrentCard()">
+              🗑️ Delete
+            </button>
+          </div>
+        </div>
+        <div class="viewer-content" id="viewerContent">
+          <div class="upload-section" id="uploadSection">
+            <div class="upload-icon">📤</div>
+            <h2>Upload Files</h2>
+            <p>Drag & drop files here or click Upload button</p>
+            <div style="margin-top: 20px;">
+              <p style="font-size: 14px; color: #666; margin-bottom: 12px;"><strong>Supported Types:</strong></p>
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; text-align: left; max-width: 400px; margin: 0 auto;">
+                <div>📝 Text</div>
+                <div>🖼️ Images</div>
+                <div>🎥 Videos</div>
+                <div>🎵 Audio</div>
+                <div>📄 Documents</div>
+                <div>📦 Archives</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -491,6 +708,8 @@
     // Global state
     let db, collection;
     let allCards = [];
+    let currentType = 'all';
+    let currentCard = null;
 
     // Initialize MCard storage
     async function initMCard() {
@@ -505,11 +724,11 @@
         
         // Load existing cards
         await loadCards();
+        populateFileTypes();
         updateStats();
       } catch (error) {
         console.error('[MCard] Initialization error:', error);
         showToast('Failed to initialize database: ' + error.message, 'error');
-        document.getElementById('dbStatus').textContent = 'Error';
       }
     }
 
@@ -523,12 +742,141 @@
         const page = await collection.getPage(1, 100);
         allCards = page.items;
         
-        renderCards(allCards);
+        populateFileTypes();
+        showCardsForType(currentType);
         updateStats();
       } catch (error) {
         console.error('[MCard] Error loading cards:', error);
         showToast('Failed to load cards', 'error');
       }
+    }
+
+    // Categorize cards by file type
+    function categorizeCards() {
+      const categories = {
+        all: [],
+        text: [],
+        images: [],
+        videos: [],
+        audio: [],
+        documents: [],
+        archives: [],
+        other: []
+      };
+
+      allCards.forEach(card => {
+        const metadata = getMetadata(card.hash);
+        const type = metadata.fileType.toLowerCase();
+        
+        categories.all.push(card);
+        
+        if (type.startsWith('text/') || type.includes('json') || type.includes('javascript') || type.includes('html')) {
+          categories.text.push(card);
+        } else if (type.startsWith('image/')) {
+          categories.images.push(card);
+        } else if (type.startsWith('video/')) {
+          categories.videos.push(card);
+        } else if (type.startsWith('audio/')) {
+          categories.audio.push(card);
+        } else if (type.includes('pdf') || type.includes('document') || type.includes('word') || type.includes('excel')) {
+          categories.documents.push(card);
+        } else if (type.includes('zip') || type.includes('tar') || type.includes('gz') || type.includes('archive')) {
+          categories.archives.push(card);
+        } else {
+          categories.other.push(card);
+        }
+      });
+
+      return categories;
+    }
+
+    // Populate file types in sidebar
+    function populateFileTypes() {
+      const categories = categorizeCards();
+      const typeList = document.getElementById('typeList');
+      
+      const types = [
+        { id: 'all', name: 'All Files', icon: '📦', count: categories.all.length },
+        { id: 'text', name: 'Text', icon: '📝', count: categories.text.length },
+        { id: 'images', name: 'Images', icon: '🖼️', count: categories.images.length },
+        { id: 'videos', name: 'Videos', icon: '🎥', count: categories.videos.length },
+        { id: 'audio', name: 'Audio', icon: '🎵', count: categories.audio.length },
+        { id: 'documents', name: 'Documents', icon: '📄', count: categories.documents.length },
+        { id: 'archives', name: 'Archives', icon: '📦', count: categories.archives.length },
+        { id: 'other', name: 'Other', icon: '🔧', count: categories.other.length }
+      ];
+
+      typeList.innerHTML = types.map(type => `
+        <div class="type-item ${type.id === currentType ? 'active' : ''}" onclick="selectType('${type.id}')">
+          <div class="type-item-content">
+            <span class="type-icon">${type.icon}</span>
+            <span class="type-name">${type.name}</span>
+          </div>
+          <span class="type-count">${type.count}</span>
+        </div>
+      `).join('');
+    }
+
+    // Select a file type
+    window.selectType = function(typeId) {
+      currentType = typeId;
+      populateFileTypes();
+      showCardsForType(typeId);
+    };
+
+    // Show cards for selected type
+    function showCardsForType(typeId) {
+      const categories = categorizeCards();
+      const cards = categories[typeId] || [];
+      
+      const mcardList = document.getElementById('mcardList');
+      const columnTitle = document.getElementById('columnTitle');
+      
+      // Update title
+      const typeNames = {
+        all: 'All Files',
+        text: 'Text Files',
+        images: 'Images',
+        videos: 'Videos',
+        audio: 'Audio Files',
+        documents: 'Documents',
+        archives: 'Archives',
+        other: 'Other Files'
+      };
+      columnTitle.textContent = typeNames[typeId] || 'Files';
+      
+      if (cards.length === 0) {
+        mcardList.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📦</div>
+            <p>No ${typeNames[typeId].toLowerCase()} found</p>
+          </div>
+        `;
+        return;
+      }
+      
+      mcardList.innerHTML = cards.map(card => {
+        const metadata = getMetadata(card.hash);
+        const icon = getFileIcon(metadata.fileType);
+        const time = formatTime(card.g_time);
+        const size = formatBytes(metadata.fileSize);
+        
+        return `
+          <div class="mcard-item ${currentCard?.hash === card.hash ? 'active' : ''}" onclick="viewCard('${card.hash}')">
+            <div class="mcard-item-header">
+              <div class="mcard-item-icon">${icon}</div>
+              <div class="mcard-item-info">
+                <div class="mcard-item-name">${metadata.fileName}</div>
+                <div class="mcard-item-hash">${card.hash.substring(0, 16)}...</div>
+              </div>
+            </div>
+            <div class="mcard-item-meta">
+              <span>🕒 ${time}</span>
+              <span>${size}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     // Upload file and create MCard
@@ -693,29 +1041,95 @@
       return date.toLocaleDateString();
     }
 
-    // View card details
+    // View card details in viewer column
     window.viewCard = async function(hash) {
       try {
         const card = await collection.get(hash);
         const metadata = getMetadata(hash);
+        currentCard = card;
         
-        const modalBody = document.getElementById('modalBody');
-        modalBody.innerHTML = `
-          <p><strong>File Name:</strong> ${metadata.fileName}</p>
-          <p><strong>Type:</strong> ${metadata.fileType}</p>
-          <p><strong>Size:</strong> ${formatBytes(metadata.fileSize)}</p>
-          <p><strong>Hash:</strong></p>
-          <pre>${card.hash}</pre>
-          <p><strong>Created:</strong> ${new Date(card.g_time).toLocaleString()}</p>
-          <p><strong>Content Preview:</strong></p>
-          <pre>${getContentPreview(card)}</pre>
+        // Update active state in list
+        showCardsForType(currentType);
+        
+        // Update viewer
+        const viewerTitle = document.getElementById('viewerTitle');
+        const viewerActions = document.getElementById('viewerActions');
+        const viewerContent = document.getElementById('viewerContent');
+        
+        viewerTitle.textContent = metadata.fileName;
+        viewerActions.style.display = 'flex';
+        
+        const icon = getFileIcon(metadata.fileType);
+        const preview = getContentPreview(card);
+        const isText = metadata.fileType.startsWith('text/') || metadata.fileType.includes('json');
+        
+        viewerContent.innerHTML = `
+          <div style="padding: 30px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <div style="font-size: 64px; margin-bottom: 16px;">${icon}</div>
+              <h2 style="color: #333; margin-bottom: 8px;">${metadata.fileName}</h2>
+              <p style="color: #999; font-size: 14px;">${metadata.fileType}</p>
+            </div>
+            
+            <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px;">
+              <h3 style="color: #667eea; margin-bottom: 16px; font-size: 16px;">📋 Details</h3>
+              <div style="display: grid; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                  <span style="color: #666; font-weight: 500;">Size:</span>
+                  <span style="color: #333;">${formatBytes(metadata.fileSize)}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                  <span style="color: #666; font-weight: 500;">Created:</span>
+                  <span style="color: #333;">${new Date(card.g_time).toLocaleString()}</span>
+                </div>
+                <div style="padding: 8px 0;">
+                  <span style="color: #666; font-weight: 500; display: block; margin-bottom: 8px;">Hash:</span>
+                  <code style="background: #f8f9fa; padding: 8px 12px; border-radius: 6px; font-size: 11px; word-break: break-all; display: block; color: #667eea;">${card.hash}</code>
+                </div>
+              </div>
+            </div>
+            
+            ${isText ? `
+              <div style="background: white; border-radius: 12px; padding: 24px;">
+                <h3 style="color: #667eea; margin-bottom: 16px; font-size: 16px;">📄 Content Preview</h3>
+                <pre style="background: #f8f9fa; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; line-height: 1.6; max-height: 400px; overflow-y: auto;">${preview}</pre>
+              </div>
+            ` : `
+              <div style="background: white; border-radius: 12px; padding: 24px; text-align: center;">
+                <p style="color: #999;">Binary file - preview not available</p>
+                <p style="color: #666; font-size: 14px; margin-top: 8px;">Click Download to save this file</p>
+              </div>
+            `}
+          </div>
         `;
-        
-        document.getElementById('cardModal').classList.add('active');
       } catch (error) {
         console.error('[MCard] Error viewing card:', error);
         showToast('Failed to load card details', 'error');
       }
+    };
+
+    // Download current card
+    window.downloadCurrentCard = async function() {
+      if (!currentCard) return;
+      await downloadCard(currentCard.hash);
+    };
+
+    // Delete current card
+    window.deleteCurrentCard = async function() {
+      if (!currentCard) return;
+      await deleteCard(currentCard.hash);
+      currentCard = null;
+      
+      // Reset viewer
+      document.getElementById('viewerTitle').textContent = 'Select an MCard';
+      document.getElementById('viewerActions').style.display = 'none';
+      document.getElementById('viewerContent').innerHTML = `
+        <div class="upload-section" id="uploadSection">
+          <div class="upload-icon">📤</div>
+          <h2>Upload Files</h2>
+          <p>Drag & drop files here or click Upload button</p>
+        </div>
+      `;
     };
 
     // Download card
@@ -825,20 +1239,55 @@
     // Search functionality
     document.getElementById('searchBox').addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase();
-      if (!query) {
-        renderCards(allCards);
+      
+      // Get cards for current type
+      const categories = categorizeCards();
+      let cards = categories[currentType] || [];
+      
+      if (query) {
+        cards = cards.filter(card => {
+          const metadata = getMetadata(card.hash);
+          const content = getContentPreview(card).toLowerCase();
+          return card.hash.toLowerCase().includes(query) ||
+                 metadata.fileName.toLowerCase().includes(query) ||
+                 content.includes(query);
+        });
+      }
+      
+      // Render filtered cards
+      const mcardList = document.getElementById('mcardList');
+      if (cards.length === 0) {
+        mcardList.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <p>No results found</p>
+          </div>
+        `;
         return;
       }
       
-      const filtered = allCards.filter(card => {
+      mcardList.innerHTML = cards.map(card => {
         const metadata = getMetadata(card.hash);
-        const content = getContentPreview(card).toLowerCase();
-        return card.hash.toLowerCase().includes(query) ||
-               metadata.fileName.toLowerCase().includes(query) ||
-               content.includes(query);
-      });
-      
-      renderCards(filtered);
+        const icon = getFileIcon(metadata.fileType);
+        const time = formatTime(card.g_time);
+        const size = formatBytes(metadata.fileSize);
+        
+        return `
+          <div class="mcard-item ${currentCard?.hash === card.hash ? 'active' : ''}" onclick="viewCard('${card.hash}')">
+            <div class="mcard-item-header">
+              <div class="mcard-item-icon">${icon}</div>
+              <div class="mcard-item-info">
+                <div class="mcard-item-name">${metadata.fileName}</div>
+                <div class="mcard-item-hash">${card.hash.substring(0, 16)}...</div>
+              </div>
+            </div>
+            <div class="mcard-item-meta">
+              <span>🕒 ${time}</span>
+              <span>${size}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
     });
 
     // Initialize on page load
