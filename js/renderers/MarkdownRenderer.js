@@ -206,9 +206,16 @@ export class MarkdownRenderer extends BaseRenderer {
    */
   async render(content, options = {}) {
     try {
-      // Load dependencies
+      // Load marked.js (required)
       await this.loadMarked();
-      await this.loadHighlight();
+      
+      // Try to load highlight.js (optional - markdown works without it)
+      try {
+        await this.loadHighlight();
+      } catch (highlightError) {
+        console.warn('[MarkdownRenderer] Syntax highlighting unavailable:', highlightError.message);
+        // Continue without syntax highlighting
+      }
       
       const { enableHandles = true } = options;
       

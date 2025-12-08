@@ -425,12 +425,35 @@ window.createTextCard = async function() {
   }
 };
 
-// Get metadata from localStorage
+/**
+ * Get metadata from localStorage
+ * 
+ * IMPORTANT: MCard only stores content and hash, NOT filename!
+ * 
+ * How filenames are stored:
+ * 1. When you upload a file, we store the MCard (content + hash) in IndexedDB
+ * 2. We ALSO store metadata (filename, MIME type, size) in localStorage
+ * 3. The metadata is keyed by hash: `mcard_meta_${hash}`
+ * 
+ * Why separate storage?
+ * - MCard is content-addressable: same content = same hash
+ * - But the same content can have different filenames
+ * - Example: "report.pdf" and "final-report.pdf" with identical content
+ *   → Same MCard hash, but different metadata
+ * 
+ * Storage locations:
+ * - MCard content: IndexedDB (db.put(card))
+ * - Metadata: localStorage (`mcard_meta_${hash}`)
+ * 
+ * @param {string} hash - The MCard hash
+ * @returns {Object} Metadata object with fileName, fileType, fileSize
+ */
 function getMetadata(hash) {
   const stored = localStorage.getItem(`mcard_meta_${hash}`);
   if (stored) {
     return JSON.parse(stored);
   }
+  // Default metadata if not found
   return {
     fileName: 'Unknown',
     fileType: 'application/octet-stream',
