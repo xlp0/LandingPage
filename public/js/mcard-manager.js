@@ -541,6 +541,7 @@ window.viewCard = async function(hash) {
             window.viewCard(targetHash);
           }
         });
+        console.log('[MCard] Rendered HTML length:', renderedHTML.length);
       } else {
         // Fallback to simple preview
         const preview = getContentPreview(card);
@@ -563,12 +564,9 @@ window.viewCard = async function(hash) {
       `;
     }
     
-    // Display rendered content
-    viewerContent.innerHTML = `
-      <div class="rendered-content">
-        ${renderedHTML}
-      </div>
-    `;
+    // Display rendered content - completely replace viewer content
+    viewerContent.innerHTML = renderedHTML;
+    console.log('[MCard] Viewer content updated');
     
     // Initialize Lucide icons after DOM update
     if (window.lucide) {

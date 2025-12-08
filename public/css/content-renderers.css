@@ -15,8 +15,11 @@
 
 /* Markdown Content */
 .markdown-content {
+  padding: 20px;
   line-height: 1.6;
   font-size: 14px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .markdown-content h1 {
