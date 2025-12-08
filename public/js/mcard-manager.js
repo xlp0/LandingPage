@@ -755,6 +755,32 @@ window.viewCard = async function(hash) {
       });
     });
     
+    // Add click handler for hash-based links
+    viewerContent.querySelectorAll('.mcard-hash-link').forEach(link => {
+      link.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const targetHash = e.target.dataset.hash;
+        if (targetHash) {
+          console.log('[MCard] Hash link clicked:', targetHash);
+          
+          // Check if the target MCard exists
+          try {
+            const targetCard = await db.get(targetHash);
+            if (targetCard) {
+              // Navigate to the target MCard
+              await window.viewCard(targetHash);
+              showToast(`✓ Navigated to MCard: ${targetHash.substring(0, 12)}...`, 'success');
+            } else {
+              showToast('MCard not found in database', 'error');
+            }
+          } catch (error) {
+            console.error('[MCard] Error navigating to hash link:', error);
+            showToast(`MCard not found: ${targetHash.substring(0, 12)}...`, 'error');
+          }
+        }
+      });
+    });
+    
   } catch (error) {
     console.error('[MCard] Error viewing card:', error);
     showToast('Failed to load card details', 'error');

@@ -274,27 +274,45 @@ export class MarkdownRenderer extends BaseRenderer {
       }
     });
     
-    // Custom renderer for links if handles are enabled
-    if (enableHandles) {
-      const renderer = {
-        link(href, title, text) {
-          // Check if it's a handle link (already processed)
-          if (href.startsWith('#mcard-')) {
-            return `<a href="${href}" title="${title || ''}">${text}</a>`;
-          }
-          
-          // Add target="_blank" for external links
-          if (href.startsWith('http://') || href.startsWith('https://')) {
-            return `<a href="${href}" title="${title || ''}" target="_blank" rel="noopener noreferrer">${text}</a>`;
-          }
-          
-          // Default link
+    // Custom renderer for links
+    const renderer = {
+      link(href, title, text) {
+        // Check if it's a hash-based link (format: hash:HASH)
+        if (href.startsWith('hash:')) {
+          const hash = href.substring(5); // Remove 'hash:' prefix
+          return `<a 
+            href="#" 
+            class="mcard-hash-link" 
+            data-hash="${hash}" 
+            title="${title || 'Navigate to MCard: ' + hash.substring(0, 12) + '...'}"
+            style="
+              color: #4fc3f7;
+              text-decoration: none;
+              border-bottom: 1px dashed #4fc3f7;
+              cursor: pointer;
+              transition: all 0.2s;
+            "
+            onmouseover="this.style.borderBottom='1px solid #4fc3f7'"
+            onmouseout="this.style.borderBottom='1px dashed #4fc3f7'"
+          >${text}</a>`;
+        }
+        
+        // Check if it's a handle link (already processed)
+        if (href.startsWith('#mcard-')) {
           return `<a href="${href}" title="${title || ''}">${text}</a>`;
         }
-      };
-      
-      window.marked.use({ renderer });
-    }
+        
+        // Add target="_blank" for external links
+        if (href.startsWith('http://') || href.startsWith('https://')) {
+          return `<a href="${href}" title="${title || ''}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+        }
+        
+        // Default link
+        return `<a href="${href}" title="${title || ''}">${text}</a>`;
+      }
+    };
+    
+    window.marked.use({ renderer });
   }
   
   /**

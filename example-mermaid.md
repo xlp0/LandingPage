@@ -2,6 +2,14 @@
 
 This document demonstrates Mermaid diagram support in the MCard Manager.
 
+## Hash-Based Hyperlinks
+
+MCards use content-addressable storage, so each file has a unique SHA-256 hash. You can link between MCards using hash-based hyperlinks!
+
+**Example:** Click this link to view another MCard → [View README MCard](hash:2e125d23a57866a17c3a20e45db0baa17c09e8e473851eb1da8cf39cff6c6df6)
+
+You can also reference it inline: The [README file](hash:2e125d23a57866a17c3a20e45db0baa17c09e8e473851eb1da8cf39cff6c6df6) contains important information about the MCard service.
+
 ## System Architecture
 
 ```mermaid
