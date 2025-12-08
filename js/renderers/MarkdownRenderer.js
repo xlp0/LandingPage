@@ -14,6 +14,7 @@ export class MarkdownRenderer extends BaseRenderer {
     super('markdown');
     this.markedLoaded = false;
     this.highlightLoaded = false;
+    this.mermaidLoaded = false;
   }
   
   /**
@@ -68,6 +69,74 @@ export class MarkdownRenderer extends BaseRenderer {
     }
     
     this.markedLoaded = true;
+  }
+  
+  /**
+   * Load Mermaid.js library dynamically
+   */
+  async loadMermaid() {
+    if (this.mermaidLoaded) return;
+    
+    if (!window.mermaid) {
+      console.log('[MarkdownRenderer] Loading mermaid.js...');
+      
+      // Check if already loading
+      if (window.__MERMAID_LOADING__) {
+        await window.__MERMAID_LOADING__;
+        this.mermaidLoaded = true;
+        return;
+      }
+      
+      window.__MERMAID_LOADING__ = (async () => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+        script.id = 'mermaid-js';
+        document.head.appendChild(script);
+        
+        await new Promise((resolve, reject) => {
+          script.onload = () => {
+            console.log('[MarkdownRenderer] mermaid.js loaded successfully');
+            resolve();
+          };
+          script.onerror = (error) => {
+            console.error('[MarkdownRenderer] Failed to load mermaid.js:', error);
+            reject(new Error('Failed to load mermaid.js from CDN'));
+          };
+        });
+        
+        // Wait for mermaid to be available
+        let attempts = 0;
+        while (!window.mermaid && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+        
+        if (!window.mermaid) {
+          throw new Error('mermaid.js loaded but window.mermaid not available');
+        }
+        
+        // Initialize mermaid with dark theme
+        window.mermaid.initialize({
+          startOnLoad: false,
+          theme: 'dark',
+          themeVariables: {
+            primaryColor: '#4a9eff',
+            primaryTextColor: '#fff',
+            primaryBorderColor: '#3e3e42',
+            lineColor: '#666',
+            secondaryColor: '#2d2d30',
+            tertiaryColor: '#1e1e1e'
+          }
+        });
+        
+        console.log('[MarkdownRenderer] mermaid.js initialized');
+      })();
+      
+      await window.__MERMAID_LOADING__;
+      window.__MERMAID_LOADING__ = null;
+    }
+    
+    this.mermaidLoaded = true;
   }
   
   /**
@@ -243,6 +312,13 @@ export class MarkdownRenderer extends BaseRenderer {
       // Load marked.js (required)
       await this.loadMarked();
       
+      // Try to load mermaid.js (optional)
+      try {
+        await this.loadMermaid();
+      } catch (mermaidError) {
+        console.warn('[MarkdownRenderer] Mermaid diagrams unavailable:', mermaidError.message);
+      }
+      
       // Try to load highlight.js (optional - markdown works without it)
       try {
         await this.loadHighlight();
@@ -263,7 +339,40 @@ export class MarkdownRenderer extends BaseRenderer {
       this.configureMarked(options);
       
       // Render markdown
-      const html = window.marked.parse(processedContent);
+      let html = window.marked.parse(processedContent);
+      
+      // Process Mermaid diagrams if available
+      if (window.mermaid && this.mermaidLoaded) {
+        // Create a temporary container to parse HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        
+        // Find all code blocks with language 'mermaid'
+        const mermaidBlocks = tempDiv.querySelectorAll('code.language-mermaid');
+        
+        for (let i = 0; i < mermaidBlocks.length; i++) {
+          const block = mermaidBlocks[i];
+          const mermaidCode = block.textContent;
+          const id = `mermaid-${Date.now()}-${i}`;
+          
+          try {
+            // Render mermaid diagram
+            const { svg } = await window.mermaid.render(id, mermaidCode);
+            
+            // Replace code block with rendered SVG
+            const pre = block.parentElement;
+            const mermaidDiv = document.createElement('div');
+            mermaidDiv.className = 'mermaid-diagram';
+            mermaidDiv.innerHTML = svg;
+            pre.replaceWith(mermaidDiv);
+          } catch (err) {
+            console.error('[MarkdownRenderer] Mermaid render error:', err);
+            // Leave the code block as-is if rendering fails
+          }
+        }
+        
+        html = tempDiv.innerHTML;
+      }
       
       // Wrap in container with styling
       return `

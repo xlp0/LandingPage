@@ -22,6 +22,22 @@
   margin: 0 auto;
 }
 
+/* Mermaid Diagrams */
+.mermaid-diagram {
+  background: #1e1e1e;
+  border: 1px solid #3e3e42;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  text-align: center;
+}
+
+.mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
 .markdown-content h1 {
   font-size: 28px;
   font-weight: 600;
