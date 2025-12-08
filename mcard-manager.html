@@ -700,10 +700,10 @@
   </div>
 
   <script type="module">
-    // Import MCard-JS from CDN (using jsdelivr which supports CORS and ES modules)
-    import { MCard } from 'https://cdn.jsdelivr.net/npm/mcard-js@2.0.1/dist/esm/model/MCard.js';
-    import { IndexedDBEngine } from 'https://cdn.jsdelivr.net/npm/mcard-js@2.0.1/dist/esm/storage/IndexedDBEngine.js';
-    import { CardCollection } from 'https://cdn.jsdelivr.net/npm/mcard-js@2.0.1/dist/esm/storage/CardCollection.js';
+    // Import MCard-JS from CDN (using jsdelivr with correct paths)
+    import { MCard } from 'https://cdn.jsdelivr.net/npm/mcard-js@2.0.1/dist/model/MCard.js';
+    import { IndexedDBEngine } from 'https://cdn.jsdelivr.net/npm/mcard-js@2.0.1/dist/storage/IndexedDBEngine.js';
+    import { CardCollection } from 'https://cdn.jsdelivr.net/npm/mcard-js@2.0.1/dist/model/CardCollection.js';
 
     // Global state
     let db, collection;
