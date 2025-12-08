@@ -2,11 +2,16 @@
 // Note: Full mcard-js has Node.js dependencies that don't work in browsers
 // We'll implement a lightweight version with just the features we need
 
+// Import renderer registry
+import rendererRegistry from '../../js/renderers/RendererRegistry.js';
+import { CONTENT_TYPES } from '../../js/redux/slices/content-renderer-slice.js';
+
 // Global state
 let db;
 let allCards = [];
 let currentType = 'all';
 let currentCard = null;
+let renderersInitialized = false;
 
 // Simple MCard class
 class MCard {
@@ -443,9 +448,58 @@ function formatTime(timestamp) {
   return date.toLocaleDateString();
 }
 
+// Initialize renderers
+async function initRenderers() {
+  if (renderersInitialized) return;
+  
+  try {
+    await rendererRegistry.initialize();
+    renderersInitialized = true;
+    console.log('[MCard] Renderers initialized:', rendererRegistry.getRegisteredTypes());
+  } catch (error) {
+    console.error('[MCard] Failed to initialize renderers:', error);
+  }
+}
+
+// Detect content type for rendering
+function detectRenderType(mimeType, fileName) {
+  const mime = (mimeType || '').toLowerCase();
+  const ext = fileName ? fileName.split('.').pop()?.toLowerCase() : '';
+  
+  // Markdown
+  if (mime.includes('markdown') || ext === 'md' || ext === 'markdown') {
+    return 'markdown';
+  }
+  
+  // Images
+  if (mime.startsWith('image/')) {
+    return 'image';
+  }
+  
+  // PDF
+  if (mime.includes('pdf') || ext === 'pdf') {
+    return 'pdf';
+  }
+  
+  // Text
+  if (mime.startsWith('text/') || mime.includes('json') || mime.includes('javascript')) {
+    return 'text';
+  }
+  
+  // Code files
+  if (['js', 'py', 'java', 'cpp', 'c', 'css', 'html', 'xml', 'json'].includes(ext)) {
+    return 'code';
+  }
+  
+  return 'text'; // Default fallback
+}
+
 // View card details in viewer column
 window.viewCard = async function(hash) {
   try {
+    // Initialize renderers if needed
+    await initRenderers();
+    
     const card = await db.get(hash);
     const metadata = getMetadata(hash);
     currentCard = card;
@@ -461,47 +515,56 @@ window.viewCard = async function(hash) {
     viewerTitle.textContent = metadata.fileName;
     viewerActions.style.display = 'flex';
     
-    const icon = getFileIcon(metadata.fileType);
-    const preview = getContentPreview(card);
-    const isText = metadata.fileType.startsWith('text/') || metadata.fileType.includes('json');
+    // Detect content type for rendering
+    const renderType = detectRenderType(metadata.fileType, metadata.fileName);
+    console.log('[MCard] Rendering as:', renderType, 'for', metadata.fileName);
     
+    // Prepare content for rendering
+    let content = card.content;
+    if (renderType === 'markdown' || renderType === 'text' || renderType === 'code') {
+      // Convert to text for text-based renderers
+      content = card.getContentAsText();
+    }
+    
+    // Render content using appropriate renderer
+    let renderedHTML = '';
+    try {
+      if (rendererRegistry.hasRenderer(renderType)) {
+        renderedHTML = await rendererRegistry.render(renderType, content, {
+          fileName: metadata.fileName,
+          mimeType: metadata.fileType,
+          enableHandles: true,
+          onHandleClick: (targetHash) => {
+            console.log('[MCard] Handle clicked:', targetHash);
+            window.viewCard(targetHash);
+          }
+        });
+      } else {
+        // Fallback to simple preview
+        const preview = getContentPreview(card);
+        renderedHTML = `
+          <div class="text-content">
+            <div class="text-header">
+              <span class="text-filename">${metadata.fileName}</span>
+            </div>
+            <pre class="text-body preserve-whitespace">${preview}</pre>
+          </div>
+        `;
+      }
+    } catch (renderError) {
+      console.error('[MCard] Render error:', renderError);
+      renderedHTML = `
+        <div style="padding: 20px; color: #f48771;">
+          <h3>Render Error</h3>
+          <p>${renderError.message}</p>
+        </div>
+      `;
+    }
+    
+    // Display rendered content
     viewerContent.innerHTML = `
-      <div style="padding: 30px;">
-        <div style="text-align: center; margin-bottom: 30px;">
-          <div style="font-size: 64px; margin-bottom: 16px;">${icon}</div>
-          <h2 style="color: #333; margin-bottom: 8px;">${metadata.fileName}</h2>
-          <p style="color: #999; font-size: 14px;">${metadata.fileType}</p>
-        </div>
-        
-        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px;">
-          <h3 style="color: #667eea; margin-bottom: 16px; font-size: 16px;">📋 Details</h3>
-          <div style="display: grid; gap: 12px;">
-            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-              <span style="color: #666; font-weight: 500;">Size:</span>
-              <span style="color: #333;">${formatBytes(metadata.fileSize)}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-              <span style="color: #666; font-weight: 500;">Created:</span>
-              <span style="color: #333;">${new Date(card.g_time).toLocaleString()}</span>
-            </div>
-            <div style="padding: 8px 0;">
-              <span style="color: #666; font-weight: 500; display: block; margin-bottom: 8px;">Hash:</span>
-              <code style="background: #f8f9fa; padding: 8px 12px; border-radius: 6px; font-size: 11px; word-break: break-all; display: block; color: #667eea;">${card.hash}</code>
-            </div>
-          </div>
-        </div>
-        
-        ${isText ? `
-          <div style="background: white; border-radius: 12px; padding: 24px;">
-            <h3 style="color: #667eea; margin-bottom: 16px; font-size: 16px;">📄 Content Preview</h3>
-            <pre style="background: #f8f9fa; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; line-height: 1.6; max-height: 400px; overflow-y: auto;">${preview}</pre>
-          </div>
-        ` : `
-          <div style="background: white; border-radius: 12px; padding: 24px; text-align: center;">
-            <p style="color: #999;">Binary file - preview not available</p>
-            <p style="color: #666; font-size: 14px; margin-top: 8px;">Click Download to save this file</p>
-          </div>
-        `}
+      <div class="rendered-content">
+        ${renderedHTML}
       </div>
     `;
     
@@ -509,6 +572,18 @@ window.viewCard = async function(hash) {
     if (window.lucide) {
       lucide.createIcons();
     }
+    
+    // Add click handler for handles
+    viewerContent.querySelectorAll('.mcard-handle').forEach(handle => {
+      handle.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const targetHash = e.target.dataset.hash;
+        if (targetHash) {
+          await window.viewCard(targetHash);
+        }
+      });
+    });
+    
   } catch (error) {
     console.error('[MCard] Error viewing card:', error);
     showToast('Failed to load card details', 'error');
