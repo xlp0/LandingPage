@@ -23,14 +23,48 @@ export class MarkdownRenderer extends BaseRenderer {
     if (this.markedLoaded) return;
     
     if (!window.marked) {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/marked@11.0.0/marked.min.js';
-      document.head.appendChild(script);
+      console.log('[MarkdownRenderer] Loading marked.js...');
       
-      await new Promise((resolve, reject) => {
-        script.onload = resolve;
-        script.onerror = reject;
-      });
+      // Check if already loading
+      if (window.__MARKED_LOADING__) {
+        await window.__MARKED_LOADING__;
+        this.markedLoaded = true;
+        return;
+      }
+      
+      window.__MARKED_LOADING__ = (async () => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/marked@11.0.0/marked.min.js';
+        script.id = 'marked-js';
+        document.head.appendChild(script);
+        
+        await new Promise((resolve, reject) => {
+          script.onload = () => {
+            console.log('[MarkdownRenderer] marked.js loaded successfully');
+            resolve();
+          };
+          script.onerror = (error) => {
+            console.error('[MarkdownRenderer] Failed to load marked.js:', error);
+            reject(new Error('Failed to load marked.js from CDN'));
+          };
+        });
+        
+        // Wait for marked to be available
+        let attempts = 0;
+        while (!window.marked && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+        
+        if (!window.marked) {
+          throw new Error('marked.js loaded but window.marked not available');
+        }
+        
+        console.log('[MarkdownRenderer] window.marked is now available');
+      })();
+      
+      await window.__MARKED_LOADING__;
+      window.__MARKED_LOADING__ = null;
     }
     
     this.markedLoaded = true;
