@@ -525,6 +525,8 @@ window.viewCard = async function(hash) {
       // Convert to text for text-based renderers
       content = card.getContentAsText();
     }
+    // For binary types (image, pdf), keep as Uint8Array
+    // Renderers will handle the conversion
     
     // Render content using appropriate renderer
     let renderedHTML = '';

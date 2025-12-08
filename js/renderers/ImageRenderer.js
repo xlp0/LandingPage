@@ -27,8 +27,13 @@ export class ImageRenderer extends BaseRenderer {
       
       let imageUrl;
       
+      // Handle Uint8Array (from MCard)
+      if (content instanceof Uint8Array) {
+        const blob = new Blob([content], { type: mimeType });
+        imageUrl = URL.createObjectURL(blob);
+      }
       // Handle ArrayBuffer
-      if (content instanceof ArrayBuffer) {
+      else if (content instanceof ArrayBuffer) {
         const blob = new Blob([content], { type: mimeType });
         imageUrl = URL.createObjectURL(blob);
       }

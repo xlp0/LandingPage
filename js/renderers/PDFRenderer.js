@@ -49,6 +49,12 @@ export class PDFRenderer extends BaseRenderer {
     try {
       const { fileName = 'document.pdf' } = options;
       
+      // Convert Uint8Array to ArrayBuffer if needed
+      let pdfData = content;
+      if (content instanceof Uint8Array) {
+        pdfData = content.buffer.slice(content.byteOffset, content.byteOffset + content.byteLength);
+      }
+      
       // Create unique ID for this PDF
       const pdfId = `pdf-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
@@ -76,7 +82,7 @@ export class PDFRenderer extends BaseRenderer {
       if (!window.__PDF_CONTENT__) {
         window.__PDF_CONTENT__ = {};
       }
-      window.__PDF_CONTENT__[pdfId] = { content, options };
+      window.__PDF_CONTENT__[pdfId] = { content: pdfData, options };
       
       // Register load function
       window.loadPDF = async (id) => {

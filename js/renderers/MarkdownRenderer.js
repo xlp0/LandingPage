@@ -43,32 +43,47 @@ export class MarkdownRenderer extends BaseRenderer {
     if (this.highlightLoaded) return;
     
     if (!window.hljs) {
-      // Load CSS
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css';
-      document.head.appendChild(link);
-      
-      // Load JS
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/core.min.js';
-      document.head.appendChild(script);
-      
-      await new Promise((resolve, reject) => {
-        script.onload = resolve;
-        script.onerror = reject;
-      });
-      
-      // Load common languages
-      const languages = ['javascript', 'python', 'java', 'cpp', 'css', 'html', 'json', 'markdown'];
-      for (const lang of languages) {
-        const langScript = document.createElement('script');
-        langScript.src = `https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/languages/${lang}.min.js`;
-        document.head.appendChild(langScript);
-        await new Promise((resolve) => {
-          langScript.onload = resolve;
-        });
+      // Check if already loading
+      if (window.__HLJS_LOADING__) {
+        await window.__HLJS_LOADING__;
+        this.highlightLoaded = true;
+        return;
       }
+      
+      // Set loading flag
+      window.__HLJS_LOADING__ = (async () => {
+        // Load CSS only once
+        if (!document.querySelector('link[href*="highlight.js"]')) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css';
+          document.head.appendChild(link);
+        }
+        
+        // Load JS
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/core.min.js';
+        document.head.appendChild(script);
+        
+        await new Promise((resolve, reject) => {
+          script.onload = resolve;
+          script.onerror = reject;
+        });
+        
+        // Load common languages
+        const languages = ['javascript', 'python', 'java', 'cpp', 'css', 'html', 'json', 'markdown'];
+        for (const lang of languages) {
+          const langScript = document.createElement('script');
+          langScript.src = `https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/languages/${lang}.min.js`;
+          document.head.appendChild(langScript);
+          await new Promise((resolve) => {
+            langScript.onload = resolve;
+          });
+        }
+      })();
+      
+      await window.__HLJS_LOADING__;
+      delete window.__HLJS_LOADING__;
     }
     
     this.highlightLoaded = true;
