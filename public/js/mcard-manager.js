@@ -606,11 +606,33 @@ window.viewCard = async function(hash) {
     
     // Dispatch Redux action to detect type and prepare rendering
     console.log('[MCard] Dispatching renderContent to Redux...');
+    
+    // Convert detected type to proper MIME type for Redux
+    const mimeTypeMap = {
+      'markdown': 'text/markdown',
+      'text': 'text/plain',
+      'json': 'application/json',
+      'image': 'image/png',
+      'pdf': 'application/pdf',
+      'binary': 'application/octet-stream'
+    };
+    const mimeType = mimeTypeMap[typeInfo.type] || 'application/octet-stream';
+    
+    // Add proper file extension
+    const extensionMap = {
+      'markdown': '.md',
+      'text': '.txt',
+      'json': '.json',
+      'image': '.png',
+      'pdf': '.pdf'
+    };
+    const extension = extensionMap[typeInfo.type] || '';
+    
     const result = await store.dispatch(renderContent({
       hash: card.hash,
       content: content,
-      mimeType: typeInfo.type,
-      fileName: `${typeInfo.displayName}-${card.hash.substring(0, 8)}`
+      mimeType: mimeType,
+      fileName: `${typeInfo.displayName}-${card.hash.substring(0, 8)}${extension}`
     }));
     
     // Get the detected type from Redux state
