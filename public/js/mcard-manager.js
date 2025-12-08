@@ -305,17 +305,17 @@ function showCardsForType(typeId) {
   }
   
   mcardList.innerHTML = cards.map(card => {
-    const metadata = getMetadata(card.hash);
-    const icon = getFileIcon(metadata.fileType);
+    const typeInfo = detectContentType(card);
+    const icon = getFileIcon(typeInfo.type);
     const time = formatTime(card.g_time);
-    const size = formatBytes(metadata.fileSize);
+    const size = formatBytes(card.getContent().byteLength);
     
     return `
       <div class="mcard-item ${currentCard?.hash === card.hash ? 'active' : ''}" onclick="viewCard('${card.hash}')">
         <div class="mcard-item-header">
           <div class="mcard-item-icon">${icon}</div>
           <div class="mcard-item-info">
-            <div class="mcard-item-name">${metadata.fileName}</div>
+            <div class="mcard-item-name">${typeInfo.displayName}</div>
             <div class="mcard-item-hash">${card.hash.substring(0, 16)}...</div>
           </div>
         </div>
@@ -862,17 +862,17 @@ document.getElementById('searchBox').addEventListener('input', (e) => {
   }
   
   mcardList.innerHTML = cards.map(card => {
-    const metadata = getMetadata(card.hash);
-    const icon = getFileIcon(metadata.fileType);
+    const typeInfo = detectContentType(card);
+    const icon = getFileIcon(typeInfo.type);
     const time = formatTime(card.g_time);
-    const size = formatBytes(metadata.fileSize);
+    const size = formatBytes(card.getContent().byteLength);
     
     return `
       <div class="mcard-item ${currentCard?.hash === card.hash ? 'active' : ''}" onclick="viewCard('${card.hash}')">
         <div class="mcard-item-header">
           <div class="mcard-item-icon">${icon}</div>
           <div class="mcard-item-info">
-            <div class="mcard-item-name">${metadata.fileName}</div>
+            <div class="mcard-item-name">${typeInfo.displayName}</div>
             <div class="mcard-item-hash">${card.hash.substring(0, 16)}...</div>
           </div>
         </div>
