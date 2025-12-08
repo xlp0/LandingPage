@@ -210,22 +210,50 @@ function categorizeCards() {
   allCards.forEach(card => {
     const metadata = getMetadata(card.hash);
     const type = metadata.fileType.toLowerCase();
+    const fileName = metadata.fileName || '';
+    const ext = fileName.split('.').pop()?.toLowerCase() || '';
     
     categories.all.push(card);
     
-    if (type.startsWith('text/') || type.includes('json') || type.includes('javascript') || type.includes('html')) {
+    // Text files (including markdown, code files)
+    if (type.startsWith('text/') || 
+        type.includes('json') || 
+        type.includes('javascript') || 
+        type.includes('html') ||
+        type.includes('markdown') ||
+        ['md', 'markdown', 'txt', 'js', 'py', 'java', 'cpp', 'c', 'css', 'html', 'xml', 'json', 'yml', 'yaml'].includes(ext)) {
       categories.text.push(card);
-    } else if (type.startsWith('image/')) {
+    } 
+    // Images
+    else if (type.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext)) {
       categories.images.push(card);
-    } else if (type.startsWith('video/')) {
+    } 
+    // Videos
+    else if (type.startsWith('video/') || ['mp4', 'webm', 'ogg', 'mov', 'avi'].includes(ext)) {
       categories.videos.push(card);
-    } else if (type.startsWith('audio/')) {
+    } 
+    // Audio
+    else if (type.startsWith('audio/') || ['mp3', 'wav', 'ogg', 'flac', 'm4a'].includes(ext)) {
       categories.audio.push(card);
-    } else if (type.includes('pdf') || type.includes('document') || type.includes('word') || type.includes('excel')) {
+    } 
+    // Documents (PDF, Office files)
+    else if (type.includes('pdf') || 
+             type.includes('document') || 
+             type.includes('word') || 
+             type.includes('excel') ||
+             ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(ext)) {
       categories.documents.push(card);
-    } else if (type.includes('zip') || type.includes('tar') || type.includes('gz') || type.includes('archive')) {
+    } 
+    // Archives
+    else if (type.includes('zip') || 
+             type.includes('tar') || 
+             type.includes('gz') || 
+             type.includes('archive') ||
+             ['zip', 'tar', 'gz', 'rar', '7z', 'bz2'].includes(ext)) {
       categories.archives.push(card);
-    } else {
+    } 
+    // Other
+    else {
       categories.other.push(card);
     }
   });
