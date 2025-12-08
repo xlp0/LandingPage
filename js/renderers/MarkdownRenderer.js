@@ -42,16 +42,22 @@ export class MarkdownRenderer extends BaseRenderer {
   async loadHighlight() {
     if (this.highlightLoaded) return;
     
-    if (!window.hljs) {
-      // Check if already loading
-      if (window.__HLJS_LOADING__) {
-        await window.__HLJS_LOADING__;
-        this.highlightLoaded = true;
-        return;
-      }
-      
-      // Set loading flag
-      window.__HLJS_LOADING__ = (async () => {
+    // If already loaded globally, just mark as loaded
+    if (window.hljs) {
+      this.highlightLoaded = true;
+      return;
+    }
+    
+    // Check if already loading
+    if (window.__HLJS_LOADING__) {
+      await window.__HLJS_LOADING__;
+      this.highlightLoaded = true;
+      return;
+    }
+    
+    // Set loading flag as a promise
+    window.__HLJS_LOADING__ = (async () => {
+      try {
         // Load CSS only once
         if (!document.querySelector('link[href*="highlight.js"]')) {
           const link = document.createElement('link');
@@ -60,32 +66,56 @@ export class MarkdownRenderer extends BaseRenderer {
           document.head.appendChild(link);
         }
         
-        // Load JS
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/core.min.js';
-        document.head.appendChild(script);
-        
-        await new Promise((resolve, reject) => {
-          script.onload = resolve;
-          script.onerror = reject;
-        });
-        
-        // Load common languages
-        const languages = ['javascript', 'python', 'java', 'cpp', 'css', 'html', 'json', 'markdown'];
-        for (const lang of languages) {
-          const langScript = document.createElement('script');
-          langScript.src = `https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/languages/${lang}.min.js`;
-          document.head.appendChild(langScript);
-          await new Promise((resolve) => {
-            langScript.onload = resolve;
+        // Check if core script already exists
+        if (!document.querySelector('script[src*="highlight.js"][src*="core"]')) {
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/core.min.js';
+          script.id = 'hljs-core';
+          document.head.appendChild(script);
+          
+          await new Promise((resolve, reject) => {
+            script.onload = resolve;
+            script.onerror = reject;
           });
         }
-      })();
-      
-      await window.__HLJS_LOADING__;
-      delete window.__HLJS_LOADING__;
-    }
+        
+        // Wait for hljs to be available
+        let attempts = 0;
+        while (!window.hljs && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+        
+        if (!window.hljs) {
+          throw new Error('highlight.js failed to load');
+        }
+        
+        // Load common languages only if not already loaded
+        const languages = ['javascript', 'python', 'java', 'cpp', 'css', 'html', 'json', 'markdown'];
+        for (const lang of languages) {
+          const scriptId = `hljs-lang-${lang}`;
+          if (!document.getElementById(scriptId)) {
+            const langScript = document.createElement('script');
+            langScript.src = `https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/languages/${lang}.min.js`;
+            langScript.id = scriptId;
+            document.head.appendChild(langScript);
+            
+            await new Promise((resolve) => {
+              langScript.onload = resolve;
+              langScript.onerror = resolve; // Continue even if one fails
+            });
+          }
+        }
+        
+        console.log('[MarkdownRenderer] Highlight.js loaded successfully');
+      } catch (error) {
+        console.error('[MarkdownRenderer] Failed to load highlight.js:', error);
+        throw error;
+      }
+    })();
     
+    await window.__HLJS_LOADING__;
+    window.__HLJS_LOADING__ = null; // Clear the flag
     this.highlightLoaded = true;
   }
   
