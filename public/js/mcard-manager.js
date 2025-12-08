@@ -643,9 +643,38 @@ window.viewCard = async function(hash) {
     // Update title with content type badge from Redux state
     const contentTypeBadge = getContentTypeBadge(renderType);
     viewerTitle.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <span>${typeInfo.displayName} • ${card.hash.substring(0, 12)}...</span>
-        ${contentTypeBadge}
+      <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 16px; font-weight: 600;">${typeInfo.displayName}</span>
+            ${contentTypeBadge}
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <code style="font-size: 11px; color: #888; font-family: 'Monaco', monospace;">${card.hash}</code>
+            <button 
+              onclick="copyHash('${card.hash}')" 
+              style="
+                background: transparent;
+                border: 1px solid #3e3e42;
+                border-radius: 4px;
+                padding: 2px 8px;
+                font-size: 10px;
+                color: #888;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                transition: all 0.2s;
+              "
+              onmouseover="this.style.borderColor='#4fc3f7'; this.style.color='#4fc3f7';"
+              onmouseout="this.style.borderColor='#3e3e42'; this.style.color='#888';"
+              title="Copy full hash"
+            >
+              <i data-lucide="copy" style="width: 10px; height: 10px;"></i>
+              Copy Hash
+            </button>
+          </div>
+        </div>
       </div>
     `;
     viewerActions.style.display = 'flex';
@@ -754,6 +783,30 @@ window.deleteCurrentCard = async function() {
       <p>Drag & drop files here or click Upload button</p>
     </div>
   `;
+};
+
+// Copy hash to clipboard
+window.copyHash = async function(hash) {
+  try {
+    await navigator.clipboard.writeText(hash);
+    showToast('✓ Hash copied to clipboard!', 'success');
+  } catch (error) {
+    console.error('[MCard] Copy error:', error);
+    // Fallback for older browsers
+    const textArea = document.createElement('textarea');
+    textArea.value = hash;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      showToast('✓ Hash copied to clipboard!', 'success');
+    } catch (err) {
+      showToast('Failed to copy hash', 'error');
+    }
+    document.body.removeChild(textArea);
+  }
 };
 
 // Download card
