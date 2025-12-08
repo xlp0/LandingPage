@@ -53,6 +53,9 @@ app.use((req, res, next) => {
 // Serve static files from the current directory
 app.use(express.static(__dirname));
 
+// Serve public folder for CSS, JS, and other assets
+app.use(express.static(path.join(__dirname, 'public')));
+
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server, path: '/ws/' });
 
