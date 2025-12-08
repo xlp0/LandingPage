@@ -2,6 +2,10 @@
 // Note: Full mcard-js has Node.js dependencies that don't work in browsers
 // We'll implement a lightweight version with just the features we need
 
+// Import Redux store and actions
+import store from '../../js/redux/store.js';
+import { renderContent, extractHandles } from '../../js/redux/slices/content-renderer-slice.js';
+
 // Import renderer registry
 import rendererRegistry from '../../js/renderers/RendererRegistry.js';
 import { CONTENT_TYPES } from '../../js/redux/slices/content-renderer-slice.js';
@@ -593,11 +597,33 @@ window.viewCard = async function(hash) {
     const viewerActions = document.getElementById('viewerActions');
     const viewerContent = document.getElementById('viewerContent');
     
-    // Detect content type for rendering
-    const renderType = detectRenderType(metadata.fileType, metadata.fileName);
-    console.log('[MCard] Rendering as:', renderType, 'for', metadata.fileName);
+    // Prepare content for Redux dispatch
+    let content = card.content;
+    const isTextBased = metadata.fileType.startsWith('text/') || 
+                        metadata.fileType.includes('markdown') ||
+                        metadata.fileType.includes('json') ||
+                        metadata.fileName.match(/\.(md|txt|js|py|java|cpp|c|css|html|xml|json|yml|yaml)$/i);
     
-    // Update title with content type badge
+    if (isTextBased) {
+      // Convert to text for text-based content
+      content = card.getContentAsText();
+    }
+    
+    // Dispatch Redux action to detect type and prepare rendering
+    console.log('[MCard] Dispatching renderContent to Redux...');
+    const result = await store.dispatch(renderContent({
+      hash: card.hash,
+      content: content,
+      mimeType: metadata.fileType,
+      fileName: metadata.fileName
+    }));
+    
+    // Get the detected type from Redux state
+    const state = store.getState();
+    const renderType = state.contentRenderer.currentType;
+    console.log('[MCard] Redux detected type:', renderType, 'for', metadata.fileName);
+    
+    // Update title with content type badge from Redux state
     const contentTypeBadge = getContentTypeBadge(renderType);
     viewerTitle.innerHTML = `
       <div style="display: flex; align-items: center; gap: 12px;">
@@ -607,16 +633,7 @@ window.viewCard = async function(hash) {
     `;
     viewerActions.style.display = 'flex';
     
-    // Prepare content for rendering
-    let content = card.content;
-    if (renderType === 'markdown' || renderType === 'text' || renderType === 'code') {
-      // Convert to text for text-based renderers
-      content = card.getContentAsText();
-    }
-    // For binary types (image, pdf), keep as Uint8Array
-    // Renderers will handle the conversion
-    
-    // Render content using appropriate renderer
+    // Render content using the type from Redux
     let renderedHTML = '';
     try {
       if (rendererRegistry.hasRenderer(renderType)) {
@@ -630,6 +647,15 @@ window.viewCard = async function(hash) {
           }
         });
         console.log('[MCard] Rendered HTML length:', renderedHTML.length);
+        
+        // Extract handles if markdown
+        if (renderType === 'markdown' && typeof content === 'string') {
+          await store.dispatch(extractHandles({
+            content: content,
+            hash: card.hash
+          }));
+          console.log('[MCard] Handles extracted and stored in Redux');
+        }
       } else {
         // Fallback to simple preview
         const preview = getContentPreview(card);
@@ -652,9 +678,13 @@ window.viewCard = async function(hash) {
       `;
     }
     
-    // Display rendered content - completely replace viewer content
+    // Display rendered content
     viewerContent.innerHTML = renderedHTML;
-    console.log('[MCard] Viewer content updated');
+    console.log('[MCard] Viewer content updated, Redux state:', {
+      currentType: state.contentRenderer.currentType,
+      currentHash: state.contentRenderer.currentHash,
+      hasHandles: Object.keys(state.contentRenderer.handles).length > 0
+    });
     
     // Initialize Lucide icons after DOM update
     if (window.lucide) {
