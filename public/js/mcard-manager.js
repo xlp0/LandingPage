@@ -758,7 +758,7 @@ function showToast(message, type = 'success') {
   }, 3000);
 }
 
-// Update stats
+// Update stats (disabled - no stats UI elements in current design)
 async function updateStats() {
   try {
     const count = await db.count();
@@ -767,9 +767,13 @@ async function updateStats() {
       return sum + meta.fileSize;
     }, 0);
     
-    document.getElementById('totalCards').textContent = count;
-    document.getElementById('totalSize').textContent = formatBytes(totalSize);
-    document.getElementById('dbStatus').textContent = 'Ready';
+    console.log('[MCard] Stats:', { count, totalSize: formatBytes(totalSize) });
+    
+    // Stats UI elements removed in redesign
+    // If you want to add stats back, add these elements to HTML:
+    // <span id="totalCards"></span>
+    // <span id="totalSize"></span>
+    // <span id="dbStatus"></span>
   } catch (error) {
     console.error('[MCard] Error updating stats:', error);
   }
