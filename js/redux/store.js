@@ -7,6 +7,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import clmReducer from './slices/clm-slice.js';
 import authReducer from './slices/auth-slice.js';
 import cubicModelsReducer from './slices/cubic-models-slice.js';
+import contentRendererReducer from './slices/content-renderer-slice.js';
 import clmMiddleware from './middleware/clm-middleware.js';
 
 // Create Redux store
@@ -18,6 +19,8 @@ const store = configureStore({
     auth: authReducer,
     // Cubic Models slice for CLM logic (三套東西: Context, Goal, Success)
     cubicModels: cubicModelsReducer,
+    // Content Renderer slice for MCard content rendering
+    contentRenderer: contentRendererReducer,
     // Future slices can be added here:
     // users: usersReducer,
     // ui: uiReducer,
