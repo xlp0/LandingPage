@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MCard File Manager</title>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     * {
       margin: 0;
@@ -605,7 +607,7 @@
   <div class="container">
     <div class="header">
       <h1>
-        <span>📦</span>
+        <i data-lucide="package" style="width: 32px; height: 32px;"></i>
         MCard File Manager
       </h1>
       <p>Content-addressable storage with cryptographic fingerprints</p>
@@ -617,11 +619,13 @@
         <div class="sidebar-header">
           <h3>File Types</h3>
           <div style="display: flex; gap: 8px; margin-top: 12px;">
-            <button class="btn" style="font-size: 12px; padding: 8px 16px;" onclick="document.getElementById('fileInput').click()">
-              📁 Upload
+            <button class="btn" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="document.getElementById('fileInput').click()">
+              <i data-lucide="upload" style="width: 16px; height: 16px;"></i>
+              Upload
             </button>
-            <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px;" onclick="createTextCard()">
-              📝 Text
+            <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="createTextCard()">
+              <i data-lucide="file-text" style="width: 16px; height: 16px;"></i>
+              Text
             </button>
           </div>
           <input type="file" id="fileInput" multiple style="display: none;">
@@ -635,11 +639,16 @@
       <div class="middle-column">
         <div class="column-header">
           <h3 id="columnTitle">All MCards</h3>
-          <input type="text" class="search-box" placeholder="🔍 Search..." id="searchBox" style="width: 100%; margin-top: 8px;">
+          <div style="position: relative; margin-top: 8px;">
+            <i data-lucide="search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #999;"></i>
+            <input type="text" class="search-box" placeholder="Search..." id="searchBox" style="width: 100%; padding-left: 40px;">
+          </div>
         </div>
         <div class="mcard-list" id="mcardList">
           <div class="empty-state">
-            <div class="empty-state-icon">📦</div>
+            <div class="empty-state-icon">
+              <i data-lucide="package" style="width: 64px; height: 64px; color: #ccc;"></i>
+            </div>
             <p>No MCards yet. Upload some files to get started!</p>
           </div>
         </div>
@@ -650,28 +659,32 @@
         <div class="viewer-header">
           <h3 id="viewerTitle">Select an MCard</h3>
           <div class="viewer-actions" id="viewerActions" style="display: none;">
-            <button class="btn" style="font-size: 12px; padding: 8px 16px;" onclick="downloadCurrentCard()">
-              💾 Download
+            <button class="btn" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="downloadCurrentCard()">
+              <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+              Download
             </button>
-            <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px;" onclick="deleteCurrentCard()">
-              🗑️ Delete
+            <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="deleteCurrentCard()">
+              <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+              Delete
             </button>
           </div>
         </div>
         <div class="viewer-content" id="viewerContent">
           <div class="upload-section" id="uploadSection">
-            <div class="upload-icon">📤</div>
+            <div class="upload-icon">
+              <i data-lucide="upload-cloud" style="width: 64px; height: 64px; color: #667eea;"></i>
+            </div>
             <h2>Upload Files</h2>
             <p>Drag & drop files here or click Upload button</p>
             <div style="margin-top: 20px;">
               <p style="font-size: 14px; color: #666; margin-bottom: 12px;"><strong>Supported Types:</strong></p>
               <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; text-align: left; max-width: 400px; margin: 0 auto;">
-                <div>📝 Text</div>
-                <div>🖼️ Images</div>
-                <div>🎥 Videos</div>
-                <div>🎵 Audio</div>
-                <div>📄 Documents</div>
-                <div>📦 Archives</div>
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="file-text" style="width: 16px; height: 16px;"></i> Text</div>
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="image" style="width: 16px; height: 16px;"></i> Images</div>
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="video" style="width: 16px; height: 16px;"></i> Videos</div>
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="music" style="width: 16px; height: 16px;"></i> Audio</div>
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="file" style="width: 16px; height: 16px;"></i> Documents</div>
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="archive" style="width: 16px; height: 16px;"></i> Archives</div>
               </div>
             </div>
           </div>
@@ -936,25 +949,30 @@
       const typeList = document.getElementById('typeList');
       
       const types = [
-        { id: 'all', name: 'All Files', icon: '📦', count: categories.all.length },
-        { id: 'text', name: 'Text', icon: '📝', count: categories.text.length },
-        { id: 'images', name: 'Images', icon: '🖼️', count: categories.images.length },
-        { id: 'videos', name: 'Videos', icon: '🎥', count: categories.videos.length },
-        { id: 'audio', name: 'Audio', icon: '🎵', count: categories.audio.length },
-        { id: 'documents', name: 'Documents', icon: '📄', count: categories.documents.length },
-        { id: 'archives', name: 'Archives', icon: '📦', count: categories.archives.length },
-        { id: 'other', name: 'Other', icon: '🔧', count: categories.other.length }
+        { id: 'all', name: 'All Files', icon: 'package', count: categories.all.length },
+        { id: 'text', name: 'Text', icon: 'file-text', count: categories.text.length },
+        { id: 'images', name: 'Images', icon: 'image', count: categories.images.length },
+        { id: 'videos', name: 'Videos', icon: 'video', count: categories.videos.length },
+        { id: 'audio', name: 'Audio', icon: 'music', count: categories.audio.length },
+        { id: 'documents', name: 'Documents', icon: 'file', count: categories.documents.length },
+        { id: 'archives', name: 'Archives', icon: 'archive', count: categories.archives.length },
+        { id: 'other', name: 'Other', icon: 'folder', count: categories.other.length }
       ];
 
       typeList.innerHTML = types.map(type => `
         <div class="type-item ${type.id === currentType ? 'active' : ''}" onclick="selectType('${type.id}')">
           <div class="type-item-content">
-            <span class="type-icon">${type.icon}</span>
+            <span class="type-icon"><i data-lucide="${type.icon}" style="width: 20px; height: 20px;"></i></span>
             <span class="type-name">${type.name}</span>
           </div>
           <span class="type-count">${type.count}</span>
         </div>
       `).join('');
+      
+      // Initialize Lucide icons after DOM update
+      if (window.lucide) {
+        lucide.createIcons();
+      }
     }
 
     // Select a file type
@@ -1011,12 +1029,17 @@
               </div>
             </div>
             <div class="mcard-item-meta">
-              <span>🕒 ${time}</span>
+              <span style="display: flex; align-items: center; gap: 4px;"><i data-lucide="clock" style="width: 14px; height: 14px;"></i> ${time}</span>
               <span>${size}</span>
             </div>
           </div>
         `;
       }).join('');
+      
+      // Initialize Lucide icons after DOM update
+      if (window.lucide) {
+        lucide.createIcons();
+      }
     }
 
     // Upload file and create MCard
@@ -1151,13 +1174,13 @@
 
     // Get file icon based on type
     function getFileIcon(type) {
-      if (type.startsWith('image/')) return '🖼️';
-      if (type.startsWith('video/')) return '🎥';
-      if (type.startsWith('audio/')) return '🎵';
-      if (type.startsWith('text/')) return '📝';
-      if (type.includes('pdf')) return '📄';
-      if (type.includes('zip') || type.includes('archive')) return '📦';
-      return '📄';
+      if (type.startsWith('image/')) return '<i data-lucide="image" style="width: 24px; height: 24px;"></i>';
+      if (type.startsWith('video/')) return '<i data-lucide="video" style="width: 24px; height: 24px;"></i>';
+      if (type.startsWith('audio/')) return '<i data-lucide="music" style="width: 24px; height: 24px;"></i>';
+      if (type.startsWith('text/')) return '<i data-lucide="file-text" style="width: 24px; height: 24px;"></i>';
+      if (type.includes('pdf')) return '<i data-lucide="file" style="width: 24px; height: 24px;"></i>';
+      if (type.includes('zip') || type.includes('archive')) return '<i data-lucide="archive" style="width: 24px; height: 24px;"></i>';
+      return '<i data-lucide="file" style="width: 24px; height: 24px;"></i>';
     }
 
     // Format bytes to human readable
@@ -1242,6 +1265,11 @@
             `}
           </div>
         `;
+        
+        // Initialize Lucide icons after DOM update
+        if (window.lucide) {
+          lucide.createIcons();
+        }
       } catch (error) {
         console.error('[MCard] Error viewing card:', error);
         showToast('Failed to load card details', 'error');
@@ -1422,16 +1450,26 @@
               </div>
             </div>
             <div class="mcard-item-meta">
-              <span>🕒 ${time}</span>
+              <span style="display: flex; align-items: center; gap: 4px;"><i data-lucide="clock" style="width: 14px; height: 14px;"></i> ${time}</span>
               <span>${size}</span>
             </div>
           </div>
         `;
       }).join('');
+      
+      // Initialize Lucide icons after DOM update
+      if (window.lucide) {
+        lucide.createIcons();
+      }
     });
 
     // Initialize on page load
     initMCard();
+    
+    // Initialize Lucide icons on initial load
+    if (window.lucide) {
+      lucide.createIcons();
+    }
   </script>
 </body>
 </html>
