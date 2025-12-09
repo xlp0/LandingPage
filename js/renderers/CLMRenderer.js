@@ -225,6 +225,48 @@ export class CLMRenderer {
   }
 
   /**
+   * Strip TypeScript type annotations for browser execution
+   */
+  stripTypeScript(code) {
+    return code
+      // Remove type annotations from variable declarations
+      .replace(/:\s*Map<[^>]+>/g, '')
+      .replace(/:\s*number\b/g, '')
+      .replace(/:\s*string\b/g, '')
+      .replace(/:\s*boolean\b/g, '')
+      .replace(/:\s*any\b/g, '')
+      .replace(/:\s*void\b/g, '')
+      .replace(/:\s*Array<[^>]+>/g, '')
+      .replace(/:\s*\w+\[\]/g, '')
+      // Remove type assertions
+      .replace(/\s+as\s+\w+/g, '')
+      // Remove non-null assertions
+      .replace(/!/g, '')
+      // Remove generic type parameters
+      .replace(/<[^>]+>/g, '');
+  }
+
+  /**
+   * Extract tests from YAML content
+   */
+  extractTests(rawContent) {
+    const tests = [];
+    const testRegex = /- name:\s*"([^"]+)"\s+type:\s*"([^"]+)"\s+input:\s*(\d+)\s+expected:\s*(\d+)/g;
+    let match;
+    
+    while ((match = testRegex.exec(rawContent)) !== null) {
+      tests.push({
+        name: match[1],
+        type: match[2],
+        input: parseInt(match[3]),
+        expected: parseInt(match[4])
+      });
+    }
+    
+    return tests;
+  }
+
+  /**
    * Execute CLM implementation code
    */
   executeCLM(button) {
@@ -239,15 +281,34 @@ export class CLMRenderer {
       // Extract implementation code from raw YAML content
       let code = '';
       
-      // Extract multi-line string after "code: |"
-      const match = rawContent.match(/code:\s*\|([^\n]*\n(?:\s{6,}.*\n?)*)/);
-      if (match) {
-        // Extract lines and remove common indentation
-        code = match[1]
-          .split('\n')
-          .map(line => line.replace(/^\s{6}/, '')) // Remove 6-space indent
-          .join('\n')
-          .trim();
+      // Find the start of code block
+      const codeStart = rawContent.indexOf('code: |');
+      if (codeStart !== -1) {
+        // Get everything after "code: |"
+        const afterCode = rawContent.substring(codeStart + 7); // 7 = length of "code: |"
+        
+        // Find the next top-level key (dependencies, metadata, etc.)
+        // Top-level keys have 4 spaces or less indentation
+        const lines = afterCode.split('\n');
+        const codeLines = [];
+        
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          
+          // Stop if we hit a line with 4 or fewer leading spaces (next YAML key)
+          if (line.length > 0 && !line.startsWith('      ') && line.trim() !== '') {
+            break;
+          }
+          
+          // Add line, removing 6-space indentation
+          if (line.startsWith('      ')) {
+            codeLines.push(line.substring(6));
+          } else if (line.trim() === '') {
+            codeLines.push(''); // Preserve empty lines
+          }
+        }
+        
+        code = codeLines.join('\n').trim();
       }
       
       if (!code) {
@@ -255,6 +316,9 @@ export class CLMRenderer {
         resultsDiv.style.display = 'block';
         return;
       }
+      
+      // Strip TypeScript type annotations for browser execution
+      code = this.stripTypeScript(code);
       
       // Create execution sandbox
       const logs = [];
@@ -264,18 +328,22 @@ export class CLMRenderer {
         warn: (...args) => logs.push({ type: 'warn', message: args.join(' ') })
       };
       
+      // Create context object with default input
+      const context = {
+        input: 5 // Default input value
+      };
+      
       // Execute code in sandbox
       const startTime = performance.now();
       let result;
       let error = null;
       
       try {
-        // Create function from code
-        // Wrap code in function and execute it
-        const fn = new Function('console', `
+        // Create function from code with context
+        const fn = new Function('console', 'context', `
           ${code}
         `);
-        result = fn(customConsole);
+        result = fn(customConsole, context);
       } catch (e) {
         error = e;
       }
@@ -335,17 +403,32 @@ export class CLMRenderer {
       
       // Extract implementation code from raw YAML
       let implCode = '';
-      const codeMatch = rawContent.match(/code:\s*\|([^\n]*\n(?:\s{6,}.*\n?)*)/);
-      if (codeMatch) {
-        implCode = codeMatch[1]
-          .split('\n')
-          .map(line => line.replace(/^\s{6}/, ''))
-          .join('\n')
-          .trim();
+      const codeStart = rawContent.indexOf('code: |');
+      if (codeStart !== -1) {
+        const afterCode = rawContent.substring(codeStart + 7);
+        const lines = afterCode.split('\n');
+        const codeLines = [];
+        
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          if (line.length > 0 && !line.startsWith('      ') && line.trim() !== '') {
+            break;
+          }
+          if (line.startsWith('      ')) {
+            codeLines.push(line.substring(6));
+          } else if (line.trim() === '') {
+            codeLines.push('');
+          }
+        }
+        
+        implCode = codeLines.join('\n').trim();
       }
       
-      // Extract tests - for now, use empty array (we'll implement test parsing later)
-      const tests = [];
+      // Strip TypeScript
+      implCode = this.stripTypeScript(implCode);
+      
+      // Extract tests from YAML
+      const tests = this.extractTests(rawContent);
       
       if (!implCode) {
         resultsContent.innerHTML = '<div class="clm-error">No implementation code found</div>';
@@ -366,22 +449,16 @@ export class CLMRenderer {
       
       tests.forEach((test, index) => {
         try {
-          // Create test function
-          const fn = new Function('console', implCode + '\n; return typeof main === "function" ? main : undefined;');
-          const mainFn = fn(console);
+          // Create context with test input
+          const context = {
+            input: test.input
+          };
           
-          if (typeof mainFn !== 'function') {
-            testResults.push({
-              index: index + 1,
-              passed: false,
-              error: 'No main function found'
-            });
-            failed++;
-            return;
-          }
+          // Execute code with context
+          const fn = new Function('console', 'context', implCode);
+          const result = fn(console, context);
           
-          // Run test
-          const result = mainFn();
+          // Check result
           const expected = test.expected || test.output;
           const testPassed = JSON.stringify(result) === JSON.stringify(expected);
           
