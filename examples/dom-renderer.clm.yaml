@@ -1,0 +1,166 @@
+# DOM Renderer CLM
+# Demonstrates HTML generation and DOM manipulation
+
+specification:
+  name: "DOM Card Renderer"
+  version: "1.0.0"
+  description: "Render MCard information as HTML elements"
+  author: "MCard Team"
+  
+  abstract:
+    input:
+      type: "object"
+      description: "MCard data to render"
+      schema:
+        hash: "string (SHA-256)"
+        content: "string"
+        type: "string"
+        size: "number (bytes)"
+    
+    output:
+      type: "HTMLElement"
+      description: "Rendered DOM element"
+      constraints:
+        - "Must be a valid HTML element"
+        - "Must display hash, type, and size"
+        - "Must be styled with CSS classes"
+    
+    behavior:
+      - "Accept MCard data object"
+      - "Generate HTML structure"
+      - "Apply styling classes"
+      - "Return DOM element"
+
+implementation:
+  runtime: "javascript"
+  
+  concrete:
+    code: |
+      function renderMCard(data) {
+        // Create container
+        const card = document.createElement('div');
+        card.className = 'mcard-item';
+        card.dataset.hash = data.hash;
+        
+        // Create header
+        const header = document.createElement('div');
+        header.className = 'mcard-header';
+        
+        // Type badge
+        const typeBadge = document.createElement('span');
+        typeBadge.className = `type-badge type-${data.type}`;
+        typeBadge.textContent = data.type.toUpperCase();
+        header.appendChild(typeBadge);
+        
+        // Hash display
+        const hashDisplay = document.createElement('code');
+        hashDisplay.className = 'mcard-hash';
+        hashDisplay.textContent = data.hash.substring(0, 12) + '...';
+        hashDisplay.title = data.hash; // Full hash on hover
+        header.appendChild(hashDisplay);
+        
+        card.appendChild(header);
+        
+        // Create content preview
+        const preview = document.createElement('div');
+        preview.className = 'mcard-preview';
+        preview.textContent = data.content.substring(0, 100);
+        if (data.content.length > 100) {
+          preview.textContent += '...';
+        }
+        card.appendChild(preview);
+        
+        // Create footer with metadata
+        const footer = document.createElement('div');
+        footer.className = 'mcard-footer';
+        
+        const sizeDisplay = document.createElement('span');
+        sizeDisplay.className = 'mcard-size';
+        sizeDisplay.textContent = formatBytes(data.size);
+        footer.appendChild(sizeDisplay);
+        
+        card.appendChild(footer);
+        
+        return card;
+      }
+      
+      function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+      }
+      
+      // Execute with input data
+      const input = context.input;
+      return renderMCard(input);
+    
+    dependencies: []
+    
+    metadata:
+      complexity: "O(1)"
+      memory: "O(n) where n is content length"
+      dom_operations: 7
+
+verification:
+  balanced:
+    tests:
+      - name: "Creates div element"
+        type: "assertion"
+        check: "result.tagName === 'DIV'"
+        
+      - name: "Has mcard-item class"
+        type: "assertion"
+        check: "result.classList.contains('mcard-item')"
+        
+      - name: "Contains hash in dataset"
+        type: "assertion"
+        check: "result.dataset.hash === input.hash"
+        
+      - name: "Displays truncated hash"
+        type: "assertion"
+        check: "result.querySelector('.mcard-hash').textContent.includes('...')"
+        
+      - name: "Shows type badge"
+        type: "assertion"
+        check: "result.querySelector('.type-badge') !== null"
+        
+      - name: "Formats file size"
+        type: "assertion"
+        check: "result.querySelector('.mcard-size').textContent.match(/\\d+(\\.\\d+)? (Bytes|KB|MB|GB)/)"
+    
+    properties:
+      - name: "Pure DOM generation"
+        description: "No side effects, only creates elements"
+        proof: "Function only calls document.createElement and element methods"
+        
+      - name: "Idempotent"
+        description: "Same input always produces equivalent output"
+        proof: "Deterministic element creation"
+        
+      - name: "Safe"
+        description: "No XSS vulnerabilities"
+        proof: "Uses textContent instead of innerHTML"
+    
+    formal_proof:
+      method: "construction"
+      steps:
+        - "Input is validated object with required fields"
+        - "Only safe DOM methods are used (createElement, textContent)"
+        - "No innerHTML or eval() calls"
+        - "Output is valid HTMLElement"
+        - "Therefore, rendering is safe and correct"
+
+metadata:
+  hash: "auto-generated"
+  created: "2025-12-09"
+  tags: ["example", "dom", "html", "rendering", "ui"]
+  license: "MIT"
+  css_required:
+    - ".mcard-item { border: 1px solid #ddd; border-radius: 8px; padding: 16px; }"
+    - ".mcard-header { display: flex; justify-content: space-between; margin-bottom: 12px; }"
+    - ".type-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }"
+    - ".mcard-hash { font-family: monospace; font-size: 12px; color: #666; }"
+    - ".mcard-preview { color: #333; line-height: 1.5; margin-bottom: 12px; }"
+    - ".mcard-footer { font-size: 12px; color: #999; }"

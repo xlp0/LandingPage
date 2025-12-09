@@ -202,6 +202,8 @@ async function loadCards() {
 function categorizeCards() {
   const categories = {
     all: [],
+    clm: [],
+    markdown: [],
     text: [],
     images: [],
     videos: [],
@@ -218,7 +220,11 @@ function categorizeCards() {
     categories.all.push(card);
     
     // Categorize by detected type
-    if (type === 'text' || type === 'markdown' || type === 'json') {
+    if (type === 'clm') {
+      categories.clm.push(card);
+    } else if (type === 'markdown') {
+      categories.markdown.push(card);
+    } else if (type === 'text' || type === 'json') {
       categories.text.push(card);
     } else if (type === 'image') {
       categories.images.push(card);
@@ -239,6 +245,8 @@ function populateFileTypes() {
   
   const types = [
     { id: 'all', name: 'All Files', icon: 'package', count: categories.all.length },
+    { id: 'clm', name: 'CLM', icon: 'box', count: categories.clm.length },
+    { id: 'markdown', name: 'Markdown', icon: 'file-text', count: categories.markdown.length },
     { id: 'text', name: 'Text', icon: 'file-text', count: categories.text.length },
     { id: 'images', name: 'Images', icon: 'image', count: categories.images.length },
     { id: 'videos', name: 'Videos', icon: 'video', count: categories.videos.length },
@@ -390,6 +398,12 @@ function detectContentType(card) {
     // Try to decode as text
     try {
       const text = card.getContentAsText();
+      
+      // Check for CLM (YAML-based with specific structure)
+      if (text.includes('specification:') && text.includes('implementation:') && 
+          (text.includes('verification:') || text.includes('balanced:'))) {
+        return { type: 'clm', displayName: 'CLM' };
+      }
       
       // Check for markdown patterns
       if (text.match(/^#+ |\*\*|\[.*\]\(.*\)/m)) {

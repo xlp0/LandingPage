@@ -1,0 +1,83 @@
+# Hello World CLM Example
+# A simple Cubical Logic Model demonstrating the three-dimensional structure
+
+specification:
+  name: "Hello World"
+  version: "1.0.0"
+  description: "A simple CLM that outputs 'Hello, World!'"
+  author: "MCard Team"
+  
+  # Abstract specification - What should happen
+  abstract:
+    input:
+      type: "none"
+      description: "No input required"
+    
+    output:
+      type: "string"
+      description: "A greeting message"
+      constraints:
+        - "Must contain 'Hello'"
+        - "Must contain 'World'"
+    
+    behavior:
+      - "Generate a greeting message"
+      - "Return the message to caller"
+
+implementation:
+  # Concrete implementation - How it happens
+  runtime: "javascript"
+  
+  concrete:
+    code: |
+      function helloWorld() {
+        return "Hello, World!";
+      }
+      
+      // Execute and return result
+      return helloWorld();
+    
+    dependencies: []
+    
+    metadata:
+      complexity: "O(1)"
+      memory: "constant"
+
+verification:
+  # Balanced verification - Proof that it works
+  balanced:
+    tests:
+      - name: "Output contains Hello"
+        type: "assertion"
+        check: "result.includes('Hello')"
+        
+      - name: "Output contains World"
+        type: "assertion"
+        check: "result.includes('World')"
+        
+      - name: "Output is string"
+        type: "type-check"
+        check: "typeof result === 'string'"
+    
+    properties:
+      - name: "Deterministic"
+        description: "Always returns the same output"
+        proof: "Pure function with no side effects"
+        
+      - name: "Total"
+        description: "Always terminates"
+        proof: "No loops or recursion"
+    
+    formal_proof:
+      method: "direct"
+      steps:
+        - "Function is pure (no side effects)"
+        - "Function has no input dependencies"
+        - "Function returns constant string"
+        - "Therefore, output is deterministic and total"
+
+metadata:
+  hash: "auto-generated"
+  created: "2025-12-09"
+  tags: ["example", "hello-world", "tutorial"]
+  license: "MIT"
