@@ -66,19 +66,22 @@ export class UIComponents {
     
     mcardList.innerHTML = cards.map(card => {
       const typeInfo = ContentTypeDetector.detect(card);
-      const preview = UIComponents.generatePreview(card, typeInfo.type);
-      const size = card.getContent().length;
+      const icon = UIComponents.getFileIcon(typeInfo.type);
+      const time = UIComponents.formatTime(card.g_time);
+      const size = UIComponents.formatBytes(card.getContent().length);
       
       return `
         <div class="mcard-item" onclick="window.mcardManager.viewCard('${card.hash}')">
           <div class="mcard-item-header">
-            <span class="mcard-type-badge">${typeInfo.displayName}</span>
-            <span class="mcard-hash-short">${card.hash.substring(0, 12)}...</span>
+            <div class="mcard-item-icon">${icon}</div>
+            <div class="mcard-item-info">
+              <div class="mcard-item-name">${typeInfo.displayName}</div>
+              <div class="mcard-item-hash">${card.hash.substring(0, 16)}...</div>
+            </div>
           </div>
-          <div class="mcard-item-preview">${UIComponents.escapeHtml(preview)}</div>
-          <div class="mcard-item-footer">
-            <span class="mcard-size">${UIComponents.formatBytes(size)}</span>
-            <span class="mcard-time">${new Date(card.g_time).toLocaleDateString()}</span>
+          <div class="mcard-item-meta">
+            <span style="display: flex; align-items: center; gap: 4px;"><i data-lucide="clock" style="width: 14px; height: 14px;"></i> ${time}</span>
+            <span>${size}</span>
           </div>
         </div>
       `;
@@ -127,68 +130,33 @@ export class UIComponents {
   }
   
   /**
-   * Generate preview text for a card
-   * @param {MCard} card
+   * Get file icon based on detected type
    * @param {string} type
    * @returns {string}
    */
-  static generatePreview(card, type) {
-    const text = card.getContentAsText();
-    
-    if (type === 'clm') {
-      // Extract name from CLM YAML
-      const nameMatch = text.match(/name:\s*["']?([^"'\n]+)["']?/);
-      const descMatch = text.match(/description:\s*["']?([^"'\n]+)["']?/);
-      
-      if (nameMatch && descMatch) {
-        return `${nameMatch[1]} - ${descMatch[1]}`;
-      } else if (nameMatch) {
-        return nameMatch[1];
-      }
-      // Fallback: remove comments and get first meaningful line
-      const lines = text.split('\n')
-        .filter(line => !line.trim().startsWith('#') && line.trim())
-        .slice(0, 2);
-      return lines.join(' ').substring(0, 100) + '...';
-    }
-    
-    if (type === 'markdown') {
-      // Remove markdown syntax for preview
-      let preview = text
-        .replace(/^#+\s+/gm, '') // Remove headers
-        .replace(/\*\*(.+?)\*\*/g, '$1') // Remove bold
-        .replace(/\*(.+?)\*/g, '$1') // Remove italic
-        .replace(/\[(.+?)\]\(.+?\)/g, '$1') // Remove links
-        .replace(/```[\s\S]*?```/g, '') // Remove code blocks
-        .replace(/`(.+?)`/g, '$1') // Remove inline code
-        .trim();
-      
-      return preview.substring(0, 100) + (preview.length > 100 ? '...' : '');
-    }
-    
-    if (type === 'json') {
-      try {
-        const obj = JSON.parse(text);
-        const keys = Object.keys(obj);
-        return `JSON object with ${keys.length} key${keys.length !== 1 ? 's' : ''}: ${keys.slice(0, 3).join(', ')}${keys.length > 3 ? '...' : ''}`;
-      } catch {
-        return text.substring(0, 100) + '...';
-      }
-    }
-    
-    // Default: clean text preview
-    return text.substring(0, 100) + (text.length > 100 ? '...' : '');
+  static getFileIcon(type) {
+    if (type === 'clm') return '<i data-lucide="box" style="width: 24px; height: 24px;"></i>';
+    if (type === 'image') return '<i data-lucide="image" style="width: 24px; height: 24px;"></i>';
+    if (type === 'pdf') return '<i data-lucide="file-text" style="width: 24px; height: 24px;"></i>';
+    if (type === 'text' || type === 'markdown' || type === 'json') return '<i data-lucide="file-text" style="width: 24px; height: 24px;"></i>';
+    if (type === 'binary') return '<i data-lucide="file" style="width: 24px; height: 24px;"></i>';
+    return '<i data-lucide="file" style="width: 24px; height: 24px;"></i>';
   }
   
   /**
-   * Escape HTML special characters
-   * @param {string} text
+   * Format timestamp to relative time
+   * @param {string} timestamp
    * @returns {string}
    */
-  static escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+  static formatTime(timestamp) {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diff = now - date;
+    
+    if (diff < 60000) return 'Just now';
+    if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+    if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+    return date.toLocaleDateString();
   }
   
   /**
