@@ -28,6 +28,9 @@ export class CardViewer {
     const typeInfo = ContentTypeDetector.detect(card);
     const content = card.getContentAsText();
     
+    // Use our detected type directly (don't let Redux override it)
+    const renderType = typeInfo.type;
+    
     // Determine MIME type
     const mimeType = this.getMimeType(typeInfo.type);
     
@@ -42,17 +45,17 @@ export class CardViewer {
     };
     const extension = extensionMap[typeInfo.type] || '';
     
-    // Dispatch Redux action to detect content type
-    const result = await store.dispatch(renderContent({
-      hash: card.hash,
-      content: content,
-      mimeType: mimeType,
-      fileName: `${typeInfo.displayName}-${card.hash.substring(0, 8)}${extension}`
-    }));
-    
-    // Get detected type from Redux
-    const state = store.getState();
-    const renderType = state.contentRenderer.currentType;
+    // Dispatch Redux action for tracking (optional)
+    try {
+      await store.dispatch(renderContent({
+        hash: card.hash,
+        content: content,
+        mimeType: mimeType,
+        fileName: `${typeInfo.displayName}-${card.hash.substring(0, 8)}${extension}`
+      }));
+    } catch (error) {
+      console.warn('[CardViewer] Redux dispatch failed:', error);
+    }
     
     // Update title with full hash and copy button
     const contentTypeBadge = this.getContentTypeBadge(renderType);

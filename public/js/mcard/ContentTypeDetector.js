@@ -17,9 +17,12 @@ export class ContentTypeDetector {
       try {
         const text = card.getContentAsText();
         
-        // Check for CLM (YAML-based with specific structure)
-        if (text.includes('specification:') && text.includes('implementation:') && 
-            (text.includes('verification:') || text.includes('balanced:'))) {
+        // Check for CLM FIRST (YAML-based with specific structure)
+        // CLM files may have markdown-like comments, so check this before markdown
+        if ((text.includes('specification:') || text.includes('Specification:')) && 
+            (text.includes('implementation:') || text.includes('Implementation:')) && 
+            (text.includes('verification:') || text.includes('Verification:') || 
+             text.includes('balanced:') || text.includes('Balanced:'))) {
           return { type: 'clm', displayName: 'CLM' };
         }
         
