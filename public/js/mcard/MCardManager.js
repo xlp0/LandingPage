@@ -1,0 +1,302 @@
+/**
+ * MCard Manager
+ * Main controller for MCard file management system
+ */
+
+import { MCard } from './MCard.js';
+import { SimpleDB } from './SimpleDB.js';
+import { ContentTypeDetector } from './ContentTypeDetector.js';
+import { UIComponents } from './UIComponents.js';
+import { CardViewer } from './CardViewer.js';
+
+export class MCardManager {
+  constructor() {
+    this.db = null;
+    this.allCards = [];
+    this.currentType = 'all';
+    this.viewer = new CardViewer();
+  }
+  
+  /**
+   * Initialize the manager
+   */
+  async init() {
+    try {
+      console.log('[MCardManager] Initializing...');
+      
+      // Initialize database
+      this.db = new SimpleDB();
+      await this.db.init();
+      console.log('[MCardManager] Database initialized');
+      
+      // Load cards
+      await this.loadCards();
+      
+      // Setup UI
+      this.setupEventListeners();
+      UIComponents.showToast('MCard Manager ready', 'success');
+      
+    } catch (error) {
+      console.error('[MCardManager] Initialization error:', error);
+      UIComponents.showToast('Failed to initialize: ' + error.message, 'error');
+    }
+  }
+  
+  /**
+   * Load all cards from storage
+   */
+  async loadCards() {
+    try {
+      const count = await this.db.count();
+      console.log(`[MCardManager] Loading ${count} cards...`);
+      
+      this.allCards = await this.db.getAll();
+      
+      UIComponents.renderFileTypes(this.allCards, this.currentType);
+      this.showCardsForType(this.currentType);
+      UIComponents.updateStats(count);
+      
+    } catch (error) {
+      console.error('[MCardManager] Error loading cards:', error);
+      UIComponents.showToast('Failed to load cards', 'error');
+    }
+  }
+  
+  /**
+   * Setup event listeners
+   */
+  setupEventListeners() {
+    // File input
+    const fileInput = document.getElementById('fileInput');
+    if (fileInput) {
+      fileInput.addEventListener('change', (e) => this.handleFileUpload(e));
+    }
+    
+    // Search box
+    const searchBox = document.getElementById('searchBox');
+    if (searchBox) {
+      searchBox.addEventListener('input', (e) => this.handleSearch(e.target.value));
+    }
+    
+    // Drag and drop
+    const uploadSection = document.getElementById('uploadSection');
+    if (uploadSection) {
+      uploadSection.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadSection.style.borderColor = '#667eea';
+      });
+      
+      uploadSection.addEventListener('dragleave', () => {
+        uploadSection.style.borderColor = '#3e3e42';
+      });
+      
+      uploadSection.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        uploadSection.style.borderColor = '#3e3e42';
+        await this.handleFileDrop(e.dataTransfer.files);
+      });
+    }
+  }
+  
+  /**
+   * Handle file upload
+   * @param {Event} event
+   */
+  async handleFileUpload(event) {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+    
+    for (const file of files) {
+      try {
+        const bytes = new Uint8Array(await file.arrayBuffer());
+        const card = await MCard.create(bytes);
+        await this.db.add(card);
+        console.log(`[MCardManager] Added card: ${card.hash}`);
+      } catch (error) {
+        console.error(`[MCardManager] Error uploading ${file.name}:`, error);
+        UIComponents.showToast(`Failed to upload ${file.name}`, 'error');
+      }
+    }
+    
+    await this.loadCards();
+    UIComponents.showToast(`Uploaded ${files.length} file(s)`, 'success');
+    event.target.value = '';
+  }
+  
+  /**
+   * Handle file drop
+   * @param {FileList} files
+   */
+  async handleFileDrop(files) {
+    if (!files || files.length === 0) return;
+    
+    for (const file of files) {
+      try {
+        const bytes = new Uint8Array(await file.arrayBuffer());
+        const card = await MCard.create(bytes);
+        await this.db.add(card);
+      } catch (error) {
+        console.error(`[MCardManager] Error dropping ${file.name}:`, error);
+      }
+    }
+    
+    await this.loadCards();
+    UIComponents.showToast(`Added ${files.length} file(s)`, 'success');
+  }
+  
+  /**
+   * Select a file type filter
+   * @param {string} typeId
+   */
+  selectType(typeId) {
+    this.currentType = typeId;
+    UIComponents.renderFileTypes(this.allCards, this.currentType);
+    this.showCardsForType(typeId);
+  }
+  
+  /**
+   * Show cards for selected type
+   * @param {string} typeId
+   */
+  showCardsForType(typeId) {
+    const categories = ContentTypeDetector.categorize(this.allCards);
+    const cards = categories[typeId] || [];
+    
+    const columnTitle = document.getElementById('columnTitle');
+    if (columnTitle) {
+      const typeNames = {
+        'all': 'All MCards',
+        'clm': 'CLM Files',
+        'markdown': 'Markdown Files',
+        'text': 'Text Files',
+        'images': 'Images',
+        'videos': 'Videos',
+        'audio': 'Audio Files',
+        'documents': 'Documents',
+        'archives': 'Archives',
+        'other': 'Other Files'
+      };
+      columnTitle.textContent = typeNames[typeId] || 'MCards';
+    }
+    
+    UIComponents.renderCardList(cards);
+  }
+  
+  /**
+   * View a card
+   * @param {string} hash
+   */
+  async viewCard(hash) {
+    try {
+      const card = await this.db.get(hash);
+      if (!card) {
+        UIComponents.showToast('Card not found', 'error');
+        return;
+      }
+      
+      await this.viewer.view(card);
+      
+    } catch (error) {
+      console.error('[MCardManager] Error viewing card:', error);
+      UIComponents.showToast('Failed to view card', 'error');
+    }
+  }
+  
+  /**
+   * Download current card
+   */
+  downloadCurrentCard() {
+    const card = this.viewer.getCurrentCard();
+    if (!card) return;
+    
+    const typeInfo = ContentTypeDetector.detect(card);
+    const blob = new Blob([card.getContent()], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${typeInfo.displayName}-${card.hash.substring(0, 8)}`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    UIComponents.showToast('Download started', 'success');
+  }
+  
+  /**
+   * Delete current card
+   */
+  async deleteCurrentCard() {
+    const card = this.viewer.getCurrentCard();
+    if (!card) return;
+    
+    if (!confirm('Are you sure you want to delete this MCard?')) return;
+    
+    try {
+      await this.db.delete(card.hash);
+      await this.loadCards();
+      UIComponents.showEmptyViewer();
+      UIComponents.showToast('MCard deleted', 'success');
+    } catch (error) {
+      console.error('[MCardManager] Error deleting card:', error);
+      UIComponents.showToast('Failed to delete card', 'error');
+    }
+  }
+  
+  /**
+   * Copy hash to clipboard
+   * @param {string} hash
+   */
+  async copyHash(hash) {
+    try {
+      await navigator.clipboard.writeText(hash);
+      UIComponents.showToast('Hash copied to clipboard', 'success');
+    } catch (error) {
+      // Fallback
+      const textarea = document.createElement('textarea');
+      textarea.value = hash;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      UIComponents.showToast('Hash copied', 'success');
+    }
+  }
+  
+  /**
+   * Handle search
+   * @param {string} query
+   */
+  handleSearch(query) {
+    if (!query.trim()) {
+      this.showCardsForType(this.currentType);
+      return;
+    }
+    
+    const filtered = this.allCards.filter(card => {
+      const content = card.getContentAsText().toLowerCase();
+      const hash = card.hash.toLowerCase();
+      const q = query.toLowerCase();
+      return content.includes(q) || hash.includes(q);
+    });
+    
+    UIComponents.renderCardList(filtered);
+  }
+  
+  /**
+   * Create a new text card
+   */
+  async createTextCard() {
+    const content = prompt('Enter text content:');
+    if (!content) return;
+    
+    try {
+      const card = await MCard.create(content);
+      await this.db.add(card);
+      await this.loadCards();
+      await this.viewCard(card.hash);
+      UIComponents.showToast('Text card created', 'success');
+    } catch (error) {
+      console.error('[MCardManager] Error creating text card:', error);
+      UIComponents.showToast('Failed to create card', 'error');
+    }
+  }
+}
