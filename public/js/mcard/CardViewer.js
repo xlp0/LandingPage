@@ -101,6 +101,13 @@ export class CardViewer {
     
     // Render content
     try {
+      // Initialize renderer registry if not already done
+      if (!rendererRegistry.initialized) {
+        console.log('[CardViewer] Initializing renderer registry...');
+        await rendererRegistry.initialize();
+        console.log('[CardViewer] Renderer registry initialized');
+      }
+      
       console.log('[CardViewer] Detected type:', renderType);
       console.log('[CardViewer] Has renderer:', rendererRegistry.hasRenderer(renderType));
       
