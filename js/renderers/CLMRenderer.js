@@ -328,9 +328,20 @@ export class CLMRenderer {
         warn: (...args) => logs.push({ type: 'warn', message: args.join(' ') })
       };
       
-      // Create context object with default input
+      // Detect if code expects numeric input or object data
+      const expectsObject = code.includes('context.input') && 
+                           (code.includes('.hash') || code.includes('.type') || code.includes('.content'));
+      
+      // Create context object with appropriate input
       const context = {
-        input: 5 // Default input value
+        input: expectsObject ? {
+          // Sample MCard data for DOM renderers
+          hash: 'abc123def456789abcdef',
+          type: 'clm',
+          content: 'Sample CLM content for testing the DOM renderer',
+          size: 1024,
+          timestamp: Date.now()
+        } : 5 // Default numeric input for calculators
       };
       
       // Execute code in sandbox
@@ -371,7 +382,23 @@ export class CLMRenderer {
       
       // Show return value
       if (result !== undefined) {
-        html += `<div class="clm-return-value"><h5>Return Value:</h5><pre>${this.escapeHtml(JSON.stringify(result, null, 2))}</pre></div>`;
+        html += `<div class="clm-return-value"><h5>Return Value:</h5>`;
+        
+        // Check if result is a DOM element
+        if (result instanceof Element) {
+          html += `<div class="clm-dom-result">`;
+          html += `<div style="margin-bottom: 8px; color: #888; font-size: 13px;">DOM Element Preview:</div>`;
+          html += `<div style="border: 1px solid #3e3e42; border-radius: 4px; padding: 12px; background: #2a2d2e;">`;
+          html += result.outerHTML;
+          html += `</div>`;
+          html += `<div style="margin-top: 8px; color: #888; font-size: 13px;">HTML Source:</div>`;
+          html += `<pre style="background: #2a2d2e; padding: 12px; border-radius: 4px; overflow-x: auto;">${this.escapeHtml(result.outerHTML)}</pre>`;
+          html += `</div>`;
+        } else {
+          html += `<pre>${this.escapeHtml(JSON.stringify(result, null, 2))}</pre>`;
+        }
+        
+        html += `</div>`;
       }
       
       // Show error if any
