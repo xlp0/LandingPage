@@ -101,7 +101,11 @@ export class CardViewer {
     
     // Render content
     try {
+      console.log('[CardViewer] Detected type:', renderType);
+      console.log('[CardViewer] Has renderer:', rendererRegistry.hasRenderer(renderType));
+      
       if (rendererRegistry.hasRenderer(renderType)) {
+        console.log('[CardViewer] Rendering with', renderType, 'renderer');
         const renderedHTML = await rendererRegistry.render(renderType, content, {
           fileName: `${typeInfo.displayName}-${card.hash.substring(0, 8)}`,
           mimeType: typeInfo.type,
@@ -110,6 +114,7 @@ export class CardViewer {
             window.mcardManager.viewCard(targetHash);
           }
         });
+        console.log('[CardViewer] Rendered HTML length:', renderedHTML.length);
         
         // Extract handles if markdown
         if (renderType === 'markdown' && typeof content === 'string') {

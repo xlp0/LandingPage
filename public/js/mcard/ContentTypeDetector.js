@@ -23,11 +23,13 @@ export class ContentTypeDetector {
             (text.includes('implementation:') || text.includes('Implementation:')) && 
             (text.includes('verification:') || text.includes('Verification:') || 
              text.includes('balanced:') || text.includes('Balanced:'))) {
+          console.log('[ContentTypeDetector] Detected CLM');
           return { type: 'clm', displayName: 'CLM' };
         }
         
         // Check for markdown patterns
         if (text.match(/^#+ |\*\*|\[.*\]\(.*\)/m)) {
+          console.log('[ContentTypeDetector] Detected Markdown');
           return { type: 'markdown', displayName: 'Markdown' };
         }
         
