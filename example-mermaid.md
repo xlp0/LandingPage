@@ -78,8 +78,8 @@ flowchart LR
     B -->|Text| C[Check Patterns]
     B -->|Binary| D[Check Magic Bytes]
     
-    C -->|Has #| E[Markdown]
-    C -->|Has {}| F[JSON]
+    C -->|Has Hash| E[Markdown]
+    C -->|Has Braces| F[JSON]
     C -->|Plain| G[Text]
     
     D -->|89 50 4E 47| H[PNG]
