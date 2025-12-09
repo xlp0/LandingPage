@@ -66,7 +66,7 @@ export class UIComponents {
     
     mcardList.innerHTML = cards.map(card => {
       const typeInfo = ContentTypeDetector.detect(card);
-      const preview = card.getContentAsText().substring(0, 100);
+      const preview = UIComponents.generatePreview(card, typeInfo.type);
       const size = card.getContent().length;
       
       return `
@@ -75,7 +75,7 @@ export class UIComponents {
             <span class="mcard-type-badge">${typeInfo.displayName}</span>
             <span class="mcard-hash-short">${card.hash.substring(0, 12)}...</span>
           </div>
-          <div class="mcard-item-preview">${preview}${preview.length >= 100 ? '...' : ''}</div>
+          <div class="mcard-item-preview">${UIComponents.escapeHtml(preview)}</div>
           <div class="mcard-item-footer">
             <span class="mcard-size">${UIComponents.formatBytes(size)}</span>
             <span class="mcard-time">${new Date(card.g_time).toLocaleDateString()}</span>
@@ -124,6 +124,71 @@ export class UIComponents {
       </div>
     `;
     if (window.lucide) lucide.createIcons();
+  }
+  
+  /**
+   * Generate preview text for a card
+   * @param {MCard} card
+   * @param {string} type
+   * @returns {string}
+   */
+  static generatePreview(card, type) {
+    const text = card.getContentAsText();
+    
+    if (type === 'clm') {
+      // Extract name from CLM YAML
+      const nameMatch = text.match(/name:\s*["']?([^"'\n]+)["']?/);
+      const descMatch = text.match(/description:\s*["']?([^"'\n]+)["']?/);
+      
+      if (nameMatch && descMatch) {
+        return `${nameMatch[1]} - ${descMatch[1]}`;
+      } else if (nameMatch) {
+        return nameMatch[1];
+      }
+      // Fallback: remove comments and get first meaningful line
+      const lines = text.split('\n')
+        .filter(line => !line.trim().startsWith('#') && line.trim())
+        .slice(0, 2);
+      return lines.join(' ').substring(0, 100) + '...';
+    }
+    
+    if (type === 'markdown') {
+      // Remove markdown syntax for preview
+      let preview = text
+        .replace(/^#+\s+/gm, '') // Remove headers
+        .replace(/\*\*(.+?)\*\*/g, '$1') // Remove bold
+        .replace(/\*(.+?)\*/g, '$1') // Remove italic
+        .replace(/\[(.+?)\]\(.+?\)/g, '$1') // Remove links
+        .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+        .replace(/`(.+?)`/g, '$1') // Remove inline code
+        .trim();
+      
+      return preview.substring(0, 100) + (preview.length > 100 ? '...' : '');
+    }
+    
+    if (type === 'json') {
+      try {
+        const obj = JSON.parse(text);
+        const keys = Object.keys(obj);
+        return `JSON object with ${keys.length} key${keys.length !== 1 ? 's' : ''}: ${keys.slice(0, 3).join(', ')}${keys.length > 3 ? '...' : ''}`;
+      } catch {
+        return text.substring(0, 100) + '...';
+      }
+    }
+    
+    // Default: clean text preview
+    return text.substring(0, 100) + (text.length > 100 ? '...' : '');
+  }
+  
+  /**
+   * Escape HTML special characters
+   * @param {string} text
+   * @returns {string}
+   */
+  static escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
   
   /**
