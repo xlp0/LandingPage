@@ -30,14 +30,21 @@ export class MCardManager {
       console.log('[MCardManager] Database initialized');
       
       // Load cards
+      console.log('[MCardManager] Starting loadCards...');
       await this.loadCards();
+      console.log('[MCardManager] loadCards complete');
       
       // Setup UI
+      console.log('[MCardManager] Setting up event listeners...');
       this.setupEventListeners();
+      console.log('[MCardManager] Event listeners setup complete');
+      
       UIComponents.showToast('MCard Manager ready', 'success');
+      console.log('[MCardManager] Initialization complete!');
       
     } catch (error) {
       console.error('[MCardManager] Initialization error:', error);
+      console.error('[MCardManager] Error stack:', error.stack);
       UIComponents.showToast('Failed to initialize: ' + error.message, 'error');
     }
   }
@@ -51,13 +58,21 @@ export class MCardManager {
       console.log(`[MCardManager] Loading ${count} cards...`);
       
       this.allCards = await this.db.getAll();
+      console.log(`[MCardManager] Loaded ${this.allCards.length} cards`);
       
+      console.log('[MCardManager] Rendering file types...');
       UIComponents.renderFileTypes(this.allCards, this.currentType);
+      
+      console.log('[MCardManager] Showing cards for type:', this.currentType);
       this.showCardsForType(this.currentType);
+      
+      console.log('[MCardManager] Updating stats...');
       UIComponents.updateStats(count);
       
+      console.log('[MCardManager] Load complete!');
     } catch (error) {
       console.error('[MCardManager] Error loading cards:', error);
+      console.error('[MCardManager] Error stack:', error.stack);
       UIComponents.showToast('Failed to load cards', 'error');
     }
   }
