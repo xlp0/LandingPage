@@ -693,6 +693,14 @@ window.viewCard = async function(hash) {
     `;
     viewerActions.style.display = 'flex';
     
+    // Show loading state
+    viewerContent.innerHTML = `
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 16px;">
+        <div class="spinner"></div>
+        <p style="color: #888; font-size: 14px;">Loading content...</p>
+      </div>
+    `;
+    
     // Render content using the type from Redux
     let renderedHTML = '';
     try {
