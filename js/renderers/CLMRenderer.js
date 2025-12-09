@@ -229,21 +229,27 @@ export class CLMRenderer {
    */
   stripTypeScript(code) {
     return code
-      // Remove type annotations from variable declarations
-      .replace(/:\s*Map<[^>]+>/g, '')
-      .replace(/:\s*number\b/g, '')
-      .replace(/:\s*string\b/g, '')
-      .replace(/:\s*boolean\b/g, '')
-      .replace(/:\s*any\b/g, '')
-      .replace(/:\s*void\b/g, '')
-      .replace(/:\s*Array<[^>]+>/g, '')
-      .replace(/:\s*\w+\[\]/g, '')
-      // Remove type assertions
-      .replace(/\s+as\s+\w+/g, '')
-      // Remove non-null assertions
-      .replace(/!/g, '')
-      // Remove generic type parameters
-      .replace(/<[^>]+>/g, '');
+      // Remove function return type annotations
+      .replace(/\)\s*:\s*\w+\s*\{/g, ') {')
+      .replace(/\)\s*:\s*Map<[^>]+>\s*\{/g, ') {')
+      .replace(/\)\s*:\s*Array<[^>]+>\s*\{/g, ') {')
+      // Remove type annotations from function parameters and variables
+      .replace(/(\w+)\s*:\s*Map<[^>]+>/g, '$1')
+      .replace(/(\w+)\s*:\s*number(?=\s*[,;)\]=])/g, '$1')
+      .replace(/(\w+)\s*:\s*string(?=\s*[,;)\]=])/g, '$1')
+      .replace(/(\w+)\s*:\s*boolean(?=\s*[,;)\]=])/g, '$1')
+      .replace(/(\w+)\s*:\s*any(?=\s*[,;)\]=])/g, '$1')
+      .replace(/(\w+)\s*:\s*void(?=\s*[,;)\]=])/g, '$1')
+      .replace(/(\w+)\s*:\s*Array<[^>]+>/g, '$1')
+      .replace(/(\w+)\s*:\s*\w+\[\]/g, '$1')
+      // Remove type assertions (as keyword)
+      .replace(/\s+as\s+number\b/g, '')
+      .replace(/\s+as\s+string\b/g, '')
+      .replace(/\s+as\s+boolean\b/g, '')
+      .replace(/\s+as\s+any\b/g, '')
+      // Remove non-null assertions (! after expressions)
+      .replace(/\.get\([^)]+\)!/g, match => match.replace('!', ''))
+      .replace(/\.(\w+)!/g, '.$1');
   }
 
   /**
