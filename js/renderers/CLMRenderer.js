@@ -340,8 +340,12 @@ export class CLMRenderer {
       
       try {
         // Create function from code with context
+        // Wrap in IIFE to create fresh scope for each execution
         const fn = new Function('console', 'context', `
-          ${code}
+          'use strict';
+          return (function() {
+            ${code}
+          })();
         `);
         result = fn(customConsole, context);
       } catch (e) {
@@ -454,8 +458,13 @@ export class CLMRenderer {
             input: test.input
           };
           
-          // Execute code with context
-          const fn = new Function('console', 'context', implCode);
+          // Execute code with context in fresh scope
+          const fn = new Function('console', 'context', `
+            'use strict';
+            return (function() {
+              ${implCode}
+            })();
+          `);
           const result = fn(console, context);
           
           // Check result
