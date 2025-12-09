@@ -151,11 +151,11 @@ export class CLMRenderer {
 
         <!-- Execution Controls -->
         <div class="clm-execution-controls">
-          <button onclick="window.clmRenderer.executeCLM(this)" class="clm-execute-btn" data-clm-content='${btoa(JSON.stringify(parsed))}'>
+          <button onclick="window.clmRenderer.executeCLM(this)" class="clm-execute-btn" data-clm-content='${btoa(JSON.stringify(parsed))}' data-clm-raw='${btoa(content)}'>
             <i data-lucide="play" style="width: 16px; height: 16px;"></i>
             Execute CLM
           </button>
-          <button onclick="window.clmRenderer.runTests(this)" class="clm-test-btn" data-clm-content='${btoa(JSON.stringify(parsed))}'>
+          <button onclick="window.clmRenderer.runTests(this)" class="clm-test-btn" data-clm-content='${btoa(JSON.stringify(parsed))}' data-clm-raw='${btoa(content)}'>
             <i data-lucide="check-square" style="width: 16px; height: 16px;"></i>
             Run Tests
           </button>
@@ -230,12 +230,25 @@ export class CLMRenderer {
   executeCLM(button) {
     try {
       const base64Data = button.getAttribute('data-clm-content');
+      const rawBase64 = button.getAttribute('data-clm-raw');
       const parsed = JSON.parse(atob(base64Data));
+      const rawContent = atob(rawBase64);
       const resultsDiv = button.closest('.clm-container').querySelector('.clm-execution-results');
       const resultsContent = resultsDiv.querySelector('.clm-results-content');
       
-      // Extract implementation code
-      const code = parsed.implementation.code || parsed.implementation.function || '';
+      // Extract implementation code from raw YAML content
+      let code = '';
+      
+      // Extract multi-line string after "code: |"
+      const match = rawContent.match(/code:\s*\|([^\n]*\n(?:\s{6,}.*\n?)*)/);
+      if (match) {
+        // Extract lines and remove common indentation
+        code = match[1]
+          .split('\n')
+          .map(line => line.replace(/^\s{6}/, '')) // Remove 6-space indent
+          .join('\n')
+          .trim();
+      }
       
       if (!code) {
         resultsContent.innerHTML = '<div class="clm-error">No implementation code found</div>';
@@ -258,7 +271,10 @@ export class CLMRenderer {
       
       try {
         // Create function from code
-        const fn = new Function('console', code + '\n; return typeof main === "function" ? main() : undefined;');
+        // Wrap code in function and execute it
+        const fn = new Function('console', `
+          ${code}
+        `);
         result = fn(customConsole);
       } catch (e) {
         error = e;
@@ -311,13 +327,25 @@ export class CLMRenderer {
   runTests(button) {
     try {
       const base64Data = button.getAttribute('data-clm-content');
+      const rawBase64 = button.getAttribute('data-clm-raw');
       const parsed = JSON.parse(atob(base64Data));
+      const rawContent = atob(rawBase64);
       const resultsDiv = button.closest('.clm-container').querySelector('.clm-execution-results');
       const resultsContent = resultsDiv.querySelector('.clm-results-content');
       
-      // Extract implementation and tests
-      const implCode = parsed.implementation.code || parsed.implementation.function || '';
-      const tests = parsed.verification.tests || parsed.verification.test_cases || [];
+      // Extract implementation code from raw YAML
+      let implCode = '';
+      const codeMatch = rawContent.match(/code:\s*\|([^\n]*\n(?:\s{6,}.*\n?)*)/);
+      if (codeMatch) {
+        implCode = codeMatch[1]
+          .split('\n')
+          .map(line => line.replace(/^\s{6}/, ''))
+          .join('\n')
+          .trim();
+      }
+      
+      // Extract tests - for now, use empty array (we'll implement test parsing later)
+      const tests = [];
       
       if (!implCode) {
         resultsContent.innerHTML = '<div class="clm-error">No implementation code found</div>';
