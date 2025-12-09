@@ -151,11 +151,11 @@ export class CLMRenderer {
 
         <!-- Execution Controls -->
         <div class="clm-execution-controls">
-          <button onclick="window.clmRenderer.executeCLM(this)" class="clm-execute-btn" data-clm-content='${this.escapeHtml(JSON.stringify(parsed))}'>
+          <button onclick="window.clmRenderer.executeCLM(this)" class="clm-execute-btn" data-clm-content='${btoa(JSON.stringify(parsed))}'>
             <i data-lucide="play" style="width: 16px; height: 16px;"></i>
             Execute CLM
           </button>
-          <button onclick="window.clmRenderer.runTests(this)" class="clm-test-btn" data-clm-content='${this.escapeHtml(JSON.stringify(parsed))}'>
+          <button onclick="window.clmRenderer.runTests(this)" class="clm-test-btn" data-clm-content='${btoa(JSON.stringify(parsed))}'>
             <i data-lucide="check-square" style="width: 16px; height: 16px;"></i>
             Run Tests
           </button>
@@ -229,7 +229,8 @@ export class CLMRenderer {
    */
   executeCLM(button) {
     try {
-      const parsed = JSON.parse(button.getAttribute('data-clm-content'));
+      const base64Data = button.getAttribute('data-clm-content');
+      const parsed = JSON.parse(atob(base64Data));
       const resultsDiv = button.closest('.clm-container').querySelector('.clm-execution-results');
       const resultsContent = resultsDiv.querySelector('.clm-results-content');
       
@@ -309,7 +310,8 @@ export class CLMRenderer {
    */
   runTests(button) {
     try {
-      const parsed = JSON.parse(button.getAttribute('data-clm-content'));
+      const base64Data = button.getAttribute('data-clm-content');
+      const parsed = JSON.parse(atob(base64Data));
       const resultsDiv = button.closest('.clm-container').querySelector('.clm-execution-results');
       const resultsContent = resultsDiv.querySelector('.clm-results-content');
       
