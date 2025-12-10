@@ -22,17 +22,25 @@ export class UIComponents {
     }
     const typeList = document.getElementById('typeList');
     
+    if (!typeList) {
+      console.error('[UIComponents] typeList element not found!');
+      return;
+    }
+    
+    // Helper to safely get count
+    const getCount = (arr) => (arr && arr.length) || 0;
+    
     const types = [
-      { id: 'all', name: 'All Files', icon: 'package', count: categories.all.length },
-      { id: 'clm', name: 'CLM', icon: 'box', count: categories.clm.length },
-      { id: 'markdown', name: 'Markdown', icon: 'file-text', count: categories.markdown.length },
-      { id: 'text', name: 'Text', icon: 'file-text', count: categories.text.length },
-      { id: 'images', name: 'Images', icon: 'image', count: categories.images.length },
-      { id: 'videos', name: 'Videos', icon: 'video', count: categories.videos.length },
-      { id: 'audio', name: 'Audio', icon: 'music', count: categories.audio.length },
-      { id: 'documents', name: 'Documents', icon: 'file', count: categories.documents.length },
-      { id: 'archives', name: 'Archives', icon: 'archive', count: categories.archives.length },
-      { id: 'other', name: 'Other', icon: 'folder', count: categories.other.length }
+      { id: 'all', name: 'All Files', icon: 'package', count: getCount(categories.all) },
+      { id: 'clm', name: 'CLM', icon: 'box', count: getCount(categories.clm) },
+      { id: 'markdown', name: 'Markdown', icon: 'file-text', count: getCount(categories.markdown) },
+      { id: 'text', name: 'Text', icon: 'file-text', count: getCount(categories.text) },
+      { id: 'images', name: 'Images', icon: 'image', count: getCount(categories.images) },
+      { id: 'videos', name: 'Videos', icon: 'video', count: getCount(categories.videos) },
+      { id: 'audio', name: 'Audio', icon: 'music', count: getCount(categories.audio) },
+      { id: 'documents', name: 'Documents', icon: 'file', count: getCount(categories.documents) },
+      { id: 'archives', name: 'Archives', icon: 'archive', count: getCount(categories.archives) },
+      { id: 'other', name: 'Other', icon: 'folder', count: getCount(categories.other) }
     ];
 
     typeList.innerHTML = types.map(type => `
