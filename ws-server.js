@@ -38,7 +38,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Add cache control headers to prevent browser caching issues
+// Add cache control headers and permissive CSP
 app.use((req, res, next) => {
     // Disable caching for HTML, JS, and CSS files
     if (req.url.endsWith('.html') || req.url.endsWith('.js') || req.url.endsWith('.css')) {
@@ -46,6 +46,20 @@ app.use((req, res, next) => {
         res.setHeader('Pragma', 'no-cache');
         res.setHeader('Expires', '0');
     }
+    
+    // ✅ Override restrictive CSP - allow everything for development
+    res.setHeader('Content-Security-Policy', 
+        "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; " +
+        "script-src * 'unsafe-inline' 'unsafe-eval'; " +
+        "style-src * 'unsafe-inline'; " +
+        "img-src * data: blob:; " +
+        "font-src *; " +
+        "connect-src *; " +
+        "media-src *; " +
+        "object-src *; " +
+        "frame-src *;"
+    );
+    
     next();
 });
 
