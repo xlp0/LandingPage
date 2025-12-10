@@ -33,8 +33,8 @@ export class CardViewer {
     const contentType = ContentTypeInterpreter.detect(card.getContent());
     const content = card.getContentAsText();
     
-    // Create typeInfo object for compatibility
-    const typeInfo = { type: this.mapContentType(contentType), displayName: contentType };
+    // Create typeInfo object for compatibility (pass content for better detection)
+    const typeInfo = { type: this.mapContentType(contentType, content), displayName: contentType };
     
     // Use our detected type directly (don't let Redux override it)
     const renderType = typeInfo.type;
@@ -235,17 +235,37 @@ export class CardViewer {
    * Map library content type to our internal type
    * ✅ Helper for ContentTypeInterpreter output
    * @param {string} contentType
+   * @param {string} content - The actual content for pattern matching
    * @returns {string}
    */
-  mapContentType(contentType) {
+  mapContentType(contentType, content = '') {
     const lowerType = contentType.toLowerCase();
     
+    // Check for markdown patterns in content
     if (lowerType.includes('markdown')) return 'markdown';
-    if (lowerType.includes('text')) return 'text';
+    
+    // If it's text/plain, check if it's actually markdown
+    if (lowerType.includes('text') && content) {
+      // Check for markdown patterns
+      if (
+        content.match(/^#{1,6}\s+/m) ||      // Headers
+        content.match(/\[.+\]\(.+\)/) ||     // Links
+        content.match(/```[\s\S]*?```/) ||   // Code blocks
+        content.match(/^\s*[-*+]\s+/m) ||    // Lists
+        content.match(/^\s*\d+\.\s+/m)       // Numbered lists
+      ) {
+        return 'markdown';
+      }
+    }
+    
+    // Check for CLM
+    if (content.includes('specification:') && content.includes('implementation:')) {
+      return 'clm';
+    }
+    
     if (lowerType.includes('json')) return 'json';
     if (lowerType.includes('image')) return 'image';
     if (lowerType.includes('pdf')) return 'pdf';
-    if (lowerType.includes('clm')) return 'clm';
     if (lowerType.includes('video')) return 'video';
     if (lowerType.includes('audio')) return 'audio';
     

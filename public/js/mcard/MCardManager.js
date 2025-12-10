@@ -107,24 +107,48 @@ export class MCardManager {
       const contentType = ContentTypeInterpreter.detect(card.getContent());
       const contentStr = card.getContentAsText();
       
-      // Categorize based on detected type
+      // Categorize based on detected type AND content analysis
+      // CLM detection (highest priority)
       if (contentStr.includes('specification:') && contentStr.includes('implementation:')) {
         categories.clm.push(card);
-      } else if (contentType.includes('markdown') || contentStr.match(/^#+ |\*\*|\[.*\]\(.*\)/m)) {
+      } 
+      // Markdown detection (check content patterns)
+      else if (
+        contentType.includes('markdown') || 
+        contentStr.match(/^#{1,6}\s+/m) ||  // Headers
+        contentStr.match(/\[.+\]\(.+\)/) ||  // Links
+        contentStr.match(/```[\s\S]*?```/) || // Code blocks
+        contentStr.match(/^\s*[-*+]\s+/m) ||  // Lists
+        contentStr.match(/^\s*\d+\.\s+/m)     // Numbered lists
+      ) {
         categories.markdown.push(card);
-      } else if (contentType.includes('text')) {
-        categories.text.push(card);
-      } else if (contentType.includes('image')) {
+      } 
+      // Image detection
+      else if (contentType.includes('image')) {
         categories.images.push(card);
-      } else if (contentType.includes('video')) {
+      } 
+      // Video detection
+      else if (contentType.includes('video')) {
         categories.videos.push(card);
-      } else if (contentType.includes('audio')) {
+      } 
+      // Audio detection
+      else if (contentType.includes('audio')) {
         categories.audio.push(card);
-      } else if (contentType.includes('pdf') || contentType.includes('document')) {
+      } 
+      // Document detection
+      else if (contentType.includes('pdf') || contentType.includes('document')) {
         categories.documents.push(card);
-      } else if (contentType.includes('zip') || contentType.includes('archive')) {
+      } 
+      // Archive detection
+      else if (contentType.includes('zip') || contentType.includes('archive')) {
         categories.archives.push(card);
-      } else {
+      } 
+      // Plain text (default for text/plain)
+      else if (contentType.includes('text')) {
+        categories.text.push(card);
+      } 
+      // Other
+      else {
         categories.other.push(card);
       }
     }
