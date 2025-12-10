@@ -4,7 +4,7 @@
  * ✅ Uses BrowserCLMRunner for execution (browser-compatible)
  */
 
-import { BrowserCLMRunner } from '../public/js/mcard/BrowserCLMRunner.js';
+import { BrowserCLMRunner } from '/public/js/mcard/BrowserCLMRunner.js';
 
 export class CLMRenderer {
   constructor() {
