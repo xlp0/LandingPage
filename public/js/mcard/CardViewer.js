@@ -33,8 +33,24 @@ export class CardViewer {
     const contentType = ContentTypeInterpreter.detect(card.getContent());
     const content = card.getContentAsText();
     
-    // Create typeInfo object for compatibility (pass content for better detection)
-    const typeInfo = { type: this.mapContentType(contentType, content), displayName: contentType };
+    // Map to our internal type (pass content for better detection)
+    const detectedType = this.mapContentType(contentType, content);
+    
+    // Create typeInfo object with proper display name
+    const displayNames = {
+      'markdown': 'Markdown',
+      'text': 'Text',
+      'json': 'JSON',
+      'image': 'Image',
+      'pdf': 'PDF',
+      'clm': 'CLM',
+      'video': 'Video',
+      'audio': 'Audio'
+    };
+    const typeInfo = { 
+      type: detectedType, 
+      displayName: displayNames[detectedType] || detectedType.toUpperCase() 
+    };
     
     // Use our detected type directly (don't let Redux override it)
     const renderType = typeInfo.type;
