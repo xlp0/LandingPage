@@ -11,6 +11,9 @@ const RoomMessageHandler = require('./room-message-handler-server.js');
 const authRoutes = require('./routes/auth.js');
 const clmRoutes = require('./routes/clm.js');
 
+// Import MCard API (USES mcard-js library!)
+const mcardRoutes = require('./server/mcard-api.js');
+
 const app = express();
 
 // Enable CORS for all routes
@@ -39,6 +42,10 @@ app.use('/api/auth', authRoutes);
 
 // CLM routes
 app.use('/api/clm', clmRoutes);
+
+// MCard API routes (USES mcard-js library!)
+app.use('/api/mcard', mcardRoutes);
+console.log('[Server] ✅ MCard API enabled - USING mcard-js v2.1.2 library');
 
 // Add cache control headers for HTML files to prevent aggressive caching
 app.use((req, res, next) => {

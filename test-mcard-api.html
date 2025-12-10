@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCard API Test - Verifying mcard-js Library Usage</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result {
+            background: #f9f9f9;
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        .error {
+            border-left-color: #f44336;
+            background: #ffebee;
+        }
+        .success {
+            border-left-color: #4CAF50;
+            background: #e8f5e9;
+        }
+        .library-badge {
+            display: inline-block;
+            background: #2196F3;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 MCard API Test - Verifying mcard-js Library Usage</h1>
+    
+    <div class="library-badge">✅ Testing: mcard-js v2.1.2</div>
+    
+    <div class="test-section">
+        <h2>1. Check API Status</h2>
+        <button onclick="checkStats()">Get Stats (Verify Library Usage)</button>
+        <div id="stats-result" class="result" style="display:none;"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Create MCard</h2>
+        <input type="text" id="content-input" placeholder="Enter content..." style="width: 300px; padding: 8px;">
+        <button onclick="createMCard()">Create MCard</button>
+        <div id="create-result" class="result" style="display:none;"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Get All MCards</h2>
+        <button onclick="getAllMCards()">Get All MCards</button>
+        <div id="list-result" class="result" style="display:none;"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Search by Hash</h2>
+        <input type="text" id="search-input" placeholder="Enter hash prefix..." style="width: 300px; padding: 8px;">
+        <button onclick="searchMCards()">Search</button>
+        <div id="search-result" class="result" style="display:none;"></div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/mcard';
+
+        async function checkStats() {
+            const resultDiv = document.getElementById('stats-result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Loading...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/stats`);
+                const data = await response.json();
+                
+                resultDiv.className = 'result success';
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                
+                // Highlight library usage
+                if (data.library && data.library.includes('mcard-js')) {
+                    resultDiv.innerHTML = `<strong style="color: green;">✅ CONFIRMED: Using ${data.library}</strong>\n\n` + 
+                                         JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function createMCard() {
+            const content = document.getElementById('content-input').value;
+            if (!content) {
+                alert('Please enter content');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('create-result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Creating...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: content })
+                });
+                
+                const data = await response.json();
+                
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `<strong style="color: green;">✅ Created using ${data.library}</strong>\n\n` +
+                                     JSON.stringify(data, null, 2);
+                
+                // Clear input
+                document.getElementById('content-input').value = '';
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function getAllMCards() {
+            const resultDiv = document.getElementById('list-result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Loading...';
+            
+            try {
+                const response = await fetch(`${API_BASE}?page=0&pageSize=10`);
+                const data = await response.json();
+                
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `<strong style="color: green;">✅ Retrieved using ${data.library}</strong>\n\n` +
+                                     `Total: ${data.total} MCards\n` +
+                                     `Page: ${data.page + 1}/${data.totalPages}\n\n` +
+                                     JSON.stringify(data.items, null, 2);
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function searchMCards() {
+            const hashPrefix = document.getElementById('search-input').value;
+            if (!hashPrefix) {
+                alert('Please enter hash prefix');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('search-result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Searching...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/search`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ hashPrefix: hashPrefix })
+                });
+                
+                const data = await response.json();
+                
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `<strong style="color: green;">✅ Searched using ${data.library}</strong>\n\n` +
+                                     `Found: ${data.count} results\n\n` +
+                                     JSON.stringify(data.results, null, 2);
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        // Auto-check stats on load
+        window.addEventListener('load', () => {
+            checkStats();
+        });
+    </script>
+</body>
+</html>
