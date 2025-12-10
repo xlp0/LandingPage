@@ -81,6 +81,7 @@ export class UIComponents {
       const icon = UIComponents.getFileIcon(type);
       const time = UIComponents.formatTime(card.g_time);
       const size = UIComponents.formatBytes(card.getContent().length);
+      const badge = UIComponents.getTypeBadge(type, binaryContent);
       
       // Display names for types
       const displayNames = {
@@ -100,7 +101,10 @@ export class UIComponents {
           <div class="mcard-item-header">
             <div class="mcard-item-icon">${icon}</div>
             <div class="mcard-item-info">
-              <div class="mcard-item-name">${displayName}</div>
+              <div class="mcard-item-name" style="display: flex; align-items: center; gap: 6px;">
+                <span>${displayName}</span>
+                ${badge}
+              </div>
               <div class="mcard-item-hash">${card.hash.substring(0, 16)}...</div>
             </div>
           </div>
@@ -290,5 +294,57 @@ export class UIComponents {
     }
     
     return 'text'; // default
+  }
+  
+  /**
+   * Get type badge HTML with specific format detection
+   * @param {string} type - Internal type (image, video, etc.)
+   * @param {Uint8Array} binaryContent - Binary content for format detection
+   * @returns {string}
+   */
+  static getTypeBadge(type, binaryContent = null) {
+    // Detect specific format for images
+    if (type === 'image' && binaryContent && binaryContent.length > 4) {
+      const bytes = binaryContent instanceof Uint8Array ? binaryContent : new Uint8Array(binaryContent);
+      // PNG: 89 50 4E 47
+      if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
+        return '<span style="background: #4ec9b0; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">PNG</span>';
+      }
+      // JPEG: FF D8 FF
+      if (bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF) {
+        return '<span style="background: #4ec9b0; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">JPG</span>';
+      }
+      // GIF: 47 49 46
+      if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
+        return '<span style="background: #4ec9b0; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">GIF</span>';
+      }
+      // WebP: 52 49 46 46 (RIFF)
+      if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) {
+        return '<span style="background: #4ec9b0; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">WEBP</span>';
+      }
+    }
+    
+    // Detect specific format for videos
+    if (type === 'video' && binaryContent && binaryContent.length > 12) {
+      const bytes = binaryContent instanceof Uint8Array ? binaryContent : new Uint8Array(binaryContent);
+      // MP4: Check for ftyp box
+      if (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
+        return '<span style="background: #c586c0; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">MP4</span>';
+      }
+      // WebM: 1A 45 DF A3
+      if (bytes[0] === 0x1A && bytes[1] === 0x45 && bytes[2] === 0xDF && bytes[3] === 0xA3) {
+        return '<span style="background: #c586c0; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">WEBM</span>';
+      }
+    }
+    
+    // Default badges for other types
+    const badges = {
+      'markdown': '<span style="background: #007acc; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">MD</span>',
+      'text': '<span style="background: #6a9955; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">TXT</span>',
+      'json': '<span style="background: #ce9178; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">JSON</span>',
+      'pdf': '<span style="background: #f48771; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">PDF</span>',
+      'clm': '<span style="background: #4fc3f7; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">CLM</span>'
+    };
+    return badges[type] || '';
   }
 }
