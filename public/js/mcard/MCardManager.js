@@ -110,8 +110,34 @@ export class MCardManager {
       // Debug: Log what library detected
       console.log(`[MCardManager] Library detected: "${contentType}" for card ${card.hash.substring(0, 8)}`);
       
+      // ✅ Check for images by magic bytes if library says "application/octet-stream"
+      let isImage = lowerType.includes('image');
+      if (!isImage && lowerType.includes('octet-stream')) {
+        // Check magic bytes for common image formats
+        const content = card.getContent();
+        if (content.length > 4) {
+          const bytes = new Uint8Array(content.slice(0, 4));
+          // PNG: 89 50 4E 47
+          if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
+            isImage = true;
+          }
+          // JPEG: FF D8 FF
+          else if (bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF) {
+            isImage = true;
+          }
+          // GIF: 47 49 46
+          else if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
+            isImage = true;
+          }
+          // WebP: 52 49 46 46 (RIFF)
+          else if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) {
+            isImage = true;
+          }
+        }
+      }
+      
       // ✅ TRUST THE LIBRARY FIRST for binary/structured types
-      if (lowerType.includes('image')) {
+      if (isImage) {
         categories.images.push(card);
       } 
       else if (lowerType.includes('video')) {

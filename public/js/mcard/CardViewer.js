@@ -31,10 +31,11 @@ export class CardViewer {
     
     // ✅ Use library's ContentTypeInterpreter
     const contentType = ContentTypeInterpreter.detect(card.getContent());
-    const content = card.getContentAsText();
+    const binaryContent = card.getContent(); // For magic byte detection
+    const textContent = card.getContentAsText(); // For text pattern matching
     
-    // Map to our internal type (pass content for better detection)
-    const detectedType = this.mapContentType(contentType, content);
+    // Map to our internal type (pass both binary and text content)
+    const detectedType = this.mapContentType(contentType, binaryContent, textContent);
     
     // Create typeInfo object with proper display name
     const displayNames = {
@@ -251,11 +252,33 @@ export class CardViewer {
    * Map library content type to our internal type
    * ✅ Uses library's ContentTypeInterpreter output first, then enhances with pattern matching
    * @param {string} contentType - From ContentTypeInterpreter.detect()
-   * @param {string} content - The actual content for pattern matching (text only)
+   * @param {Uint8Array} binaryContent - Binary content for magic byte detection
+   * @param {string} textContent - Text content for pattern matching
    * @returns {string}
    */
-  mapContentType(contentType, content = '') {
+  mapContentType(contentType, binaryContent = null, textContent = '') {
     const lowerType = contentType.toLowerCase();
+    
+    // ✅ Check for images by magic bytes if library says "application/octet-stream"
+    if (lowerType.includes('octet-stream') && binaryContent && binaryContent.length > 4) {
+      const bytes = binaryContent instanceof Uint8Array ? binaryContent : new Uint8Array(binaryContent);
+      // PNG: 89 50 4E 47
+      if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
+        return 'image';
+      }
+      // JPEG: FF D8 FF
+      if (bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF) {
+        return 'image';
+      }
+      // GIF: 47 49 46
+      if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
+        return 'image';
+      }
+      // WebP: 52 49 46 46 (RIFF)
+      if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) {
+        return 'image';
+      }
+    }
     
     // ✅ TRUST THE LIBRARY FIRST for binary/structured types
     // These are reliably detected by the library
@@ -268,19 +291,19 @@ export class CardViewer {
     
     // ✅ ENHANCE for text-based types (library might say "text/plain")
     // Only do pattern matching for text content
-    if (lowerType.includes('text') && content) {
+    if (lowerType.includes('text') && textContent) {
       // Check for CLM (highest priority for text)
-      if (content.includes('specification:') && content.includes('implementation:')) {
+      if (textContent.includes('specification:') && textContent.includes('implementation:')) {
         return 'clm';
       }
       
       // Check for markdown patterns
       if (
-        content.match(/^#{1,6}\s+/m) ||      // Headers
-        content.match(/\[.+\]\(.+\)/) ||     // Links
-        content.match(/```[\s\S]*?```/) ||   // Code blocks
-        content.match(/^\s*[-*+]\s+/m) ||    // Lists
-        content.match(/^\s*\d+\.\s+/m)       // Numbered lists
+        textContent.match(/^#{1,6}\s+/m) ||      // Headers
+        textContent.match(/\[.+\]\(.+\)/) ||     // Links
+        textContent.match(/```[\s\S]*?```/) ||   // Code blocks
+        textContent.match(/^\s*[-*+]\s+/m) ||    // Lists
+        textContent.match(/^\s*\d+\.\s+/m)       // Numbered lists
       ) {
         return 'markdown';
       }
