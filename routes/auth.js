@@ -1,5 +1,5 @@
-const express = require('express');
-const axios = require('axios');
+import express from 'express';
+import axios from 'axios';
 const router = express.Router();
 
 const ZITADEL_DOMAIN = process.env.ZITADEL_DOMAIN || 'vpn.pkc.pub';
@@ -178,4 +178,4 @@ router.post('/logout', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

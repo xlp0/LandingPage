@@ -3,11 +3,16 @@
  * Serves component registry and individual component configurations
  */
 
-const express = require('express');
+import express from 'express';
+import yaml from 'js-yaml';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const router = express.Router();
-const yaml = require('js-yaml');
-const fs = require('fs');
-const path = require('path');
 
 // Load CLM registry
 const registryPath = path.join(__dirname, '..', 'clm-registry.yaml');
@@ -124,4 +129,4 @@ router.post('/telemetry', express.json(), (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

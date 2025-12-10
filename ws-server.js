@@ -20,8 +20,8 @@ dotenv.config();
 // Import room management modules (ESM)
 import RoomRegistry from './room-registry.mjs';
 import RoomMessageHandler from './room-message-handler-server.mjs';
-import authRoutes from './routes/auth.mjs';
-import clmRoutes from './routes/clm.mjs';
+import authRoutes from './routes/auth.js';
+import clmRoutes from './routes/clm.js';
 
 // ✅ Import MCard API (USES mcard-js library!)
 import mcardRoutes from './server/mcard-api.mjs';
