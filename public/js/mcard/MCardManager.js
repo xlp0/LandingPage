@@ -105,48 +105,53 @@ export class MCardManager {
     for (const card of cards) {
       // ✅ Use library's ContentTypeInterpreter
       const contentType = ContentTypeInterpreter.detect(card.getContent());
-      const contentStr = card.getContentAsText();
+      const lowerType = contentType.toLowerCase();
       
-      // Categorize based on detected type AND content analysis
-      // CLM detection (highest priority)
-      if (contentStr.includes('specification:') && contentStr.includes('implementation:')) {
-        categories.clm.push(card);
-      } 
-      // Markdown detection (check content patterns)
-      else if (
-        contentType.includes('markdown') || 
-        contentStr.match(/^#{1,6}\s+/m) ||  // Headers
-        contentStr.match(/\[.+\]\(.+\)/) ||  // Links
-        contentStr.match(/```[\s\S]*?```/) || // Code blocks
-        contentStr.match(/^\s*[-*+]\s+/m) ||  // Lists
-        contentStr.match(/^\s*\d+\.\s+/m)     // Numbered lists
-      ) {
-        categories.markdown.push(card);
-      } 
-      // Image detection
-      else if (contentType.includes('image')) {
+      // ✅ TRUST THE LIBRARY FIRST for binary/structured types
+      if (lowerType.includes('image')) {
         categories.images.push(card);
       } 
-      // Video detection
-      else if (contentType.includes('video')) {
+      else if (lowerType.includes('video')) {
         categories.videos.push(card);
       } 
-      // Audio detection
-      else if (contentType.includes('audio')) {
+      else if (lowerType.includes('audio')) {
         categories.audio.push(card);
       } 
-      // Document detection
-      else if (contentType.includes('pdf') || contentType.includes('document')) {
+      else if (lowerType.includes('pdf')) {
         categories.documents.push(card);
       } 
-      // Archive detection
-      else if (contentType.includes('zip') || contentType.includes('archive')) {
+      else if (lowerType.includes('zip') || lowerType.includes('archive')) {
         categories.archives.push(card);
-      } 
-      // Plain text (default for text/plain)
-      else if (contentType.includes('text')) {
-        categories.text.push(card);
-      } 
+      }
+      else if (lowerType.includes('json')) {
+        categories.other.push(card);
+      }
+      else if (lowerType.includes('markdown')) {
+        categories.markdown.push(card);
+      }
+      // ✅ ENHANCE for text-based types (library might say "text/plain")
+      else if (lowerType.includes('text')) {
+        const contentStr = card.getContentAsText();
+        
+        // Check for CLM (highest priority)
+        if (contentStr.includes('specification:') && contentStr.includes('implementation:')) {
+          categories.clm.push(card);
+        }
+        // Check for markdown patterns
+        else if (
+          contentStr.match(/^#{1,6}\s+/m) ||  // Headers
+          contentStr.match(/\[.+\]\(.+\)/) ||  // Links
+          contentStr.match(/```[\s\S]*?```/) || // Code blocks
+          contentStr.match(/^\s*[-*+]\s+/m) ||  // Lists
+          contentStr.match(/^\s*\d+\.\s+/m)     // Numbered lists
+        ) {
+          categories.markdown.push(card);
+        }
+        // Plain text
+        else {
+          categories.text.push(card);
+        }
+      }
       // Other
       else {
         categories.other.push(card);

@@ -249,19 +249,31 @@ export class CardViewer {
   
   /**
    * Map library content type to our internal type
-   * ✅ Helper for ContentTypeInterpreter output
-   * @param {string} contentType
-   * @param {string} content - The actual content for pattern matching
+   * ✅ Uses library's ContentTypeInterpreter output first, then enhances with pattern matching
+   * @param {string} contentType - From ContentTypeInterpreter.detect()
+   * @param {string} content - The actual content for pattern matching (text only)
    * @returns {string}
    */
   mapContentType(contentType, content = '') {
     const lowerType = contentType.toLowerCase();
     
-    // Check for markdown patterns in content
+    // ✅ TRUST THE LIBRARY FIRST for binary/structured types
+    // These are reliably detected by the library
+    if (lowerType.includes('image')) return 'image';
+    if (lowerType.includes('video')) return 'video';
+    if (lowerType.includes('audio')) return 'audio';
+    if (lowerType.includes('pdf')) return 'pdf';
+    if (lowerType.includes('json')) return 'json';
     if (lowerType.includes('markdown')) return 'markdown';
     
-    // If it's text/plain, check if it's actually markdown
+    // ✅ ENHANCE for text-based types (library might say "text/plain")
+    // Only do pattern matching for text content
     if (lowerType.includes('text') && content) {
+      // Check for CLM (highest priority for text)
+      if (content.includes('specification:') && content.includes('implementation:')) {
+        return 'clm';
+      }
+      
       // Check for markdown patterns
       if (
         content.match(/^#{1,6}\s+/m) ||      // Headers
@@ -272,19 +284,12 @@ export class CardViewer {
       ) {
         return 'markdown';
       }
+      
+      // Plain text
+      return 'text';
     }
     
-    // Check for CLM
-    if (content.includes('specification:') && content.includes('implementation:')) {
-      return 'clm';
-    }
-    
-    if (lowerType.includes('json')) return 'json';
-    if (lowerType.includes('image')) return 'image';
-    if (lowerType.includes('pdf')) return 'pdf';
-    if (lowerType.includes('video')) return 'video';
-    if (lowerType.includes('audio')) return 'audio';
-    
-    return 'text'; // default
+    // Default fallback
+    return 'text';
   }
 }
