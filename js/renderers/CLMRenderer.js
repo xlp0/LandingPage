@@ -1,12 +1,16 @@
 /**
  * CLM (Cubical Logic Model) Renderer
  * Renders CLM YAML files with three-dimensional structure visualization
+ * ✅ Uses BrowserCLMRunner for execution (browser-compatible)
  */
+
+import { BrowserCLMRunner } from '../public/js/mcard/BrowserCLMRunner.js';
 
 export class CLMRenderer {
   constructor() {
     this.name = 'CLM Renderer';
     this.contentType = 'clm';
+    this.runner = new BrowserCLMRunner();
   }
 
   /**
@@ -222,6 +226,220 @@ export class CLMRenderer {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  /**
+   * Execute CLM with user input
+   * ✅ Uses BrowserCLMRunner from mcard-js library pattern
+   */
+  async executeCLM(button) {
+    const rawContent = atob(button.dataset.clmRaw);
+    const resultsDiv = button.closest('.clm-container').querySelector('.clm-execution-results');
+    const resultsContent = resultsDiv.querySelector('.clm-results-content');
+    
+    // Show results panel
+    resultsDiv.style.display = 'block';
+    resultsContent.innerHTML = '<div class="clm-loading">Executing...</div>';
+    
+    try {
+      // Get input from user (simple prompt for now)
+      const inputStr = prompt('Enter input (JSON format):', '{}');
+      if (inputStr === null) {
+        resultsDiv.style.display = 'none';
+        return;
+      }
+      
+      const input = JSON.parse(inputStr);
+      
+      // Execute using BrowserCLMRunner
+      const result = await this.runner.execute(rawContent, input);
+      
+      if (result.success) {
+        resultsContent.innerHTML = `
+          <div class="clm-result-success">
+            <div class="clm-result-header">
+              <i data-lucide="check-circle" style="width: 20px; height: 20px; color: #4ade80;"></i>
+              <span>Execution Successful</span>
+            </div>
+            <div class="clm-result-details">
+              <div class="clm-result-item">
+                <strong>Execution Time:</strong> ${result.executionTime}ms
+              </div>
+              <div class="clm-result-item">
+                <strong>Chapter:</strong> ${result.clm.chapter}
+              </div>
+              <div class="clm-result-item">
+                <strong>Concept:</strong> ${result.clm.concept}
+              </div>
+              <div class="clm-result-item">
+                <strong>Result:</strong>
+                <pre class="clm-result-output">${JSON.stringify(result.result, null, 2)}</pre>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        resultsContent.innerHTML = `
+          <div class="clm-result-error">
+            <div class="clm-result-header">
+              <i data-lucide="x-circle" style="width: 20px; height: 20px; color: #f87171;"></i>
+              <span>Execution Failed</span>
+            </div>
+            <div class="clm-result-details">
+              <div class="clm-result-item">
+                <strong>Error:</strong> ${this.escapeHtml(result.error)}
+              </div>
+              <div class="clm-result-item">
+                <strong>Execution Time:</strong> ${result.executionTime}ms
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      
+      // Re-initialize Lucide icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    } catch (error) {
+      resultsContent.innerHTML = `
+        <div class="clm-result-error">
+          <div class="clm-result-header">
+            <i data-lucide="alert-circle" style="width: 20px; height: 20px; color: #f87171;"></i>
+            <span>Error</span>
+          </div>
+          <div class="clm-result-details">
+            <div class="clm-result-item">
+              <strong>Message:</strong> ${this.escapeHtml(error.message)}
+            </div>
+          </div>
+        </div>
+      `;
+      
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+  }
+
+  /**
+   * Run all test cases
+   * ✅ Uses BrowserCLMRunner from mcard-js library pattern
+   */
+  async runTests(button) {
+    const rawContent = atob(button.dataset.clmRaw);
+    const resultsDiv = button.closest('.clm-container').querySelector('.clm-execution-results');
+    const resultsContent = resultsDiv.querySelector('.clm-results-content');
+    
+    // Show results panel
+    resultsDiv.style.display = 'block';
+    resultsContent.innerHTML = '<div class="clm-loading">Running tests...</div>';
+    
+    try {
+      // Run tests using BrowserCLMRunner
+      const testResults = await this.runner.runTests(rawContent);
+      
+      if (testResults.success) {
+        resultsContent.innerHTML = `
+          <div class="clm-result-success">
+            <div class="clm-result-header">
+              <i data-lucide="check-circle" style="width: 20px; height: 20px; color: #4ade80;"></i>
+              <span>All Tests Passed</span>
+            </div>
+            <div class="clm-result-details">
+              <div class="clm-result-item">
+                <strong>Total Tests:</strong> ${testResults.totalTests}
+              </div>
+              <div class="clm-result-item">
+                <strong>Passed:</strong> <span style="color: #4ade80;">${testResults.passed}</span>
+              </div>
+              <div class="clm-result-item">
+                <strong>Failed:</strong> <span style="color: #f87171;">${testResults.failed}</span>
+              </div>
+            </div>
+            <div class="clm-test-results">
+              ${testResults.results.map(r => `
+                <div class="clm-test-case ${r.passed ? 'passed' : 'failed'}">
+                  <div class="clm-test-header">
+                    <i data-lucide="${r.passed ? 'check' : 'x'}" style="width: 16px; height: 16px;"></i>
+                    <span>${this.escapeHtml(r.name)}</span>
+                    <span class="clm-test-time">${r.executionTime}ms</span>
+                  </div>
+                  ${!r.passed ? `
+                    <div class="clm-test-details">
+                      <div><strong>Expected:</strong> <code>${JSON.stringify(r.expected)}</code></div>
+                      <div><strong>Actual:</strong> <code>${JSON.stringify(r.actual)}</code></div>
+                      ${r.error ? `<div><strong>Error:</strong> ${this.escapeHtml(r.error)}</div>` : ''}
+                    </div>
+                  ` : ''}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else {
+        resultsContent.innerHTML = `
+          <div class="clm-result-error">
+            <div class="clm-result-header">
+              <i data-lucide="x-circle" style="width: 20px; height: 20px; color: #f87171;"></i>
+              <span>Some Tests Failed</span>
+            </div>
+            <div class="clm-result-details">
+              <div class="clm-result-item">
+                <strong>Total Tests:</strong> ${testResults.totalTests}
+              </div>
+              <div class="clm-result-item">
+                <strong>Passed:</strong> <span style="color: #4ade80;">${testResults.passed}</span>
+              </div>
+              <div class="clm-result-item">
+                <strong>Failed:</strong> <span style="color: #f87171;">${testResults.failed}</span>
+              </div>
+            </div>
+            <div class="clm-test-results">
+              ${testResults.results.map(r => `
+                <div class="clm-test-case ${r.passed ? 'passed' : 'failed'}">
+                  <div class="clm-test-header">
+                    <i data-lucide="${r.passed ? 'check' : 'x'}" style="width: 16px; height: 16px;"></i>
+                    <span>${this.escapeHtml(r.name)}</span>
+                    <span class="clm-test-time">${r.executionTime}ms</span>
+                  </div>
+                  ${!r.passed ? `
+                    <div class="clm-test-details">
+                      <div><strong>Expected:</strong> <code>${JSON.stringify(r.expected)}</code></div>
+                      <div><strong>Actual:</strong> <code>${JSON.stringify(r.actual)}</code></div>
+                      ${r.error ? `<div><strong>Error:</strong> ${this.escapeHtml(r.error)}</div>` : ''}
+                    </div>
+                  ` : ''}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+      
+      // Re-initialize Lucide icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    } catch (error) {
+      resultsContent.innerHTML = `
+        <div class="clm-result-error">
+          <div class="clm-result-header">
+            <i data-lucide="alert-circle" style="width: 20px; height: 20px; color: #f87171;"></i>
+            <span>Error Running Tests</span>
+          </div>
+          <div class="clm-result-details">
+            <div class="clm-result-item">
+              <strong>Message:</strong> ${this.escapeHtml(error.message)}
+            </div>
+          </div>
+        </div>
+      `;
+      
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
   }
 
   /**
