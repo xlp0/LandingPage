@@ -97,7 +97,7 @@
 <script type="importmap">
 {
   "imports": {
-    "mcard-js": "https://cdn.jsdelivr.net/npm/mcard-js@2.1.2/+esm"
+    "mcard-js": "https://cdn.jsdelivr.net/npm/mcard-js@2.1.8/+esm"
   }
 }
 </script>

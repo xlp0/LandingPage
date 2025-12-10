@@ -8,7 +8,7 @@
 - 🔍 **Content Detection** - Full parity with Python implementation
 - 🔄 **Semantic Versioning** - Version-aware handle resolution
 - ✅ **155 Tests Passing** - Comprehensive coverage
-- 🌐 **Published to npm** - `npm install mcard-js@2.1.2`
+- 🌐 **Published to npm** - `npm install mcard-js@2.1.8`
 
 ---
 
@@ -16,7 +16,7 @@
 
 ```bash
 # From npm
-npm install mcard-js@2.1.2
+npm install mcard-js@2.1.8
 
 # With optional dependencies (for Node.js)
 npm install mcard-js better-sqlite3 sqlite-vec

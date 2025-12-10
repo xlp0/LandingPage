@@ -327,7 +327,7 @@ app.get('/health', (req, res) => {
         },
         mcard: {
             enabled: true,
-            library: 'mcard-js v2.1.2',
+            library: 'mcard-js v2.1.8',
             storage: 'Server-side SQLite'
         }
     });
@@ -479,5 +479,5 @@ server.listen(PORT, '0.0.0.0', () => {
     console.log(`WebSocket endpoint: ws://0.0.0.0:${PORT}/ws/`);
     console.log(`Connected clients: ${connectedClients.size}`);
     console.log(`[Server] 📡 Periodic room list broadcast enabled (every 5 seconds)`);
-    console.log(`[Server] ✅ MCard API enabled with mcard-js v2.1.2 library`);
+    console.log(`[Server] ✅ MCard API enabled with mcard-js v2.1.8 library`);
 });

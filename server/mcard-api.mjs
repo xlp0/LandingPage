@@ -4,7 +4,7 @@
  * 
  * ✅ Uses ESM imports to properly load mcard-js
  * ✅ Server-side SQLite storage
- * ✅ Full mcard-js v2.1.2 features
+ * ✅ Full mcard-js v2.1.8 features
  */
 
 import express from 'express';
@@ -37,7 +37,7 @@ async function initStorage() {
     
     console.log('[MCard API] ✅ mcard-js library initialized!');
     console.log('[MCard API] 📁 Server Database:', dbPath);
-    console.log('[MCard API] 🎯 ACTUALLY USING mcard-js v2.1.2 library!');
+    console.log('[MCard API] 🎯 ACTUALLY USING mcard-js v2.1.8 library!');
   }
   return storage;
 }
@@ -70,7 +70,7 @@ router.post('/create', async (req, res) => {
       hash: hash,
       size: card.getSize(),
       g_time: card.g_time,
-      library: 'mcard-js v2.1.2',
+      library: 'mcard-js v2.1.8',
       storage: 'Server-side SQLite',
       message: '✅ ACTUALLY USING mcard-js library!'
     });
@@ -107,7 +107,7 @@ router.get('/:hash', async (req, res) => {
       size: card.getSize(),
       g_time: card.g_time,
       contentType: contentType,
-      library: 'mcard-js v2.1.2',
+      library: 'mcard-js v2.1.8',
       storage: 'Server-side SQLite'
     });
   } catch (error) {
@@ -147,7 +147,7 @@ router.get('/', async (req, res) => {
       page: result.page,
       pageSize: result.pageSize,
       totalPages: result.totalPages,
-      library: 'mcard-js v2.1.2',
+      library: 'mcard-js v2.1.8',
       storage: 'Server-side SQLite'
     });
   } catch (error) {
@@ -172,7 +172,7 @@ router.delete('/:hash', async (req, res) => {
     res.json({
       success: true,
       message: 'MCard deleted',
-      library: 'mcard-js v2.1.2'
+      library: 'mcard-js v2.1.8'
     });
   } catch (error) {
     console.error('[MCard API] Error deleting MCard:', error);
@@ -205,7 +205,7 @@ router.post('/search', async (req, res) => {
       success: true,
       results: results,
       count: results.length,
-      library: 'mcard-js v2.1.2'
+      library: 'mcard-js v2.1.8'
     });
   } catch (error) {
     console.error('[MCard API] Error searching MCards:', error);
@@ -237,7 +237,7 @@ router.post('/verify/:hash', async (req, res) => {
       success: true,
       hash: hash,
       valid: isValid,
-      library: 'mcard-js v2.1.2'
+      library: 'mcard-js v2.1.8'
     });
   } catch (error) {
     console.error('[MCard API] Error verifying MCard:', error);
@@ -259,7 +259,7 @@ router.get('/stats', async (req, res) => {
     res.json({
       success: true,
       total: total,
-      library: 'mcard-js v2.1.2',
+      library: 'mcard-js v2.1.8',
       engine: 'SqliteNodeEngine',
       backend: 'Node.js ESM',
       storage: 'Server-side SQLite',

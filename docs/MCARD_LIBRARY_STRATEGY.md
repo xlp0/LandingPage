@@ -331,7 +331,7 @@ import {
   MCard, 
   IndexedDBEngine, 
   ContentTypeInterpreter 
-} from 'https://cdn.jsdelivr.net/npm/mcard-js@2.1.2/+esm';
+} from 'https://cdn.jsdelivr.net/npm/mcard-js@2.1.8/+esm';
 
 // Initialize storage
 const storage = new IndexedDBEngine('mcard-storage');
@@ -402,7 +402,7 @@ await storage.init();
 
 ### ✅ What Works
 
-- [x] Library installed (`mcard-js@2.1.2`)
+- [x] Library installed (`mcard-js@2.1.8`)
 - [x] Server converted to ESM
 - [x] IndexedDBEngine available
 - [x] SqliteNodeEngine available

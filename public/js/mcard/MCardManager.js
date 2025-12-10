@@ -31,7 +31,7 @@ export class MCardManager {
       // ✅ Initialize IndexedDBEngine from library
       this.db = new IndexedDBEngine('mcard-storage');
       await this.db.init();
-      console.log('[MCardManager] ✅ IndexedDBEngine initialized (mcard-js v2.1.2)');
+      console.log('[MCardManager] ✅ IndexedDBEngine initialized (mcard-js v2.1.8)');
       
       // Load cards
       console.log('[MCardManager] Starting loadCards...');

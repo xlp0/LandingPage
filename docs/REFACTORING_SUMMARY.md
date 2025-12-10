@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-Refactored the browser-based MCard implementation to **align with mcard-js v2.1.2 library API** while maintaining browser compatibility and zero-build-step deployment.
+Refactored the browser-based MCard implementation to **align with mcard-js v2.1.8 library API** while maintaining browser compatibility and zero-build-step deployment.
 
 **Key Achievement:** API-compatible browser implementation that can seamlessly migrate to full mcard-js library when advanced features are needed.
 
@@ -40,7 +40,7 @@ Refactored the browser-based MCard implementation to **align with mcard-js v2.1.
 ### 1. Installed mcard-js Library
 
 ```bash
-npm install mcard-js@2.1.2
+npm install mcard-js@2.1.8
 ```
 
 **Added 42 packages** for future use (PTR runtime, Lambda Calculus, RAG)
@@ -240,7 +240,7 @@ Created `public/js/mcard/README.md` with:
 
 ### Dependencies
 
-- **Added:** `mcard-js@2.1.2` (42 packages)
+- **Added:** `mcard-js@2.1.8` (42 packages)
 - **Size:** ~500KB (not bundled in browser build)
 - **Usage:** Available for future server-side features
 
