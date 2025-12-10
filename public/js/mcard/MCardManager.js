@@ -158,12 +158,25 @@ export class MCardManager {
       else if (lowerType.includes('markdown')) {
         categories.markdown.push(card);
       }
+      // ✅ Check for YAML (library might detect it)
+      else if (lowerType.includes('yaml')) {
+        const contentStr = card.getContentAsText();
+        // Check if it's a CLM file (YAML with CLM structure)
+        if ((contentStr.includes('abstract:') && contentStr.includes('concrete:') && contentStr.includes('balanced:')) ||
+            contentStr.includes('clm:')) {
+          categories.clm.push(card);
+        } else {
+          // Regular YAML - put in other for now
+          categories.other.push(card);
+        }
+      }
       // ✅ ENHANCE for text-based types (library might say "text/plain")
       else if (lowerType.includes('text')) {
         const contentStr = card.getContentAsText();
         
-        // Check for CLM (highest priority)
-        if (contentStr.includes('specification:') && contentStr.includes('implementation:')) {
+        // Check for CLM (YAML-based, highest priority)
+        if ((contentStr.includes('abstract:') && contentStr.includes('concrete:') && contentStr.includes('balanced:')) ||
+            contentStr.includes('clm:')) {
           categories.clm.push(card);
         }
         // Check for markdown patterns

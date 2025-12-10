@@ -432,11 +432,25 @@ export class CardViewer {
     if (lowerType.includes('json')) return 'json';
     if (lowerType.includes('markdown')) return 'markdown';
     
+    // ✅ Check for YAML (library might detect it)
+    if (lowerType.includes('yaml')) {
+      // Check if it's a CLM file (YAML with CLM structure)
+      if (textContent && (
+        (textContent.includes('abstract:') && textContent.includes('concrete:') && textContent.includes('balanced:')) ||
+        textContent.includes('clm:')
+      )) {
+        return 'clm';
+      }
+      // Regular YAML
+      return 'yaml';
+    }
+    
     // ✅ ENHANCE for text-based types (library might say "text/plain")
     // Only do pattern matching for text content
     if (lowerType.includes('text') && textContent) {
-      // Check for CLM (highest priority for text)
-      if (textContent.includes('specification:') && textContent.includes('implementation:')) {
+      // Check for CLM (YAML-based, highest priority for text)
+      if ((textContent.includes('abstract:') && textContent.includes('concrete:') && textContent.includes('balanced:')) ||
+          textContent.includes('clm:')) {
         return 'clm';
       }
       
