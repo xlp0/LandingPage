@@ -107,6 +107,9 @@ export class MCardManager {
       const contentType = ContentTypeInterpreter.detect(card.getContent());
       const lowerType = contentType.toLowerCase();
       
+      // Debug: Log what library detected
+      console.log(`[MCardManager] Library detected: "${contentType}" for card ${card.hash.substring(0, 8)}`);
+      
       // ✅ TRUST THE LIBRARY FIRST for binary/structured types
       if (lowerType.includes('image')) {
         categories.images.push(card);
