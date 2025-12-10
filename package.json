@@ -28,7 +28,8 @@
   },
   "homepage": "https://github.com/xlp0/LandingPage#readme",
   "devDependencies": {
-    "@playwright/test": "^1.40.0"
+    "@playwright/test": "^1.40.0",
+    "esbuild": "^0.27.1"
   },
   "dependencies": {
     "@mlc-ai/web-llm": "^0.2.80",
