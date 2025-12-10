@@ -53,6 +53,7 @@ export class UIComponents {
   
   /**
    * Render card list
+   * ✅ Uses ContentTypeInterpreter from library
    * @param {MCard[]} cards
    */
   static renderCardList(cards) {
@@ -72,8 +73,10 @@ export class UIComponents {
     }
     
     mcardList.innerHTML = cards.map(card => {
-      const typeInfo = ContentTypeDetector.detect(card);
-      const icon = UIComponents.getFileIcon(typeInfo.type);
+      // ✅ Use library's ContentTypeInterpreter
+      const contentType = ContentTypeInterpreter.detect(card.getContent());
+      const type = UIComponents.mapContentType(contentType);
+      const icon = UIComponents.getFileIcon(type);
       const time = UIComponents.formatTime(card.g_time);
       const size = UIComponents.formatBytes(card.getContent().length);
       
@@ -82,7 +85,7 @@ export class UIComponents {
           <div class="mcard-item-header">
             <div class="mcard-item-icon">${icon}</div>
             <div class="mcard-item-info">
-              <div class="mcard-item-name">${typeInfo.displayName}</div>
+              <div class="mcard-item-name">${contentType}</div>
               <div class="mcard-item-hash">${card.hash.substring(0, 16)}...</div>
             </div>
           </div>
@@ -210,5 +213,26 @@ export class UIComponents {
     if (statsEl) {
       statsEl.textContent = `${count} MCard${count !== 1 ? 's' : ''}`;
     }
+  }
+  
+  /**
+   * Map library content type to our internal type
+   * ✅ Helper for ContentTypeInterpreter output
+   * @param {string} contentType
+   * @returns {string}
+   */
+  static mapContentType(contentType) {
+    const lowerType = contentType.toLowerCase();
+    
+    if (lowerType.includes('markdown')) return 'markdown';
+    if (lowerType.includes('text')) return 'text';
+    if (lowerType.includes('json')) return 'json';
+    if (lowerType.includes('image')) return 'image';
+    if (lowerType.includes('pdf')) return 'pdf';
+    if (lowerType.includes('clm')) return 'clm';
+    if (lowerType.includes('video')) return 'video';
+    if (lowerType.includes('audio')) return 'audio';
+    
+    return 'text'; // default
   }
 }
