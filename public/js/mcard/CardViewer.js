@@ -138,9 +138,15 @@ export class CardViewer {
       
       if (rendererRegistry.hasRenderer(renderType)) {
         console.log('[CardViewer] Rendering with', renderType, 'renderer');
-        const renderedHTML = await rendererRegistry.render(renderType, content, {
+        
+        // ✅ Use binary content for binary types, text content for text types
+        const contentToRender = (renderType === 'image' || renderType === 'pdf' || renderType === 'video' || renderType === 'audio') 
+          ? binaryContent 
+          : textContent;
+        
+        const renderedHTML = await rendererRegistry.render(renderType, contentToRender, {
           fileName: `${typeInfo.displayName}-${card.hash.substring(0, 8)}`,
-          mimeType: typeInfo.type,
+          mimeType: mimeType,
           enableHandles: true,
           onHandleClick: (targetHash) => {
             window.mcardManager.viewCard(targetHash);
@@ -149,9 +155,9 @@ export class CardViewer {
         console.log('[CardViewer] Rendered HTML length:', renderedHTML.length);
         
         // Extract handles if markdown
-        if (renderType === 'markdown' && typeof content === 'string') {
+        if (renderType === 'markdown' && typeof textContent === 'string') {
           await store.dispatch(extractHandles({
-            content: content,
+            content: textContent,
             hash: card.hash
           }));
         }
@@ -166,7 +172,7 @@ export class CardViewer {
           lucide.createIcons();
         }
       } else {
-        viewerContent.innerHTML = `<pre style="padding: 20px; overflow: auto;">${this.escapeHtml(content)}</pre>`;
+        viewerContent.innerHTML = `<pre style="padding: 20px; overflow: auto;">${this.escapeHtml(textContent)}</pre>`;
       }
     } catch (error) {
       console.error('[CardViewer] Rendering error:', error);
