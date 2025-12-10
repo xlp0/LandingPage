@@ -23,8 +23,8 @@ import RoomMessageHandler from './room-message-handler-server.mjs';
 import authRoutes from './routes/auth.js';
 import clmRoutes from './routes/clm.js';
 
-// ✅ Import MCard API (USES mcard-js library!)
-import mcardRoutes from './server/mcard-api.mjs';
+// ⚠️ MCard API temporarily disabled - library import issues
+// import mcardRoutes from './server/mcard-api.mjs';
 
 const app = express();
 
@@ -55,9 +55,9 @@ app.use('/api/auth', authRoutes);
 // CLM routes
 app.use('/api/clm', clmRoutes);
 
-// ✅ MCard API routes (USES mcard-js library!)
-app.use('/api/mcard', mcardRoutes);
-console.log('[Server] ✅ MCard API enabled - USING mcard-js v2.1.2 library (ESM)');
+// ⚠️ MCard API temporarily disabled - library import issues
+// app.use('/api/mcard', mcardRoutes);
+console.log('[Server] ⚠️  MCard API disabled - library import issues (browser still works!)');
 
 // Add cache control headers for HTML files to prevent aggressive caching
 app.use((req, res, next) => {
