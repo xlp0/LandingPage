@@ -75,17 +75,32 @@ export class UIComponents {
     mcardList.innerHTML = cards.map(card => {
       // ✅ Use library's ContentTypeInterpreter
       const contentType = ContentTypeInterpreter.detect(card.getContent());
-      const type = UIComponents.mapContentType(contentType);
+      const binaryContent = card.getContent();
+      const textContent = card.getContentAsText();
+      const type = UIComponents.mapContentType(contentType, binaryContent, textContent);
       const icon = UIComponents.getFileIcon(type);
       const time = UIComponents.formatTime(card.g_time);
       const size = UIComponents.formatBytes(card.getContent().length);
+      
+      // Display names for types
+      const displayNames = {
+        'markdown': 'Markdown',
+        'text': 'Text',
+        'json': 'JSON',
+        'image': 'Image',
+        'pdf': 'PDF',
+        'clm': 'CLM',
+        'video': 'Video',
+        'audio': 'Audio'
+      };
+      const displayName = displayNames[type] || type.toUpperCase();
       
       return `
         <div class="mcard-item" onclick="window.mcardManager.viewCard('${card.hash}')">
           <div class="mcard-item-header">
             <div class="mcard-item-icon">${icon}</div>
             <div class="mcard-item-info">
-              <div class="mcard-item-name">${contentType}</div>
+              <div class="mcard-item-name">${displayName}</div>
               <div class="mcard-item-hash">${card.hash.substring(0, 16)}...</div>
             </div>
           </div>
@@ -217,21 +232,62 @@ export class UIComponents {
   
   /**
    * Map library content type to our internal type
-   * ✅ Helper for ContentTypeInterpreter output
-   * @param {string} contentType
+   * ✅ Uses library first, then checks magic bytes for images
+   * @param {string} contentType - From ContentTypeInterpreter.detect()
+   * @param {Uint8Array} binaryContent - Binary content for magic byte detection
+   * @param {string} textContent - Text content for pattern matching
    * @returns {string}
    */
-  static mapContentType(contentType) {
+  static mapContentType(contentType, binaryContent = null, textContent = '') {
     const lowerType = contentType.toLowerCase();
     
-    if (lowerType.includes('markdown')) return 'markdown';
-    if (lowerType.includes('text')) return 'text';
-    if (lowerType.includes('json')) return 'json';
+    // ✅ Check for images by magic bytes if library says "application/octet-stream"
+    if (lowerType.includes('octet-stream') && binaryContent && binaryContent.length > 4) {
+      const bytes = binaryContent instanceof Uint8Array ? binaryContent : new Uint8Array(binaryContent);
+      // PNG: 89 50 4E 47
+      if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
+        return 'image';
+      }
+      // JPEG: FF D8 FF
+      if (bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF) {
+        return 'image';
+      }
+      // GIF: 47 49 46
+      if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
+        return 'image';
+      }
+      // WebP: 52 49 46 46 (RIFF)
+      if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) {
+        return 'image';
+      }
+    }
+    
+    // ✅ TRUST THE LIBRARY FIRST
     if (lowerType.includes('image')) return 'image';
-    if (lowerType.includes('pdf')) return 'pdf';
-    if (lowerType.includes('clm')) return 'clm';
     if (lowerType.includes('video')) return 'video';
     if (lowerType.includes('audio')) return 'audio';
+    if (lowerType.includes('pdf')) return 'pdf';
+    if (lowerType.includes('json')) return 'json';
+    if (lowerType.includes('markdown')) return 'markdown';
+    
+    // ✅ ENHANCE for text types
+    if (lowerType.includes('text') && textContent) {
+      // Check for CLM
+      if (textContent.includes('specification:') && textContent.includes('implementation:')) {
+        return 'clm';
+      }
+      // Check for markdown patterns
+      if (
+        textContent.match(/^#{1,6}\s+/m) ||
+        textContent.match(/\[.+\]\(.+\)/) ||
+        textContent.match(/```[\s\S]*?```/) ||
+        textContent.match(/^\s*[-*+]\s+/m) ||
+        textContent.match(/^\s*\d+\.\s+/m)
+      ) {
+        return 'markdown';
+      }
+      return 'text';
+    }
     
     return 'text'; // default
   }
