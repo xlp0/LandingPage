@@ -9,9 +9,11 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const { MCard } = require('mcard-js');
-const { SqliteNodeEngine } = require('mcard-js');
-const { ContentTypeInterpreter } = require('mcard-js');
+
+// Import from mcard-js dist files directly (package.json exports are misconfigured)
+const { MCard } = require('mcard-js/dist/model/MCard.js');
+const { SqliteNodeEngine } = require('mcard-js/dist/storage/SqliteNodeEngine.js');
+const { ContentTypeInterpreter } = require('mcard-js/dist/model/detectors/ContentTypeInterpreter.js');
 
 const router = express.Router();
 
