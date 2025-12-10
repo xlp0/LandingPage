@@ -1,18 +1,25 @@
 /**
  * UI Components
  * Handles all UI rendering and interactions
+ * 
+ * ✅ NOW USING mcard-js LIBRARY!
  */
 
-import { ContentTypeDetector } from './ContentTypeDetector.js';
+// ✅ Import from mcard-js library
+import { ContentTypeInterpreter } from 'mcard-js';
 
 export class UIComponents {
   /**
    * Render file types sidebar
    * @param {MCard[]} allCards
    * @param {string} currentType
+   * @param {Object} categories - Pre-categorized cards
    */
-  static renderFileTypes(allCards, currentType) {
-    const categories = ContentTypeDetector.categorize(allCards);
+  static renderFileTypes(allCards, currentType, categories = null) {
+    // If categories not provided, create basic structure
+    if (!categories) {
+      categories = { all: allCards };
+    }
     const typeList = document.getElementById('typeList');
     
     const types = [

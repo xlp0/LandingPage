@@ -1,9 +1,12 @@
 /**
  * Card Viewer Component
  * Handles viewing and rendering individual cards
+ * 
+ * ✅ NOW USING mcard-js LIBRARY!
  */
 
-import { ContentTypeDetector } from './ContentTypeDetector.js';
+// ✅ Import from mcard-js library
+import { ContentTypeInterpreter } from 'mcard-js';
 import { UIComponents } from './UIComponents.js';
 import store from '../../../js/redux/store.js';
 import { renderContent, extractHandles } from '../../../js/redux/slices/content-renderer-slice.js';
@@ -16,6 +19,7 @@ export class CardViewer {
   
   /**
    * View a card
+   * ✅ Uses ContentTypeInterpreter from library
    * @param {MCard} card
    */
   async view(card) {
@@ -25,8 +29,12 @@ export class CardViewer {
     const viewerContent = document.getElementById('viewerContent');
     const viewerActions = document.getElementById('viewerActions');
     
-    const typeInfo = ContentTypeDetector.detect(card);
+    // ✅ Use library's ContentTypeInterpreter
+    const contentType = ContentTypeInterpreter.detect(card.getContent());
     const content = card.getContentAsText();
+    
+    // Create typeInfo object for compatibility
+    const typeInfo = { type: this.mapContentType(contentType), displayName: contentType };
     
     // Use our detected type directly (don't let Redux override it)
     const renderType = typeInfo.type;
@@ -221,5 +229,26 @@ export class CardViewer {
    */
   getCurrentCard() {
     return this.currentCard;
+  }
+  
+  /**
+   * Map library content type to our internal type
+   * ✅ Helper for ContentTypeInterpreter output
+   * @param {string} contentType
+   * @returns {string}
+   */
+  mapContentType(contentType) {
+    const lowerType = contentType.toLowerCase();
+    
+    if (lowerType.includes('markdown')) return 'markdown';
+    if (lowerType.includes('text')) return 'text';
+    if (lowerType.includes('json')) return 'json';
+    if (lowerType.includes('image')) return 'image';
+    if (lowerType.includes('pdf')) return 'pdf';
+    if (lowerType.includes('clm')) return 'clm';
+    if (lowerType.includes('video')) return 'video';
+    if (lowerType.includes('audio')) return 'audio';
+    
+    return 'text'; // default
   }
 }

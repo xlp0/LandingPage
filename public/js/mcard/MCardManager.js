@@ -1,11 +1,14 @@
 /**
  * MCard Manager
  * Main controller for MCard file management system
+ * 
+ * ✅ NOW USING mcard-js LIBRARY!
  */
 
-import { MCard } from './MCard.js';
-import { SimpleDB } from './SimpleDB.js';
-import { ContentTypeDetector } from './ContentTypeDetector.js';
+// ✅ Import from mcard-js library
+import { MCard, IndexedDBEngine, ContentTypeInterpreter } from 'mcard-js';
+
+// Keep UI components (not part of library)
 import { UIComponents } from './UIComponents.js';
 import { CardViewer } from './CardViewer.js';
 
@@ -19,15 +22,16 @@ export class MCardManager {
   
   /**
    * Initialize the manager
+   * ✅ Uses IndexedDBEngine from mcard-js library
    */
   async init() {
     try {
-      console.log('[MCardManager] Initializing...');
+      console.log('[MCardManager] Initializing with mcard-js library...');
       
-      // Initialize database
-      this.db = new SimpleDB();
+      // ✅ Initialize IndexedDBEngine from library
+      this.db = new IndexedDBEngine('mcard-storage');
       await this.db.init();
-      console.log('[MCardManager] Database initialized');
+      console.log('[MCardManager] ✅ IndexedDBEngine initialized (mcard-js v2.1.2)');
       
       // Load cards
       console.log('[MCardManager] Starting loadCards...');
@@ -61,7 +65,8 @@ export class MCardManager {
       console.log(`[MCardManager] Loaded ${this.allCards.length} cards`);
       
       console.log('[MCardManager] Rendering file types...');
-      UIComponents.renderFileTypes(this.allCards, this.currentType);
+      const categories = this.categorizeCards(this.allCards);
+      UIComponents.renderFileTypes(this.allCards, this.currentType, categories);
       
       console.log('[MCardManager] Showing cards for type:', this.currentType);
       this.showCardsForType(this.currentType);
@@ -75,6 +80,56 @@ export class MCardManager {
       console.error('[MCardManager] Error stack:', error.stack);
       UIComponents.showToast('Failed to load cards', 'error');
     }
+  }
+  
+  /**
+   * Categorize cards by content type
+   * ✅ Uses ContentTypeInterpreter from mcard-js library
+   * @param {Array} cards
+   * @returns {Object} Categories object
+   */
+  categorizeCards(cards) {
+    const categories = {
+      all: cards,
+      clm: [],
+      markdown: [],
+      text: [],
+      images: [],
+      videos: [],
+      audio: [],
+      documents: [],
+      archives: [],
+      other: []
+    };
+    
+    for (const card of cards) {
+      // ✅ Use library's ContentTypeInterpreter
+      const contentType = ContentTypeInterpreter.detect(card.getContent());
+      const contentStr = card.getContentAsText();
+      
+      // Categorize based on detected type
+      if (contentStr.includes('specification:') && contentStr.includes('implementation:')) {
+        categories.clm.push(card);
+      } else if (contentType.includes('markdown') || contentStr.match(/^#+ |\*\*|\[.*\]\(.*\)/m)) {
+        categories.markdown.push(card);
+      } else if (contentType.includes('text')) {
+        categories.text.push(card);
+      } else if (contentType.includes('image')) {
+        categories.images.push(card);
+      } else if (contentType.includes('video')) {
+        categories.videos.push(card);
+      } else if (contentType.includes('audio')) {
+        categories.audio.push(card);
+      } else if (contentType.includes('pdf') || contentType.includes('document')) {
+        categories.documents.push(card);
+      } else if (contentType.includes('zip') || contentType.includes('archive')) {
+        categories.archives.push(card);
+      } else {
+        categories.other.push(card);
+      }
+    }
+    
+    return categories;
   }
   
   /**
@@ -165,16 +220,19 @@ export class MCardManager {
    */
   selectType(typeId) {
     this.currentType = typeId;
-    UIComponents.renderFileTypes(this.allCards, this.currentType);
+    const categories = this.categorizeCards(this.allCards);
+    UIComponents.renderFileTypes(this.allCards, this.currentType, categories);
     this.showCardsForType(typeId);
   }
   
   /**
    * Show cards for selected type
    * @param {string} typeId
+   * ✅ Uses ContentTypeInterpreter from library
    */
   showCardsForType(typeId) {
-    const categories = ContentTypeDetector.categorize(this.allCards);
+    // ✅ Categorize using library's ContentTypeInterpreter
+    const categories = this.categorizeCards(this.allCards);
     const cards = categories[typeId] || [];
     
     const columnTitle = document.getElementById('columnTitle');
