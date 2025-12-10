@@ -136,6 +136,36 @@ export class CardViewer {
       console.log('[CardViewer] Detected type:', renderType);
       console.log('[CardViewer] Has renderer:', rendererRegistry.hasRenderer(renderType));
       
+      // ✅ Handle unknown binary files
+      if (renderType === 'binary') {
+        const sizeMB = (binaryContent.length / (1024 * 1024)).toFixed(2);
+        viewerContent.innerHTML = `
+          <div style="padding: 40px; text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 16px;">📦</div>
+            <h3 style="color: #888; margin-bottom: 8px;">Binary File</h3>
+            <p style="color: #888; margin-bottom: 8px;">Size: ${sizeMB} MB</p>
+            <p style="color: #666; font-size: 14px; margin-bottom: 24px;">This file cannot be displayed in the browser.</p>
+            <button 
+              onclick="window.mcardManager.downloadCard('${card.hash}')"
+              style="
+                background: #4fc3f7;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 600;
+              "
+            >
+              Download File
+            </button>
+          </div>
+        `;
+        UIComponents.hideLoading();
+        return;
+      }
+      
       if (rendererRegistry.hasRenderer(renderType)) {
         console.log('[CardViewer] Rendering with', renderType, 'renderer');
         
@@ -143,6 +173,37 @@ export class CardViewer {
         const contentToRender = (renderType === 'image' || renderType === 'pdf' || renderType === 'video' || renderType === 'audio') 
           ? binaryContent 
           : textContent;
+        
+        // ✅ Safety check: Prevent rendering huge text files that freeze the browser
+        const MAX_TEXT_SIZE = 1024 * 1024; // 1MB limit for text rendering
+        if ((renderType === 'text' || renderType === 'markdown' || renderType === 'json') && 
+            binaryContent.length > MAX_TEXT_SIZE) {
+          const sizeMB = (binaryContent.length / (1024 * 1024)).toFixed(2);
+          viewerContent.innerHTML = `
+            <div style="padding: 40px; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">📄</div>
+              <h3 style="color: #f48771; margin-bottom: 8px;">File Too Large to Display</h3>
+              <p style="color: #888; margin-bottom: 24px;">This file is ${sizeMB} MB. Text files larger than 1 MB cannot be displayed in the browser.</p>
+              <button 
+                onclick="window.mcardManager.downloadCard('${card.hash}')"
+                style="
+                  background: #4fc3f7;
+                  color: white;
+                  border: none;
+                  padding: 12px 24px;
+                  border-radius: 6px;
+                  cursor: pointer;
+                  font-size: 14px;
+                  font-weight: 600;
+                "
+              >
+                Download File
+              </button>
+            </div>
+          `;
+          UIComponents.hideLoading();
+          return;
+        }
         
         const renderedHTML = await rendererRegistry.render(renderType, contentToRender, {
           fileName: `${typeInfo.displayName}-${card.hash.substring(0, 8)}`,
@@ -304,6 +365,42 @@ export class CardViewer {
    */
   mapContentType(contentType, binaryContent = null, textContent = '') {
     const lowerType = contentType.toLowerCase();
+    
+    // ✅ Safety: Check if "text/plain" is actually binary (has many null bytes or high-byte chars)
+    if (lowerType.includes('text') && binaryContent && binaryContent.length > 100) {
+      const bytes = binaryContent instanceof Uint8Array ? binaryContent : new Uint8Array(binaryContent);
+      let nullCount = 0;
+      let highByteCount = 0;
+      const sampleSize = Math.min(1000, bytes.length);
+      
+      for (let i = 0; i < sampleSize; i++) {
+        if (bytes[i] === 0) nullCount++;
+        if (bytes[i] > 127) highByteCount++;
+      }
+      
+      // If >5% null bytes or >80% high bytes, it's probably binary
+      if (nullCount > sampleSize * 0.05 || highByteCount > sampleSize * 0.8) {
+        // Try to detect format by magic bytes
+        if (bytes.length > 4) {
+          // PNG
+          if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) return 'image';
+          // JPEG
+          if (bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF) return 'image';
+          // GIF
+          if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return 'image';
+          // WebP
+          if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) return 'image';
+          // MP4
+          if (bytes.length > 12 && bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) return 'video';
+          // WebM
+          if (bytes[0] === 0x1A && bytes[1] === 0x45 && bytes[2] === 0xDF && bytes[3] === 0xA3) return 'video';
+          // PDF
+          if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return 'pdf';
+        }
+        // Unknown binary - don't try to render as text
+        return 'binary';
+      }
+    }
     
     // ✅ Check for images by magic bytes if library says "application/octet-stream"
     if (lowerType.includes('octet-stream') && binaryContent && binaryContent.length > 4) {
