@@ -3,10 +3,18 @@
  * Main controller for MCard file management system
  * 
  * ✅ NOW USING mcard-js LIBRARY!
+ * ✅ Added Handle support for friendly names and versioning
  */
 
 // ✅ Import from mcard-js library
-import { MCard, IndexedDBEngine, ContentTypeInterpreter } from 'mcard-js';
+import { 
+  MCard, 
+  CardCollection,
+  IndexedDBEngine, 
+  ContentTypeInterpreter,
+  validateHandle,
+  HandleValidationError
+} from 'mcard-js';
 
 // Keep UI components (not part of library)
 import { UIComponents } from './UIComponents.js';
@@ -15,6 +23,7 @@ import { CardViewer } from './CardViewer.js';
 export class MCardManager {
   constructor() {
     this.db = null;
+    this.collection = null;  // ✅ CardCollection for handle support
     this.allCards = [];
     this.currentType = 'all';
     this.viewer = new CardViewer();
@@ -32,6 +41,10 @@ export class MCardManager {
       this.db = new IndexedDBEngine('mcard-storage');
       await this.db.init();
       console.log('[MCardManager] ✅ IndexedDBEngine initialized (mcard-js v2.1.8)');
+      
+      // ✅ Initialize CardCollection for handle support
+      this.collection = new CardCollection(this.db);
+      console.log('[MCardManager] ✅ CardCollection initialized with handle support');
       
       // Load cards
       console.log('[MCardManager] Starting loadCards...');
@@ -213,10 +226,11 @@ export class MCardManager {
       fileInput.addEventListener('change', (e) => this.handleFileUpload(e));
     }
     
-    // Search box
+    // Search box (supports @handle syntax)
     const searchBox = document.getElementById('searchBox');
     if (searchBox) {
-      searchBox.addEventListener('input', (e) => this.handleSearch(e.target.value));
+      searchBox.addEventListener('input', (e) => this.searchByHandle(e.target.value));
+      searchBox.placeholder = 'Search files or @handle...';
     }
     
     // Drag and drop
@@ -441,6 +455,158 @@ export class MCardManager {
     } catch (error) {
       console.error('[MCardManager] Error creating text card:', error);
       UIComponents.showToast('Failed to create card', 'error');
+    }
+  }
+  
+  // =========== Handle Management ===========
+  
+  /**
+   * Create a handle for a card
+   * ✅ Uses library's handle validation and CardCollection
+   * @param {string} hash - Card hash
+   */
+  async createHandle(hash) {
+    const handleName = prompt('Enter a friendly name for this card:\n(e.g., my-document, 文檔, مستند)');
+    if (!handleName) return;
+    
+    try {
+      // ✅ Validate handle using library
+      validateHandle(handleName);
+      
+      // Get the card
+      const card = await this.db.get(hash);
+      if (!card) {
+        throw new Error('Card not found');
+      }
+      
+      // ✅ Add with handle using CardCollection
+      await this.collection.addWithHandle(card, handleName);
+      
+      UIComponents.showToast(`Handle "${handleName}" created`, 'success');
+      
+      // Refresh view to show handle
+      await this.viewCard(hash);
+      
+    } catch (error) {
+      if (error instanceof HandleValidationError) {
+        UIComponents.showToast(`Invalid handle: ${error.message}`, 'error');
+      } else {
+        console.error('[MCardManager] Error creating handle:', error);
+        UIComponents.showToast('Failed to create handle: ' + error.message, 'error');
+      }
+    }
+  }
+  
+  /**
+   * Get card by handle
+   * ✅ Uses CardCollection.getByHandle
+   * @param {string} handle - Handle name
+   */
+  async getByHandle(handle) {
+    try {
+      const card = await this.collection.getByHandle(handle);
+      if (card) {
+        await this.viewCard(card.hash);
+      } else {
+        UIComponents.showToast(`Handle "${handle}" not found`, 'error');
+      }
+    } catch (error) {
+      console.error('[MCardManager] Error getting by handle:', error);
+      UIComponents.showToast('Failed to resolve handle', 'error');
+    }
+  }
+  
+  /**
+   * Update handle to point to new card
+   * ✅ Uses CardCollection.updateHandle
+   * @param {string} handle - Handle name
+   * @param {string} newHash - New card hash
+   */
+  async updateHandle(handle, newHash) {
+    try {
+      const card = await this.db.get(newHash);
+      if (!card) {
+        throw new Error('Card not found');
+      }
+      
+      await this.collection.updateHandle(handle, card);
+      UIComponents.showToast(`Handle "${handle}" updated`, 'success');
+      
+      // Refresh view
+      await this.viewCard(newHash);
+      
+    } catch (error) {
+      console.error('[MCardManager] Error updating handle:', error);
+      UIComponents.showToast('Failed to update handle', 'error');
+    }
+  }
+  
+  /**
+   * Get handle history
+   * ✅ Uses CardCollection.getHandleHistory
+   * @param {string} handle - Handle name
+   */
+  async getHandleHistory(handle) {
+    try {
+      const history = await this.collection.getHandleHistory(handle);
+      
+      if (!history || history.length === 0) {
+        UIComponents.showToast(`No history for "${handle}"`, 'info');
+        return;
+      }
+      
+      // Display history in a modal or panel
+      this.showHandleHistory(handle, history);
+      
+    } catch (error) {
+      console.error('[MCardManager] Error getting handle history:', error);
+      UIComponents.showToast('Failed to get history', 'error');
+    }
+  }
+  
+  /**
+   * Show handle history UI
+   * @param {string} handle - Handle name
+   * @param {Array} history - History entries
+   */
+  showHandleHistory(handle, history) {
+    const historyHtml = `
+      <div class="handle-history-modal">
+        <div class="handle-history-header">
+          <h3>Version History: ${handle}</h3>
+          <button onclick="this.closest('.handle-history-modal').remove()">×</button>
+        </div>
+        <div class="handle-history-content">
+          ${history.map((entry, index) => `
+            <div class="history-entry">
+              <div class="history-version">Version ${history.length - index}</div>
+              <div class="history-hash">${entry.hash.substring(0, 16)}...</div>
+              <div class="history-time">${new Date(entry.timestamp).toLocaleString()}</div>
+              <button onclick="window.mcardManager.viewCard('${entry.hash}')">View</button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    
+    // Add to page
+    const container = document.createElement('div');
+    container.innerHTML = historyHtml;
+    document.body.appendChild(container.firstElementChild);
+  }
+  
+  /**
+   * Search by handle
+   * @param {string} query - Search query
+   */
+  async searchByHandle(query) {
+    if (query.startsWith('@')) {
+      // Handle search (e.g., @my-document)
+      const handle = query.substring(1);
+      await this.getByHandle(handle);
+    } else {
+      // Regular search
+      this.handleSearch(query);
     }
   }
 }

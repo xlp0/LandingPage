@@ -115,6 +115,28 @@ export class CardViewer {
               <i data-lucide="copy" style="width: 10px; height: 10px;"></i>
               Copy Hash
             </button>
+            <button 
+              onclick="window.mcardManager.createHandle('${card.hash}')" 
+              style="
+                background: transparent;
+                border: 1px solid #3e3e42;
+                border-radius: 4px;
+                padding: 2px 8px;
+                font-size: 10px;
+                color: #888;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                transition: all 0.2s;
+              "
+              onmouseover="this.style.borderColor='#4ade80'; this.style.color='#4ade80';"
+              onmouseout="this.style.borderColor='#3e3e42'; this.style.color='#888';"
+              title="Create friendly name"
+            >
+              <i data-lucide="tag" style="width: 10px; height: 10px;"></i>
+              Create Handle
+            </button>
           </div>
         </div>
       </div>
