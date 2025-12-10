@@ -1,136 +1,229 @@
-// node_modules/mcard-js/dist/hash/HashValidator.js
-var HashValidator = class {
-  /**
-   * Compute hash of content using specified algorithm
-   */
-  static async computeHash(content, algorithm = "sha256") {
-    const data = typeof content === "string" ? new TextEncoder().encode(content) : content;
-    let algoName = "SHA-256";
-    switch (algorithm.toLowerCase()) {
-      case "sha1":
-        algoName = "SHA-1";
-        break;
-      case "sha-1":
-        algoName = "SHA-1";
-        break;
-      case "sha256":
-        algoName = "SHA-256";
-        break;
-      case "sha-256":
-        algoName = "SHA-256";
-        break;
-      case "sha384":
-        algoName = "SHA-384";
-        break;
-      case "sha-384":
-        algoName = "SHA-384";
-        break;
-      case "sha512":
-        algoName = "SHA-512";
-        break;
-      case "sha-512":
-        algoName = "SHA-512";
-        break;
-      default:
-        console.warn(`Algorithm ${algorithm} not natively supported or mapped, defaulting to SHA-256`);
-        algoName = "SHA-256";
-    }
-    const buffer = new Uint8Array(data).buffer;
-    const hashBuffer = await crypto.subtle.digest(algoName, buffer);
-    return Array.from(new Uint8Array(hashBuffer)).map((b) => b.toString(16).padStart(2, "0")).join("");
-  }
-  /**
-   * Validate that content matches expected hash
-   */
-  static async validate(content, expectedHash) {
-    const computedHash = await this.computeHash(content);
-    return computedHash === expectedHash;
-  }
+var __defProp = Object.defineProperty;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __esm = (fn, res) => function __init() {
+  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+};
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
 };
 
-// node_modules/mcard-js/dist/model/GTime.js
-var VALID_HASH_ALGORITHMS = ["md5", "sha1", "sha224", "sha256", "sha384", "sha512"];
-var GTime = class {
-  static DEFAULT_ALGORITHM = "sha256";
-  /**
-   * Generate a GTime stamp for the current moment
-   * Format: HASH_ALGO|TIMESTAMP|REGION_CODE
-   */
-  static stampNow(hashAlgorithm = this.DEFAULT_ALGORITHM) {
-    const algo = hashAlgorithm.toLowerCase();
-    const timestamp = (/* @__PURE__ */ new Date()).toISOString();
-    const region = "UTC";
-    return `${algo}|${timestamp}|${region}`;
-  }
-  /**
-   * Parse a GTime string
-   */
-  static parse(gtime) {
-    const parts = gtime.split("|");
-    if (parts.length !== 3) {
-      throw new Error(`Invalid GTime format: ${gtime}`);
-    }
-    return {
-      algorithm: parts[0],
-      timestamp: new Date(parts[1]),
-      region: parts[2]
+// node_modules/mcard-js/dist/hash/HashValidator.js
+var HashValidator;
+var init_HashValidator = __esm({
+  "node_modules/mcard-js/dist/hash/HashValidator.js"() {
+    HashValidator = class {
+      /**
+       * Compute hash of content using specified algorithm
+       */
+      static async computeHash(content, algorithm = "sha256") {
+        const data = typeof content === "string" ? new TextEncoder().encode(content) : content;
+        let algoName = "SHA-256";
+        switch (algorithm.toLowerCase()) {
+          case "sha1":
+            algoName = "SHA-1";
+            break;
+          case "sha-1":
+            algoName = "SHA-1";
+            break;
+          case "sha256":
+            algoName = "SHA-256";
+            break;
+          case "sha-256":
+            algoName = "SHA-256";
+            break;
+          case "sha384":
+            algoName = "SHA-384";
+            break;
+          case "sha-384":
+            algoName = "SHA-384";
+            break;
+          case "sha512":
+            algoName = "SHA-512";
+            break;
+          case "sha-512":
+            algoName = "SHA-512";
+            break;
+          default:
+            console.warn(`Algorithm ${algorithm} not natively supported or mapped, defaulting to SHA-256`);
+            algoName = "SHA-256";
+        }
+        const buffer = new Uint8Array(data).buffer;
+        const hashBuffer = await crypto.subtle.digest(algoName, buffer);
+        return Array.from(new Uint8Array(hashBuffer)).map((b) => b.toString(16).padStart(2, "0")).join("");
+      }
+      /**
+       * Validate that content matches expected hash
+       */
+      static async validate(content, expectedHash) {
+        const computedHash = await this.computeHash(content);
+        return computedHash === expectedHash;
+      }
     };
   }
-  /**
-   * Get the hash algorithm from a GTime string
-   */
-  static getHashAlgorithm(gtime) {
-    return this.parse(gtime).algorithm;
-  }
-  /**
-   * Get the timestamp from a GTime string
-   */
-  static getTimestamp(gtime) {
-    return this.parse(gtime).timestamp;
-  }
-  /**
-   * Get the region code from a GTime string
-   */
-  static getRegionCode(gtime) {
-    return this.parse(gtime).region;
-  }
-  /**
-   * Check if the provided hash function is valid.
-   * Matches Python's GTime.is_valid_hash_function()
-   */
-  static isValidHashFunction(hashFunction) {
-    if (!hashFunction || typeof hashFunction !== "string") {
-      return false;
-    }
-    return VALID_HASH_ALGORITHMS.includes(hashFunction.toLowerCase());
-  }
-  /**
-   * Check if the provided region code is valid.
-   * Matches Python's GTime.is_valid_region_code()
-   */
-  static isValidRegionCode(regionCode) {
-    return Boolean(regionCode && regionCode === regionCode.toUpperCase());
-  }
-  /**
-   * Check if the provided timestamp is in ISO format.
-   * Matches Python's GTime.is_iso_format()
-   */
-  static isIsoFormat(timestamp) {
-    if (!timestamp || typeof timestamp !== "string") {
-      return false;
-    }
-    try {
-      const date = new Date(timestamp);
-      if (isNaN(date.getTime())) {
-        return false;
+});
+
+// node_modules/mcard-js/dist/model/GTime.js
+var VALID_HASH_ALGORITHMS, GTime;
+var init_GTime = __esm({
+  "node_modules/mcard-js/dist/model/GTime.js"() {
+    VALID_HASH_ALGORITHMS = ["md5", "sha1", "sha224", "sha256", "sha384", "sha512"];
+    GTime = class {
+      static DEFAULT_ALGORITHM = "sha256";
+      /**
+       * Generate a GTime stamp for the current moment
+       * Format: HASH_ALGO|TIMESTAMP|REGION_CODE
+       */
+      static stampNow(hashAlgorithm = this.DEFAULT_ALGORITHM) {
+        const algo = hashAlgorithm.toLowerCase();
+        const timestamp = (/* @__PURE__ */ new Date()).toISOString();
+        const region = "UTC";
+        return `${algo}|${timestamp}|${region}`;
       }
-      const isoPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
-      return isoPattern.test(timestamp);
-    } catch {
-      return false;
-    }
+      /**
+       * Parse a GTime string
+       */
+      static parse(gtime) {
+        const parts = gtime.split("|");
+        if (parts.length !== 3) {
+          throw new Error(`Invalid GTime format: ${gtime}`);
+        }
+        return {
+          algorithm: parts[0],
+          timestamp: new Date(parts[1]),
+          region: parts[2]
+        };
+      }
+      /**
+       * Get the hash algorithm from a GTime string
+       */
+      static getHashAlgorithm(gtime) {
+        return this.parse(gtime).algorithm;
+      }
+      /**
+       * Get the timestamp from a GTime string
+       */
+      static getTimestamp(gtime) {
+        return this.parse(gtime).timestamp;
+      }
+      /**
+       * Get the region code from a GTime string
+       */
+      static getRegionCode(gtime) {
+        return this.parse(gtime).region;
+      }
+      /**
+       * Check if the provided hash function is valid.
+       * Matches Python's GTime.is_valid_hash_function()
+       */
+      static isValidHashFunction(hashFunction) {
+        if (!hashFunction || typeof hashFunction !== "string") {
+          return false;
+        }
+        return VALID_HASH_ALGORITHMS.includes(hashFunction.toLowerCase());
+      }
+      /**
+       * Check if the provided region code is valid.
+       * Matches Python's GTime.is_valid_region_code()
+       */
+      static isValidRegionCode(regionCode) {
+        return Boolean(regionCode && regionCode === regionCode.toUpperCase());
+      }
+      /**
+       * Check if the provided timestamp is in ISO format.
+       * Matches Python's GTime.is_iso_format()
+       */
+      static isIsoFormat(timestamp) {
+        if (!timestamp || typeof timestamp !== "string") {
+          return false;
+        }
+        try {
+          const date = new Date(timestamp);
+          if (isNaN(date.getTime())) {
+            return false;
+          }
+          const isoPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+          return isoPattern.test(timestamp);
+        } catch {
+          return false;
+        }
+      }
+    };
   }
-};
+});
+
+// node_modules/mcard-js/dist/model/constants.js
+var EVENT_CONSTANTS, ALGORITHM_HIERARCHY;
+var init_constants = __esm({
+  "node_modules/mcard-js/dist/model/constants.js"() {
+    EVENT_CONSTANTS = {
+      TYPE: "type",
+      HASH: "hash",
+      FIRST_G_TIME: "first_g_time",
+      CONTENT_SIZE: "content_size",
+      COLLISION_TIME: "collision_time",
+      UPGRADED_FUNCTION: "upgraded_function",
+      UPGRADED_HASH: "upgraded_hash",
+      DUPLICATE_TIME: "duplicate_time",
+      DUPLICATE_EVENT_TYPE: "duplicate",
+      COLLISION_EVENT_TYPE: "collision"
+    };
+    ALGORITHM_HIERARCHY = {
+      "sha1": { strength: 1, next: "sha224" },
+      "sha224": { strength: 2, next: "sha256" },
+      "sha256": { strength: 3, next: "sha384" },
+      "sha384": { strength: 4, next: "sha512" },
+      "sha512": { strength: 5, next: "custom" },
+      "custom": { strength: 6, next: null }
+    };
+  }
+});
+
+// node_modules/mcard-js/dist/model/EventProducer.js
+var EventProducer_exports = {};
+__export(EventProducer_exports, {
+  generateCollisionEvent: () => generateCollisionEvent,
+  generateDuplicationEvent: () => generateDuplicationEvent
+});
+async function generateCollisionEvent(card) {
+  const currentHashFunction = GTime.getHashAlgorithm(card.g_time);
+  const nextAlgo = nextHashFunction(currentHashFunction);
+  const upgradedHash = await HashValidator.computeHash(card.content, nextAlgo);
+  const event = {
+    [EVENT_CONSTANTS.TYPE]: EVENT_CONSTANTS.COLLISION_EVENT_TYPE,
+    [EVENT_CONSTANTS.HASH]: card.hash,
+    [EVENT_CONSTANTS.FIRST_G_TIME]: card.g_time,
+    [EVENT_CONSTANTS.COLLISION_TIME]: card.g_time,
+    // Using original card's time as per Python logic reference
+    [EVENT_CONSTANTS.CONTENT_SIZE]: card.content.length,
+    [EVENT_CONSTANTS.UPGRADED_FUNCTION]: nextAlgo,
+    [EVENT_CONSTANTS.UPGRADED_HASH]: upgradedHash
+  };
+  return JSON.stringify(event);
+}
+function generateDuplicationEvent(card) {
+  const event = {
+    [EVENT_CONSTANTS.TYPE]: EVENT_CONSTANTS.DUPLICATE_EVENT_TYPE,
+    [EVENT_CONSTANTS.HASH]: card.hash,
+    [EVENT_CONSTANTS.DUPLICATE_TIME]: card.g_time
+  };
+  return JSON.stringify(event);
+}
+function nextHashFunction(current) {
+  const currentLower = current.toLowerCase();
+  const entry = ALGORITHM_HIERARCHY[currentLower];
+  if (entry && entry.next) {
+    return entry.next;
+  }
+  return "sha256";
+}
+var init_EventProducer = __esm({
+  "node_modules/mcard-js/dist/model/EventProducer.js"() {
+    init_constants();
+    init_GTime();
+    init_HashValidator();
+  }
+});
 
 // node_modules/mcard-js/dist/model/detectors/ContentTypeInterpreter.js
 var ContentTypeInterpreter = class {
@@ -172,6 +265,8 @@ var ContentTypeInterpreter = class {
 };
 
 // node_modules/mcard-js/dist/model/MCard.js
+init_HashValidator();
+init_GTime();
 var MCard = class _MCard {
   content;
   hash;
@@ -232,6 +327,329 @@ var MCard = class _MCard {
       g_time: this.g_time,
       contentType: this.contentType,
       hashFunction: this.hashFunction
+    };
+  }
+};
+
+// node_modules/mcard-js/dist/monads/Maybe.js
+var Maybe = class _Maybe {
+  _value;
+  _isNothing;
+  constructor(_value, _isNothing) {
+    this._value = _value;
+    this._isNothing = _isNothing;
+  }
+  /**
+   * Create a Just (has value)
+   */
+  static just(value) {
+    return new _Maybe(value, false);
+  }
+  /**
+   * Create a Nothing (no value)
+   */
+  static nothing() {
+    return new _Maybe(null, true);
+  }
+  /**
+   * Check if this is Nothing
+   */
+  get isNothing() {
+    return this._isNothing;
+  }
+  /**
+   * Check if this is Just
+   */
+  get isJust() {
+    return !this._isNothing;
+  }
+  /**
+   * Get the value (throws if Nothing)
+   */
+  get value() {
+    if (this._isNothing) {
+      throw new Error("Cannot get value from Nothing");
+    }
+    return this._value;
+  }
+  /**
+   * Monadic bind - chain operations
+   * Short-circuits on Nothing
+   */
+  bind(fn) {
+    if (this._isNothing) {
+      return _Maybe.nothing();
+    }
+    return fn(this._value);
+  }
+  /**
+   * Map a function over the value
+   */
+  map(fn) {
+    if (this._isNothing) {
+      return _Maybe.nothing();
+    }
+    return _Maybe.just(fn(this._value));
+  }
+  /**
+   * Get value or default
+   */
+  getOrElse(defaultValue) {
+    return this._isNothing ? defaultValue : this._value;
+  }
+};
+
+// node_modules/mcard-js/dist/model/CardCollection.js
+var CardCollection = class {
+  engine;
+  constructor(engine) {
+    this.engine = engine;
+  }
+  // =========== Standard Operations ===========
+  /**
+   * Add a card to the collection
+   * Handles duplicates (same content, same hash) and collisions (diff content, same hash)
+   */
+  async add(card) {
+    const existingCard = await this.engine.get(card.hash);
+    if (existingCard) {
+      const isDuplicate = this.areContentsEqual(existingCard.content, card.content);
+      if (isDuplicate) {
+        const { generateDuplicationEvent: generateDuplicationEvent2 } = await Promise.resolve().then(() => (init_EventProducer(), EventProducer_exports));
+        const eventStr = generateDuplicationEvent2(card);
+        const eventCard = await MCard.create(eventStr);
+        await this.engine.add(eventCard);
+        return card.hash;
+      } else {
+        const { generateCollisionEvent: generateCollisionEvent2 } = await Promise.resolve().then(() => (init_EventProducer(), EventProducer_exports));
+        const eventStr = await generateCollisionEvent2(card);
+        const eventCard = await MCard.create(eventStr);
+        await this.engine.add(eventCard);
+        const eventObj = JSON.parse(eventStr);
+        const nextAlgo = eventObj.upgraded_function;
+        if (!nextAlgo) {
+          throw new Error("Failed to determine next hash algorithm for collision");
+        }
+        const upgradedCard = await MCard.create(card.content, nextAlgo);
+        return this.engine.add(upgradedCard);
+      }
+    }
+    return this.engine.add(card);
+  }
+  areContentsEqual(a, b) {
+    if (a.length !== b.length)
+      return false;
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] !== b[i])
+        return false;
+    }
+    return true;
+  }
+  /**
+   * Get a card by hash
+   */
+  async get(hash) {
+    return this.engine.get(hash);
+  }
+  /**
+   * Delete a card by hash
+   */
+  async delete(hash) {
+    return this.engine.delete(hash);
+  }
+  /**
+   * Get a page of cards
+   */
+  async getPage(pageNumber = 1, pageSize = 10) {
+    return this.engine.getPage(pageNumber, pageSize);
+  }
+  /**
+   * Count total cards
+   */
+  async count() {
+    return this.engine.count();
+  }
+  // =========== Handle Operations ===========
+  /**
+   * Add a card and register a handle for it
+   */
+  async addWithHandle(card, handle) {
+    const hash = await this.add(card);
+    await this.engine.registerHandle(handle, hash);
+    return hash;
+  }
+  /**
+   * Get card by handle
+   */
+  async getByHandle(handle) {
+    return this.engine.getByHandle(handle);
+  }
+  /**
+   * Resolve handle to hash
+   */
+  async resolveHandle(handle) {
+    return this.engine.resolveHandle(handle);
+  }
+  /**
+   * Update handle to point to new card
+   */
+  async updateHandle(handle, newCard) {
+    const hash = await this.add(newCard);
+    await this.engine.updateHandle(handle, hash);
+    return hash;
+  }
+  /**
+   * Get version history for a handle
+   */
+  async getHandleHistory(handle) {
+    return this.engine.getHandleHistory(handle);
+  }
+  // =========== Monadic Operations ===========
+  /**
+   * Monadic get - returns Maybe<MCard>
+   */
+  async getM(hash) {
+    const card = await this.get(hash);
+    return card ? Maybe.just(card) : Maybe.nothing();
+  }
+  /**
+   * Monadic getByHandle - returns Maybe<MCard>
+   */
+  async getByHandleM(handle) {
+    const card = await this.getByHandle(handle);
+    return card ? Maybe.just(card) : Maybe.nothing();
+  }
+  /**
+   * Monadic resolveHandle - returns Maybe<string>
+   */
+  async resolveHandleM(handle) {
+    const hash = await this.resolveHandle(handle);
+    return hash ? Maybe.just(hash) : Maybe.nothing();
+  }
+  /**
+   * Resolve handle and get card in one monadic operation
+   */
+  async resolveAndGetM(handle) {
+    const maybeHash = await this.resolveHandleM(handle);
+    if (maybeHash.isNothing)
+      return Maybe.nothing();
+    return this.getM(maybeHash.value);
+  }
+  // =========== Search & Bulk Operations ===========
+  async clear() {
+    return this.engine.clear();
+  }
+  async searchByString(query, pageNumber = 1, pageSize = 10) {
+    return this.engine.search(query, pageNumber, pageSize);
+  }
+  async searchByContent(query, pageNumber = 1, pageSize = 10) {
+    return this.engine.search(query, pageNumber, pageSize);
+  }
+  async searchByHash(hashPrefix) {
+    return this.engine.searchByHash(hashPrefix);
+  }
+  async getAllMCardsRaw() {
+    return this.engine.getAll();
+  }
+  async getAllCards(pageSize = 10, processCallback) {
+    const cards = [];
+    let pageNumber = 1;
+    let total = 0;
+    while (true) {
+      const page = await this.getPage(pageNumber, pageSize);
+      if (!page.items || page.items.length === 0)
+        break;
+      for (const card of page.items) {
+        if (processCallback) {
+          processCallback(card);
+        }
+        cards.push(card);
+      }
+      total = page.totalItems;
+      if (!page.hasNext)
+        break;
+      pageNumber++;
+    }
+    return { cards, total };
+  }
+  async printAllCards() {
+    const cards = await this.getAllMCardsRaw();
+    cards.forEach((card) => {
+      console.log(`Hash: ${card.hash}`);
+      try {
+        const text = new TextDecoder().decode(card.content);
+        const preview = text.slice(0, 100).replace(/\n/g, " ");
+        console.log(`Content: ${preview}${text.length > 100 ? "..." : ""}`);
+      } catch {
+        console.log(`Content (binary): ${card.content.length} bytes`);
+      }
+      console.log("---");
+    });
+  }
+};
+
+// node_modules/mcard-js/dist/model/Handle.js
+var MAX_HANDLE_LENGTH = 63;
+function isValidStartChar(char) {
+  return /^\p{L}$/u.test(char);
+}
+function isValidBodyChar(char) {
+  return /^[\p{L}\p{N}_-]$/u.test(char);
+}
+var HandleValidationError = class extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "HandleValidationError";
+  }
+};
+function validateHandle(handle) {
+  if (!handle) {
+    throw new HandleValidationError("Handle cannot be empty.");
+  }
+  const normalized = handle.trim().normalize("NFC").toLowerCase();
+  if (normalized.length === 0) {
+    throw new HandleValidationError("Handle cannot be empty after normalization.");
+  }
+  if (normalized.length > MAX_HANDLE_LENGTH) {
+    throw new HandleValidationError(`Handle '${handle}' is too long (${normalized.length} chars). Maximum is ${MAX_HANDLE_LENGTH}.`);
+  }
+  if (!isValidStartChar(normalized[0])) {
+    throw new HandleValidationError(`Invalid handle '${handle}'. Must start with a letter (any language).`);
+  }
+  for (let i = 1; i < normalized.length; i++) {
+    if (!isValidBodyChar(normalized[i])) {
+      throw new HandleValidationError(`Invalid character '${normalized[i]}' at position ${i} in handle '${handle}'.`);
+    }
+  }
+  return normalized;
+}
+var ContentHandle = class {
+  handle;
+  currentHash;
+  createdAt;
+  updatedAt;
+  constructor(handle, currentHash, createdAt, updatedAt) {
+    this.handle = validateHandle(handle);
+    this.currentHash = currentHash;
+    this.createdAt = createdAt ?? /* @__PURE__ */ new Date();
+    this.updatedAt = updatedAt ?? this.createdAt;
+  }
+  /**
+   * Update handle to point to new hash
+   * @returns Previous hash for history tracking
+   */
+  update(newHash) {
+    const previousHash = this.currentHash;
+    this.currentHash = newHash;
+    this.updatedAt = /* @__PURE__ */ new Date();
+    return previousHash;
+  }
+  toObject() {
+    return {
+      handle: this.handle,
+      currentHash: this.currentHash,
+      createdAt: this.createdAt.toISOString(),
+      updatedAt: this.updatedAt.toISOString()
     };
   }
 };
@@ -406,6 +824,17 @@ function openDB(name, version, { blocked, upgrade, blocking, terminated } = {}) 
   });
   return openPromise;
 }
+function deleteDB(name, { blocked } = {}) {
+  const request = indexedDB.deleteDatabase(name);
+  if (blocked) {
+    request.addEventListener("blocked", (event) => blocked(
+      // Casting due to https://github.com/microsoft/TypeScript-DOM-lib-generator/pull/1405
+      event.oldVersion,
+      event
+    ));
+  }
+  return wrap(request).then(() => void 0);
+}
 var readMethods = ["get", "getKey", "getAll", "getAllKeys", "count"];
 var writeMethods = ["put", "add", "delete", "clear"];
 var cachedMethods = /* @__PURE__ */ new Map();
@@ -442,42 +871,6 @@ replaceTraps((oldTraps) => ({
   get: (target, prop, receiver) => getMethod(target, prop) || oldTraps.get(target, prop, receiver),
   has: (target, prop) => !!getMethod(target, prop) || oldTraps.has(target, prop)
 }));
-
-// node_modules/mcard-js/dist/model/Handle.js
-var MAX_HANDLE_LENGTH = 63;
-function isValidStartChar(char) {
-  return /^\p{L}$/u.test(char);
-}
-function isValidBodyChar(char) {
-  return /^[\p{L}\p{N}_-]$/u.test(char);
-}
-var HandleValidationError = class extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "HandleValidationError";
-  }
-};
-function validateHandle(handle) {
-  if (!handle) {
-    throw new HandleValidationError("Handle cannot be empty.");
-  }
-  const normalized = handle.trim().normalize("NFC").toLowerCase();
-  if (normalized.length === 0) {
-    throw new HandleValidationError("Handle cannot be empty after normalization.");
-  }
-  if (normalized.length > MAX_HANDLE_LENGTH) {
-    throw new HandleValidationError(`Handle '${handle}' is too long (${normalized.length} chars). Maximum is ${MAX_HANDLE_LENGTH}.`);
-  }
-  if (!isValidStartChar(normalized[0])) {
-    throw new HandleValidationError(`Invalid handle '${handle}'. Must start with a letter (any language).`);
-  }
-  for (let i = 1; i < normalized.length; i++) {
-    if (!isValidBodyChar(normalized[i])) {
-      throw new HandleValidationError(`Invalid character '${normalized[i]}' at position ${i} in handle '${handle}'.`);
-    }
-  }
-  return normalized;
-}
 
 // node_modules/mcard-js/dist/storage/IndexedDBEngine.js
 var IndexedDBEngine = class {
@@ -659,11 +1052,20 @@ var IndexedDBEngine = class {
     return records.map((r) => ({ previousHash: r.previousHash, changedAt: r.changedAt })).reverse();
   }
 };
+
+// mcard-browser-entry.js
+init_GTime();
+init_HashValidator();
 export {
+  CardCollection,
+  ContentHandle,
   ContentTypeInterpreter,
   GTime,
+  HandleValidationError,
   HashValidator,
   IndexedDBEngine,
-  MCard
+  MCard,
+  Maybe,
+  validateHandle
 };
 //# sourceMappingURL=mcard-js.bundle.js.map
