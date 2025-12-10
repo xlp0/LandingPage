@@ -71,10 +71,10 @@ export class MCardManager {
    */
   async loadCards() {
     try {
-      const count = await this.db.count();
+      const count = await this.collection.count();
       console.log(`[MCardManager] Loading ${count} cards...`);
       
-      this.allCards = await this.db.getAll();
+      this.allCards = await this.collection.getAll();
       console.log(`[MCardManager] Loaded ${this.allCards.length} cards`);
       
       console.log('[MCardManager] Rendering file types...');
@@ -265,7 +265,7 @@ export class MCardManager {
       try {
         const bytes = new Uint8Array(await file.arrayBuffer());
         const card = await MCard.create(bytes);
-        await this.db.add(card);
+        await this.collection.add(card);
         console.log(`[MCardManager] Added card: ${card.hash}`);
       } catch (error) {
         console.error(`[MCardManager] Error uploading ${file.name}:`, error);
@@ -289,7 +289,7 @@ export class MCardManager {
       try {
         const bytes = new Uint8Array(await file.arrayBuffer());
         const card = await MCard.create(bytes);
-        await this.db.add(card);
+        await this.collection.add(card);
       } catch (error) {
         console.error(`[MCardManager] Error dropping ${file.name}:`, error);
       }
@@ -448,7 +448,7 @@ export class MCardManager {
     
     try {
       const card = await MCard.create(content);
-      await this.db.add(card);
+      await this.collection.add(card);
       await this.loadCards();
       await this.viewCard(card.hash);
       UIComponents.showToast('Text card created', 'success');
@@ -474,7 +474,7 @@ export class MCardManager {
       validateHandle(handleName);
       
       // Get the card
-      const card = await this.db.get(hash);
+      const card = await this.collection.get(hash);
       if (!card) {
         throw new Error('Card not found');
       }
@@ -524,7 +524,7 @@ export class MCardManager {
    */
   async updateHandle(handle, newHash) {
     try {
-      const card = await this.db.get(newHash);
+      const card = await this.collection.get(newHash);
       if (!card) {
         throw new Error('Card not found');
       }
