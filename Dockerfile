@@ -1,6 +1,9 @@
 # Use Node.js 18 Alpine as the base image
 FROM node:18-alpine
 
+# Install build dependencies for better-sqlite3
+RUN apk add --no-cache python3 make g++
+
 # Set the working directory
 WORKDIR /app
 
