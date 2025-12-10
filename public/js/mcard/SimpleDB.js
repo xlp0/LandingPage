@@ -1,5 +1,10 @@
 /**
  * SimpleDB - IndexedDB wrapper for MCard storage
+ * 
+ * Simplified browser implementation following mcard-js IndexedDBEngine patterns
+ * Provides core storage operations with pagination support
+ * 
+ * @see https://www.npmjs.com/package/mcard-js
  */
 
 import { MCard } from './MCard.js';
@@ -36,15 +41,17 @@ export class SimpleDB {
   
   /**
    * Add or update a card
+   * Matches mcard-js StorageEngine.add() API
+   * 
    * @param {MCard} card
-   * @returns {Promise<void>}
+   * @returns {Promise<string>} - Returns the hash
    */
   async add(card) {
     const tx = this.db.transaction(this.storeName, 'readwrite');
     const store = tx.objectStore(this.storeName);
     await store.put(card.toObject());
     return new Promise((resolve, reject) => {
-      tx.oncomplete = () => resolve();
+      tx.oncomplete = () => resolve(card.hash);
       tx.onerror = () => reject(tx.error);
     });
   }
@@ -113,6 +120,57 @@ export class SimpleDB {
     return new Promise((resolve, reject) => {
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
+    });
+  }
+  
+  /**
+   * Get paginated results
+   * Matches mcard-js StorageEngine.getPage() API
+   * 
+   * @param {number} pageNumber - Page number (0-indexed)
+   * @param {number} pageSize - Items per page
+   * @returns {Promise<{items: MCard[], total: number, page: number, pageSize: number}>}
+   */
+  async getPage(pageNumber = 0, pageSize = 20) {
+    const total = await this.count();
+    const allCards = await this.getAll();
+    
+    const start = pageNumber * pageSize;
+    const end = start + pageSize;
+    const items = allCards.slice(start, end);
+    
+    return {
+      items,
+      total,
+      page: pageNumber,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize)
+    };
+  }
+  
+  /**
+   * Search cards by hash prefix
+   * Matches mcard-js StorageEngine.searchByHash() API
+   * 
+   * @param {string} hashPrefix - Hash prefix to search
+   * @returns {Promise<MCard[]>}
+   */
+  async searchByHash(hashPrefix) {
+    const allCards = await this.getAll();
+    return allCards.filter(card => card.hash.startsWith(hashPrefix));
+  }
+  
+  /**
+   * Clear all cards
+   * @returns {Promise<void>}
+   */
+  async clear() {
+    const tx = this.db.transaction(this.storeName, 'readwrite');
+    const store = tx.objectStore(this.storeName);
+    await store.clear();
+    return new Promise((resolve, reject) => {
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
     });
   }
 }

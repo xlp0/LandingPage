@@ -1,6 +1,11 @@
 /**
  * Content Type Detector
  * Detects content type from MCard content
+ * 
+ * Simplified browser implementation following mcard-js ContentTypeInterpreter patterns
+ * Provides parity with Python implementation for common types
+ * 
+ * @see https://www.npmjs.com/package/mcard-js
  */
 
 export class ContentTypeDetector {

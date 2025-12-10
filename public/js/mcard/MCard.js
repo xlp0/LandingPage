@@ -1,6 +1,11 @@
 /**
  * MCard Class
  * Content-addressable storage unit with SHA-256 hashing
+ * 
+ * Simplified browser implementation following mcard-js library patterns
+ * For full features, use mcard-js library in Node.js environment
+ * 
+ * @see https://www.npmjs.com/package/mcard-js
  */
 
 export class MCard {
@@ -12,26 +17,39 @@ export class MCard {
   
   /**
    * Create a new MCard from data
-   * @param {string|Uint8Array} data - Content to store
+   * Matches mcard-js MCard.create() API
+   * 
+   * @param {string|Uint8Array|ArrayBuffer} data - Content to store
+   * @param {Object} options - Optional metadata
    * @returns {Promise<MCard>}
    */
-  static async create(data) {
-    // Convert to Uint8Array if needed
-    const bytes = typeof data === 'string' 
-      ? new TextEncoder().encode(data)
-      : data instanceof Uint8Array 
-        ? data 
-        : new Uint8Array(data);
+  static async create(data, options = {}) {
+    // Convert to Uint8Array if needed (handle multiple input types)
+    let bytes;
+    if (typeof data === 'string') {
+      bytes = new TextEncoder().encode(data);
+    } else if (data instanceof Uint8Array) {
+      bytes = data;
+    } else if (data instanceof ArrayBuffer) {
+      bytes = new Uint8Array(data);
+    } else if (ArrayBuffer.isView(data)) {
+      bytes = new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
+    } else {
+      throw new TypeError('Data must be string, Uint8Array, or ArrayBuffer');
+    }
     
     // Calculate SHA-256 hash
     const hashBuffer = await crypto.subtle.digest('SHA-256', bytes);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     
-    // Create timestamp
-    const g_time = new Date().toISOString();
+    // Create timestamp (GTime format from mcard-js)
+    const g_time = options.g_time || new Date().toISOString();
     
-    return new MCard(hash, bytes, g_time);
+    const card = new MCard(hash, bytes, g_time);
+    card.metadata = options.metadata || {};
+    
+    return card;
   }
   
   /**
@@ -44,14 +62,35 @@ export class MCard {
   
   /**
    * Get content as text
+   * @param {string} encoding - Text encoding (default: 'utf-8')
    * @returns {string}
    */
-  getContentAsText() {
+  getContentAsText(encoding = 'utf-8') {
     try {
-      return new TextDecoder().decode(this.content);
-    } catch {
+      return new TextDecoder(encoding).decode(this.content);
+    } catch (error) {
+      console.warn('[MCard] Failed to decode as text:', error.message);
       return '[Binary content]';
     }
+  }
+  
+  /**
+   * Get content size in bytes
+   * @returns {number}
+   */
+  getSize() {
+    return this.content.byteLength;
+  }
+  
+  /**
+   * Verify hash integrity
+   * @returns {Promise<boolean>}
+   */
+  async verify() {
+    const hashBuffer = await crypto.subtle.digest('SHA-256', this.content);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const computedHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return computedHash === this.hash;
   }
   
   /**
