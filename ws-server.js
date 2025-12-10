@@ -1,18 +1,30 @@
-const express = require('express');
-const { WebSocketServer } = require('ws');
-const http = require('http');
-const cors = require('cors');
-const path = require('path');
-require('dotenv').config();
+/**
+ * PKC WebSocket Gateway Server (ESM)
+ * Converted to ESM to support mcard-js library
+ */
 
-// Import room management modules
-const RoomRegistry = require('./room-registry.js');
-const RoomMessageHandler = require('./room-message-handler-server.js');
-const authRoutes = require('./routes/auth.js');
-const clmRoutes = require('./routes/clm.js');
+import express from 'express';
+import { WebSocketServer } from 'ws';
+import http from 'http';
+import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
 
-// MCard API temporarily disabled - mcard-js is ESM-only, not compatible with CommonJS
-// const mcardRoutes = require('./server/mcard-api.js');
+// ESM equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config();
+
+// Import room management modules (ESM)
+import RoomRegistry from './room-registry.mjs';
+import RoomMessageHandler from './room-message-handler-server.mjs';
+import authRoutes from './routes/auth.mjs';
+import clmRoutes from './routes/clm.mjs';
+
+// ✅ Import MCard API (USES mcard-js library!)
+import mcardRoutes from './server/mcard-api.mjs';
 
 const app = express();
 
@@ -43,9 +55,9 @@ app.use('/api/auth', authRoutes);
 // CLM routes
 app.use('/api/clm', clmRoutes);
 
-// MCard API temporarily disabled - mcard-js is ESM-only, not compatible with CommonJS
-// app.use('/api/mcard', mcardRoutes);
-console.log('[Server] ⚠️  MCard API disabled - mcard-js library is ESM-only, incompatible with CommonJS');
+// ✅ MCard API routes (USES mcard-js library!)
+app.use('/api/mcard', mcardRoutes);
+console.log('[Server] ✅ MCard API enabled - USING mcard-js v2.1.2 library (ESM)');
 
 // Add cache control headers for HTML files to prevent aggressive caching
 app.use((req, res, next) => {
@@ -298,7 +310,8 @@ app.get('/health', (req, res) => {
             websocket: '/ws/',
             config: '/api/config',
             env: '/api/env',
-            rooms: '/api/rooms'
+            rooms: '/api/rooms',
+            mcard: '/api/mcard'
         },
         environment: {
             NODE_ENV: process.env.NODE_ENV || 'development',
@@ -311,6 +324,11 @@ app.get('/health', (req, res) => {
         rooms: {
             total: roomRegistry.getRoomCount(),
             list: roomList
+        },
+        mcard: {
+            enabled: true,
+            library: 'mcard-js v2.1.2',
+            storage: 'Server-side SQLite'
         }
     });
 });
@@ -455,10 +473,11 @@ setInterval(() => {
 }, 5000);
 
 // Start server
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`PKC WebSocket Gateway Server running on port ${PORT}`);
     console.log(`WebSocket endpoint: ws://0.0.0.0:${PORT}/ws/`);
     console.log(`Connected clients: ${connectedClients.size}`);
     console.log(`[Server] 📡 Periodic room list broadcast enabled (every 5 seconds)`);
+    console.log(`[Server] ✅ MCard API enabled with mcard-js v2.1.2 library`);
 });
