@@ -1,13 +1,16 @@
 /**
  * CLM (Cubical Logic Model) Renderer
  * Renders CLM YAML files with three-dimensional structure visualization
- * ✅ Uses server-side API with mcard-js library's actual CLMRunner
+ * ✅ Uses BrowserCLMRunner (library's CLMRunner not exported)
  */
+
+import { BrowserCLMRunner } from '/public/js/mcard/BrowserCLMRunner.js';
 
 export class CLMRenderer {
   constructor() {
     this.name = 'CLM Renderer';
     this.contentType = 'clm';
+    this.runner = new BrowserCLMRunner();
   }
 
   /**
@@ -227,7 +230,7 @@ export class CLMRenderer {
 
   /**
    * Execute CLM with user input
-   * ✅ Uses server-side API with mcard-js library's actual CLMRunner
+   * ✅ Uses BrowserCLMRunner (library's CLMRunner not exported)
    */
   async executeCLM(button) {
     const rawContent = atob(button.dataset.clmRaw);
@@ -248,14 +251,8 @@ export class CLMRenderer {
       
       const input = JSON.parse(inputStr);
       
-      // Execute using server-side API (uses library's actual CLMRunner)
-      const response = await fetch('/api/clm/execute', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ yamlContent: rawContent, input })
-      });
-      
-      const result = await response.json();
+      // Execute using BrowserCLMRunner
+      const result = await this.runner.execute(rawContent, input);
       
       if (result.success) {
         resultsContent.innerHTML = `
@@ -327,7 +324,7 @@ export class CLMRenderer {
 
   /**
    * Run all test cases
-   * ✅ Uses server-side API with mcard-js library's actual CLMRunner
+   * ✅ Uses BrowserCLMRunner (library's CLMRunner not exported)
    */
   async runTests(button) {
     const rawContent = atob(button.dataset.clmRaw);
@@ -339,14 +336,8 @@ export class CLMRenderer {
     resultsContent.innerHTML = '<div class="clm-loading">Running tests...</div>';
     
     try {
-      // Run tests using server-side API (uses library's actual CLMRunner)
-      const response = await fetch('/api/clm/test', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ yamlContent: rawContent })
-      });
-      
-      const testResults = await response.json();
+      // Run tests using BrowserCLMRunner
+      const testResults = await this.runner.runTests(rawContent);
       
       if (testResults.success) {
         resultsContent.innerHTML = `
