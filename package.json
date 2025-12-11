@@ -13,7 +13,8 @@
     "test:ui": "playwright test --ui",
     "install-browsers": "playwright install",
     "report": "playwright show-report",
-    "ws-server": "node ws-server.js"
+    "ws-server": "node ws-server.js",
+    "build:mcard": "esbuild build-mcard-bundle.js --bundle --format=esm --outfile=public/js/vendor/mcard-js.bundle.js --platform=browser"
   },
   "repository": {
     "type": "git",

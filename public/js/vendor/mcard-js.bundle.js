@@ -225,6 +225,10 @@ var init_EventProducer = __esm({
   }
 });
 
+// node_modules/mcard-js/dist/model/MCard.js
+init_HashValidator();
+init_GTime();
+
 // node_modules/mcard-js/dist/model/detectors/ContentTypeInterpreter.js
 var ContentTypeInterpreter = class {
   /**
@@ -265,8 +269,6 @@ var ContentTypeInterpreter = class {
 };
 
 // node_modules/mcard-js/dist/model/MCard.js
-init_HashValidator();
-init_GTime();
 var MCard = class _MCard {
   content;
   hash;
@@ -535,6 +537,18 @@ var CardCollection = class {
       return Maybe.nothing();
     return this.getM(maybeHash.value);
   }
+  /**
+   * Prune version history for a handle.
+   * @param handle The handle string.
+   * @param options Options for pruning (olderThan date, or deleteAll).
+   * @returns Number of deleted entries.
+   */
+  async pruneHandleHistory(handle, options = {}) {
+    if (this.engine.pruneHandleHistory) {
+      return this.engine.pruneHandleHistory(handle, options);
+    }
+    return 0;
+  }
   // =========== Search & Bulk Operations ===========
   async clear() {
     return this.engine.clear();
@@ -589,12 +603,12 @@ var CardCollection = class {
 };
 
 // node_modules/mcard-js/dist/model/Handle.js
-var MAX_HANDLE_LENGTH = 63;
+var MAX_HANDLE_LENGTH = 255;
 function isValidStartChar(char) {
   return /^\p{L}$/u.test(char);
 }
 function isValidBodyChar(char) {
-  return /^[\p{L}\p{N}_-]$/u.test(char);
+  return /^[\p{L}\p{N}_./ -]$/u.test(char);
 }
 var HandleValidationError = class extends Error {
   constructor(message) {
@@ -653,6 +667,9 @@ var ContentHandle = class {
     };
   }
 };
+
+// build-mcard-bundle.js
+init_GTime();
 
 // node_modules/idb/build/wrap-idb-value.js
 var instanceOfAny = (object, constructors) => constructors.some((c) => object instanceof c);
@@ -823,17 +840,6 @@ function openDB(name, version, { blocked, upgrade, blocking, terminated } = {}) 
   }).catch(() => {
   });
   return openPromise;
-}
-function deleteDB(name, { blocked } = {}) {
-  const request = indexedDB.deleteDatabase(name);
-  if (blocked) {
-    request.addEventListener("blocked", (event) => blocked(
-      // Casting due to https://github.com/microsoft/TypeScript-DOM-lib-generator/pull/1405
-      event.oldVersion,
-      event
-    ));
-  }
-  return wrap(request).then(() => void 0);
 }
 var readMethods = ["get", "getKey", "getAll", "getAllKeys", "count"];
 var writeMethods = ["put", "add", "delete", "clear"];
@@ -1053,19 +1059,293 @@ var IndexedDBEngine = class {
   }
 };
 
-// mcard-browser-entry.js
-init_GTime();
+// build-mcard-bundle.js
 init_HashValidator();
+
+// node_modules/mcard-js/dist/monads/Either.js
+var Either = class _Either {
+  _value;
+  _isLeft;
+  constructor(_value, _isLeft) {
+    this._value = _value;
+    this._isLeft = _isLeft;
+  }
+  /**
+   * Create a Left (failure/error)
+   */
+  static left(value) {
+    return new _Either(value, true);
+  }
+  /**
+   * Create a Right (success)
+   */
+  static right(value) {
+    return new _Either(value, false);
+  }
+  /**
+   * Check if Left
+   */
+  get isLeft() {
+    return this._isLeft;
+  }
+  /**
+   * Check if Right
+   */
+  get isRight() {
+    return !this._isLeft;
+  }
+  /**
+   * Get Left value (throws if Right)
+   */
+  get left() {
+    if (!this._isLeft)
+      throw new Error("Cannot get left from Right");
+    return this._value;
+  }
+  /**
+   * Get Right value (throws if Left)
+   */
+  get right() {
+    if (this._isLeft)
+      throw new Error("Cannot get right from Left");
+    return this._value;
+  }
+  /**
+   * Monadic bind - chain operations (short-circuits on Left)
+   */
+  bind(fn) {
+    if (this._isLeft)
+      return _Either.left(this._value);
+    return fn(this._value);
+  }
+  /**
+   * Map a function over Right value
+   */
+  map(fn) {
+    if (this._isLeft)
+      return _Either.left(this._value);
+    return _Either.right(fn(this._value));
+  }
+  /**
+   * Get Right or default
+   */
+  getOrElse(defaultValue) {
+    return this._isLeft ? defaultValue : this._value;
+  }
+  /**
+   * Fold: apply leftFn if Left, rightFn if Right
+   */
+  fold(leftFn, rightFn) {
+    return this._isLeft ? leftFn(this._value) : rightFn(this._value);
+  }
+};
+
+// node_modules/mcard-js/dist/monads/IO.js
+var IO = class _IO {
+  effect;
+  constructor(effect) {
+    this.effect = effect;
+  }
+  /**
+   * Create an IO from an effect (lazy evaluation)
+   */
+  static of(effect) {
+    return new _IO(effect);
+  }
+  /**
+   * Lift a pure value into IO
+   */
+  static pure(value) {
+    return new _IO(() => value);
+  }
+  /**
+   * Monadic bind - chain IO operations
+   */
+  bind(fn) {
+    return new _IO(async () => {
+      const result = await this.run();
+      return fn(result).run();
+    });
+  }
+  /**
+   * Map a function over the result
+   */
+  map(fn) {
+    return new _IO(async () => {
+      const result = await this.run();
+      return fn(result);
+    });
+  }
+  /**
+   * Execute the IO and get the result
+   */
+  async run() {
+    return this.effect();
+  }
+  /**
+   * Run multiple IOs in sequence
+   */
+  static sequence(ios) {
+    return new _IO(async () => {
+      const results = [];
+      for (const io of ios) {
+        results.push(await io.run());
+      }
+      return results;
+    });
+  }
+  /**
+   * Run multiple IOs in parallel
+   */
+  static parallel(ios) {
+    return new _IO(() => Promise.all(ios.map((io) => io.run())));
+  }
+};
+
+// node_modules/mcard-js/dist/monads/Reader.js
+var Reader = class _Reader {
+  run;
+  constructor(run) {
+    this.run = run;
+  }
+  /**
+   * Lift a pure value into Reader
+   */
+  static pure(value) {
+    return new _Reader((_) => value);
+  }
+  /**
+   * Get the environment
+   */
+  static ask() {
+    return new _Reader((env) => env);
+  }
+  /**
+   * Monadic bind (flatMap)
+   */
+  bind(fn) {
+    return new _Reader((env) => {
+      const value = this.run(env);
+      return fn(value).run(env);
+    });
+  }
+  /**
+   * Map over the result
+   */
+  map(fn) {
+    return this.bind((value) => _Reader.pure(fn(value)));
+  }
+  /**
+   * Execute the Reader logic with an environment
+   */
+  evaluate(env) {
+    return this.run(env);
+  }
+};
+
+// node_modules/mcard-js/dist/monads/Writer.js
+var Writer = class _Writer {
+  run;
+  constructor(run) {
+    this.run = run;
+  }
+  /**
+   * Lift a pure value into Writer (empty log)
+   */
+  static pure(value) {
+    return new _Writer(() => [value, []]);
+  }
+  /**
+   * Write to log
+   */
+  static tell(log) {
+    return new _Writer(() => [void 0, log]);
+  }
+  /**
+   * Monadic bind
+   */
+  bind(fn) {
+    return new _Writer(() => {
+      const [val1, log1] = this.run();
+      const writer2 = fn(val1);
+      const [val2, log2] = writer2.evaluate();
+      return [val2, [...log1, ...log2]];
+    });
+  }
+  /**
+   * Map
+   */
+  map(fn) {
+    return this.bind((val) => _Writer.pure(fn(val)));
+  }
+  /**
+   * Run the writer
+   */
+  evaluate() {
+    return this.run();
+  }
+};
+
+// node_modules/mcard-js/dist/monads/State.js
+var State = class _State {
+  run;
+  constructor(run) {
+    this.run = run;
+  }
+  /**
+   * Lift pure value
+   */
+  static pure(value) {
+    return new _State((state) => [value, state]);
+  }
+  /**
+   * Get current state
+   */
+  static get() {
+    return new _State((state) => [state, state]);
+  }
+  /**
+   * Set new state
+   */
+  static put(newState) {
+    return new _State((_) => [void 0, newState]);
+  }
+  /**
+   * Monadic bind
+   */
+  bind(fn) {
+    return new _State((state) => {
+      const [val, newState] = this.run(state);
+      return fn(val).run(newState);
+    });
+  }
+  /**
+   * Map
+   */
+  map(fn) {
+    return this.bind((val) => _State.pure(fn(val)));
+  }
+  /**
+   * Execute state transition
+   */
+  evaluate(initialState) {
+    return this.run(initialState);
+  }
+};
 export {
   CardCollection,
   ContentHandle,
   ContentTypeInterpreter,
+  Either,
   GTime,
   HandleValidationError,
   HashValidator,
+  IO,
   IndexedDBEngine,
   MCard,
   Maybe,
+  Reader,
+  State,
+  Writer,
   validateHandle
 };
-//# sourceMappingURL=mcard-js.bundle.js.map
