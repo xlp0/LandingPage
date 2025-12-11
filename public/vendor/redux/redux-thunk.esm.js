@@ -1,8 +1,16 @@
-/**
- * Bundled by jsDelivr using Rollup v2.79.2 and Terser v5.39.0.
- * Original file: /npm/redux-thunk@2.4.2/es/index.js
+/*
+ * Skypack CDN - redux-thunk@2.4.2
  *
- * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ * Learn more:
+ *   📙 Package Documentation: https://www.skypack.dev/view/redux-thunk
+ *   📘 Skypack Documentation: https://www.skypack.dev/docs
+ *
+ * Pinned URL: (Optimized for Production)
+ *   ▶️ Normal: https://cdn.skypack.dev/pin/redux-thunk@v2.4.2-a4ycAAl9Cz9DQfpzO9cX/mode=imports/optimized/redux-thunk.js
+ *   ⏩ Minified: https://cdn.skypack.dev/pin/redux-thunk@v2.4.2-a4ycAAl9Cz9DQfpzO9cX/mode=imports,min/optimized/redux-thunk.js
+ *
  */
-function t(t){return function(n){var r=n.dispatch,u=n.getState;return function(n){return function(e){return"function"==typeof e?e(r,u,t):n(e)}}}}var n=t();n.withExtraArgument=t;export{n as default};
-//# sourceMappingURL=/sm/2ff9b708a3e49a680d509632f2eb7d4e6fe66b778633b55d1e69e217584d4cbf.map
+
+// Browser-Optimized Imports (Don't directly import the URLs below in your application!)
+export * from '/-/redux-thunk@v2.4.2-a4ycAAl9Cz9DQfpzO9cX/dist=es2019,mode=imports/optimized/redux-thunk.js';
+export {default} from '/-/redux-thunk@v2.4.2-a4ycAAl9Cz9DQfpzO9cX/dist=es2019,mode=imports/optimized/redux-thunk.js';

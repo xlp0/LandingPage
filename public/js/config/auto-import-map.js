@@ -22,9 +22,9 @@
   const importMap = {
     imports: {
       'redux': `${vendorPath}/redux/redux.esm.js`,
-      'redux-thunk': `${vendorPath}/redux/redux-thunk.esm.js`,
-      'immer': `${vendorPath}/redux/immer.esm.js`,
-      'reselect': `${vendorPath}/redux/reselect.esm.js`,
+      'redux-thunk': `${vendorPath}/redux/redux-thunk-esm.js`,
+      'immer': `${vendorPath}/redux/immer-esm.js`,
+      'reselect': `${vendorPath}/redux/reselect-esm.js`,
       '@reduxjs/toolkit': `${vendorPath}/redux/toolkit.esm.js`,
       'mcard-js': '/js/vendor/mcard-js.bundle.js'
     }

@@ -1,8 +1,16 @@
-/**
- * Bundled by jsDelivr using Rollup v2.79.2 and Terser v5.39.0.
- * Original file: /npm/reselect@4.1.8/es/index.js
+/*
+ * Skypack CDN - reselect@4.1.8
  *
- * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ * Learn more:
+ *   📙 Package Documentation: https://www.skypack.dev/view/reselect
+ *   📘 Skypack Documentation: https://www.skypack.dev/docs
+ *
+ * Pinned URL: (Optimized for Production)
+ *   ▶️ Normal: https://cdn.skypack.dev/pin/reselect@v4.1.8-aCBVHjOKA2CijoSa8DqM/mode=imports/optimized/reselect.js
+ *   ⏩ Minified: https://cdn.skypack.dev/pin/reselect@v4.1.8-aCBVHjOKA2CijoSa8DqM/mode=imports,min/optimized/reselect.js
+ *
  */
-var e="NOT_FOUND";var t=function(e,t){return e===t};function n(n,r){var u,o,i="object"==typeof r?r:{equalityCheck:r},c=i.equalityCheck,a=void 0===c?t:c,f=i.maxSize,l=void 0===f?1:f,p=i.resultEqualityCheck,v=function(e){return function(t,n){if(null===t||null===n||t.length!==n.length)return!1;for(var r=t.length,u=0;u<r;u++)if(!e(t[u],n[u]))return!1;return!0}}(a),s=1===l?(u=v,{get:function(t){return o&&u(o.key,t)?o.value:e},put:function(e,t){o={key:e,value:t}},getEntries:function(){return o?[o]:[]},clear:function(){o=void 0}}):function(t,n){var r=[];function u(t){var u=r.findIndex((function(e){return n(t,e.key)}));if(u>-1){var o=r[u];return u>0&&(r.splice(u,1),r.unshift(o)),o.value}return e}return{get:u,put:function(n,o){u(n)===e&&(r.unshift({key:n,value:o}),r.length>t&&r.pop())},getEntries:function(){return r},clear:function(){r=[]}}}(l,v);function y(){var t=s.get(arguments);if(t===e){if(t=n.apply(null,arguments),p){var r=s.getEntries().find((function(e){return p(e.value,t)}));r&&(t=r.value)}s.put(arguments,t)}return t}return y.clearCache=function(){return s.clear()},y}function r(e){for(var t=arguments.length,n=new Array(t>1?t-1:0),r=1;r<t;r++)n[r-1]=arguments[r];return function(){for(var t=arguments.length,r=new Array(t),u=0;u<t;u++)r[u]=arguments[u];var o,i=0,c={memoizeOptions:void 0},a=r.pop();if("object"==typeof a&&(c=a,a=r.pop()),"function"!=typeof a)throw new Error("createSelector expects an output function after the inputs, but received: ["+typeof a+"]");var f=c.memoizeOptions,l=void 0===f?n:f,p=Array.isArray(l)?l:[l],v=function(e){var t=Array.isArray(e[0])?e[0]:e;if(!t.every((function(e){return"function"==typeof e}))){var n=t.map((function(e){return"function"==typeof e?"function "+(e.name||"unnamed")+"()":typeof e})).join(", ");throw new Error("createSelector expects all input-selectors to be functions, but received the following types: ["+n+"]")}return t}(r),s=e.apply(void 0,[function(){return i++,a.apply(null,arguments)}].concat(p)),y=e((function(){for(var e=[],t=v.length,n=0;n<t;n++)e.push(v[n].apply(null,arguments));return o=s.apply(null,e)}));return Object.assign(y,{resultFunc:a,memoizedResultFunc:s,dependencies:v,lastResult:function(){return o},recomputations:function(){return i},resetRecomputations:function(){return i=0}}),y}}var u=r(n),o=function(e,t){if(void 0===t&&(t=u),"object"!=typeof e)throw new Error("createStructuredSelector expects first argument to be an object where each property is a selector, instead received a "+typeof e);var n=Object.keys(e),r=t(n.map((function(t){return e[t]})),(function(){for(var e=arguments.length,t=new Array(e),r=0;r<e;r++)t[r]=arguments[r];return t.reduce((function(e,t,r){return e[n[r]]=t,e}),{})}));return r};export{u as createSelector,r as createSelectorCreator,o as createStructuredSelector,t as defaultEqualityCheck,n as defaultMemoize};export default null;
-//# sourceMappingURL=/sm/3bdab7fe2907fb1c0434bb490e9100e6644bfa211855df2288a50691d20ff689.map
+
+// Browser-Optimized Imports (Don't directly import the URLs below in your application!)
+export * from '/-/reselect@v4.1.8-aCBVHjOKA2CijoSa8DqM/dist=es2019,mode=imports/optimized/reselect.js';
+export {default} from '/-/reselect@v4.1.8-aCBVHjOKA2CijoSa8DqM/dist=es2019,mode=imports/optimized/reselect.js';
