@@ -203,19 +203,38 @@ export class UIComponents {
   }
   
   /**
-   * Format timestamp to relative time
-   * @param {string} timestamp
+   * Format GTime to readable string
+   * @param {GTime|string} gtime - GTime object or ISO string
    * @returns {string}
    */
-  static formatTime(timestamp) {
+  static formatTime(gtime) {
+    if (!gtime) return 'Unknown';
+    
+    // ✅ Handle GTime object (has toISOString method)
+    let timestamp;
+    if (typeof gtime === 'object' && gtime.toISOString) {
+      timestamp = gtime.toISOString();
+    } else if (typeof gtime === 'string') {
+      timestamp = gtime;
+    } else {
+      return 'Unknown';
+    }
+    
+    // Parse and format
     const date = new Date(timestamp);
+    if (isNaN(date.getTime())) {
+      // If invalid date, show the raw GTime string
+      return timestamp.substring(0, 19).replace('T', ' ');
+    }
+    
     const now = new Date();
     const diff = now - date;
     
     if (diff < 60000) return 'Just now';
     if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
     if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
-    return date.toLocaleDateString();
+    if (diff < 604800000) return Math.floor(diff / 86400000) + 'd ago';
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
   }
   
   /**
