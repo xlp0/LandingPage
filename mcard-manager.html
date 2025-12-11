@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MCard File Manager</title>
   
+  <!-- Define process.env for browser compatibility -->
+  <script>
+    // Redux Toolkit expects process.env.NODE_ENV
+    window.process = {
+      env: {
+        NODE_ENV: 'production'
+      }
+    };
+  </script>
+  
   <!-- Auto-generate Import Map based on current URL -->
   <script>
     // Must run synchronously before any module imports
