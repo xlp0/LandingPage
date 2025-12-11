@@ -1,0 +1,1 @@
+{"version":3,"file":"registry.d.ts","sourceRoot":"","sources":["../../../src/model/detectors/registry.ts"],"names":[],"mappings":"AAOA;;GAEG;AACH,qBAAa,gBAAgB;IACzB,OAAO,CAAC,SAAS,CAAiB;;IA4BlC;;OAEG;IACH,MAAM,CACF,aAAa,EAAE,MAAM,GAAG,UAAU,EAClC,KAAK,EAAE,MAAM,EAAE,EACf,SAAS,EAAE,MAAM,EACjB,aAAa,CAAC,EAAE,MAAM,GACvB,MAAM;CAkCZ;AAED,eAAO,MAAM,QAAQ,kBAAyB,CAAC"}
