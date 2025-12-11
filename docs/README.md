@@ -13,58 +13,116 @@ This directory contains all technical documentation for the THK Mesh Landing Pag
 
 ```
 docs/
-├── README.md                    # This file - Documentation guide
-├── INDEX.md                     # Quick navigation index
-├── STATUS.md                    # Current project status
-├── START_HERE.md                # New developer onboarding
-├── QUICKSTART.md                # 5-minute setup guide
+├── README.md                         # This file - Documentation guide
+├── INDEX.md                          # Quick navigation index
+├── REORGANIZATION_PROPOSAL.md        # Reorganization plan (completed!)
 │
-├── 🏗️ architecture/            # System architecture & design
+├── 🚀 00-getting-started/           # Entry point for new developers
+│   ├── README.md                    # Getting started overview
+│   ├── START_HERE.md                # New developer onboarding
+│   ├── QUICKSTART.md                # 5-minute setup
+│   ├── STATUS.md                    # Current project status
+│   └── OPEN_AND_USE.md              # How to use the app
+│
+├── 🏗️ 01-architecture/              # System architecture & design
+│   ├── README.md                    # Architecture overview
 │   ├── landing-page-architecture.md
 │   ├── webrtc-communication-design.md
-│   └── webrtc-connection-handshake-flow.md
+│   ├── webrtc-connection-handshake-flow.md
+│   ├── CUBIC-LOGIC-MODEL.md
+│   ├── MODULAR_ARCHITECTURE.md
+│   ├── MCARD_MODULAR_ARCHITECTURE.md
+│   └── architecture-serverless-p2p.md
 │
-├── 🧩 components/               # UI component documentation
-│   ├── clm-*.md                # CLM component specs
-│   └── [component-name].md     # Individual component docs
+├── 🔐 02-authentication/            # Auth & security
+│   ├── README.md                    # Auth overview
+│   ├── ZITADEL_SETUP.md
+│   ├── OAUTH_*.md
+│   ├── PKCE_*.md
+│   └── *_SECRET*.md
 │
-├── 📊 redux/                    # Redux state management
-│   ├── INDEX.md                # Redux overview
-│   ├── REDUX_ARCHITECTURE.md   # State architecture
-│   └── slices/                 # Redux slice documentation
-│       ├── auth-slice.md
-│       ├── clm-slice.md
-│       └── [slice-name].md
+├── 💾 03-data-management/           # MCard & storage
+│   ├── README.md                    # Data management overview
+│   ├── MCARD-JS-SETUP.md
+│   ├── MCARD_*.md
+│   ├── CONTENT_RENDERING_SYSTEM.md
+│   └── mcard/                       # MCard documentation
+│       ├── README.md
+│       ├── how_to_use_mcard_js.md
+│       └── CLM_Language_Specification_v2.md
 │
-├── 📋 epics/                    # Project epics (large features)
-│   ├── README.md                # Epic guidelines
-│   └── EPIC-XXX-*.md          # Individual epics
+├── 🌐 04-networking/                # WebRTC & P2P
+│   ├── README.md                    # Networking overview
+│   ├── webrtc-*.md
+│   ├── p2p-*.md
+│   └── stun-*.md
 │
-├── 📝 stories/                  # User stories (small features)
-│   └── STORY-XXX-*.md         # Individual stories
+├── 📊 05-state-management/          # Redux
+│   ├── README.md                    # Redux overview
+│   ├── REDUX_*.md
+│   └── redux/                       # Redux documentation
+│       ├── INDEX.md
+│       ├── REDUX_ARCHITECTURE.md
+│       └── slices/
+│           ├── auth-slice.md
+│           ├── clm-slice.md
+│           ├── rtc-connection-slice.md
+│           ├── participants-slice.md
+│           └── invitations-slice.md
 │
-├── 🗄️ mcard/                    # MCard system documentation
-│   ├── README.md                # MCard overview
-│   ├── how_to_use_mcard_js.md  # Usage guide
-│   └── CLM_Language_Specification_v2.md
+├── 🧩 06-components/                # UI components
+│   ├── README.md                    # Component overview
+│   ├── CLM_*.md
+│   ├── clm-*.md
+│   ├── cubical-logic-model-for-webrtc.md
+│   └── components/                  # Individual components
+│       └── clm-*.md
 │
-├── 📈 observability/            # Monitoring & debugging
-│   ├── TROUBLESHOOTING.md      # Debug guide
-│   ├── client-side-tracking.md
-│   └── grafana-*.md            # Grafana setup
+├── 🚢 07-deployment/                # CI/CD & deployment
+│   ├── README.md                    # Deployment overview
+│   ├── ARGOCD_*.md
+│   ├── R2_SETUP.md
+│   ├── SELF-HOSTED-CDN.md
+│   ├── BACKEND_IMPLEMENTATION.md
+│   └── caching-strategy.md
 │
-├── ⚡ performance/              # Performance optimization
-│   ├── library-comparison.md
-│   └── tikz-*.md               # TikZ rendering optimization
+├── 🔍 08-testing/                   # Testing
+│   ├── README.md                    # Testing overview
+│   └── VERIFICATION_CHECKLIST.md
 │
-├── 📏 rules/                    # Development standards
-│   └── css.md                  # CSS guidelines
+├── 📈 09-performance/               # Performance & monitoring
+│   ├── README.md                    # Performance overview
+│   ├── optimization/                # Performance optimization
+│   │   ├── library-comparison.md
+│   │   └── tikz-*.md
+│   └── observability/               # Monitoring & debugging
+│       ├── TROUBLESHOOTING.md
+│       ├── client-side-tracking.md
+│       └── grafana-*.md
 │
-├── ✨ features/                 # Feature documentation
-│   └── nested-sidebar.md       # Feature specs
+├── 📋 10-project-management/        # Epics & stories
+│   ├── README.md                    # PM overview
+│   ├── IMPLEMENTATION_GUIDE.md
+│   ├── LIBRARY_ONLY_MIGRATION.md
+│   ├── REFACTORING_SUMMARY.md
+│   ├── PHASE1_COMPLETE.md
+│   ├── bmm-*.md
+│   ├── epics/                       # Project epics
+│   │   ├── README.md
+│   │   └── EPIC-XXX-*.md
+│   └── stories/                     # User stories
+│       └── STORY-XXX-*.md
 │
-└── 🗄️ archive/                  # Deprecated documentation
-    └── p2p-libp2p-old-*/       # Old implementations
+├── 📏 11-standards/                 # Coding standards
+│   ├── README.md                    # Standards overview
+│   ├── rules/                       # Development rules
+│   │   └── css.md
+│   └── features/                    # Feature specs
+│       └── nested-sidebar.md
+│
+└── 🗄️ archive/                      # Deprecated documentation
+    ├── cleanup-libp2p-migration.md
+    └── p2p-libp2p-old-*/
 ```
 
 ---
@@ -76,9 +134,9 @@ Essential documents for new developers and quick setup.
 
 | Document | Purpose | Read Time |
 |----------|---------|-----------|
-| [`START_HERE.md`](START_HERE.md) | New developer onboarding | 15 min |
-| [`QUICKSTART.md`](QUICKSTART.md) | 5-minute project setup | 5 min |
-| [`STATUS.md`](STATUS.md) | Current project status | 3 min |
+| [`00-getting-started/START_HERE.md`](00-getting-started/START_HERE.md) | New developer onboarding | 15 min |
+| [`00-getting-started/QUICKSTART.md`](00-getting-started/QUICKSTART.md) | 5-minute project setup | 5 min |
+| [`00-getting-started/STATUS.md`](00-getting-started/STATUS.md) | Current project status | 3 min |
 | [`INDEX.md`](INDEX.md) | Quick navigation | 2 min |
 
 ### 🏗️ Architecture & Design
