@@ -60,12 +60,13 @@ export class UIComponents {
   }
   
   /**
-   * Render card list
-   * ✅ Uses ContentTypeInterpreter from library
-   * @param {MCard[]} cards
+   * Render MCard list
+   * @param {Array} cards
+   * @param {Object} collection - CardCollection instance for handle lookup
    */
-  static renderCardList(cards) {
+  static async renderCards(cards, collection = null) {
     const mcardList = document.getElementById('mcardList');
+    if (!mcardList) return;
     
     if (cards.length === 0) {
       mcardList.innerHTML = `
@@ -80,8 +81,24 @@ export class UIComponents {
       return;
     }
     
+    // Fetch handles for all cards
+    const cardHandles = new Map();
+    if (collection) {
+      for (const card of cards) {
+        try {
+          // Try to resolve handle from hash
+          const handles = await collection.engine.getHandlesForHash?.(card.hash);
+          if (handles && handles.length > 0) {
+            cardHandles.set(card.hash, handles[0]); // Use first handle
+          }
+        } catch (e) {
+          // No handle for this card
+        }
+      }
+    }
+    
     mcardList.innerHTML = cards.map(card => {
-      // ✅ Use library's ContentTypeInterpreter
+      // Use library's ContentTypeInterpreter
       const contentType = ContentTypeInterpreter.detect(card.getContent());
       const binaryContent = card.getContent();
       const textContent = card.getContentAsText();
@@ -104,6 +121,10 @@ export class UIComponents {
       };
       const displayName = displayNames[type] || type.toUpperCase();
       
+      // ✅ Get handle for this card
+      const handle = cardHandles.get(card.hash);
+      const handleBadge = handle ? `<span style="background: #4ade80; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">@${handle}</span>` : '';
+      
       return `
         <div class="mcard-item" onclick="window.mcardManager.viewCard('${card.hash}')">
           <div class="mcard-item-header">
@@ -112,6 +133,7 @@ export class UIComponents {
               <div class="mcard-item-name" style="display: flex; align-items: center; gap: 6px;">
                 <span>${displayName}</span>
                 ${badge}
+                ${handleBadge}
               </div>
               <div class="mcard-item-hash">${card.hash.substring(0, 16)}...</div>
             </div>

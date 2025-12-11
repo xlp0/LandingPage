@@ -315,7 +315,7 @@ export class MCardManager {
    * @param {string} typeId
    * ✅ Uses ContentTypeInterpreter from library
    */
-  showCardsForType(typeId) {
+  async showCardsForType(typeId) {
     // ✅ Categorize using library's ContentTypeInterpreter
     const categories = this.categorizeCards(this.allCards);
     const cards = categories[typeId] || [];
@@ -337,7 +337,8 @@ export class MCardManager {
       columnTitle.textContent = typeNames[typeId] || 'MCards';
     }
     
-    UIComponents.renderCardList(cards);
+    // ✅ Pass collection for handle lookup
+    await UIComponents.renderCards(cards, this.collection);
   }
   
   /**
