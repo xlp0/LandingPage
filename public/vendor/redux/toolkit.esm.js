@@ -1,8 +1,2019 @@
-/**
- * Bundled by jsDelivr using Rollup v2.79.2 and Terser v5.39.0.
- * Original file: /npm/@reduxjs/toolkit@1.9.7/dist/redux-toolkit.esm.js
- *
- * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
- */
-import n,{enableES5 as e,isDraft as t,current as r,isDraftable as i}from"/npm/immer@9.0.21/+esm";export{default as createNextState,current,freeze,isDraft,original}from"/npm/immer@9.0.21/+esm";import{combineReducers as o,applyMiddleware as u,createStore as a,compose as c}from"/npm/redux@4.2.1/+esm";export*from"/npm/redux@4.2.1/+esm";import{createSelector as f}from"/npm/reselect@4.1.8/+esm";export{createSelector}from"/npm/reselect@4.1.8/+esm";import l from"/npm/redux-thunk@2.4.2/+esm";var s="undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{};"function"==typeof s.setTimeout&&setTimeout,"function"==typeof s.clearTimeout&&clearTimeout;function d(n,e){this.fun=n,this.array=e}d.prototype.run=function(){this.fun.apply(null,this.array)};var p=s.performance||{};p.now||p.mozNow||p.msNow||p.oNow||p.webkitNow;new Date;var v,y=(v=function(n,e){return v=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(n,e){n.__proto__=e}||function(n,e){for(var t in e)Object.prototype.hasOwnProperty.call(e,t)&&(n[t]=e[t])},v(n,e)},function(n,e){if("function"!=typeof e&&null!==e)throw new TypeError("Class extends value "+String(e)+" is not a constructor or null");function t(){this.constructor=n}v(n,e),n.prototype=null===e?Object.create(e):(t.prototype=e.prototype,new t)}),h=function(n,e){var t,r,i,o,u={label:0,sent:function(){if(1&i[0])throw i[1];return i[1]},trys:[],ops:[]};return o={next:a(0),throw:a(1),return:a(2)},"function"==typeof Symbol&&(o[Symbol.iterator]=function(){return this}),o;function a(o){return function(a){return function(o){if(t)throw new TypeError("Generator is already executing.");for(;u;)try{if(t=1,r&&(i=2&o[0]?r.return:o[0]?r.throw||((i=r.return)&&i.call(r),0):r.next)&&!(i=i.call(r,o[1])).done)return i;switch(r=0,i&&(o=[2&o[0],i.value]),o[0]){case 0:case 1:i=o;break;case 4:return u.label++,{value:o[1],done:!1};case 5:u.label++,r=o[1],o=[0];continue;case 7:o=u.ops.pop(),u.trys.pop();continue;default:if(!(i=u.trys,(i=i.length>0&&i[i.length-1])||6!==o[0]&&2!==o[0])){u=0;continue}if(3===o[0]&&(!i||o[1]>i[0]&&o[1]<i[3])){u.label=o[1];break}if(6===o[0]&&u.label<i[1]){u.label=i[1],i=o;break}if(i&&u.label<i[2]){u.label=i[2],u.ops.push(o);break}i[2]&&u.ops.pop(),u.trys.pop();continue}o=e.call(n,u)}catch(n){o=[6,n],r=0}finally{t=i=0}if(5&o[0])throw o[1];return{value:o[0]?o[1]:void 0,done:!0}}([o,a])}}},g=function(n,e){for(var t=0,r=e.length,i=n.length;t<r;t++,i++)n[i]=e[t];return n},m=Object.defineProperty,b=Object.defineProperties,w=Object.getOwnPropertyDescriptors,O=Object.getOwnPropertySymbols,j=Object.prototype.hasOwnProperty,E=Object.prototype.propertyIsEnumerable,A=function(n,e,t){return e in n?m(n,e,{enumerable:!0,configurable:!0,writable:!0,value:t}):n[e]=t},S=function(n,e){for(var t in e||(e={}))j.call(e,t)&&A(n,t,e[t]);if(O)for(var r=0,i=O(e);r<i.length;r++){t=i[r];E.call(e,t)&&A(n,t,e[t])}return n},P=function(n,e){return b(n,w(e))},x=function(n,e,t){return new Promise((function(r,i){var o=function(n){try{a(t.next(n))}catch(n){i(n)}},u=function(n){try{a(t.throw(n))}catch(n){i(n)}},a=function(n){return n.done?r(n.value):Promise.resolve(n.value).then(o,u)};a((t=t.apply(n,e)).next())}))},k=function(){for(var n=[],e=0;e<arguments.length;e++)n[e]=arguments[e];var i=f.apply(void 0,n);return function(n){for(var e=[],o=1;o<arguments.length;o++)e[o-1]=arguments[o];return i.apply(void 0,g([t(n)?r(n):n],e))}},C="undefined"!=typeof window&&window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__?window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__:function(){if(0!==arguments.length)return"object"==typeof arguments[0]?c:c.apply(null,arguments)};function T(n){if("object"!=typeof n||null===n)return!1;var e=Object.getPrototypeOf(n);if(null===e)return!0;for(var t=e;null!==Object.getPrototypeOf(t);)t=Object.getPrototypeOf(t);return e===t}var _=function(n){return n&&"function"==typeof n.match};function I(n,e){function t(){for(var t=[],r=0;r<arguments.length;r++)t[r]=arguments[r];if(e){var i=e.apply(void 0,t);if(!i)throw new Error("prepareAction did not return an object");return S(S({type:n,payload:i.payload},"meta"in i&&{meta:i.meta}),"error"in i&&{error:i.error})}return{type:n,payload:t[0]}}return t.toString=function(){return""+n},t.type=n,t.match=function(e){return e.type===n},t}function M(n){return T(n)&&"type"in n}function q(n){return"function"==typeof n&&"type"in n&&_(n)}function L(n){return M(n)&&"string"==typeof n.type&&Object.keys(n).every(R)}function R(n){return["type","payload","error","meta"].indexOf(n)>-1}function N(n){return""+n}function D(n){return function(){return function(n){return function(e){return n(e)}}}}var z=function(n){function e(){for(var t=[],r=0;r<arguments.length;r++)t[r]=arguments[r];var i=n.apply(this,t)||this;return Object.setPrototypeOf(i,e.prototype),i}return y(e,n),Object.defineProperty(e,Symbol.species,{get:function(){return e},enumerable:!1,configurable:!0}),e.prototype.concat=function(){for(var e=[],t=0;t<arguments.length;t++)e[t]=arguments[t];return n.prototype.concat.apply(this,e)},e.prototype.prepend=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];return 1===n.length&&Array.isArray(n[0])?new(e.bind.apply(e,g([void 0],n[0].concat(this)))):new(e.bind.apply(e,g([void 0],n.concat(this))))},e}(Array),V=function(n){function e(){for(var t=[],r=0;r<arguments.length;r++)t[r]=arguments[r];var i=n.apply(this,t)||this;return Object.setPrototypeOf(i,e.prototype),i}return y(e,n),Object.defineProperty(e,Symbol.species,{get:function(){return e},enumerable:!1,configurable:!0}),e.prototype.concat=function(){for(var e=[],t=0;t<arguments.length;t++)e[t]=arguments[t];return n.prototype.concat.apply(this,e)},e.prototype.prepend=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];return 1===n.length&&Array.isArray(n[0])?new(e.bind.apply(e,g([void 0],n[0].concat(this)))):new(e.bind.apply(e,g([void 0],n.concat(this))))},e}(Array);function B(e){return i(e)?n(e,(function(){})):e}function F(n){return"object"!=typeof n||null==n||Object.isFrozen(n)}function W(n){return function(){return function(n){return function(e){return n(e)}}}}function X(n){var e=typeof n;return null==n||"string"===e||"boolean"===e||"number"===e||Array.isArray(n)||T(n)}function G(n,e,t,r,i,o){var u;if(void 0===e&&(e=""),void 0===t&&(t=X),void 0===i&&(i=[]),!t(n))return{keyPath:e||"<root>",value:n};if("object"!=typeof n||null===n)return!1;if(null==o?void 0:o.has(n))return!1;for(var a=null!=r?r(n):Object.entries(n),c=i.length>0,f=function(n,a){var f=e?e+"."+n:n;if(c&&i.some((function(n){return n instanceof RegExp?n.test(f):f===n})))return"continue";return t(a)?"object"==typeof a&&(u=G(a,f,t,r,i,o))?{value:u}:void 0:{value:{keyPath:f,value:a}}},l=0,s=a;l<s.length;l++){var d=s[l],p=f(d[0],d[1]);if("object"==typeof p)return p.value}return o&&U(n)&&o.add(n),!1}function U(n){if(!Object.isFrozen(n))return!1;for(var e=0,t=Object.values(n);e<t.length;e++){var r=t[e];if("object"==typeof r&&null!==r&&!U(r))return!1}return!0}function J(n){return function(){return function(n){return function(e){return n(e)}}}}function K(n){void 0===n&&(n={});var e=n.thunk,t=void 0===e||e;n.immutableCheck,n.serializableCheck,n.actionCreatorCheck;var r=new z;return t&&("boolean"==typeof t?r.push(l):r.push(l.withExtraArgument(t.extraArgument))),r}function H(n){var e,t=function(n){return K(n)},r=n||{},i=r.reducer,f=void 0===i?void 0:i,l=r.middleware,s=void 0===l?t():l,d=r.devTools,p=void 0===d||d,v=r.preloadedState,y=void 0===v?void 0:v,h=r.enhancers,m=void 0===h?void 0:h;if("function"==typeof f)e=f;else{if(!T(f))throw new Error('"reducer" is a required argument, and must be a function or an object of functions that can be passed to combineReducers');e=o(f)}var b=s;"function"==typeof b&&(b=b(t));var w=u.apply(void 0,b),O=c;p&&(O=C(S({trace:!1},"object"==typeof p&&p)));var j=new V(w),E=j;Array.isArray(m)?E=g([w],m):"function"==typeof m&&(E=m(j));var A=O.apply(void 0,E);return a(e,y,A)}function Q(n){var e,t={},r=[],i={addCase:function(n,e){var r="string"==typeof n?n:n.type;if(!r)throw new Error("`builder.addCase` cannot be called with an empty action type");if(r in t)throw new Error("`builder.addCase` cannot be called with two reducers for the same action type");return t[r]=e,i},addMatcher:function(n,e){return r.push({matcher:n,reducer:e}),i},addDefaultCase:function(n){return e=n,i}};return n(i),[t,r,e]}function Y(e,r,o,u){void 0===o&&(o=[]);var a,c="function"==typeof r?Q(r):[r,o,u],f=c[0],l=c[1],s=c[2];if("function"==typeof e)a=function(){return B(e())};else{var d=B(e);a=function(){return d}}function p(e,r){void 0===e&&(e=a());var o=g([f[r.type]],l.filter((function(n){return(0,n.matcher)(r)})).map((function(n){return n.reducer})));return 0===o.filter((function(n){return!!n})).length&&(o=[s]),o.reduce((function(e,o){if(o){var u;if(t(e))return void 0===(u=o(e,r))?e:u;if(i(e))return n(e,(function(n){return o(n,r)}));if(void 0===(u=o(e,r))){if(null===e)return e;throw Error("A case reducer on a non-draftable value must not return undefined")}return u}return e}),e)}return p.getInitialState=a,p}function Z(n){var e=n.name;if(!e)throw new Error("`name` is a required option for createSlice");var t,r="function"==typeof n.initialState?n.initialState:B(n.initialState),i=n.reducers||{},o=Object.keys(i),u={},a={},c={};function f(){var e="function"==typeof n.extraReducers?Q(n.extraReducers):[n.extraReducers],t=e[0],i=void 0===t?{}:t,o=e[1],u=void 0===o?[]:o,c=e[2],f=void 0===c?void 0:c,l=S(S({},i),a);return Y(r,(function(n){for(var e in l)n.addCase(e,l[e]);for(var t=0,r=u;t<r.length;t++){var i=r[t];n.addMatcher(i.matcher,i.reducer)}f&&n.addDefaultCase(f)}))}return o.forEach((function(n){var t,r,o=i[n],f=e+"/"+n;"reducer"in o?(t=o.reducer,r=o.prepare):t=o,u[n]=t,a[f]=t,c[n]=r?I(f,r):I(f)})),{name:e,reducer:function(n,e){return t||(t=f()),t(n,e)},actions:c,caseReducers:u,getInitialState:function(){return t||(t=f()),t.getInitialState()}}}function $(e){return function(r,i){var o=function(n){L(i)?e(i.payload,n):e(i,n)};return t(r)?(o(r),r):n(r,o)}}function nn(n,e){return e(n)}function en(n){return Array.isArray(n)||(n=Object.values(n)),n}function tn(n,e,t){for(var r=[],i=[],o=0,u=n=en(n);o<u.length;o++){var a=u[o],c=nn(a,e);c in t.entities?i.push({id:c,changes:a}):r.push(a)}return[r,i]}function rn(n){function e(e,t){var r=nn(e,n);r in t.entities||(t.ids.push(r),t.entities[r]=e)}function t(n,t){for(var r=0,i=n=en(n);r<i.length;r++){e(i[r],t)}}function r(e,t){var r=nn(e,n);r in t.entities||t.ids.push(r),t.entities[r]=e}function i(n,e){var t=!1;n.forEach((function(n){n in e.entities&&(delete e.entities[n],t=!0)})),t&&(e.ids=e.ids.filter((function(n){return n in e.entities})))}function o(e,t){var r={},i={};if(e.forEach((function(n){n.id in t.entities&&(i[n.id]={id:n.id,changes:S(S({},i[n.id]?i[n.id].changes:null),n.changes)})})),(e=Object.values(i)).length>0){var o=e.filter((function(e){return function(e,t,r){var i=r.entities[t.id],o=Object.assign({},i,t.changes),u=nn(o,n),a=u!==t.id;return a&&(e[t.id]=u,delete r.entities[t.id]),r.entities[u]=o,a}(r,e,t)})).length>0;o&&(t.ids=Object.keys(t.entities))}}function u(e,r){var i=tn(e,n,r),u=i[0];o(i[1],r),t(u,r)}return{removeAll:(a=function(n){Object.assign(n,{ids:[],entities:{}})},c=$((function(n,e){return a(e)})),function(n){return c(n,void 0)}),addOne:$(e),addMany:$(t),setOne:$(r),setMany:$((function(n,e){for(var t=0,i=n=en(n);t<i.length;t++){r(i[t],e)}})),setAll:$((function(n,e){n=en(n),e.ids=[],e.entities={},t(n,e)})),updateOne:$((function(n,e){return o([n],e)})),updateMany:$(o),upsertOne:$((function(n,e){return u([n],e)})),upsertMany:$(u),removeOne:$((function(n,e){return i([n],e)})),removeMany:$(i)};var a,c}function on(n){void 0===n&&(n={});var e=S({sortComparer:!1,selectId:function(n){return n.id}},n),t=e.selectId,r=e.sortComparer,i={getInitialState:function(n){return void 0===n&&(n={}),Object.assign({ids:[],entities:{}},n)}},o={getSelectors:function(n){var e=function(n){return n.ids},t=function(n){return n.entities},r=k(e,t,(function(n,e){return n.map((function(n){return e[n]}))})),i=function(n,e){return e},o=function(n,e){return n[e]},u=k(e,(function(n){return n.length}));if(!n)return{selectIds:e,selectEntities:t,selectAll:r,selectTotal:u,selectById:k(t,i,o)};var a=k(n,t);return{selectIds:k(n,e),selectEntities:a,selectAll:k(n,r),selectTotal:k(n,u),selectById:k(a,i,o)}}},u=r?function(n,e){var t=rn(n);function r(e,t){var r=(e=en(e)).filter((function(e){return!(nn(e,n)in t.entities)}));0!==r.length&&a(r,t)}function i(n,e){0!==(n=en(n)).length&&a(n,e)}function o(e,t){for(var r=!1,i=0,o=e;i<o.length;i++){var u=o[i],a=t.entities[u.id];if(a){r=!0,Object.assign(a,u.changes);var f=n(a);u.id!==f&&(delete t.entities[u.id],t.entities[f]=a)}}r&&c(t)}function u(e,t){var i=tn(e,n,t),u=i[0];o(i[1],t),r(u,t)}function a(e,t){e.forEach((function(e){t.entities[n(e)]=e})),c(t)}function c(t){var r=Object.values(t.entities);r.sort(e);var i=r.map(n);(function(n,e){if(n.length!==e.length)return!1;for(var t=0;t<n.length&&t<e.length;t++)if(n[t]!==e[t])return!1;return!0})(t.ids,i)||(t.ids=i)}return{removeOne:t.removeOne,removeMany:t.removeMany,removeAll:t.removeAll,addOne:$((function(n,e){return r([n],e)})),updateOne:$((function(n,e){return o([n],e)})),upsertOne:$((function(n,e){return u([n],e)})),setOne:$((function(n,e){return i([n],e)})),setMany:$(i),setAll:$((function(n,e){n=en(n),e.entities={},e.ids=[],r(n,e)})),addMany:$(r),updateMany:$(o),upsertMany:$(u)}}(t,r):rn(t);return S(S(S({selectId:t,sortComparer:r},i),o),u)}var un=function(n){void 0===n&&(n=21);for(var e="",t=n;t--;)e+="ModuleSymbhasOwnPr-0123456789ABCDEFGHNRVfgctiUvz_KqYTJkLxpZXIjQW"[64*Math.random()|0];return e},an=["name","message","stack","code"],cn=function(n,e){this.payload=n,this.meta=e},fn=function(n,e){this.payload=n,this.meta=e},ln=function(n){if("object"==typeof n&&null!==n){for(var e={},t=0,r=an;t<r.length;t++){var i=r[t];"string"==typeof n[i]&&(e[i]=n[i])}return e}return{message:String(n)}},sn=function(){function n(n,e,t){var r=I(n+"/fulfilled",(function(n,e,t,r){return{payload:n,meta:P(S({},r||{}),{arg:t,requestId:e,requestStatus:"fulfilled"})}})),i=I(n+"/pending",(function(n,e,t){return{payload:void 0,meta:P(S({},t||{}),{arg:e,requestId:n,requestStatus:"pending"})}})),o=I(n+"/rejected",(function(n,e,r,i,o){return{payload:i,error:(t&&t.serializeError||ln)(n||"Rejected"),meta:P(S({},o||{}),{arg:r,requestId:e,rejectedWithValue:!!i,requestStatus:"rejected",aborted:"AbortError"===(null==n?void 0:n.name),condition:"ConditionError"===(null==n?void 0:n.name)})}})),u="undefined"!=typeof AbortController?AbortController:function(){function n(){this.signal={aborted:!1,addEventListener:function(){},dispatchEvent:function(){return!1},onabort:function(){},removeEventListener:function(){},reason:void 0,throwIfAborted:function(){}}}return n.prototype.abort=function(){},n}();return Object.assign((function(n){return function(a,c,f){var l,s=(null==t?void 0:t.idGenerator)?t.idGenerator(n):un(),d=new u;function p(n){l=n,d.abort()}var v=function(){return x(this,null,(function(){var u,v,y,g,m,b;return h(this,(function(h){switch(h.label){case 0:return h.trys.push([0,4,,5]),g=null==(u=null==t?void 0:t.condition)?void 0:u.call(t,n,{getState:c,extra:f}),null===(w=g)||"object"!=typeof w||"function"!=typeof w.then?[3,2]:[4,g];case 1:g=h.sent(),h.label=2;case 2:if(!1===g||d.signal.aborted)throw{name:"ConditionError",message:"Aborted due to condition callback returning false."};return m=new Promise((function(n,e){return d.signal.addEventListener("abort",(function(){return e({name:"AbortError",message:l||"Aborted"})}))})),a(i(s,n,null==(v=null==t?void 0:t.getPendingMeta)?void 0:v.call(t,{requestId:s,arg:n},{getState:c,extra:f}))),[4,Promise.race([m,Promise.resolve(e(n,{dispatch:a,getState:c,extra:f,requestId:s,signal:d.signal,abort:p,rejectWithValue:function(n,e){return new cn(n,e)},fulfillWithValue:function(n,e){return new fn(n,e)}})).then((function(e){if(e instanceof cn)throw e;return e instanceof fn?r(e.payload,s,n,e.meta):r(e,s,n)}))])];case 3:return y=h.sent(),[3,5];case 4:return b=h.sent(),y=b instanceof cn?o(null,s,n,b.payload,b.meta):o(b,s,n),[3,5];case 5:return t&&!t.dispatchConditionRejection&&o.match(y)&&y.meta.condition||a(y),[2,y]}var w}))}))}();return Object.assign(v,{abort:p,requestId:s,arg:n,unwrap:function(){return v.then(dn)}})}}),{pending:i,rejected:o,fulfilled:r,typePrefix:n})}return n.withTypes=function(){return n},n}();function dn(n){if(n.meta&&n.meta.rejectedWithValue)throw n.payload;if(n.error)throw n.error;return n.payload}var pn=function(n,e){return _(n)?n.match(e):n(e)};function vn(){for(var n=[],e=0;e<arguments.length;e++)n[e]=arguments[e];return function(e){return n.some((function(n){return pn(n,e)}))}}function yn(){for(var n=[],e=0;e<arguments.length;e++)n[e]=arguments[e];return function(e){return n.every((function(n){return pn(n,e)}))}}function hn(n,e){if(!n||!n.meta)return!1;var t="string"==typeof n.meta.requestId,r=e.indexOf(n.meta.requestStatus)>-1;return t&&r}function gn(n){return"function"==typeof n[0]&&"pending"in n[0]&&"fulfilled"in n[0]&&"rejected"in n[0]}function mn(){for(var n=[],e=0;e<arguments.length;e++)n[e]=arguments[e];return 0===n.length?function(n){return hn(n,["pending"])}:gn(n)?function(e){var t=n.map((function(n){return n.pending}));return vn.apply(void 0,t)(e)}:mn()(n[0])}function bn(){for(var n=[],e=0;e<arguments.length;e++)n[e]=arguments[e];return 0===n.length?function(n){return hn(n,["rejected"])}:gn(n)?function(e){var t=n.map((function(n){return n.rejected}));return vn.apply(void 0,t)(e)}:bn()(n[0])}function wn(){for(var n=[],e=0;e<arguments.length;e++)n[e]=arguments[e];var t=function(n){return n&&n.meta&&n.meta.rejectedWithValue};return 0===n.length||gn(n)?function(e){return yn(bn.apply(void 0,n),t)(e)}:wn()(n[0])}function On(){for(var n=[],e=0;e<arguments.length;e++)n[e]=arguments[e];return 0===n.length?function(n){return hn(n,["fulfilled"])}:gn(n)?function(e){var t=n.map((function(n){return n.fulfilled}));return vn.apply(void 0,t)(e)}:On()(n[0])}function jn(){for(var n=[],e=0;e<arguments.length;e++)n[e]=arguments[e];return 0===n.length?function(n){return hn(n,["pending","fulfilled","rejected"])}:gn(n)?function(e){for(var t=[],r=0,i=n;r<i.length;r++){var o=i[r];t.push(o.pending,o.rejected,o.fulfilled)}return vn.apply(void 0,t)(e)}:jn()(n[0])}var En=function(n,e){if("function"!=typeof n)throw new TypeError(e+" is not a function")},An=function(){},Sn=function(n,e){return void 0===e&&(e=An),n.catch(e),n},Pn=function(n,e){return n.addEventListener("abort",e,{once:!0}),function(){return n.removeEventListener("abort",e)}},xn=function(n,e){var t=n.signal;t.aborted||("reason"in t||Object.defineProperty(t,"reason",{enumerable:!0,value:e,configurable:!0,writable:!0}),n.abort(e))},kn="listener",Cn="completed",Tn="cancelled",_n="task-"+Tn,In="task-"+Cn,Mn=kn+"-"+Tn,qn=kn+"-"+Cn,Ln=function(n){this.code=n,this.name="TaskAbortError",this.message="task "+Tn+" (reason: "+n+")"},Rn=function(n){if(n.aborted)throw new Ln(n.reason)};function Nn(n,e){var t=An;return new Promise((function(r,i){var o=function(){return i(new Ln(n.reason))};n.aborted?o():(t=Pn(n,o),e.finally((function(){return t()})).then(r,i))})).finally((function(){t=An}))}var Dn=function(n){return function(e){return Sn(Nn(n,e).then((function(e){return Rn(n),e})))}},zn=function(n){var e=Dn(n);return function(n){return e(new Promise((function(e){return setTimeout(e,n)})))}},Vn=Object.assign,Bn={},Fn="listenerMiddleware",Wn=function(n,e){return function(t,r){En(t,"taskExecutor");var i,o=new AbortController;i=o,Pn(n,(function(){return xn(i,n.reason)}));var u,a,c=(u=function(){return x(void 0,null,(function(){var e;return h(this,(function(r){switch(r.label){case 0:return Rn(n),Rn(o.signal),[4,t({pause:Dn(o.signal),delay:zn(o.signal),signal:o.signal})];case 1:return e=r.sent(),Rn(o.signal),[2,e]}}))}))},a=function(){return xn(o,In)},x(void 0,null,(function(){var n;return h(this,(function(e){switch(e.label){case 0:return e.trys.push([0,3,4,5]),[4,Promise.resolve()];case 1:return e.sent(),[4,u()];case 2:return[2,{status:"ok",value:e.sent()}];case 3:return[2,{status:(n=e.sent())instanceof Ln?"cancelled":"rejected",error:n}];case 4:return null==a||a(),[7];case 5:return[2]}}))})));return(null==r?void 0:r.autoJoin)&&e.push(c),{result:Dn(n)(c),cancel:function(){xn(o,_n)}}}},Xn=function(n,e){return function(t,r){return Sn(function(t,r){return x(void 0,null,(function(){var i,o,u,a;return h(this,(function(c){switch(c.label){case 0:Rn(e),i=function(){},o=new Promise((function(e,r){var o=n({predicate:t,effect:function(n,t){t.unsubscribe(),e([n,t.getState(),t.getOriginalState()])}});i=function(){o(),r()}})),u=[o],null!=r&&u.push(new Promise((function(n){return setTimeout(n,r,null)}))),c.label=1;case 1:return c.trys.push([1,,3,4]),[4,Nn(e,Promise.race(u))];case 2:return a=c.sent(),Rn(e),[2,a];case 3:return i(),[7];case 4:return[2]}}))}))}(t,r))}},Gn=function(n){var e=n.type,t=n.actionCreator,r=n.matcher,i=n.predicate,o=n.effect;if(e)i=I(e).match;else if(t)e=t.type,i=t.match;else if(r)i=r;else if(!i)throw new Error("Creating or removing a listener requires one of the known fields for matching an action");return En(o,"options.listener"),{predicate:i,type:e,effect:o}},Un=function(n){n.pending.forEach((function(n){xn(n,Mn)}))},Jn=function(n,e,t){try{n(e,t)}catch(n){setTimeout((function(){throw n}),0)}},Kn=I(Fn+"/add"),Hn=I(Fn+"/removeAll"),Qn=I(Fn+"/remove"),Yn=function(){for(var n=[],e=0;e<arguments.length;e++)n[e]=arguments[e];console.error.apply(console,g([Fn+"/error"],n))};function Zn(n){var e=this;void 0===n&&(n={});var t=new Map,r=n.extra,i=n.onError,o=void 0===i?Yn:i;En(o,"onError");var u=function(n){for(var e=0,r=Array.from(t.values());e<r.length;e++){var i=r[e];if(n(i))return i}},a=function(n){var e=u((function(e){return e.effect===n.effect}));return e||(e=function(n){var e=Gn(n),t=e.type,r=e.predicate,i=e.effect;return{id:un(),effect:i,type:t,predicate:r,pending:new Set,unsubscribe:function(){throw new Error("Unsubscribe not initialized")}}}(n)),function(n){return n.unsubscribe=function(){return t.delete(n.id)},t.set(n.id,n),function(e){n.unsubscribe(),(null==e?void 0:e.cancelActive)&&Un(n)}}(e)},c=function(n){var e=Gn(n),t=e.type,r=e.effect,i=e.predicate,o=u((function(n){return("string"==typeof t?n.type===t:n.predicate===i)&&n.effect===r}));return o&&(o.unsubscribe(),n.cancelActive&&Un(o)),!!o},f=function(n,i,u,c){return x(e,null,(function(){var e,f,l,s;return h(this,(function(d){switch(d.label){case 0:e=new AbortController,f=Xn(a,e.signal),l=[],d.label=1;case 1:return d.trys.push([1,3,4,6]),n.pending.add(e),[4,Promise.resolve(n.effect(i,Vn({},u,{getOriginalState:c,condition:function(n,e){return f(n,e).then(Boolean)},take:f,delay:zn(e.signal),pause:Dn(e.signal),extra:r,signal:e.signal,fork:Wn(e.signal,l),unsubscribe:n.unsubscribe,subscribe:function(){t.set(n.id,n)},cancelActiveListeners:function(){n.pending.forEach((function(n,t,r){n!==e&&(xn(n,Mn),r.delete(n))}))}})))];case 2:return d.sent(),[3,6];case 3:return(s=d.sent())instanceof Ln||Jn(o,s,{raisedBy:"effect"}),[3,6];case 4:return[4,Promise.allSettled(l)];case 5:return d.sent(),xn(e,qn),n.pending.delete(e),[7];case 6:return[2]}}))}))},l=function(n){return function(){n.forEach(Un),n.clear()}}(t);return{middleware:function(n){return function(e){return function(r){if(!M(r))return e(r);if(Kn.match(r))return a(r.payload);if(!Hn.match(r)){if(Qn.match(r))return c(r.payload);var i,u=n.getState(),s=function(){if(u===Bn)throw new Error(Fn+": getOriginalState can only be called synchronously");return u};try{if(i=e(r),t.size>0)for(var d=n.getState(),p=Array.from(t.values()),v=0,y=p;v<y.length;v++){var h=y[v],g=!1;try{g=h.predicate(r,d,u)}catch(n){g=!1,Jn(o,n,{raisedBy:"predicate"})}g&&f(h,r,n,s)}}finally{u=Bn}return i}l()}}},startListening:a,stopListening:c,clearListeners:l}}var $n,ne="RTK_autoBatch",ee=function(){return function(n){var e;return{payload:n,meta:(e={},e[ne]=!0,e)}}},te="function"==typeof queueMicrotask?queueMicrotask.bind("undefined"!=typeof window?window:void 0!==s?s:globalThis):function(n){return($n||($n=Promise.resolve())).then(n).catch((function(n){return setTimeout((function(){throw n}),0)}))},re=function(n){return function(e){setTimeout(e,n)}},ie="undefined"!=typeof window&&window.requestAnimationFrame?window.requestAnimationFrame:re(10),oe=function(n){return void 0===n&&(n={type:"raf"}),function(e){return function(){for(var t=[],r=0;r<arguments.length;r++)t[r]=arguments[r];var i=e.apply(void 0,t),o=!0,u=!1,a=!1,c=new Set,f="tick"===n.type?te:"raf"===n.type?ie:"callback"===n.type?n.queueNotification:re(n.timeout),l=function(){a=!1,u&&(u=!1,c.forEach((function(n){return n()})))};return Object.assign({},i,{subscribe:function(n){var e=i.subscribe((function(){return o&&n()}));return c.add(n),function(){e(),c.delete(n)}},dispatch:function(n){var e;try{return o=!(null==(e=null==n?void 0:n.meta)?void 0:e[ne]),(u=!o)&&(a||(a=!0,f(l))),i.dispatch(n)}finally{o=!0}}})}}};e();export{V as EnhancerArray,z as MiddlewareArray,ne as SHOULD_AUTOBATCH,Ln as TaskAbortError,Kn as addListener,oe as autoBatchEnhancer,Hn as clearAllListeners,H as configureStore,I as createAction,D as createActionCreatorInvariantMiddleware,sn as createAsyncThunk,k as createDraftSafeSelector,on as createEntityAdapter,W as createImmutableStateInvariantMiddleware,Zn as createListenerMiddleware,Y as createReducer,J as createSerializableStateInvariantMiddleware,Z as createSlice,G as findNonSerializableValue,K as getDefaultMiddleware,N as getType,M as isAction,q as isActionCreator,yn as isAllOf,vn as isAnyOf,jn as isAsyncThunkAction,L as isFluxStandardAction,On as isFulfilled,F as isImmutableDefault,mn as isPending,X as isPlain,T as isPlainObject,bn as isRejected,wn as isRejectedWithValue,ln as miniSerializeError,un as nanoid,ee as prepareAutoBatched,Qn as removeListener,dn as unwrapResult};export default null;
-//# sourceMappingURL=/sm/610cf2999977241d317747ef5f08991548cf17a8d337570f6a1aaa1ea98289c6.map
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+};
+var __defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = function (obj, key, value) { return key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value: value }) : obj[key] = value; };
+var __spreadValues = function (a, b) {
+    for (var prop in b || (b = {}))
+        if (__hasOwnProp.call(b, prop))
+            __defNormalProp(a, prop, b[prop]);
+    if (__getOwnPropSymbols)
+        for (var _i = 0, _c = __getOwnPropSymbols(b); _i < _c.length; _i++) {
+            var prop = _c[_i];
+            if (__propIsEnum.call(b, prop))
+                __defNormalProp(a, prop, b[prop]);
+        }
+    return a;
+};
+var __spreadProps = function (a, b) { return __defProps(a, __getOwnPropDescs(b)); };
+var __async = function (__this, __arguments, generator) {
+    return new Promise(function (resolve, reject) {
+        var fulfilled = function (value) {
+            try {
+                step(generator.next(value));
+            }
+            catch (e) {
+                reject(e);
+            }
+        };
+        var rejected = function (value) {
+            try {
+                step(generator.throw(value));
+            }
+            catch (e) {
+                reject(e);
+            }
+        };
+        var step = function (x) { return x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected); };
+        step((generator = generator.apply(__this, __arguments)).next());
+    });
+};
+// src/index.ts
+import { enableES5 } from "immer";
+export * from "redux";
+import { default as default2, current as current2, freeze, original, isDraft as isDraft4 } from "immer";
+import { createSelector as createSelector2 } from "reselect";
+// src/createDraftSafeSelector.ts
+import { current, isDraft } from "immer";
+import { createSelector } from "reselect";
+var createDraftSafeSelector = function () {
+    var args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        args[_i] = arguments[_i];
+    }
+    var selector = createSelector.apply(void 0, args);
+    var wrappedSelector = function (value) {
+        var rest = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            rest[_i - 1] = arguments[_i];
+        }
+        return selector.apply(void 0, __spreadArray([isDraft(value) ? current(value) : value], rest));
+    };
+    return wrappedSelector;
+};
+// src/configureStore.ts
+import { createStore, compose as compose2, applyMiddleware, combineReducers } from "redux";
+// src/devtoolsExtension.ts
+import { compose } from "redux";
+var composeWithDevTools = typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : function () {
+    if (arguments.length === 0)
+        return void 0;
+    if (typeof arguments[0] === "object")
+        return compose;
+    return compose.apply(null, arguments);
+};
+var devToolsEnhancer = typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__ : function () {
+    return function (noop2) {
+        return noop2;
+    };
+};
+// src/isPlainObject.ts
+function isPlainObject(value) {
+    if (typeof value !== "object" || value === null)
+        return false;
+    var proto = Object.getPrototypeOf(value);
+    if (proto === null)
+        return true;
+    var baseProto = proto;
+    while (Object.getPrototypeOf(baseProto) !== null) {
+        baseProto = Object.getPrototypeOf(baseProto);
+    }
+    return proto === baseProto;
+}
+// src/getDefaultMiddleware.ts
+import thunkMiddleware from "redux-thunk";
+// src/tsHelpers.ts
+var hasMatchFunction = function (v) {
+    return v && typeof v.match === "function";
+};
+// src/createAction.ts
+function createAction(type, prepareAction) {
+    function actionCreator() {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        if (prepareAction) {
+            var prepared = prepareAction.apply(void 0, args);
+            if (!prepared) {
+                throw new Error("prepareAction did not return an object");
+            }
+            return __spreadValues(__spreadValues({
+                type: type,
+                payload: prepared.payload
+            }, "meta" in prepared && { meta: prepared.meta }), "error" in prepared && { error: prepared.error });
+        }
+        return { type: type, payload: args[0] };
+    }
+    actionCreator.toString = function () { return "" + type; };
+    actionCreator.type = type;
+    actionCreator.match = function (action) { return action.type === type; };
+    return actionCreator;
+}
+function isAction(action) {
+    return isPlainObject(action) && "type" in action;
+}
+function isActionCreator(action) {
+    return typeof action === "function" && "type" in action && hasMatchFunction(action);
+}
+function isFSA(action) {
+    return isAction(action) && typeof action.type === "string" && Object.keys(action).every(isValidKey);
+}
+function isValidKey(key) {
+    return ["type", "payload", "error", "meta"].indexOf(key) > -1;
+}
+function getType(actionCreator) {
+    return "" + actionCreator;
+}
+// src/actionCreatorInvariantMiddleware.ts
+function getMessage(type) {
+    var splitType = type ? ("" + type).split("/") : [];
+    var actionName = splitType[splitType.length - 1] || "actionCreator";
+    return "Detected an action creator with type \"" + (type || "unknown") + "\" being dispatched. \nMake sure you're calling the action creator before dispatching, i.e. `dispatch(" + actionName + "())` instead of `dispatch(" + actionName + ")`. This is necessary even if the action has no payload.";
+}
+function createActionCreatorInvariantMiddleware(options) {
+    if (options === void 0) { options = {}; }
+    if (process.env.NODE_ENV === "production") {
+        return function () { return function (next) { return function (action) { return next(action); }; }; };
+    }
+    var _c = options.isActionCreator, isActionCreator2 = _c === void 0 ? isActionCreator : _c;
+    return function () { return function (next) { return function (action) {
+        if (isActionCreator2(action)) {
+            console.warn(getMessage(action.type));
+        }
+        return next(action);
+    }; }; };
+}
+// src/utils.ts
+import createNextState, { isDraftable } from "immer";
+function getTimeMeasureUtils(maxDelay, fnName) {
+    var elapsed = 0;
+    return {
+        measureTime: function (fn) {
+            var started = Date.now();
+            try {
+                return fn();
+            }
+            finally {
+                var finished = Date.now();
+                elapsed += finished - started;
+            }
+        },
+        warnIfExceeded: function () {
+            if (elapsed > maxDelay) {
+                console.warn(fnName + " took " + elapsed + "ms, which is more than the warning threshold of " + maxDelay + "ms. \nIf your state or actions are very large, you may want to disable the middleware as it might cause too much of a slowdown in development mode. See https://redux-toolkit.js.org/api/getDefaultMiddleware for instructions.\nIt is disabled in production builds, so you don't need to worry about that.");
+            }
+        }
+    };
+}
+var MiddlewareArray = /** @class */ (function (_super) {
+    __extends(MiddlewareArray, _super);
+    function MiddlewareArray() {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        var _this = _super.apply(this, args) || this;
+        Object.setPrototypeOf(_this, MiddlewareArray.prototype);
+        return _this;
+    }
+    Object.defineProperty(MiddlewareArray, Symbol.species, {
+        get: function () {
+            return MiddlewareArray;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    MiddlewareArray.prototype.concat = function () {
+        var arr = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            arr[_i] = arguments[_i];
+        }
+        return _super.prototype.concat.apply(this, arr);
+    };
+    MiddlewareArray.prototype.prepend = function () {
+        var arr = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            arr[_i] = arguments[_i];
+        }
+        if (arr.length === 1 && Array.isArray(arr[0])) {
+            return new (MiddlewareArray.bind.apply(MiddlewareArray, __spreadArray([void 0], arr[0].concat(this))))();
+        }
+        return new (MiddlewareArray.bind.apply(MiddlewareArray, __spreadArray([void 0], arr.concat(this))))();
+    };
+    return MiddlewareArray;
+}(Array));
+var EnhancerArray = /** @class */ (function (_super) {
+    __extends(EnhancerArray, _super);
+    function EnhancerArray() {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        var _this = _super.apply(this, args) || this;
+        Object.setPrototypeOf(_this, EnhancerArray.prototype);
+        return _this;
+    }
+    Object.defineProperty(EnhancerArray, Symbol.species, {
+        get: function () {
+            return EnhancerArray;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    EnhancerArray.prototype.concat = function () {
+        var arr = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            arr[_i] = arguments[_i];
+        }
+        return _super.prototype.concat.apply(this, arr);
+    };
+    EnhancerArray.prototype.prepend = function () {
+        var arr = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            arr[_i] = arguments[_i];
+        }
+        if (arr.length === 1 && Array.isArray(arr[0])) {
+            return new (EnhancerArray.bind.apply(EnhancerArray, __spreadArray([void 0], arr[0].concat(this))))();
+        }
+        return new (EnhancerArray.bind.apply(EnhancerArray, __spreadArray([void 0], arr.concat(this))))();
+    };
+    return EnhancerArray;
+}(Array));
+function freezeDraftable(val) {
+    return isDraftable(val) ? createNextState(val, function () {
+    }) : val;
+}
+// src/immutableStateInvariantMiddleware.ts
+var isProduction = process.env.NODE_ENV === "production";
+var prefix = "Invariant failed";
+function invariant(condition, message) {
+    if (condition) {
+        return;
+    }
+    if (isProduction) {
+        throw new Error(prefix);
+    }
+    throw new Error(prefix + ": " + (message || ""));
+}
+function stringify(obj, serializer, indent, decycler) {
+    return JSON.stringify(obj, getSerialize(serializer, decycler), indent);
+}
+function getSerialize(serializer, decycler) {
+    var stack = [], keys = [];
+    if (!decycler)
+        decycler = function (_, value) {
+            if (stack[0] === value)
+                return "[Circular ~]";
+            return "[Circular ~." + keys.slice(0, stack.indexOf(value)).join(".") + "]";
+        };
+    return function (key, value) {
+        if (stack.length > 0) {
+            var thisPos = stack.indexOf(this);
+            ~thisPos ? stack.splice(thisPos + 1) : stack.push(this);
+            ~thisPos ? keys.splice(thisPos, Infinity, key) : keys.push(key);
+            if (~stack.indexOf(value))
+                value = decycler.call(this, key, value);
+        }
+        else
+            stack.push(value);
+        return serializer == null ? value : serializer.call(this, key, value);
+    };
+}
+function isImmutableDefault(value) {
+    return typeof value !== "object" || value == null || Object.isFrozen(value);
+}
+function trackForMutations(isImmutable, ignorePaths, obj) {
+    var trackedProperties = trackProperties(isImmutable, ignorePaths, obj);
+    return {
+        detectMutations: function () {
+            return detectMutations(isImmutable, ignorePaths, trackedProperties, obj);
+        }
+    };
+}
+function trackProperties(isImmutable, ignorePaths, obj, path, checkedObjects) {
+    if (ignorePaths === void 0) { ignorePaths = []; }
+    if (path === void 0) { path = ""; }
+    if (checkedObjects === void 0) { checkedObjects = new Set(); }
+    var tracked = { value: obj };
+    if (!isImmutable(obj) && !checkedObjects.has(obj)) {
+        checkedObjects.add(obj);
+        tracked.children = {};
+        for (var key in obj) {
+            var childPath = path ? path + "." + key : key;
+            if (ignorePaths.length && ignorePaths.indexOf(childPath) !== -1) {
+                continue;
+            }
+            tracked.children[key] = trackProperties(isImmutable, ignorePaths, obj[key], childPath);
+        }
+    }
+    return tracked;
+}
+function detectMutations(isImmutable, ignoredPaths, trackedProperty, obj, sameParentRef, path) {
+    if (ignoredPaths === void 0) { ignoredPaths = []; }
+    if (sameParentRef === void 0) { sameParentRef = false; }
+    if (path === void 0) { path = ""; }
+    var prevObj = trackedProperty ? trackedProperty.value : void 0;
+    var sameRef = prevObj === obj;
+    if (sameParentRef && !sameRef && !Number.isNaN(obj)) {
+        return { wasMutated: true, path: path };
+    }
+    if (isImmutable(prevObj) || isImmutable(obj)) {
+        return { wasMutated: false };
+    }
+    var keysToDetect = {};
+    for (var key in trackedProperty.children) {
+        keysToDetect[key] = true;
+    }
+    for (var key in obj) {
+        keysToDetect[key] = true;
+    }
+    var hasIgnoredPaths = ignoredPaths.length > 0;
+    var _loop_1 = function (key) {
+        var nestedPath = path ? path + "." + key : key;
+        if (hasIgnoredPaths) {
+            var hasMatches = ignoredPaths.some(function (ignored) {
+                if (ignored instanceof RegExp) {
+                    return ignored.test(nestedPath);
+                }
+                return nestedPath === ignored;
+            });
+            if (hasMatches) {
+                return "continue";
+            }
+        }
+        var result = detectMutations(isImmutable, ignoredPaths, trackedProperty.children[key], obj[key], sameRef, nestedPath);
+        if (result.wasMutated) {
+            return { value: result };
+        }
+    };
+    for (var key in keysToDetect) {
+        var state_1 = _loop_1(key);
+        if (typeof state_1 === "object")
+            return state_1.value;
+    }
+    return { wasMutated: false };
+}
+function createImmutableStateInvariantMiddleware(options) {
+    if (options === void 0) { options = {}; }
+    if (process.env.NODE_ENV === "production") {
+        return function () { return function (next) { return function (action) { return next(action); }; }; };
+    }
+    var _c = options.isImmutable, isImmutable = _c === void 0 ? isImmutableDefault : _c, ignoredPaths = options.ignoredPaths, _d = options.warnAfter, warnAfter = _d === void 0 ? 32 : _d, ignore = options.ignore;
+    ignoredPaths = ignoredPaths || ignore;
+    var track = trackForMutations.bind(null, isImmutable, ignoredPaths);
+    return function (_c) {
+        var getState = _c.getState;
+        var state = getState();
+        var tracker = track(state);
+        var result;
+        return function (next) { return function (action) {
+            var measureUtils = getTimeMeasureUtils(warnAfter, "ImmutableStateInvariantMiddleware");
+            measureUtils.measureTime(function () {
+                state = getState();
+                result = tracker.detectMutations();
+                tracker = track(state);
+                invariant(!result.wasMutated, "A state mutation was detected between dispatches, in the path '" + (result.path || "") + "'.  This may cause incorrect behavior. (https://redux.js.org/style-guide/style-guide#do-not-mutate-state)");
+            });
+            var dispatchedAction = next(action);
+            measureUtils.measureTime(function () {
+                state = getState();
+                result = tracker.detectMutations();
+                tracker = track(state);
+                result.wasMutated && invariant(!result.wasMutated, "A state mutation was detected inside a dispatch, in the path: " + (result.path || "") + ". Take a look at the reducer(s) handling the action " + stringify(action) + ". (https://redux.js.org/style-guide/style-guide#do-not-mutate-state)");
+            });
+            measureUtils.warnIfExceeded();
+            return dispatchedAction;
+        }; };
+    };
+}
+// src/serializableStateInvariantMiddleware.ts
+function isPlain(val) {
+    var type = typeof val;
+    return val == null || type === "string" || type === "boolean" || type === "number" || Array.isArray(val) || isPlainObject(val);
+}
+function findNonSerializableValue(value, path, isSerializable, getEntries, ignoredPaths, cache) {
+    if (path === void 0) { path = ""; }
+    if (isSerializable === void 0) { isSerializable = isPlain; }
+    if (ignoredPaths === void 0) { ignoredPaths = []; }
+    var foundNestedSerializable;
+    if (!isSerializable(value)) {
+        return {
+            keyPath: path || "<root>",
+            value: value
+        };
+    }
+    if (typeof value !== "object" || value === null) {
+        return false;
+    }
+    if (cache == null ? void 0 : cache.has(value))
+        return false;
+    var entries = getEntries != null ? getEntries(value) : Object.entries(value);
+    var hasIgnoredPaths = ignoredPaths.length > 0;
+    var _loop_2 = function (key, nestedValue) {
+        var nestedPath = path ? path + "." + key : key;
+        if (hasIgnoredPaths) {
+            var hasMatches = ignoredPaths.some(function (ignored) {
+                if (ignored instanceof RegExp) {
+                    return ignored.test(nestedPath);
+                }
+                return nestedPath === ignored;
+            });
+            if (hasMatches) {
+                return "continue";
+            }
+        }
+        if (!isSerializable(nestedValue)) {
+            return { value: {
+                    keyPath: nestedPath,
+                    value: nestedValue
+                } };
+        }
+        if (typeof nestedValue === "object") {
+            foundNestedSerializable = findNonSerializableValue(nestedValue, nestedPath, isSerializable, getEntries, ignoredPaths, cache);
+            if (foundNestedSerializable) {
+                return { value: foundNestedSerializable };
+            }
+        }
+    };
+    for (var _i = 0, entries_1 = entries; _i < entries_1.length; _i++) {
+        var _c = entries_1[_i], key = _c[0], nestedValue = _c[1];
+        var state_2 = _loop_2(key, nestedValue);
+        if (typeof state_2 === "object")
+            return state_2.value;
+    }
+    if (cache && isNestedFrozen(value))
+        cache.add(value);
+    return false;
+}
+function isNestedFrozen(value) {
+    if (!Object.isFrozen(value))
+        return false;
+    for (var _i = 0, _c = Object.values(value); _i < _c.length; _i++) {
+        var nestedValue = _c[_i];
+        if (typeof nestedValue !== "object" || nestedValue === null)
+            continue;
+        if (!isNestedFrozen(nestedValue))
+            return false;
+    }
+    return true;
+}
+function createSerializableStateInvariantMiddleware(options) {
+    if (options === void 0) { options = {}; }
+    if (process.env.NODE_ENV === "production") {
+        return function () { return function (next) { return function (action) { return next(action); }; }; };
+    }
+    var _c = options.isSerializable, isSerializable = _c === void 0 ? isPlain : _c, getEntries = options.getEntries, _d = options.ignoredActions, ignoredActions = _d === void 0 ? [] : _d, _e = options.ignoredActionPaths, ignoredActionPaths = _e === void 0 ? ["meta.arg", "meta.baseQueryMeta"] : _e, _f = options.ignoredPaths, ignoredPaths = _f === void 0 ? [] : _f, _g = options.warnAfter, warnAfter = _g === void 0 ? 32 : _g, _h = options.ignoreState, ignoreState = _h === void 0 ? false : _h, _j = options.ignoreActions, ignoreActions = _j === void 0 ? false : _j, _k = options.disableCache, disableCache = _k === void 0 ? false : _k;
+    var cache = !disableCache && WeakSet ? new WeakSet() : void 0;
+    return function (storeAPI) { return function (next) { return function (action) {
+        var result = next(action);
+        var measureUtils = getTimeMeasureUtils(warnAfter, "SerializableStateInvariantMiddleware");
+        if (!ignoreActions && !(ignoredActions.length && ignoredActions.indexOf(action.type) !== -1)) {
+            measureUtils.measureTime(function () {
+                var foundActionNonSerializableValue = findNonSerializableValue(action, "", isSerializable, getEntries, ignoredActionPaths, cache);
+                if (foundActionNonSerializableValue) {
+                    var keyPath = foundActionNonSerializableValue.keyPath, value = foundActionNonSerializableValue.value;
+                    console.error("A non-serializable value was detected in an action, in the path: `" + keyPath + "`. Value:", value, "\nTake a look at the logic that dispatched this action: ", action, "\n(See https://redux.js.org/faq/actions#why-should-type-be-a-string-or-at-least-serializable-why-should-my-action-types-be-constants)", "\n(To allow non-serializable values see: https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data)");
+                }
+            });
+        }
+        if (!ignoreState) {
+            measureUtils.measureTime(function () {
+                var state = storeAPI.getState();
+                var foundStateNonSerializableValue = findNonSerializableValue(state, "", isSerializable, getEntries, ignoredPaths, cache);
+                if (foundStateNonSerializableValue) {
+                    var keyPath = foundStateNonSerializableValue.keyPath, value = foundStateNonSerializableValue.value;
+                    console.error("A non-serializable value was detected in the state, in the path: `" + keyPath + "`. Value:", value, "\nTake a look at the reducer(s) handling this action type: " + action.type + ".\n(See https://redux.js.org/faq/organizing-state#can-i-put-functions-promises-or-other-non-serializable-items-in-my-store-state)");
+                }
+            });
+            measureUtils.warnIfExceeded();
+        }
+        return result;
+    }; }; };
+}
+// src/getDefaultMiddleware.ts
+function isBoolean(x) {
+    return typeof x === "boolean";
+}
+function curryGetDefaultMiddleware() {
+    return function curriedGetDefaultMiddleware(options) {
+        return getDefaultMiddleware(options);
+    };
+}
+function getDefaultMiddleware(options) {
+    if (options === void 0) { options = {}; }
+    var _c = options.thunk, thunk = _c === void 0 ? true : _c, _d = options.immutableCheck, immutableCheck = _d === void 0 ? true : _d, _e = options.serializableCheck, serializableCheck = _e === void 0 ? true : _e, _f = options.actionCreatorCheck, actionCreatorCheck = _f === void 0 ? true : _f;
+    var middlewareArray = new MiddlewareArray();
+    if (thunk) {
+        if (isBoolean(thunk)) {
+            middlewareArray.push(thunkMiddleware);
+        }
+        else {
+            middlewareArray.push(thunkMiddleware.withExtraArgument(thunk.extraArgument));
+        }
+    }
+    if (process.env.NODE_ENV !== "production") {
+        if (immutableCheck) {
+            var immutableOptions = {};
+            if (!isBoolean(immutableCheck)) {
+                immutableOptions = immutableCheck;
+            }
+            middlewareArray.unshift(createImmutableStateInvariantMiddleware(immutableOptions));
+        }
+        if (serializableCheck) {
+            var serializableOptions = {};
+            if (!isBoolean(serializableCheck)) {
+                serializableOptions = serializableCheck;
+            }
+            middlewareArray.push(createSerializableStateInvariantMiddleware(serializableOptions));
+        }
+        if (actionCreatorCheck) {
+            var actionCreatorOptions = {};
+            if (!isBoolean(actionCreatorCheck)) {
+                actionCreatorOptions = actionCreatorCheck;
+            }
+            middlewareArray.unshift(createActionCreatorInvariantMiddleware(actionCreatorOptions));
+        }
+    }
+    return middlewareArray;
+}
+// src/configureStore.ts
+var IS_PRODUCTION = process.env.NODE_ENV === "production";
+function configureStore(options) {
+    var curriedGetDefaultMiddleware = curryGetDefaultMiddleware();
+    var _c = options || {}, _d = _c.reducer, reducer = _d === void 0 ? void 0 : _d, _e = _c.middleware, middleware = _e === void 0 ? curriedGetDefaultMiddleware() : _e, _f = _c.devTools, devTools = _f === void 0 ? true : _f, _g = _c.preloadedState, preloadedState = _g === void 0 ? void 0 : _g, _h = _c.enhancers, enhancers = _h === void 0 ? void 0 : _h;
+    var rootReducer;
+    if (typeof reducer === "function") {
+        rootReducer = reducer;
+    }
+    else if (isPlainObject(reducer)) {
+        rootReducer = combineReducers(reducer);
+    }
+    else {
+        throw new Error('"reducer" is a required argument, and must be a function or an object of functions that can be passed to combineReducers');
+    }
+    var finalMiddleware = middleware;
+    if (typeof finalMiddleware === "function") {
+        finalMiddleware = finalMiddleware(curriedGetDefaultMiddleware);
+        if (!IS_PRODUCTION && !Array.isArray(finalMiddleware)) {
+            throw new Error("when using a middleware builder function, an array of middleware must be returned");
+        }
+    }
+    if (!IS_PRODUCTION && finalMiddleware.some(function (item) { return typeof item !== "function"; })) {
+        throw new Error("each middleware provided to configureStore must be a function");
+    }
+    var middlewareEnhancer = applyMiddleware.apply(void 0, finalMiddleware);
+    var finalCompose = compose2;
+    if (devTools) {
+        finalCompose = composeWithDevTools(__spreadValues({
+            trace: !IS_PRODUCTION
+        }, typeof devTools === "object" && devTools));
+    }
+    var defaultEnhancers = new EnhancerArray(middlewareEnhancer);
+    var storeEnhancers = defaultEnhancers;
+    if (Array.isArray(enhancers)) {
+        storeEnhancers = __spreadArray([middlewareEnhancer], enhancers);
+    }
+    else if (typeof enhancers === "function") {
+        storeEnhancers = enhancers(defaultEnhancers);
+    }
+    var composedEnhancer = finalCompose.apply(void 0, storeEnhancers);
+    return createStore(rootReducer, preloadedState, composedEnhancer);
+}
+// src/createReducer.ts
+import createNextState2, { isDraft as isDraft2, isDraftable as isDraftable2 } from "immer";
+// src/mapBuilders.ts
+function executeReducerBuilderCallback(builderCallback) {
+    var actionsMap = {};
+    var actionMatchers = [];
+    var defaultCaseReducer;
+    var builder = {
+        addCase: function (typeOrActionCreator, reducer) {
+            if (process.env.NODE_ENV !== "production") {
+                if (actionMatchers.length > 0) {
+                    throw new Error("`builder.addCase` should only be called before calling `builder.addMatcher`");
+                }
+                if (defaultCaseReducer) {
+                    throw new Error("`builder.addCase` should only be called before calling `builder.addDefaultCase`");
+                }
+            }
+            var type = typeof typeOrActionCreator === "string" ? typeOrActionCreator : typeOrActionCreator.type;
+            if (!type) {
+                throw new Error("`builder.addCase` cannot be called with an empty action type");
+            }
+            if (type in actionsMap) {
+                throw new Error("`builder.addCase` cannot be called with two reducers for the same action type");
+            }
+            actionsMap[type] = reducer;
+            return builder;
+        },
+        addMatcher: function (matcher, reducer) {
+            if (process.env.NODE_ENV !== "production") {
+                if (defaultCaseReducer) {
+                    throw new Error("`builder.addMatcher` should only be called before calling `builder.addDefaultCase`");
+                }
+            }
+            actionMatchers.push({ matcher: matcher, reducer: reducer });
+            return builder;
+        },
+        addDefaultCase: function (reducer) {
+            if (process.env.NODE_ENV !== "production") {
+                if (defaultCaseReducer) {
+                    throw new Error("`builder.addDefaultCase` can only be called once");
+                }
+            }
+            defaultCaseReducer = reducer;
+            return builder;
+        }
+    };
+    builderCallback(builder);
+    return [actionsMap, actionMatchers, defaultCaseReducer];
+}
+// src/createReducer.ts
+function isStateFunction(x) {
+    return typeof x === "function";
+}
+var hasWarnedAboutObjectNotation = false;
+function createReducer(initialState, mapOrBuilderCallback, actionMatchers, defaultCaseReducer) {
+    if (actionMatchers === void 0) { actionMatchers = []; }
+    if (process.env.NODE_ENV !== "production") {
+        if (typeof mapOrBuilderCallback === "object") {
+            if (!hasWarnedAboutObjectNotation) {
+                hasWarnedAboutObjectNotation = true;
+                console.warn("The object notation for `createReducer` is deprecated, and will be removed in RTK 2.0. Please use the 'builder callback' notation instead: https://redux-toolkit.js.org/api/createReducer");
+            }
+        }
+    }
+    var _c = typeof mapOrBuilderCallback === "function" ? executeReducerBuilderCallback(mapOrBuilderCallback) : [mapOrBuilderCallback, actionMatchers, defaultCaseReducer], actionsMap = _c[0], finalActionMatchers = _c[1], finalDefaultCaseReducer = _c[2];
+    var getInitialState;
+    if (isStateFunction(initialState)) {
+        getInitialState = function () { return freezeDraftable(initialState()); };
+    }
+    else {
+        var frozenInitialState_1 = freezeDraftable(initialState);
+        getInitialState = function () { return frozenInitialState_1; };
+    }
+    function reducer(state, action) {
+        if (state === void 0) { state = getInitialState(); }
+        var caseReducers = __spreadArray([
+            actionsMap[action.type]
+        ], finalActionMatchers.filter(function (_c) {
+            var matcher = _c.matcher;
+            return matcher(action);
+        }).map(function (_c) {
+            var reducer2 = _c.reducer;
+            return reducer2;
+        }));
+        if (caseReducers.filter(function (cr) { return !!cr; }).length === 0) {
+            caseReducers = [finalDefaultCaseReducer];
+        }
+        return caseReducers.reduce(function (previousState, caseReducer) {
+            if (caseReducer) {
+                if (isDraft2(previousState)) {
+                    var draft = previousState;
+                    var result = caseReducer(draft, action);
+                    if (result === void 0) {
+                        return previousState;
+                    }
+                    return result;
+                }
+                else if (!isDraftable2(previousState)) {
+                    var result = caseReducer(previousState, action);
+                    if (result === void 0) {
+                        if (previousState === null) {
+                            return previousState;
+                        }
+                        throw Error("A case reducer on a non-draftable value must not return undefined");
+                    }
+                    return result;
+                }
+                else {
+                    return createNextState2(previousState, function (draft) {
+                        return caseReducer(draft, action);
+                    });
+                }
+            }
+            return previousState;
+        }, state);
+    }
+    reducer.getInitialState = getInitialState;
+    return reducer;
+}
+// src/createSlice.ts
+var hasWarnedAboutObjectNotation2 = false;
+function getType2(slice, actionKey) {
+    return slice + "/" + actionKey;
+}
+function createSlice(options) {
+    var name = options.name;
+    if (!name) {
+        throw new Error("`name` is a required option for createSlice");
+    }
+    if (typeof process !== "undefined" && process.env.NODE_ENV === "development") {
+        if (options.initialState === void 0) {
+            console.error("You must provide an `initialState` value that is not `undefined`. You may have misspelled `initialState`");
+        }
+    }
+    var initialState = typeof options.initialState == "function" ? options.initialState : freezeDraftable(options.initialState);
+    var reducers = options.reducers || {};
+    var reducerNames = Object.keys(reducers);
+    var sliceCaseReducersByName = {};
+    var sliceCaseReducersByType = {};
+    var actionCreators = {};
+    reducerNames.forEach(function (reducerName) {
+        var maybeReducerWithPrepare = reducers[reducerName];
+        var type = getType2(name, reducerName);
+        var caseReducer;
+        var prepareCallback;
+        if ("reducer" in maybeReducerWithPrepare) {
+            caseReducer = maybeReducerWithPrepare.reducer;
+            prepareCallback = maybeReducerWithPrepare.prepare;
+        }
+        else {
+            caseReducer = maybeReducerWithPrepare;
+        }
+        sliceCaseReducersByName[reducerName] = caseReducer;
+        sliceCaseReducersByType[type] = caseReducer;
+        actionCreators[reducerName] = prepareCallback ? createAction(type, prepareCallback) : createAction(type);
+    });
+    function buildReducer() {
+        if (process.env.NODE_ENV !== "production") {
+            if (typeof options.extraReducers === "object") {
+                if (!hasWarnedAboutObjectNotation2) {
+                    hasWarnedAboutObjectNotation2 = true;
+                    console.warn("The object notation for `createSlice.extraReducers` is deprecated, and will be removed in RTK 2.0. Please use the 'builder callback' notation instead: https://redux-toolkit.js.org/api/createSlice");
+                }
+            }
+        }
+        var _c = typeof options.extraReducers === "function" ? executeReducerBuilderCallback(options.extraReducers) : [options.extraReducers], _d = _c[0], extraReducers = _d === void 0 ? {} : _d, _e = _c[1], actionMatchers = _e === void 0 ? [] : _e, _f = _c[2], defaultCaseReducer = _f === void 0 ? void 0 : _f;
+        var finalCaseReducers = __spreadValues(__spreadValues({}, extraReducers), sliceCaseReducersByType);
+        return createReducer(initialState, function (builder) {
+            for (var key in finalCaseReducers) {
+                builder.addCase(key, finalCaseReducers[key]);
+            }
+            for (var _i = 0, actionMatchers_1 = actionMatchers; _i < actionMatchers_1.length; _i++) {
+                var m = actionMatchers_1[_i];
+                builder.addMatcher(m.matcher, m.reducer);
+            }
+            if (defaultCaseReducer) {
+                builder.addDefaultCase(defaultCaseReducer);
+            }
+        });
+    }
+    var _reducer;
+    return {
+        name: name,
+        reducer: function (state, action) {
+            if (!_reducer)
+                _reducer = buildReducer();
+            return _reducer(state, action);
+        },
+        actions: actionCreators,
+        caseReducers: sliceCaseReducersByName,
+        getInitialState: function () {
+            if (!_reducer)
+                _reducer = buildReducer();
+            return _reducer.getInitialState();
+        }
+    };
+}
+// src/entities/entity_state.ts
+function getInitialEntityState() {
+    return {
+        ids: [],
+        entities: {}
+    };
+}
+function createInitialStateFactory() {
+    function getInitialState(additionalState) {
+        if (additionalState === void 0) { additionalState = {}; }
+        return Object.assign(getInitialEntityState(), additionalState);
+    }
+    return { getInitialState: getInitialState };
+}
+// src/entities/state_selectors.ts
+function createSelectorsFactory() {
+    function getSelectors(selectState) {
+        var selectIds = function (state) { return state.ids; };
+        var selectEntities = function (state) { return state.entities; };
+        var selectAll = createDraftSafeSelector(selectIds, selectEntities, function (ids, entities) { return ids.map(function (id) { return entities[id]; }); });
+        var selectId = function (_, id) { return id; };
+        var selectById = function (entities, id) { return entities[id]; };
+        var selectTotal = createDraftSafeSelector(selectIds, function (ids) { return ids.length; });
+        if (!selectState) {
+            return {
+                selectIds: selectIds,
+                selectEntities: selectEntities,
+                selectAll: selectAll,
+                selectTotal: selectTotal,
+                selectById: createDraftSafeSelector(selectEntities, selectId, selectById)
+            };
+        }
+        var selectGlobalizedEntities = createDraftSafeSelector(selectState, selectEntities);
+        return {
+            selectIds: createDraftSafeSelector(selectState, selectIds),
+            selectEntities: selectGlobalizedEntities,
+            selectAll: createDraftSafeSelector(selectState, selectAll),
+            selectTotal: createDraftSafeSelector(selectState, selectTotal),
+            selectById: createDraftSafeSelector(selectGlobalizedEntities, selectId, selectById)
+        };
+    }
+    return { getSelectors: getSelectors };
+}
+// src/entities/state_adapter.ts
+import createNextState3, { isDraft as isDraft3 } from "immer";
+function createSingleArgumentStateOperator(mutator) {
+    var operator = createStateOperator(function (_, state) { return mutator(state); });
+    return function operation(state) {
+        return operator(state, void 0);
+    };
+}
+function createStateOperator(mutator) {
+    return function operation(state, arg) {
+        function isPayloadActionArgument(arg2) {
+            return isFSA(arg2);
+        }
+        var runMutator = function (draft) {
+            if (isPayloadActionArgument(arg)) {
+                mutator(arg.payload, draft);
+            }
+            else {
+                mutator(arg, draft);
+            }
+        };
+        if (isDraft3(state)) {
+            runMutator(state);
+            return state;
+        }
+        else {
+            return createNextState3(state, runMutator);
+        }
+    };
+}
+// src/entities/utils.ts
+function selectIdValue(entity, selectId) {
+    var key = selectId(entity);
+    if (process.env.NODE_ENV !== "production" && key === void 0) {
+        console.warn("The entity passed to the `selectId` implementation returned undefined.", "You should probably provide your own `selectId` implementation.", "The entity that was passed:", entity, "The `selectId` implementation:", selectId.toString());
+    }
+    return key;
+}
+function ensureEntitiesArray(entities) {
+    if (!Array.isArray(entities)) {
+        entities = Object.values(entities);
+    }
+    return entities;
+}
+function splitAddedUpdatedEntities(newEntities, selectId, state) {
+    newEntities = ensureEntitiesArray(newEntities);
+    var added = [];
+    var updated = [];
+    for (var _i = 0, newEntities_1 = newEntities; _i < newEntities_1.length; _i++) {
+        var entity = newEntities_1[_i];
+        var id = selectIdValue(entity, selectId);
+        if (id in state.entities) {
+            updated.push({ id: id, changes: entity });
+        }
+        else {
+            added.push(entity);
+        }
+    }
+    return [added, updated];
+}
+// src/entities/unsorted_state_adapter.ts
+function createUnsortedStateAdapter(selectId) {
+    function addOneMutably(entity, state) {
+        var key = selectIdValue(entity, selectId);
+        if (key in state.entities) {
+            return;
+        }
+        state.ids.push(key);
+        state.entities[key] = entity;
+    }
+    function addManyMutably(newEntities, state) {
+        newEntities = ensureEntitiesArray(newEntities);
+        for (var _i = 0, newEntities_2 = newEntities; _i < newEntities_2.length; _i++) {
+            var entity = newEntities_2[_i];
+            addOneMutably(entity, state);
+        }
+    }
+    function setOneMutably(entity, state) {
+        var key = selectIdValue(entity, selectId);
+        if (!(key in state.entities)) {
+            state.ids.push(key);
+        }
+        state.entities[key] = entity;
+    }
+    function setManyMutably(newEntities, state) {
+        newEntities = ensureEntitiesArray(newEntities);
+        for (var _i = 0, newEntities_3 = newEntities; _i < newEntities_3.length; _i++) {
+            var entity = newEntities_3[_i];
+            setOneMutably(entity, state);
+        }
+    }
+    function setAllMutably(newEntities, state) {
+        newEntities = ensureEntitiesArray(newEntities);
+        state.ids = [];
+        state.entities = {};
+        addManyMutably(newEntities, state);
+    }
+    function removeOneMutably(key, state) {
+        return removeManyMutably([key], state);
+    }
+    function removeManyMutably(keys, state) {
+        var didMutate = false;
+        keys.forEach(function (key) {
+            if (key in state.entities) {
+                delete state.entities[key];
+                didMutate = true;
+            }
+        });
+        if (didMutate) {
+            state.ids = state.ids.filter(function (id) { return id in state.entities; });
+        }
+    }
+    function removeAllMutably(state) {
+        Object.assign(state, {
+            ids: [],
+            entities: {}
+        });
+    }
+    function takeNewKey(keys, update, state) {
+        var original2 = state.entities[update.id];
+        var updated = Object.assign({}, original2, update.changes);
+        var newKey = selectIdValue(updated, selectId);
+        var hasNewKey = newKey !== update.id;
+        if (hasNewKey) {
+            keys[update.id] = newKey;
+            delete state.entities[update.id];
+        }
+        state.entities[newKey] = updated;
+        return hasNewKey;
+    }
+    function updateOneMutably(update, state) {
+        return updateManyMutably([update], state);
+    }
+    function updateManyMutably(updates, state) {
+        var newKeys = {};
+        var updatesPerEntity = {};
+        updates.forEach(function (update) {
+            if (update.id in state.entities) {
+                updatesPerEntity[update.id] = {
+                    id: update.id,
+                    changes: __spreadValues(__spreadValues({}, updatesPerEntity[update.id] ? updatesPerEntity[update.id].changes : null), update.changes)
+                };
+            }
+        });
+        updates = Object.values(updatesPerEntity);
+        var didMutateEntities = updates.length > 0;
+        if (didMutateEntities) {
+            var didMutateIds = updates.filter(function (update) { return takeNewKey(newKeys, update, state); }).length > 0;
+            if (didMutateIds) {
+                state.ids = Object.keys(state.entities);
+            }
+        }
+    }
+    function upsertOneMutably(entity, state) {
+        return upsertManyMutably([entity], state);
+    }
+    function upsertManyMutably(newEntities, state) {
+        var _c = splitAddedUpdatedEntities(newEntities, selectId, state), added = _c[0], updated = _c[1];
+        updateManyMutably(updated, state);
+        addManyMutably(added, state);
+    }
+    return {
+        removeAll: createSingleArgumentStateOperator(removeAllMutably),
+        addOne: createStateOperator(addOneMutably),
+        addMany: createStateOperator(addManyMutably),
+        setOne: createStateOperator(setOneMutably),
+        setMany: createStateOperator(setManyMutably),
+        setAll: createStateOperator(setAllMutably),
+        updateOne: createStateOperator(updateOneMutably),
+        updateMany: createStateOperator(updateManyMutably),
+        upsertOne: createStateOperator(upsertOneMutably),
+        upsertMany: createStateOperator(upsertManyMutably),
+        removeOne: createStateOperator(removeOneMutably),
+        removeMany: createStateOperator(removeManyMutably)
+    };
+}
+// src/entities/sorted_state_adapter.ts
+function createSortedStateAdapter(selectId, sort) {
+    var _c = createUnsortedStateAdapter(selectId), removeOne = _c.removeOne, removeMany = _c.removeMany, removeAll = _c.removeAll;
+    function addOneMutably(entity, state) {
+        return addManyMutably([entity], state);
+    }
+    function addManyMutably(newEntities, state) {
+        newEntities = ensureEntitiesArray(newEntities);
+        var models = newEntities.filter(function (model) { return !(selectIdValue(model, selectId) in state.entities); });
+        if (models.length !== 0) {
+            merge(models, state);
+        }
+    }
+    function setOneMutably(entity, state) {
+        return setManyMutably([entity], state);
+    }
+    function setManyMutably(newEntities, state) {
+        newEntities = ensureEntitiesArray(newEntities);
+        if (newEntities.length !== 0) {
+            merge(newEntities, state);
+        }
+    }
+    function setAllMutably(newEntities, state) {
+        newEntities = ensureEntitiesArray(newEntities);
+        state.entities = {};
+        state.ids = [];
+        addManyMutably(newEntities, state);
+    }
+    function updateOneMutably(update, state) {
+        return updateManyMutably([update], state);
+    }
+    function updateManyMutably(updates, state) {
+        var appliedUpdates = false;
+        for (var _i = 0, updates_1 = updates; _i < updates_1.length; _i++) {
+            var update = updates_1[_i];
+            var entity = state.entities[update.id];
+            if (!entity) {
+                continue;
+            }
+            appliedUpdates = true;
+            Object.assign(entity, update.changes);
+            var newId = selectId(entity);
+            if (update.id !== newId) {
+                delete state.entities[update.id];
+                state.entities[newId] = entity;
+            }
+        }
+        if (appliedUpdates) {
+            resortEntities(state);
+        }
+    }
+    function upsertOneMutably(entity, state) {
+        return upsertManyMutably([entity], state);
+    }
+    function upsertManyMutably(newEntities, state) {
+        var _c = splitAddedUpdatedEntities(newEntities, selectId, state), added = _c[0], updated = _c[1];
+        updateManyMutably(updated, state);
+        addManyMutably(added, state);
+    }
+    function areArraysEqual(a, b) {
+        if (a.length !== b.length) {
+            return false;
+        }
+        for (var i = 0; i < a.length && i < b.length; i++) {
+            if (a[i] === b[i]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    function merge(models, state) {
+        models.forEach(function (model) {
+            state.entities[selectId(model)] = model;
+        });
+        resortEntities(state);
+    }
+    function resortEntities(state) {
+        var allEntities = Object.values(state.entities);
+        allEntities.sort(sort);
+        var newSortedIds = allEntities.map(selectId);
+        var ids = state.ids;
+        if (!areArraysEqual(ids, newSortedIds)) {
+            state.ids = newSortedIds;
+        }
+    }
+    return {
+        removeOne: removeOne,
+        removeMany: removeMany,
+        removeAll: removeAll,
+        addOne: createStateOperator(addOneMutably),
+        updateOne: createStateOperator(updateOneMutably),
+        upsertOne: createStateOperator(upsertOneMutably),
+        setOne: createStateOperator(setOneMutably),
+        setMany: createStateOperator(setManyMutably),
+        setAll: createStateOperator(setAllMutably),
+        addMany: createStateOperator(addManyMutably),
+        updateMany: createStateOperator(updateManyMutably),
+        upsertMany: createStateOperator(upsertManyMutably)
+    };
+}
+// src/entities/create_adapter.ts
+function createEntityAdapter(options) {
+    if (options === void 0) { options = {}; }
+    var _c = __spreadValues({
+        sortComparer: false,
+        selectId: function (instance) { return instance.id; }
+    }, options), selectId = _c.selectId, sortComparer = _c.sortComparer;
+    var stateFactory = createInitialStateFactory();
+    var selectorsFactory = createSelectorsFactory();
+    var stateAdapter = sortComparer ? createSortedStateAdapter(selectId, sortComparer) : createUnsortedStateAdapter(selectId);
+    return __spreadValues(__spreadValues(__spreadValues({
+        selectId: selectId,
+        sortComparer: sortComparer
+    }, stateFactory), selectorsFactory), stateAdapter);
+}
+// src/nanoid.ts
+var urlAlphabet = "ModuleSymbhasOwnPr-0123456789ABCDEFGHNRVfgctiUvz_KqYTJkLxpZXIjQW";
+var nanoid = function (size) {
+    if (size === void 0) { size = 21; }
+    var id = "";
+    var i = size;
+    while (i--) {
+        id += urlAlphabet[Math.random() * 64 | 0];
+    }
+    return id;
+};
+// src/createAsyncThunk.ts
+var commonProperties = [
+    "name",
+    "message",
+    "stack",
+    "code"
+];
+var RejectWithValue = /** @class */ (function () {
+    function RejectWithValue(payload, meta) {
+        this.payload = payload;
+        this.meta = meta;
+    }
+    return RejectWithValue;
+}());
+var FulfillWithMeta = /** @class */ (function () {
+    function FulfillWithMeta(payload, meta) {
+        this.payload = payload;
+        this.meta = meta;
+    }
+    return FulfillWithMeta;
+}());
+var miniSerializeError = function (value) {
+    if (typeof value === "object" && value !== null) {
+        var simpleError = {};
+        for (var _i = 0, commonProperties_1 = commonProperties; _i < commonProperties_1.length; _i++) {
+            var property = commonProperties_1[_i];
+            if (typeof value[property] === "string") {
+                simpleError[property] = value[property];
+            }
+        }
+        return simpleError;
+    }
+    return { message: String(value) };
+};
+var createAsyncThunk = (function () {
+    function createAsyncThunk2(typePrefix, payloadCreator, options) {
+        var fulfilled = createAction(typePrefix + "/fulfilled", function (payload, requestId, arg, meta) { return ({
+            payload: payload,
+            meta: __spreadProps(__spreadValues({}, meta || {}), {
+                arg: arg,
+                requestId: requestId,
+                requestStatus: "fulfilled"
+            })
+        }); });
+        var pending = createAction(typePrefix + "/pending", function (requestId, arg, meta) { return ({
+            payload: void 0,
+            meta: __spreadProps(__spreadValues({}, meta || {}), {
+                arg: arg,
+                requestId: requestId,
+                requestStatus: "pending"
+            })
+        }); });
+        var rejected = createAction(typePrefix + "/rejected", function (error, requestId, arg, payload, meta) { return ({
+            payload: payload,
+            error: (options && options.serializeError || miniSerializeError)(error || "Rejected"),
+            meta: __spreadProps(__spreadValues({}, meta || {}), {
+                arg: arg,
+                requestId: requestId,
+                rejectedWithValue: !!payload,
+                requestStatus: "rejected",
+                aborted: (error == null ? void 0 : error.name) === "AbortError",
+                condition: (error == null ? void 0 : error.name) === "ConditionError"
+            })
+        }); });
+        var displayedWarning = false;
+        var AC = typeof AbortController !== "undefined" ? AbortController : /** @class */ (function () {
+            function class_1() {
+                this.signal = {
+                    aborted: false,
+                    addEventListener: function () {
+                    },
+                    dispatchEvent: function () {
+                        return false;
+                    },
+                    onabort: function () {
+                    },
+                    removeEventListener: function () {
+                    },
+                    reason: void 0,
+                    throwIfAborted: function () {
+                    }
+                };
+            }
+            class_1.prototype.abort = function () {
+                if (process.env.NODE_ENV !== "production") {
+                    if (!displayedWarning) {
+                        displayedWarning = true;
+                        console.info("This platform does not implement AbortController. \nIf you want to use the AbortController to react to `abort` events, please consider importing a polyfill like 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'.");
+                    }
+                }
+            };
+            return class_1;
+        }());
+        function actionCreator(arg) {
+            return function (dispatch, getState, extra) {
+                var requestId = (options == null ? void 0 : options.idGenerator) ? options.idGenerator(arg) : nanoid();
+                var abortController = new AC();
+                var abortReason;
+                var started = false;
+                function abort(reason) {
+                    abortReason = reason;
+                    abortController.abort();
+                }
+                var promise2 = function () {
+                    return __async(this, null, function () {
+                        var _a, _b, finalAction, conditionResult, abortedPromise, err_1, skipDispatch;
+                        return __generator(this, function (_c) {
+                            switch (_c.label) {
+                                case 0:
+                                    _c.trys.push([0, 4, , 5]);
+                                    conditionResult = (_a = options == null ? void 0 : options.condition) == null ? void 0 : _a.call(options, arg, { getState: getState, extra: extra });
+                                    if (!isThenable(conditionResult)) return [3 /*break*/, 2];
+                                    return [4 /*yield*/, conditionResult];
+                                case 1:
+                                    conditionResult = _c.sent();
+                                    _c.label = 2;
+                                case 2:
+                                    if (conditionResult === false || abortController.signal.aborted) {
+                                        throw {
+                                            name: "ConditionError",
+                                            message: "Aborted due to condition callback returning false."
+                                        };
+                                    }
+                                    started = true;
+                                    abortedPromise = new Promise(function (_, reject) { return abortController.signal.addEventListener("abort", function () { return reject({
+                                        name: "AbortError",
+                                        message: abortReason || "Aborted"
+                                    }); }); });
+                                    dispatch(pending(requestId, arg, (_b = options == null ? void 0 : options.getPendingMeta) == null ? void 0 : _b.call(options, { requestId: requestId, arg: arg }, { getState: getState, extra: extra })));
+                                    return [4 /*yield*/, Promise.race([
+                                            abortedPromise,
+                                            Promise.resolve(payloadCreator(arg, {
+                                                dispatch: dispatch,
+                                                getState: getState,
+                                                extra: extra,
+                                                requestId: requestId,
+                                                signal: abortController.signal,
+                                                abort: abort,
+                                                rejectWithValue: function (value, meta) {
+                                                    return new RejectWithValue(value, meta);
+                                                },
+                                                fulfillWithValue: function (value, meta) {
+                                                    return new FulfillWithMeta(value, meta);
+                                                }
+                                            })).then(function (result) {
+                                                if (result instanceof RejectWithValue) {
+                                                    throw result;
+                                                }
+                                                if (result instanceof FulfillWithMeta) {
+                                                    return fulfilled(result.payload, requestId, arg, result.meta);
+                                                }
+                                                return fulfilled(result, requestId, arg);
+                                            })
+                                        ])];
+                                case 3:
+                                    finalAction = _c.sent();
+                                    return [3 /*break*/, 5];
+                                case 4:
+                                    err_1 = _c.sent();
+                                    finalAction = err_1 instanceof RejectWithValue ? rejected(null, requestId, arg, err_1.payload, err_1.meta) : rejected(err_1, requestId, arg);
+                                    return [3 /*break*/, 5];
+                                case 5:
+                                    skipDispatch = options && !options.dispatchConditionRejection && rejected.match(finalAction) && finalAction.meta.condition;
+                                    if (!skipDispatch) {
+                                        dispatch(finalAction);
+                                    }
+                                    return [2 /*return*/, finalAction];
+                            }
+                        });
+                    });
+                }();
+                return Object.assign(promise2, {
+                    abort: abort,
+                    requestId: requestId,
+                    arg: arg,
+                    unwrap: function () {
+                        return promise2.then(unwrapResult);
+                    }
+                });
+            };
+        }
+        return Object.assign(actionCreator, {
+            pending: pending,
+            rejected: rejected,
+            fulfilled: fulfilled,
+            typePrefix: typePrefix
+        });
+    }
+    createAsyncThunk2.withTypes = function () { return createAsyncThunk2; };
+    return createAsyncThunk2;
+})();
+function unwrapResult(action) {
+    if (action.meta && action.meta.rejectedWithValue) {
+        throw action.payload;
+    }
+    if (action.error) {
+        throw action.error;
+    }
+    return action.payload;
+}
+function isThenable(value) {
+    return value !== null && typeof value === "object" && typeof value.then === "function";
+}
+// src/matchers.ts
+var matches = function (matcher, action) {
+    if (hasMatchFunction(matcher)) {
+        return matcher.match(action);
+    }
+    else {
+        return matcher(action);
+    }
+};
+function isAnyOf() {
+    var matchers = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        matchers[_i] = arguments[_i];
+    }
+    return function (action) {
+        return matchers.some(function (matcher) { return matches(matcher, action); });
+    };
+}
+function isAllOf() {
+    var matchers = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        matchers[_i] = arguments[_i];
+    }
+    return function (action) {
+        return matchers.every(function (matcher) { return matches(matcher, action); });
+    };
+}
+function hasExpectedRequestMetadata(action, validStatus) {
+    if (!action || !action.meta)
+        return false;
+    var hasValidRequestId = typeof action.meta.requestId === "string";
+    var hasValidRequestStatus = validStatus.indexOf(action.meta.requestStatus) > -1;
+    return hasValidRequestId && hasValidRequestStatus;
+}
+function isAsyncThunkArray(a) {
+    return typeof a[0] === "function" && "pending" in a[0] && "fulfilled" in a[0] && "rejected" in a[0];
+}
+function isPending() {
+    var asyncThunks = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        asyncThunks[_i] = arguments[_i];
+    }
+    if (asyncThunks.length === 0) {
+        return function (action) { return hasExpectedRequestMetadata(action, ["pending"]); };
+    }
+    if (!isAsyncThunkArray(asyncThunks)) {
+        return isPending()(asyncThunks[0]);
+    }
+    return function (action) {
+        var matchers = asyncThunks.map(function (asyncThunk) { return asyncThunk.pending; });
+        var combinedMatcher = isAnyOf.apply(void 0, matchers);
+        return combinedMatcher(action);
+    };
+}
+function isRejected() {
+    var asyncThunks = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        asyncThunks[_i] = arguments[_i];
+    }
+    if (asyncThunks.length === 0) {
+        return function (action) { return hasExpectedRequestMetadata(action, ["rejected"]); };
+    }
+    if (!isAsyncThunkArray(asyncThunks)) {
+        return isRejected()(asyncThunks[0]);
+    }
+    return function (action) {
+        var matchers = asyncThunks.map(function (asyncThunk) { return asyncThunk.rejected; });
+        var combinedMatcher = isAnyOf.apply(void 0, matchers);
+        return combinedMatcher(action);
+    };
+}
+function isRejectedWithValue() {
+    var asyncThunks = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        asyncThunks[_i] = arguments[_i];
+    }
+    var hasFlag = function (action) {
+        return action && action.meta && action.meta.rejectedWithValue;
+    };
+    if (asyncThunks.length === 0) {
+        return function (action) {
+            var combinedMatcher = isAllOf(isRejected.apply(void 0, asyncThunks), hasFlag);
+            return combinedMatcher(action);
+        };
+    }
+    if (!isAsyncThunkArray(asyncThunks)) {
+        return isRejectedWithValue()(asyncThunks[0]);
+    }
+    return function (action) {
+        var combinedMatcher = isAllOf(isRejected.apply(void 0, asyncThunks), hasFlag);
+        return combinedMatcher(action);
+    };
+}
+function isFulfilled() {
+    var asyncThunks = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        asyncThunks[_i] = arguments[_i];
+    }
+    if (asyncThunks.length === 0) {
+        return function (action) { return hasExpectedRequestMetadata(action, ["fulfilled"]); };
+    }
+    if (!isAsyncThunkArray(asyncThunks)) {
+        return isFulfilled()(asyncThunks[0]);
+    }
+    return function (action) {
+        var matchers = asyncThunks.map(function (asyncThunk) { return asyncThunk.fulfilled; });
+        var combinedMatcher = isAnyOf.apply(void 0, matchers);
+        return combinedMatcher(action);
+    };
+}
+function isAsyncThunkAction() {
+    var asyncThunks = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        asyncThunks[_i] = arguments[_i];
+    }
+    if (asyncThunks.length === 0) {
+        return function (action) { return hasExpectedRequestMetadata(action, ["pending", "fulfilled", "rejected"]); };
+    }
+    if (!isAsyncThunkArray(asyncThunks)) {
+        return isAsyncThunkAction()(asyncThunks[0]);
+    }
+    return function (action) {
+        var matchers = [];
+        for (var _i = 0, asyncThunks_1 = asyncThunks; _i < asyncThunks_1.length; _i++) {
+            var asyncThunk = asyncThunks_1[_i];
+            matchers.push(asyncThunk.pending, asyncThunk.rejected, asyncThunk.fulfilled);
+        }
+        var combinedMatcher = isAnyOf.apply(void 0, matchers);
+        return combinedMatcher(action);
+    };
+}
+// src/listenerMiddleware/utils.ts
+var assertFunction = function (func, expected) {
+    if (typeof func !== "function") {
+        throw new TypeError(expected + " is not a function");
+    }
+};
+var noop = function () {
+};
+var catchRejection = function (promise2, onError) {
+    if (onError === void 0) { onError = noop; }
+    promise2.catch(onError);
+    return promise2;
+};
+var addAbortSignalListener = function (abortSignal, callback) {
+    abortSignal.addEventListener("abort", callback, { once: true });
+    return function () { return abortSignal.removeEventListener("abort", callback); };
+};
+var abortControllerWithReason = function (abortController, reason) {
+    var signal = abortController.signal;
+    if (signal.aborted) {
+        return;
+    }
+    if (!("reason" in signal)) {
+        Object.defineProperty(signal, "reason", {
+            enumerable: true,
+            value: reason,
+            configurable: true,
+            writable: true
+        });
+    }
+    ;
+    abortController.abort(reason);
+};
+// src/listenerMiddleware/exceptions.ts
+var task = "task";
+var listener = "listener";
+var completed = "completed";
+var cancelled = "cancelled";
+var taskCancelled = "task-" + cancelled;
+var taskCompleted = "task-" + completed;
+var listenerCancelled = listener + "-" + cancelled;
+var listenerCompleted = listener + "-" + completed;
+var TaskAbortError = /** @class */ (function () {
+    function TaskAbortError(code) {
+        this.code = code;
+        this.name = "TaskAbortError";
+        this.message = task + " " + cancelled + " (reason: " + code + ")";
+    }
+    return TaskAbortError;
+}());
+// src/listenerMiddleware/task.ts
+var validateActive = function (signal) {
+    if (signal.aborted) {
+        throw new TaskAbortError(signal.reason);
+    }
+};
+function raceWithSignal(signal, promise2) {
+    var cleanup = noop;
+    return new Promise(function (resolve, reject) {
+        var notifyRejection = function () { return reject(new TaskAbortError(signal.reason)); };
+        if (signal.aborted) {
+            notifyRejection();
+            return;
+        }
+        cleanup = addAbortSignalListener(signal, notifyRejection);
+        promise2.finally(function () { return cleanup(); }).then(resolve, reject);
+    }).finally(function () {
+        cleanup = noop;
+    });
+}
+var runTask = function (task2, cleanUp) { return __async(void 0, null, function () {
+    var value, error_1;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 3, 4, 5]);
+                return [4 /*yield*/, Promise.resolve()];
+            case 1:
+                _c.sent();
+                return [4 /*yield*/, task2()];
+            case 2:
+                value = _c.sent();
+                return [2 /*return*/, {
+                        status: "ok",
+                        value: value
+                    }];
+            case 3:
+                error_1 = _c.sent();
+                return [2 /*return*/, {
+                        status: error_1 instanceof TaskAbortError ? "cancelled" : "rejected",
+                        error: error_1
+                    }];
+            case 4:
+                cleanUp == null ? void 0 : cleanUp();
+                return [7 /*endfinally*/];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); };
+var createPause = function (signal) {
+    return function (promise2) {
+        return catchRejection(raceWithSignal(signal, promise2).then(function (output) {
+            validateActive(signal);
+            return output;
+        }));
+    };
+};
+var createDelay = function (signal) {
+    var pause = createPause(signal);
+    return function (timeoutMs) {
+        return pause(new Promise(function (resolve) { return setTimeout(resolve, timeoutMs); }));
+    };
+};
+// src/listenerMiddleware/index.ts
+var assign = Object.assign;
+var INTERNAL_NIL_TOKEN = {};
+var alm = "listenerMiddleware";
+var createFork = function (parentAbortSignal, parentBlockingPromises) {
+    var linkControllers = function (controller) { return addAbortSignalListener(parentAbortSignal, function () { return abortControllerWithReason(controller, parentAbortSignal.reason); }); };
+    return function (taskExecutor, opts) {
+        assertFunction(taskExecutor, "taskExecutor");
+        var childAbortController = new AbortController();
+        linkControllers(childAbortController);
+        var result = runTask(function () { return __async(void 0, null, function () {
+            var result2;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        validateActive(parentAbortSignal);
+                        validateActive(childAbortController.signal);
+                        return [4 /*yield*/, taskExecutor({
+                                pause: createPause(childAbortController.signal),
+                                delay: createDelay(childAbortController.signal),
+                                signal: childAbortController.signal
+                            })];
+                    case 1:
+                        result2 = _c.sent();
+                        validateActive(childAbortController.signal);
+                        return [2 /*return*/, result2];
+                }
+            });
+        }); }, function () { return abortControllerWithReason(childAbortController, taskCompleted); });
+        if (opts == null ? void 0 : opts.autoJoin) {
+            parentBlockingPromises.push(result);
+        }
+        return {
+            result: createPause(parentAbortSignal)(result),
+            cancel: function () {
+                abortControllerWithReason(childAbortController, taskCancelled);
+            }
+        };
+    };
+};
+var createTakePattern = function (startListening, signal) {
+    var take = function (predicate, timeout) { return __async(void 0, null, function () {
+        var unsubscribe, tuplePromise, promises, output;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    validateActive(signal);
+                    unsubscribe = function () {
+                    };
+                    tuplePromise = new Promise(function (resolve, reject) {
+                        var stopListening = startListening({
+                            predicate: predicate,
+                            effect: function (action, listenerApi) {
+                                listenerApi.unsubscribe();
+                                resolve([
+                                    action,
+                                    listenerApi.getState(),
+                                    listenerApi.getOriginalState()
+                                ]);
+                            }
+                        });
+                        unsubscribe = function () {
+                            stopListening();
+                            reject();
+                        };
+                    });
+                    promises = [
+                        tuplePromise
+                    ];
+                    if (timeout != null) {
+                        promises.push(new Promise(function (resolve) { return setTimeout(resolve, timeout, null); }));
+                    }
+                    _c.label = 1;
+                case 1:
+                    _c.trys.push([1, , 3, 4]);
+                    return [4 /*yield*/, raceWithSignal(signal, Promise.race(promises))];
+                case 2:
+                    output = _c.sent();
+                    validateActive(signal);
+                    return [2 /*return*/, output];
+                case 3:
+                    unsubscribe();
+                    return [7 /*endfinally*/];
+                case 4: return [2 /*return*/];
+            }
+        });
+    }); };
+    return function (predicate, timeout) { return catchRejection(take(predicate, timeout)); };
+};
+var getListenerEntryPropsFrom = function (options) {
+    var type = options.type, actionCreator = options.actionCreator, matcher = options.matcher, predicate = options.predicate, effect = options.effect;
+    if (type) {
+        predicate = createAction(type).match;
+    }
+    else if (actionCreator) {
+        type = actionCreator.type;
+        predicate = actionCreator.match;
+    }
+    else if (matcher) {
+        predicate = matcher;
+    }
+    else if (predicate) {
+    }
+    else {
+        throw new Error("Creating or removing a listener requires one of the known fields for matching an action");
+    }
+    assertFunction(effect, "options.listener");
+    return { predicate: predicate, type: type, effect: effect };
+};
+var createListenerEntry = function (options) {
+    var _c = getListenerEntryPropsFrom(options), type = _c.type, predicate = _c.predicate, effect = _c.effect;
+    var id = nanoid();
+    var entry = {
+        id: id,
+        effect: effect,
+        type: type,
+        predicate: predicate,
+        pending: new Set(),
+        unsubscribe: function () {
+            throw new Error("Unsubscribe not initialized");
+        }
+    };
+    return entry;
+};
+var cancelActiveListeners = function (entry) {
+    entry.pending.forEach(function (controller) {
+        abortControllerWithReason(controller, listenerCancelled);
+    });
+};
+var createClearListenerMiddleware = function (listenerMap) {
+    return function () {
+        listenerMap.forEach(cancelActiveListeners);
+        listenerMap.clear();
+    };
+};
+var safelyNotifyError = function (errorHandler, errorToNotify, errorInfo) {
+    try {
+        errorHandler(errorToNotify, errorInfo);
+    }
+    catch (errorHandlerError) {
+        setTimeout(function () {
+            throw errorHandlerError;
+        }, 0);
+    }
+};
+var addListener = createAction(alm + "/add");
+var clearAllListeners = createAction(alm + "/removeAll");
+var removeListener = createAction(alm + "/remove");
+var defaultErrorHandler = function () {
+    var args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        args[_i] = arguments[_i];
+    }
+    console.error.apply(console, __spreadArray([alm + "/error"], args));
+};
+function createListenerMiddleware(middlewareOptions) {
+    var _this = this;
+    if (middlewareOptions === void 0) { middlewareOptions = {}; }
+    var listenerMap = new Map();
+    var extra = middlewareOptions.extra, _c = middlewareOptions.onError, onError = _c === void 0 ? defaultErrorHandler : _c;
+    assertFunction(onError, "onError");
+    var insertEntry = function (entry) {
+        entry.unsubscribe = function () { return listenerMap.delete(entry.id); };
+        listenerMap.set(entry.id, entry);
+        return function (cancelOptions) {
+            entry.unsubscribe();
+            if (cancelOptions == null ? void 0 : cancelOptions.cancelActive) {
+                cancelActiveListeners(entry);
+            }
+        };
+    };
+    var findListenerEntry = function (comparator) {
+        for (var _i = 0, _c = Array.from(listenerMap.values()); _i < _c.length; _i++) {
+            var entry = _c[_i];
+            if (comparator(entry)) {
+                return entry;
+            }
+        }
+        return void 0;
+    };
+    var startListening = function (options) {
+        var entry = findListenerEntry(function (existingEntry) { return existingEntry.effect === options.effect; });
+        if (!entry) {
+            entry = createListenerEntry(options);
+        }
+        return insertEntry(entry);
+    };
+    var stopListening = function (options) {
+        var _c = getListenerEntryPropsFrom(options), type = _c.type, effect = _c.effect, predicate = _c.predicate;
+        var entry = findListenerEntry(function (entry2) {
+            var matchPredicateOrType = typeof type === "string" ? entry2.type === type : entry2.predicate === predicate;
+            return matchPredicateOrType && entry2.effect === effect;
+        });
+        if (entry) {
+            entry.unsubscribe();
+            if (options.cancelActive) {
+                cancelActiveListeners(entry);
+            }
+        }
+        return !!entry;
+    };
+    var notifyListener = function (entry, action, api, getOriginalState) { return __async(_this, null, function () {
+        var internalTaskController, take, autoJoinPromises, listenerError_1;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    internalTaskController = new AbortController();
+                    take = createTakePattern(startListening, internalTaskController.signal);
+                    autoJoinPromises = [];
+                    _c.label = 1;
+                case 1:
+                    _c.trys.push([1, 3, 4, 6]);
+                    entry.pending.add(internalTaskController);
+                    return [4 /*yield*/, Promise.resolve(entry.effect(action, assign({}, api, {
+                            getOriginalState: getOriginalState,
+                            condition: function (predicate, timeout) { return take(predicate, timeout).then(Boolean); },
+                            take: take,
+                            delay: createDelay(internalTaskController.signal),
+                            pause: createPause(internalTaskController.signal),
+                            extra: extra,
+                            signal: internalTaskController.signal,
+                            fork: createFork(internalTaskController.signal, autoJoinPromises),
+                            unsubscribe: entry.unsubscribe,
+                            subscribe: function () {
+                                listenerMap.set(entry.id, entry);
+                            },
+                            cancelActiveListeners: function () {
+                                entry.pending.forEach(function (controller, _, set) {
+                                    if (controller !== internalTaskController) {
+                                        abortControllerWithReason(controller, listenerCancelled);
+                                        set.delete(controller);
+                                    }
+                                });
+                            }
+                        })))];
+                case 2:
+                    _c.sent();
+                    return [3 /*break*/, 6];
+                case 3:
+                    listenerError_1 = _c.sent();
+                    if (!(listenerError_1 instanceof TaskAbortError)) {
+                        safelyNotifyError(onError, listenerError_1, {
+                            raisedBy: "effect"
+                        });
+                    }
+                    return [3 /*break*/, 6];
+                case 4: return [4 /*yield*/, Promise.allSettled(autoJoinPromises)];
+                case 5:
+                    _c.sent();
+                    abortControllerWithReason(internalTaskController, listenerCompleted);
+                    entry.pending.delete(internalTaskController);
+                    return [7 /*endfinally*/];
+                case 6: return [2 /*return*/];
+            }
+        });
+    }); };
+    var clearListenerMiddleware = createClearListenerMiddleware(listenerMap);
+    var middleware = function (api) { return function (next) { return function (action) {
+        if (!isAction(action)) {
+            return next(action);
+        }
+        if (addListener.match(action)) {
+            return startListening(action.payload);
+        }
+        if (clearAllListeners.match(action)) {
+            clearListenerMiddleware();
+            return;
+        }
+        if (removeListener.match(action)) {
+            return stopListening(action.payload);
+        }
+        var originalState = api.getState();
+        var getOriginalState = function () {
+            if (originalState === INTERNAL_NIL_TOKEN) {
+                throw new Error(alm + ": getOriginalState can only be called synchronously");
+            }
+            return originalState;
+        };
+        var result;
+        try {
+            result = next(action);
+            if (listenerMap.size > 0) {
+                var currentState = api.getState();
+                var listenerEntries = Array.from(listenerMap.values());
+                for (var _i = 0, listenerEntries_1 = listenerEntries; _i < listenerEntries_1.length; _i++) {
+                    var entry = listenerEntries_1[_i];
+                    var runListener = false;
+                    try {
+                        runListener = entry.predicate(action, currentState, originalState);
+                    }
+                    catch (predicateError) {
+                        runListener = false;
+                        safelyNotifyError(onError, predicateError, {
+                            raisedBy: "predicate"
+                        });
+                    }
+                    if (!runListener) {
+                        continue;
+                    }
+                    notifyListener(entry, action, api, getOriginalState);
+                }
+            }
+        }
+        finally {
+            originalState = INTERNAL_NIL_TOKEN;
+        }
+        return result;
+    }; }; };
+    return {
+        middleware: middleware,
+        startListening: startListening,
+        stopListening: stopListening,
+        clearListeners: clearListenerMiddleware
+    };
+}
+// src/autoBatchEnhancer.ts
+var SHOULD_AUTOBATCH = "RTK_autoBatch";
+var prepareAutoBatched = function () { return function (payload) {
+    var _c;
+    return ({
+        payload: payload,
+        meta: (_c = {}, _c[SHOULD_AUTOBATCH] = true, _c)
+    });
+}; };
+var promise;
+var queueMicrotaskShim = typeof queueMicrotask === "function" ? queueMicrotask.bind(typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : globalThis) : function (cb) { return (promise || (promise = Promise.resolve())).then(cb).catch(function (err) { return setTimeout(function () {
+    throw err;
+}, 0); }); };
+var createQueueWithTimer = function (timeout) {
+    return function (notify) {
+        setTimeout(notify, timeout);
+    };
+};
+var rAF = typeof window !== "undefined" && window.requestAnimationFrame ? window.requestAnimationFrame : createQueueWithTimer(10);
+var autoBatchEnhancer = function (options) {
+    if (options === void 0) { options = { type: "raf" }; }
+    return function (next) { return function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        var store = next.apply(void 0, args);
+        var notifying = true;
+        var shouldNotifyAtEndOfTick = false;
+        var notificationQueued = false;
+        var listeners = new Set();
+        var queueCallback = options.type === "tick" ? queueMicrotaskShim : options.type === "raf" ? rAF : options.type === "callback" ? options.queueNotification : createQueueWithTimer(options.timeout);
+        var notifyListeners = function () {
+            notificationQueued = false;
+            if (shouldNotifyAtEndOfTick) {
+                shouldNotifyAtEndOfTick = false;
+                listeners.forEach(function (l) { return l(); });
+            }
+        };
+        return Object.assign({}, store, {
+            subscribe: function (listener2) {
+                var wrappedListener = function () { return notifying && listener2(); };
+                var unsubscribe = store.subscribe(wrappedListener);
+                listeners.add(listener2);
+                return function () {
+                    unsubscribe();
+                    listeners.delete(listener2);
+                };
+            },
+            dispatch: function (action) {
+                var _a;
+                try {
+                    notifying = !((_a = action == null ? void 0 : action.meta) == null ? void 0 : _a[SHOULD_AUTOBATCH]);
+                    shouldNotifyAtEndOfTick = !notifying;
+                    if (shouldNotifyAtEndOfTick) {
+                        if (!notificationQueued) {
+                            notificationQueued = true;
+                            queueCallback(notifyListeners);
+                        }
+                    }
+                    return store.dispatch(action);
+                }
+                finally {
+                    notifying = true;
+                }
+            }
+        });
+    }; };
+};
+// src/index.ts
+enableES5();
+export { EnhancerArray, MiddlewareArray, SHOULD_AUTOBATCH, TaskAbortError, addListener, autoBatchEnhancer, clearAllListeners, configureStore, createAction, createActionCreatorInvariantMiddleware, createAsyncThunk, createDraftSafeSelector, createEntityAdapter, createImmutableStateInvariantMiddleware, createListenerMiddleware, default2 as createNextState, createReducer, createSelector2 as createSelector, createSerializableStateInvariantMiddleware, createSlice, current2 as current, findNonSerializableValue, freeze, getDefaultMiddleware, getType, isAction, isActionCreator, isAllOf, isAnyOf, isAsyncThunkAction, isDraft4 as isDraft, isFSA as isFluxStandardAction, isFulfilled, isImmutableDefault, isPending, isPlain, isPlainObject, isRejected, isRejectedWithValue, miniSerializeError, nanoid, original, prepareAutoBatched, removeListener, unwrapResult };
+//# sourceMappingURL=redux-toolkit.esm.js.map
