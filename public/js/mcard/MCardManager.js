@@ -125,12 +125,17 @@ export class MCardManager {
         const store = tx.objectStore('handles');
         const allHandles = await store.getAll();
         
+        console.log('[MCardManager] Found handles in DB:', allHandles.length);
+        
         // Build set of hashes that have handles
         allHandles.forEach(handle => {
+          console.log('[MCardManager] Handle:', handle.name, '→', handle.hash?.substring(0, 8));
           if (handle.hash) {
             cardsWithHandles.add(handle.hash);
           }
         });
+        
+        console.log('[MCardManager] Cards with handles Set size:', cardsWithHandles.size);
       } catch (error) {
         console.error('[MCardManager] Error fetching handles:', error);
       }
@@ -138,7 +143,10 @@ export class MCardManager {
     
     for (const card of cards) {
       // Check if this card has handles
-      if (cardsWithHandles.has(card.hash)) {
+      const hasHandle = cardsWithHandles.has(card.hash);
+      console.log(`[MCardManager] Card ${card.hash.substring(0, 8)} has handle: ${hasHandle}`);
+      
+      if (hasHandle) {
         categories.withHandles.push(card);
       }
       
