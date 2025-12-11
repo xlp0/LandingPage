@@ -81,19 +81,28 @@ export class UIComponents {
       return;
     }
     
-    // Fetch handles for all cards
+    // Fetch handles for all cards using IndexedDB index
     const cardHandles = new Map();
-    if (collection) {
-      for (const card of cards) {
-        try {
-          // Try to resolve handle from hash
-          const handles = await collection.engine.getHandlesForHash?.(card.hash);
-          if (handles && handles.length > 0) {
-            cardHandles.set(card.hash, handles[0]); // Use first handle
+    if (collection && collection.engine.db) {
+      try {
+        const db = collection.engine.db;
+        const tx = db.transaction('handles', 'readonly');
+        const store = tx.objectStore('handles');
+        const index = store.index('by-hash');
+        
+        for (const card of cards) {
+          try {
+            // Query by hash using the 'by-hash' index
+            const handleRecords = await index.getAll(card.hash);
+            if (handleRecords && handleRecords.length > 0) {
+              cardHandles.set(card.hash, handleRecords[0].handle);
+            }
+          } catch (e) {
+            // No handle for this card
           }
-        } catch (e) {
-          // No handle for this card
         }
+      } catch (e) {
+        console.warn('[UIComponents] Failed to fetch handles:', e);
       }
     }
     
