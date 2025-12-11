@@ -169,11 +169,26 @@ export class MarkdownRenderer extends BaseRenderer {
           document.head.appendChild(link);
         }
         
-        // Check if core script already exists
-        if (!document.querySelector('script[src*="highlight.js"][src*="core"]')) {
+        // Load highlight.js core (ES module version)
+        if (!document.getElementById('hljs-core')) {
           const script = document.createElement('script');
-          script.src = 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/core.min.js';
+          script.src = 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/es/core.min.js';
+          script.type = 'module';
           script.id = 'hljs-core';
+          script.textContent = `
+            import hljs from 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/es/core.min.js';
+            import javascript from 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/es/languages/javascript.min.js';
+            import python from 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/es/languages/python.min.js';
+            import json from 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/es/languages/json.min.js';
+            import markdown from 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/es/languages/markdown.min.js';
+            
+            hljs.registerLanguage('javascript', javascript);
+            hljs.registerLanguage('python', python);
+            hljs.registerLanguage('json', json);
+            hljs.registerLanguage('markdown', markdown);
+            
+            window.hljs = hljs;
+          `;
           document.head.appendChild(script);
           
           await new Promise((resolve, reject) => {
@@ -191,23 +206,6 @@ export class MarkdownRenderer extends BaseRenderer {
         
         if (!window.hljs) {
           throw new Error('highlight.js failed to load');
-        }
-        
-        // Load common languages only if not already loaded
-        const languages = ['javascript', 'python', 'java', 'cpp', 'css', 'html', 'json', 'markdown'];
-        for (const lang of languages) {
-          const scriptId = `hljs-lang-${lang}`;
-          if (!document.getElementById(scriptId)) {
-            const langScript = document.createElement('script');
-            langScript.src = `https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/languages/${lang}.min.js`;
-            langScript.id = scriptId;
-            document.head.appendChild(langScript);
-            
-            await new Promise((resolve) => {
-              langScript.onload = resolve;
-              langScript.onerror = resolve; // Continue even if one fails
-            });
-          }
         }
         
         console.log('[MarkdownRenderer] Highlight.js loaded successfully');

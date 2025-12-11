@@ -74,7 +74,7 @@ export class CardViewer {
     try {
       await store.dispatch(renderContent({
         hash: card.hash,
-        content: content,
+        content: textContent || '[Binary Content]',
         mimeType: mimeType,
         fileName: `${typeInfo.displayName}-${card.hash.substring(0, 8)}${extension}`
       }));
