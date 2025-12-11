@@ -32,6 +32,7 @@ export class UIComponents {
     
     const types = [
       { id: 'all', name: 'All Files', icon: 'package', count: getCount(categories.all) },
+      { id: 'with-handles', name: 'With Handles', icon: 'tag', count: getCount(categories.withHandles) },
       { id: 'clm', name: 'CLM', icon: 'box', count: getCount(categories.clm) },
       { id: 'markdown', name: 'Markdown', icon: 'file-text', count: getCount(categories.markdown) },
       { id: 'text', name: 'Text', icon: 'file-text', count: getCount(categories.text) },

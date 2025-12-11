@@ -78,7 +78,7 @@ export class MCardManager {
       console.log(`[MCardManager] Loaded ${this.allCards.length} cards`);
       
       console.log('[MCardManager] Rendering file types...');
-      const categories = this.categorizeCards(this.allCards);
+      const categories = await this.categorizeCards(this.allCards);
       UIComponents.renderFileTypes(this.allCards, this.currentType, categories);
       
       console.log('[MCardManager] Showing cards for type:', this.currentType);
@@ -96,14 +96,15 @@ export class MCardManager {
   }
   
   /**
-   * Categorize cards by content type
-   * ✅ Uses ContentTypeInterpreter from mcard-js library
+   * Categorize cards by content 
+   * Uses ContentTypeInterpreter from mcard-js library
    * @param {Array} cards
-   * @returns {Object} Categories object
+   * @returns {Promise<Object>} Categories object
    */
-  categorizeCards(cards) {
+  async categorizeCards(cards) {
     const categories = {
       all: cards,
+      withHandles: [],
       clm: [],
       markdown: [],
       text: [],
@@ -115,8 +116,33 @@ export class MCardManager {
       other: []
     };
     
+    // Fetch all cards with handles
+    const cardsWithHandles = new Set();
+    if (this.collection && this.collection.engine.db) {
+      try {
+        const db = this.collection.engine.db;
+        const tx = db.transaction('handles', 'readonly');
+        const store = tx.objectStore('handles');
+        const allHandles = await store.getAll();
+        
+        // Build set of hashes that have handles
+        allHandles.forEach(handle => {
+          if (handle.hash) {
+            cardsWithHandles.add(handle.hash);
+          }
+        });
+      } catch (error) {
+        console.error('[MCardManager] Error fetching handles:', error);
+      }
+    }
+    
     for (const card of cards) {
-      // ✅ Use library's ContentTypeInterpreter
+      // Check if this card has handles
+      if (cardsWithHandles.has(card.hash)) {
+        categories.withHandles.push(card);
+      }
+      
+      // Use library's ContentTypeInterpreter
       const contentType = ContentTypeInterpreter.detect(card.getContent());
       const lowerType = contentType.toLowerCase();
       
@@ -303,9 +329,9 @@ export class MCardManager {
    * Select a file type filter
    * @param {string} typeId
    */
-  selectType(typeId) {
+  async selectType(typeId) {
     this.currentType = typeId;
-    const categories = this.categorizeCards(this.allCards);
+    const categories = await this.categorizeCards(this.allCards);
     UIComponents.renderFileTypes(this.allCards, this.currentType, categories);
     this.showCardsForType(typeId);
   }
@@ -317,13 +343,14 @@ export class MCardManager {
    */
   async showCardsForType(typeId) {
     // ✅ Categorize using library's ContentTypeInterpreter
-    const categories = this.categorizeCards(this.allCards);
+    const categories = await this.categorizeCards(this.allCards);
     const cards = categories[typeId] || [];
     
     const columnTitle = document.getElementById('columnTitle');
     if (columnTitle) {
       const typeNames = {
         'all': 'All MCards',
+        'with-handles': 'MCards with Handles',
         'clm': 'CLM Files',
         'markdown': 'Markdown Files',
         'text': 'Text Files',
