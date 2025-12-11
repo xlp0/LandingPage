@@ -74,7 +74,7 @@ export class MCardManager {
       const count = await this.collection.count();
       console.log(`[MCardManager] Loading ${count} cards...`);
       
-      this.allCards = await this.collection.getAll();
+      this.allCards = await this.collection.getAllMCardsRaw();
       console.log(`[MCardManager] Loaded ${this.allCards.length} cards`);
       
       console.log('[MCardManager] Rendering file types...');
