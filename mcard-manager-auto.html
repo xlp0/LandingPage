@@ -5,15 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MCard File Manager</title>
   
-  <!-- Auto-generate Import Map based on current URL -->
-  <script type="module" src="/js/config/auto-import-map.js"></script>
+  <!-- Auto-detect environment and inject import map -->
+  <script type="module">
+    import EnvDetector from '/js/config/env-detector.js';
+    
+    // Inject import map dynamically based on current URL
+    EnvDetector.injectImportMap();
+    
+    // Make config available globally
+    window.ENV_CONFIG = EnvDetector.getConfig();
+  </script>
   
-  <!-- Lucide Icons - Self-Hosted -->
-  <script src="/vendor/lucide/lucide.min.js"></script>
-  <!-- MCard Manager CSS -->
-  <link rel="stylesheet" href="/css/mcard-manager.css">
-  <!-- Content Renderers CSS -->
-  <link rel="stylesheet" href="/css/content-renderers.css">
+  <!-- Lucide Icons - Auto-detected path -->
+  <script type="module">
+    import EnvDetector from '/js/config/env-detector.js';
+    await EnvDetector.loadVendorScript('lucide', 'lucide.min.js', 'lucide-icons');
+  </script>
+  
+  <!-- MCard Manager CSS - Auto-detected path -->
+  <script type="module">
+    import EnvDetector from '/js/config/env-detector.js';
+    await EnvDetector.loadCSS('mcard-manager.css', 'mcard-manager-css');
+    await EnvDetector.loadCSS('content-renderers.css', 'content-renderers-css');
+  </script>
 </head>
 <body>
   <div class="container">

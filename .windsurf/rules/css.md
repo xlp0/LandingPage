@@ -1,4 +1,8 @@
 ---
+trigger: manual
+---
+
+---
 trigger: css
 glob: "**/*.{html,css,js}"
 description: CSS Standards and Best Practices for THK Mesh Project
@@ -43,35 +47,29 @@ description: CSS Standards and Best Practices for THK Mesh Project
 ### 3. **SELF-HOSTED CDN (Zero-Trust Architecture)**
 ✅ **ALWAYS** use self-hosted CSS resources via controlled CDN
 
-**Auto-Detection (Recommended):**
+**Environment-Based CDN URLs:**
 ```javascript
-// Auto-detect BASE_URL from browser location
-const { protocol, hostname, port } = window.location;
-let baseUrl = `${protocol}//${hostname}`;
-if (port && port !== '80' && port !== '443') {
-  baseUrl += `:${port}`;
-}
+// Use BASE_URL from .env
+const BASE_URL = process.env.BASE_URL || 'http://localhost:8765';
 
-// CSS URLs - automatically adapt to current environment
-const CSS_CDN = `${baseUrl}/css`;
-const VENDOR_CDN = `${baseUrl}/vendor`;
+// CSS URLs
+const CSS_CDN = `${BASE_URL}/css`;
+const VENDOR_CDN = `${BASE_URL}/vendor`;
 ```
-
-**Benefits of Auto-Detection:**
-- ✅ No .env dependency
-- ✅ Works in any environment automatically
-- ✅ localhost:8765 → uses localhost:8765
-- ✅ dev.pkc.pub → uses dev.pkc.pub
-- ✅ henry.pkc.pub → uses henry.pkc.pub
 
 **Examples:**
 ```html
-<!-- Relative paths - work everywhere -->
-<link rel="stylesheet" href="/css/tailwind.css">
-<link rel="stylesheet" href="/vendor/lucide/lucide.css">
+<!-- Development (localhost:8765) -->
+<link rel="stylesheet" href="http://localhost:8765/css/tailwind.css">
+<link rel="stylesheet" href="http://localhost:8765/vendor/lucide/lucide.css">
 
-<!-- Auto-generated import map -->
-<script type="module" src="/js/config/auto-import-map.js"></script>
+<!-- Staging (dev.pkc.pub) -->
+<link rel="stylesheet" href="https://dev.pkc.pub/css/tailwind.css">
+<link rel="stylesheet" href="https://dev.pkc.pub/vendor/lucide/lucide.css">
+
+<!-- Production (henry.pkc.pub) -->
+<link rel="stylesheet" href="https://henry.pkc.pub/css/tailwind.css">
+<link rel="stylesheet" href="https://henry.pkc.pub/vendor/lucide/lucide.css">
 ```
 
 ---
