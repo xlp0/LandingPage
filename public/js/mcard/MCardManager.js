@@ -474,18 +474,19 @@ export class MCardManager {
       // ✅ Validate handle using library
       validateHandle(handleName);
       
-      // Get the card
+      // Verify card exists
       const card = await this.collection.get(hash);
       if (!card) {
         throw new Error('Card not found');
       }
       
-      // ✅ Add with handle using CardCollection
-      await this.collection.addWithHandle(card, handleName);
+      // ✅ Register handle directly (card already exists)
+      await this.collection.engine.registerHandle(handleName, hash);
       
       UIComponents.showToast(`Handle "${handleName}" created`, 'success');
       
       // Refresh view to show handle
+      await this.loadCards(); // Reload to show handle in list
       await this.viewCard(hash);
       
     } catch (error) {
