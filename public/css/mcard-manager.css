@@ -112,6 +112,11 @@ body {
   position: relative;
 }
 
+/* Hide mobile back button by default */
+.mobile-back-btn {
+  display: none;
+}
+
 /* Chat Panel */
 .chat-panel {
   width: 350px;

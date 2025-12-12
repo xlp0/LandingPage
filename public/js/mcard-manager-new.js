@@ -144,10 +144,34 @@ window.saveEditedCard = async () => {
   }
 };
 
+// Initialize mobile navigation state
+function initMobileNav() {
+  const mainContent = document.querySelector('.main-content');
+  if (!mainContent) return;
+  
+  if (window.innerWidth <= 640) {
+    // Ensure we start at types view on mobile
+    mainContent.classList.remove('show-cards', 'show-viewer');
+    mobileNavState = 'types';
+  }
+}
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('[MCard] Starting MCard Manager...');
   await manager.init();
+  initMobileNav();
+});
+
+// Reinitialize on window resize
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 640) {
+    // Reset mobile nav classes when going to desktop
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) {
+      mainContent.classList.remove('show-cards', 'show-viewer');
+    }
+  }
 });
 
 // Export for module usage
