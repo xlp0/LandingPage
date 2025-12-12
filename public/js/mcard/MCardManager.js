@@ -394,7 +394,7 @@ Use \`#\` for headers (1-6 levels):
           // Handle exists - check if content changed
           if (existingHash !== newCard.hash) {
             // Content changed - update handle to point to new version
-            await this.collection.addWithHandle(newCard, handle);
+            await this.collection.updateHandle(handle, newCard);
             console.log(`[MCardManager] ✅ Updated startup card: @${handle} (${existingHash.substring(0, 8)} → ${newCard.hash.substring(0, 8)})`);
             updated++;
           } else {
