@@ -19,16 +19,6 @@ window.navigateToCards = () => {
     mainContent.classList.remove('show-viewer');
     mainContent.classList.add('show-cards');
     mobileNavState = 'cards';
-    
-    // Force transforms with inline styles
-    const sidebar = document.querySelector('.sidebar');
-    const middleColumn = document.querySelector('.middle-column');
-    const viewerColumn = document.querySelector('.viewer-column');
-    
-    if (sidebar) sidebar.style.transform = 'translateX(-100%)';
-    if (middleColumn) middleColumn.style.transform = 'translateX(0)';
-    if (viewerColumn) viewerColumn.style.transform = 'translateX(100%)';
-    
     console.log('[MobileNav] Navigated to cards');
   }
 };
@@ -39,16 +29,6 @@ window.navigateToViewer = () => {
     mainContent.classList.remove('show-cards');
     mainContent.classList.add('show-viewer');
     mobileNavState = 'viewer';
-    
-    // Force transforms with inline styles
-    const sidebar = document.querySelector('.sidebar');
-    const middleColumn = document.querySelector('.middle-column');
-    const viewerColumn = document.querySelector('.viewer-column');
-    
-    if (sidebar) sidebar.style.transform = 'translateX(-100%)';
-    if (middleColumn) middleColumn.style.transform = 'translateX(-100%)';
-    if (viewerColumn) viewerColumn.style.transform = 'translateX(0)';
-    
     console.log('[MobileNav] Navigated to viewer');
   }
 };
@@ -69,35 +49,14 @@ window.navigateBack = () => {
   
   if (mobileNavState === 'viewer') {
     console.log('[MobileNav] Going back from viewer to cards');
-    // Go back to cards
     mainContent.classList.remove('show-viewer');
     mainContent.classList.add('show-cards');
     mobileNavState = 'cards';
-    
-    // Force transforms with inline styles
-    const sidebar = document.querySelector('.sidebar');
-    const middleColumn = document.querySelector('.middle-column');
-    const viewerColumn = document.querySelector('.viewer-column');
-    
-    if (sidebar) sidebar.style.transform = 'translateX(-100%)';
-    if (middleColumn) middleColumn.style.transform = 'translateX(0)';
-    if (viewerColumn) viewerColumn.style.transform = 'translateX(100%)';
-    
   } else if (mobileNavState === 'cards') {
     console.log('[MobileNav] Going back from cards to types');
-    // Go back to types
     mainContent.classList.remove('show-cards');
     mainContent.classList.remove('show-viewer');
     mobileNavState = 'types';
-    
-    // Force transforms with inline styles
-    const sidebar = document.querySelector('.sidebar');
-    const middleColumn = document.querySelector('.middle-column');
-    const viewerColumn = document.querySelector('.viewer-column');
-    
-    if (sidebar) sidebar.style.transform = 'translateX(0)';
-    if (middleColumn) middleColumn.style.transform = 'translateX(100%)';
-    if (viewerColumn) viewerColumn.style.transform = 'translateX(100%)';
   }
   
   console.log('[MobileNav] New state:', mobileNavState);
@@ -208,25 +167,6 @@ function initMobileNav() {
     // Ensure we start at types view on mobile
     mainContent.classList.remove('show-cards', 'show-viewer');
     mobileNavState = 'types';
-    
-    // Force correct z-index and transforms
-    const sidebar = document.querySelector('.sidebar');
-    const middleColumn = document.querySelector('.middle-column');
-    const viewerColumn = document.querySelector('.viewer-column');
-    
-    if (sidebar) {
-      sidebar.style.transform = 'translateX(0)';
-      sidebar.style.zIndex = '3';
-    }
-    if (middleColumn) {
-      middleColumn.style.transform = 'translateX(100%)';
-      middleColumn.style.zIndex = '2';
-    }
-    if (viewerColumn) {
-      viewerColumn.style.transform = 'translateX(100%)';
-      viewerColumn.style.zIndex = '1';
-    }
-    
     console.log('[MobileNav] Initialized - showing types view');
   }
 }

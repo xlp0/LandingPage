@@ -780,40 +780,40 @@ input[type="file"] {
   
   /* Default: Show sidebar (types) */
   .sidebar {
-    transform: translateX(0);
-    z-index: 3;
+    transform: translateX(0) !important;
+    z-index: 3 !important;
   }
   
   .middle-column {
-    transform: translateX(100%);
-    z-index: 2;
+    transform: translateX(100%) !important;
+    z-index: 2 !important;
   }
   
   .viewer-column {
-    transform: translateX(100%);
-    z-index: 1;
+    transform: translateX(100%) !important;
+    z-index: 1 !important;
   }
   
   /* When showing card list */
   .main-content.show-cards .sidebar {
-    transform: translateX(-100%);
+    transform: translateX(-100%) !important;
   }
   
   .main-content.show-cards .middle-column {
-    transform: translateX(0);
+    transform: translateX(0) !important;
   }
   
   /* When showing viewer */
   .main-content.show-viewer .sidebar {
-    transform: translateX(-100%);
+    transform: translateX(-100%) !important;
   }
   
   .main-content.show-viewer .middle-column {
-    transform: translateX(-100%);
+    transform: translateX(-100%) !important;
   }
   
   .main-content.show-viewer .viewer-column {
-    transform: translateX(0);
+    transform: translateX(0) !important;
   }
   
   .header-left h1 {
