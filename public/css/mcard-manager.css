@@ -285,6 +285,8 @@ body {
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
+  flex-wrap: wrap; /* Allow header to wrap if needed */
+  gap: 12px;
 }
 
 .viewer-header h3 {
@@ -296,6 +298,8 @@ body {
 .viewer-actions {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap; /* Allow buttons to wrap to next line */
+  align-items: center;
 }
 
 .viewer-content {
