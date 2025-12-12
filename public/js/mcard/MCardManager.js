@@ -27,6 +27,7 @@ export class MCardManager {
     this.allCards = [];
     this.currentType = 'all';
     this.viewer = new CardViewer();
+    this.searchDebounceTimer = null;  // For debounced search
   }
   
   /**
@@ -456,23 +457,61 @@ export class MCardManager {
   }
   
   /**
-   * Handle search
+   * Handle search with debouncing
+   * Uses library's IndexedDB search for full-text search
    * @param {string} query
    */
-  handleSearch(query) {
+  async handleSearch(query) {
+    // Clear existing debounce timer
+    if (this.searchDebounceTimer) {
+      clearTimeout(this.searchDebounceTimer);
+    }
+    
+    // If empty query, show current type
     if (!query.trim()) {
-      this.showCardsForType(this.currentType);
+      await this.showCardsForType(this.currentType);
       return;
     }
     
-    const filtered = this.allCards.filter(card => {
-      const content = card.getContentAsText().toLowerCase();
-      const hash = card.hash.toLowerCase();
-      const q = query.toLowerCase();
-      return content.includes(q) || hash.includes(q);
-    });
-    
-    UIComponents.renderCardList(filtered);
+    // Debounce search by 300ms
+    this.searchDebounceTimer = setTimeout(async () => {
+      try {
+        console.log('[MCardManager] Searching for:', query);
+        
+        // ✅ Use library's IndexedDB search (full-text search)
+        const searchResults = await this.collection.engine.search(query, 1, 100);
+        
+        console.log('[MCardManager] Search found:', searchResults.items.length, 'results');
+        
+        // Update column title to show search results
+        const columnTitle = document.getElementById('columnTitle');
+        if (columnTitle) {
+          columnTitle.textContent = `Search: "${query}" (${searchResults.items.length} results)`;
+        }
+        
+        // Render search results
+        await UIComponents.renderCards(searchResults.items, this.collection);
+        
+      } catch (error) {
+        console.error('[MCardManager] Search error:', error);
+        
+        // Fallback to client-side search if IndexedDB search fails
+        console.log('[MCardManager] Falling back to client-side search');
+        const filtered = this.allCards.filter(card => {
+          const content = card.getContentAsText().toLowerCase();
+          const hash = card.hash.toLowerCase();
+          const q = query.toLowerCase();
+          return content.includes(q) || hash.includes(q);
+        });
+        
+        const columnTitle = document.getElementById('columnTitle');
+        if (columnTitle) {
+          columnTitle.textContent = `Search: "${query}" (${filtered.length} results)`;
+        }
+        
+        await UIComponents.renderCards(filtered, this.collection);
+      }
+    }, 300); // 300ms debounce
   }
   
   /**
