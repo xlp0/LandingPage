@@ -128,11 +128,19 @@ export class MCardManager {
         
         console.log('[MCardManager] Found handles in DB:', allHandles.length);
         
+        // Debug: Log first handle structure
+        if (allHandles.length > 0) {
+          console.log('[MCardManager] First handle structure:', allHandles[0]);
+        }
+        
         // Build set of hashes that have handles
         allHandles.forEach(handle => {
-          console.log('[MCardManager] Handle:', handle.name, '→', handle.hash?.substring(0, 8));
-          if (handle.hash) {
-            cardsWithHandles.add(handle.hash);
+          // Handle object structure: { handle: 'name', hash: '...' } or { name: '...', hash: '...' }
+          const handleName = handle.handle || handle.name || 'unknown';
+          const handleHash = handle.hash;
+          console.log('[MCardManager] Handle:', handleName, '→', handleHash?.substring(0, 8));
+          if (handleHash) {
+            cardsWithHandles.add(handleHash);
           }
         });
         
