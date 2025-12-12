@@ -13,6 +13,22 @@ body {
   overflow: hidden;
 }
 
+/* Handle link styling */
+.mcard-handle-link {
+  color: #4fc3f7;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid transparent;
+}
+
+.mcard-handle-link:hover {
+  color: #81d4fa;
+  border-bottom-color: #81d4fa;
+  text-decoration: none;
+}
+
 .container {
   display: flex;
   flex-direction: column;

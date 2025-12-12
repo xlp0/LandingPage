@@ -302,8 +302,14 @@ export class CardViewer {
         
         viewerContent.innerHTML = renderedHTML;
         
+        // Convert @handle references to clickable links
+        this.convertHandleReferences(viewerContent);
+        
         // Add hash link click handlers
         this.attachHashLinkHandlers();
+        
+        // Add handle link click handlers
+        this.attachHandleLinkHandlers();
         
         // Initialize Lucide icons
         if (window.lucide) {
@@ -324,6 +330,82 @@ export class CardViewer {
   }
   
   /**
+   * Convert @handle references in text to clickable links
+   * @param {HTMLElement} container - The container element to search in
+   */
+  convertHandleReferences(container) {
+    // Find all text nodes and convert @handle patterns to links
+    const walker = document.createTreeWalker(
+      container,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: (node) => {
+          // Skip if parent is already a link or code block
+          if (node.parentElement.tagName === 'A' || 
+              node.parentElement.tagName === 'CODE' ||
+              node.parentElement.tagName === 'PRE') {
+            return NodeFilter.FILTER_REJECT;
+          }
+          // Only accept if contains @
+          return node.textContent.includes('@') ? 
+            NodeFilter.FILTER_ACCEPT : 
+            NodeFilter.FILTER_REJECT;
+        }
+      }
+    );
+    
+    const textNodes = [];
+    let node;
+    while (node = walker.nextNode()) {
+      textNodes.push(node);
+    }
+    
+    // Process each text node
+    textNodes.forEach(textNode => {
+      const text = textNode.textContent;
+      // Match @handle pattern (letters, numbers, hyphens, underscores)
+      const handleRegex = /@([a-zA-Z0-9_-]+)/g;
+      
+      if (handleRegex.test(text)) {
+        // Create a span to hold the new content
+        const span = document.createElement('span');
+        let lastIndex = 0;
+        let match;
+        
+        // Reset regex
+        handleRegex.lastIndex = 0;
+        
+        while ((match = handleRegex.exec(text)) !== null) {
+          // Add text before the match
+          if (match.index > lastIndex) {
+            span.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+          }
+          
+          // Create link for @handle
+          const link = document.createElement('a');
+          link.href = '#';
+          link.className = 'mcard-handle-link';
+          link.dataset.handle = match[1];
+          link.textContent = match[0]; // @handle
+          link.style.cssText = 'color: #4fc3f7; text-decoration: none; font-weight: 500; cursor: pointer;';
+          link.title = `View @${match[1]}`;
+          
+          span.appendChild(link);
+          lastIndex = match.index + match[0].length;
+        }
+        
+        // Add remaining text
+        if (lastIndex < text.length) {
+          span.appendChild(document.createTextNode(text.substring(lastIndex)));
+        }
+        
+        // Replace the text node with the span
+        textNode.parentNode.replaceChild(span, textNode);
+      }
+    });
+  }
+  
+  /**
    * Attach click handlers for hash-based links
    */
   attachHashLinkHandlers() {
@@ -334,6 +416,33 @@ export class CardViewer {
         const targetHash = link.dataset.hash;
         if (targetHash) {
           window.mcardManager.viewCard(targetHash);
+        }
+      });
+    });
+  }
+  
+  /**
+   * Attach click handlers for handle-based links
+   */
+  attachHandleLinkHandlers() {
+    const handleLinks = document.querySelectorAll('.mcard-handle-link');
+    handleLinks.forEach(link => {
+      link.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const handleName = link.dataset.handle;
+        if (handleName) {
+          try {
+            // Resolve handle to hash
+            const hash = await window.mcardManager.collection.resolveHandle(handleName);
+            if (hash) {
+              window.mcardManager.viewCard(hash);
+            } else {
+              UIComponents.showToast(`Handle @${handleName} not found`, 'error');
+            }
+          } catch (error) {
+            console.error('[CardViewer] Error resolving handle:', error);
+            UIComponents.showToast(`Failed to resolve @${handleName}`, 'error');
+          }
         }
       });
     });
