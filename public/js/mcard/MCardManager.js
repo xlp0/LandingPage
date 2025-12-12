@@ -439,6 +439,9 @@ Use \`#\` for headers (1-6 levels):
       const cards = await this.collection.getAllMCardsRaw();
       console.log(`[MCardManager] Loaded ${cards.length} cards`);
       
+      // Store cards in instance variable
+      this.allCards = cards;
+      
       console.log('[MCardManager] Rendering file types...');
       const categories = await this.categorizeCards(cards);
       UIComponents.renderFileTypes(cards, this.currentType, categories);
