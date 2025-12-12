@@ -653,7 +653,7 @@ export class MCardManager {
       titleText.textContent = `Edit: @${handle}`;
       handleInput.value = handle;
       contentArea.value = card.getContentAsText();
-      saveButtonText.textContent = 'Update';
+      saveButtonText.textContent = 'Save';
       
       // Store mode
       panel.dataset.mode = 'edit';

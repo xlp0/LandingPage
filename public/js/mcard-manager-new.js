@@ -56,7 +56,7 @@ window.saveEditedCard = async () => {
       
       // Add handle if provided
       if (newHandle) {
-        await manager.collection.setHandle(newHandle, card.hash);
+        await manager.collection.addWithHandle(card, newHandle);
       }
       
       await manager.loadCards();
@@ -68,14 +68,14 @@ window.saveEditedCard = async () => {
       UIComponents.showToast(message, 'success');
       
     } else if (mode === 'edit') {
-      // Update existing card
+      // Update existing card - use updateHandle API
       const { MCard } = await import('mcard-js');
       const newCard = await MCard.create(content);
       await manager.collection.add(newCard);
       
-      // Update handle to point to new card
+      // ✅ Use updateHandle to point handle to new card (creates version history)
       if (newHandle) {
-        await manager.collection.setHandle(newHandle, newCard.hash);
+        await manager.collection.updateHandle(newHandle, newCard);
       }
       
       await manager.loadCards();
@@ -83,7 +83,7 @@ window.saveEditedCard = async () => {
       window.closeEditPanel();
       
       const { UIComponents } = await import('./mcard/UIComponents.js');
-      UIComponents.showToast(`Updated @${newHandle}`, 'success');
+      UIComponents.showToast(`Saved @${newHandle}`, 'success');
     }
   } catch (error) {
     console.error('[EditPanel] Error saving card:', error);
