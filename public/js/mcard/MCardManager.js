@@ -487,14 +487,38 @@ export class MCardManager {
         console.log('[MCardManager] Searching for:', query);
         const q = query.toLowerCase();
         
-        // ✅ Search by hash first (fast, client-side)
+        // ✅ 1. Search by hash (fast, client-side)
         const hashMatches = this.allCards.filter(card => 
           card.hash.toLowerCase().includes(q)
         );
         
         console.log('[MCardManager] Hash matches:', hashMatches.length);
         
-        // ✅ Search by content (IndexedDB full-text search)
+        // ✅ 2. Search by handle name (fast, client-side)
+        let handleMatches = [];
+        try {
+          // Get all handles from IndexedDB
+          const db = this.collection.engine.db;
+          const tx = db.transaction('handles', 'readonly');
+          const store = tx.objectStore('handles');
+          const allHandles = await store.getAll();
+          
+          // Find handles that match the query
+          const matchingHandles = allHandles.filter(h => 
+            h.handle && h.handle.toLowerCase().includes(q)
+          );
+          
+          // Get cards for matching handles
+          handleMatches = this.allCards.filter(card =>
+            matchingHandles.some(h => h.currentHash === card.hash)
+          );
+          
+          console.log('[MCardManager] Handle matches:', handleMatches.length);
+        } catch (handleError) {
+          console.log('[MCardManager] Handle search failed:', handleError);
+        }
+        
+        // ✅ 3. Search by content (IndexedDB full-text search)
         let contentMatches = [];
         try {
           const searchResults = await this.collection.engine.search(query, 1, 100);
@@ -509,15 +533,22 @@ export class MCardManager {
           });
         }
         
-        // ✅ Combine results (remove duplicates by hash)
+        // ✅ Combine all results (remove duplicates by hash)
         const resultMap = new Map();
         
-        // Add hash matches first (higher priority)
+        // Add hash matches first (highest priority)
         hashMatches.forEach(card => {
           resultMap.set(card.hash, card);
         });
         
-        // Add content matches
+        // Add handle matches (second priority)
+        handleMatches.forEach(card => {
+          if (!resultMap.has(card.hash)) {
+            resultMap.set(card.hash, card);
+          }
+        });
+        
+        // Add content matches (third priority)
         contentMatches.forEach(card => {
           if (!resultMap.has(card.hash)) {
             resultMap.set(card.hash, card);
@@ -532,9 +563,10 @@ export class MCardManager {
         const columnTitle = document.getElementById('columnTitle');
         if (columnTitle) {
           const hashCount = hashMatches.length;
+          const handleCount = handleMatches.length;
           const contentCount = contentMatches.length;
           const total = combinedResults.length;
-          columnTitle.textContent = `Search: "${query}" (${total} results: ${hashCount} hash, ${contentCount} content)`;
+          columnTitle.textContent = `Search: "${query}" (${total} results: ${hashCount} hash, ${handleCount} handle, ${contentCount} content)`;
         }
         
         // Render combined results
