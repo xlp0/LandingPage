@@ -1012,32 +1012,113 @@ Use \`#\` for headers (1-6 levels):
   }
   
   /**
-   * Open edit panel for creating new text card
+   * Open card creation form in viewer area
    */
   openNewTextPanel() {
-    const panel = document.getElementById('editPanel');
-    const titleText = document.getElementById('editPanelTitleText');
-    const handleInput = document.getElementById('editHandleName');
-    const contentArea = document.getElementById('editContentArea');
-    const saveButtonText = document.getElementById('editSaveButtonText');
+    const viewerTitle = document.getElementById('viewerTitle');
+    const viewerActions = document.getElementById('viewerActions');
+    const viewerContent = document.getElementById('viewerContent');
     
-    // Reset panel
-    titleText.textContent = 'New Text Card';
-    handleInput.value = '';
-    contentArea.value = '';
-    saveButtonText.textContent = 'Create';
+    // Update title
+    viewerTitle.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="12" y1="18" x2="12" y2="12"></line>
+          <line x1="9" y1="15" x2="15" y2="15"></line>
+        </svg>
+        <span style="font-size: 16px; font-weight: 600;">Create New Card</span>
+      </div>
+    `;
     
-    // Store mode
-    panel.dataset.mode = 'create';
-    panel.dataset.hash = '';
-    panel.dataset.handle = '';
+    // Hide default viewer actions
+    viewerActions.style.display = 'none';
     
-    // Show panel
-    panel.classList.remove('hidden');
+    // Show creation form in viewer content
+    viewerContent.innerHTML = `
+      <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+        <!-- Handle Name Input -->
+        <div style="margin-bottom: 24px;">
+          <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: #cccccc;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;">
+              <path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"></path>
+              <circle cx="7.5" cy="7.5" r=".5" fill="currentColor"></circle>
+            </svg>
+            Handle Name (Optional)
+          </label>
+          <input 
+            type="text" 
+            id="newCardHandle" 
+            class="search-box" 
+            placeholder="e.g., my-document, readme, notes"
+            style="width: 100%; padding: 12px; background: #1e1e1e; border: 1px solid #3e3e42; border-radius: 4px; color: #cccccc; font-size: 14px;"
+          />
+          <p style="font-size: 12px; color: #888; margin-top: 6px;">
+            💡 Give this card a friendly name for easy reference (e.g., @my-document)
+          </p>
+        </div>
+
+        <!-- Content Editor -->
+        <div style="margin-bottom: 24px;">
+          <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: #cccccc;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;">
+              <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path>
+              <path d="M14 2v5a1 1 0 0 0 1 1h5"></path>
+              <path d="M10 9H8"></path>
+              <path d="M16 13H8"></path>
+              <path d="M16 17H8"></path>
+            </svg>
+            Content
+          </label>
+          <textarea 
+            id="newCardContent" 
+            placeholder="Enter your content here...
+
+Supports:
+• Markdown formatting
+• @handle references (e.g., @welcome, @quick-guide)
+• Mermaid diagrams
+• Code blocks with syntax highlighting
+
+Try creating a card with some markdown!"
+            style="width: 100%; min-height: 400px; padding: 12px; background: #1e1e1e; border: 1px solid #3e3e42; border-radius: 4px; color: #cccccc; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 13px; line-height: 1.6; resize: vertical;"
+          ></textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 12px; justify-content: flex-end; padding-top: 12px; border-top: 1px solid #3e3e42;">
+          <button 
+            class="btn btn-secondary" 
+            onclick="window.mcardManager.cancelNewCard()"
+            style="font-size: 14px; padding: 10px 24px; display: flex; align-items: center; gap: 8px;"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+              <path d="M18 6 6 18"></path>
+              <path d="m6 6 12 12"></path>
+            </svg>
+            Cancel
+          </button>
+          <button 
+            class="btn" 
+            onclick="window.mcardManager.saveNewCard()"
+            style="font-size: 14px; padding: 10px 24px; display: flex; align-items: center; gap: 8px; background: #007acc;"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+              <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"></path>
+              <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"></path>
+              <path d="M7 3v4a1 1 0 0 0 1 1h7"></path>
+            </svg>
+            Create Card
+          </button>
+        </div>
+      </div>
+    `;
     
     // Focus content area
     setTimeout(() => {
-      contentArea.focus();
+      const contentArea = document.getElementById('newCardContent');
+      if (contentArea) contentArea.focus();
       if (window.lucide) lucide.createIcons();
     }, 100);
   }
@@ -1154,10 +1235,96 @@ Use \`#\` for headers (1-6 levels):
   }
   
   /**
+   * Save new card from creation form
+   */
+  async saveNewCard() {
+    try {
+      const handleInput = document.getElementById('newCardHandle');
+      const contentArea = document.getElementById('newCardContent');
+      
+      if (!contentArea) {
+        UIComponents.showToast('Content area not found', 'error');
+        return;
+      }
+      
+      const content = contentArea.value.trim();
+      const handle = handleInput ? handleInput.value.trim() : '';
+      
+      if (!content) {
+        UIComponents.showToast('Please enter some content', 'error');
+        return;
+      }
+      
+      // Create the card
+      const { MCard } = await import('mcard-js');
+      const newCard = await MCard.create(content);
+      
+      // Add to collection
+      if (handle) {
+        // Validate handle
+        if (!/^[a-z0-9-]+$/.test(handle)) {
+          UIComponents.showToast('Handle must contain only lowercase letters, numbers, and hyphens', 'error');
+          return;
+        }
+        
+        // Check if handle exists
+        const existingHash = await this.collection.resolveHandle(handle);
+        if (existingHash) {
+          UIComponents.showToast(`Handle @${handle} already exists`, 'error');
+          return;
+        }
+        
+        // Add with handle
+        await this.collection.addWithHandle(newCard, handle);
+        UIComponents.showToast(`Created card with handle @${handle}`, 'success');
+        console.log(`[MCardManager] Created card with handle: @${handle}`);
+      } else {
+        // Add without handle
+        await this.collection.add(newCard);
+        UIComponents.showToast('Card created successfully', 'success');
+        console.log('[MCardManager] Created card without handle');
+      }
+      
+      // Reload cards and view the new one
+      await this.loadCards();
+      await this.viewCard(newCard.hash);
+      
+    } catch (error) {
+      console.error('[MCardManager] Error creating card:', error);
+      UIComponents.showToast('Failed to create card: ' + error.message, 'error');
+    }
+  }
+  
+  /**
+   * Cancel new card creation
+   */
+  cancelNewCard() {
+    const viewerTitle = document.getElementById('viewerTitle');
+    const viewerContent = document.getElementById('viewerContent');
+    
+    // Reset viewer to default state
+    viewerTitle.textContent = 'Select an MCard';
+    viewerContent.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 64px; height: 64px; color: #666;">
+            <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path>
+            <path d="M14 2v5a1 1 0 0 0 1 1h5"></path>
+          </svg>
+        </div>
+        <p style="color: #888; font-size: 14px;">Select a card from the list to view its content</p>
+      </div>
+    `;
+    
+    if (window.lucide) lucide.createIcons();
+    console.log('[MCardManager] Cancelled card creation');
+  }
+  
+  /**
    * Create a new text card (legacy - now uses panel)
    */
   async createTextCard() {
-    // Open the edit panel instead of using prompt
+    // Open the creation form in viewer area
     this.openNewTextPanel();
   }
   
