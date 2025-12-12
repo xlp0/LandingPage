@@ -728,6 +728,13 @@ input[type="file"] {
   .header-btn span {
     display: none; /* Hide button text, show only icons */
   }
+  
+  /* Ensure columns stay relative on tablet */
+  .sidebar,
+  .middle-column,
+  .viewer-column {
+    position: relative !important; /* Force relative on tablet */
+  }
 }
 
 /* Mobile (Landscape) - 640px and below */
