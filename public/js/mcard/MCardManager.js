@@ -89,16 +89,26 @@ MCard Manager is a content-addressed file management system where every file is 
 - **Type Detection**: Automatic content type recognition
 
 ## Getting Started:
-1. Click "Upload" to add files
-2. Click "New Text" to create text cards
-3. Use handles (like @welcome) to reference cards
-4. Edit cards with handles to create new versions
+1. Read the @quick-guide for step-by-step instructions
+2. Check out @example-markdown to see formatting options
+3. Click "Upload" to add your own files
+4. Click "New Text" to create text cards
+5. Use handles (like @welcome) to reference cards
+
+## Learn More:
+- **Quick Start**: See @quick-guide for detailed instructions
+- **Markdown Examples**: Explore @example-markdown for formatting tips
+- **Cross-References**: Click any @handle link to navigate between cards
 
 Enjoy using MCard Manager! 📦✨`
         },
         {
           handle: 'quick-guide',
           content: `# Quick Start Guide 📖
+
+Welcome! This guide will help you get started with MCard Manager.
+
+👉 **New here?** Start with @welcome for an overview.
 
 ## Creating Cards:
 - **Upload Files**: Click the Upload button or drag & drop
@@ -122,24 +132,35 @@ Handles are friendly names for your cards (like @quick-guide).
 - **Card Types**: Filter by content type (left sidebar)
 - **Search**: Find cards by content or hash
 - **View**: Click any card to see its content
+- **Handle Links**: Click @handle references to navigate (try clicking @welcome!)
+
+## Markdown Formatting:
+Want to see what you can do with markdown? Check out @example-markdown for examples!
 
 ## Tips:
 - Handles make it easy to reference cards
 - Version history tracks all changes
 - Content hashing ensures data integrity
-- All data is stored locally in your browser`
+- All data is stored locally in your browser
+- Use @handle syntax to link between cards
+
+## Related Cards:
+- @welcome - Introduction and overview
+- @example-markdown - Markdown formatting examples`
         },
         {
           handle: 'example-markdown',
           content: `# Markdown Example 📝
 
-This is an example markdown card showing various formatting options.
+This card demonstrates various markdown formatting options you can use in MCard Manager.
+
+👉 **New here?** Check out @welcome and @quick-guide first!
 
 ## Text Formatting:
-- **Bold text**
-- *Italic text*
-- \`inline code\`
-- ~~Strikethrough~~
+- **Bold text** - Use \`**text**\`
+- *Italic text* - Use \`*text*\`
+- \`inline code\` - Use backticks
+- ~~Strikethrough~~ - Use \`~~text~~\`
 
 ## Lists:
 1. First item
@@ -150,23 +171,49 @@ This is an example markdown card showing various formatting options.
 - Bullet point
 - Another point
   - Nested point
+  - Another nested point
 
 ## Code Block:
 \`\`\`javascript
-// Example code
+// Example code with syntax highlighting
 const greeting = "Hello, MCard!";
 console.log(greeting);
+
+// You can reference other cards
+const welcomeCard = "@welcome";
 \`\`\`
 
 ## Quotes:
 > "Content-addressed storage is the future of data management."
+> 
+> Use blockquotes for emphasis or citations.
 
-## Links:
-You can create links: [MCard Documentation](https://example.com)
+## Handle References:
+You can link to other cards using @handle syntax:
+- Click @welcome to see the introduction
+- Click @quick-guide for instructions
+- Click @example-markdown (this card!) to return here
+
+These become **clickable links** automatically! Try it!
+
+## External Links:
+You can also create regular links: [MCard Documentation](https://example.com)
+
+## Headers:
+Use \`#\` for headers (1-6 levels):
+# H1 Header
+## H2 Header
+### H3 Header
 
 ---
 
-**Try editing this card to create your own version!**`
+**Try editing this card to create your own version!**
+
+💡 **Tip**: When you edit a card with a handle, you create a new version. The handle (@example-markdown) will point to your new version!
+
+## Related Cards:
+- @welcome - Back to welcome page
+- @quick-guide - Learn how to use MCard Manager`
         }
       ];
       
