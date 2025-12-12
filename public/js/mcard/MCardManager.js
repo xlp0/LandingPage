@@ -134,10 +134,10 @@ export class MCardManager {
         }
         
         // Build set of hashes that have handles
-        allHandles.forEach(handle => {
-          // Handle object structure: { handle: 'name', hash: '...' } or { name: '...', hash: '...' }
-          const handleName = handle.handle || handle.name || 'unknown';
-          const handleHash = handle.hash;
+        allHandles.forEach(handleObj => {
+          // ✅ Handle object structure: { handle: 'name', currentHash: '...' }
+          const handleName = handleObj.handle || 'unknown';
+          const handleHash = handleObj.currentHash; // ← Use currentHash, not hash
           console.log('[MCardManager] Handle:', handleName, '→', handleHash?.substring(0, 8));
           if (handleHash) {
             cardsWithHandles.add(handleHash);
