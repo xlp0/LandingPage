@@ -466,7 +466,7 @@ export class MCardManager {
   
   /**
    * Handle search with debouncing
-   * Uses library's IndexedDB search for full-text search
+   * Searches both content (IndexedDB) and hash (client-side)
    * @param {string} query
    */
   async handleSearch(query) {
@@ -485,26 +485,66 @@ export class MCardManager {
     this.searchDebounceTimer = setTimeout(async () => {
       try {
         console.log('[MCardManager] Searching for:', query);
+        const q = query.toLowerCase();
         
-        // ✅ Use library's IndexedDB search (full-text search)
-        const searchResults = await this.collection.engine.search(query, 1, 100);
+        // ✅ Search by hash first (fast, client-side)
+        const hashMatches = this.allCards.filter(card => 
+          card.hash.toLowerCase().includes(q)
+        );
         
-        console.log('[MCardManager] Search found:', searchResults.items.length, 'results');
+        console.log('[MCardManager] Hash matches:', hashMatches.length);
+        
+        // ✅ Search by content (IndexedDB full-text search)
+        let contentMatches = [];
+        try {
+          const searchResults = await this.collection.engine.search(query, 1, 100);
+          contentMatches = searchResults.items;
+          console.log('[MCardManager] Content matches:', contentMatches.length);
+        } catch (searchError) {
+          console.log('[MCardManager] IndexedDB search failed, using client-side filter');
+          // Fallback to client-side content search
+          contentMatches = this.allCards.filter(card => {
+            const content = card.getContentAsText().toLowerCase();
+            return content.includes(q);
+          });
+        }
+        
+        // ✅ Combine results (remove duplicates by hash)
+        const resultMap = new Map();
+        
+        // Add hash matches first (higher priority)
+        hashMatches.forEach(card => {
+          resultMap.set(card.hash, card);
+        });
+        
+        // Add content matches
+        contentMatches.forEach(card => {
+          if (!resultMap.has(card.hash)) {
+            resultMap.set(card.hash, card);
+          }
+        });
+        
+        const combinedResults = Array.from(resultMap.values());
+        
+        console.log('[MCardManager] Total unique results:', combinedResults.length);
         
         // Update column title to show search results
         const columnTitle = document.getElementById('columnTitle');
         if (columnTitle) {
-          columnTitle.textContent = `Search: "${query}" (${searchResults.items.length} results)`;
+          const hashCount = hashMatches.length;
+          const contentCount = contentMatches.length;
+          const total = combinedResults.length;
+          columnTitle.textContent = `Search: "${query}" (${total} results: ${hashCount} hash, ${contentCount} content)`;
         }
         
-        // Render search results
-        await UIComponents.renderCards(searchResults.items, this.collection);
+        // Render combined results
+        await UIComponents.renderCards(combinedResults, this.collection);
         
       } catch (error) {
         console.error('[MCardManager] Search error:', error);
         
-        // Fallback to client-side search if IndexedDB search fails
-        console.log('[MCardManager] Falling back to client-side search');
+        // Ultimate fallback: simple client-side search
+        console.log('[MCardManager] Using ultimate fallback search');
         const filtered = this.allCards.filter(card => {
           const content = card.getContentAsText().toLowerCase();
           const hash = card.hash.toLowerCase();
