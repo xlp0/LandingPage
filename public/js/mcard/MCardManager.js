@@ -361,7 +361,13 @@ export class MCardManager {
   async showCardsForType(typeId) {
     // ✅ Categorize using library's ContentTypeInterpreter
     const categories = await this.categorizeCards(this.allCards);
-    const cards = categories[typeId] || [];
+    
+    // ✅ Map kebab-case to camelCase for category lookup
+    const categoryMap = {
+      'with-handles': 'withHandles'
+    };
+    const categoryKey = categoryMap[typeId] || typeId;
+    const cards = categories[categoryKey] || [];
     
     const columnTitle = document.getElementById('columnTitle');
     if (columnTitle) {
