@@ -8,29 +8,35 @@ The MCard Manager now features **IndexedDB-based full-text search** powered by t
 
 ## Features
 
-### 1. **Library-Powered Search**
+### 1. **Dual Search Strategy**
+- **Hash Search:** Client-side, instant matching on card hashes
+- **Content Search:** IndexedDB full-text search across card content
+- **Combined Results:** Merges both searches, removes duplicates
+- **Smart Prioritization:** Hash matches shown first
+
+### 2. **Library-Powered Content Search**
 - Uses `IndexedDBEngine.search()` from mcard-js
-- Full-text search across all card content
-- Indexed database queries (much faster than filtering)
+- Full-text indexed search across all card content
+- Much faster than client-side filtering
 - Supports pagination (currently 100 results per page)
 
-### 2. **Debounced Input**
+### 3. **Debounced Input**
 - 300ms debounce delay
 - Prevents excessive searches while typing
 - Cancels previous searches automatically
 - Smooth, lag-free user experience
 
-### 3. **Fallback Mechanism**
+### 4. **Fallback Mechanism**
 - Falls back to client-side search if IndexedDB fails
 - Ensures search always works
 - Graceful error handling
 - Logs errors for debugging
 
-### 4. **Enhanced UI Feedback**
+### 5. **Enhanced UI Feedback**
 - Shows search query in column title
-- Displays result count
-- Example: `Search: "hello" (5 results)`
-- Clear visual indication of search state
+- Displays total results with breakdown
+- Example: `Search: "hello" (5 results: 2 hash, 3 content)`
+- Clear visual indication of match types
 
 ---
 
@@ -87,28 +93,41 @@ Finds cards by hash prefix
          │
          ▼
 ┌─────────────────────────┐
-│  IndexedDB Search       │ ← mcard-js library
-│  engine.search(query)   │
+│  Dual Search Strategy   │
 └────────┬────────────────┘
          │
-         ├─── Success ──────┐
-         │                  │
-         │                  ▼
-         │         ┌─────────────────┐
-         │         │  Render Results │
-         │         └─────────────────┘
-         │
-         └─── Error ────────┐
-                            │
-                            ▼
-                   ┌─────────────────────┐
-                   │  Client-Side Filter │ ← Fallback
-                   └────────┬────────────┘
-                            │
-                            ▼
-                   ┌─────────────────┐
-                   │  Render Results │
-                   └─────────────────┘
+         ├──────────────────────────┐
+         │                          │
+         ▼                          ▼
+┌──────────────────┐    ┌──────────────────────┐
+│  Hash Search     │    │  Content Search      │
+│  (Client-Side)   │    │  (IndexedDB)         │
+│  Instant         │    │  engine.search()     │
+└────────┬─────────┘    └──────────┬───────────┘
+         │                          │
+         │                          ├─ Success ─┐
+         │                          │           │
+         │                          └─ Error ───┤
+         │                                      │
+         │                          ┌───────────▼──────────┐
+         │                          │  Client-Side Filter  │
+         │                          │  (Fallback)          │
+         │                          └───────────┬──────────┘
+         │                                      │
+         └──────────────┬───────────────────────┘
+                        │
+                        ▼
+              ┌─────────────────────┐
+              │  Combine Results    │
+              │  Remove Duplicates  │
+              │  (Map by hash)      │
+              └─────────┬───────────┘
+                        │
+                        ▼
+              ┌─────────────────────┐
+              │  Render Results     │
+              │  Show breakdown     │
+              └─────────────────────┘
 ```
 
 ### Code Structure
@@ -136,25 +155,40 @@ async handleSearch(query) {
   
   // Debounce search by 300ms
   this.searchDebounceTimer = setTimeout(async () => {
+    const q = query.toLowerCase();
+    
+    // ✅ Search by hash (client-side, instant)
+    const hashMatches = this.allCards.filter(card => 
+      card.hash.toLowerCase().includes(q)
+    );
+    
+    // ✅ Search by content (IndexedDB)
+    let contentMatches = [];
     try {
-      // ✅ Use library's IndexedDB search
       const searchResults = await this.collection.engine.search(query, 1, 100);
-      
-      // Update UI
-      columnTitle.textContent = `Search: "${query}" (${searchResults.items.length} results)`;
-      await UIComponents.renderCards(searchResults.items, this.collection);
-      
+      contentMatches = searchResults.items;
     } catch (error) {
-      // Fallback to client-side search
-      const filtered = this.allCards.filter(card => {
+      // Fallback to client-side content search
+      contentMatches = this.allCards.filter(card => {
         const content = card.getContentAsText().toLowerCase();
-        const hash = card.hash.toLowerCase();
-        const q = query.toLowerCase();
-        return content.includes(q) || hash.includes(q);
+        return content.includes(q);
       });
-      
-      await UIComponents.renderCards(filtered, this.collection);
     }
+    
+    // ✅ Combine results (remove duplicates)
+    const resultMap = new Map();
+    hashMatches.forEach(card => resultMap.set(card.hash, card));
+    contentMatches.forEach(card => {
+      if (!resultMap.has(card.hash)) {
+        resultMap.set(card.hash, card);
+      }
+    });
+    
+    const combinedResults = Array.from(resultMap.values());
+    
+    // Update UI with breakdown
+    columnTitle.textContent = `Search: "${query}" (${combinedResults.length} results: ${hashMatches.length} hash, ${contentMatches.length} content)`;
+    await UIComponents.renderCards(combinedResults, this.collection);
   }, 300);
 }
 ```
