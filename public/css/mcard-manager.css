@@ -823,6 +823,10 @@ input[type="file"] {
     gap: 8px !important;
   }
   
+  .viewer-header h3 > div > div {
+    flex-wrap: wrap !important; /* Allow hash row to wrap */
+  }
+  
   .viewer-header h3 code {
     font-size: 10px !important;
     max-width: 150px;
@@ -873,17 +877,28 @@ input[type="file"] {
   /* Hide hash on mobile, show only short version */
   .viewer-header h3 code {
     font-size: 9px !important;
-    max-width: 100px !important;
+    max-width: 80px !important;
+    display: inline-block;
   }
   
-  /* Simplify buttons - icons only on mobile */
-  .viewer-header button span {
-    display: none !important;
+  /* Hash row should wrap */
+  .viewer-header h3 > div > div:last-child {
+    flex-wrap: wrap !important;
+    gap: 4px !important;
   }
   
-  .viewer-header button {
-    padding: 4px 8px !important;
+  /* Simplify buttons - hide text, show icons only */
+  .viewer-header h3 button {
+    font-size: 0 !important; /* Hide text */
+    padding: 4px 6px !important;
     min-width: auto !important;
+    gap: 0 !important;
+  }
+  
+  .viewer-header h3 button svg {
+    width: 12px !important;
+    height: 12px !important;
+    margin: 0 !important;
   }
   
   .viewer-actions {
@@ -914,12 +929,18 @@ input[type="file"] {
   }
   
   .viewer-header h3 code {
-    display: none !important; /* Hide full hash on tiny screens */
+    font-size: 8px !important;
+    max-width: 60px !important; /* Show only first ~8 chars */
   }
   
-  /* Show only first 8 chars of hash */
-  .viewer-header h3 code::before {
-    content: attr(data-short-hash);
+  /* Hash buttons even smaller */
+  .viewer-header h3 button {
+    padding: 3px 5px !important;
+  }
+  
+  .viewer-header h3 button svg {
+    width: 10px !important;
+    height: 10px !important;
   }
   
   .viewer-actions .btn {
