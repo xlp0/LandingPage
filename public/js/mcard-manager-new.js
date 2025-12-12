@@ -9,9 +9,62 @@ import { MCardManager } from './mcard/MCardManager.js';
 const manager = new MCardManager();
 window.mcardManager = manager;
 
+// Mobile navigation state
+let mobileNavState = 'types'; // 'types', 'cards', 'viewer'
+
+// Mobile navigation functions
+window.navigateToCards = () => {
+  const mainContent = document.querySelector('.main-content');
+  if (mainContent && window.innerWidth <= 640) {
+    mainContent.classList.remove('show-viewer');
+    mainContent.classList.add('show-cards');
+    mobileNavState = 'cards';
+  }
+};
+
+window.navigateToViewer = () => {
+  const mainContent = document.querySelector('.main-content');
+  if (mainContent && window.innerWidth <= 640) {
+    mainContent.classList.remove('show-cards');
+    mainContent.classList.add('show-viewer');
+    mobileNavState = 'viewer';
+  }
+};
+
+window.navigateBack = () => {
+  const mainContent = document.querySelector('.main-content');
+  if (!mainContent || window.innerWidth > 640) return;
+  
+  if (mobileNavState === 'viewer') {
+    // Go back to cards
+    mainContent.classList.remove('show-viewer');
+    mainContent.classList.add('show-cards');
+    mobileNavState = 'cards';
+  } else if (mobileNavState === 'cards') {
+    // Go back to types
+    mainContent.classList.remove('show-cards');
+    mainContent.classList.remove('show-viewer');
+    mobileNavState = 'types';
+  }
+};
+
 // Global functions for HTML onclick handlers
-window.selectType = (typeId) => manager.selectType(typeId);
-window.viewCard = (hash) => manager.viewCard(hash);
+window.selectType = (typeId) => {
+  manager.selectType(typeId);
+  // On mobile, navigate to cards view
+  if (window.innerWidth <= 640) {
+    window.navigateToCards();
+  }
+};
+
+window.viewCard = (hash) => {
+  manager.viewCard(hash);
+  // On mobile, navigate to viewer
+  if (window.innerWidth <= 640) {
+    window.navigateToViewer();
+  }
+};
+
 window.downloadCurrentCard = () => manager.downloadCurrentCard();
 window.deleteCurrentCard = () => manager.deleteCurrentCard();
 window.createTextCard = () => manager.createTextCard();

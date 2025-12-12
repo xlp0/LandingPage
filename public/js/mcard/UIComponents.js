@@ -31,7 +31,7 @@ export class UIComponents {
     const getCount = (arr) => (arr && arr.length) || 0;
     
     const types = [
-      { id: 'all', name: 'All Files', icon: 'package', count: getCount(categories.all) },
+      { id: 'all', name: 'All Cards', icon: 'package', count: getCount(categories.all) },
       { id: 'with-handles', name: 'With Handles', icon: 'tag', count: getCount(categories.withHandles) },
       { id: 'clm', name: 'CLM', icon: 'box', count: getCount(categories.clm) },
       { id: 'markdown', name: 'Markdown', icon: 'file-text', count: getCount(categories.markdown) },
