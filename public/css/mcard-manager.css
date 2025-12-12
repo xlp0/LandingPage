@@ -734,6 +734,18 @@ input[type="file"] {
   .middle-column,
   .viewer-column {
     position: relative !important; /* Force relative on tablet */
+    transform: none !important; /* Reset any transforms */
+    z-index: auto !important; /* Reset z-index */
+    width: auto; /* Let flexbox handle width */
+    height: auto; /* Let flexbox handle height */
+  }
+  
+  .sidebar {
+    width: 200px;
+  }
+  
+  .middle-column {
+    width: 280px;
   }
 }
 
