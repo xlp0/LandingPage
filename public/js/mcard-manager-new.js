@@ -153,6 +153,26 @@ function initMobileNav() {
     // Ensure we start at types view on mobile
     mainContent.classList.remove('show-cards', 'show-viewer');
     mobileNavState = 'types';
+    
+    // Force correct z-index and transforms
+    const sidebar = document.querySelector('.sidebar');
+    const middleColumn = document.querySelector('.middle-column');
+    const viewerColumn = document.querySelector('.viewer-column');
+    
+    if (sidebar) {
+      sidebar.style.transform = 'translateX(0)';
+      sidebar.style.zIndex = '3';
+    }
+    if (middleColumn) {
+      middleColumn.style.transform = 'translateX(100%)';
+      middleColumn.style.zIndex = '2';
+    }
+    if (viewerColumn) {
+      viewerColumn.style.transform = 'translateX(100%)';
+      viewerColumn.style.zIndex = '1';
+    }
+    
+    console.log('[MobileNav] Initialized - showing types view');
   }
 }
 
