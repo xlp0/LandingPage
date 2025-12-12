@@ -136,7 +136,7 @@ export class UIComponents {
       const handleBadge = handle ? `<span style="background: #4ade80; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">@${handle}</span>` : '';
       
       return `
-        <div class="mcard-item" onclick="window.mcardManager.viewCard('${card.hash}')">
+        <div class="mcard-item" onclick="viewCard('${card.hash}')">
           <div class="mcard-item-header">
             <div class="mcard-item-icon">${icon}</div>
             <div class="mcard-item-info">

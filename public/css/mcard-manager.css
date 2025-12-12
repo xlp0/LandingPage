@@ -732,6 +732,7 @@ input[type="file"] {
   .main-content {
     flex-direction: column;
     position: relative;
+    overflow: hidden; /* Prevent scrolling on container */
   }
   
   /* Mobile Navigation: Show only one section at a time */
@@ -743,10 +744,11 @@ input[type="file"] {
     max-height: none;
     border-right: none;
     border-bottom: none;
-    position: absolute;
+    position: absolute !important; /* Force absolute positioning on mobile */
     top: 0;
     left: 0;
     transition: transform 0.3s ease;
+    background: #1e1e1e; /* Ensure solid background */
   }
   
   /* Default: Show sidebar (types) */
