@@ -808,3 +808,123 @@ input[type="file"] {
     font-size: 12px;
   }
 }
+
+/* ========================================
+   VIEWER HEADER RESPONSIVE
+   ======================================== */
+
+/* Tablet - Simplify viewer header */
+@media (max-width: 768px) {
+  .viewer-header h3 > div {
+    gap: 8px !important;
+  }
+  
+  .viewer-header h3 code {
+    font-size: 10px !important;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .viewer-header button {
+    font-size: 9px !important;
+    padding: 2px 6px !important;
+  }
+  
+  .viewer-actions {
+    gap: 6px !important;
+    flex-wrap: wrap;
+  }
+  
+  .viewer-actions .btn {
+    padding: 6px 10px !important;
+    font-size: 11px !important;
+  }
+}
+
+/* Mobile - Stack viewer header elements */
+@media (max-width: 640px) {
+  .viewer-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    padding: 12px 16px !important;
+  }
+  
+  .viewer-header h3 {
+    width: 100%;
+  }
+  
+  .viewer-header h3 > div {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+  
+  .viewer-header h3 > div > div {
+    width: 100%;
+  }
+  
+  /* Hide hash on mobile, show only short version */
+  .viewer-header h3 code {
+    font-size: 9px !important;
+    max-width: 100px !important;
+  }
+  
+  /* Simplify buttons - icons only on mobile */
+  .viewer-header button span {
+    display: none !important;
+  }
+  
+  .viewer-header button {
+    padding: 4px 8px !important;
+    min-width: auto !important;
+  }
+  
+  .viewer-actions {
+    width: 100%;
+    justify-content: flex-start !important;
+    gap: 4px !important;
+  }
+  
+  .viewer-actions .btn {
+    padding: 6px 8px !important;
+    font-size: 10px !important;
+  }
+  
+  /* Show only icons for action buttons on very small screens */
+  .viewer-actions .btn i {
+    margin: 0 !important;
+  }
+}
+
+/* Mobile Portrait - Ultra compact */
+@media (max-width: 480px) {
+  .viewer-header {
+    padding: 8px 12px !important;
+  }
+  
+  .viewer-header h3 span {
+    font-size: 14px !important;
+  }
+  
+  .viewer-header h3 code {
+    display: none !important; /* Hide full hash on tiny screens */
+  }
+  
+  /* Show only first 8 chars of hash */
+  .viewer-header h3 code::before {
+    content: attr(data-short-hash);
+  }
+  
+  .viewer-actions .btn {
+    padding: 4px 6px !important;
+    font-size: 0 !important; /* Hide text, show only icons */
+  }
+  
+  .viewer-actions .btn i {
+    width: 14px !important;
+    height: 14px !important;
+  }
+}
