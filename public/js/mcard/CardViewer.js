@@ -21,8 +21,9 @@ export class CardViewer {
    * View a card
    * ✅ Uses ContentTypeInterpreter from library
    * @param {MCard} card
+   * @param {Object} collection - MCard collection for handle lookup
    */
-  async view(card) {
+  async view(card, collection = null) {
     this.currentCard = card;
     
     const viewerTitle = document.getElementById('viewerTitle');
@@ -141,6 +142,52 @@ export class CardViewer {
         </div>
       </div>
     `;
+    
+    // ✅ Check if card has a handle and add Edit button
+    let cardHandle = null;
+    if (collection && collection.engine && collection.engine.db) {
+      try {
+        const db = collection.engine.db;
+        const tx = db.transaction('handles', 'readonly');
+        const store = tx.objectStore('handles');
+        const index = store.index('by-hash');
+        const handleRecords = await index.getAll(card.hash);
+        if (handleRecords && handleRecords.length > 0) {
+          cardHandle = handleRecords[0].handle;
+        }
+      } catch (e) {
+        console.warn('[CardViewer] Failed to fetch handle:', e);
+      }
+    }
+    
+    // Update viewer actions with Edit button if card has handle
+    if (cardHandle) {
+      viewerActions.innerHTML = `
+        <button class="btn" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="window.mcardManager.editCard('${card.hash}', '${cardHandle}')">
+          <i data-lucide="edit-3" style="width: 16px; height: 16px;"></i>
+          Edit
+        </button>
+        <button class="btn" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="downloadCurrentCard()">
+          <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+          Download
+        </button>
+        <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="deleteCurrentCard()">
+          <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+          Delete
+        </button>
+      `;
+    } else {
+      viewerActions.innerHTML = `
+        <button class="btn" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="downloadCurrentCard()">
+          <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+          Download
+        </button>
+        <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="deleteCurrentCard()">
+          <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+          Delete
+        </button>
+      `;
+    }
     viewerActions.style.display = 'flex';
     
     // Show loading state

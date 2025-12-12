@@ -403,7 +403,8 @@ export class MCardManager {
         return;
       }
       
-      await this.viewer.view(card);
+      // ✅ Pass collection for handle lookup in viewer
+      await this.viewer.view(card, this.collection);
       
     } catch (error) {
       console.error('[MCardManager] Error viewing card:', error);

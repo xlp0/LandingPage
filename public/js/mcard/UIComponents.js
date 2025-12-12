@@ -135,19 +135,6 @@ export class UIComponents {
       const handle = cardHandles.get(card.hash);
       const handleBadge = handle ? `<span style="background: #4ade80; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">@${handle}</span>` : '';
       
-      // ✅ Add edit button for cards with handles
-      const editButton = handle ? `
-        <button 
-          class="btn btn-secondary" 
-          onclick="event.stopPropagation(); window.mcardManager.editCard('${card.hash}', '${handle}')"
-          style="font-size: 11px; padding: 4px 8px; margin-left: auto; display: flex; align-items: center; gap: 4px;"
-          title="Edit ${handle}"
-        >
-          <i data-lucide="edit-3" style="width: 12px; height: 12px;"></i>
-          Edit
-        </button>
-      ` : '';
-      
       return `
         <div class="mcard-item" onclick="window.mcardManager.viewCard('${card.hash}')">
           <div class="mcard-item-header">
@@ -160,7 +147,6 @@ export class UIComponents {
               </div>
               <div class="mcard-item-hash">${card.hash.substring(0, 16)}...</div>
             </div>
-            ${editButton}
           </div>
           <div class="mcard-item-meta">
             <span style="display: flex; align-items: center; gap: 4px;"><i data-lucide="clock" style="width: 14px; height: 14px;"></i> ${time}</span>
