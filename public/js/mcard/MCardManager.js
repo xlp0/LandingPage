@@ -233,25 +233,215 @@ Use \`#\` for headers (1-6 levels):
   }
   
   /**
-   * Load all cards from storage
+   * Update startup cards - ensures they exist and have latest content
+   * This runs on every page load/refresh
+   */
+  async updateStartupCards() {
+    try {
+      const startupHandles = ['welcome', 'quick-guide', 'example-markdown'];
+      const startupCards = [
+        {
+          handle: 'welcome',
+          content: `# Welcome to MCard Manager! 🎉
+
+MCard Manager is a content-addressed file management system where every file is immutable and cryptographically verified.
+
+## Key Features:
+- **Content-Addressed**: Files are identified by their content hash
+- **Immutable**: Once created, cards never change
+- **Handles**: Use friendly names to reference cards
+- **Versioning**: Update handles to point to new versions
+- **Type Detection**: Automatic content type recognition
+
+## Getting Started:
+1. Read the @quick-guide for step-by-step instructions
+2. Check out @example-markdown to see formatting options
+3. Click "Upload" to add your own files
+4. Click "New Text" to create text cards
+5. Use handles (like @welcome) to reference cards
+
+## Learn More:
+- **Quick Start**: See @quick-guide for detailed instructions
+- **Markdown Examples**: Explore @example-markdown for formatting tips
+- **Cross-References**: Click any @handle link to navigate between cards
+
+Enjoy using MCard Manager! 📦✨`
+        },
+        {
+          handle: 'quick-guide',
+          content: `# Quick Start Guide 📖
+
+Welcome! This guide will help you get started with MCard Manager.
+
+👉 **New here?** Start with @welcome for an overview.
+
+## Creating Cards:
+- **Upload Files**: Click the Upload button or drag & drop
+- **New Text Card**: Click "New Text" to create markdown content
+- **Supported Types**: Text, Markdown, Images, Videos, Audio, Documents, Archives
+
+## Using Handles:
+Handles are friendly names for your cards (like @quick-guide).
+
+### Create a Handle:
+1. View a card
+2. Click "Create Handle"
+3. Enter a name (e.g., "my-document")
+
+### Update a Handle:
+1. Edit a card with a handle
+2. Save changes
+3. The handle now points to the new version
+
+## Navigation:
+- **Card Types**: Filter by content type (left sidebar)
+- **Search**: Find cards by content or hash
+- **View**: Click any card to see its content
+- **Handle Links**: Click @handle references to navigate (try clicking @welcome!)
+
+## Markdown Formatting:
+Want to see what you can do with markdown? Check out @example-markdown for examples!
+
+## Tips:
+- Handles make it easy to reference cards
+- Version history tracks all changes
+- Content hashing ensures data integrity
+- All data is stored locally in your browser
+- Use @handle syntax to link between cards
+
+## Related Cards:
+- @welcome - Introduction and overview
+- @example-markdown - Markdown formatting examples`
+        },
+        {
+          handle: 'example-markdown',
+          content: `# Markdown Example 📝
+
+This card demonstrates various markdown formatting options you can use in MCard Manager.
+
+👉 **New here?** Check out @welcome and @quick-guide first!
+
+## Text Formatting:
+- **Bold text** - Use \`**text**\`
+- *Italic text* - Use \`*text*\`
+- \`inline code\` - Use backticks
+- ~~Strikethrough~~ - Use \`~~text~~\`
+
+## Lists:
+1. First item
+2. Second item
+3. Third item
+
+### Unordered:
+- Bullet point
+- Another point
+  - Nested point
+  - Another nested point
+
+## Code Block:
+\`\`\`javascript
+// Example code with syntax highlighting
+const greeting = "Hello, MCard!";
+console.log(greeting);
+
+// You can reference other cards
+const welcomeCard = "@welcome";
+\`\`\`
+
+## Quotes:
+> "Content-addressed storage is the future of data management."
+> 
+> Use blockquotes for emphasis or citations.
+
+## Handle References:
+You can link to other cards using @handle syntax:
+- Click @welcome to see the introduction
+- Click @quick-guide for instructions
+- Click @example-markdown (this card!) to return here
+
+These become **clickable links** automatically! Try it!
+
+## External Links:
+You can also create regular links: [MCard Documentation](https://example.com)
+
+## Headers:
+Use \`#\` for headers (1-6 levels):
+# H1 Header
+## H2 Header
+### H3 Header
+
+---
+
+**Try editing this card to create your own version!**
+
+💡 **Tip**: When you edit a card with a handle, you create a new version. The handle (@example-markdown) will point to your new version!
+
+## Related Cards:
+- @welcome - Back to welcome page
+- @quick-guide - Learn how to use MCard Manager`
+        }
+      ];
+      
+      let created = 0;
+      let updated = 0;
+      
+      for (const { handle, content } of startupCards) {
+        // Check if handle exists
+        const existingHash = await this.collection.resolveHandle(handle);
+        const newCard = await MCard.create(content);
+        
+        if (existingHash) {
+          // Handle exists - check if content changed
+          if (existingHash !== newCard.hash) {
+            // Content changed - update handle to point to new version
+            await this.collection.addWithHandle(newCard, handle);
+            console.log(`[MCardManager] ✅ Updated startup card: @${handle} (${existingHash.substring(0, 8)} → ${newCard.hash.substring(0, 8)})`);
+            updated++;
+          } else {
+            console.log(`[MCardManager] ℹ️ Startup card @${handle} unchanged`);
+          }
+        } else {
+          // Handle doesn't exist - create it
+          await this.collection.addWithHandle(newCard, handle);
+          console.log(`[MCardManager] ✅ Created startup card: @${handle}`);
+          created++;
+        }
+      }
+      
+      if (created > 0 || updated > 0) {
+        const message = created > 0 
+          ? `Welcome cards created! 🎉` 
+          : `Startup cards updated! ✨`;
+        console.log(`[MCardManager] ${created} created, ${updated} updated`);
+        if (created > 0) {
+          UIComponents.showToast(message, 'success');
+        }
+      }
+      
+    } catch (error) {
+      console.error('[MCardManager] Error updating startup cards:', error);
+      // Don't show error toast - this is not critical
+    }
+  }
+  
+  /**
+   * Load all cards from the collection
    */
   async loadCards() {
     try {
       const count = await this.collection.count();
-      console.log(`[MCardManager] Loading ${count} cards...`);
+      console.log(`[MCardManager] Loading ${count} cards from collection`);
       
-      // Create startup cards if this is first visit
-      if (count === 0) {
-        console.log('[MCardManager] No cards found - creating startup cards...');
-        await this.createStartupCards();
-      }
+      // Always update startup cards on every load to ensure they have latest content
+      console.log('[MCardManager] Updating startup cards...');
+      await this.updateStartupCards();
       
-      this.allCards = await this.collection.getAllMCardsRaw();
-      console.log(`[MCardManager] Loaded ${this.allCards.length} cards`);
+      const cards = await this.collection.getAllMCardsRaw();
+      console.log(`[MCardManager] Loaded ${cards.length} cards`);
       
       console.log('[MCardManager] Rendering file types...');
-      const categories = await this.categorizeCards(this.allCards);
-      UIComponents.renderFileTypes(this.allCards, this.currentType, categories);
+      const categories = await this.categorizeCards(cards);
+      UIComponents.renderFileTypes(cards, this.currentType, categories);
       
       console.log('[MCardManager] Showing cards for type:', this.currentType);
       this.showCardsForType(this.currentType);
