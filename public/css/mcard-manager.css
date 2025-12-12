@@ -307,19 +307,20 @@ body {
   background: #252526;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start; /* Align to top to prevent overlap */
   flex-shrink: 0;
   gap: 16px;
   min-height: 60px;
+  flex-wrap: wrap; /* Allow wrapping if needed */
 }
 
 .viewer-header h3 {
   font-size: 13px;
   color: #cccccc;
   font-weight: 600;
-  flex: 1;
-  min-width: 0; /* Allow flex item to shrink below content size */
-  overflow: hidden; /* Hide overflow */
+  flex: 1 1 auto; /* Allow grow and shrink */
+  min-width: 300px; /* Minimum width before wrapping */
+  max-width: 60%; /* Don't take more than 60% on large screens */
 }
 
 /* Hash code in viewer header - make it scrollable horizontally if needed */
@@ -352,9 +353,12 @@ body {
 .viewer-actions {
   display: flex;
   gap: 8px;
-  flex-wrap: nowrap; /* Keep buttons in one line */
+  flex-wrap: wrap; /* Allow wrapping if needed */
   align-items: center;
   flex-shrink: 0; /* Prevent buttons from shrinking */
+  justify-content: flex-end; /* Align buttons to the right */
+  flex: 0 1 auto; /* Don't grow, but can shrink */
+  min-width: fit-content; /* Ensure buttons don't get cut off */
 }
 
 .viewer-content {
