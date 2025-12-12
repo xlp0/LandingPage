@@ -180,6 +180,72 @@
           </button>
         </div>
       </div>
+
+      <!-- Edit Panel -->
+      <div class="chat-panel hidden" id="editPanel">
+        <div class="chat-header">
+          <h3 id="editPanelTitle">
+            <i data-lucide="edit-3" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
+            <span id="editPanelTitleText">New Text Card</span>
+          </h3>
+          <button class="chat-close-btn" onclick="closeEditPanel()">
+            <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+          </button>
+        </div>
+        <div class="chat-messages" style="padding: 16px;">
+          <!-- Handle Name Input -->
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px;">
+              <i data-lucide="tag" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
+              Handle Name
+            </label>
+            <input 
+              type="text" 
+              id="editHandleName" 
+              class="search-box" 
+              placeholder="e.g., my-document, readme, notes"
+              style="width: 100%; padding: 10px 12px;"
+            />
+            <p style="font-size: 12px; color: #666; margin-top: 4px;">
+              Optional: Give this card a friendly name for easy reference
+            </p>
+          </div>
+
+          <!-- Content Editor -->
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px;">
+              <i data-lucide="file-text" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
+              Content
+            </label>
+            <textarea 
+              id="editContentArea" 
+              class="chat-input" 
+              placeholder="Enter your content here..."
+              style="width: 100%; min-height: 300px; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 13px; line-height: 1.6; resize: vertical;"
+            ></textarea>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display: flex; gap: 8px; justify-content: flex-end;">
+            <button 
+              class="btn btn-secondary" 
+              onclick="closeEditPanel()"
+              style="font-size: 14px; padding: 10px 20px;"
+            >
+              <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+              Cancel
+            </button>
+            <button 
+              class="btn" 
+              onclick="saveEditedCard()"
+              style="font-size: 14px; padding: 10px 20px;"
+            >
+              <i data-lucide="save" style="width: 14px; height: 14px;"></i>
+              <span id="editSaveButtonText">Save</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -601,22 +601,86 @@ export class MCardManager {
   }
   
   /**
-   * Create a new text card
+   * Open edit panel for creating new text card
+   */
+  openNewTextPanel() {
+    const panel = document.getElementById('editPanel');
+    const titleText = document.getElementById('editPanelTitleText');
+    const handleInput = document.getElementById('editHandleName');
+    const contentArea = document.getElementById('editContentArea');
+    const saveButtonText = document.getElementById('editSaveButtonText');
+    
+    // Reset panel
+    titleText.textContent = 'New Text Card';
+    handleInput.value = '';
+    contentArea.value = '';
+    saveButtonText.textContent = 'Create';
+    
+    // Store mode
+    panel.dataset.mode = 'create';
+    panel.dataset.hash = '';
+    panel.dataset.handle = '';
+    
+    // Show panel
+    panel.classList.remove('hidden');
+    
+    // Focus content area
+    setTimeout(() => {
+      contentArea.focus();
+      if (window.lucide) lucide.createIcons();
+    }, 100);
+  }
+  
+  /**
+   * Open edit panel for editing existing card
+   */
+  async editCard(hash, handle) {
+    try {
+      const card = await this.db.get(hash);
+      if (!card) {
+        UIComponents.showToast('Card not found', 'error');
+        return;
+      }
+      
+      const panel = document.getElementById('editPanel');
+      const titleText = document.getElementById('editPanelTitleText');
+      const handleInput = document.getElementById('editHandleName');
+      const contentArea = document.getElementById('editContentArea');
+      const saveButtonText = document.getElementById('editSaveButtonText');
+      
+      // Set panel content
+      titleText.textContent = `Edit: @${handle}`;
+      handleInput.value = handle;
+      contentArea.value = card.getContentAsText();
+      saveButtonText.textContent = 'Update';
+      
+      // Store mode
+      panel.dataset.mode = 'edit';
+      panel.dataset.hash = hash;
+      panel.dataset.handle = handle;
+      
+      // Show panel
+      panel.classList.remove('hidden');
+      
+      // Focus content area
+      setTimeout(() => {
+        contentArea.focus();
+        if (window.lucide) lucide.createIcons();
+      }, 100);
+      
+      console.log('[MCardManager] Opened edit panel for:', handle, hash.substring(0, 8));
+    } catch (error) {
+      console.error('[MCardManager] Error opening edit panel:', error);
+      UIComponents.showToast('Failed to open editor', 'error');
+    }
+  }
+  
+  /**
+   * Create a new text card (legacy - now uses panel)
    */
   async createTextCard() {
-    const content = prompt('Enter text content:');
-    if (!content) return;
-    
-    try {
-      const card = await MCard.create(content);
-      await this.collection.add(card);
-      await this.loadCards();
-      await this.viewCard(card.hash);
-      UIComponents.showToast('Text card created', 'success');
-    } catch (error) {
-      console.error('[MCardManager] Error creating text card:', error);
-      UIComponents.showToast('Failed to create card', 'error');
-    }
+    // Open the edit panel instead of using prompt
+    this.openNewTextPanel();
   }
   
   // =========== Handle Management ===========
