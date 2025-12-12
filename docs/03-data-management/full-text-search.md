@@ -8,11 +8,12 @@ The MCard Manager now features **IndexedDB-based full-text search** powered by t
 
 ## Features
 
-### 1. **Dual Search Strategy**
+### 1. **Triple Search Strategy**
 - **Hash Search:** Client-side, instant matching on card hashes
+- **Handle Search:** Client-side, matches handle names (no @ needed!)
 - **Content Search:** IndexedDB full-text search across card content
-- **Combined Results:** Merges both searches, removes duplicates
-- **Smart Prioritization:** Hash matches shown first
+- **Combined Results:** Merges all three searches, removes duplicates
+- **Smart Prioritization:** Hash → Handle → Content
 
 ### 2. **Library-Powered Content Search**
 - Uses `IndexedDBEngine.search()` from mcard-js
@@ -35,8 +36,8 @@ The MCard Manager now features **IndexedDB-based full-text search** powered by t
 ### 5. **Enhanced UI Feedback**
 - Shows search query in column title
 - Displays total results with breakdown
-- Example: `Search: "hello" (5 results: 2 hash, 3 content)`
-- Clear visual indication of match types
+- Example: `Search: "example" (3 results: 0 hash, 1 handle, 2 content)`
+- Clear visual indication of all three match types
 
 ---
 
@@ -65,9 +66,11 @@ Finds cards containing both "hello" and "world"
 
 #### Handle Search
 ```
-@my-document
+example
+my-readme
+readme
 ```
-Searches for cards by handle name (starts with `@`)
+Searches for cards by handle name (no @ needed!)
 
 #### Hash Search
 ```
