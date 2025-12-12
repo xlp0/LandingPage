@@ -188,16 +188,35 @@ const welcomeCard = "@welcome";
 > 
 > Use blockquotes for emphasis or citations.
 
-## Handle References:
+## Linking to Other Cards:
+
+### Method 1: @handle Syntax (Simple)
 You can link to other cards using @handle syntax:
 - Click @welcome to see the introduction
 - Click @quick-guide for instructions
 - Click @example-markdown (this card!) to return here
 
-These become **clickable links** automatically! Try it!
+These become **clickable links** automatically!
 
-## External Links:
-You can also create regular links: [MCard Documentation](https://example.com)
+### Method 2: Standard Markdown Links
+You can also use standard markdown link syntax with card hashes:
+
+**Syntax:**
+\`\`\`markdown
+[Link text](HASH)              # Direct hash (64 hex chars)
+[Link text](hash:HASH)         # With hash: prefix (optional)
+\`\`\`
+
+**Example:**
+When you create a card, copy its hash from the viewer and use it:
+\`\`\`markdown
+[View my notes](a1b2c3d4e5f6789...)
+\`\`\`
+
+The system automatically detects 64-character hex strings as card hashes!
+
+### Method 3: External Links
+Regular web links work too: [MCard Documentation](https://example.com)
 
 ## Headers:
 Use \`#\` for headers (1-6 levels):
