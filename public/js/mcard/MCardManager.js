@@ -68,12 +68,136 @@ export class MCardManager {
   }
   
   /**
+   * Create startup/welcome cards for first-time users
+   */
+  async createStartupCards() {
+    try {
+      console.log('[MCardManager] Creating startup cards...');
+      
+      const startupCards = [
+        {
+          handle: 'welcome',
+          content: `# Welcome to MCard Manager! 🎉
+
+MCard Manager is a content-addressed file management system where every file is immutable and cryptographically verified.
+
+## Key Features:
+- **Content-Addressed**: Files are identified by their content hash
+- **Immutable**: Once created, cards never change
+- **Handles**: Use friendly names to reference cards
+- **Versioning**: Update handles to point to new versions
+- **Type Detection**: Automatic content type recognition
+
+## Getting Started:
+1. Click "Upload" to add files
+2. Click "New Text" to create text cards
+3. Use handles (like @welcome) to reference cards
+4. Edit cards with handles to create new versions
+
+Enjoy using MCard Manager! 📦✨`
+        },
+        {
+          handle: 'quick-guide',
+          content: `# Quick Start Guide 📖
+
+## Creating Cards:
+- **Upload Files**: Click the Upload button or drag & drop
+- **New Text Card**: Click "New Text" to create markdown content
+- **Supported Types**: Text, Markdown, Images, Videos, Audio, Documents, Archives
+
+## Using Handles:
+Handles are friendly names for your cards (like @quick-guide).
+
+### Create a Handle:
+1. View a card
+2. Click "Create Handle"
+3. Enter a name (e.g., "my-document")
+
+### Update a Handle:
+1. Edit a card with a handle
+2. Save changes
+3. The handle now points to the new version
+
+## Navigation:
+- **Card Types**: Filter by content type (left sidebar)
+- **Search**: Find cards by content or hash
+- **View**: Click any card to see its content
+
+## Tips:
+- Handles make it easy to reference cards
+- Version history tracks all changes
+- Content hashing ensures data integrity
+- All data is stored locally in your browser`
+        },
+        {
+          handle: 'example-markdown',
+          content: `# Markdown Example 📝
+
+This is an example markdown card showing various formatting options.
+
+## Text Formatting:
+- **Bold text**
+- *Italic text*
+- \`inline code\`
+- ~~Strikethrough~~
+
+## Lists:
+1. First item
+2. Second item
+3. Third item
+
+### Unordered:
+- Bullet point
+- Another point
+  - Nested point
+
+## Code Block:
+\`\`\`javascript
+// Example code
+const greeting = "Hello, MCard!";
+console.log(greeting);
+\`\`\`
+
+## Quotes:
+> "Content-addressed storage is the future of data management."
+
+## Links:
+You can create links: [MCard Documentation](https://example.com)
+
+---
+
+**Try editing this card to create your own version!**`
+        }
+      ];
+      
+      for (const { handle, content } of startupCards) {
+        const card = await MCard.create(content);
+        await this.collection.addWithHandle(card, handle);
+        console.log(`[MCardManager] ✅ Created startup card: @${handle}`);
+      }
+      
+      console.log('[MCardManager] ✅ All startup cards created');
+      UIComponents.showToast('Welcome cards created! 🎉', 'success');
+      
+    } catch (error) {
+      console.error('[MCardManager] Error creating startup cards:', error);
+      // Don't show error toast - this is not critical
+    }
+  }
+  
+  /**
    * Load all cards from storage
    */
   async loadCards() {
     try {
       const count = await this.collection.count();
       console.log(`[MCardManager] Loading ${count} cards...`);
+      
+      // Create startup cards if this is first visit
+      if (count === 0) {
+        console.log('[MCardManager] No cards found - creating startup cards...');
+        await this.createStartupCards();
+      }
       
       this.allCards = await this.collection.getAllMCardsRaw();
       console.log(`[MCardManager] Loaded ${this.allCards.length} cards`);
@@ -86,7 +210,7 @@ export class MCardManager {
       this.showCardsForType(this.currentType);
       
       console.log('[MCardManager] Updating stats...');
-      UIComponents.updateStats(count);
+      UIComponents.updateStats(this.allCards.length);
       
       console.log('[MCardManager] Load complete!');
     } catch (error) {
