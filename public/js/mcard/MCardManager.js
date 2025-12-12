@@ -374,15 +374,15 @@ export class MCardManager {
       const typeNames = {
         'all': 'All MCards',
         'with-handles': 'MCards with Handles',
-        'clm': 'CLM Files',
-        'markdown': 'Markdown Files',
-        'text': 'Text Files',
-        'images': 'Images',
-        'videos': 'Videos',
-        'audio': 'Audio Files',
-        'documents': 'Documents',
-        'archives': 'Archives',
-        'other': 'Other Files'
+        'clm': 'CLM Cards',
+        'markdown': 'Markdown Cards',
+        'text': 'Text Cards',
+        'images': 'Image Cards',
+        'videos': 'Video Cards',
+        'audio': 'Audio Cards',
+        'documents': 'Document Cards',
+        'archives': 'Archive Cards',
+        'other': 'Other Cards'
       };
       columnTitle.textContent = typeNames[typeId] || 'MCards';
     }
@@ -633,9 +633,9 @@ export class MCardManager {
   }
   
   /**
-   * Open edit panel for editing existing card
+   * Toggle in-place edit mode in viewer
    */
-  async editCard(hash, handle) {
+  async toggleEditMode(hash, handle) {
     try {
       const card = await this.db.get(hash);
       if (!card) {
@@ -643,36 +643,103 @@ export class MCardManager {
         return;
       }
       
-      const panel = document.getElementById('editPanel');
-      const titleText = document.getElementById('editPanelTitleText');
-      const handleInput = document.getElementById('editHandleName');
-      const contentArea = document.getElementById('editContentArea');
-      const saveButtonText = document.getElementById('editSaveButtonText');
+      const viewerContent = document.getElementById('viewerContent');
+      const editBtn = document.getElementById('editBtn');
+      const saveBtn = document.getElementById('saveBtn');
+      const cancelBtn = document.getElementById('cancelBtn');
       
-      // Set panel content
-      titleText.textContent = `Edit: @${handle}`;
-      handleInput.value = handle;
-      contentArea.value = card.getContentAsText();
-      saveButtonText.textContent = 'Save';
+      // Store original content for cancel
+      if (!viewerContent.dataset.originalContent) {
+        viewerContent.dataset.originalContent = card.getContentAsText();
+        viewerContent.dataset.originalHash = hash;
+      }
       
-      // Store mode
-      panel.dataset.mode = 'edit';
-      panel.dataset.hash = hash;
-      panel.dataset.handle = handle;
+      // Replace viewer content with textarea
+      viewerContent.innerHTML = `
+        <textarea 
+          id="inPlaceEditor" 
+          style="
+            width: 100%; 
+            height: 100%; 
+            background: #1e1e1e; 
+            color: #d4d4d4; 
+            border: 1px solid #3e3e42; 
+            border-radius: 4px; 
+            padding: 16px; 
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace; 
+            font-size: 13px; 
+            line-height: 1.6; 
+            resize: none;
+            outline: none;
+          "
+        >${card.getContentAsText()}</textarea>
+      `;
       
-      // Show panel
-      panel.classList.remove('hidden');
+      // Toggle buttons
+      editBtn.style.display = 'none';
+      saveBtn.style.display = 'flex';
+      cancelBtn.style.display = 'flex';
       
-      // Focus content area
+      // Focus editor
       setTimeout(() => {
-        contentArea.focus();
-        if (window.lucide) lucide.createIcons();
+        document.getElementById('inPlaceEditor').focus();
       }, 100);
       
-      console.log('[MCardManager] Opened edit panel for:', handle, hash.substring(0, 8));
+      console.log('[MCardManager] Entered edit mode for:', handle, hash.substring(0, 8));
     } catch (error) {
-      console.error('[MCardManager] Error opening edit panel:', error);
-      UIComponents.showToast('Failed to open editor', 'error');
+      console.error('[MCardManager] Error entering edit mode:', error);
+      UIComponents.showToast('Failed to enter edit mode', 'error');
+    }
+  }
+  
+  /**
+   * Save in-place edit
+   */
+  async saveInPlaceEdit(hash, handle) {
+    try {
+      const editor = document.getElementById('inPlaceEditor');
+      if (!editor) {
+        UIComponents.showToast('Editor not found', 'error');
+        return;
+      }
+      
+      const newContent = editor.value;
+      if (!newContent.trim()) {
+        UIComponents.showToast('Content cannot be empty', 'error');
+        return;
+      }
+      
+      // Create new card with updated content
+      const { MCard } = await import('mcard-js');
+      const newCard = await MCard.create(newContent);
+      await this.collection.add(newCard);
+      
+      // Update handle to point to new card
+      await this.collection.updateHandle(handle, newCard);
+      
+      // Reload and view updated card
+      await this.loadCards();
+      await this.viewCard(newCard.hash);
+      
+      UIComponents.showToast(`Saved @${handle}`, 'success');
+      console.log('[MCardManager] Saved in-place edit for:', handle);
+    } catch (error) {
+      console.error('[MCardManager] Error saving edit:', error);
+      UIComponents.showToast('Failed to save: ' + error.message, 'error');
+    }
+  }
+  
+  /**
+   * Cancel in-place edit mode
+   */
+  async cancelEditMode(hash) {
+    try {
+      // Re-render the original card
+      await this.viewCard(hash);
+      console.log('[MCardManager] Cancelled edit mode');
+    } catch (error) {
+      console.error('[MCardManager] Error cancelling edit:', error);
+      UIComponents.showToast('Failed to cancel edit', 'error');
     }
   }
   

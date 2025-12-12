@@ -163,9 +163,17 @@ export class CardViewer {
     // Update viewer actions with Edit button if card has handle
     if (cardHandle) {
       viewerActions.innerHTML = `
-        <button class="btn" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="window.mcardManager.editCard('${card.hash}', '${cardHandle}')">
+        <button class="btn" id="editBtn" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="window.mcardManager.toggleEditMode('${card.hash}', '${cardHandle}')">
           <i data-lucide="edit-3" style="width: 16px; height: 16px;"></i>
           Edit
+        </button>
+        <button class="btn" id="saveBtn" style="font-size: 12px; padding: 8px 16px; display: none; align-items: center; gap: 6px;" onclick="window.mcardManager.saveInPlaceEdit('${card.hash}', '${cardHandle}')">
+          <i data-lucide="save" style="width: 16px; height: 16px;"></i>
+          Save
+        </button>
+        <button class="btn btn-secondary" id="cancelBtn" style="font-size: 12px; padding: 8px 16px; display: none; align-items: center; gap: 6px;" onclick="window.mcardManager.cancelEditMode('${card.hash}')">
+          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+          Cancel
         </button>
         <button class="btn" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="downloadCurrentCard()">
           <i data-lucide="download" style="width: 16px; height: 16px;"></i>
