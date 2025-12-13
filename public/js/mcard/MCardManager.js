@@ -1224,15 +1224,20 @@ Try creating a card with some markdown!"
       const newCard = await MCard.create(newContent);
       await this.collection.add(newCard);
       
-      // Update handle to point to new card
-      await this.collection.updateHandle(handle, newCard);
+      // Update handle to point to new card (if handle exists)
+      if (handle) {
+        await this.collection.updateHandle(handle, newCard);
+        UIComponents.showToast(`Saved @${handle}`, 'success');
+        console.log('[MCardManager] Saved in-place edit for:', handle);
+      } else {
+        UIComponents.showToast('Card saved successfully', 'success');
+        console.log('[MCardManager] Saved card without handle');
+      }
       
       // Reload and view updated card
       await this.loadCards();
       await this.viewCard(newCard.hash);
       
-      UIComponents.showToast(`Saved @${handle}`, 'success');
-      console.log('[MCardManager] Saved in-place edit for:', handle);
     } catch (error) {
       console.error('[MCardManager] Error saving edit:', error);
       UIComponents.showToast('Failed to save: ' + error.message, 'error');

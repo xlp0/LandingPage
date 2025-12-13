@@ -143,7 +143,7 @@ export class CardViewer {
       </div>
     `;
     
-    // ✅ Check if card has a handle and add Edit button
+    // ✅ Check if card has a handle
     let cardHandle = null;
     if (collection && collection.engine && collection.engine.db) {
       try {
@@ -160,14 +160,18 @@ export class CardViewer {
       }
     }
     
-    // Update viewer actions with Edit button if card has handle
-    if (cardHandle) {
+    // ✅ Determine if content is editable (text-based types only)
+    const editableTypes = ['markdown', 'text', 'json', 'clm', 'yaml'];
+    const isEditable = editableTypes.includes(renderType);
+    
+    // Update viewer actions with Edit button for all editable content
+    if (isEditable) {
       viewerActions.innerHTML = `
-        <button class="btn" id="editBtn" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="window.mcardManager.toggleEditMode('${card.hash}', '${cardHandle}')">
+        <button class="btn" id="editBtn" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="window.mcardManager.toggleEditMode('${card.hash}', '${cardHandle || ''}')">
           <i data-lucide="edit-3" style="width: 16px; height: 16px;"></i>
           Edit
         </button>
-        <button class="btn" id="saveBtn" style="font-size: 12px; padding: 8px 16px; display: none; align-items: center; gap: 6px;" onclick="window.mcardManager.saveInPlaceEdit('${card.hash}', '${cardHandle}')">
+        <button class="btn" id="saveBtn" style="font-size: 12px; padding: 8px 16px; display: none; align-items: center; gap: 6px;" onclick="window.mcardManager.saveInPlaceEdit('${card.hash}', '${cardHandle || ''}')">
           <i data-lucide="save" style="width: 16px; height: 16px;"></i>
           Save
         </button>
@@ -185,6 +189,7 @@ export class CardViewer {
         </button>
       `;
     } else {
+      // Non-editable content (images, videos, PDFs, etc.)
       viewerActions.innerHTML = `
         <button class="btn" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="downloadCurrentCard()">
           <i data-lucide="download" style="width: 16px; height: 16px;"></i>
