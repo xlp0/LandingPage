@@ -406,7 +406,7 @@ graph LR
    */
   async updateStartupCards() {
     try {
-      const startupHandles = ['welcome', 'quick-guide', 'example-markdown'];
+      const startupHandles = ['welcome', 'quick-guide', 'example-markdown', 'advanced-examples'];
       const startupCards = [
         {
           handle: 'welcome',
