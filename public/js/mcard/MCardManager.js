@@ -1147,8 +1147,13 @@ Related Cards:
       else if (lowerType.includes('text')) {
         const contentStr = card.getContentAsText();
         
-        // Check for CLM (YAML-based, highest priority)
-        if ((contentStr.includes('abstract:') && contentStr.includes('concrete:') && contentStr.includes('balanced:')) ||
+        // Check for LaTeX content marker (highest priority)
+        if (contentStr.trim().startsWith('<!-- CONTENT-TYPE: latex -->')) {
+          // LaTeX cards go in markdown category for now (or create latex category)
+          categories.markdown.push(card);
+        }
+        // Check for CLM (YAML-based, high priority)
+        else if ((contentStr.includes('abstract:') && contentStr.includes('concrete:') && contentStr.includes('balanced:')) ||
             contentStr.includes('clm:')) {
           categories.clm.push(card);
         }
