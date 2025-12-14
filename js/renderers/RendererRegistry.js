@@ -10,6 +10,7 @@ import { ImageRenderer } from './ImageRenderer.js';
 import { TextRenderer } from './TextRenderer.js';
 import { PDFRenderer } from './PDFRenderer.js';
 import { CLMRenderer } from './CLMRenderer.js';
+import { LatexRenderer } from './LatexRenderer.js';
 
 export class RendererRegistry {
   constructor() {
@@ -27,6 +28,7 @@ export class RendererRegistry {
       // Register all available renderers
       this.register(new CLMRenderer());
       this.register(new MarkdownRenderer());
+      this.register(new LatexRenderer());
       this.register(new ImageRenderer());
       this.register(new TextRenderer());
       this.register(new PDFRenderer());

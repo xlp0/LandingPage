@@ -41,6 +41,7 @@ export class CardViewer {
     // Create typeInfo object with proper display name
     const displayNames = {
       'markdown': 'Markdown',
+      'latex': 'LaTeX',
       'text': 'Text',
       'json': 'JSON',
       'image': 'Image',
@@ -64,6 +65,7 @@ export class CardViewer {
     const extensionMap = {
       'text': '.txt',
       'markdown': '.md',
+      'latex': '.tex',
       'json': '.json',
       'image': '.png',
       'pdf': '.pdf',
@@ -462,6 +464,7 @@ export class CardViewer {
     const mimeMap = {
       'text': 'text/plain',
       'markdown': 'text/markdown',
+      'latex': 'text/x-latex',
       'json': 'application/json',
       'image': 'image/png',
       'pdf': 'application/pdf',
@@ -639,7 +642,12 @@ export class CardViewer {
     // ✅ ENHANCE for text-based types (library might say "text/plain")
     // Only do pattern matching for text content
     if (lowerType.includes('text') && textContent) {
-      // Check for CLM (YAML-based, highest priority for text)
+      // Check for LaTeX content marker (highest priority)
+      if (textContent.trim().startsWith('<!-- CONTENT-TYPE: latex -->')) {
+        return 'latex';
+      }
+      
+      // Check for CLM (YAML-based, high priority for text)
       if ((textContent.includes('abstract:') && textContent.includes('concrete:') && textContent.includes('balanced:')) ||
           textContent.includes('clm:')) {
         return 'clm';
