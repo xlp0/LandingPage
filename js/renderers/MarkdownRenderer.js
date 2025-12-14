@@ -15,6 +15,8 @@ export class MarkdownRenderer extends BaseRenderer {
     this.markedLoaded = false;
     this.highlightLoaded = false;
     this.mermaidLoaded = false;
+    this.katexLoaded = false;
+    this.tikzLoaded = false;
   }
   
   /**
@@ -137,6 +139,120 @@ export class MarkdownRenderer extends BaseRenderer {
     }
     
     this.mermaidLoaded = true;
+  }
+  
+  /**
+   * Load KaTeX library for LaTeX math rendering
+   */
+  async loadKaTeX() {
+    if (this.katexLoaded) return;
+    
+    if (!window.katex) {
+      console.log('[MarkdownRenderer] Loading KaTeX...');
+      
+      // Check if already loading
+      if (window.__KATEX_LOADING__) {
+        await window.__KATEX_LOADING__;
+        this.katexLoaded = true;
+        return;
+      }
+      
+      window.__KATEX_LOADING__ = (async () => {
+        // Load KaTeX CSS
+        const katexCSS = document.createElement('link');
+        katexCSS.rel = 'stylesheet';
+        katexCSS.href = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css';
+        document.head.appendChild(katexCSS);
+        
+        // Load KaTeX JS
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js';
+        script.id = 'katex-js';
+        document.head.appendChild(script);
+        
+        await new Promise((resolve, reject) => {
+          script.onload = () => {
+            console.log('[MarkdownRenderer] KaTeX loaded successfully');
+            resolve();
+          };
+          script.onerror = (error) => {
+            console.error('[MarkdownRenderer] Failed to load KaTeX:', error);
+            reject(new Error('Failed to load KaTeX from CDN'));
+          };
+        });
+        
+        // Wait for katex to be available
+        let attempts = 0;
+        while (!window.katex && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+        
+        if (!window.katex) {
+          throw new Error('KaTeX loaded but window.katex not available');
+        }
+        
+        console.log('[MarkdownRenderer] window.katex is now available');
+      })();
+      
+      await window.__KATEX_LOADING__;
+      window.__KATEX_LOADING__ = null;
+    }
+    
+    this.katexLoaded = true;
+  }
+  
+  /**
+   * Load TikZ renderer modules
+   */
+  async loadTikZ() {
+    if (this.tikzLoaded) return;
+    
+    console.log('[MarkdownRenderer] Loading TikZ renderer...');
+    
+    // Check if already loading
+    if (window.__TIKZ_LOADING__) {
+      await window.__TIKZ_LOADING__;
+      this.tikzLoaded = true;
+      return;
+    }
+    
+    window.__TIKZ_LOADING__ = (async () => {
+      try {
+        // Load tikz-renderer.js (fallback renderer)
+        if (!window.TikZRenderer) {
+          const tikzScript = document.createElement('script');
+          tikzScript.src = '/js/modules/tikz-renderer.js';
+          document.head.appendChild(tikzScript);
+          
+          await new Promise((resolve, reject) => {
+            tikzScript.onload = resolve;
+            tikzScript.onerror = reject;
+          });
+        }
+        
+        // Load professional-tikz-renderer.js
+        if (!window.ProfessionalTikZRenderer) {
+          const profTikzScript = document.createElement('script');
+          profTikzScript.src = '/js/modules/professional-tikz-renderer.js';
+          document.head.appendChild(profTikzScript);
+          
+          await new Promise((resolve, reject) => {
+            profTikzScript.onload = resolve;
+            profTikzScript.onerror = reject;
+          });
+        }
+        
+        console.log('[MarkdownRenderer] TikZ renderer loaded successfully');
+      } catch (error) {
+        console.warn('[MarkdownRenderer] TikZ renderer unavailable:', error);
+        // Continue without TikZ support
+      }
+    })();
+    
+    await window.__TIKZ_LOADING__;
+    window.__TIKZ_LOADING__ = null;
+    this.tikzLoaded = true;
   }
   
   /**
@@ -356,6 +472,20 @@ export class MarkdownRenderer extends BaseRenderer {
         console.warn('[MarkdownRenderer] Mermaid diagrams unavailable:', mermaidError.message);
       }
       
+      // Try to load KaTeX (optional)
+      try {
+        await this.loadKaTeX();
+      } catch (katexError) {
+        console.warn('[MarkdownRenderer] LaTeX math unavailable:', katexError.message);
+      }
+      
+      // Try to load TikZ (optional)
+      try {
+        await this.loadTikZ();
+      } catch (tikzError) {
+        console.warn('[MarkdownRenderer] TikZ diagrams unavailable:', tikzError.message);
+      }
+      
       // Try to load highlight.js (optional - markdown works without it)
       try {
         await this.loadHighlight();
@@ -378,13 +508,12 @@ export class MarkdownRenderer extends BaseRenderer {
       // Render markdown
       let html = window.marked.parse(processedContent);
       
+      // Create a temporary container to parse HTML
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+      
       // Process Mermaid diagrams if available
       if (window.mermaid && this.mermaidLoaded) {
-        // Create a temporary container to parse HTML
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
-        
-        // Find all code blocks with language 'mermaid'
         const mermaidBlocks = tempDiv.querySelectorAll('code.language-mermaid');
         
         for (let i = 0; i < mermaidBlocks.length; i++) {
@@ -400,6 +529,7 @@ export class MarkdownRenderer extends BaseRenderer {
             const pre = block.parentElement;
             const mermaidDiv = document.createElement('div');
             mermaidDiv.className = 'mermaid-diagram';
+            mermaidDiv.style.cssText = 'background: #f7fafc; padding: 2rem; border-radius: 8px; margin: 1.5rem 0; text-align: center;';
             mermaidDiv.innerHTML = svg;
             pre.replaceWith(mermaidDiv);
           } catch (err) {
@@ -407,9 +537,71 @@ export class MarkdownRenderer extends BaseRenderer {
             // Leave the code block as-is if rendering fails
           }
         }
-        
-        html = tempDiv.innerHTML;
       }
+      
+      // Process TikZ diagrams if available
+      if (window.ProfessionalTikZRenderer && this.tikzLoaded) {
+        const tikzBlocks = tempDiv.querySelectorAll('code.language-tikz');
+        const tikzRenderer = new window.ProfessionalTikZRenderer();
+        
+        for (let i = 0; i < tikzBlocks.length; i++) {
+          const block = tikzBlocks[i];
+          const tikzCode = block.textContent;
+          
+          try {
+            // Render TikZ diagram
+            const renderedSVG = await tikzRenderer.render(tikzCode);
+            
+            // Replace code block with rendered SVG
+            const pre = block.parentElement;
+            const tikzDiv = document.createElement('div');
+            tikzDiv.className = 'tikz-diagram';
+            tikzDiv.style.cssText = 'background: #f7fafc; padding: 1rem; border-radius: 8px; margin: 1.5rem 0; text-align: center; overflow-x: auto;';
+            tikzDiv.innerHTML = renderedSVG;
+            pre.replaceWith(tikzDiv);
+          } catch (err) {
+            console.error('[MarkdownRenderer] TikZ render error:', err);
+            // Leave the code block as-is if rendering fails
+          }
+        }
+      }
+      
+      // Process LaTeX math if available
+      if (window.katex && this.katexLoaded) {
+        // Process inline math: $...$
+        let htmlContent = tempDiv.innerHTML;
+        htmlContent = htmlContent.replace(/\$([^\$]+)\$/g, (match, math) => {
+          try {
+            return katex.renderToString(math, {
+              displayMode: false,
+              throwOnError: false,
+              strict: false
+            });
+          } catch (err) {
+            console.error('[MarkdownRenderer] KaTeX inline render error:', err);
+            return match;
+          }
+        });
+        
+        // Process display math: $$...$$
+        htmlContent = htmlContent.replace(/\$\$([^\$]+)\$\$/g, (match, math) => {
+          try {
+            const rendered = katex.renderToString(math, {
+              displayMode: true,
+              throwOnError: false,
+              strict: false
+            });
+            return `<div style="text-align: center; margin: 1.5rem 0; overflow-x: auto; padding: 1rem; background: #f7fafc; border-radius: 8px;">${rendered}</div>`;
+          } catch (err) {
+            console.error('[MarkdownRenderer] KaTeX display render error:', err);
+            return match;
+          }
+        });
+        
+        tempDiv.innerHTML = htmlContent;
+      }
+      
+      html = tempDiv.innerHTML;
       
       // Wrap in container with styling
       return `
