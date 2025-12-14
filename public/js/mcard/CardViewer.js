@@ -166,6 +166,8 @@ export class CardViewer {
     const editableTypes = ['markdown', 'latex', 'text', 'json', 'clm', 'yaml'];
     const isEditable = editableTypes.includes(renderType);
     
+    console.log(`[CardViewer] renderType: "${renderType}", isEditable: ${isEditable}`);
+    
     // Update viewer actions with Edit button for all editable content
     if (isEditable) {
       viewerActions.innerHTML = `
@@ -643,7 +645,10 @@ export class CardViewer {
     // Only do pattern matching for text content
     if (lowerType.includes('text') && textContent) {
       // Check for LaTeX content marker (highest priority)
-      if (textContent.trim().startsWith('<!-- CONTENT-TYPE: latex -->')) {
+      const hasLatexMarker = textContent.trim().startsWith('<!-- CONTENT-TYPE: latex -->');
+      console.log(`[CardViewer] Checking LaTeX marker: ${hasLatexMarker}, first 50 chars: "${textContent.substring(0, 50)}"`);
+      if (hasLatexMarker) {
+        console.log('[CardViewer] ✓ Detected LaTeX content type');
         return 'latex';
       }
       
