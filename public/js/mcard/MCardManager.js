@@ -939,25 +939,30 @@ Related Cards:
       let updated = 0;
       
       for (const { handle, content } of startupCards) {
-        // Check if handle exists
-        const existingHash = await this.collection.resolveHandle(handle);
-        const newCard = await MCard.create(content);
-        
-        if (existingHash) {
-          // Handle exists - check if content changed
-          if (existingHash !== newCard.hash) {
-            // Content changed - update handle to point to new version
-            await this.collection.updateHandle(handle, newCard);
-            console.log(`[MCardManager] ✅ Updated startup card: @${handle} (${existingHash.substring(0, 8)} → ${newCard.hash.substring(0, 8)})`);
-            updated++;
+        try {
+          console.log(`[MCardManager] Processing startup card: @${handle}`);
+          // Check if handle exists
+          const existingHash = await this.collection.resolveHandle(handle);
+          const newCard = await MCard.create(content);
+          
+          if (existingHash) {
+            // Handle exists - check if content changed
+            if (existingHash !== newCard.hash) {
+              // Content changed - update handle to point to new version
+              await this.collection.updateHandle(handle, newCard);
+              console.log(`[MCardManager] ✅ Updated startup card: @${handle} (${existingHash.substring(0, 8)} → ${newCard.hash.substring(0, 8)})`);
+              updated++;
+            } else {
+              console.log(`[MCardManager] ℹ️ Startup card @${handle} unchanged`);
+            }
           } else {
-            console.log(`[MCardManager] ℹ️ Startup card @${handle} unchanged`);
+            // Handle doesn't exist - create it
+            await this.collection.addWithHandle(newCard, handle);
+            console.log(`[MCardManager] ✅ Created startup card: @${handle}`);
+            created++;
           }
-        } else {
-          // Handle doesn't exist - create it
-          await this.collection.addWithHandle(newCard, handle);
-          console.log(`[MCardManager] ✅ Created startup card: @${handle}`);
-          created++;
+        } catch (error) {
+          console.error(`[MCardManager] ❌ Failed to process startup card @${handle}:`, error);
         }
       }
       
