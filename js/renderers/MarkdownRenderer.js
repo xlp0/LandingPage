@@ -557,9 +557,27 @@ export class MarkdownRenderer extends BaseRenderer {
       // Render markdown
       let html = window.marked.parse(processedContent);
       
-      // Restore math placeholders
+      // Debug: Log if we have placeholders to restore
+      if (mathPlaceholders.length > 0) {
+        console.log(`[MarkdownRenderer] Restoring ${mathPlaceholders.length} math placeholders`);
+      }
+      
+      // Restore math placeholders with global replace to handle all occurrences
       for (const { placeholder, html: mathHtml } of mathPlaceholders) {
-        html = html.replace(placeholder, mathHtml);
+        // Use regex with global flag to replace all occurrences
+        // Also handle cases where markdown might have wrapped it in tags
+        const escapedPlaceholder = placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(escapedPlaceholder, 'g');
+        const beforeLength = html.length;
+        html = html.replace(regex, mathHtml);
+        const afterLength = html.length;
+        
+        if (beforeLength === afterLength) {
+          console.warn(`[MarkdownRenderer] Failed to replace placeholder: ${placeholder}`);
+          console.log('[MarkdownRenderer] HTML snippet:', html.substring(0, 500));
+        } else {
+          console.log(`[MarkdownRenderer] ✓ Replaced ${placeholder}`);
+        }
       }
       
       // Create a temporary container to parse HTML
