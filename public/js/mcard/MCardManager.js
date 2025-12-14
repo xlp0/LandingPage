@@ -372,8 +372,8 @@ Here's a mathematical formula $f(x) = \\int_{0}^{x} t^2 dt = \\frac{x^3}{3}$ fol
 
 \`\`\`mermaid
 graph LR
-    A[Input: x] --> B[Calculate: x³/3]
-    B --> C[Output: f(x)]
+    A["Input: x"] --> B["Calculate: x³/3"]
+    B --> C["Output: result"]
 \`\`\`
 
 ## Related Cards
@@ -732,8 +732,8 @@ Here's a mathematical formula $f(x) = \\int_{0}^{x} t^2 dt = \\frac{x^3}{3}$ fol
 
 \`\`\`mermaid
 graph LR
-    A[Input: x] --> B[Calculate: x³/3]
-    B --> C[Output: f(x)]
+    A["Input: x"] --> B["Calculate: x³/3"]
+    B --> C["Output: result"]
 \`\`\`
 
 ## Related Cards
