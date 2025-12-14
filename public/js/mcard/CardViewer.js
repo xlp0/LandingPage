@@ -163,7 +163,7 @@ export class CardViewer {
     }
     
     // ✅ Determine if content is editable (text-based types only)
-    const editableTypes = ['markdown', 'text', 'json', 'clm', 'yaml'];
+    const editableTypes = ['markdown', 'latex', 'text', 'json', 'clm', 'yaml'];
     const isEditable = editableTypes.includes(renderType);
     
     // Update viewer actions with Edit button for all editable content
