@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaTeX Test</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+        h1 { color: #4fc3f7; }
+        h2 { color: #81c784; margin-top: 30px; }
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #4fc3f7;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            background: #333;
+            border-radius: 4px;
+        }
+        .label {
+            color: #ffb74d;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>LaTeX Rendering Test 📐</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Direct KaTeX Rendering</h2>
+        <div class="label">Inline Math: E = mc²</div>
+        <div class="result" id="test1-inline"></div>
+        
+        <div class="label">Display Math: Integral</div>
+        <div class="result" id="test1-display"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Markdown with LaTeX</h2>
+        <div class="label">Source:</div>
+        <pre style="background: #1a1a1a; padding: 10px; border-radius: 4px;">
+This is inline math: $E = mc^2$ and $\sum_{i=1}^{n} i$
+
+Display math:
+$$
+\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
+$$
+        </pre>
+        
+        <div class="label">Rendered:</div>
+        <div class="result" id="test2-result"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+    <script>
+        console.log('=== LaTeX Test Starting ===');
+        
+        // Test 1: Direct KaTeX
+        try {
+            const inline = katex.renderToString('E = mc^2', {
+                displayMode: false,
+                throwOnError: false
+            });
+            document.getElementById('test1-inline').innerHTML = inline;
+            console.log('✓ Test 1 inline: SUCCESS');
+        } catch (err) {
+            console.error('✗ Test 1 inline: FAILED', err);
+            document.getElementById('test1-inline').textContent = 'ERROR: ' + err.message;
+        }
+        
+        try {
+            const display = katex.renderToString('\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}', {
+                displayMode: true,
+                throwOnError: false
+            });
+            document.getElementById('test1-display').innerHTML = display;
+            console.log('✓ Test 1 display: SUCCESS');
+        } catch (err) {
+            console.error('✗ Test 1 display: FAILED', err);
+            document.getElementById('test1-display').textContent = 'ERROR: ' + err.message;
+        }
+        
+        // Test 2: Markdown + LaTeX (same approach as MarkdownRenderer)
+        try {
+            let content = `This is inline math: $E = mc^2$ and $\\sum_{i=1}^{n} i$
+
+Display math:
+$$
+\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}
+$$`;
+            
+            console.log('Original content:', content);
+            
+            // Process LaTeX BEFORE markdown
+            const mathPlaceholders = [];
+            let mathIndex = 0;
+            
+            // Process display math first ($$...$$)
+            content = content.replace(/\$\$([^\$]+)\$\$/g, (match, math) => {
+                console.log('Found display math:', math);
+                try {
+                    const rendered = katex.renderToString(math, {
+                        displayMode: true,
+                        throwOnError: false,
+                        strict: false
+                    });
+                    const placeholder = `___MATH_DISPLAY_${mathIndex}___`;
+                    mathPlaceholders.push({
+                        placeholder,
+                        html: `<div class="math-display" style="text-align: center; margin: 1.5rem 0; overflow-x: auto; padding: 1rem; background: #1a1a1a; border-radius: 8px;">${rendered}</div>`
+                    });
+                    mathIndex++;
+                    console.log('Created placeholder:', placeholder);
+                    return placeholder;
+                } catch (err) {
+                    console.error('KaTeX display error:', err);
+                    return match;
+                }
+            });
+            
+            // Process inline math ($...$)
+            content = content.replace(/\$([^\$\n]+)\$/g, (match, math) => {
+                console.log('Found inline math:', math);
+                try {
+                    const rendered = katex.renderToString(math, {
+                        displayMode: false,
+                        throwOnError: false,
+                        strict: false
+                    });
+                    const placeholder = `___MATH_INLINE_${mathIndex}___`;
+                    mathPlaceholders.push({
+                        placeholder,
+                        html: `<span class="math-inline">${rendered}</span>`
+                    });
+                    mathIndex++;
+                    console.log('Created placeholder:', placeholder);
+                    return placeholder;
+                } catch (err) {
+                    console.error('KaTeX inline error:', err);
+                    return match;
+                }
+            });
+            
+            console.log('Content after LaTeX processing:', content);
+            console.log('Placeholders:', mathPlaceholders);
+            
+            // Render markdown
+            let html = marked.parse(content);
+            console.log('HTML after markdown:', html);
+            
+            // Restore placeholders
+            for (const { placeholder, html: mathHtml } of mathPlaceholders) {
+                const escapedPlaceholder = placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(escapedPlaceholder, 'g');
+                const beforeLength = html.length;
+                html = html.replace(regex, mathHtml);
+                const afterLength = html.length;
+                
+                if (beforeLength === afterLength) {
+                    console.warn('Failed to replace:', placeholder);
+                } else {
+                    console.log('✓ Replaced:', placeholder);
+                }
+            }
+            
+            console.log('Final HTML:', html);
+            document.getElementById('test2-result').innerHTML = html;
+            console.log('✓ Test 2: SUCCESS');
+        } catch (err) {
+            console.error('✗ Test 2: FAILED', err);
+            document.getElementById('test2-result').textContent = 'ERROR: ' + err.message;
+        }
+        
+        console.log('=== LaTeX Test Complete ===');
+    </script>
+</body>
+</html>
