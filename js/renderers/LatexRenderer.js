@@ -140,6 +140,25 @@ export class LatexRenderer {
       console.log('[LatexRenderer] ✓ Render complete');
       
       return `
+        <style>
+          .latex-content .katex,
+          .latex-content .katex * {
+            color: #e0e0e0 !important;
+          }
+          .latex-content .katex .mord,
+          .latex-content .katex .mrel,
+          .latex-content .katex .mop,
+          .latex-content .katex .mbin,
+          .latex-content .katex .mopen,
+          .latex-content .katex .mclose,
+          .latex-content .katex .mpunct {
+            color: #e0e0e0 !important;
+          }
+          .latex-content .latex-display {
+            background: #2a2a2a !important;
+            border: 1px solid #444 !important;
+          }
+        </style>
         <div class="latex-content" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #e0e0e0;">
           ${html}
         </div>
