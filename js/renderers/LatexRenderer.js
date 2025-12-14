@@ -140,7 +140,7 @@ export class LatexRenderer {
       console.log('[LatexRenderer] ✓ Render complete');
       
       return `
-        <div class="latex-content" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #2d3748;">
+        <div class="latex-content" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #e0e0e0;">
           ${html}
         </div>
       `;
