@@ -502,11 +502,65 @@ export class MarkdownRenderer extends BaseRenderer {
         processedContent = this.processHandles(content, options);
       }
       
+      // Process LaTeX math BEFORE markdown to prevent markdown from interfering
+      // Replace with placeholders that markdown won't touch
+      const mathPlaceholders = [];
+      let mathIndex = 0;
+      
+      if (window.katex && this.katexLoaded) {
+        // Process display math first ($$...$$)
+        processedContent = processedContent.replace(/\$\$([^\$]+)\$\$/g, (match, math) => {
+          try {
+            const rendered = katex.renderToString(math, {
+              displayMode: true,
+              throwOnError: false,
+              strict: false
+            });
+            const placeholder = `___MATH_DISPLAY_${mathIndex}___`;
+            mathPlaceholders.push({
+              placeholder,
+              html: `<div class="math-display" style="text-align: center; margin: 1.5rem 0; overflow-x: auto; padding: 1rem; background: #f7fafc; border-radius: 8px;">${rendered}</div>`
+            });
+            mathIndex++;
+            return placeholder;
+          } catch (err) {
+            console.error('[MarkdownRenderer] KaTeX display render error:', err);
+            return match;
+          }
+        });
+        
+        // Process inline math ($...$)
+        processedContent = processedContent.replace(/\$([^\$\n]+)\$/g, (match, math) => {
+          try {
+            const rendered = katex.renderToString(math, {
+              displayMode: false,
+              throwOnError: false,
+              strict: false
+            });
+            const placeholder = `___MATH_INLINE_${mathIndex}___`;
+            mathPlaceholders.push({
+              placeholder,
+              html: `<span class="math-inline">${rendered}</span>`
+            });
+            mathIndex++;
+            return placeholder;
+          } catch (err) {
+            console.error('[MarkdownRenderer] KaTeX inline render error:', err);
+            return match;
+          }
+        });
+      }
+      
       // Configure marked
       this.configureMarked(options);
       
       // Render markdown
       let html = window.marked.parse(processedContent);
+      
+      // Restore math placeholders
+      for (const { placeholder, html: mathHtml } of mathPlaceholders) {
+        html = html.replace(placeholder, mathHtml);
+      }
       
       // Create a temporary container to parse HTML
       const tempDiv = document.createElement('div');
@@ -564,41 +618,6 @@ export class MarkdownRenderer extends BaseRenderer {
             // Leave the code block as-is if rendering fails
           }
         }
-      }
-      
-      // Process LaTeX math if available
-      if (window.katex && this.katexLoaded) {
-        // Process inline math: $...$
-        let htmlContent = tempDiv.innerHTML;
-        htmlContent = htmlContent.replace(/\$([^\$]+)\$/g, (match, math) => {
-          try {
-            return katex.renderToString(math, {
-              displayMode: false,
-              throwOnError: false,
-              strict: false
-            });
-          } catch (err) {
-            console.error('[MarkdownRenderer] KaTeX inline render error:', err);
-            return match;
-          }
-        });
-        
-        // Process display math: $$...$$
-        htmlContent = htmlContent.replace(/\$\$([^\$]+)\$\$/g, (match, math) => {
-          try {
-            const rendered = katex.renderToString(math, {
-              displayMode: true,
-              throwOnError: false,
-              strict: false
-            });
-            return `<div style="text-align: center; margin: 1.5rem 0; overflow-x: auto; padding: 1rem; background: #f7fafc; border-radius: 8px;">${rendered}</div>`;
-          } catch (err) {
-            console.error('[MarkdownRenderer] KaTeX display render error:', err);
-            return match;
-          }
-        });
-        
-        tempDiv.innerHTML = htmlContent;
       }
       
       html = tempDiv.innerHTML;
