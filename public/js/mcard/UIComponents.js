@@ -47,7 +47,7 @@ export class UIComponents {
     typeList.innerHTML = types.map(type => `
       <div class="type-item ${type.id === currentType ? 'active' : ''}" onclick="selectType('${type.id}')" title="${type.name}">
         <div class="type-item-content">
-          <span class="type-icon"><i data-lucide="${type.icon}" style="width: 20px; height: 20px;"></i></span>
+          <span class="type-icon" title="${type.name}"><i data-lucide="${type.icon}" style="width: 20px; height: 20px;"></i></span>
           <span class="type-name">${type.name}</span>
         </div>
         <span class="type-count">${type.count}</span>
