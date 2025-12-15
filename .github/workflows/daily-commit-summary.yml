@@ -213,8 +213,10 @@ jobs:
           import json
           import os
           from datetime import datetime, timedelta
+          from zoneinfo import ZoneInfo
           from google.oauth2 import service_account
           from googleapiclient.discovery import build
+          from googleapiclient.errors import HttpError
           
           # Load credentials from secret
           credentials_json = os.environ.get('GOOGLE_CREDENTIALS')
@@ -234,15 +236,39 @@ jobs:
           service = build('calendar', 'v3', credentials=credentials)
           
           # Get calendar ID
-          calendar_id = os.environ.get('GOOGLE_CALENDAR_ID', 'primary')
+          calendar_id = os.environ.get('GOOGLE_CALENDAR_ID', 'primary').strip()
+
+          # Preflight: verify the service account can see/access the target calendar
+          try:
+              calendar_list = service.calendarList().list().execute()
+              visible_ids = [item.get('id') for item in (calendar_list.get('items') or []) if item.get('id')]
+              if calendar_id not in visible_ids:
+                  print('ERROR: Calendar ID is not visible to this service account.')
+                  print(f'Calendar ID used: {calendar_id}')
+                  print('You must share the calendar with the service account email (client_email) and grant "Make changes to events".')
+                  print('Calendars currently visible to the service account:')
+                  for cid in visible_ids[:50]:
+                      print(f'- {cid}')
+                  if len(visible_ids) > 50:
+                      print(f'... and {len(visible_ids) - 50} more')
+                  raise SystemExit(1)
+
+              service.calendars().get(calendarId=calendar_id).execute()
+          except HttpError as e:
+              print('ERROR: Failed to access the target calendar.')
+              print(f'Calendar ID used: {calendar_id}')
+              print(f'HTTP error: {e}')
+              print('Most common cause: the calendar is not shared with the service account (or wrong calendar ID).')
+              raise SystemExit(1)
           
           # Load summary
           with open('summary.json', 'r') as f:
               summary_data = json.load(f)
           
           # Get yesterday's date for the event
-          yesterday = datetime.now() - timedelta(days=1)
-          event_date = yesterday.strftime('%Y-%m-%d')
+          tz = ZoneInfo('Asia/Makassar')
+          yesterday_date = datetime.now(tz).date() - timedelta(days=1)
+          event_date = yesterday_date.strftime('%Y-%m-%d')
           
           # Create event
           event = {
@@ -274,6 +300,10 @@ jobs:
               print(f"Event Link: {created_event.get('htmlLink', 'N/A')}")
               print(f"Summary: {created_event['summary']}")
               print(f"Date: {event_date}")
+          except HttpError as e:
+              print(f"❌ Error creating event (HttpError): {e}")
+              print("If you see 404 Not Found, it usually means the calendar is not shared with the service account (or Calendar ID is wrong).")
+              exit(1)
           except Exception as e:
               print(f"❌ Error creating event: {e}")
               exit(1)
