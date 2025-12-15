@@ -1,0 +1,281 @@
+name: Daily Commit Summary to Google Calendar
+
+on:
+  schedule:
+    # Runs at 06:00 WITA (22:00 UTC previous day)
+    # WITA = UTC+8, so 06:00 WITA = 22:00 UTC
+    - cron: '0 22 * * *'
+  workflow_dispatch: # Allow manual trigger for testing
+
+jobs:
+  summarize-commits:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for commit analysis
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install Python dependencies
+        run: |
+          pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client requests
+      
+      - name: Setup Ollama
+        uses: ai-action/setup-ollama@v1
+        with:
+          version: latest
+      
+      - name: Pull Ollama llama3.2 model
+        run: |
+          echo "Pulling llama3.2 model..."
+          ollama pull llama3.2
+          echo "Model pulled successfully"
+      
+      - name: Cache Ollama models
+        uses: actions/cache@v4
+        with:
+          path: ~/.ollama
+          key: ${{ runner.os }}-ollama-llama3.2
+      
+      - name: Get yesterday's commits
+        id: get-commits
+        run: |
+          # Calculate yesterday's date in WITA timezone
+          # When running at 06:00 WITA, we want commits from the previous day
+          YESTERDAY=$(TZ='Asia/Makassar' date -d 'yesterday' '+%Y-%m-%d')
+          TODAY=$(TZ='Asia/Makassar' date '+%Y-%m-%d')
+          
+          echo "Collecting commits from: $YESTERDAY"
+          echo "yesterday=$YESTERDAY" >> $GITHUB_OUTPUT
+          echo "today=$TODAY" >> $GITHUB_OUTPUT
+          
+          # Get commits from yesterday in WITA timezone
+          git log --since="$YESTERDAY 00:00:00" --until="$YESTERDAY 23:59:59" \
+            --pretty=format:"%H|%an|%ae|%ad|%s|%b" --date=iso > commits.txt
+          
+          COMMIT_COUNT=$(wc -l < commits.txt)
+          echo "commit_count=$COMMIT_COUNT" >> $GITHUB_OUTPUT
+          
+          if [ $COMMIT_COUNT -eq 0 ]; then
+            echo "No commits found for yesterday ($YESTERDAY)"
+            echo "has_commits=false" >> $GITHUB_OUTPUT
+          else
+            echo "Found $COMMIT_COUNT commits for yesterday"
+            echo "has_commits=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Process commits with AI
+        id: ai-summary
+        if: steps.get-commits.outputs.has_commits == 'true'
+        run: |
+          python3 << 'EOF'
+          import subprocess
+          import json
+          import os
+          
+          # Read commits
+          with open('commits.txt', 'r') as f:
+              commits = f.readlines()
+          
+          # Format commits for AI processing
+          commit_data = []
+          for commit in commits:
+              if commit.strip():
+                  parts = commit.strip().split('|')
+                  if len(parts) >= 5:
+                      commit_data.append({
+                          'hash': parts[0][:7],
+                          'author': parts[1],
+                          'email': parts[2],
+                          'date': parts[3],
+                          'subject': parts[4],
+                          'body': parts[5] if len(parts) > 5 else ''
+                      })
+          
+          # Create prompt for AI
+          prompt = f"""You are a technical project manager analyzing daily development work. 
+          
+          Analyze the following {len(commit_data)} commits from yesterday and create a concise, professional summary for a calendar event.
+          
+          Commits:
+          """
+          
+          for i, commit in enumerate(commit_data, 1):
+              prompt += f"\n{i}. [{commit['hash']}] {commit['subject']}"
+              if commit['body']:
+                  prompt += f"\n   Details: {commit['body'][:200]}"
+              prompt += f"\n   Author: {commit['author']}"
+          
+          prompt += """
+          
+          Please provide:
+          1. A brief title (max 100 characters) summarizing the day's work
+          2. A detailed description (max 500 characters) highlighting:
+             - Main features/changes implemented
+             - Bug fixes or improvements
+             - Key technical decisions
+             - Overall progress assessment
+          
+          Format your response as JSON:
+          {
+            "title": "Brief summary title",
+            "description": "Detailed description of the day's work"
+          }
+          
+          Keep it professional, concise, and actionable. Focus on business value and technical achievements.
+          """
+          
+          # Save prompt to file for Ollama
+          with open('prompt.txt', 'w') as f:
+              f.write(prompt)
+          
+          print("Sending prompt to Ollama llama3.2...")
+          
+          # Call Ollama with the prompt
+          result = subprocess.run(
+              ['ollama', 'run', 'llama3.2'],
+              input=prompt,
+              capture_output=True,
+              text=True,
+              timeout=120
+          )
+          
+          ai_response = result.stdout.strip()
+          print(f"AI Response:\n{ai_response}")
+          
+          # Try to extract JSON from response
+          try:
+              # Find JSON in response
+              start_idx = ai_response.find('{')
+              end_idx = ai_response.rfind('}') + 1
+              
+              if start_idx != -1 and end_idx > start_idx:
+                  json_str = ai_response[start_idx:end_idx]
+                  summary_data = json.loads(json_str)
+              else:
+                  # Fallback if JSON not found
+                  summary_data = {
+                      'title': f'Development Summary - {len(commit_data)} commits',
+                      'description': ai_response[:500]
+                  }
+          except json.JSONDecodeError:
+              # Fallback summary
+              summary_data = {
+                  'title': f'Development Summary - {len(commit_data)} commits',
+                  'description': f'Processed {len(commit_data)} commits. AI response: {ai_response[:400]}'
+              }
+          
+          # Save summary to file
+          with open('summary.json', 'w') as f:
+              json.dump(summary_data, f, indent=2)
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"title={summary_data['title']}\n")
+              # Escape newlines for GitHub Actions
+              description = summary_data['description'].replace('\n', '\\n')
+              f.write(f"description={description}\n")
+          
+          print(f"\nGenerated Summary:")
+          print(f"Title: {summary_data['title']}")
+          print(f"Description: {summary_data['description']}")
+          EOF
+      
+      - name: Create Google Calendar Event
+        if: steps.get-commits.outputs.has_commits == 'true'
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
+          GOOGLE_CALENDAR_ID: ${{ secrets.GOOGLE_CALENDAR_ID }}
+        run: |
+          python3 << 'EOF'
+          import json
+          import os
+          from datetime import datetime, timedelta
+          from google.oauth2 import service_account
+          from googleapiclient.discovery import build
+          
+          # Load credentials from secret
+          credentials_json = os.environ.get('GOOGLE_CREDENTIALS')
+          if not credentials_json:
+              print("ERROR: GOOGLE_CREDENTIALS secret not set")
+              exit(1)
+          
+          credentials_info = json.loads(credentials_json)
+          
+          # Create credentials
+          SCOPES = ['https://www.googleapis.com/auth/calendar']
+          credentials = service_account.Credentials.from_service_account_info(
+              credentials_info, scopes=SCOPES
+          )
+          
+          # Build Calendar API service
+          service = build('calendar', 'v3', credentials=credentials)
+          
+          # Get calendar ID
+          calendar_id = os.environ.get('GOOGLE_CALENDAR_ID', 'primary')
+          
+          # Load summary
+          with open('summary.json', 'r') as f:
+              summary_data = json.load(f)
+          
+          # Get yesterday's date for the event
+          yesterday = datetime.now() - timedelta(days=1)
+          event_date = yesterday.strftime('%Y-%m-%d')
+          
+          # Create event
+          event = {
+              'summary': f"📝 {summary_data['title']}",
+              'description': f"{summary_data['description']}\n\n---\nGenerated by GitHub Actions\nRepository: {os.environ.get('GITHUB_REPOSITORY', 'N/A')}\nWorkflow: Daily Commit Summary",
+              'start': {
+                  'date': event_date,
+                  'timeZone': 'Asia/Makassar',
+              },
+              'end': {
+                  'date': event_date,
+                  'timeZone': 'Asia/Makassar',
+              },
+              'colorId': '9',  # Blue color
+              'reminders': {
+                  'useDefault': False,
+              },
+          }
+          
+          # Insert event
+          try:
+              created_event = service.events().insert(
+                  calendarId=calendar_id,
+                  body=event
+              ).execute()
+              
+              print(f"✅ Event created successfully!")
+              print(f"Event ID: {created_event['id']}")
+              print(f"Event Link: {created_event.get('htmlLink', 'N/A')}")
+              print(f"Summary: {created_event['summary']}")
+              print(f"Date: {event_date}")
+          except Exception as e:
+              print(f"❌ Error creating event: {e}")
+              exit(1)
+          EOF
+      
+      - name: No commits notification
+        if: steps.get-commits.outputs.has_commits == 'false'
+        run: |
+          echo "ℹ️ No commits found for yesterday. Skipping calendar event creation."
+          echo "This is normal if no development work was done yesterday."
+      
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: commit-summary-${{ steps.get-commits.outputs.yesterday }}
+          path: |
+            commits.txt
+            summary.json
+            prompt.txt
+          retention-days: 30
