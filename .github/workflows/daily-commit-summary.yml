@@ -25,23 +25,39 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client requests
-      
-      - name: Setup Ollama
-        uses: ai-action/setup-ollama@v1
-        with:
-          version: latest
-      
-      - name: Pull Ollama llama3.2 model
+
+      - name: Install Ollama
         run: |
-          echo "Pulling llama3.2 model..."
-          ollama pull llama3.2
-          echo "Model pulled successfully"
-      
+          curl -fsSL https://ollama.com/install.sh | sh
+          ollama --version
+
       - name: Cache Ollama models
         uses: actions/cache@v4
         with:
           path: ~/.ollama
           key: ${{ runner.os }}-ollama-llama3.2
+          restore-keys: |
+            ${{ runner.os }}-ollama-
+
+      - name: Start Ollama daemon
+        run: |
+          nohup ollama serve > /tmp/ollama-serve.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:11434/api/tags > /dev/null; then
+              echo "Ollama is up"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Ollama failed to start"
+          cat /tmp/ollama-serve.log || true
+          exit 1
+
+      - name: Pull Ollama llama3.2 model
+        run: |
+          echo "Pulling llama3.2 model..."
+          ollama pull llama3.2
+          echo "Model pulled successfully"
       
       - name: Get yesterday's commits
         id: get-commits
