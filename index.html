@@ -1208,6 +1208,24 @@
               }
             });
 
+            // Add MCard Manager link at the bottom
+            const mcardManagerItem = document.createElement('div');
+            mcardManagerItem.className = 'type-item';
+            mcardManagerItem.style.marginTop = '12px';
+            mcardManagerItem.style.borderTop = '1px solid rgba(255, 255, 255, 0.1)';
+            mcardManagerItem.style.paddingTop = '16px';
+            mcardManagerItem.innerHTML = `
+              <div class="type-item-content">
+                <span class="type-icon">📝</span>
+                <span class="type-name">MCard Manager</span>
+              </div>
+              <span style="font-size: 18px;">→</span>
+            `;
+            mcardManagerItem.onclick = () => {
+              window.location.href = '/mcard-manager.html';
+            };
+            typesList.appendChild(mcardManagerItem);
+
             // Select "All MCards" by default
             showComponentsForType(types[0]);
 
