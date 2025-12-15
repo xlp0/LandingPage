@@ -225,6 +225,10 @@ jobs:
               exit(1)
           
           credentials_info = json.loads(credentials_json)
+
+          service_account_email = credentials_info.get('client_email')
+          if service_account_email:
+              print(f"Service account client_email: {service_account_email}")
           
           # Create credentials
           SCOPES = ['https://www.googleapis.com/auth/calendar']
@@ -240,8 +244,17 @@ jobs:
 
           # Preflight: verify the service account can see/access the target calendar
           try:
-              calendar_list = service.calendarList().list().execute()
-              visible_ids = [item.get('id') for item in (calendar_list.get('items') or []) if item.get('id')]
+              visible_ids = []
+              page_token = None
+              while True:
+                  calendar_list = service.calendarList().list(pageToken=page_token).execute()
+                  visible_ids.extend(
+                      [item.get('id') for item in (calendar_list.get('items') or []) if item.get('id')]
+                  )
+                  page_token = calendar_list.get('nextPageToken')
+                  if not page_token:
+                      break
+
               if calendar_id not in visible_ids:
                   print('ERROR: Calendar ID is not visible to this service account.')
                   print(f'Calendar ID used: {calendar_id}')
