@@ -177,7 +177,7 @@ jobs:
               else:
                   # Fallback if JSON not found
                   summary_data = {
-                      'title': f'Development Summary - {len(commit_data)} commits',
+                      'title': f'Daily Report - {len(commit_data)} commits',
                       'description': ai_response[:500]
                   }
           except json.JSONDecodeError:
