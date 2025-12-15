@@ -2002,4 +2002,119 @@ Try creating a card with some markdown!"
       this.handleSearch(query);
     }
   }
+
+  /**
+   * Apply search filters and refresh results
+   */
+  async applyFiltersAndSearch() {
+    const searchBox = document.getElementById('searchBox');
+    const query = searchBox ? searchBox.value : '';
+    
+    // Get current cards for the selected type
+    let cards = await this.getCardsForType(this.currentType);
+    
+    // Apply filters if they exist
+    if (window.searchFilters) {
+      const filters = window.searchFilters;
+      
+      // Filter by handles
+      if (filters.withHandles) {
+        const cardsWithHandles = new Set();
+        try {
+          const db = this.collection.engine.db;
+          const tx = db.transaction('handles', 'readonly');
+          const store = tx.objectStore('handles');
+          const allHandles = await store.getAll();
+          allHandles.forEach(h => cardsWithHandles.add(h.currentHash));
+        } catch (e) {
+          console.warn('[MCardManager] Failed to get handles:', e);
+        }
+        cards = cards.filter(card => cardsWithHandles.has(card.hash));
+      }
+      
+      // Filter by capital letters (content starts with capital)
+      if (filters.capital) {
+        cards = cards.filter(card => {
+          const content = card.getContentAsText().trim();
+          return content.length > 0 && content[0] === content[0].toUpperCase() && content[0] !== content[0].toLowerCase();
+        });
+      }
+      
+      // Filter by markdown
+      if (filters.markdown) {
+        cards = cards.filter(card => {
+          const contentType = ContentTypeInterpreter.detect(card.getContent());
+          return contentType.toLowerCase().includes('markdown') || 
+                 card.getContentAsText().includes('# ') ||
+                 card.getContentAsText().includes('## ');
+        });
+      }
+      
+      // Filter by images
+      if (filters.images) {
+        cards = cards.filter(card => {
+          const contentType = ContentTypeInterpreter.detect(card.getContent());
+          return contentType.toLowerCase().includes('image');
+        });
+      }
+      
+      // Filter by videos
+      if (filters.videos) {
+        cards = cards.filter(card => {
+          const contentType = ContentTypeInterpreter.detect(card.getContent());
+          return contentType.toLowerCase().includes('video');
+        });
+      }
+      
+      // Apply sorting
+      if (filters.sortBy === 'oldest') {
+        cards.sort((a, b) => a.hash.localeCompare(b.hash));
+      } else if (filters.sortBy === 'newest') {
+        cards.sort((a, b) => b.hash.localeCompare(a.hash));
+      } else if (filters.sortBy === 'name') {
+        cards.sort((a, b) => {
+          const aText = a.getContentAsText().substring(0, 50);
+          const bText = b.getContentAsText().substring(0, 50);
+          return aText.localeCompare(bText);
+        });
+      }
+    }
+    
+    // Apply text search if query exists
+    if (query.trim()) {
+      const q = query.toLowerCase();
+      cards = cards.filter(card => {
+        const hash = card.hash.toLowerCase();
+        const content = card.getContentAsText().toLowerCase();
+        return hash.includes(q) || content.includes(q);
+      });
+    }
+    
+    // Render filtered cards
+    await UIComponents.renderCards(cards, this.collection);
+  }
+
+  /**
+   * Get cards for a specific type
+   * @param {string} typeId
+   * @returns {Promise<Array>}
+   */
+  async getCardsForType(typeId) {
+    const categories = await this.categorizeCards(this.allCards);
+    
+    switch (typeId) {
+      case 'all': return categories.all || [];
+      case 'with-handles': return categories.withHandles || [];
+      case 'clm': return categories.clm || [];
+      case 'markdown': return categories.markdown || [];
+      case 'text': return categories.text || [];
+      case 'images': return categories.images || [];
+      case 'videos': return categories.videos || [];
+      case 'audio': return categories.audio || [];
+      case 'documents': return categories.documents || [];
+      case 'archives': return categories.archives || [];
+      case 'other': return categories.other || [];
+      default: return categories.all || [];
+    }
+  }
 }

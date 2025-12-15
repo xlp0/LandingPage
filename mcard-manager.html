@@ -111,7 +111,58 @@
           <h3 id="columnTitle">All MCards</h3>
           <div style="position: relative; margin-top: 8px;">
             <i data-lucide="search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #999;"></i>
-            <input type="text" class="search-box" placeholder="Search..." id="searchBox" style="width: 100%; padding-left: 40px;">
+            <input type="text" class="search-box" placeholder="Search files or @handle..." id="searchBox" style="width: 100%; padding-left: 40px; padding-right: 40px;">
+            <button class="filter-toggle-btn" id="filterToggleBtn" onclick="toggleSearchFilters()" title="Search filters">
+              <i data-lucide="filter" style="width: 16px; height: 16px;"></i>
+            </button>
+          </div>
+          <!-- Search Filters Dropdown -->
+          <div class="search-filters" id="searchFilters" style="display: none;">
+            <div class="filter-section">
+              <label class="filter-label">Filter by:</label>
+              <div class="filter-options">
+                <label class="filter-option">
+                  <input type="checkbox" id="filterWithHandles" onchange="applySearchFilters()">
+                  <span>With Handles Only</span>
+                </label>
+                <label class="filter-option">
+                  <input type="checkbox" id="filterCapital" onchange="applySearchFilters()">
+                  <span>Capital Letters Only</span>
+                </label>
+                <label class="filter-option">
+                  <input type="checkbox" id="filterMarkdown" onchange="applySearchFilters()">
+                  <span>Markdown Files</span>
+                </label>
+                <label class="filter-option">
+                  <input type="checkbox" id="filterImages" onchange="applySearchFilters()">
+                  <span>Images Only</span>
+                </label>
+                <label class="filter-option">
+                  <input type="checkbox" id="filterVideos" onchange="applySearchFilters()">
+                  <span>Videos Only</span>
+                </label>
+              </div>
+            </div>
+            <div class="filter-section">
+              <label class="filter-label">Sort by:</label>
+              <div class="filter-options">
+                <label class="filter-option">
+                  <input type="radio" name="sortBy" value="newest" checked onchange="applySearchFilters()">
+                  <span>Newest First</span>
+                </label>
+                <label class="filter-option">
+                  <input type="radio" name="sortBy" value="oldest" onchange="applySearchFilters()">
+                  <span>Oldest First</span>
+                </label>
+                <label class="filter-option">
+                  <input type="radio" name="sortBy" value="name" onchange="applySearchFilters()">
+                  <span>Name (A-Z)</span>
+                </label>
+              </div>
+            </div>
+            <div class="filter-actions">
+              <button class="filter-clear-btn" onclick="clearSearchFilters()">Clear All</button>
+            </div>
           </div>
         </div>
         <div class="mcard-list" id="mcardList">
@@ -296,6 +347,84 @@
         setTimeout(() => lucide.createIcons(), 100);
       }
     }
+
+    // Search filter functionality
+    function toggleSearchFilters() {
+      const filtersPanel = document.getElementById('searchFilters');
+      const toggleBtn = document.getElementById('filterToggleBtn');
+      
+      if (filtersPanel.style.display === 'none') {
+        filtersPanel.style.display = 'block';
+        toggleBtn.classList.add('active');
+      } else {
+        filtersPanel.style.display = 'none';
+        toggleBtn.classList.remove('active');
+      }
+      
+      // Re-initialize Lucide icons
+      if (window.lucide) {
+        setTimeout(() => lucide.createIcons(), 100);
+      }
+    }
+
+    function applySearchFilters() {
+      // Get filter values
+      const withHandles = document.getElementById('filterWithHandles').checked;
+      const capital = document.getElementById('filterCapital').checked;
+      const markdown = document.getElementById('filterMarkdown').checked;
+      const images = document.getElementById('filterImages').checked;
+      const videos = document.getElementById('filterVideos').checked;
+      const sortBy = document.querySelector('input[name="sortBy"]:checked').value;
+      
+      // Store filters in window object for MCardManager to access
+      window.searchFilters = {
+        withHandles,
+        capital,
+        markdown,
+        images,
+        videos,
+        sortBy
+      };
+      
+      // Trigger search update
+      if (window.mcardManager) {
+        window.mcardManager.applyFiltersAndSearch();
+      }
+    }
+
+    function clearSearchFilters() {
+      // Uncheck all checkboxes
+      document.getElementById('filterWithHandles').checked = false;
+      document.getElementById('filterCapital').checked = false;
+      document.getElementById('filterMarkdown').checked = false;
+      document.getElementById('filterImages').checked = false;
+      document.getElementById('filterVideos').checked = false;
+      
+      // Reset sort to newest
+      document.querySelector('input[name="sortBy"][value="newest"]').checked = true;
+      
+      // Clear filters and refresh
+      window.searchFilters = null;
+      if (window.mcardManager) {
+        window.mcardManager.applyFiltersAndSearch();
+      }
+    }
+
+    // Close filters when clicking outside
+    document.addEventListener('click', function(event) {
+      const filtersPanel = document.getElementById('searchFilters');
+      const toggleBtn = document.getElementById('filterToggleBtn');
+      const searchBox = document.getElementById('searchBox');
+      
+      if (filtersPanel && toggleBtn && searchBox) {
+        if (!filtersPanel.contains(event.target) && 
+            !toggleBtn.contains(event.target) && 
+            !searchBox.contains(event.target)) {
+          filtersPanel.style.display = 'none';
+          toggleBtn.classList.remove('active');
+        }
+      }
+    });
   </script>
 
   <!-- MCard Manager JavaScript (Modular Version) -->
