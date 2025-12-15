@@ -183,7 +183,7 @@ jobs:
           except json.JSONDecodeError:
               # Fallback summary
               summary_data = {
-                  'title': f'Development Summary - {len(commit_data)} commits',
+                  'title': f'Daily Report - {len(commit_data)} commits',
                   'description': f'Processed {len(commit_data)} commits. AI response: {ai_response[:400]}'
               }
           
