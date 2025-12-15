@@ -280,6 +280,7 @@ body {
   border-bottom: 1px solid #3e3e42;
   background: #252526;
   flex-shrink: 0;
+  position: relative;
 }
 
 .column-header h3 {

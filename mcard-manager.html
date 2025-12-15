@@ -353,12 +353,16 @@
       const filtersPanel = document.getElementById('searchFilters');
       const toggleBtn = document.getElementById('filterToggleBtn');
       
-      if (filtersPanel.style.display === 'none') {
+      console.log('[Filter] Toggle clicked, current display:', filtersPanel.style.display);
+      
+      if (filtersPanel.style.display === 'none' || filtersPanel.style.display === '') {
         filtersPanel.style.display = 'block';
         toggleBtn.classList.add('active');
+        console.log('[Filter] Showing filters panel');
       } else {
         filtersPanel.style.display = 'none';
         toggleBtn.classList.remove('active');
+        console.log('[Filter] Hiding filters panel');
       }
       
       // Re-initialize Lucide icons
