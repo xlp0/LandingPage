@@ -107,6 +107,36 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
+  transition: width 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+.sidebar.collapsed .sidebar-header h3 {
+  display: none;
+}
+
+.sidebar.collapsed .type-name {
+  display: none;
+}
+
+.sidebar.collapsed .type-count {
+  display: none;
+}
+
+.sidebar.collapsed .type-item {
+  justify-content: center;
+  padding: 10px;
+}
+
+.sidebar.collapsed .type-item-content {
+  gap: 0;
+}
+
+.sidebar.collapsed .collapse-btn i {
+  transform: rotate(180deg);
 }
 
 .middle-column {
@@ -164,8 +194,30 @@ body {
   color: #cccccc;
   text-transform: uppercase;
   letter-spacing: 1px;
-  margin-bottom: 12px;
+  margin: 0;
   font-weight: 600;
+}
+
+.collapse-btn {
+  background: transparent;
+  border: none;
+  color: #858585;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.collapse-btn:hover {
+  background: #3e3e42;
+  color: #cccccc;
+}
+
+.collapse-btn i {
+  transition: transform 0.3s ease;
 }
 
 .type-list {

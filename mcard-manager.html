@@ -87,9 +87,14 @@
 
     <div class="main-content">
       <!-- Left Sidebar: File Types -->
-      <div class="sidebar">
+      <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-          <h3>Card Types</h3>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h3>Card Types</h3>
+            <button class="collapse-btn" id="collapseBtn" onclick="toggleSidebar()" title="Collapse sidebar">
+              <i data-lucide="chevrons-left" style="width: 16px; height: 16px;"></i>
+            </button>
+          </div>
         </div>
         <div class="type-list" id="typeList">
           <!-- Card types will be populated here -->
@@ -279,6 +284,19 @@
     <span id="toastIcon">✓</span>
     <span id="toastMessage">Success!</span>
   </div>
+
+  <!-- Sidebar collapse functionality -->
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('collapsed');
+      
+      // Re-initialize Lucide icons after DOM change
+      if (window.lucide) {
+        setTimeout(() => lucide.createIcons(), 100);
+      }
+    }
+  </script>
 
   <!-- MCard Manager JavaScript (Modular Version) -->
   <script type="module" src="/js/mcard-manager-new.js"></script>
