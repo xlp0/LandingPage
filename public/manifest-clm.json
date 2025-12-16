@@ -1,0 +1,40 @@
+{
+  "name": "PKC CLM Dashboard",
+  "short_name": "CLM Dashboard",
+  "description": "Component Lifecycle Management Dashboard for PKC - Manage components, view documentation, and collaborate",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f0c29",
+  "theme_color": "#0f0c29",
+  "orientation": "any",
+  "icons": [],
+  "categories": ["productivity", "utilities", "business"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "MCard Manager",
+      "short_name": "MCards",
+      "description": "Open MCard Manager",
+      "url": "/mcard-manager.html",
+      "icons": []
+    },
+    {
+      "name": "PKC Viewer",
+      "short_name": "Viewer",
+      "description": "Open PKC Document Viewer",
+      "url": "/pkc-viewer.html",
+      "icons": []
+    }
+  ],
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}
