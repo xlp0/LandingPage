@@ -139,7 +139,13 @@ Anda perlu MinIO credentials untuk upload file.
 
 Tambahkan secrets berikut di repository:
 
-#### Secret 1: `GOOGLE_SERVICE_ACCOUNT_KEY`
+#### Secret 1: `GOOGLE_API_KEY`
+```
+AIzaSyBFnvQpbGWsaqlRddIeM0ZAhzwmbhE4oFk
+```
+Google Gemini API key untuk AI analysis. Get your key at: https://aistudio.google.com/apikey
+
+#### Secret 2: `GOOGLE_SERVICE_ACCOUNT_KEY`
 ```json
 {
   "type": "service_account",
@@ -151,12 +157,12 @@ Tambahkan secrets berikut di repository:
 }
 ```
 
-#### Secret 2: `MINIO_ACCESS_KEY`
+#### Secret 3: `MINIO_ACCESS_KEY`
 ```
 your-minio-access-key
 ```
 
-#### Secret 3: `MINIO_SECRET_KEY`
+#### Secret 4: `MINIO_SECRET_KEY`
 ```
 your-minio-secret-key
 ```
@@ -188,8 +194,20 @@ daily-reports/                              # Generated reports (gitignored)
 
 ## 🤖 AI Analysis Format
 
-Untuk setiap user, AI menghasilkan analisis dengan struktur JSON:
+**Using Google Gemini API with Structured Output**
 
+The workflow now uses **Google Gemini 2.0 Flash** with structured JSON output via Pydantic schemas. This guarantees valid, parsable JSON responses every time.
+
+**Pydantic Schema:**
+```python
+class CommitAnalysis(BaseModel):
+    summary: List[str]        # 5-10 bullet points
+    suggestions: List[str]    # 5-10 constructive suggestions
+    critique: List[str]       # 5-10 honest critiques
+    conclusion: str           # 2-3 paragraphs
+```
+
+**Example Output:**
 ```json
 {
   "summary": [
@@ -214,6 +232,12 @@ Untuk setiap user, AI menghasilkan analisis dengan struktur JSON:
 }
 ```
 
+**Benefits:**
+- ✅ **Guaranteed valid JSON** - No more parsing errors
+- ✅ **Type-safe responses** - Pydantic validates structure
+- ✅ **Faster processing** - No need for Ollama installation
+- ✅ **Better quality** - Gemini 2.0 produces more accurate analysis
+
 ## 🔍 Troubleshooting
 
 ### No commits for a user
@@ -221,8 +245,8 @@ Untuk setiap user, AI menghasilkan analisis dengan struktur JSON:
 - **Result**: Tidak ada laporan dibuat untuk user tersebut, tidak ada event di calendar
 
 ### AI timeout or invalid response
-- **Cause**: LLM membutuhkan waktu lama atau response tidak valid
-- **Fallback**: Workflow akan menggunakan fallback summary
+- **Fixed**: Now using Google Gemini API with structured output - guaranteed valid JSON
+- **No more parsing errors**: Pydantic validates the response structure automatically
 
 ### PDF conversion fails
 - **Cause**: LaTeX syntax error atau package tidak tersedia
