@@ -177,13 +177,13 @@ jobs:
               else:
                   # Fallback if JSON not found
                   summary_data = {
-                      'title': f'Daily Report - {len(commit_data)} commits',
+                      'title': f'Development Summary - {len(commit_data)} commits',
                       'description': ai_response[:500]
                   }
           except json.JSONDecodeError:
               # Fallback summary
               summary_data = {
-                  'title': f'Daily Report - {len(commit_data)} commits',
+                  'title': f'Development Summary - {len(commit_data)} commits',
                   'description': f'Processed {len(commit_data)} commits. AI response: {ai_response[:400]}'
               }
           
@@ -244,29 +244,40 @@ jobs:
 
           # Preflight: verify the service account can see/access the target calendar
           try:
-              visible_ids = []
-              page_token = None
-              while True:
-                  calendar_list = service.calendarList().list(pageToken=page_token).execute()
-                  visible_ids.extend(
-                      [item.get('id') for item in (calendar_list.get('items') or []) if item.get('id')]
-                  )
-                  page_token = calendar_list.get('nextPageToken')
-                  if not page_token:
-                      break
+              # NOTE: For service accounts, a calendar can be shared (ACL grants access)
+              # without appearing in calendarList().list(). So we validate access via
+              # calendars().get() (authoritative), and treat calendarList visibility as optional.
+              target_calendar = service.calendars().get(calendarId=calendar_id).execute()
+              if isinstance(target_calendar, dict):
+                  print(f"Target calendar accessible: {target_calendar.get('summary', '(no summary)')}")
 
-              if calendar_id not in visible_ids:
-                  print('ERROR: Calendar ID is not visible to this service account.')
-                  print(f'Calendar ID used: {calendar_id}')
-                  print('You must share the calendar with the service account email (client_email) and grant "Make changes to events".')
-                  print('Calendars currently visible to the service account:')
-                  for cid in visible_ids[:50]:
-                      print(f'- {cid}')
-                  if len(visible_ids) > 50:
-                      print(f'... and {len(visible_ids) - 50} more')
-                  raise SystemExit(1)
+              # Optional: list calendars visible in the service account's calendarList for debugging.
+              # Do NOT fail if the calendar isn't present there.
+              try:
+                  visible_ids = []
+                  page_token = None
+                  while True:
+                      calendar_list = service.calendarList().list(pageToken=page_token).execute()
+                      visible_ids.extend(
+                          [item.get('id') for item in (calendar_list.get('items') or []) if item.get('id')]
+                      )
+                      page_token = calendar_list.get('nextPageToken')
+                      if not page_token:
+                          break
 
-              service.calendars().get(calendarId=calendar_id).execute()
+                  print(f"calendarList().list() returned {len(visible_ids)} calendar(s) for this service account")
+
+                  if calendar_id not in visible_ids:
+                      print('NOTE: Calendar ID is not in calendarList for this service account.')
+                      print('This can be normal for service accounts even when ACL access is correct.')
+                      print('Attempting to add the calendar to calendarList...')
+                      try:
+                          service.calendarList().insert(body={'id': calendar_id}).execute()
+                          print('calendarList.insert succeeded.')
+                      except HttpError as e:
+                          print(f'calendarList.insert failed (non-fatal): {e}')
+              except HttpError as e:
+                  print(f'WARNING: Unable to list calendarList (non-fatal): {e}')
           except HttpError as e:
               print('ERROR: Failed to access the target calendar.')
               print(f'Calendar ID used: {calendar_id}')
