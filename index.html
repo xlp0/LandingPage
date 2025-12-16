@@ -1,2089 +1,564 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PKC Account Management - CLM Dashboard</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏢</text></svg>">
-    
-    <!-- Import Map for ES Modules -->
-    <script type="importmap">
-    {
-      "imports": {
-        "redux": "https://cdn.jsdelivr.net/npm/redux@4.2.1/+esm",
-        "redux-thunk": "https://cdn.jsdelivr.net/npm/redux-thunk@2.4.2/+esm",
-        "immer": "https://cdn.jsdelivr.net/npm/immer@9.0.21/+esm",
-        "reselect": "https://cdn.jsdelivr.net/npm/reselect@4.1.8/+esm",
-        "@reduxjs/toolkit": "https://cdn.jsdelivr.net/npm/@reduxjs/toolkit@1.9.7/+esm"
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PKC Landing Page (Local File Mode)</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg-start: #667eea;
+      --bg-end: #764ba2;
+      --bg-deep: #0b1024;
+      --card-bg: rgba(10, 10, 28, 0.9);
+      --border-soft: rgba(255, 255, 255, 0.18);
+      --accent: #ffd700;
+      --text-main: #ffffff;
+      --text-soft: rgba(255, 255, 255, 0.8);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at top, var(--bg-start), transparent 55%),
+        radial-gradient(circle at bottom, var(--bg-end), transparent 60%),
+        linear-gradient(135deg, var(--bg-start), var(--bg-end), var(--bg-deep));
+    }
+    .card {
+      width: min(960px, 100%);
+      border-radius: 28px;
+      padding: 2.25rem 2.25rem 2.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+    }
+    h1 {
+      margin: 0 0 0.5rem;
+      font-size: clamp(2.2rem, 3.6vw, 3.1rem);
+    }
+    h2 {
+      margin: 2rem 0 0.75rem;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    p {
+      margin: 0 0 0.7rem;
+      line-height: 1.6;
+      color: var(--text-soft);
+      font-size: 0.98rem;
+    }
+    .subtitle {
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 0.5rem 0 1.5rem;
+    }
+    .chip {
+      border-radius: 999px;
+      padding: 0.35rem 0.9rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+    .chip-accent { border-color: var(--accent); color: var(--accent); }
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.75rem;
+    }
+    a.button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.7rem 1.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-main);
+      background: transparent;
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      backdrop-filter: blur(14px);
+    }
+    a.button.primary {
+      background: rgba(255, 255, 255, 0.96);
+      color: #2a2b55;
+    }
+    a.button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.5);
+      background: rgba(255, 255, 255, 0.1);
+    }
+    a.button.primary:hover {
+      background: #ffffff;
+    }
+    .columns {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.2fr);
+      gap: 1.75rem;
+      margin-top: 1.75rem;
+    }
+
+    /* Responsive Design - Enhanced */
+    @media (max-width: 1024px) {
+      body {
+        padding: 1.5rem 1rem;
+      }
+      .card {
+        padding: 2rem 1.75rem 2.25rem;
+      }
+      h1 {
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+      }
+      h2 {
+        font-size: 1rem;
       }
     }
-    </script>
-    
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      
+
+    @media (max-width: 768px) {
       body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-        color: white;
-        overflow: hidden;
-      }
-
-      .dashboard-container {
-        display: flex;
-        height: 100vh;
-        overflow: hidden;
-      }
-
-      /* Sidebar for component selection - Finder style */
-      .component-sidebar {
-        width: 560px;
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-
-      /* Two-column layout container */
-      .sidebar-columns {
-        flex: 1;
-        display: flex;
-        overflow: hidden;
-      }
-
-      /* First column - Types/Categories */
-      .types-column {
-        width: 180px;
-        background: rgba(255, 255, 255, 0.03);
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-
-      .types-column-header {
-        padding: 12px 16px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        opacity: 0.7;
-        letter-spacing: 0.5px;
-      }
-
-      .types-list {
-        flex: 1;
-        overflow-y: auto;
-        padding: 8px;
-      }
-
-      .type-item {
-        padding: 10px 12px;
-        margin: 4px 0;
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.2s;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .type-item:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.15);
-      }
-
-      .type-item.active {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-color: rgba(255, 255, 255, 0.3);
-      }
-
-      .type-item-content {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex: 1;
-      }
-
-      .type-icon {
-        font-size: 16px;
-      }
-
-      .type-name {
-        font-size: 13px;
-        font-weight: 600;
-      }
-
-      .type-count {
-        font-size: 10px;
-        opacity: 0.7;
-        background: rgba(255, 255, 255, 0.15);
-        padding: 2px 6px;
-        border-radius: 10px;
-      }
-
-      /* Second column - Components */
-      .components-column {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-
-      .components-column-header {
-        padding: 12px 16px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        opacity: 0.7;
-        letter-spacing: 0.5px;
-      }
-
-      .sidebar-header {
-        padding: 20px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        flex-shrink: 0;
-      }
-
-      .sidebar-title {
-        font-size: 18px;
-        font-weight: 700;
-        margin-bottom: 8px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .component-count {
-        font-size: 12px;
-        opacity: 0.7;
-      }
-
-      .component-list {
-        flex: 1;
-        overflow-y: auto;
-        padding: 8px;
-      }
-
-      .component-list-empty {
-        padding: 40px 20px;
-        text-align: center;
-        opacity: 0.5;
-        font-size: 13px;
-      }
-
-      .component-item {
-        padding: 10px 16px;
-        margin: 6px 0;
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.2s;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-left: 3px solid transparent;
-      }
-
-      .component-item:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.2);
-        transform: translateX(4px);
-      }
-
-      .component-item.active {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-color: rgba(255, 255, 255, 0.3);
-        border-left-color: #fff;
-        transform: translateX(4px);
-      }
-
-      .component-item-name {
-        font-size: 14px;
-        font-weight: 600;
-        margin-bottom: 4px;
-      }
-
-      .component-item-hash {
-        font-size: 11px;
-        opacity: 0.6;
-        font-family: monospace;
-      }
-
-      /* Main content area */
-      .main-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        position: relative;
-      }
-
-      /* Agentic Workflow Chat Panel */
-      .chat-panel {
-        position: fixed;
-        right: 0;
-        top: 0;
-        height: 100vh;
-        width: 400px;
-        background: rgba(20, 20, 30, 0.95);
-        backdrop-filter: blur(20px);
-        border-left: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        flex-direction: column;
-        transform: translateX(100%);
-        transition: transform 0.3s ease;
-        z-index: 1000;
-        box-shadow: -4px 0 24px rgba(0, 0, 0, 0.3);
-      }
-
-      .chat-panel.open {
-        transform: translateX(0);
-      }
-
-      .chat-header {
-        padding: 20px;
-        background: rgba(255, 255, 255, 0.05);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .chat-title {
-        font-size: 18px;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .chat-close-btn {
-        background: rgba(255, 255, 255, 0.1);
-        border: none;
-        color: white;
-        width: 32px;
-        height: 32px;
-        border-radius: 6px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-      }
-
-      .chat-close-btn:hover {
-        background: rgba(255, 255, 255, 0.2);
-        transform: scale(1.1);
-      }
-
-      .chat-messages {
-        flex: 1;
-        overflow-y: auto;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .chat-message {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        animation: slideIn 0.3s ease;
-      }
-
-      @keyframes slideIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .chat-message.user {
-        align-items: flex-end;
-      }
-
-      .chat-message.assistant {
+        padding: 1rem 0.75rem;
         align-items: flex-start;
       }
+      .card {
+        padding: 1.5rem 1.25rem 1.75rem;
+        border-radius: 20px;
+      }
+      h1 {
+        font-size: clamp(1.5rem, 5vw, 2rem);
+        margin-bottom: 0.75rem;
+      }
+      h2 {
+        font-size: 0.95rem;
+        margin-top: 1.5rem;
+      }
+      p {
+        font-size: 0.9rem;
+      }
+      .subtitle {
+        font-size: 0.95rem;
+      }
+      .columns {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.25rem;
+      }
+      .badge-row {
+        gap: 0.4rem;
+        margin: 0.5rem 0 1.25rem;
+      }
+      .chip {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.75rem;
+      }
+      .links {
+        gap: 0.6rem;
+        margin-top: 1.25rem;
+      }
+      a.button {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
+        width: 100%;
+        justify-content: center;
+      }
+      .playground-viewport {
+        width: 180px;
+        height: 180px;
+      }
+      .cube-face {
+        width: 100px;
+        height: 100px;
+        margin: -50px 0 0 -50px;
+        font-size: 0.7rem;
+        border-radius: 14px;
+      }
+      .cube-front { transform: translateZ(50px); }
+      .cube-back { transform: rotateY(180deg) translateZ(50px); }
+      .cube-right { transform: rotateY(90deg) translateZ(50px); }
+      .cube-left { transform: rotateY(-90deg) translateZ(50px); }
+      .cube-top { transform: rotateX(90deg) translateZ(50px); }
+      .cube-bottom { transform: rotateX(-90deg) translateZ(50px); }
+      .slider-vert-track {
+        height: 140px;
+      }
+      .slider-vert-track input[type="range"] {
+        width: 140px;
+      }
+    }
 
-      .message-bubble {
-        max-width: 80%;
-        padding: 12px 16px;
-        border-radius: 12px;
-        font-size: 14px;
+    @media (max-width: 480px) {
+      body {
+        padding: 0.75rem 0.5rem;
+      }
+      .card {
+        padding: 1.25rem 1rem 1.5rem;
+        border-radius: 16px;
+      }
+      h1 {
+        font-size: clamp(1.3rem, 6vw, 1.75rem);
+      }
+      h2 {
+        font-size: 0.85rem;
+        margin-top: 1.25rem;
+      }
+      p {
+        font-size: 0.85rem;
         line-height: 1.5;
-        word-wrap: break-word;
       }
-
-      .chat-message.user .message-bubble {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+      .subtitle {
+        font-size: 0.88rem;
       }
-
-      .chat-message.assistant .message-bubble {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
+      code {
+        font-size: 0.8em;
+        word-break: break-all;
       }
-
-      .message-time {
-        font-size: 11px;
-        opacity: 0.6;
-        padding: 0 8px;
+      .chip {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.6rem;
       }
-
-      .chat-input-container {
-        padding: 20px;
-        background: rgba(255, 255, 255, 0.05);
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      a.button {
+        padding: 0.55rem 1rem;
+        font-size: 0.8rem;
       }
-
-      .chat-input-wrapper {
-        display: flex;
-        gap: 10px;
-        align-items: flex-end;
+      .note {
+        padding: 0.75rem 0.85rem;
+        font-size: 0.8rem;
       }
+      .playground-viewport {
+        width: 160px;
+        height: 160px;
+      }
+      .cube-face {
+        width: 80px;
+        height: 80px;
+        margin: -40px 0 0 -40px;
+        font-size: 0.65rem;
+        border-radius: 12px;
+      }
+      .cube-front { transform: translateZ(40px); }
+      .cube-back { transform: rotateY(180deg) translateZ(40px); }
+      .cube-right { transform: rotateY(90deg) translateZ(40px); }
+      .cube-left { transform: rotateY(-90deg) translateZ(40px); }
+      .cube-top { transform: rotateX(90deg) translateZ(40px); }
+      .cube-bottom { transform: rotateX(-90deg) translateZ(40px); }
+      .slider-label {
+        font-size: 10px;
+      }
+      .slider-readout {
+        font-size: 10px;
+      }
+      .slider-vert-track {
+        height: 120px;
+      }
+      .slider-vert-track input[type="range"] {
+        width: 120px;
+      }
+    }
 
-      .chat-input {
-        flex: 1;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 8px;
-        padding: 12px 16px;
-        color: white;
-        font-size: 14px;
-        resize: none;
+    /* Landscape mobile optimization */
+    @media (max-width: 768px) and (orientation: landscape) {
+      body {
+        align-items: center;
+      }
+      .card {
+        max-width: 90%;
+      }
+      .playground-viewport {
+        width: 160px;
+        height: 160px;
+      }
+    }
+
+    /* Touch-friendly improvements */
+    @media (hover: none) and (pointer: coarse) {
+      a.button {
         min-height: 44px;
-        max-height: 120px;
-        font-family: inherit;
+        padding: 0.7rem 1.4rem;
       }
-
-      .chat-input:focus {
-        outline: none;
-        border-color: #667eea;
-        background: rgba(255, 255, 255, 0.15);
+      input[type="range"] {
+        height: 32px;
       }
-
-      .chat-input::placeholder {
-        color: rgba(255, 255, 255, 0.5);
-      }
-
-      .chat-send-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        color: white;
-        width: 44px;
-        height: 44px;
-        border-radius: 8px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-        flex-shrink: 0;
-      }
-
-      .chat-send-btn:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-      }
-
-      .chat-send-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
-      }
-
-      /* Chat toggle button */
-      .chat-toggle-btn {
-        position: fixed;
-        right: 20px;
-        bottom: 20px;
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        border-radius: 50%;
-        color: white;
-        font-size: 24px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
-        transition: all 0.3s;
-        z-index: 999;
-      }
-
-      .chat-toggle-btn:hover {
-        transform: scale(1.1);
-        box-shadow: 0 6px 24px rgba(102, 126, 234, 0.6);
-      }
-
-      .chat-toggle-btn.hidden {
-        display: none;
-      }
-
-      .components-grid {
-        display: none; /* Hide old grid view */
-      }
-
-      .dashboard-header {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        border-radius: 12px;
-        padding: 20px 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        flex-shrink: 0;
-      }
-
-      .dashboard-title {
-        font-size: 24px;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .clm-badge {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        letter-spacing: 1px;
-      }
-
-      /* Single component viewer */
-      .component-viewer {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        padding: 20px;
-        overflow: hidden;
-      }
-
-      .component-frame {
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        position: relative;
-        flex: 1;
-        display: none; /* Hidden by default */
-      }
-
-      .component-frame.active {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .component-label {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(10px);
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-size: 11px;
-        font-weight: 600;
-        z-index: 10;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .fullscreen-button {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(10px);
-        padding: 8px 12px;
-        border-radius: 6px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: white;
-        cursor: pointer;
-        font-size: 11px;
-        font-weight: 600;
-        z-index: 10;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        transition: all 0.2s;
-      }
-
-      .fullscreen-button:hover {
-        background: rgba(0, 0, 0, 0.8);
-        border-color: rgba(255, 255, 255, 0.4);
-        transform: scale(1.05);
-      }
-
-      .fullscreen-button svg {
-        width: 14px;
-        height: 14px;
-      }
-
-      /* Fullscreen mode styles */
-      .component-frame.fullscreen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: 9999;
-        border-radius: 0;
-        margin: 0;
-      }
-
-      .component-frame.fullscreen .fullscreen-button {
-        background: rgba(0, 0, 0, 0.8);
-      }
-
-      .status-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #4caf50;
-        animation: pulse 2s infinite;
-      }
-
-      .status-dot.error {
-        background: #f44336;
-      }
-
-      @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-      }
-
-      iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-      }
-
-      .components-grid::-webkit-scrollbar {
-        width: 8px;
-      }
-
-      .components-grid::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 4px;
-      }
-
-      .components-grid::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 4px;
-      }
-
-      .components-grid::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.3);
-      }
-
-      .loading-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.9);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        transition: opacity 0.5s;
-      }
-
-      .loading-overlay.hidden {
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      .loader {
-        width: 50px;
-        height: 50px;
-        border: 4px solid rgba(255, 255, 255, 0.1);
-        border-top-color: #667eea;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-
-      .loading-text {
-        margin-top: 20px;
-        font-size: 16px;
-        color: rgba(255, 255, 255, 0.8);
-      }
-
-      /* Mobile Menu Toggle */
-      .mobile-menu-toggle {
-        display: none;
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 10001;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 8px;
-        padding: 12px;
-        cursor: pointer;
-        transition: all 0.3s;
-      }
-
-      .mobile-menu-toggle:hover {
-        background: rgba(255, 255, 255, 0.15);
-      }
-
-      .mobile-menu-toggle svg {
-        width: 24px;
-        height: 24px;
-        stroke: white;
-      }
-
-      /* Responsive Design - Tablet and Mobile */
-      @media (max-width: 1024px) {
-        .component-sidebar {
-          width: 400px;
-        }
-
-        .types-column {
-          width: 140px;
-        }
-
-        .components-column {
-          width: 260px;
-        }
-      }
-
-      @media (max-width: 768px) {
-        body {
-          overflow: auto;
-        }
-
-        .dashboard-container {
-          flex-direction: column;
-          height: auto;
-          min-height: 100vh;
-        }
-
-        /* Show mobile menu toggle */
-        .mobile-menu-toggle {
-          display: block;
-        }
-
-        /* Sidebar becomes overlay on mobile */
-        .component-sidebar {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          max-width: 320px;
-          height: 100vh;
-          z-index: 10000;
-          transform: translateX(-100%);
-          transition: transform 0.3s ease-out;
-          box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .component-sidebar.mobile-open {
-          transform: translateX(0);
-        }
-
-        /* Overlay backdrop when sidebar is open */
-        .mobile-backdrop {
-          display: none;
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.5);
-          z-index: 9999;
-          backdrop-filter: blur(4px);
-        }
-
-        .mobile-backdrop.active {
-          display: block;
-        }
-
-        /* Adjust sidebar columns for mobile */
-        .types-column {
-          width: 100px;
-        }
-
-        .components-column {
-          width: calc(100% - 100px);
-        }
-
-        .type-item {
-          padding: 8px 10px;
-          font-size: 13px;
-        }
-
-        .component-item {
-          padding: 10px 12px;
-          font-size: 13px;
-        }
-
-        /* Main content area */
-        .main-content {
-          width: 100%;
-          padding-top: 60px;
-        }
-
-        .header {
-          padding: 12px 60px 12px 20px;
-        }
-
-        .header h1 {
-          font-size: 18px;
-        }
-
-        .header-actions {
-          gap: 8px;
-        }
-
-        .header-btn {
-          padding: 6px 12px;
-          font-size: 13px;
-        }
-
-        /* Component frames stack vertically on mobile */
-        .component-viewer {
-          padding: 12px;
-        }
-
-        .component-frame {
-          margin-bottom: 16px;
-          min-height: 400px;
-        }
-
-        .component-label {
-          font-size: 13px;
-          padding: 10px 12px;
-        }
-
-        .fullscreen-button {
-          padding: 6px 10px;
-          font-size: 12px;
-        }
-
-        .fullscreen-button svg {
-          width: 14px;
-          height: 14px;
-        }
-      }
-
-      /* Small mobile devices */
-      @media (max-width: 480px) {
-        .component-sidebar {
-          max-width: 280px;
-        }
-
-        .types-column {
-          width: 80px;
-        }
-
-        .components-column {
-          width: calc(100% - 80px);
-        }
-
-        .sidebar-header {
-          padding: 12px;
-        }
-
-        .sidebar-title {
-          font-size: 16px;
-        }
-
-        .type-item {
-          padding: 6px 8px;
-          font-size: 12px;
-        }
-
-        .component-item {
-          padding: 8px 10px;
-          font-size: 12px;
-        }
-
-        .header h1 {
-          font-size: 16px;
-        }
-
-        .component-frame {
-          min-height: 300px;
-        }
-      }
-
-      /* Landscape mobile optimization */
-      @media (max-width: 768px) and (orientation: landscape) {
-        .component-frame {
-          min-height: 250px;
-        }
-
-        .mobile-menu-toggle {
-          top: 10px;
-          left: 10px;
-          padding: 8px;
-        }
-      }
-    </style>
+    }
+    ul {
+      padding-left: 1.1rem;
+      margin: 0.35rem 0 0.2rem;
+    }
+    li { margin-bottom: 0.25rem; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 0.9em; }
+    .note {
+      margin-top: 1.5rem;
+      padding: 0.9rem 1rem;
+      border-radius: 0.9rem;
+      border: 1px dashed rgba(255, 255, 255, 0.35);
+      background: rgba(8, 12, 30, 0.9);
+      font-size: 0.88rem;
+    }
+
+    .playground-viewport {
+      width: 220px;
+      height: 220px;
+      margin: 0 auto;
+      perspective: 900px;
+    }
+
+    .cube {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(-18deg) rotateY(26deg);
+    }
+
+    .cube-face {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      top: 50%;
+      left: 50%;
+      margin: -60px 0 0 -60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #0f172a;
+      background: rgba(248, 250, 252, 0.96);
+      border-radius: 18px;
+      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.7);
+    }
+
+    .cube-front { transform: translateZ(60px); }
+    .cube-back { transform: rotateY(180deg) translateZ(60px); }
+    .cube-right { transform: rotateY(90deg) translateZ(60px); }
+    .cube-left { transform: rotateY(-90deg) translateZ(60px); }
+    .cube-top { transform: rotateX(90deg) translateZ(60px); }
+    .cube-bottom { transform: rotateX(-90deg) translateZ(60px); }
+
+    .playground-shell {
+      display: grid;
+      grid-template-areas:
+        '. top .'
+        'left cube right'
+        '. bottom .';
+      grid-template-columns: auto 1fr auto;
+      grid-template-rows: auto auto auto;
+      column-gap: 0.75rem;
+      row-gap: 0.5rem;
+      align-items: center;
+      justify-items: center;
+    }
+
+    .slider-top { grid-area: top; text-align: center; }
+    .slider-left,
+    .slider-right {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .slider-left { grid-area: left; }
+    .slider-right { grid-area: right; }
+    .slider-bottom { grid-area: bottom; width: 100%; text-align: center; }
+
+    .slider-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #e5e7eb;
+    }
+
+    .slider-readout {
+      display: block;
+      margin-top: 2px;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .slider-vert-track {
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slider-vert-track input[type="range"] {
+      transform: rotate(-90deg);
+      width: 160px;
+    }
+  </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-      <div class="loader"></div>
-      <div class="loading-text">Loading CLM Components...</div>
-    </div>
+  <main class="card">
+    <header>
+      <h1>PKC Landing Page</h1>
+      <p class="subtitle">
+        Welcome to the Personal Knowledge Container (PKC) platform. A decentralized,
+        local-first system for managing knowledge, components, and peer-to-peer collaboration.
+        Choose your destination below to explore different features and applications.
+      </p>
+      <div class="badge-row">
+        <span class="chip chip-accent">PKC Platform</span>
+        <span class="chip">Local-first &middot; Decentralized</span>
+        <span class="chip">Web3 Ready</span>
+      </div>
+    </header>
 
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle Menu">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-      </svg>
-    </button>
-
-    <!-- Mobile Backdrop -->
-    <div class="mobile-backdrop" id="mobileBackdrop"></div>
-
-    <!-- Dashboard Container -->
-    <div class="dashboard-container">
-      <!-- Sidebar - Finder Style Two-Column Layout -->
-      <div class="component-sidebar" id="componentSidebar">
-        <div class="sidebar-header">
-          <div class="sidebar-title">
-            <span>📦</span>
-            <span>Components</span>
-          </div>
-          <div class="component-count">
-            <span id="componentCount">0</span> CLM Modules
-          </div>
+    <section class="columns">
+      <section>
+        <h2>🚀 Main Applications</h2>
+        <p>
+          Access the core PKC applications and tools:
+        </p>
+        <div class="links">
+          <a class="button primary" href="mcard-manager.html">📦 MCard Manager (PWA)</a>
+          <a class="button primary" href="index-clm-dashboard.html">🏢 CLM Dashboard</a>
+          <a class="button" href="pkc-viewer.html">📄 PKC Document Viewer</a>
+          <a class="button" href="mcard-manager-auto.html">🔄 MCard Auto Manager</a>
         </div>
-        
-        <!-- Two-column layout -->
-        <div class="sidebar-columns">
-          <!-- First Column: Types -->
-          <div class="types-column">
-            <div class="types-column-header">Types</div>
-            <div class="types-list" id="typesList">
-              <!-- Type items will be dynamically inserted here -->
+
+        <h2>📚 Documentation & Resources</h2>
+        <p>
+          Browse documentation, examples, and architecture:
+        </p>
+        <div class="links">
+          <a class="button" href="pkc-docs-index.html">📖 Browse Documentation</a>
+          <a class="button" href="README.md">📋 README</a>
+          <a class="button" href="PWA-SETUP.md">📱 PWA Setup Guide</a>
+          <a class="button" href="RESPONSIVE-DESIGN.md">📐 Responsive Design Guide</a>
+        </div>
+      </section>
+      <section>
+        <h2>🔬 Demos & Examples</h2>
+        <p>
+          Explore interactive demos and proof-of-concepts:
+        </p>
+        <div class="links">
+          <a class="button" href="js/modules/p2p-serverless/example.html">🌐 P2P Serverless Demo</a>
+          <a class="button" href="pkc-viewer.html?doc=LaTeX-Test.md">📐 LaTeX Test</a>
+          <a class="button" href="test-mcard-api.html">🧪 MCard API Test</a>
+          <a class="button" href="test-offline.html">📴 Offline Test</a>
+        </div>
+
+        <h2>⚙️ Development Tools</h2>
+        <p>
+          Tools for developers and administrators:
+        </p>
+        <div class="links">
+          <a class="button" href="auth-callback-enhanced.html">🔐 Auth Callback (Enhanced)</a>
+          <a class="button" href="auth-callback-redux.html">🔐 Auth Callback (Redux)</a>
+          <a class="button" href="public/icons/generate-icons.html">🎨 Icon Generator</a>
+        </div>
+      </section>
+    </section>
+
+    <section class="note" id="anime-playground-shell">
+      <div class="tw-space-y-3 tw-mb-3">
+        <p class="tw-text-xs tw-font-semibold tw-tracking-[0.18em] tw-uppercase tw-text-slate-300">Animation Playground</p>
+        <p class="tw-text-sm tw-text-slate-100">
+          Load an interactive anime.js + Tailwind demo that lets you control a 3D cube using four sliders.
+        </p>
+        <button id="ap-load" type="button" class="tw-inline-flex tw-items-center tw-justify-center tw-gap-1.5 tw-rounded-full tw-bg-emerald-500 hover:tw-bg-emerald-400 tw-text-slate-950 tw-text-xs tw-font-semibold tw-px-3.5 tw-py-1.5 tw-shadow-sm">
+          Load Animation Playground
+        </button>
+      </div>
+      <div id="anime-playground-host" class="tw-mt-3"></div>
+    </section>
+
+    <template id="animation-playground-template">
+      <div class="tw-flex tw-justify-center tw-items-center">
+        <div class="playground-shell">
+          <label class="slider-top">
+            <span class="slider-label">Rotate X</span><br />
+            <input id="ap-rot-x" type="range" min="-180" max="180" step="15" value="-18" />
+            <span id="ap-rot-x-value" class="slider-readout">-18°</span>
+          </label>
+          <label class="slider-left">
+            <span class="slider-label">Rotate Y</span>
+            <div class="slider-vert-track">
+              <input id="ap-rot-y" type="range" min="-180" max="180" step="15" value="26" />
+            </div>
+            <span id="ap-rot-y-value" class="slider-readout">26°</span>
+          </label>
+          <label class="slider-right">
+            <span class="slider-label">Rotate Z</span>
+            <div class="slider-vert-track">
+              <input id="ap-rot-z" type="range" min="-180" max="180" step="15" value="0" />
+            </div>
+            <span id="ap-rot-z-value" class="slider-readout">0°</span>
+          </label>
+          <label class="slider-bottom">
+            <span class="slider-label">Scale</span><br />
+            <input id="ap-scale" type="range" min="0.6" max="1.8" step="0.1" value="1" class="tw-w-full" />
+            <span id="ap-scale-value" class="slider-readout">1.0×</span>
+          </label>
+          <div class="playground-viewport" style="grid-area: cube;">
+            <div id="ap-cube" class="cube">
+              <div class="cube-face cube-front">PKC</div>
+              <div class="cube-face cube-back">Docs</div>
+              <div class="cube-face cube-right">Mesh</div>
+              <div class="cube-face cube-left">P2P</div>
+              <div class="cube-face cube-top">Local</div>
+              <div class="cube-face cube-bottom">Static</div>
             </div>
           </div>
-          
-          <!-- Second Column: Components -->
-          <div class="components-column">
-            <div class="components-column-header" id="componentsColumnHeader">Components</div>
-            <div class="component-list" id="componentList">
-              <div class="component-list-empty">Select a type to view components</div>
-            </div>
-          </div>
         </div>
       </div>
+    </template>
+  </main>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loadBtn = document.getElementById('ap-load');
+      const host = document.getElementById('anime-playground-host');
 
-      <!-- Main Content -->
-      <div class="main-content">
-        <!-- Header -->
-        <div class="dashboard-header">
-          <div class="dashboard-title">
-            <span>🏢</span>
-            <span>CLM Dashboard</span>
-            <span class="clm-badge">SINGLE VIEW</span>
-          </div>
-          <div style="display: flex; align-items: center; gap: 12px; flex: 1; max-width: 500px; justify-content: center;">
-            <span id="testRunBadge" class="clm-badge" style="background: rgba(100, 149, 237, 0.3); font-size: 11px; padding: 4px 10px;">
-              Loading...
-            </span>
-            <div id="testStatusText" style="font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, 0.9);">
-              Loading test status...
-            </div>
-            <a id="testStatusLink" href="#" target="_blank" style="display: none; padding: 6px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 600; transition: all 0.3s ease;">
-              View Logs
-            </a>
-          </div>
-          <div style="display: flex; align-items: center; gap: 20px;">
-            <button id="loginBtn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: transform 0.2s;">
-              🔐 Login
-            </button>
-          </div>
-        </div>
+      if (!loadBtn || !host) return;
 
-        <!-- Component Viewer -->
-        <div class="component-viewer" id="componentViewer">
-          <!-- Active component will be displayed here -->
-        </div>
-      </div>
-    </div>
+      loadBtn.addEventListener('click', () => {
+        loadBtn.disabled = true;
+        loadBtn.textContent = 'Loading...';
 
-    <!-- Agentic Workflow Chat Panel -->
-    <div class="chat-panel" id="chatPanel">
-      <div class="chat-header">
-        <div class="chat-title">
-          <span>🤖</span>
-          <span>Agentic Workflow</span>
-        </div>
-        <button class="chat-close-btn" id="chatCloseBtn">✕</button>
-      </div>
-      
-      <div class="chat-messages" id="chatMessages">
-        <div class="chat-message assistant">
-          <div class="message-bubble">
-            👋 Hello! I'm your Agentic Workflow assistant. How can I help you today?
-          </div>
-          <div class="message-time">Just now</div>
-        </div>
-      </div>
-      
-      <div class="chat-input-container">
-        <div class="chat-input-wrapper">
-          <textarea 
-            class="chat-input" 
-            id="chatInput" 
-            placeholder="Type your message..."
-            rows="1"
-          ></textarea>
-          <button class="chat-send-btn" id="chatSendBtn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Chat Toggle Button -->
-    <button class="chat-toggle-btn" id="chatToggleBtn">
-      💬
-    </button>
-
-    <!-- OAuth Handler -->
-    <script src="./js/oauth-handler.js"></script>
-    <script src="./js/local-storage-manager.js"></script>
-
-    <!-- Redux Store -->
-    <script type="module">
-      import store from './js/redux/store.js';
-      import { 
-        fetchCLMRegistry, 
-        loadCLMComponent,
-        componentLoaded,
-        setActiveComponent,
-        selectCLMState
-      } from './js/redux/slices/clm-slice.js';
-      import { 
-        loginWithZitadel, 
-        logoutUser,
-        selectUser,
-        selectIsAuthenticated 
-      } from './js/redux/slices/auth-slice.js';
-
-      console.log('[Dashboard] Initializing CLM Account Management Dashboard with Redux...');
-
-      // Make store globally available
-      window.reduxStore = store;
-
-      // Fetch OAuth configuration from environment
-      let oauth;
-      async function initializeOAuth() {
-        try {
-          const envResponse = await fetch('/api/env');
-          const envData = await envResponse.json();
-          
-          // Initialize OAuth handler with environment config
-          oauth = new window.OAuth2Handler({
-            domain: envData.ZITADEL_DOMAIN || 'vpn.pkc.pub',
-            clientId: envData.ZITADEL_CLIENT_ID || '348213051452882951',
-            redirectUri: envData.REDIRECT_URI || (window.location.origin + '/auth-callback-enhanced.html'),
-            scopes: ['openid', 'profile', 'email'],
-            debug: true
-          });
-          
-          console.log('[Dashboard] OAuth initialized with:', {
-            domain: oauth.domain,
-            clientId: oauth.clientId,
-            redirectUri: oauth.redirectUri
-          });
-          
-          return oauth;
-        } catch (error) {
-          console.error('[Dashboard] Failed to fetch OAuth config, using defaults:', error);
-          // Fallback to defaults
-          oauth = new window.OAuth2Handler({
-            domain: 'vpn.pkc.pub',
-            clientId: '348213051452882951',
-            redirectUri: window.location.origin + '/auth-callback-enhanced.html',
-            scopes: ['openid', 'profile', 'email'],
-            debug: true
-          });
-          return oauth;
-        }
-      }
-
-      // Check if user is already logged in from Redux
-      function checkAuthStatus() {
-        const state = store.getState();
-        const isAuthenticated = selectIsAuthenticated(state);
-        const user = selectUser(state);
-        const loginBtn = document.getElementById('loginBtn');
-        
-        if (isAuthenticated && user) {
-          loginBtn.innerHTML = `👤 ${user.name || user.email || 'User'}`;
-          loginBtn.style.background = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)';
-          // Reduced logging - only log on initial load
-        } else {
-          loginBtn.innerHTML = '🔐 Login';
-          loginBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-        }
-      }
-
-      // Subscribe to auth state changes
-      store.subscribe(() => {
-        checkAuthStatus();
-      });
-
-      // Login button handler
-      document.getElementById('loginBtn').addEventListener('click', async () => {
-        const state = store.getState();
-        const isAuthenticated = selectIsAuthenticated(state);
-        
-        // If already logged in, logout via Redux
-        if (isAuthenticated) {
-          const logout = confirm('You are already logged in. Do you want to logout?');
-          if (logout) {
-            await store.dispatch(logoutUser());
-            console.log('[Dashboard] Logged out via Redux');
-          }
-          return;
-        }
-        
-        console.log('[Dashboard] Login button clicked');
-        try {
-          // Ensure OAuth is initialized
-          if (!oauth) {
-            console.log('[Dashboard] OAuth not initialized, initializing now...');
-            await initializeOAuth();
-          }
-          
-          // Generate PKCE challenge
-          const { codeVerifier, codeChallenge } = await oauth.generatePKCE();
-          
-          // Store code verifier for callback
-          localStorage.setItem('pkce_code_verifier', codeVerifier);
-          
-          // Build authorization URL
-          const authUrl = `https://${oauth.domain}/oauth/v2/authorize?` + new URLSearchParams({
-            client_id: oauth.clientId,
-            redirect_uri: oauth.redirectUri,
-            response_type: 'code',
-            scope: oauth.scopes.join(' '),
-            code_challenge: codeChallenge,
-            code_challenge_method: 'S256',
-            state: btoa(JSON.stringify({ timestamp: Date.now() }))
-          });
-          
-          console.log('[Dashboard] Redirecting to OAuth login...');
-          window.location.href = authUrl;
-        } catch (error) {
-          console.error('[Dashboard] Login error:', error);
-          alert('Login failed: ' + error.message);
-        }
-      });
-
-      // Check auth status on load
-      checkAuthStatus();
-
-      // Create component frame dynamically
-      function createComponentFrame(component) {
-        const iframeId = `iframe-${component.hash}`;
-        const statusId = `status-${component.hash}`;
-        
-        // Determine display name
-        const displayName = component.name || component.hash;
-        const reduxSlice = component.concrete?.redux_slice || component.redux_slice;
-        const label = reduxSlice ? `${displayName} [Redux: ${reduxSlice}]` : displayName;
-        const isExpectedFailure = component.balanced?.expected_failure;
-        
-        const frame = document.createElement('div');
-        frame.className = 'component-frame';
-        frame.id = `frame-${component.hash}`;
-        frame.innerHTML = `
-          <div class="component-label">
-            <span class="status-dot ${isExpectedFailure ? 'error' : ''}" id="${statusId}"></span>
-            <span>${label}</span>
-          </div>
-          <button class="fullscreen-button" onclick="toggleFullscreen('${component.hash}')" title="Toggle Fullscreen">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-            </svg>
-            <span class="fullscreen-text">Fullscreen</span>
-          </button>
-          <iframe id="${iframeId}" sandbox="${component.concrete?.sandbox || 'allow-scripts'}"></iframe>
-        `;
-        
-        return { frame, iframeId, statusId };
-      }
-
-      // Toggle fullscreen mode (make it global)
-      window.toggleFullscreen = function(componentHash) {
-        const frame = document.getElementById(`frame-${componentHash}`);
-        if (!frame) return;
-        
-        const isFullscreen = frame.classList.contains('fullscreen');
-        
-        if (isFullscreen) {
-          // Exit fullscreen
-          frame.classList.remove('fullscreen');
-          const button = frame.querySelector('.fullscreen-button .fullscreen-text');
-          if (button) button.textContent = 'Fullscreen';
-          console.log('[Dashboard] Exited fullscreen for:', componentHash);
-          
-          // Track with Faro
-          if (window.faro) {
-            window.faro.api.pushEvent('clm_fullscreen_exit', {
-              component_hash: componentHash,
-              timestamp: Date.now()
-            });
-          }
-        } else {
-          // Enter fullscreen
-          frame.classList.add('fullscreen');
-          const button = frame.querySelector('.fullscreen-button .fullscreen-text');
-          if (button) button.textContent = 'Exit Fullscreen';
-          console.log('[Dashboard] Entered fullscreen for:', componentHash);
-          
-          // Track with Faro
-          if (window.faro) {
-            window.faro.api.pushEvent('clm_fullscreen_enter', {
-              component_hash: componentHash,
-              timestamp: Date.now()
-            });
-          }
-        }
-      };
-      
-      // Handle ESC key to exit fullscreen
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          const fullscreenFrame = document.querySelector('.component-frame.fullscreen');
-          if (fullscreenFrame) {
-            const componentHash = fullscreenFrame.id.replace('frame-', '');
-            toggleFullscreen(componentHash);
-          }
-        }
-      });
-
-      // Switch to a component (lazy load iframe on-demand)
-      function switchToComponent(componentHash) {
-        console.log('[Dashboard] Switching to component:', componentHash);
-        
-        // Hide all iframes
-        document.querySelectorAll('.component-iframe').forEach(iframe => {
-          iframe.style.display = 'none';
-        });
-        
-        // Check if iframe already exists
-        let iframe = document.getElementById(`iframe-${componentHash}`);
-        
-        if (!iframe) {
-          // Create iframe on-demand (lazy loading)
-          console.log('[Dashboard] Creating iframe for:', componentHash);
-          
-          const state = store.getState();
-          const registry = state.clm.registry;
-          const component = registry?.components?.find(c => c.hash === componentHash);
-          
-          if (component && component.concrete && component.concrete.implementation) {
-            const componentViewer = document.getElementById('componentViewer');
-            if (componentViewer) {
-              iframe = document.createElement('iframe');
-              iframe.id = `iframe-${componentHash}`;
-              iframe.className = 'component-iframe';
-              iframe.src = component.concrete.implementation;
-              iframe.sandbox = component.concrete.sandbox || 'allow-scripts allow-same-origin';
-              iframe.style.width = '100%';
-              iframe.style.height = '100%';
-              iframe.style.border = 'none';
-              
-              componentViewer.appendChild(iframe);
-              
-              // Dispatch componentLoaded when iframe loads
-              iframe.onload = () => {
-                store.dispatch(componentLoaded({
-                  componentId: component.hash,
-                  iframeId: iframe.id,
-                  url: component.concrete.implementation
-                }));
-                console.log('[Dashboard] Component loaded:', component.hash);
-              };
-            }
-          }
-        }
-        
-        // Show the iframe
-        if (iframe) {
-          iframe.style.display = 'block';
-        }
-        
-        // Update sidebar selection
-        document.querySelectorAll('.component-item').forEach(item => {
-          item.classList.remove('active');
-        });
-        const selectedItem = Array.from(document.querySelectorAll('.component-item'))
-          .find(item => item.textContent.includes(componentHash) || 
-                        item.querySelector('.component-name')?.textContent.includes(componentHash));
-        if (selectedItem) {
-          selectedItem.classList.add('active');
-        }
-        
-        // Update Redux state
-        store.dispatch(setActiveComponent(componentHash));
-      }
-
-      // Categorize components by type (Finder-style)
-      function categorizeComponentsByType(components) {
-        const internal = [];
-        const external = [];
-        const games = [];
-        const dashboards = [];
-        const videos = [];
-        const tools = [];
-        
-        components.forEach(comp => {
-          const impl = comp.concrete?.originalImplementation || comp.concrete?.implementation || '';
-          const name = (comp.name || '').toLowerCase();
-          const hash = (comp.hash || '').toLowerCase();
-          
-          // Categorize by type
-          if (name.includes('game') || hash.includes('game') || hash.includes('-io') || 
-              name.includes('repuls') || name.includes('krunker') || name.includes('octagon')) {
-            games.push(comp);
-          } else if (name.includes('grafana') || name.includes('dashboard') || hash.includes('dashboard')) {
-            dashboards.push(comp);
-          } else if (name.includes('youtube') || name.includes('video') || hash.includes('youtube')) {
-            videos.push(comp);
-          } else if (name.includes('viewer') || name.includes('search') || name.includes('redux')) {
-            tools.push(comp);
-          }
-          
-          // Also categorize by internal/external
-          if (impl.startsWith('http://') || impl.startsWith('https://')) {
-            external.push(comp);
+        function mount() {
+          if (window.PKCAnimationPlayground && typeof window.PKCAnimationPlayground.mount === 'function') {
+            window.PKCAnimationPlayground.mount(host);
+            loadBtn.textContent = 'Animation Playground Loaded';
           } else {
-            internal.push(comp);
+            loadBtn.disabled = false;
+            loadBtn.textContent = 'Load Animation Playground (failed, retry)';
           }
-        });
-        
-        return { internal, external, games, dashboards, videos, tools };
-      }
-
-      // Show components for selected type (Finder-style second column)
-      function showComponentsForType(type) {
-        const componentList = document.getElementById('componentList');
-        const componentsColumnHeader = document.getElementById('componentsColumnHeader');
-        
-        // Update active type
-        document.querySelectorAll('.type-item').forEach(item => item.classList.remove('active'));
-        const typeItem = document.getElementById(`type-${type.id}`);
-        if (typeItem) typeItem.classList.add('active');
-        
-        // Update header
-        componentsColumnHeader.textContent = type.name;
-        
-        // Clear and populate component list
-        componentList.innerHTML = '';
-        
-        if (type.components.length === 0) {
-          componentList.innerHTML = '<div class="component-list-empty">No components in this category</div>';
-          return;
         }
-        
-        type.components.forEach(comp => {
-          const item = document.createElement('div');
-          item.className = 'component-item';
-          item.id = `item-${comp.hash}`;
-          item.innerHTML = `
-            <div class="component-item-name">${comp.name}</div>
-            <div class="component-item-hash">${comp.hash}</div>
-          `;
-          item.onclick = () => {
-            switchToComponent(comp.hash);
-            if (window.loadTestStatus) {
-              window.loadTestStatus(comp.hash);
-            }
+
+        if (typeof window.PKCAnimationPlayground === 'undefined') {
+          const s = document.createElement('script');
+          s.src = 'js/components/animation-playground.js';
+          s.onload = mount;
+          s.onerror = () => {
+            loadBtn.disabled = false;
+            loadBtn.textContent = 'Load Animation Playground (failed, retry)';
           };
-          componentList.appendChild(item);
-        });
-        
-        console.log('[Dashboard] Showing components for type:', type.name, type.components.length);
-      }
-
-      // Create category section
-      function createCategorySection(categoryName, icon, components, isExpanded = true) {
-        const category = document.createElement('div');
-        category.className = 'component-category';
-        
-        const header = document.createElement('div');
-        header.className = `category-header ${isExpanded ? 'expanded' : ''}`;
-        header.innerHTML = `
-          <div class="category-title">
-            <span class="category-icon">${icon}</span>
-            <span>${categoryName}</span>
-            <span class="category-count">${components.length}</span>
-          </div>
-          <span class="category-chevron">▶</span>
-        `;
-        
-        const itemsContainer = document.createElement('div');
-        itemsContainer.className = `category-items ${isExpanded ? 'expanded' : ''}`;
-        
-        // Toggle category on click
-        header.onclick = () => {
-          const isCurrentlyExpanded = header.classList.contains('expanded');
-          header.classList.toggle('expanded');
-          itemsContainer.classList.toggle('expanded');
-          
-          console.log(`[Dashboard] ${categoryName} ${isCurrentlyExpanded ? 'collapsed' : 'expanded'}`);
-        };
-        
-        category.appendChild(header);
-        category.appendChild(itemsContainer);
-        
-        return { category, itemsContainer };
-      }
-
-      // Load all components using Redux
-      async function loadDashboard() {
-        try {
-          console.log('[Dashboard] Fetching CLM registry...');
-          
-          // Fetch registry via Redux thunk with timeout
-          const registryAction = await Promise.race([
-            store.dispatch(fetchCLMRegistry()),
-            new Promise((_, reject) => 
-              setTimeout(() => reject(new Error('Registry fetch timeout')), 10000)
-            )
-          ]);
-          
-          if (fetchCLMRegistry.fulfilled.match(registryAction)) {
-            const registry = registryAction.payload;
-            console.log('[Dashboard] Registry loaded via Redux:', registry);
-
-            const componentList = document.getElementById('componentList');
-            const componentViewer = document.getElementById('componentViewer');
-            const componentCount = document.getElementById('componentCount');
-            
-            // Update component count
-            componentCount.textContent = registry.components.length;
-
-            // Categorize components by type
-            const componentsByType = categorizeComponentsByType(registry.components);
-            console.log('[Dashboard] Categorized by type:', componentsByType);
-
-            // Populate types column (first column)
-            const typesList = document.getElementById('typesList');
-            typesList.innerHTML = '';
-            
-            const types = [
-              { id: 'all', name: 'All MCards', icon: '📦', components: registry.components },
-              { id: 'internal', name: 'Internal', icon: '🏠', components: componentsByType.internal },
-              { id: 'external', name: 'External', icon: '🌐', components: componentsByType.external },
-              { id: 'games', name: 'Games', icon: '🎮', components: componentsByType.games },
-              { id: 'dashboards', name: 'Dashboards', icon: '📊', components: componentsByType.dashboards },
-              { id: 'videos', name: 'Videos', icon: '🎥', components: componentsByType.videos },
-              { id: 'tools', name: 'Tools', icon: '🔧', components: componentsByType.tools }
-            ];
-
-            types.forEach(type => {
-              if (type.components.length > 0) {
-                const typeItem = document.createElement('div');
-                typeItem.className = 'type-item';
-                typeItem.id = `type-${type.id}`;
-                typeItem.innerHTML = `
-                  <div class="type-item-content">
-                    <span class="type-icon">${type.icon}</span>
-                    <span class="type-name">${type.name}</span>
-                  </div>
-                  <span class="type-count">${type.components.length}</span>
-                `;
-                typeItem.onclick = () => showComponentsForType(type);
-                typesList.appendChild(typeItem);
-              }
-            });
-
-            // Add MCard Manager link at the bottom
-            const mcardManagerItem = document.createElement('div');
-            mcardManagerItem.className = 'type-item';
-            mcardManagerItem.style.marginTop = '12px';
-            mcardManagerItem.style.borderTop = '1px solid rgba(255, 255, 255, 0.1)';
-            mcardManagerItem.style.paddingTop = '16px';
-            mcardManagerItem.innerHTML = `
-              <div class="type-item-content">
-                <span class="type-icon">📝</span>
-                <span class="type-name">MCard Manager</span>
-              </div>
-              <span style="font-size: 18px;">→</span>
-            `;
-            mcardManagerItem.onclick = () => {
-              window.location.href = '/mcard-manager.html';
-            };
-            typesList.appendChild(mcardManagerItem);
-
-            // Select "All MCards" by default
-            showComponentsForType(types[0]);
-
-            // Hide loading overlay after all components are loaded
-            setTimeout(() => {
-              const loadingOverlay = document.querySelector('.loading-overlay');
-              if (loadingOverlay) {
-                loadingOverlay.style.display = 'none';
-              }
-              console.log('[Dashboard] All components loaded, hiding overlay');
-            }, 1000);
-          }
-
-        } catch (error) {
-          console.error('[Dashboard] Failed to load:', error);
-          const loadingOverlay = document.querySelector('.loading-overlay');
-          if (loadingOverlay) {
-            loadingOverlay.style.display = 'none';
-          }
-          alert('Failed to load components: ' + error.message);
-        }
-      }
-
-      // Monitor heartbeats and update UI
-      window.addEventListener('message', (event) => {
-        if (event.data.type === 'clm_heartbeat') {
-          const statusDot = document.getElementById(`status-${event.data.componentId}`);
-          if (statusDot) {
-            statusDot.style.background = '#4caf50';
-          }
-        }
-
-        // Handle Redux state requests from components
-        if (event.data.type === 'request_redux_state') {
-          const state = store.getState();
-          const iframe = document.getElementById(`iframe-${event.data.componentId}`);
-          if (iframe && iframe.contentWindow) {
-            iframe.contentWindow.postMessage({
-              type: 'redux_state_update',
-              state: state,
-              timestamp: Date.now()
-            }, '*');
-          }
-        }
-      });
-
-      // Subscribe to Redux state changes for debugging (reduced verbosity)
-      let lastComponentCount = 0;
-      store.subscribe(() => {
-        const state = store.getState();
-        const clmState = selectCLMState(state);
-        const currentCount = Object.keys(clmState.components).length;
-        
-        // Only log when component count changes
-        if (currentCount !== lastComponentCount) {
-          console.log('[Dashboard] Redux State:', {
-            loadedComponents: currentCount,
-            totalEvents: clmState.events.length,
-            metrics: clmState.metrics
-          });
-          lastComponentCount = currentCount;
-        }
-      });
-
-      // Initialize OAuth and start loading
-      (async () => {
-        await initializeOAuth();
-        loadDashboard();
-      })();
-
-      console.log('[Dashboard] CLM Dashboard with Redux initialized');
-    </script>
-
-    <!-- Web LLM from CDN -->
-    <script type="module">
-      // Import Web LLM from CDN
-      import * as webllm from "https://esm.run/@mlc-ai/web-llm";
-      
-      // Make it globally available
-      window.webllm = webllm;
-    </script>
-
-    <!-- Agentic Workflow Chat JavaScript with Web LLM -->
-    <script type="module">
-      // Import local modules
-      const { getLLMManager } = await import('./js/modules/web-llm/llm-manager.js');
-      const { ModelStatus } = await import('./js/modules/web-llm/config.js');
-
-      // Chat functionality
-      const chatPanel = document.getElementById('chatPanel');
-      const chatToggleBtn = document.getElementById('chatToggleBtn');
-      const chatCloseBtn = document.getElementById('chatCloseBtn');
-      const chatInput = document.getElementById('chatInput');
-      const chatSendBtn = document.getElementById('chatSendBtn');
-      const chatMessages = document.getElementById('chatMessages');
-
-      // Initialize LLM Manager
-      const llmManager = getLLMManager();
-      let isGenerating = false;
-      let currentStreamingMessage = null;
-
-      // Update chat title with model status
-      function updateChatTitle(status, progress = null) {
-        const chatTitle = document.querySelector('.chat-title span:last-child');
-        if (!chatTitle) return;
-
-        switch (status) {
-          case ModelStatus.LOADING:
-            chatTitle.textContent = progress ? `Loading... ${progress}` : 'Loading Model...';
-            break;
-          case ModelStatus.READY:
-            const model = llmManager.getCurrentModel();
-            chatTitle.textContent = `Agentic Workflow (${model?.name || 'Ready'})`;
-            break;
-          case ModelStatus.ERROR:
-            chatTitle.textContent = 'Agentic Workflow (Error)';
-            break;
-          default:
-            chatTitle.textContent = 'Agentic Workflow';
-        }
-      }
-
-      // Setup LLM status listener
-      llmManager.onStatusChange = (status) => {
-        updateChatTitle(status);
-        console.log('[Chat] LLM Status:', status);
-      };
-
-      // Setup LLM progress listener
-      llmManager.onProgress = (progress) => {
-        const progressText = progress.text || '';
-        const progressPercent = progress.progress ? Math.round(progress.progress * 100) : null;
-        const displayText = progressPercent ? `${progressPercent}%` : progressText;
-        updateChatTitle(ModelStatus.LOADING, displayText);
-      };
-
-      // Initialize LLM when chat opens
-      async function initializeLLM() {
-        if (llmManager.getStatus() === ModelStatus.UNLOADED) {
-          try {
-            addMessage('🤖 Initializing AI model... This may take a moment on first load.', false);
-            await llmManager.initialize();
-            addMessage('✅ AI model loaded! How can I help you?', false);
-          } catch (error) {
-            console.error('[Chat] LLM initialization failed:', error);
-            if (error.message.includes('webgpu')) {
-              addMessage('⚠️ WebGPU is not available in your browser. Please use Chrome 113+ or Edge 113+ for AI features.', false);
-            } else {
-              addMessage('⚠️ Failed to load AI model. Using fallback responses.', false);
-            }
-          }
-        }
-      }
-
-      // Toggle chat panel
-      function toggleChat() {
-        chatPanel.classList.toggle('open');
-        chatToggleBtn.classList.toggle('hidden');
-        
-        // Focus input when opening
-        if (chatPanel.classList.contains('open')) {
-          setTimeout(() => chatInput.focus(), 300);
-          
-          // Initialize LLM if not already loaded
-          initializeLLM();
-          
-          // Track with Faro
-          if (window.faro) {
-            window.faro.api.pushEvent('chat_opened', {
-              timestamp: Date.now()
-            });
-          }
+          document.head.appendChild(s);
         } else {
-          // Track with Faro
-          if (window.faro) {
-            window.faro.api.pushEvent('chat_closed', {
-              timestamp: Date.now()
-            });
-          }
-        }
-      }
-
-      chatToggleBtn.addEventListener('click', toggleChat);
-      chatCloseBtn.addEventListener('click', toggleChat);
-
-      // Format time
-      function formatTime() {
-        const now = new Date();
-        return now.toLocaleTimeString('en-US', { 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        });
-      }
-
-      // Add message to chat
-      function addMessage(text, isUser = false) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `chat-message ${isUser ? 'user' : 'assistant'}`;
-        messageDiv.innerHTML = `
-          <div class="message-bubble">${text}</div>
-          <div class="message-time">${formatTime()}</div>
-        `;
-        chatMessages.appendChild(messageDiv);
-        
-        // Scroll to bottom
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        
-        return messageDiv;
-      }
-
-      // Add streaming message (for LLM responses)
-      function addStreamingMessage() {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'chat-message assistant';
-        messageDiv.innerHTML = `
-          <div class="message-bubble"></div>
-          <div class="message-time">${formatTime()}</div>
-        `;
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        
-        currentStreamingMessage = messageDiv.querySelector('.message-bubble');
-        return currentStreamingMessage;
-      }
-
-      // Update streaming message with new token
-      function updateStreamingMessage(token) {
-        if (currentStreamingMessage) {
-          currentStreamingMessage.textContent += token;
-          chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-      }
-
-      // Send message
-      async function sendMessage() {
-        const message = chatInput.value.trim();
-        if (!message || isGenerating) return;
-
-        // Add user message
-        addMessage(message, true);
-        chatInput.value = '';
-        chatInput.style.height = 'auto';
-
-        // Disable input while generating
-        isGenerating = true;
-        chatInput.disabled = true;
-        chatSendBtn.disabled = true;
-
-        // Track with Faro
-        if (window.faro) {
-          window.faro.api.pushEvent('chat_message_sent', {
-            message_length: message.length,
-            timestamp: Date.now()
-          });
-        }
-
-        try {
-          // Check if LLM is ready
-          if (llmManager.isReady()) {
-            // Generate response with LLM
-            const streamingBubble = addStreamingMessage();
-            
-            await llmManager.generateResponse(message, (token) => {
-              updateStreamingMessage(token);
-            });
-
-            // Track with Faro
-            if (window.faro) {
-              window.faro.api.pushEvent('chat_llm_response_received', {
-                timestamp: Date.now()
-              });
-            }
-          } else {
-            // Fallback to simulated response
-            setTimeout(() => {
-              const responses = [
-                "I'm still loading. Please wait a moment...",
-                "AI model is initializing. Try again in a few seconds.",
-                "Loading AI capabilities... Please be patient."
-              ];
-              const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-              addMessage(randomResponse, false);
-            }, 500);
-          }
-        } catch (error) {
-          console.error('[Chat] Generation error:', error);
-          addMessage('⚠️ Sorry, I encountered an error generating a response. Please try again.', false);
-        } finally {
-          // Re-enable input
-          isGenerating = false;
-          chatInput.disabled = false;
-          chatSendBtn.disabled = false;
-          chatInput.focus();
-          currentStreamingMessage = null;
-        }
-      }
-
-      // Send button click
-      chatSendBtn.addEventListener('click', sendMessage);
-
-      // Enter key to send (Shift+Enter for new line)
-      chatInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          sendMessage();
+          mount();
         }
       });
-
-      // Auto-resize textarea
-      chatInput.addEventListener('input', function() {
-        this.style.height = 'auto';
-        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-      });
-
-      console.log('[Chat] Agentic Workflow chat with Web LLM initialized');
-    </script>
-
-    <!-- Grafana Faro Web SDK for Real User Monitoring -->
-    <script src="https://unpkg.com/@grafana/faro-web-sdk@^1.3.0/dist/bundle/faro-web-sdk.iife.js"></script>
-    <script>
-      // Initialize Grafana Faro
-      (function() {
-        try {
-          const faro = window.GrafanaFaroWebSdk.initializeFaro({
-            url: 'https://faro-collector-prod-ap-southeast-2.grafana.net/collect/2a49694fa859f4189869a5157f39c44d',
-            app: {
-              name: 'THK Mesh Landing Page',
-              version: '1.0.0',
-              environment: 'production'
-            },
-            instrumentations: [
-              // Automatic instrumentation for web vitals, errors, etc.
-              ...window.GrafanaFaroWebSdk.getWebInstrumentations({
-                captureConsole: true,
-                captureConsoleDisabledLevels: []
-              })
-            ]
-          });
-
-          // Make Faro globally available
-          window.faro = faro;
-
-          console.log('[Faro] ✓ Initialized successfully');
-          console.log('[Faro] Tracking: Web Vitals, Errors, User Interactions');
-
-          // Track initial page load
-          faro.api.pushEvent('page_loaded', {
-            page: 'dashboard',
-            timestamp: Date.now(),
-            user_agent: navigator.userAgent,
-            screen_width: window.innerWidth,
-            screen_height: window.innerHeight
-          });
-
-        } catch (error) {
-          console.error('[Faro] Failed to initialize:', error);
-        }
-      })();
-
-      // Add Faro tracking to existing Redux store
-      // Note: We'll track actions via store subscription instead of middleware
-      // to avoid recreating the store (which would break existing references)
-      
-      if (window.store) {
-        let previousState = window.store.getState();
-        
-        window.store.subscribe(() => {
-          const currentState = window.store.getState();
-          const clmState = currentState.clm || {};
-          const prevClmState = previousState.clm || {};
-          
-          if (window.faro) {
-            // Track component navigation
-            if (clmState.activeComponent !== prevClmState.activeComponent && clmState.activeComponent) {
-              const component = clmState.registry?.components?.find(
-                c => c.hash === clmState.activeComponent
-              );
-              
-              if (component) {
-                window.faro.api.pushEvent('clm_component_visit', {
-                  component_hash: component.hash,
-                  component_name: component.name,
-                  timestamp: Date.now(),
-                  previous_component: prevClmState.activeComponent || 'none'
-                });
-                
-                console.log('[Faro] Tracked component visit:', component.name);
-              }
-            }
-            
-            // Track registry fetch status changes
-            if (clmState.status !== prevClmState.status) {
-              if (clmState.status === 'succeeded') {
-                window.faro.api.pushEvent('clm_registry_loaded', {
-                  component_count: clmState.registry?.components?.length || 0,
-                  timestamp: Date.now()
-                });
-                console.log('[Faro] Tracked registry load success');
-              } else if (clmState.status === 'failed') {
-                window.faro.api.pushError(
-                  new Error(`Registry fetch failed: ${clmState.error}`),
-                  {
-                    context: {
-                      error_type: 'registry_fetch_failure',
-                      error_message: clmState.error
-                    }
-                  }
-                );
-                console.error('[Faro] Tracked registry error:', clmState.error);
-              }
-            }
-          }
-          
-          previousState = currentState;
-        });
-        
-        console.log('[Faro] Store subscription added for tracking');
-      } else {
-        console.warn('[Faro] Redux store not found, skipping tracking setup');
-      }
-    </script>
-
-    <!-- CLM Test Status Loader -->
-    <script>
-      // Global variable to track current component
-      window.currentComponentHash = 'welcome';
-
-      // Load and display test status from JSON file for specific component
-      window.loadTestStatus = async function(componentHash) {
-        // Use current component if no hash provided
-        if (!componentHash) {
-          componentHash = window.currentComponentHash || 'welcome';
-        }
-        
-        try {
-          console.log(`[Test Status] Loading test results for ${componentHash}...`);
-          const response = await fetch(`/tests/test-components/${componentHash}.json`);
-          
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          
-          const testData = await response.json();
-          console.log('[Test Status] Test data loaded:', testData);
-          
-          // Determine status icon and color
-          let statusIcon = '❓';
-          let statusColor = 'rgba(255, 255, 255, 0.3)';
-          let statusText = 'Unknown';
-          let statusTextColor = 'rgba(255, 255, 255, 0.9)';
-          
-          if (testData.status === 'success') {
-            statusIcon = '✅';
-            statusColor = 'rgba(46, 204, 113, 0.3)';
-            statusText = 'Success';
-            statusTextColor = '#2ecc71';
-          } else if (testData.status === 'failure') {
-            statusIcon = '❌';
-            statusColor = 'rgba(231, 76, 60, 0.3)';
-            statusText = 'Error';
-            statusTextColor = '#e74c3c';
-          }
-          
-          // Format timestamp
-          const date = new Date(testData.timestamp);
-          const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-          
-          // Update test run badge (next to SINGLE VIEW)
-          const testRunBadge = document.getElementById('testRunBadge');
-          if (testRunBadge) {
-            const timesText = testData.test_run === 1 ? 'Time' : 'Times';
-            testRunBadge.innerHTML = `Tested ${testData.test_run} ${timesText}`;
-            testRunBadge.style.background = statusColor;
-            testRunBadge.title = `Test run #${testData.test_run} - ${statusText}`;
-          }
-          
-          // Update test status text (center, before button)
-          const testStatusText = document.getElementById('testStatusText');
-          if (testStatusText) {
-            testStatusText.innerHTML = `Latest Test: <span style="color: ${statusTextColor};">${statusText}</span>`;
-            testStatusText.title = `Status: ${statusText}\nDate: ${formattedDate}\nBranch: ${testData.branch}\nCommit: ${testData.commit_sha.substring(0, 7)}`;
-          }
-          
-          // Update GitHub Actions link button (below status text)
-          const testStatusLink = document.getElementById('testStatusLink');
-          if (testStatusLink) {
-            testStatusLink.href = testData.github_actions_url;
-            testStatusLink.style.display = 'inline-block';
-            
-            // Add hover effect
-            testStatusLink.onmouseover = () => {
-              testStatusLink.style.transform = 'scale(1.05)';
-              testStatusLink.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
-            };
-            testStatusLink.onmouseout = () => {
-              testStatusLink.style.transform = 'scale(1)';
-              testStatusLink.style.boxShadow = 'none';
-            };
-          }
-          
-          console.log('[Test Status] UI updated successfully');
-        } catch (error) {
-          console.error('[Test Status] Failed to load test results:', error);
-          
-          // Update test run badge
-          const testRunBadge = document.getElementById('testRunBadge');
-          if (testRunBadge) {
-            testRunBadge.innerHTML = 'No data';
-            testRunBadge.style.background = 'rgba(255, 193, 7, 0.2)';
-          }
-          
-          // Update status text
-          const testStatusText = document.getElementById('testStatusText');
-          if (testStatusText) {
-            testStatusText.innerHTML = 'No test data available';
-            testStatusText.style.color = 'rgba(255, 193, 7, 0.9)';
-          }
-          
-          // Hide link button
-          const testStatusLink = document.getElementById('testStatusLink');
-          if (testStatusLink) {
-            testStatusLink.style.display = 'none';
-          }
-        }
-      };
-      
-      // Load test status when page loads
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => window.loadTestStatus('welcome'));
-      } else {
-        window.loadTestStatus('welcome');
-      }
-      
-      // Listen to Redux store changes for active component
-      if (window.reduxStore) {
-        let previousComponentHash = null;
-        
-        window.reduxStore.subscribe(() => {
-          const state = window.reduxStore.getState();
-          const currentHash = state.clm?.activeComponent;
-          
-          if (currentHash && currentHash !== previousComponentHash) {
-            console.log(`[Test Status] Component changed to: ${currentHash}`);
-            previousComponentHash = currentHash;
-            window.currentComponentHash = currentHash;
-            window.loadTestStatus(currentHash);
-          }
-        });
-        
-        console.log('[Test Status] Redux store listener attached');
-      }
-      
-      // Also listen to global postMessage for component changes
-      window.addEventListener('message', (event) => {
-        if (event.data.type === 'clm_component_loaded') {
-          const componentHash = event.data.componentId;
-          if (componentHash) {
-            console.log(`[Test Status] Component loaded via postMessage: ${componentHash}`);
-            window.currentComponentHash = componentHash;
-            window.loadTestStatus(componentHash);
-          }
-        }
-      });
-      
-      // Refresh test status for current component every 5 minutes
-      setInterval(() => {
-        window.loadTestStatus(window.currentComponentHash);
-      }, 5 * 60 * 1000);
-    </script>
-
-    <!-- Mobile Menu Handler -->
-    <script>
-      (function() {
-        const menuToggle = document.getElementById('mobileMenuToggle');
-        const sidebar = document.getElementById('componentSidebar');
-        const backdrop = document.getElementById('mobileBackdrop');
-
-        if (!menuToggle || !sidebar || !backdrop) return;
-
-        // Toggle mobile menu
-        function toggleMobileMenu() {
-          const isOpen = sidebar.classList.contains('mobile-open');
-          
-          if (isOpen) {
-            sidebar.classList.remove('mobile-open');
-            backdrop.classList.remove('active');
-          } else {
-            sidebar.classList.add('mobile-open');
-            backdrop.classList.add('active');
-          }
-
-          console.log('[Mobile] Menu', isOpen ? 'closed' : 'opened');
-        }
-
-        // Close menu
-        function closeMobileMenu() {
-          sidebar.classList.remove('mobile-open');
-          backdrop.classList.remove('active');
-        }
-
-        // Event listeners
-        menuToggle.addEventListener('click', toggleMobileMenu);
-        backdrop.addEventListener('click', closeMobileMenu);
-
-        // Close menu when clicking on a component
-        sidebar.addEventListener('click', (e) => {
-          if (e.target.classList.contains('component-item') || 
-              e.target.classList.contains('type-item')) {
-            // Small delay to allow the click to register
-            setTimeout(closeMobileMenu, 300);
-          }
-        });
-
-        // Close menu on ESC key
-        document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape' && sidebar.classList.contains('mobile-open')) {
-            closeMobileMenu();
-          }
-        });
-
-        // Handle window resize
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-          clearTimeout(resizeTimer);
-          resizeTimer = setTimeout(() => {
-            // Close menu if resizing to desktop
-            if (window.innerWidth > 768) {
-              closeMobileMenu();
-            }
-          }, 250);
-        });
-
-        console.log('[Mobile] Menu handler initialized');
-      })();
-    </script>
+    });
+  </script>
 </body>
 </html>
