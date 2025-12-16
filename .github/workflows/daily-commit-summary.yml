@@ -1,4 +1,4 @@
-name: Daily Commit Summary to Google Calendar
+name: Daily Commit Summary Reports by User
 
 on:
   schedule:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch: # Allow manual trigger for testing
 
 jobs:
-  summarize-commits:
+  generate-daily-reports:
     runs-on: ubuntu-latest
     
     steps:
@@ -24,7 +24,12 @@ jobs:
       
       - name: Install Python dependencies
         run: |
-          pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client requests
+          pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client minio
+
+      - name: Install LaTeX (for PDF generation)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra
 
       - name: Install Ollama
         run: |
@@ -63,7 +68,6 @@ jobs:
         id: get-commits
         run: |
           # Calculate yesterday's date in WITA timezone
-          # When running at 06:00 WITA, we want commits from the previous day
           YESTERDAY=$(TZ='Asia/Makassar' date -d 'yesterday' '+%Y-%m-%d')
           TODAY=$(TZ='Asia/Makassar' date '+%Y-%m-%d')
           
@@ -84,267 +88,60 @@ jobs:
           else
             echo "Found $COMMIT_COUNT commits for yesterday"
             echo "has_commits=true" >> $GITHUB_OUTPUT
+            cat commits.txt
           fi
       
-      - name: Process commits with AI
-        id: ai-summary
+      - name: Process commits by user with AI
+        id: process-commits
         if: steps.get-commits.outputs.has_commits == 'true'
         run: |
-          python3 << 'EOF'
-          import subprocess
-          import json
-          import os
-          
-          # Read commits
-          with open('commits.txt', 'r') as f:
-              commits = f.readlines()
-          
-          # Format commits for AI processing
-          commit_data = []
-          for commit in commits:
-              if commit.strip():
-                  parts = commit.strip().split('|')
-                  if len(parts) >= 5:
-                      commit_data.append({
-                          'hash': parts[0][:7],
-                          'author': parts[1],
-                          'email': parts[2],
-                          'date': parts[3],
-                          'subject': parts[4],
-                          'body': parts[5] if len(parts) > 5 else ''
-                      })
-          
-          # Create prompt for AI
-          prompt = f"""You are a technical project manager analyzing daily development work. 
-          
-          Analyze the following {len(commit_data)} commits from yesterday and create a concise, professional summary for a calendar event.
-          
-          Commits:
-          """
-          
-          for i, commit in enumerate(commit_data, 1):
-              prompt += f"\n{i}. [{commit['hash']}] {commit['subject']}"
-              if commit['body']:
-                  prompt += f"\n   Details: {commit['body'][:200]}"
-              prompt += f"\n   Author: {commit['author']}"
-          
-          prompt += """
-          
-          Please provide:
-          1. A brief title (max 100 characters) summarizing the day's work
-          2. A detailed description (max 500 characters) highlighting:
-             - Main features/changes implemented
-             - Bug fixes or improvements
-             - Key technical decisions
-             - Overall progress assessment
-          
-          Format your response as JSON:
-          {
-            "title": "Brief summary title",
-            "description": "Detailed description of the day's work"
-          }
-          
-          Keep it professional, concise, and actionable. Focus on business value and technical achievements.
-          """
-          
-          # Save prompt to file for Ollama
-          with open('prompt.txt', 'w') as f:
-              f.write(prompt)
-          
-          print("Sending prompt to Ollama llama3.2...")
-          
-          # Call Ollama with the prompt
-          result = subprocess.run(
-              ['ollama', 'run', 'llama3.2'],
-              input=prompt,
-              capture_output=True,
-              text=True,
-              timeout=120
-          )
-          
-          ai_response = result.stdout.strip()
-          print(f"AI Response:\n{ai_response}")
-          
-          # Try to extract JSON from response
-          try:
-              # Find JSON in response
-              start_idx = ai_response.find('{')
-              end_idx = ai_response.rfind('}') + 1
-              
-              if start_idx != -1 and end_idx > start_idx:
-                  json_str = ai_response[start_idx:end_idx]
-                  summary_data = json.loads(json_str)
-              else:
-                  # Fallback if JSON not found
-                  summary_data = {
-                      'title': f'Development Summary - {len(commit_data)} commits',
-                      'description': ai_response[:500]
-                  }
-          except json.JSONDecodeError:
-              # Fallback summary
-              summary_data = {
-                  'title': f'Development Summary - {len(commit_data)} commits',
-                  'description': f'Processed {len(commit_data)} commits. AI response: {ai_response[:400]}'
-              }
-          
-          # Save summary to file
-          with open('summary.json', 'w') as f:
-              json.dump(summary_data, f, indent=2)
-          
-          # Output for GitHub Actions
-          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-              f.write(f"title={summary_data['title']}\n")
-              # Escape newlines for GitHub Actions
-              description = summary_data['description'].replace('\n', '\\n')
-              f.write(f"description={description}\n")
-          
-          print(f"\nGenerated Summary:")
-          print(f"Title: {summary_data['title']}")
-          print(f"Description: {summary_data['description']}")
-          EOF
+          chmod +x .github/scripts/process_commits.py
+          python3 .github/scripts/process_commits.py commits.txt
       
-      - name: Create Google Calendar Event
+      - name: Convert reports to PDF
+        if: steps.get-commits.outputs.has_commits == 'true'
+        run: |
+          chmod +x .github/scripts/convert_to_pdf.py
+          
+          # Convert each user's markdown to PDF
+          if [ -f "daily-reports/henry_${{ steps.get-commits.outputs.yesterday }}.md" ]; then
+            python3 .github/scripts/convert_to_pdf.py "daily-reports/henry_${{ steps.get-commits.outputs.yesterday }}.md"
+          fi
+          
+          if [ -f "daily-reports/alessandro_${{ steps.get-commits.outputs.yesterday }}.md" ]; then
+            python3 .github/scripts/convert_to_pdf.py "daily-reports/alessandro_${{ steps.get-commits.outputs.yesterday }}.md"
+          fi
+      
+      - name: Upload reports to MinIO
+        if: steps.get-commits.outputs.has_commits == 'true'
+        env:
+          MINIO_ENDPOINT: minio.pkc.pub
+          MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
+          MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
+        run: |
+          chmod +x .github/scripts/upload_to_minio.py
+          python3 .github/scripts/upload_to_minio.py daily-reports/processing_results.json
+      
+      - name: Create Google Calendar Events
         if: steps.get-commits.outputs.has_commits == 'true'
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
         run: |
-          python3 << 'EOF'
-          import json
-          import os
-          from datetime import datetime, timedelta
-          from zoneinfo import ZoneInfo
-          from google.oauth2 import service_account
-          from googleapiclient.discovery import build
-          from googleapiclient.errors import HttpError
-          
-          # Load credentials from secret
-          credentials_json = os.environ.get('GOOGLE_CREDENTIALS')
-          if not credentials_json:
-              print("ERROR: GOOGLE_CREDENTIALS secret not set")
-              exit(1)
-          
-          credentials_info = json.loads(credentials_json)
-
-          service_account_email = credentials_info.get('client_email')
-          if service_account_email:
-              print(f"Service account client_email: {service_account_email}")
-          
-          # Create credentials
-          SCOPES = ['https://www.googleapis.com/auth/calendar']
-          credentials = service_account.Credentials.from_service_account_info(
-              credentials_info, scopes=SCOPES
-          )
-          
-          # Build Calendar API service
-          service = build('calendar', 'v3', credentials=credentials)
-          
-          # Get calendar ID
-          calendar_id = 'f0a800fb2e065c7a82fe3d4ffc26a1620a39737e8bcdbbd9e1ab1d6728090894@group.calendar.google.com'
-
-          # Preflight: verify the service account can see/access the target calendar
-          try:
-              # NOTE: For service accounts, a calendar can be shared (ACL grants access)
-              # without appearing in calendarList().list(). So we validate access via
-              # calendars().get() (authoritative), and treat calendarList visibility as optional.
-              target_calendar = service.calendars().get(calendarId=calendar_id).execute()
-              if isinstance(target_calendar, dict):
-                  print(f"Target calendar accessible: {target_calendar.get('summary', '(no summary)')}")
-
-              # Optional: list calendars visible in the service account's calendarList for debugging.
-              # Do NOT fail if the calendar isn't present there.
-              try:
-                  visible_ids = []
-                  page_token = None
-                  while True:
-                      calendar_list = service.calendarList().list(pageToken=page_token).execute()
-                      visible_ids.extend(
-                          [item.get('id') for item in (calendar_list.get('items') or []) if item.get('id')]
-                      )
-                      page_token = calendar_list.get('nextPageToken')
-                      if not page_token:
-                          break
-
-                  print(f"calendarList().list() returned {len(visible_ids)} calendar(s) for this service account")
-
-                  if calendar_id not in visible_ids:
-                      print('NOTE: Calendar ID is not in calendarList for this service account.')
-                      print('This can be normal for service accounts even when ACL access is correct.')
-                      print('Attempting to add the calendar to calendarList...')
-                      try:
-                          service.calendarList().insert(body={'id': calendar_id}).execute()
-                          print('calendarList.insert succeeded.')
-                      except HttpError as e:
-                          print(f'calendarList.insert failed (non-fatal): {e}')
-              except HttpError as e:
-                  print(f'WARNING: Unable to list calendarList (non-fatal): {e}')
-          except HttpError as e:
-              print('ERROR: Failed to access the target calendar.')
-              print(f'Calendar ID used: {calendar_id}')
-              print(f'HTTP error: {e}')
-              print('Most common cause: the calendar is not shared with the service account (or wrong calendar ID).')
-              raise SystemExit(1)
-          
-          # Load summary
-          with open('summary.json', 'r') as f:
-              summary_data = json.load(f)
-          
-          # Get yesterday's date for the event
-          tz = ZoneInfo('Asia/Makassar')
-          yesterday_date = datetime.now(tz).date() - timedelta(days=1)
-          event_date = yesterday_date.strftime('%Y-%m-%d')
-          
-          # Create event
-          event = {
-              'summary': f"📝 {summary_data['title']}",
-              'description': f"{summary_data['description']}\n\n---\nGenerated by GitHub Actions\nRepository: {os.environ.get('GITHUB_REPOSITORY', 'N/A')}\nWorkflow: Daily Commit Summary",
-              'start': {
-                  'date': event_date,
-                  'timeZone': 'Asia/Makassar',
-              },
-              'end': {
-                  'date': event_date,
-                  'timeZone': 'Asia/Makassar',
-              },
-              'colorId': '9',  # Blue color
-              'reminders': {
-                  'useDefault': False,
-              },
-          }
-          
-          # Insert event
-          try:
-              created_event = service.events().insert(
-                  calendarId=calendar_id,
-                  body=event
-              ).execute()
-              
-              print(f"✅ Event created successfully!")
-              print(f"Event ID: {created_event['id']}")
-              print(f"Event Link: {created_event.get('htmlLink', 'N/A')}")
-              print(f"Summary: {created_event['summary']}")
-              print(f"Date: {event_date}")
-          except HttpError as e:
-              print(f"❌ Error creating event (HttpError): {e}")
-              print("If you see 404 Not Found, it usually means the calendar is not shared with the service account (or Calendar ID is wrong).")
-              exit(1)
-          except Exception as e:
-              print(f"❌ Error creating event: {e}")
-              exit(1)
-          EOF
+          chmod +x .github/scripts/create_calendar_events.py
+          python3 .github/scripts/create_calendar_events.py daily-reports/upload_results.json daily-reports/processing_results.json
       
       - name: No commits notification
         if: steps.get-commits.outputs.has_commits == 'false'
         run: |
-          echo "ℹ️ No commits found for yesterday. Skipping calendar event creation."
+          echo "ℹ️ No commits found for yesterday. Skipping report generation."
           echo "This is normal if no development work was done yesterday."
       
       - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: commit-summary-${{ steps.get-commits.outputs.yesterday }}
+          name: daily-reports-${{ steps.get-commits.outputs.yesterday }}
           path: |
             commits.txt
-            summary.json
-            prompt.txt
+            daily-reports/
           retention-days: 30
