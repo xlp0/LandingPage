@@ -117,9 +117,185 @@
       gap: 1.75rem;
       margin-top: 1.75rem;
     }
+
+    /* Responsive Design - Enhanced */
+    @media (max-width: 1024px) {
+      body {
+        padding: 1.5rem 1rem;
+      }
+      .card {
+        padding: 2rem 1.75rem 2.25rem;
+      }
+      h1 {
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+      }
+      h2 {
+        font-size: 1rem;
+      }
+    }
+
     @media (max-width: 768px) {
-      .card { padding: 1.75rem 1.5rem 2rem; }
-      .columns { grid-template-columns: minmax(0, 1fr); }
+      body {
+        padding: 1rem 0.75rem;
+        align-items: flex-start;
+      }
+      .card {
+        padding: 1.5rem 1.25rem 1.75rem;
+        border-radius: 20px;
+      }
+      h1 {
+        font-size: clamp(1.5rem, 5vw, 2rem);
+        margin-bottom: 0.75rem;
+      }
+      h2 {
+        font-size: 0.95rem;
+        margin-top: 1.5rem;
+      }
+      p {
+        font-size: 0.9rem;
+      }
+      .subtitle {
+        font-size: 0.95rem;
+      }
+      .columns {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.25rem;
+      }
+      .badge-row {
+        gap: 0.4rem;
+        margin: 0.5rem 0 1.25rem;
+      }
+      .chip {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.75rem;
+      }
+      .links {
+        gap: 0.6rem;
+        margin-top: 1.25rem;
+      }
+      a.button {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
+        width: 100%;
+        justify-content: center;
+      }
+      .playground-viewport {
+        width: 180px;
+        height: 180px;
+      }
+      .cube-face {
+        width: 100px;
+        height: 100px;
+        margin: -50px 0 0 -50px;
+        font-size: 0.7rem;
+        border-radius: 14px;
+      }
+      .cube-front { transform: translateZ(50px); }
+      .cube-back { transform: rotateY(180deg) translateZ(50px); }
+      .cube-right { transform: rotateY(90deg) translateZ(50px); }
+      .cube-left { transform: rotateY(-90deg) translateZ(50px); }
+      .cube-top { transform: rotateX(90deg) translateZ(50px); }
+      .cube-bottom { transform: rotateX(-90deg) translateZ(50px); }
+      .slider-vert-track {
+        height: 140px;
+      }
+      .slider-vert-track input[type="range"] {
+        width: 140px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 0.75rem 0.5rem;
+      }
+      .card {
+        padding: 1.25rem 1rem 1.5rem;
+        border-radius: 16px;
+      }
+      h1 {
+        font-size: clamp(1.3rem, 6vw, 1.75rem);
+      }
+      h2 {
+        font-size: 0.85rem;
+        margin-top: 1.25rem;
+      }
+      p {
+        font-size: 0.85rem;
+        line-height: 1.5;
+      }
+      .subtitle {
+        font-size: 0.88rem;
+      }
+      code {
+        font-size: 0.8em;
+        word-break: break-all;
+      }
+      .chip {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.6rem;
+      }
+      a.button {
+        padding: 0.55rem 1rem;
+        font-size: 0.8rem;
+      }
+      .note {
+        padding: 0.75rem 0.85rem;
+        font-size: 0.8rem;
+      }
+      .playground-viewport {
+        width: 160px;
+        height: 160px;
+      }
+      .cube-face {
+        width: 80px;
+        height: 80px;
+        margin: -40px 0 0 -40px;
+        font-size: 0.65rem;
+        border-radius: 12px;
+      }
+      .cube-front { transform: translateZ(40px); }
+      .cube-back { transform: rotateY(180deg) translateZ(40px); }
+      .cube-right { transform: rotateY(90deg) translateZ(40px); }
+      .cube-left { transform: rotateY(-90deg) translateZ(40px); }
+      .cube-top { transform: rotateX(90deg) translateZ(40px); }
+      .cube-bottom { transform: rotateX(-90deg) translateZ(40px); }
+      .slider-label {
+        font-size: 10px;
+      }
+      .slider-readout {
+        font-size: 10px;
+      }
+      .slider-vert-track {
+        height: 120px;
+      }
+      .slider-vert-track input[type="range"] {
+        width: 120px;
+      }
+    }
+
+    /* Landscape mobile optimization */
+    @media (max-width: 768px) and (orientation: landscape) {
+      body {
+        align-items: center;
+      }
+      .card {
+        max-width: 90%;
+      }
+      .playground-viewport {
+        width: 160px;
+        height: 160px;
+      }
+    }
+
+    /* Touch-friendly improvements */
+    @media (hover: none) and (pointer: coarse) {
+      a.button {
+        min-height: 44px;
+        padding: 0.7rem 1.4rem;
+      }
+      input[type="range"] {
+        height: 32px;
+      }
     }
     ul {
       padding-left: 1.1rem;
