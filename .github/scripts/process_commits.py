@@ -87,7 +87,8 @@ Please provide a detailed analysis in the following structure:
    - Recommendations for next steps
    - Overall productivity and quality assessment
 
-Format your response as JSON with this exact structure:
+IMPORTANT: Respond ONLY with valid JSON. Do not include any text before or after the JSON.
+Use this exact structure:
 {
   "summary": ["point 1", "point 2", ...],
   "suggestions": ["point 1", "point 2", ...],
@@ -96,6 +97,7 @@ Format your response as JSON with this exact structure:
 }
 
 Keep it professional, actionable, and specific to the commits provided. Be constructive in critique and suggestions.
+Respond with ONLY the JSON object, nothing else.
 """
     
     return prompt
@@ -110,42 +112,75 @@ def call_ollama(prompt):
             input=prompt,
             capture_output=True,
             text=True,
-            timeout=180
+            timeout=600  # Increased timeout to 10 minutes
         )
         
         ai_response = result.stdout.strip()
         print(f"AI Response received ({len(ai_response)} chars)")
         
+        # Save raw response for debugging
+        debug_file = Path('daily-reports') / 'last_llm_response.txt'
+        debug_file.parent.mkdir(exist_ok=True)
+        with open(debug_file, 'w') as f:
+            f.write(ai_response)
+        print(f"Raw LLM response saved to: {debug_file}")
+        
         # Try to extract JSON from response
+        # Look for the first { and last } to handle multiline JSON
         start_idx = ai_response.find('{')
         end_idx = ai_response.rfind('}') + 1
         
         if start_idx != -1 and end_idx > start_idx:
             json_str = ai_response[start_idx:end_idx]
-            analysis = json.loads(json_str)
             
-            # Validate structure
-            required_keys = ['summary', 'suggestions', 'critique', 'conclusion']
-            if all(key in analysis for key in required_keys):
-                return analysis
+            try:
+                analysis = json.loads(json_str)
+                
+                # Validate structure
+                required_keys = ['summary', 'suggestions', 'critique', 'conclusion']
+                if all(key in analysis for key in required_keys):
+                    # Ensure all list fields are actually lists
+                    for key in ['summary', 'suggestions', 'critique']:
+                        if not isinstance(analysis[key], list):
+                            analysis[key] = [str(analysis[key])]
+                    
+                    # Ensure conclusion is a string
+                    if not isinstance(analysis['conclusion'], str):
+                        analysis['conclusion'] = str(analysis['conclusion'])
+                    
+                    print("✅ Successfully parsed JSON response")
+                    return analysis
+                else:
+                    print(f"Warning: Missing required keys. Found: {list(analysis.keys())}")
+            except json.JSONDecodeError as e:
+                print(f"Warning: JSON decode failed - {e}")
+                print(f"Attempted to parse: {json_str[:200]}...")
         
-        # Fallback if parsing fails
-        print("Warning: Could not parse JSON from LLM response, using fallback")
+        # Fallback if parsing fails - provide clean fallback without raw JSON
+        print("⚠️  Could not parse JSON from LLM response, using fallback")
         return {
-            'summary': ['Analysis completed but response format was invalid'],
-            'suggestions': ['Review the commits manually for detailed suggestions'],
-            'critique': ['Unable to generate detailed critique'],
-            'conclusion': ai_response[:500] if ai_response else 'No response from LLM'
+            'summary': [
+                'Analysis completed but response format was invalid',
+                'Please review the commits manually for detailed analysis',
+                'The LLM response could not be properly parsed'
+            ],
+            'suggestions': [
+                'Review the commits manually for detailed suggestions',
+                'Consider improving commit message clarity',
+                'Ensure consistent coding standards are followed'
+            ],
+            'critique': [
+                'Unable to generate detailed critique due to parsing error',
+                'Manual review recommended for quality assessment'
+            ],
+            'conclusion': 'The automated analysis encountered a formatting issue and could not complete successfully. Please review the commits manually to assess the day\'s work. The raw LLM response has been saved for debugging purposes.'
         }
         
     except subprocess.TimeoutExpired:
-        print("Error: Ollama timeout")
-        return None
-    except json.JSONDecodeError as e:
-        print(f"Error: JSON decode failed - {e}")
+        print("❌ Error: Ollama timeout after 5 minutes")
         return None
     except Exception as e:
-        print(f"Error calling Ollama: {e}")
+        print(f"❌ Error calling Ollama: {e}")
         return None
 
 def generate_markdown_report(user_name, date_str, commits, analysis):
