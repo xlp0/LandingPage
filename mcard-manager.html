@@ -109,7 +109,7 @@
 
     <div class="main-content">
       <!-- Left Sidebar: File Types -->
-      <div class="sidebar collapsed" id="sidebar">
+      <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <h3>Card Types</h3>
@@ -369,6 +369,42 @@
         setTimeout(() => lucide.createIcons(), 100);
       }
     }
+
+    // Auto-collapse sidebar on mobile devices
+    function initializeSidebarState() {
+      const sidebar = document.getElementById('sidebar');
+      const isMobile = window.innerWidth <= 768;
+      
+      if (isMobile && !sidebar.classList.contains('collapsed')) {
+        sidebar.classList.add('collapsed');
+        console.log('[Sidebar] Auto-collapsed on mobile device');
+      }
+    }
+
+    // Run on page load
+    window.addEventListener('DOMContentLoaded', initializeSidebarState);
+    
+    // Re-check on window resize
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const sidebar = document.getElementById('sidebar');
+        const isMobile = window.innerWidth <= 768;
+        
+        // Auto-collapse when resizing to mobile
+        if (isMobile && !sidebar.classList.contains('collapsed')) {
+          sidebar.classList.add('collapsed');
+          console.log('[Sidebar] Auto-collapsed on resize to mobile');
+        }
+        // Auto-expand when resizing to desktop (optional)
+        // Uncomment if you want sidebar to expand on desktop
+        // else if (!isMobile && sidebar.classList.contains('collapsed')) {
+        //   sidebar.classList.remove('collapsed');
+        //   console.log('[Sidebar] Auto-expanded on resize to desktop');
+        // }
+      }, 250);
+    });
 
     // Search filter functionality
     function toggleSearchFilters() {
