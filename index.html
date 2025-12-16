@@ -2305,14 +2305,40 @@
           e.preventDefault();
           deferredPrompt = e;
           console.log('[PWA] ✓ Install prompt captured');
-          showBanner();
         });
 
         // Install button click
         installBtn.addEventListener('click', async () => {
           if (!deferredPrompt) {
-            console.log('[PWA] ⚠️  No install prompt available');
-            alert('Install prompt not available. Try adding to home screen manually.');
+            console.log('[PWA] ⚠️  No install prompt available, showing manual instructions');
+            
+            // Show manual install instructions
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+            const isChrome = /Chrome/i.test(navigator.userAgent) && !/Edge/i.test(navigator.userAgent);
+            
+            let message = 'To install this app:\n\n';
+            
+            if (isIOS) {
+              message += '1. Tap the Share button (square with arrow)\n';
+              message += '2. Scroll down and tap "Add to Home Screen"\n';
+              message += '3. Tap "Add" in the top right';
+            } else if (isMobile) {
+              message += '1. Tap the menu (⋮) in the browser\n';
+              message += '2. Tap "Add to Home Screen" or "Install App"\n';
+              message += '3. Follow the prompts';
+            } else if (isChrome) {
+              message += '1. Look for the install icon (⊕) in the address bar\n';
+              message += '2. Click it to install\n\n';
+              message += 'Or:\n';
+              message += '1. Click the menu (⋮) in the top right\n';
+              message += '2. Click "Install CLM Dashboard..."';
+            } else {
+              message += '1. Check your browser menu for "Install" or "Add to Home Screen"\n';
+              message += '2. Follow the prompts to install';
+            }
+            
+            alert(message);
             return;
           }
 
@@ -2345,9 +2371,12 @@
           hideBanner();
         });
 
-        // Check if should show banner on load
+        // Always show banner after page load (don't wait for beforeinstallprompt)
         if (!isInstalled() && !isDismissed()) {
-          console.log('[PWA] Waiting for install prompt...');
+          console.log('[PWA] Showing install banner...');
+          showBanner();
+        } else {
+          console.log('[PWA] Banner not shown - already installed or dismissed');
         }
       })();
     </script>
