@@ -11,8 +11,8 @@ from pathlib import Path
 
 # User mappings
 USERS = {
-    'Henry': 'githubhenrykoo',
-    'Alessandro': 'alessandrorumampuk'
+    'Henry Koo': 'githubhenrykoo',
+    'Alessandro Rumampuk': 'alessandrorumampuk'
 }
 
 def get_commits_by_user(commits_file, username):
