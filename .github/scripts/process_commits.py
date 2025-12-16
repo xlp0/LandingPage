@@ -106,7 +106,7 @@ def call_ollama(prompt):
     
     try:
         result = subprocess.run(
-            ['ollama', 'run', 'qwen2.5'],
+            ['ollama', 'run', 'qwen2.5:3b'],
             input=prompt,
             capture_output=True,
             text=True,
