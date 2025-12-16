@@ -373,15 +373,32 @@
     // Auto-collapse sidebar on mobile devices
     function initializeSidebarState() {
       const sidebar = document.getElementById('sidebar');
+      if (!sidebar) {
+        console.warn('[Sidebar] Element not found');
+        return;
+      }
+      
       const isMobile = window.innerWidth <= 768;
       
-      if (isMobile && !sidebar.classList.contains('collapsed')) {
-        sidebar.classList.add('collapsed');
-        console.log('[Sidebar] Auto-collapsed on mobile device');
+      if (isMobile) {
+        // Always collapse on mobile
+        if (!sidebar.classList.contains('collapsed')) {
+          sidebar.classList.add('collapsed');
+        }
+        console.log('[Sidebar] Auto-collapsed on mobile device (width: ' + window.innerWidth + 'px)');
+      } else {
+        // Always expand on desktop
+        if (sidebar.classList.contains('collapsed')) {
+          sidebar.classList.remove('collapsed');
+        }
+        console.log('[Sidebar] Auto-expanded on desktop (width: ' + window.innerWidth + 'px)');
       }
     }
 
-    // Run on page load
+    // Run immediately when script loads
+    initializeSidebarState();
+    
+    // Also run on DOMContentLoaded to be safe
     window.addEventListener('DOMContentLoaded', initializeSidebarState);
     
     // Re-check on window resize
