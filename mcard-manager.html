@@ -5,6 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MCard Manager</title>
   
+  <!-- PWA Meta Tags -->
+  <meta name="description" content="Content-addressable card management system with local-first storage">
+  <meta name="theme-color" content="#007acc">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MCard Manager">
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  
+  <!-- Apple Touch Icons -->
+  <link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="96x96" href="/icons/icon-96x96.png">
+  <link rel="apple-touch-icon" sizes="128x128" href="/icons/icon-128x128.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-72x72.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-72x72.png">
+  
   <!-- Define process.env for browser compatibility -->
   <script>
     // Redux Toolkit expects process.env.NODE_ENV
@@ -433,5 +456,110 @@
 
   <!-- MCard Manager JavaScript (Modular Version) -->
   <script type="module" src="/js/mcard-manager-new.js"></script>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    // Register service worker for PWA functionality
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('[PWA] Service Worker registered successfully:', registration.scope);
+            
+            // Check for updates
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              console.log('[PWA] New service worker found, installing...');
+              
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  console.log('[PWA] New version available! Refresh to update.');
+                  
+                  // Show update notification
+                  if (confirm('A new version of MCard Manager is available. Reload to update?')) {
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                    window.location.reload();
+                  }
+                }
+              });
+            });
+          })
+          .catch((error) => {
+            console.error('[PWA] Service Worker registration failed:', error);
+          });
+
+        // Handle service worker updates
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        });
+      });
+    }
+
+    // PWA Install prompt
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      console.log('[PWA] Install prompt available');
+      e.preventDefault();
+      deferredPrompt = e;
+      
+      // Show custom install button (optional)
+      showInstallPromotion();
+    });
+
+    function showInstallPromotion() {
+      // Create install button if it doesn't exist
+      const existingBtn = document.getElementById('pwa-install-btn');
+      if (existingBtn) return;
+
+      const installBtn = document.createElement('button');
+      installBtn.id = 'pwa-install-btn';
+      installBtn.className = 'header-btn';
+      installBtn.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: #007acc; color: white; padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);';
+      installBtn.innerHTML = `
+        <i data-lucide="download" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+        Install App
+      `;
+      
+      installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('[PWA] User choice:', outcome);
+        
+        if (outcome === 'accepted') {
+          console.log('[PWA] App installed');
+        }
+        
+        deferredPrompt = null;
+        installBtn.remove();
+      });
+      
+      document.body.appendChild(installBtn);
+      
+      // Initialize Lucide icons for the button
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    // Detect if app is running as PWA
+    window.addEventListener('load', () => {
+      if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+        console.log('[PWA] Running as installed app');
+        document.body.classList.add('pwa-mode');
+      }
+    });
+
+    // Handle share target (if app receives shared content)
+    if (window.location.search.includes('share-target')) {
+      console.log('[PWA] Received shared content');
+      // Handle shared content here
+    }
+  </script>
 </body>
 </html>

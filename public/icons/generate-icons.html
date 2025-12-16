@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generate PWA Icons</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #1e1e1e;
+      color: #cccccc;
+    }
+    h1 { color: #007acc; }
+    .icon-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+    .icon-item {
+      text-align: center;
+      padding: 15px;
+      background: #252526;
+      border-radius: 8px;
+      border: 1px solid #3e3e42;
+    }
+    .icon-item img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    .icon-item p {
+      margin: 10px 0 0;
+      font-size: 12px;
+      color: #858585;
+    }
+    button {
+      background: #007acc;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 10px 5px;
+    }
+    button:hover {
+      background: #005a9e;
+    }
+    #canvas {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>📦 MCard Manager - PWA Icon Generator</h1>
+  <p>This tool generates placeholder icons for the PWA. Replace with branded icons for production.</p>
+
+  <div>
+    <button onclick="generateAllIcons()">Generate All Icons</button>
+    <button onclick="downloadAllIcons()">Download All</button>
+  </div>
+
+  <div class="icon-preview" id="iconPreview"></div>
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+    const icons = {};
+
+    function drawIcon(size) {
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      canvas.width = size;
+      canvas.height = size;
+
+      // Background
+      const gradient = ctx.createLinearGradient(0, 0, size, size);
+      gradient.addColorStop(0, '#007acc');
+      gradient.addColorStop(1, '#005a9e');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, size, size);
+
+      // Card icon
+      const cardSize = size * 0.6;
+      const x = (size - cardSize) / 2;
+      const y = (size - cardSize) / 2;
+      const radius = size * 0.08;
+
+      ctx.fillStyle = 'white';
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = size * 0.04;
+
+      // Draw rounded rectangle (card)
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + cardSize - radius, y);
+      ctx.quadraticCurveTo(x + cardSize, y, x + cardSize, y + radius);
+      ctx.lineTo(x + cardSize, y + cardSize - radius);
+      ctx.quadraticCurveTo(x + cardSize, y + cardSize, x + cardSize - radius, y + cardSize);
+      ctx.lineTo(x + radius, y + cardSize);
+      ctx.quadraticCurveTo(x, y + cardSize, x, y + cardSize - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+      ctx.stroke();
+
+      // Add lines inside card
+      const lineY1 = y + cardSize * 0.3;
+      const lineY2 = y + cardSize * 0.5;
+      const lineY3 = y + cardSize * 0.7;
+      const lineX1 = x + cardSize * 0.2;
+      const lineX2 = x + cardSize * 0.8;
+
+      ctx.lineWidth = size * 0.02;
+      ctx.beginPath();
+      ctx.moveTo(lineX1, lineY1);
+      ctx.lineTo(lineX2, lineY1);
+      ctx.moveTo(lineX1, lineY2);
+      ctx.lineTo(lineX2, lineY2);
+      ctx.moveTo(lineX1, lineY3);
+      ctx.lineTo(lineX2 * 0.7, lineY3);
+      ctx.stroke();
+
+      return canvas.toDataURL('image/png');
+    }
+
+    function generateAllIcons() {
+      const preview = document.getElementById('iconPreview');
+      preview.innerHTML = '';
+
+      sizes.forEach(size => {
+        const dataUrl = drawIcon(size);
+        icons[size] = dataUrl;
+
+        const item = document.createElement('div');
+        item.className = 'icon-item';
+        item.innerHTML = `
+          <img src="${dataUrl}" alt="${size}x${size}">
+          <p>${size}x${size}</p>
+          <button onclick="downloadIcon(${size})">Download</button>
+        `;
+        preview.appendChild(item);
+      });
+    }
+
+    function downloadIcon(size) {
+      const link = document.createElement('a');
+      link.download = `icon-${size}x${size}.png`;
+      link.href = icons[size];
+      link.click();
+    }
+
+    function downloadAllIcons() {
+      sizes.forEach(size => {
+        if (icons[size]) {
+          setTimeout(() => downloadIcon(size), 100 * sizes.indexOf(size));
+        }
+      });
+    }
+
+    // Auto-generate on load
+    window.addEventListener('load', generateAllIcons);
+  </script>
+</body>
+</html>
