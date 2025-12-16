@@ -28,6 +28,20 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-72x72.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-72x72.png">
   
+  <!-- Performance Optimization: Resource Hints -->
+  <!-- Preconnect to CDN origins for faster loading -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  
+  <!-- Preload critical CSS -->
+  <link rel="preload" href="/css/mcard-manager.css" as="style">
+  
+  <!-- Preload critical JavaScript -->
+  <link rel="preload" href="/js/mcard-manager-new.js" as="script" crossorigin>
+  
+  <!-- Preload critical fonts from CDN -->
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.min.css" as="style" crossorigin>
+  
   <!-- Define process.env for browser compatibility -->
   <script>
     // Redux Toolkit expects process.env.NODE_ENV
@@ -453,6 +467,9 @@
       }
     });
   </script>
+
+  <!-- Performance Monitoring -->
+  <script src="/js/performance-monitor.js"></script>
 
   <!-- MCard Manager JavaScript (Modular Version) -->
   <script type="module" src="/js/mcard-manager-new.js"></script>

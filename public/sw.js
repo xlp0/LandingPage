@@ -1,23 +1,45 @@
-// Service Worker for MCard Manager PWA
-const CACHE_NAME = 'mcard-manager-v1';
-const RUNTIME_CACHE = 'mcard-runtime-v1';
+// Service Worker for MCard Manager PWA - Optimized for Speed
+const CACHE_VERSION = 'v2';
+const CACHE_NAME = `mcard-manager-${CACHE_VERSION}`;
+const RUNTIME_CACHE = `mcard-runtime-${CACHE_VERSION}`;
+const IMAGE_CACHE = `mcard-images-${CACHE_VERSION}`;
+const CDN_CACHE = `mcard-cdn-${CACHE_VERSION}`;
 
-// Assets to cache on install
-const PRECACHE_ASSETS = [
+// Critical assets for instant loading (cache-first, never expire)
+const CRITICAL_ASSETS = [
   '/mcard-manager.html',
-  '/index.html',
   '/css/mcard-manager.css',
+  '/manifest.json'
+];
+
+// App shell assets (cache-first, update in background)
+const APP_SHELL_ASSETS = [
+  '/index.html',
   '/js/mcard-manager-new.js',
   '/js/mcard/MCardManager.js',
   '/js/mcard/CardViewer.js',
   '/js/mcard/UIComponents.js',
+  '/js/mcard/CardCollection.js',
+  '/js/mcard/CardEditor.js',
   '/js/renderers/MarkdownRenderer.js',
   '/js/renderers/LatexRenderer.js',
-  '/manifest.json',
+  '/js/renderers/ImageRenderer.js',
+  '/js/renderers/VideoRenderer.js',
+  '/js/renderers/AudioRenderer.js',
+  '/js/renderers/PdfRenderer.js'
+];
+
+// CDN resources (cache-first, long expiry)
+const CDN_ASSETS = [
   'https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.min.css',
   'https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js',
-  'https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js'
+  'https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js',
+  'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js',
+  'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css'
 ];
+
+// Combine all for initial precache
+const PRECACHE_ASSETS = [...CRITICAL_ASSETS, ...APP_SHELL_ASSETS];
 
 // Install event - cache assets
 self.addEventListener('install', (event) => {
@@ -62,82 +84,148 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - optimized caching strategies
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip cross-origin requests
-  if (url.origin !== location.origin) {
-    // Cache CDN resources
-    if (url.hostname.includes('cdn.jsdelivr.net') || url.hostname.includes('unpkg.com')) {
-      event.respondWith(
-        caches.open(RUNTIME_CACHE).then((cache) => {
-          return cache.match(request).then((response) => {
-            return response || fetch(request).then((response) => {
-              cache.put(request, response.clone());
-              return response;
-            });
-          });
-        })
-      );
-    }
+  // Skip non-GET requests
+  if (request.method !== 'GET') {
     return;
   }
 
-  // Network first for API calls and IndexedDB
-  if (url.pathname.includes('/api/') || request.method !== 'GET') {
+  // Strategy 1: Cache First (Critical Assets) - INSTANT LOADING
+  if (CRITICAL_ASSETS.some(asset => url.pathname === asset)) {
+    event.respondWith(
+      caches.match(request).then((cachedResponse) => {
+        if (cachedResponse) {
+          console.log('[SW] ⚡ INSTANT from cache:', url.pathname);
+          return cachedResponse;
+        }
+        return fetch(request).then((response) => {
+          if (response.ok) {
+            const cache = caches.open(CACHE_NAME);
+            cache.then(c => c.put(request, response.clone()));
+          }
+          return response;
+        });
+      })
+    );
+    return;
+  }
+
+  // Strategy 2: Stale-While-Revalidate (App Shell) - FAST + FRESH
+  if (APP_SHELL_ASSETS.some(asset => url.pathname.includes(asset))) {
+    event.respondWith(
+      caches.match(request).then((cachedResponse) => {
+        const fetchPromise = fetch(request).then((networkResponse) => {
+          if (networkResponse.ok) {
+            const cache = caches.open(CACHE_NAME);
+            cache.then(c => c.put(request, networkResponse.clone()));
+          }
+          return networkResponse;
+        }).catch(() => cachedResponse);
+
+        // Return cached immediately, update in background
+        console.log('[SW] 🔄 Stale-while-revalidate:', url.pathname);
+        return cachedResponse || fetchPromise;
+      })
+    );
+    return;
+  }
+
+  // Strategy 3: CDN Cache First (Long-lived external resources)
+  if (url.hostname.includes('cdn.jsdelivr.net') || 
+      url.hostname.includes('unpkg.com') || 
+      url.hostname.includes('cdnjs.cloudflare.com')) {
+    event.respondWith(
+      caches.open(CDN_CACHE).then((cache) => {
+        return cache.match(request).then((cachedResponse) => {
+          if (cachedResponse) {
+            console.log('[SW] 📦 CDN from cache:', url.hostname);
+            return cachedResponse;
+          }
+          return fetch(request).then((response) => {
+            if (response.ok) {
+              cache.put(request, response.clone());
+            }
+            return response;
+          });
+        });
+      })
+    );
+    return;
+  }
+
+  // Strategy 4: Images - Cache with size limit
+  if (request.destination === 'image' || url.pathname.match(/\.(jpg|jpeg|png|gif|webp|svg|ico)$/i)) {
+    event.respondWith(
+      caches.open(IMAGE_CACHE).then((cache) => {
+        return cache.match(request).then((cachedResponse) => {
+          if (cachedResponse) {
+            console.log('[SW] 🖼️  Image from cache');
+            return cachedResponse;
+          }
+          return fetch(request).then((response) => {
+            if (response.ok && response.headers.get('content-length') < 5000000) { // 5MB limit
+              cache.put(request, response.clone());
+            }
+            return response;
+          });
+        });
+      })
+    );
+    return;
+  }
+
+  // Strategy 5: Network First (Dynamic content, API calls)
+  if (url.pathname.includes('/api/') || url.search) {
     event.respondWith(
       fetch(request)
+        .then((response) => {
+          if (response.ok) {
+            const cache = caches.open(RUNTIME_CACHE);
+            cache.then(c => c.put(request, response.clone()));
+          }
+          return response;
+        })
         .catch(() => {
-          return new Response(
-            JSON.stringify({ error: 'Offline - API not available' }),
-            { headers: { 'Content-Type': 'application/json' } }
-          );
+          return caches.match(request).then((cachedResponse) => {
+            return cachedResponse || new Response(
+              JSON.stringify({ error: 'Offline - No cached data available' }),
+              { headers: { 'Content-Type': 'application/json' } }
+            );
+          });
         })
     );
     return;
   }
 
-  // Cache first for app shell and assets
+  // Strategy 6: Runtime Cache (Everything else)
   event.respondWith(
-    caches.match(request)
-      .then((cachedResponse) => {
-        if (cachedResponse) {
-          console.log('[SW] Serving from cache:', request.url);
-          return cachedResponse;
+    caches.match(request).then((cachedResponse) => {
+      if (cachedResponse) {
+        console.log('[SW] 💾 Runtime cache hit');
+        return cachedResponse;
+      }
+      
+      return fetch(request).then((response) => {
+        if (response.ok) {
+          const cache = caches.open(RUNTIME_CACHE);
+          cache.then(c => c.put(request, response.clone()));
         }
-
-        console.log('[SW] Fetching from network:', request.url);
-        return fetch(request)
-          .then((response) => {
-            // Don't cache non-successful responses
-            if (!response || response.status !== 200 || response.type === 'error') {
-              return response;
-            }
-
-            // Clone the response
-            const responseToCache = response.clone();
-
-            // Cache the fetched resource
-            caches.open(RUNTIME_CACHE)
-              .then((cache) => {
-                cache.put(request, responseToCache);
-              });
-
-            return response;
-          })
-          .catch((error) => {
-            console.error('[SW] Fetch failed:', error);
-            
-            // Return offline page for navigation requests
-            if (request.mode === 'navigate') {
-              return caches.match('/mcard-manager.html');
-            }
-            
-            throw error;
-          });
-      })
+        return response;
+      }).catch((error) => {
+        console.error('[SW] ❌ Fetch failed:', error);
+        
+        // Offline fallback for navigation
+        if (request.mode === 'navigate') {
+          return caches.match('/mcard-manager.html');
+        }
+        
+        throw error;
+      });
+    })
   );
 });
 
