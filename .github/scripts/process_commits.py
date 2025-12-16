@@ -1,37 +1,19 @@
 #!/usr/bin/env python3
 """
-Process daily commits, separate by user, and generate reports with Google Gemini API.
+Process daily commits, separate by user, and generate reports with Ollama LLM.
 """
+import subprocess
 import json
 import os
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import List
-from pydantic import BaseModel, Field
-from google import genai
 
 # User mappings
 USERS = {
     'Henry': 'githubhenrykoo',
     'Alessandro': 'alessandrorumampuk'
 }
-
-# Pydantic models for structured output
-class CommitAnalysis(BaseModel):
-    """Structured analysis of daily commits."""
-    summary: List[str] = Field(
-        description="5-10 bullet points summarizing what was accomplished (features, bug fixes, improvements, technical decisions)"
-    )
-    suggestions: List[str] = Field(
-        description="5-10 constructive suggestions for code quality improvements, better practices, optimizations, and areas needing attention"
-    )
-    critique: List[str] = Field(
-        description="5-10 honest critiques about what could be done better, potential issues, code smells, technical debt, and areas needing refactoring"
-    )
-    conclusion: str = Field(
-        description="2-3 paragraphs concluding the overall assessment, key achievements, recommendations for next steps, and productivity/quality assessment"
-    )
 
 def get_commits_by_user(commits_file, username):
     """Filter commits by username from the commits file."""
@@ -62,8 +44,8 @@ def get_commits_by_user(commits_file, username):
     
     return user_commits
 
-def generate_analysis_prompt(user_name, commits):
-    """Generate prompt for Google Gemini API to analyze commits."""
+def generate_llm_prompt(user_name, commits):
+    """Generate prompt for Ollama LLM to analyze commits."""
     prompt = f"""You are a technical project manager analyzing daily development work for {user_name}.
 
 Analyze the following {len(commits)} commits from yesterday and create a comprehensive professional report.
@@ -79,76 +61,91 @@ Commits from {user_name}:
     
     prompt += """
 
-Provide a detailed analysis with:
+Please provide a detailed analysis in the following structure:
 
-1. **Summary** (5-10 points): What was accomplished - features implemented, bug fixes, code improvements, technical decisions
+1. **Summary**: Provide 5-10 bullet points summarizing what was accomplished. Focus on:
+   - Features implemented
+   - Bug fixes
+   - Code improvements
+   - Technical decisions made
 
-2. **Suggestions** (5-10 points): Constructive suggestions for code quality improvements, better practices, optimizations, areas needing attention
+2. **Suggestions**: Provide 5-10 bullet points with constructive suggestions for:
+   - Code quality improvements
+   - Better practices that could be applied
+   - Potential optimizations
+   - Areas that need attention
 
-3. **Critique** (5-10 points): Honest critique about what could be done better, potential issues, code smells, technical debt, areas needing refactoring
+3. **Critique**: Provide 5-10 bullet points with honest critique about:
+   - What could have been done better
+   - Potential issues or concerns
+   - Code smells or technical debt
+   - Areas needing refactoring
 
-4. **Conclusion** (2-3 paragraphs): Overall assessment of the day's work, key achievements, recommendations for next steps, productivity and quality assessment
+4. **Conclusion**: Write 2-3 paragraphs concluding:
+   - Overall assessment of the day's work
+   - Key achievements
+   - Recommendations for next steps
+   - Overall productivity and quality assessment
 
-Be professional, actionable, and specific to the commits provided. Be constructive in critique and suggestions.
+Format your response as JSON with this exact structure:
+{
+  "summary": ["point 1", "point 2", ...],
+  "suggestions": ["point 1", "point 2", ...],
+  "critique": ["point 1", "point 2", ...],
+  "conclusion": "Your conclusion paragraphs here"
+}
+
+Keep it professional, actionable, and specific to the commits provided. Be constructive in critique and suggestions.
 """
     
     return prompt
 
-def call_gemini_api(prompt):
-    """Call Google Gemini API with structured output and return parsed response."""
-    print(f"Calling Google Gemini API for analysis...")
+def call_ollama(prompt):
+    """Call Ollama LLM with the prompt and return parsed response."""
+    print(f"Calling Ollama llama3.2 for analysis...")
     
     try:
-        # Get API key from environment
-        api_key = os.environ.get('GOOGLE_API_KEY')
-        if not api_key:
-            print("❌ Error: GOOGLE_API_KEY environment variable not set")
-            return None
-        
-        # Initialize Gemini client
-        client = genai.Client(api_key=api_key)
-        
-        # Call Gemini with structured output
-        print(f"Using model: gemini-2.0-flash-exp")
-        response = client.models.generate_content(
-            model='gemini-2.0-flash-exp',
-            contents=prompt,
-            config={
-                'response_mime_type': 'application/json',
-                'response_json_schema': CommitAnalysis.model_json_schema(),
-            }
+        result = subprocess.run(
+            ['ollama', 'run', 'qwen2.5'],
+            input=prompt,
+            capture_output=True,
+            text=True,
+            timeout=180
         )
         
-        # Parse response using Pydantic
-        analysis = CommitAnalysis.model_validate_json(response.text)
+        ai_response = result.stdout.strip()
+        print(f"AI Response received ({len(ai_response)} chars)")
         
-        # Convert to dict for compatibility with rest of code
-        analysis_dict = {
-            'summary': analysis.summary,
-            'suggestions': analysis.suggestions,
-            'critique': analysis.critique,
-            'conclusion': analysis.conclusion
+        # Try to extract JSON from response
+        start_idx = ai_response.find('{')
+        end_idx = ai_response.rfind('}') + 1
+        
+        if start_idx != -1 and end_idx > start_idx:
+            json_str = ai_response[start_idx:end_idx]
+            analysis = json.loads(json_str)
+            
+            # Validate structure
+            required_keys = ['summary', 'suggestions', 'critique', 'conclusion']
+            if all(key in analysis for key in required_keys):
+                return analysis
+        
+        # Fallback if parsing fails
+        print("Warning: Could not parse JSON from LLM response, using fallback")
+        return {
+            'summary': ['Analysis completed but response format was invalid'],
+            'suggestions': ['Review the commits manually for detailed suggestions'],
+            'critique': ['Unable to generate detailed critique'],
+            'conclusion': ai_response[:500] if ai_response else 'No response from LLM'
         }
         
-        print(f"✅ Successfully received structured response")
-        print(f"   - Summary: {len(analysis.summary)} points")
-        print(f"   - Suggestions: {len(analysis.suggestions)} points")
-        print(f"   - Critique: {len(analysis.critique)} points")
-        print(f"   - Conclusion: {len(analysis.conclusion)} chars")
-        
-        # Save response for debugging
-        debug_file = Path('daily-reports') / 'last_gemini_response.json'
-        debug_file.parent.mkdir(exist_ok=True)
-        with open(debug_file, 'w') as f:
-            json.dump(analysis_dict, f, indent=2)
-        print(f"Response saved to: {debug_file}")
-        
-        return analysis_dict
-        
+    except subprocess.TimeoutExpired:
+        print("Error: Ollama timeout")
+        return None
+    except json.JSONDecodeError as e:
+        print(f"Error: JSON decode failed - {e}")
+        return None
     except Exception as e:
-        print(f"❌ Error calling Gemini API: {e}")
-        import traceback
-        traceback.print_exc()
+        print(f"Error calling Ollama: {e}")
         return None
 
 def generate_markdown_report(user_name, date_str, commits, analysis):
@@ -219,8 +216,8 @@ def main():
         
         print(f"Found {len(user_commits)} commits for {user_name}")
         
-        # Generate prompt and call Gemini API
-        prompt = generate_analysis_prompt(user_name, user_commits)
+        # Generate prompt and call LLM
+        prompt = generate_llm_prompt(user_name, user_commits)
         
         # Save prompt for debugging
         prompt_file = output_dir / f"{user_name.lower()}_prompt.txt"
@@ -228,11 +225,11 @@ def main():
             f.write(prompt)
         print(f"Prompt saved to: {prompt_file}")
         
-        # Call Gemini API
-        analysis = call_gemini_api(prompt)
+        # Call Ollama
+        analysis = call_ollama(prompt)
         
         if not analysis:
-            print(f"Error: Failed to get analysis from Gemini API for {user_name}")
+            print(f"Error: Failed to get analysis from LLM for {user_name}")
             results[user_name] = {
                 'commit_count': len(user_commits),
                 'has_commits': True,
