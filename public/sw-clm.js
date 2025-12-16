@@ -71,8 +71,18 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip non-HTTP(S) schemes (chrome-extension, data, blob, etc.)
+  if (!url.protocol.startsWith('http')) {
+    return;
+  }
+
   // Skip WebSocket and API requests
   if (url.pathname.startsWith('/ws/') || url.pathname.startsWith('/api/')) {
+    return;
+  }
+
+  // Skip Grafana Faro monitoring (causes CORS errors)
+  if (url.hostname.includes('grafana.net')) {
     return;
   }
 

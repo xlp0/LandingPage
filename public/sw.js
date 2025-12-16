@@ -94,6 +94,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip non-HTTP(S) schemes (chrome-extension, data, blob, etc.)
+  if (!url.protocol.startsWith('http')) {
+    return;
+  }
+
+  // Skip Grafana Faro monitoring (causes CORS errors)
+  if (url.hostname.includes('grafana.net')) {
+    return;
+  }
+
   // Strategy 1: Cache First (Critical Assets) - INSTANT LOADING
   if (CRITICAL_ASSETS.some(asset => url.pathname === asset)) {
     event.respondWith(
