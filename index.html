@@ -865,6 +865,130 @@
           padding: 8px;
         }
       }
+
+      /* PWA Install Banner */
+      .pwa-install-banner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 10000;
+        background: linear-gradient(135deg, #007acc 0%, #005a9e 100%);
+        color: white;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        transform: translateY(-100%);
+        transition: transform 0.3s ease-out;
+      }
+
+      .pwa-install-banner.show {
+        transform: translateY(0);
+      }
+
+      .pwa-install-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+      }
+
+      .pwa-install-icon {
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+      }
+
+      .pwa-install-text {
+        flex: 1;
+      }
+
+      .pwa-install-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      .pwa-install-description {
+        font-size: 13px;
+        opacity: 0.9;
+      }
+
+      .pwa-install-actions {
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+
+      .pwa-install-btn {
+        padding: 8px 20px;
+        border-radius: 6px;
+        border: none;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+
+      .pwa-install-btn.primary {
+        background: white;
+        color: #007acc;
+      }
+
+      .pwa-install-btn.primary:hover {
+        background: #f0f0f0;
+        transform: translateY(-1px);
+      }
+
+      .pwa-install-btn.secondary {
+        background: transparent;
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+
+      .pwa-install-btn.secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: white;
+      }
+
+      /* Mobile responsive for install banner */
+      @media (max-width: 768px) {
+        .pwa-install-banner {
+          flex-direction: column;
+          align-items: stretch;
+          padding: 14px 16px;
+        }
+
+        .pwa-install-content {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+
+        .pwa-install-actions {
+          width: 100%;
+        }
+
+        .pwa-install-btn {
+          flex: 1;
+          padding: 10px 16px;
+        }
+      }
+
+      /* Adjust main content when banner is shown */
+      body.pwa-banner-visible .dashboard-container {
+        padding-top: 80px;
+      }
+
+      @media (max-width: 768px) {
+        body.pwa-banner-visible .dashboard-container {
+          padding-top: 120px;
+        }
+      }
     </style>
 </head>
 <body>
@@ -872,6 +996,23 @@
     <div class="loading-overlay" id="loadingOverlay">
       <div class="loader"></div>
       <div class="loading-text">Loading CLM Components...</div>
+    </div>
+
+    <!-- PWA Install Banner -->
+    <div class="pwa-install-banner" id="pwaInstallBanner">
+      <div class="pwa-install-content">
+        <svg class="pwa-install-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+        </svg>
+        <div class="pwa-install-text">
+          <div class="pwa-install-title">Install CLM Dashboard</div>
+          <div class="pwa-install-description">Get faster access and work offline</div>
+        </div>
+      </div>
+      <div class="pwa-install-actions">
+        <button class="pwa-install-btn primary" id="pwaInstallBtn">Install</button>
+        <button class="pwa-install-btn secondary" id="pwaDismissBtn">Not Now</button>
+      </div>
     </div>
 
     <!-- Mobile Menu Toggle -->
@@ -2098,6 +2239,116 @@
         });
 
         console.log('[Mobile] Menu handler initialized');
+      })();
+    </script>
+
+    <!-- PWA Install Banner Handler -->
+    <script>
+      (function() {
+        const banner = document.getElementById('pwaInstallBanner');
+        const installBtn = document.getElementById('pwaInstallBtn');
+        const dismissBtn = document.getElementById('pwaDismissBtn');
+        
+        if (!banner || !installBtn || !dismissBtn) return;
+
+        let deferredPrompt = null;
+        const DISMISS_KEY = 'pwa-install-dismissed-clm';
+        const DISMISS_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+        // Check if already dismissed
+        function isDismissed() {
+          const dismissed = localStorage.getItem(DISMISS_KEY);
+          if (!dismissed) return false;
+          
+          const dismissedTime = parseInt(dismissed, 10);
+          const now = Date.now();
+          
+          if (now - dismissedTime > DISMISS_DURATION) {
+            localStorage.removeItem(DISMISS_KEY);
+            return false;
+          }
+          
+          return true;
+        }
+
+        // Check if already installed
+        function isInstalled() {
+          return window.matchMedia('(display-mode: standalone)').matches ||
+                 window.navigator.standalone === true;
+        }
+
+        // Show banner
+        function showBanner() {
+          if (isDismissed() || isInstalled()) {
+            console.log('[PWA] Install banner not shown (dismissed or installed)');
+            return;
+          }
+
+          setTimeout(() => {
+            banner.classList.add('show');
+            document.body.classList.add('pwa-banner-visible');
+            console.log('[PWA] ✓ Install banner shown');
+          }, 2000); // Show after 2 seconds
+        }
+
+        // Hide banner
+        function hideBanner() {
+          banner.classList.remove('show');
+          document.body.classList.remove('pwa-banner-visible');
+          setTimeout(() => {
+            banner.style.display = 'none';
+          }, 300);
+        }
+
+        // Capture beforeinstallprompt event
+        window.addEventListener('beforeinstallprompt', (e) => {
+          e.preventDefault();
+          deferredPrompt = e;
+          console.log('[PWA] ✓ Install prompt captured');
+          showBanner();
+        });
+
+        // Install button click
+        installBtn.addEventListener('click', async () => {
+          if (!deferredPrompt) {
+            console.log('[PWA] ⚠️  No install prompt available');
+            alert('Install prompt not available. Try adding to home screen manually.');
+            return;
+          }
+
+          console.log('[PWA] Showing install prompt...');
+          deferredPrompt.prompt();
+
+          const { outcome } = await deferredPrompt.userChoice;
+          console.log('[PWA] Install prompt outcome:', outcome);
+
+          if (outcome === 'accepted') {
+            console.log('[PWA] ✓ User accepted install');
+          } else {
+            console.log('[PWA] User dismissed install');
+          }
+
+          deferredPrompt = null;
+          hideBanner();
+        });
+
+        // Dismiss button click
+        dismissBtn.addEventListener('click', () => {
+          console.log('[PWA] Install banner dismissed');
+          localStorage.setItem(DISMISS_KEY, Date.now().toString());
+          hideBanner();
+        });
+
+        // Listen for app installed event
+        window.addEventListener('appinstalled', () => {
+          console.log('[PWA] ✓ App installed successfully');
+          hideBanner();
+        });
+
+        // Check if should show banner on load
+        if (!isInstalled() && !isDismissed()) {
+          console.log('[PWA] Waiting for install prompt...');
+        }
       })();
     </script>
 
