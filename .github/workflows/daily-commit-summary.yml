@@ -207,7 +207,6 @@ jobs:
         if: steps.get-commits.outputs.has_commits == 'true'
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
-          GOOGLE_CALENDAR_ID: ${{ secrets.GOOGLE_CALENDAR_ID }}
         run: |
           python3 << 'EOF'
           import json
@@ -240,7 +239,7 @@ jobs:
           service = build('calendar', 'v3', credentials=credentials)
           
           # Get calendar ID
-          calendar_id = os.environ.get('GOOGLE_CALENDAR_ID', 'primary').strip()
+          calendar_id = 'f0a800fb2e065c7a82fe3d4ffc26a1620a39737e8bcdbbd9e1ab1d6728090894@group.calendar.google.com'
 
           # Preflight: verify the service account can see/access the target calendar
           try:
