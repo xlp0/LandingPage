@@ -11,6 +11,7 @@ import { TextRenderer } from './TextRenderer.js';
 import { PDFRenderer } from './PDFRenderer.js';
 import { CLMRenderer } from './CLMRenderer.js';
 import { LatexRenderer } from './LatexRenderer.js';
+import { AudioRenderer } from './AudioRenderer.js';
 
 export class RendererRegistry {
   constructor() {
@@ -32,6 +33,7 @@ export class RendererRegistry {
       this.register(new ImageRenderer());
       this.register(new TextRenderer());
       this.register(new PDFRenderer());
+      this.register(new AudioRenderer());
       
       this.initialized = true;
       console.log('[RendererRegistry] Initialized with renderers:', Array.from(this.renderers.keys()));

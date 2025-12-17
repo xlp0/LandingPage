@@ -520,6 +520,38 @@ export class CardViewer {
       return '<span style="background: #c586c0; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">VIDEO</span>';
     }
     
+    // Detect specific format for audio
+    if (type === 'audio' && binaryContent && binaryContent.length > 12) {
+      const bytes = binaryContent instanceof Uint8Array ? binaryContent : new Uint8Array(binaryContent);
+      // MP3: FF FB or FF F3 or FF F2
+      if (bytes[0] === 0xFF && (bytes[1] === 0xFB || bytes[1] === 0xF3 || bytes[1] === 0xF2)) {
+        return '<span style="background: #dcdcaa; color: #1e1e1e; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">MP3</span>';
+      }
+      // WAV: RIFF...WAVE
+      if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) {
+        if (bytes.length > 11 && bytes[8] === 0x57 && bytes[9] === 0x41 && bytes[10] === 0x56 && bytes[11] === 0x45) {
+          return '<span style="background: #dcdcaa; color: #1e1e1e; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">WAV</span>';
+        }
+      }
+      // OGG: OggS
+      if (bytes[0] === 0x4F && bytes[1] === 0x67 && bytes[2] === 0x67 && bytes[3] === 0x53) {
+        return '<span style="background: #dcdcaa; color: #1e1e1e; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">OGG</span>';
+      }
+      // FLAC: fLaC
+      if (bytes[0] === 0x66 && bytes[1] === 0x4C && bytes[2] === 0x61 && bytes[3] === 0x43) {
+        return '<span style="background: #dcdcaa; color: #1e1e1e; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">FLAC</span>';
+      }
+      // M4A: ftyp with M4A
+      if (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
+        const ftypString = String.fromCharCode(...bytes.slice(8, 12));
+        if (ftypString.includes('M4A')) {
+          return '<span style="background: #dcdcaa; color: #1e1e1e; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">M4A</span>';
+        }
+      }
+      // Generic audio
+      return '<span style="background: #dcdcaa; color: #1e1e1e; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">AUDIO</span>';
+    }
+    
     // Default badges for other types
     const badges = {
       'markdown': '<span style="background: #007acc; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">MD</span>',
@@ -598,9 +630,16 @@ export class CardViewer {
       }
     }
     
-    // ✅ Check for images by magic bytes if library says "application/octet-stream"
+    // ✅ Check for binary formats by magic bytes if library says "application/octet-stream"
     if (lowerType.includes('octet-stream') && binaryContent && binaryContent.length > 4) {
       const bytes = binaryContent instanceof Uint8Array ? binaryContent : new Uint8Array(binaryContent);
+      
+      // PDF: 25 50 44 46 (%PDF)
+      if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) {
+        console.log('[CardViewer] ✓ Detected PDF by magic bytes');
+        return 'pdf';
+      }
+      
       // PNG: 89 50 4E 47
       if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
         return 'image';
@@ -615,7 +654,53 @@ export class CardViewer {
       }
       // WebP: 52 49 46 46 (RIFF)
       if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) {
-        return 'image';
+        // Check if it's WebP (not WAV)
+        if (bytes.length > 11 && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50) {
+          return 'image';
+        }
+        // RIFF but not WebP - could be WAV audio
+        if (bytes.length > 11 && bytes[8] === 0x57 && bytes[9] === 0x41 && bytes[10] === 0x56 && bytes[11] === 0x45) {
+          console.log('[CardViewer] ✓ Detected WAV audio by magic bytes');
+          return 'audio';
+        }
+      }
+      
+      // MP3: FF FB or FF F3 or FF F2 (MPEG audio frame sync)
+      if (bytes[0] === 0xFF && (bytes[1] === 0xFB || bytes[1] === 0xF3 || bytes[1] === 0xF2)) {
+        console.log('[CardViewer] ✓ Detected MP3 audio by magic bytes');
+        return 'audio';
+      }
+      
+      // OGG: 4F 67 67 53 (OggS)
+      if (bytes[0] === 0x4F && bytes[1] === 0x67 && bytes[2] === 0x67 && bytes[3] === 0x53) {
+        console.log('[CardViewer] ✓ Detected OGG audio by magic bytes');
+        return 'audio';
+      }
+      
+      // FLAC: 66 4C 61 43 (fLaC)
+      if (bytes[0] === 0x66 && bytes[1] === 0x4C && bytes[2] === 0x61 && bytes[3] === 0x43) {
+        console.log('[CardViewer] ✓ Detected FLAC audio by magic bytes');
+        return 'audio';
+      }
+      
+      // M4A/AAC: Check for ftyp box with M4A
+      if (bytes.length > 12 && bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
+        // Check if it's M4A (audio) vs MP4 (video)
+        const ftypString = String.fromCharCode(...bytes.slice(8, 12));
+        if (ftypString.includes('M4A') || ftypString.includes('mp42')) {
+          console.log('[CardViewer] ✓ Detected M4A audio by ftyp');
+          return 'audio';
+        }
+      }
+      
+      // MP4 video
+      if (bytes.length > 12 && bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
+        return 'video';
+      }
+      
+      // WebM: 1A 45 DF A3
+      if (bytes[0] === 0x1A && bytes[1] === 0x45 && bytes[2] === 0xDF && bytes[3] === 0xA3) {
+        return 'video';
       }
     }
     
