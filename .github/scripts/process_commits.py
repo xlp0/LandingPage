@@ -103,7 +103,7 @@ Keep it professional, actionable, and specific to the commits provided. Be const
 
 def call_ollama(prompt):
     """Call Ollama LLM with the prompt and return parsed response."""
-    model = os.environ.get('OLLAMA_MODEL', 'llama3.2')
+    model = os.environ.get('OLLAMA_MODEL', 'qwen2.5:3b')
     try:
         timeout_seconds = int(os.environ.get('OLLAMA_TIMEOUT_SECONDS', '600'))
     except ValueError:
