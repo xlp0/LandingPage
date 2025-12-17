@@ -103,15 +103,21 @@ Keep it professional, actionable, and specific to the commits provided. Be const
 
 def call_ollama(prompt):
     """Call Ollama LLM with the prompt and return parsed response."""
-    print(f"Calling Ollama llama3.2 for analysis...")
+    model = os.environ.get('OLLAMA_MODEL', 'llama3.2')
+    try:
+        timeout_seconds = int(os.environ.get('OLLAMA_TIMEOUT_SECONDS', '600'))
+    except ValueError:
+        timeout_seconds = 600
+
+    print(f"Calling Ollama {model} for analysis (timeout: {timeout_seconds}s)...")
     
     try:
         result = subprocess.run(
-            ['ollama', 'run', 'qwen2.5:3b'],
+            ['ollama', 'run', model],
             input=prompt,
             capture_output=True,
             text=True,
-            timeout=180
+            timeout=timeout_seconds
         )
         
         ai_response = result.stdout.strip()
@@ -140,7 +146,7 @@ def call_ollama(prompt):
         }
         
     except subprocess.TimeoutExpired:
-        print("Error: Ollama timeout")
+        print(f"Error: Ollama timeout after {timeout_seconds}s (model: {model})")
         return None
     except json.JSONDecodeError as e:
         print(f"Error: JSON decode failed - {e}")
