@@ -1,27 +1,29 @@
-// Service Worker for MCard Manager PWA - Optimized for Speed
-const CACHE_VERSION = 'v5';
+// Service Worker for MCard Manager PWA - ULTRA-FAST CACHING
+const CACHE_VERSION = 'v6';
 const CACHE_NAME = `mcard-manager-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `mcard-runtime-${CACHE_VERSION}`;
 const IMAGE_CACHE = `mcard-images-${CACHE_VERSION}`;
 const CDN_CACHE = `mcard-cdn-${CACHE_VERSION}`;
 
-// Critical assets for instant loading (cache-first, never expire)
+// Critical assets for INSTANT loading (cache-first, never expire)
 const CRITICAL_ASSETS = [
   '/',
   '/index.html',
   '/public/manifest.json'
 ];
 
-// App shell assets (cache-first, update in background)
+// App shell assets (cache-first, aggressive caching)
 // Only include files that actually exist
 const APP_SHELL_ASSETS = [
   '/public/css/mcard-manager.css',
+  '/public/css/content-renderers.css',
   '/public/js/mcard-manager-new.js',
   '/public/js/mcard/MCardManager.js',
   '/public/js/mcard/CardViewer.js',
   '/public/js/mcard/UIComponents.js',
   '/public/js/renderers/MarkdownRenderer.js',
-  '/public/js/renderers/ImageRenderer.js'
+  '/public/js/renderers/ImageRenderer.js',
+  '/public/js/performance-monitor.js'
 ];
 
 // CDN resources (cache-first, long expiry)
@@ -30,50 +32,73 @@ const CDN_ASSETS = [
   'https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js',
   'https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js',
   'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js',
-  'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css'
+  'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css',
+  'https://unpkg.com/mcard-js@latest/dist/mcard.min.js'
 ];
 
 // Combine all for initial precache
 const PRECACHE_ASSETS = [...CRITICAL_ASSETS, ...APP_SHELL_ASSETS];
 
-// Install event - cache assets
+// Preload CDN assets in background
+const PRELOAD_CDN = true;
+
+// Install event - cache assets AGGRESSIVELY
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing service worker...');
+  console.log('[SW] 🚀 Installing service worker with aggressive caching...');
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('[SW] Caching app shell');
+    Promise.all([
+      // Cache app shell immediately
+      caches.open(CACHE_NAME).then((cache) => {
+        console.log('[SW] 📦 Caching app shell (critical + assets)');
         return cache.addAll(PRECACHE_ASSETS);
-      })
-      .then(() => {
-        console.log('[SW] Service worker installed successfully');
-        return self.skipWaiting();
-      })
-      .catch((error) => {
-        console.error('[SW] Installation failed:', error);
-      })
+      }),
+      // Cache CDN assets in parallel for INSTANT second load
+      PRELOAD_CDN ? caches.open(CDN_CACHE).then((cache) => {
+        console.log('[SW] 🌐 Preloading CDN assets for instant second load...');
+        return Promise.allSettled(
+          CDN_ASSETS.map(url => 
+            fetch(url)
+              .then(response => {
+                if (response.ok) {
+                  console.log('[SW] ✅ Cached CDN:', url.split('/').pop());
+                  return cache.put(url, response);
+                }
+              })
+              .catch(err => console.log('[SW] ⚠️  CDN skip:', url.split('/').pop()))
+          )
+        );
+      }) : Promise.resolve()
+    ])
+    .then(() => {
+      console.log('[SW] ✅ Service worker installed - READY FOR INSTANT LOADING!');
+      return self.skipWaiting();
+    })
+    .catch((error) => {
+      console.error('[SW] ❌ Installation failed:', error);
+    })
   );
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches but keep current ones
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating service worker...');
+  console.log('[SW] ⚡ Activating service worker...');
+  
+  const currentCaches = [CACHE_NAME, RUNTIME_CACHE, IMAGE_CACHE, CDN_CACHE];
+  
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
         return Promise.all(
           cacheNames
-            .filter((cacheName) => {
-              return cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE;
-            })
+            .filter((cacheName) => !currentCaches.includes(cacheName))
             .map((cacheName) => {
-              console.log('[SW] Deleting old cache:', cacheName);
+              console.log('[SW] 🗑️  Deleting old cache:', cacheName);
               return caches.delete(cacheName);
             })
         );
       })
       .then(() => {
-        console.log('[SW] Service worker activated');
+        console.log('[SW] ✅ Service worker activated - TAKING CONTROL!');
         return self.clients.claim();
       })
   );
@@ -99,17 +124,23 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Strategy 1: Cache First (Critical Assets) - INSTANT LOADING
+  // Strategy 1: Cache First (Critical Assets) - INSTANT LOADING ⚡
   if (CRITICAL_ASSETS.some(asset => url.pathname === asset)) {
     event.respondWith(
       caches.match(request).then((cachedResponse) => {
         if (cachedResponse) {
           console.log('[SW] ⚡ INSTANT from cache:', url.pathname);
+          // Update cache in background (stale-while-revalidate)
+          fetch(request).then(response => {
+            if (response && response.ok) {
+              caches.open(CACHE_NAME).then(c => c.put(request, response.clone()));
+            }
+          }).catch(() => {});
           return cachedResponse;
         }
+        // Not in cache, fetch and cache
         return fetch(request).then((response) => {
           if (response.ok) {
-            // Clone before using
             const responseToCache = response.clone();
             caches.open(CACHE_NAME).then(c => c.put(request, responseToCache));
           }
@@ -120,22 +151,31 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Strategy 2: Stale-While-Revalidate (App Shell) - FAST + FRESH
+  // Strategy 2: Cache First + Background Update (App Shell) - INSTANT + FRESH 🚀
   if (APP_SHELL_ASSETS.some(asset => url.pathname.includes(asset))) {
     event.respondWith(
       caches.match(request).then((cachedResponse) => {
+        // Always update in background
         const fetchPromise = fetch(request).then((networkResponse) => {
           if (networkResponse && networkResponse.ok) {
-            // Clone before using
             const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then(c => c.put(request, responseToCache));
+            caches.open(CACHE_NAME).then(c => {
+              c.put(request, responseToCache);
+              console.log('[SW] 🔄 Updated cache:', url.pathname.split('/').pop());
+            });
           }
           return networkResponse;
         }).catch(() => cachedResponse);
 
-        // Return cached immediately, update in background
-        console.log('[SW] 🔄 Stale-while-revalidate:', url.pathname);
-        return cachedResponse || fetchPromise;
+        // Return cached INSTANTLY, update in background
+        if (cachedResponse) {
+          console.log('[SW] 🚀 INSTANT from cache:', url.pathname.split('/').pop());
+          fetchPromise; // Trigger background update
+          return cachedResponse;
+        }
+        
+        // Not cached yet, wait for network
+        return fetchPromise;
       })
     );
     return;
