@@ -1252,3 +1252,76 @@ input[type="file"] {
     height: 14px !important;
   }
 }
+
+/* Calendar View - Full Width */
+.calendar-view {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #1e1e1e;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-header {
+  background: #2d2d30;
+  color: white;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #3e3e42;
+  flex-shrink: 0;
+}
+
+.calendar-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.calendar-container {
+  flex: 1;
+  overflow: hidden;
+  background: white;
+  position: relative;
+}
+
+.calendar-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Calendar View Animations */
+.calendar-view {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Mobile Calendar View */
+@media (max-width: 768px) {
+  .calendar-header h2 {
+    font-size: 16px;
+  }
+  
+  .calendar-header h2 i {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}

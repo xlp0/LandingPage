@@ -121,12 +121,40 @@
           <i data-lucide="file-text" style="width: 16px; height: 16px;"></i>
           New Text
         </button>
+        <button class="header-btn" onclick="showCalendar()">
+          <i data-lucide="calendar" style="width: 16px; height: 16px;"></i>
+          Calendar
+        </button>
         <button class="header-btn" onclick="toggleChat()">
           <i data-lucide="message-square" style="width: 16px; height: 16px;"></i>
           Chat
         </button>
       </div>
       <input type="file" id="fileInput" multiple style="display: none;">
+    </div>
+
+    <!-- Full-Width Calendar View -->
+    <div class="calendar-view" id="calendarView" style="display: none;">
+      <div class="calendar-header">
+        <button class="header-btn" onclick="hideCalendar()">
+          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+          Close Calendar
+        </button>
+        <h2 style="margin: 0; flex: 1; text-align: center;">
+          <i data-lucide="calendar" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
+          Public Calendar
+        </h2>
+        <div style="width: 120px;"></div> <!-- Spacer for centering -->
+      </div>
+      <div class="calendar-container" id="calendarContainer">
+        <iframe 
+          id="calendarFrame"
+          src="https://calendar.google.com/calendar/embed?src=83eaf0af7e929d74dc166a19beb26b471f351697c5b0ba8d92e3a9a30540ca8d%40group.calendar.google.com&ctz=Asia%2FMakassar"
+          style="border: 0; width: 100%; height: 100%;"
+          frameborder="0"
+          scrolling="no">
+        </iframe>
+      </div>
     </div>
 
     <div class="main-content">
@@ -1054,6 +1082,54 @@ Supported browsers:
       console.log('[PWA] Received shared content');
       // Handle shared content here
     }
+
+    // Calendar View Functions
+    function showCalendar() {
+      console.log('[Calendar] Opening calendar view');
+      const calendarView = document.getElementById('calendarView');
+      const mainContent = document.querySelector('.main-content');
+      
+      // Hide main content
+      if (mainContent) {
+        mainContent.style.display = 'none';
+      }
+      
+      // Show calendar view
+      calendarView.style.display = 'flex';
+      
+      // Re-initialize Lucide icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+      
+      console.log('[Calendar] Calendar view opened');
+    }
+
+    function hideCalendar() {
+      console.log('[Calendar] Closing calendar view');
+      const calendarView = document.getElementById('calendarView');
+      const mainContent = document.querySelector('.main-content');
+      
+      // Hide calendar view
+      calendarView.style.display = 'none';
+      
+      // Show main content
+      if (mainContent) {
+        mainContent.style.display = 'flex';
+      }
+      
+      console.log('[Calendar] Calendar view closed');
+    }
+
+    // ESC key to close calendar
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const calendarView = document.getElementById('calendarView');
+        if (calendarView && calendarView.style.display === 'flex') {
+          hideCalendar();
+        }
+      }
+    });
   </script>
 </body>
 </html>
