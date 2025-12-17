@@ -7,6 +7,7 @@
 
 // ✅ Import from mcard-js library
 import { ContentTypeInterpreter } from 'mcard-js';
+import { ContentTypeDetector } from './ContentTypeDetector.js';
 
 export class UIComponents {
   /**
@@ -125,11 +126,11 @@ export class UIComponents {
     }
     
     mcardList.innerHTML = cards.map(card => {
-      // Use library's ContentTypeInterpreter
-      const contentType = ContentTypeInterpreter.detect(card.getContent());
+      // ✅ Use ContentTypeDetector for unified detection
+      const typeInfo = ContentTypeDetector.detect(card);
+      const type = typeInfo.type;
       const binaryContent = card.getContent();
-      const textContent = card.getContentAsText();
-      const type = UIComponents.mapContentType(contentType, binaryContent, textContent);
+      
       const icon = UIComponents.getFileIcon(type);
       const time = UIComponents.formatTime(card.g_time);
       const size = UIComponents.formatBytes(card.getContent().length);
