@@ -2,17 +2,24 @@
   "name": "MCard Manager",
   "short_name": "MCard",
   "description": "Content-addressable card management system with local-first storage",
-  "start_url": "/mcard-manager.html",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#1e1e1e",
   "theme_color": "#007acc",
   "orientation": "any",
-  "icons": [],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ],
   "categories": ["productivity", "utilities"],
   "screenshots": [],
   "shortcuts": [],
   "share_target": {
-    "action": "/mcard-manager.html",
+    "action": "/",
     "method": "POST",
     "enctype": "multipart/form-data",
     "params": {

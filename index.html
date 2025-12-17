@@ -606,14 +606,23 @@
     
     window.addEventListener('beforeinstallprompt', (e) => {
       console.log('[PWA] ✅ Native install prompt available!');
+      console.log('[PWA] Event details:', e);
+      console.log('[PWA] Browser:', navigator.userAgent);
+      console.log('[PWA] Display mode:', window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser');
+      
+      // Prevent the mini-infobar from appearing on mobile
       e.preventDefault();
+      
+      // Store the event so it can be triggered later
       deferredPrompt = e;
       
-      // Show modal immediately when native prompt is available (Android Chrome/Edge)
+      // Show modal immediately when native prompt is available (Android Chrome/Edge, Desktop Chrome/Edge)
       if (!installPromptShown && !window.matchMedia('(display-mode: standalone)').matches && !window.navigator.standalone) {
         console.log('[PWA] 🚀 Showing install modal with native prompt support');
         installPromptShown = true;
         showInstallPromotion();
+      } else {
+        console.log('[PWA] ℹ️  Install prompt not shown (already shown or app installed)');
       }
     });
 
@@ -888,13 +897,18 @@
 
       // Install button handler
       document.getElementById('modal-install-btn').addEventListener('click', async () => {
+        console.log('[PWA] 🎯 Install button clicked!');
+        console.log('[PWA] deferredPrompt available:', !!deferredPrompt);
+        console.log('[PWA] User agent:', navigator.userAgent);
+        
         if (deferredPrompt) {
           // Native install prompt available (Chrome/Edge/Android)
           console.log('[PWA] 🚀 Triggering native install prompt!');
           
           try {
             // Show the native install prompt
-            await deferredPrompt.prompt();
+            const promptResult = await deferredPrompt.prompt();
+            console.log('[PWA] Prompt result:', promptResult);
             
             // Wait for the user's response
             const { outcome } = await deferredPrompt.userChoice;
@@ -905,7 +919,35 @@
               // Show success message
               closeModal();
               setTimeout(() => {
-                alert('✅ MCard Manager installed! You can now find it on your home screen or app drawer.');
+                const successMsg = document.createElement('div');
+                successMsg.style.cssText = `
+                  position: fixed;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                  background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+                  color: white;
+                  padding: 24px 32px;
+                  border-radius: 12px;
+                  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                  z-index: 10001;
+                  font-size: 16px;
+                  font-weight: 600;
+                  text-align: center;
+                  animation: fadeIn 0.3s ease-out;
+                `;
+                successMsg.innerHTML = `
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <i data-lucide="check-circle" style="width: 24px; height: 24px;"></i>
+                    <div>
+                      <div style="font-size: 18px; margin-bottom: 4px;">✅ Installation Successful!</div>
+                      <div style="font-size: 14px; opacity: 0.9;">MCard Manager is now on your home screen</div>
+                    </div>
+                  </div>
+                `;
+                document.body.appendChild(successMsg);
+                if (window.lucide) lucide.createIcons();
+                setTimeout(() => successMsg.remove(), 4000);
               }, 300);
             } else {
               console.log('[PWA] ❌ User cancelled installation');
@@ -916,13 +958,34 @@
             deferredPrompt = null;
           } catch (error) {
             console.error('[PWA] ❌ Install prompt error:', error);
-            // If native prompt fails, show manual instructions
-            showManualInstructions();
+            console.error('[PWA] Error details:', error.message, error.stack);
+            
+            // Check if it's because app is already installed
+            if (error.message && error.message.includes('The app is already installed')) {
+              closeModal();
+              alert('✅ MCard Manager is already installed on your device!');
+            } else {
+              // If native prompt fails, show manual instructions
+              showManualInstructions();
+            }
           }
         } else {
           // No native prompt available - show manual instructions
           console.log('[PWA] ⚠️  Native prompt not available, showing manual instructions');
-          showManualInstructions();
+          console.log('[PWA] Possible reasons:');
+          console.log('  - App already installed');
+          console.log('  - Browser does not support PWA install');
+          console.log('  - User has dismissed prompt too many times');
+          console.log('  - Not served over HTTPS (localhost is OK)');
+          console.log('  - Service worker not registered');
+          
+          // Check if already installed
+          if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+            closeModal();
+            alert('✅ MCard Manager is already installed on your device!');
+          } else {
+            showManualInstructions();
+          }
         }
       });
       
