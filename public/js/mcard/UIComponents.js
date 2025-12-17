@@ -33,6 +33,7 @@ export class UIComponents {
     const types = [
       { id: 'all', name: 'All Cards', icon: 'package', count: getCount(categories.all) },
       { id: 'with-handles', name: 'With Handles', icon: 'tag', count: getCount(categories.withHandles) },
+      { id: 'calendar', name: 'Calendar', icon: 'calendar', count: '', isSpecial: true },
       { id: 'clm', name: 'CLM', icon: 'box', count: getCount(categories.clm) },
       { id: 'markdown', name: 'Markdown', icon: 'file-text', count: getCount(categories.markdown) },
       { id: 'text', name: 'Text', icon: 'file-text', count: getCount(categories.text) },
@@ -44,15 +45,31 @@ export class UIComponents {
       { id: 'other', name: 'Other', icon: 'folder', count: getCount(categories.other) }
     ];
 
-    typeList.innerHTML = types.map(type => `
-      <div class="type-item ${type.id === currentType ? 'active' : ''}" onclick="selectType('${type.id}')" title="${type.name}">
-        <div class="type-item-content">
-          <span class="type-icon" title="${type.name}"><i data-lucide="${type.icon}" style="width: 20px; height: 20px;"></i></span>
-          <span class="type-name">${type.name}</span>
+    typeList.innerHTML = types.map(type => {
+      // Special handling for calendar
+      if (type.isSpecial && type.id === 'calendar') {
+        return `
+          <div class="type-item" onclick="showCalendar()" title="${type.name}">
+            <div class="type-item-content">
+              <span class="type-icon" title="${type.name}"><i data-lucide="${type.icon}" style="width: 20px; height: 20px;"></i></span>
+              <span class="type-name">${type.name}</span>
+            </div>
+            <span class="type-count" style="opacity: 0.5;"><i data-lucide="external-link" style="width: 14px; height: 14px;"></i></span>
+          </div>
+        `;
+      }
+      
+      // Normal card type
+      return `
+        <div class="type-item ${type.id === currentType ? 'active' : ''}" onclick="selectType('${type.id}')" title="${type.name}">
+          <div class="type-item-content">
+            <span class="type-icon" title="${type.name}"><i data-lucide="${type.icon}" style="width: 20px; height: 20px;"></i></span>
+            <span class="type-name">${type.name}</span>
+          </div>
+          <span class="type-count">${type.count}</span>
         </div>
-        <span class="type-count">${type.count}</span>
-      </div>
-    `).join('');
+      `;
+    }).join('');
     
     // Initialize Lucide icons
     if (window.lucide) {
