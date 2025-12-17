@@ -19,6 +19,7 @@ import {
 // Keep UI components (not part of library)
 import { UIComponents } from './UIComponents.js';
 import { CardViewer } from './CardViewer.js';
+import { ContentTypeDetector } from './ContentTypeDetector.js';
 
 export class MCardManager {
   constructor() {
@@ -1025,6 +1026,8 @@ Related Cards:
    * @returns {Promise<Object>} Categories object
    */
   async categorizeCards(cards) {
+    console.log('[MCardManager] ✅ Using ContentTypeDetector for categorization');
+    
     const categories = {
       all: cards,
       withHandles: [],
@@ -1075,157 +1078,41 @@ Related Cards:
     for (const card of cards) {
       // Check if this card has handles
       const hasHandle = cardsWithHandles.has(card.hash);
-      console.log(`[MCardManager] Card ${card.hash.substring(0, 8)} has handle: ${hasHandle}`);
       
       if (hasHandle) {
         categories.withHandles.push(card);
       }
       
-      // Use library's ContentTypeInterpreter
-      const contentType = ContentTypeInterpreter.detect(card.getContent());
-      const lowerType = contentType.toLowerCase();
+      // ✅ Use ContentTypeDetector for unified detection
+      const typeInfo = ContentTypeDetector.detect(card);
+      const type = typeInfo.type;
       
-      // Debug: Log what library detected
-      console.log(`[MCardManager] Library detected: "${contentType}" for card ${card.hash.substring(0, 8)}`);
+      console.log(`[MCardManager] Detected "${type}" (${typeInfo.displayName}) for card ${card.hash.substring(0, 8)}`);
       
-      // ✅ Check for binary formats by magic bytes if library says "application/octet-stream"
-      let isImage = lowerType.includes('image');
-      let isPDF = lowerType.includes('pdf');
-      let isAudio = lowerType.includes('audio');
-      let isVideo = lowerType.includes('video');
-      
-      if (lowerType.includes('octet-stream')) {
-        // Check magic bytes for common formats
-        const content = card.getContent();
-        if (content.length > 12) {
-          const bytes = new Uint8Array(content.slice(0, 12));
-          
-          // PDF: 25 50 44 46 (%PDF)
-          if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) {
-            isPDF = true;
-            console.log(`[MCardManager] ✓ Detected PDF by magic bytes for ${card.hash.substring(0, 8)}`);
-          }
-          // PNG: 89 50 4E 47
-          else if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
-            isImage = true;
-          }
-          // JPEG: FF D8 FF
-          else if (bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF) {
-            isImage = true;
-          }
-          // GIF: 47 49 46
-          else if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
-            isImage = true;
-          }
-          // WebP: 52 49 46 46 (RIFF)
-          else if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) {
-            // Check if it's WebP (not WAV)
-            if (bytes.length > 11 && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50) {
-              isImage = true;
-            }
-            // RIFF but not WebP - could be WAV audio
-            else if (bytes.length > 11 && bytes[8] === 0x57 && bytes[9] === 0x41 && bytes[10] === 0x56 && bytes[11] === 0x45) {
-              isAudio = true;
-              console.log(`[MCardManager] ✓ Detected WAV audio by magic bytes for ${card.hash.substring(0, 8)}`);
-            }
-          }
-          // MP3: FF FB or FF F3 or FF F2
-          else if (bytes[0] === 0xFF && (bytes[1] === 0xFB || bytes[1] === 0xF3 || bytes[1] === 0xF2)) {
-            isAudio = true;
-            console.log(`[MCardManager] ✓ Detected MP3 audio by magic bytes for ${card.hash.substring(0, 8)}`);
-          }
-          // OGG: 4F 67 67 53 (OggS)
-          else if (bytes[0] === 0x4F && bytes[1] === 0x67 && bytes[2] === 0x67 && bytes[3] === 0x53) {
-            isAudio = true;
-            console.log(`[MCardManager] ✓ Detected OGG audio by magic bytes for ${card.hash.substring(0, 8)}`);
-          }
-          // FLAC: 66 4C 61 43 (fLaC)
-          else if (bytes[0] === 0x66 && bytes[1] === 0x4C && bytes[2] === 0x61 && bytes[3] === 0x43) {
-            isAudio = true;
-            console.log(`[MCardManager] ✓ Detected FLAC audio by magic bytes for ${card.hash.substring(0, 8)}`);
-          }
-          // MP4/M4A: Check for ftyp box
-          else if (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
-            const ftypString = String.fromCharCode(...bytes.slice(8, 12));
-            if (ftypString.includes('M4A') || ftypString.includes('mp42')) {
-              isAudio = true;
-              console.log(`[MCardManager] ✓ Detected M4A audio by ftyp for ${card.hash.substring(0, 8)}`);
-            } else {
-              isVideo = true;
-            }
-          }
-          // WebM: 1A 45 DF A3
-          else if (bytes[0] === 0x1A && bytes[1] === 0x45 && bytes[2] === 0xDF && bytes[3] === 0xA3) {
-            isVideo = true;
-          }
-        }
-      }
-      
-      // ✅ TRUST THE LIBRARY FIRST for binary/structured types
-      if (isImage) {
+      // Categorize by detected type
+      if (type === 'clm') {
+        categories.clm.push(card);
+      } 
+      else if (type === 'markdown') {
+        categories.markdown.push(card);
+      } 
+      else if (type === 'text' || type === 'json') {
+        categories.text.push(card);
+      } 
+      else if (type === 'image') {
         categories.images.push(card);
       } 
-      else if (isVideo) {
-        categories.videos.push(card);
-      } 
-      else if (isAudio) {
+      else if (type === 'audio') {
         categories.audio.push(card);
       } 
-      else if (isPDF) {
+      else if (type === 'video') {
+        categories.videos.push(card);
+      } 
+      else if (type === 'pdf') {
         categories.documents.push(card);
       } 
-      else if (lowerType.includes('zip') || lowerType.includes('archive')) {
-        categories.archives.push(card);
-      }
-      else if (lowerType.includes('json')) {
-        categories.other.push(card);
-      }
-      else if (lowerType.includes('markdown')) {
-        categories.markdown.push(card);
-      }
-      // ✅ Check for YAML (library might detect it)
-      else if (lowerType.includes('yaml')) {
-        const contentStr = card.getContentAsText();
-        // Check if it's a CLM file (YAML with CLM structure)
-        if ((contentStr.includes('abstract:') && contentStr.includes('concrete:') && contentStr.includes('balanced:')) ||
-            contentStr.includes('clm:')) {
-          categories.clm.push(card);
-        } else {
-          // Regular YAML - put in other for now
-          categories.other.push(card);
-        }
-      }
-      // ✅ ENHANCE for text-based types (library might say "text/plain")
-      else if (lowerType.includes('text')) {
-        const contentStr = card.getContentAsText();
-        
-        // Check for LaTeX content marker (highest priority)
-        if (contentStr.trim().startsWith('<!-- CONTENT-TYPE: latex -->')) {
-          // LaTeX cards go in markdown category for now (or create latex category)
-          categories.markdown.push(card);
-        }
-        // Check for CLM (YAML-based, high priority)
-        else if ((contentStr.includes('abstract:') && contentStr.includes('concrete:') && contentStr.includes('balanced:')) ||
-            contentStr.includes('clm:')) {
-          categories.clm.push(card);
-        }
-        // Check for markdown patterns
-        else if (
-          contentStr.match(/^#{1,6}\s+/m) ||  // Headers
-          contentStr.match(/\[.+\]\(.+\)/) ||  // Links
-          contentStr.match(/```[\s\S]*?```/) || // Code blocks
-          contentStr.match(/^\s*[-*+]\s+/m) ||  // Lists
-          contentStr.match(/^\s*\d+\.\s+/m)     // Numbered lists
-        ) {
-          categories.markdown.push(card);
-        }
-        // Plain text
-        else {
-          categories.text.push(card);
-        }
-      }
-      // Other
       else {
+        // Everything else goes to other
         categories.other.push(card);
       }
     }
