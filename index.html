@@ -626,11 +626,31 @@
       }
     });
 
+    // Diagnostic check after 3 seconds
+    setTimeout(() => {
+      console.log('[PWA] 🔍 Diagnostic Check:');
+      console.log('  - beforeinstallprompt fired:', !!deferredPrompt);
+      console.log('  - Service worker registered:', !!navigator.serviceWorker.controller);
+      console.log('  - Is HTTPS:', location.protocol === 'https:' || location.hostname === 'localhost');
+      console.log('  - Display mode:', window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser');
+      console.log('  - User agent:', navigator.userAgent);
+      
+      if (!deferredPrompt) {
+        console.log('[PWA] ⚠️  Possible reasons for no beforeinstallprompt:');
+        console.log('  1. App already installed');
+        console.log('  2. User dismissed prompt too many times (Chrome blocks it)');
+        console.log('  3. Manifest or service worker issue');
+        console.log('  4. Browser does not support PWA install');
+        console.log('  5. PWA criteria not met');
+      }
+    }, 3000);
+    
     // Fallback: Show modal after 5 seconds if beforeinstallprompt hasn't fired
     // (for browsers that don't support it or if user doesn't meet criteria)
     setTimeout(() => {
       if (!installPromptShown && !window.matchMedia('(display-mode: standalone)').matches && !window.navigator.standalone) {
-        console.log('[PWA] ⚠️  Native prompt not available, showing manual instructions');
+        console.log('[PWA] ⚠️  Native prompt not available after 5s, showing manual instructions');
+        console.log('[PWA] deferredPrompt status:', !!deferredPrompt);
         installPromptShown = true;
         showInstallPromotion();
       } else if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
@@ -899,7 +919,16 @@
       document.getElementById('modal-install-btn').addEventListener('click', async () => {
         console.log('[PWA] 🎯 Install button clicked!');
         console.log('[PWA] deferredPrompt available:', !!deferredPrompt);
+        console.log('[PWA] deferredPrompt object:', deferredPrompt);
         console.log('[PWA] User agent:', navigator.userAgent);
+        console.log('[PWA] Is standalone:', window.matchMedia('(display-mode: standalone)').matches);
+        console.log('[PWA] Navigator standalone:', window.navigator.standalone);
+        
+        // Force check if we're on desktop Chrome and should have native prompt
+        const isDesktopChrome = /Chrome/i.test(navigator.userAgent) && 
+                               !/Mobile|Android/i.test(navigator.userAgent) &&
+                               !/Edge/i.test(navigator.userAgent);
+        console.log('[PWA] Is desktop Chrome:', isDesktopChrome);
         
         if (deferredPrompt) {
           // Native install prompt available (Chrome/Edge/Android)
