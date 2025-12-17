@@ -104,7 +104,7 @@ def main():
     service = build('calendar', 'v3', credentials=credentials)
     
     # Hardcoded calendar ID
-    calendar_id = 'f0a800fb2e065c7a82fe3d4ffc26a1620a39737e8bcdbbd9e1ab1d6728090894@group.calendar.google.com'
+    calendar_id = '83eaf0af7e929d74dc166a19beb26b471f351697c5b0ba8d92e3a9a30540ca8d@group.calendar.google.com'
     
     # Verify calendar access
     try:
