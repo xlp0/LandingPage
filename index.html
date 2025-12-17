@@ -560,10 +560,17 @@
       console.log('[PWA] Install prompt available');
       e.preventDefault();
       deferredPrompt = e;
-      
-      // Show custom install button (optional)
-      showInstallPromotion();
     });
+
+    // Always show install modal after 3 seconds (regardless of beforeinstallprompt)
+    setTimeout(() => {
+      if (!window.matchMedia('(display-mode: standalone)').matches && !window.navigator.standalone) {
+        console.log('[PWA] Showing install modal automatically');
+        showInstallPromotion();
+      } else {
+        console.log('[PWA] Already installed, skipping modal');
+      }
+    }, 3000);
 
     function showInstallPromotion() {
       // Check if already dismissed
@@ -824,23 +831,94 @@
 
       // Install button handler
       document.getElementById('modal-install-btn').addEventListener('click', async () => {
-        if (!deferredPrompt) {
-          console.log('[PWA] No install prompt available');
-          alert('Install prompt not available. Try adding to home screen manually.');
+        if (deferredPrompt) {
+          // Native install prompt available (Chrome/Edge)
+          console.log('[PWA] Using native install prompt');
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          console.log('[PWA] User choice:', outcome);
+          
+          if (outcome === 'accepted') {
+            console.log('[PWA] App installed successfully!');
+          }
+          
+          deferredPrompt = null;
           closeModal();
-          return;
+        } else {
+          // Show manual installation instructions
+          console.log('[PWA] Showing manual install instructions');
+          
+          const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+          const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+          const isChrome = /Chrome/i.test(navigator.userAgent) && !/Edge/i.test(navigator.userAgent);
+          const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome/i.test(navigator.userAgent);
+          
+          let instructions = '';
+          
+          if (isIOS) {
+            instructions = `
+📱 Install on iOS:
+
+1. Tap the Share button (square with arrow)
+2. Scroll down and tap "Add to Home Screen"
+3. Tap "Add" in the top right
+4. The app icon will appear on your home screen!
+
+✨ You can then open it like any other app.
+            `.trim();
+          } else if (isMobile) {
+            instructions = `
+📱 Install on Android:
+
+1. Tap the menu (⋮) in the top right
+2. Tap "Add to Home screen" or "Install app"
+3. Tap "Add" or "Install"
+4. The app icon will appear on your home screen!
+
+✨ You can then open it like any other app.
+            `.trim();
+          } else if (isChrome) {
+            instructions = `
+💻 Install on Desktop (Chrome):
+
+1. Click the install icon (⊕) in the address bar
+   OR
+2. Click menu (⋮) → "Install MCard Manager"
+3. Click "Install" in the popup
+4. The app will open in its own window!
+
+✨ You can then find it in your applications.
+            `.trim();
+          } else if (isSafari) {
+            instructions = `
+💻 Install on Safari:
+
+Safari doesn't support PWA installation on desktop.
+
+Please use Chrome, Edge, or Firefox for the best experience.
+
+Or visit on your iPhone/iPad to install as an app!
+            `.trim();
+          } else {
+            instructions = `
+💻 Install on Desktop:
+
+1. Look for an install icon in your browser's address bar
+2. Or check your browser's menu for "Install" option
+3. Click it to install the app
+
+Supported browsers:
+✅ Chrome
+✅ Edge
+✅ Firefox
+✅ Opera
+
+✨ The app will open in its own window!
+            `.trim();
+          }
+          
+          alert(instructions);
         }
-        
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        console.log('[PWA] User choice:', outcome);
-        
-        if (outcome === 'accepted') {
-          console.log('[PWA] App installed successfully!');
-        }
-        
-        deferredPrompt = null;
-        closeModal();
       });
 
       // Dismiss button handler
