@@ -1,5 +1,5 @@
 // Service Worker for MCard Manager PWA - ULTRA-FAST CACHING + OFFLINE
-const CACHE_VERSION = 'v7';
+const CACHE_VERSION = 'v8';
 const CACHE_NAME = `mcard-manager-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `mcard-runtime-${CACHE_VERSION}`;
 const IMAGE_CACHE = `mcard-images-${CACHE_VERSION}`;
@@ -23,7 +23,11 @@ const APP_SHELL_ASSETS = [
   '/public/js/mcard/UIComponents.js',
   '/public/js/renderers/MarkdownRenderer.js',
   '/public/js/renderers/ImageRenderer.js',
-  '/public/js/performance-monitor.js'
+  '/public/js/performance-monitor.js',
+  '/js/vendor/mcard-js.bundle.js',
+  '/public/js/vendor/mcard-js.bundle.js',
+  '/vendor/lucide/lucide.min.js',
+  '/public/vendor/lucide/lucide.min.js'
 ];
 
 // CDN resources (cache-first, long expiry)
