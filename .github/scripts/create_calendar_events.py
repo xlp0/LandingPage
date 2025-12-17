@@ -115,8 +115,9 @@ def main():
         print("Make sure the calendar is shared with the service account")
         sys.exit(1)
     
-    # Get yesterday's date
-    yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+    # Get yesterday's date in WITA timezone (UTC+8)
+    wita_tz = ZoneInfo('Asia/Makassar')
+    yesterday = (datetime.now(wita_tz) - timedelta(days=1)).strftime('%Y-%m-%d')
     
     # Create events for each user
     event_results = {}

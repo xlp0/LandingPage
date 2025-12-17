@@ -7,6 +7,7 @@ import sys
 import json
 from pathlib import Path
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from minio import Minio
 from minio.error import S3Error
 
@@ -82,8 +83,9 @@ def main():
     with open(results_file, 'r') as f:
         results = json.load(f)
     
-    # Get yesterday's date for folder structure
-    yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+    # Get yesterday's date in WITA timezone (UTC+8) for folder structure
+    wita_tz = ZoneInfo('Asia/Makassar')
+    yesterday = (datetime.now(wita_tz) - timedelta(days=1)).strftime('%Y-%m-%d')
     
     bucket_name = 'daily-reports'
     upload_results = {}

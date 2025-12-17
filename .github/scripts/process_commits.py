@@ -8,6 +8,7 @@ import os
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 # User mappings
 USERS = {
@@ -186,8 +187,9 @@ def main():
         print(f"Error: Commits file not found: {commits_file}")
         sys.exit(1)
     
-    # Get yesterday's date
-    yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+    # Get yesterday's date in WITA timezone (UTC+8)
+    wita_tz = ZoneInfo('Asia/Makassar')
+    yesterday = (datetime.now(wita_tz) - timedelta(days=1)).strftime('%Y-%m-%d')
     
     # Create output directory
     output_dir = Path('daily-reports')
