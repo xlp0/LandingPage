@@ -58,27 +58,29 @@ export class PDFRenderer extends BaseRenderer {
       // Create unique ID for this PDF
       const pdfId = `pdf-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
-      // Return placeholder HTML - actual rendering happens after DOM insertion
+      // Return placeholder HTML with auto-load
       const html = `
         <div class="pdf-content" id="${pdfId}" data-pdf-content="${pdfId}">
           <div class="pdf-header">
             <span class="pdf-filename">${this.escapeHtml(fileName)}</span>
-            <span class="pdf-status">Click to load PDF</span>
+            <span class="pdf-status">Loading PDF...</span>
           </div>
           <div class="pdf-pages" id="${pdfId}-pages">
             <div class="pdf-placeholder">
-              <i data-lucide="file-text" style="width: 64px; height: 64px;"></i>
-              <p>PDF Document</p>
-              <button class="btn" onclick="window.loadPDF('${pdfId}')">
-                <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
-                Load PDF
-              </button>
+              <i data-lucide="loader" style="width: 64px; height: 64px; animation: spin 1s linear infinite;"></i>
+              <p>Loading PDF...</p>
             </div>
           </div>
         </div>
+        <style>
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        </style>
       `;
       
-      // Store content for lazy loading
+      // Store content for auto-loading
       if (!window.__PDF_CONTENT__) {
         window.__PDF_CONTENT__ = {};
       }
@@ -91,6 +93,11 @@ export class PDFRenderer extends BaseRenderer {
           await this.renderPDFPages(pdfData.content, id, pdfData.options);
         }
       };
+      
+      // Auto-load PDF after a short delay (to allow DOM to be ready)
+      setTimeout(() => {
+        window.loadPDF(pdfId);
+      }, 100);
       
       return html;
     } catch (error) {
