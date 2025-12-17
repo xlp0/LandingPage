@@ -578,21 +578,32 @@
 
     // PWA Install prompt
     let deferredPrompt;
+    let installPromptShown = false;
+    
     window.addEventListener('beforeinstallprompt', (e) => {
-      console.log('[PWA] Install prompt available');
+      console.log('[PWA] ✅ Native install prompt available!');
       e.preventDefault();
       deferredPrompt = e;
+      
+      // Show modal immediately when native prompt is available (Android Chrome/Edge)
+      if (!installPromptShown && !window.matchMedia('(display-mode: standalone)').matches && !window.navigator.standalone) {
+        console.log('[PWA] 🚀 Showing install modal with native prompt support');
+        installPromptShown = true;
+        showInstallPromotion();
+      }
     });
 
-    // Always show install modal after 3 seconds (regardless of beforeinstallprompt)
+    // Fallback: Show modal after 5 seconds if beforeinstallprompt hasn't fired
+    // (for browsers that don't support it or if user doesn't meet criteria)
     setTimeout(() => {
-      if (!window.matchMedia('(display-mode: standalone)').matches && !window.navigator.standalone) {
-        console.log('[PWA] Showing install modal automatically');
+      if (!installPromptShown && !window.matchMedia('(display-mode: standalone)').matches && !window.navigator.standalone) {
+        console.log('[PWA] ⚠️  Native prompt not available, showing manual instructions');
+        installPromptShown = true;
         showInstallPromotion();
-      } else {
-        console.log('[PWA] Already installed, skipping modal');
+      } else if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+        console.log('[PWA] ✅ Already installed, skipping modal');
       }
-    }, 3000);
+    }, 5000);
 
     function showInstallPromotion() {
       // Check if already dismissed
@@ -854,53 +865,79 @@
       // Install button handler
       document.getElementById('modal-install-btn').addEventListener('click', async () => {
         if (deferredPrompt) {
-          // Native install prompt available (Chrome/Edge)
-          console.log('[PWA] Using native install prompt');
-          deferredPrompt.prompt();
-          const { outcome } = await deferredPrompt.userChoice;
-          console.log('[PWA] User choice:', outcome);
+          // Native install prompt available (Chrome/Edge/Android)
+          console.log('[PWA] 🚀 Triggering native install prompt!');
           
-          if (outcome === 'accepted') {
-            console.log('[PWA] App installed successfully!');
+          try {
+            // Show the native install prompt
+            await deferredPrompt.prompt();
+            
+            // Wait for the user's response
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log('[PWA] User choice:', outcome);
+            
+            if (outcome === 'accepted') {
+              console.log('[PWA] ✅ App installed successfully!');
+              // Show success message
+              closeModal();
+              setTimeout(() => {
+                alert('✅ MCard Manager installed! You can now find it on your home screen or app drawer.');
+              }, 300);
+            } else {
+              console.log('[PWA] ❌ User cancelled installation');
+              closeModal();
+            }
+            
+            // Clear the deferred prompt
+            deferredPrompt = null;
+          } catch (error) {
+            console.error('[PWA] ❌ Install prompt error:', error);
+            // If native prompt fails, show manual instructions
+            showManualInstructions();
           }
-          
-          deferredPrompt = null;
-          closeModal();
         } else {
-          // Show manual installation instructions
-          console.log('[PWA] Showing manual install instructions');
-          
-          const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-          const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-          const isChrome = /Chrome/i.test(navigator.userAgent) && !/Edge/i.test(navigator.userAgent);
-          const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome/i.test(navigator.userAgent);
-          
-          let instructions = '';
-          
-          if (isIOS) {
-            instructions = `
+          // No native prompt available - show manual instructions
+          console.log('[PWA] ⚠️  Native prompt not available, showing manual instructions');
+          showManualInstructions();
+        }
+      });
+      
+      // Helper function for manual installation instructions
+      function showManualInstructions() {
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const isChrome = /Chrome/i.test(navigator.userAgent) && !/Edge/i.test(navigator.userAgent);
+        const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome/i.test(navigator.userAgent);
+        
+        let instructions = '';
+        
+        if (isIOS) {
+          instructions = `
 📱 Install on iOS:
 
-1. Tap the Share button (square with arrow)
+1. Tap the Share button (⬆️ square with arrow)
 2. Scroll down and tap "Add to Home Screen"
 3. Tap "Add" in the top right
 4. The app icon will appear on your home screen!
 
 ✨ You can then open it like any other app.
-            `.trim();
-          } else if (isMobile) {
-            instructions = `
+          `.trim();
+        } else if (isAndroid) {
+          instructions = `
 📱 Install on Android:
 
-1. Tap the menu (⋮) in the top right
-2. Tap "Add to Home screen" or "Install app"
-3. Tap "Add" or "Install"
+1. Tap the menu (⋮) in the top right corner
+2. Look for "Add to Home screen" or "Install app"
+3. Tap it and confirm
 4. The app icon will appear on your home screen!
 
 ✨ You can then open it like any other app.
-            `.trim();
-          } else if (isChrome) {
-            instructions = `
+
+Note: Make sure you're using Chrome or Edge browser.
+          `.trim();
+        } else if (isChrome) {
+          instructions = `
 💻 Install on Desktop (Chrome):
 
 1. Click the install icon (⊕) in the address bar
@@ -910,9 +947,9 @@
 4. The app will open in its own window!
 
 ✨ You can then find it in your applications.
-            `.trim();
-          } else if (isSafari) {
-            instructions = `
+          `.trim();
+        } else if (isSafari) {
+          instructions = `
 💻 Install on Safari:
 
 Safari doesn't support PWA installation on desktop.
@@ -920,9 +957,9 @@ Safari doesn't support PWA installation on desktop.
 Please use Chrome, Edge, or Firefox for the best experience.
 
 Or visit on your iPhone/iPad to install as an app!
-            `.trim();
-          } else {
-            instructions = `
+          `.trim();
+        } else {
+          instructions = `
 💻 Install on Desktop:
 
 1. Look for an install icon in your browser's address bar
@@ -936,12 +973,12 @@ Supported browsers:
 ✅ Opera
 
 ✨ The app will open in its own window!
-            `.trim();
-          }
-          
-          alert(instructions);
+          `.trim();
         }
-      });
+        
+        alert(instructions);
+        closeModal();
+      }
 
       // Dismiss button handler
       document.getElementById('modal-dismiss-btn').addEventListener('click', () => {
