@@ -80,6 +80,28 @@
   <link rel="stylesheet" href="/css/content-renderers.css">
 </head>
 <body>
+  <!-- Offline Indicator -->
+  <div id="offline-indicator" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+    padding: 12px 20px;
+    text-align: center;
+    z-index: 10001;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    animation: slideDown 0.3s ease-out;
+  ">
+    <i data-lucide="wifi-off" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 8px;"></i>
+    You're offline - Working from cache
+  </div>
+
   <div class="container">
     <div class="header">
       <div class="header-left">
@@ -517,7 +539,7 @@
     // Register service worker for PWA functionality
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/public/sw.js')
+        navigator.serviceWorker.register('/sw.js')
           .then((registration) => {
             console.log('[PWA] Service Worker registered successfully:', registration.scope);
             
@@ -945,8 +967,45 @@ Supported browsers:
       document.addEventListener('keydown', escHandler);
     }
 
-    // Detect if app is running as PWA
+    // Online/Offline Detection
+    function updateOnlineStatus() {
+      const indicator = document.getElementById('offline-indicator');
+      if (!navigator.onLine) {
+        console.log('[PWA] 🔌 OFFLINE MODE - Working from cache');
+        indicator.style.display = 'block';
+        if (window.lucide) lucide.createIcons();
+      } else {
+        console.log('[PWA] 🌐 ONLINE MODE');
+        indicator.style.display = 'none';
+      }
+    }
+
+    window.addEventListener('online', () => {
+      console.log('[PWA] ✅ Connection restored!');
+      updateOnlineStatus();
+      // Show brief notification
+      const indicator = document.getElementById('offline-indicator');
+      indicator.style.background = 'linear-gradient(135deg, #51cf66 0%, #37b24d 100%)';
+      indicator.innerHTML = '<i data-lucide="wifi" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 8px;"></i>Back online!';
+      indicator.style.display = 'block';
+      if (window.lucide) lucide.createIcons();
+      setTimeout(() => {
+        indicator.style.display = 'none';
+        indicator.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)';
+        indicator.innerHTML = '<i data-lucide="wifi-off" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 8px;"></i>You\'re offline - Working from cache';
+      }, 3000);
+    });
+
+    window.addEventListener('offline', () => {
+      console.log('[PWA] ⚠️  Connection lost - Switching to offline mode');
+      updateOnlineStatus();
+    });
+
+    // Check initial status
     window.addEventListener('load', () => {
+      updateOnlineStatus();
+      
+      // Detect if app is running as PWA
       if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
         console.log('[PWA] Running as installed app');
         document.body.classList.add('pwa-mode');
