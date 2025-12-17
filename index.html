@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="MCard Manager">
   
   <!-- PWA Manifest -->
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="/public/manifest.json">
   
   <!-- Performance Optimization: Resource Hints -->
   <!-- Preconnect to CDN origins for faster loading -->
@@ -517,7 +517,7 @@
     // Register service worker for PWA functionality
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('/public/sw.js')
           .then((registration) => {
             console.log('[PWA] Service Worker registered successfully:', registration.scope);
             
