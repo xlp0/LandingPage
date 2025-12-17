@@ -418,7 +418,7 @@
       }
     }
 
-    // Auto-collapse sidebar on mobile devices
+    // Initialize sidebar state - keep expanded on all devices
     function initializeSidebarState() {
       const sidebar = document.getElementById('sidebar');
       if (!sidebar) {
@@ -426,21 +426,11 @@
         return;
       }
       
-      const isMobile = window.innerWidth <= 768;
-      
-      if (isMobile) {
-        // Always collapse on mobile
-        if (!sidebar.classList.contains('collapsed')) {
-          sidebar.classList.add('collapsed');
-        }
-        console.log('[Sidebar] Auto-collapsed on mobile device (width: ' + window.innerWidth + 'px)');
-      } else {
-        // Always expand on desktop
-        if (sidebar.classList.contains('collapsed')) {
-          sidebar.classList.remove('collapsed');
-        }
-        console.log('[Sidebar] Auto-expanded on desktop (width: ' + window.innerWidth + 'px)');
+      // Always keep sidebar expanded (remove collapsed class if present)
+      if (sidebar.classList.contains('collapsed')) {
+        sidebar.classList.remove('collapsed');
       }
+      console.log('[Sidebar] Initialized as expanded (width: ' + window.innerWidth + 'px)');
     }
 
     // Run immediately when script loads
@@ -449,27 +439,8 @@
     // Also run on DOMContentLoaded to be safe
     window.addEventListener('DOMContentLoaded', initializeSidebarState);
     
-    // Re-check on window resize
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        const sidebar = document.getElementById('sidebar');
-        const isMobile = window.innerWidth <= 768;
-        
-        // Auto-collapse when resizing to mobile
-        if (isMobile && !sidebar.classList.contains('collapsed')) {
-          sidebar.classList.add('collapsed');
-          console.log('[Sidebar] Auto-collapsed on resize to mobile');
-        }
-        // Auto-expand when resizing to desktop (optional)
-        // Uncomment if you want sidebar to expand on desktop
-        // else if (!isMobile && sidebar.classList.contains('collapsed')) {
-        //   sidebar.classList.remove('collapsed');
-        //   console.log('[Sidebar] Auto-expanded on resize to desktop');
-        // }
-      }, 250);
-    });
+    // Note: Removed auto-collapse on resize - sidebar stays expanded unless user manually collapses it
+    // Users can still manually toggle using the collapse button
 
     // Search filter functionality
     function toggleSearchFilters() {
@@ -607,10 +578,16 @@
     let installPromptShown = false;
     
     window.addEventListener('beforeinstallprompt', (e) => {
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      const isChrome = /Chrome/i.test(navigator.userAgent);
+      
       console.log('[PWA] ✅ Native install prompt available!');
       console.log('[PWA] Event details:', e);
       console.log('[PWA] Browser:', navigator.userAgent);
+      console.log('[PWA] Is Android:', isAndroid);
+      console.log('[PWA] Is Chrome:', isChrome);
       console.log('[PWA] Display mode:', window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser');
+      console.log('[PWA] Screen width:', window.innerWidth);
       
       // Prevent the mini-infobar from appearing on mobile
       e.preventDefault();
@@ -621,6 +598,9 @@
       // Show modal immediately when native prompt is available (Android Chrome/Edge, Desktop Chrome/Edge)
       if (!installPromptShown && !window.matchMedia('(display-mode: standalone)').matches && !window.navigator.standalone) {
         console.log('[PWA] 🚀 Showing install modal with native prompt support');
+        if (isAndroid) {
+          console.log('[PWA] 📱 Android device detected - will show native Add to Home Screen');
+        }
         installPromptShown = true;
         showInstallPromotion();
       } else {
@@ -630,11 +610,17 @@
 
     // Diagnostic check after 3 seconds
     setTimeout(() => {
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      const isChrome = /Chrome/i.test(navigator.userAgent);
+      
       console.log('[PWA] 🔍 Diagnostic Check:');
       console.log('  - beforeinstallprompt fired:', !!deferredPrompt);
       console.log('  - Service worker registered:', !!navigator.serviceWorker.controller);
       console.log('  - Is HTTPS:', location.protocol === 'https:' || location.hostname === 'localhost');
       console.log('  - Display mode:', window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser');
+      console.log('  - Is Android:', isAndroid);
+      console.log('  - Is Chrome:', isChrome);
+      console.log('  - Screen width:', window.innerWidth);
       console.log('  - User agent:', navigator.userAgent);
       
       if (!deferredPrompt) {
@@ -643,7 +629,11 @@
         console.log('  2. User dismissed prompt too many times (Chrome blocks it)');
         console.log('  3. Manifest or service worker issue');
         console.log('  4. Browser does not support PWA install');
-        console.log('  5. PWA criteria not met');
+        console.log('  5. PWA criteria not met (check manifest icons)');
+        if (isAndroid) {
+          console.log('  6. Android-specific: May need PNG icons instead of SVG');
+          console.log('  7. Android-specific: Check if Chrome version supports PWA');
+        }
       }
     }, 3000);
     
