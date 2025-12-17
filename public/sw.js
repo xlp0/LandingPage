@@ -1,5 +1,5 @@
 // Service Worker for MCard Manager PWA - Optimized for Speed
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const CACHE_NAME = `mcard-manager-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `mcard-runtime-${CACHE_VERSION}`;
 const IMAGE_CACHE = `mcard-images-${CACHE_VERSION}`;
@@ -14,19 +14,19 @@ const CRITICAL_ASSETS = [
 
 // App shell assets (cache-first, update in background)
 const APP_SHELL_ASSETS = [
-  '/css/mcard-manager.css',
-  '/js/mcard-manager-new.js',
-  '/js/mcard/MCardManager.js',
-  '/js/mcard/CardViewer.js',
-  '/js/mcard/UIComponents.js',
-  '/js/mcard/CardCollection.js',
-  '/js/mcard/CardEditor.js',
-  '/js/renderers/MarkdownRenderer.js',
-  '/js/renderers/LatexRenderer.js',
-  '/js/renderers/ImageRenderer.js',
-  '/js/renderers/VideoRenderer.js',
-  '/js/renderers/AudioRenderer.js',
-  '/js/renderers/PdfRenderer.js'
+  '/public/css/mcard-manager.css',
+  '/public/js/mcard-manager-new.js',
+  '/public/js/mcard/MCardManager.js',
+  '/public/js/mcard/CardViewer.js',
+  '/public/js/mcard/UIComponents.js',
+  '/public/js/mcard/CardCollection.js',
+  '/public/js/mcard/CardEditor.js',
+  '/public/js/renderers/MarkdownRenderer.js',
+  '/public/js/renderers/LatexRenderer.js',
+  '/public/js/renderers/ImageRenderer.js',
+  '/public/js/renderers/VideoRenderer.js',
+  '/public/js/renderers/AudioRenderer.js',
+  '/public/js/renderers/PdfRenderer.js'
 ];
 
 // CDN resources (cache-first, long expiry)
