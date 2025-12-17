@@ -566,118 +566,270 @@
     });
 
     function showInstallPromotion() {
-      // Create install banner if it doesn't exist
-      const existingBanner = document.getElementById('pwa-install-banner');
-      if (existingBanner) return;
+      // Check if already dismissed
+      const dismissed = localStorage.getItem('pwa-install-dismissed');
+      if (dismissed && Date.now() - parseInt(dismissed) < 7 * 24 * 60 * 60 * 1000) {
+        console.log('[PWA] Install prompt dismissed recently');
+        return;
+      }
 
-      // Create banner
-      const banner = document.createElement('div');
-      banner.id = 'pwa-install-banner';
-      banner.style.cssText = `
+      // Create modal backdrop
+      const backdrop = document.createElement('div');
+      backdrop.id = 'pwa-install-backdrop';
+      backdrop.style.cssText = `
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
-        background: linear-gradient(135deg, #007acc 0%, #005a9e 100%);
-        color: white;
-        padding: 16px 20px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        z-index: 10000;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 9999;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        animation: slideDown 0.3s ease-out;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        justify-content: center;
+        animation: fadeIn 0.3s ease-out;
+        padding: 20px;
       `;
 
-      banner.innerHTML = `
+      // Create modal
+      const modal = document.createElement('div');
+      modal.id = 'pwa-install-modal';
+      modal.style.cssText = `
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 480px;
+        width: 100%;
+        animation: slideUp 0.3s ease-out;
+        overflow: hidden;
+      `;
+
+      modal.innerHTML = `
         <style>
-          @keyframes slideDown {
-            from { transform: translateY(-100%); }
-            to { transform: translateY(0); }
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
           }
-          @media (max-width: 768px) {
-            #pwa-install-banner {
-              flex-direction: column;
-              gap: 12px;
-              padding: 12px 16px !important;
+          @keyframes slideUp {
+            from { 
+              opacity: 0;
+              transform: translateY(30px) scale(0.95);
             }
-            #pwa-install-banner .banner-content {
-              flex-direction: column;
-              align-items: flex-start !important;
-              gap: 8px !important;
+            to { 
+              opacity: 1;
+              transform: translateY(0) scale(1);
             }
-            #pwa-install-banner .banner-actions {
-              width: 100%;
-              justify-content: stretch !important;
+          }
+          @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+          }
+          @keyframes slideDown {
+            from { 
+              opacity: 1;
+              transform: translateY(0) scale(1);
             }
-            #pwa-install-banner button {
-              flex: 1;
+            to { 
+              opacity: 0;
+              transform: translateY(30px) scale(0.95);
             }
           }
         </style>
-        <div class="banner-content" style="display: flex; align-items: center; gap: 16px; flex: 1;">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <i data-lucide="download-cloud" style="width: 32px; height: 32px; min-width: 32px;"></i>
-            <div>
-              <div style="font-weight: 600; font-size: 16px; margin-bottom: 4px;">Install MCard Manager</div>
-              <div style="font-size: 13px; opacity: 0.9;">Get faster access and work offline</div>
+        
+        <!-- Modal Header -->
+        <div style="
+          background: linear-gradient(135deg, #007acc 0%, #005a9e 100%);
+          padding: 32px 24px;
+          text-align: center;
+          color: white;
+        ">
+          <div style="
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          ">
+            <i data-lucide="download-cloud" style="width: 48px; height: 48px;"></i>
+          </div>
+          <h2 style="
+            margin: 0 0 8px 0;
+            font-size: 24px;
+            font-weight: 700;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          ">Install MCard Manager</h2>
+          <p style="
+            margin: 0;
+            font-size: 15px;
+            opacity: 0.95;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          ">Get the best experience with our app</p>
+        </div>
+
+        <!-- Modal Body -->
+        <div style="padding: 24px;">
+          <div style="
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 24px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          ">
+            <div style="display: flex; align-items: start; gap: 12px;">
+              <div style="
+                width: 40px;
+                height: 40px;
+                min-width: 40px;
+                background: #e3f2fd;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              ">
+                <i data-lucide="zap" style="width: 20px; height: 20px; color: #007acc;"></i>
+              </div>
+              <div>
+                <div style="font-weight: 600; font-size: 15px; color: #1a1a1a; margin-bottom: 4px;">
+                  Lightning Fast
+                </div>
+                <div style="font-size: 14px; color: #666; line-height: 1.5;">
+                  Instant loading and smooth performance
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: start; gap: 12px;">
+              <div style="
+                width: 40px;
+                height: 40px;
+                min-width: 40px;
+                background: #e8f5e9;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              ">
+                <i data-lucide="wifi-off" style="width: 20px; height: 20px; color: #4caf50;"></i>
+              </div>
+              <div>
+                <div style="font-weight: 600; font-size: 15px; color: #1a1a1a; margin-bottom: 4px;">
+                  Works Offline
+                </div>
+                <div style="font-size: 14px; color: #666; line-height: 1.5;">
+                  Access your cards without internet
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: start; gap: 12px;">
+              <div style="
+                width: 40px;
+                height: 40px;
+                min-width: 40px;
+                background: #fff3e0;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              ">
+                <i data-lucide="smartphone" style="width: 20px; height: 20px; color: #ff9800;"></i>
+              </div>
+              <div>
+                <div style="font-weight: 600; font-size: 15px; color: #1a1a1a; margin-bottom: 4px;">
+                  Native Experience
+                </div>
+                <div style="font-size: 14px; color: #666; line-height: 1.5;">
+                  Feels like a native mobile app
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="banner-actions" style="display: flex; gap: 12px; align-items: center;">
-          <button id="install-btn" style="
-            background: white;
-            color: #007acc;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-          ">
-            Install
-          </button>
-          <button id="dismiss-btn" style="
-            background: transparent;
-            color: white;
-            border: 1px solid rgba(255,255,255,0.3);
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: 500;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-          ">
-            Not Now
-          </button>
+
+          <!-- Action Buttons -->
+          <div style="display: flex; gap: 12px;">
+            <button id="modal-install-btn" style="
+              flex: 1;
+              background: linear-gradient(135deg, #007acc 0%, #005a9e 100%);
+              color: white;
+              border: none;
+              padding: 14px 24px;
+              border-radius: 10px;
+              font-weight: 600;
+              cursor: pointer;
+              font-size: 15px;
+              transition: all 0.2s;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              box-shadow: 0 4px 12px rgba(0, 122, 204, 0.3);
+            ">
+              Install Now
+            </button>
+            <button id="modal-dismiss-btn" style="
+              flex: 1;
+              background: #f5f5f5;
+              color: #666;
+              border: none;
+              padding: 14px 24px;
+              border-radius: 10px;
+              font-weight: 600;
+              cursor: pointer;
+              font-size: 15px;
+              transition: all 0.2s;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            ">
+              Maybe Later
+            </button>
+          </div>
         </div>
       `;
 
       // Add hover effects
       const style = document.createElement('style');
       style.textContent = `
-        #install-btn:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        #modal-install-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(0, 122, 204, 0.4);
         }
-        #dismiss-btn:hover {
-          background: rgba(255,255,255,0.1);
+        #modal-install-btn:active {
+          transform: translateY(0);
+        }
+        #modal-dismiss-btn:hover {
+          background: #e0e0e0;
+        }
+        @media (max-width: 480px) {
+          #pwa-install-modal {
+            margin: 0 16px;
+          }
         }
       `;
       document.head.appendChild(style);
 
-      document.body.appendChild(banner);
+      backdrop.appendChild(modal);
+      document.body.appendChild(backdrop);
 
       // Initialize Lucide icons
       if (window.lucide) {
         lucide.createIcons();
       }
 
+      // Close modal function
+      function closeModal() {
+        backdrop.style.animation = 'fadeOut 0.2s ease-out';
+        modal.style.animation = 'slideDown 0.2s ease-out';
+        setTimeout(() => backdrop.remove(), 200);
+      }
+
       // Install button handler
-      document.getElementById('install-btn').addEventListener('click', async () => {
-        if (!deferredPrompt) return;
+      document.getElementById('modal-install-btn').addEventListener('click', async () => {
+        if (!deferredPrompt) {
+          console.log('[PWA] No install prompt available');
+          alert('Install prompt not available. Try adding to home screen manually.');
+          closeModal();
+          return;
+        }
         
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
@@ -688,24 +840,31 @@
         }
         
         deferredPrompt = null;
-        banner.style.animation = 'slideDown 0.3s ease-out reverse';
-        setTimeout(() => banner.remove(), 300);
+        closeModal();
       });
 
       // Dismiss button handler
-      document.getElementById('dismiss-btn').addEventListener('click', () => {
-        banner.style.animation = 'slideDown 0.3s ease-out reverse';
-        setTimeout(() => banner.remove(), 300);
-        
-        // Remember dismissal for 7 days
+      document.getElementById('modal-dismiss-btn').addEventListener('click', () => {
         localStorage.setItem('pwa-install-dismissed', Date.now());
+        console.log('[PWA] Install prompt dismissed for 7 days');
+        closeModal();
       });
 
-      // Auto-show again after 7 days if dismissed
-      const dismissed = localStorage.getItem('pwa-install-dismissed');
-      if (dismissed && Date.now() - parseInt(dismissed) < 7 * 24 * 60 * 60 * 1000) {
-        banner.remove();
-      }
+      // Close on backdrop click
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) {
+          closeModal();
+        }
+      });
+
+      // Close on ESC key
+      const escHandler = (e) => {
+        if (e.key === 'Escape') {
+          closeModal();
+          document.removeEventListener('keydown', escHandler);
+        }
+      };
+      document.addEventListener('keydown', escHandler);
     }
 
     // Detect if app is running as PWA
