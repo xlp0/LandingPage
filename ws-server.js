@@ -50,12 +50,13 @@ app.use((req, res, next) => {
     // ✅ Override restrictive CSP - allow everything for development
     res.setHeader('Content-Security-Policy', 
         "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; " +
-        "script-src * 'unsafe-inline' 'unsafe-eval'; " +
+        "script-src * 'unsafe-inline' 'unsafe-eval' blob:; " +
+        "worker-src * blob:; " +
         "style-src * 'unsafe-inline'; " +
         "img-src * data: blob:; " +
         "font-src *; " +
         "connect-src *; " +
-        "media-src *; " +
+        "media-src * data: blob:; " +
         "object-src *; " +
         "frame-src *;"
     );
