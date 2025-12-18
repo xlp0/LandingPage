@@ -155,6 +155,30 @@
       </div>
     </div>
 
+    <!-- Full-Width Map View -->
+    <div class="calendar-view" id="mapView" style="display: none;">
+      <div class="calendar-header">
+        <button class="header-btn" onclick="hideMap()">
+          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+          Close Map
+        </button>
+        <h2 style="margin: 0; flex: 1; text-align: center;">
+          <i data-lucide="map" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
+          IoT Map
+        </h2>
+        <div style="width: 120px;"></div> <!-- Spacer for centering -->
+      </div>
+      <div class="calendar-container" id="mapContainer">
+        <iframe 
+          id="mapFrame"
+          src="https://iotmap.pkc.pub/"
+          style="border: 0; width: 100%; height: 100%;"
+          frameborder="0"
+          scrolling="yes">
+        </iframe>
+      </div>
+    </div>
+
     <div class="main-content">
       <!-- Left Sidebar: File Types -->
       <div class="sidebar" id="sidebar">
@@ -1224,19 +1248,54 @@ Supported browsers:
       console.log('[Calendar] Calendar view closed');
     }
 
-    // Map View Functions (placeholder)
+    // Map View Functions
     function showMap() {
       console.log('[Map] Opening map view');
-      alert('Map feature coming soon! This will show an interactive map view.');
-      // TODO: Implement map view similar to calendar
+      const mapView = document.getElementById('mapView');
+      const mainContent = document.querySelector('.main-content');
+      
+      // Hide main content
+      if (mainContent) {
+        mainContent.style.display = 'none';
+      }
+      
+      // Show map view
+      mapView.style.display = 'flex';
+      
+      // Re-initialize Lucide icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+      
+      console.log('[Map] Map view opened');
     }
 
-    // ESC key to close calendar
+    function hideMap() {
+      console.log('[Map] Closing map view');
+      const mapView = document.getElementById('mapView');
+      const mainContent = document.querySelector('.main-content');
+      
+      // Hide map view
+      mapView.style.display = 'none';
+      
+      // Show main content
+      if (mainContent) {
+        mainContent.style.display = 'flex';
+      }
+      
+      console.log('[Map] Map view closed');
+    }
+
+    // ESC key to close calendar or map
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         const calendarView = document.getElementById('calendarView');
+        const mapView = document.getElementById('mapView');
+        
         if (calendarView && calendarView.style.display === 'flex') {
           hideCalendar();
+        } else if (mapView && mapView.style.display === 'flex') {
+          hideMap();
         }
       }
     });
