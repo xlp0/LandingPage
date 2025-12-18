@@ -38,10 +38,10 @@ export class ContentTypeDetector {
     }
     
     try {
-      // ✅ PERFORMANCE: Only read first 12 bytes for detection
+      // ✅ PERFORMANCE: Read first 256 bytes for detection (MP3 ID3 tags can be large)
       // This prevents loading entire 100MB+ videos into memory
       const content = card.getContent();
-      const sampleSize = Math.min(12, content.length);
+      const sampleSize = Math.min(256, content.length);
       const bytes = new Uint8Array(content.slice(0, sampleSize));
       
       console.log(`[ContentTypeDetector] Checking ${sampleSize} bytes (file size: ${(content.length / 1024 / 1024).toFixed(2)} MB)`);
@@ -86,10 +86,19 @@ export class ContentTypeDetector {
             }
           }
           
-          // MP3: FF FB or FF F3 or FF F2
-          if (bytes[0] === 0xFF && (bytes[1] === 0xFB || bytes[1] === 0xF3 || bytes[1] === 0xF2)) {
-            console.log('[ContentTypeDetector] Detected MP3 audio by magic bytes');
+          // MP3: Check for ID3 tag first (49 44 33 = "ID3")
+          if (bytes[0] === 0x49 && bytes[1] === 0x44 && bytes[2] === 0x33) {
+            console.log('[ContentTypeDetector] Detected MP3 audio by ID3 tag');
             return this.cacheResult(cacheKey, { type: 'audio', displayName: 'MP3 Audio' });
+          }
+          
+          // MP3: Check for MPEG frame sync (FF FB or FF F3 or FF F2)
+          // Scan first 256 bytes for frame sync (ID3 tag might be at start)
+          for (let i = 0; i < bytes.length - 1; i++) {
+            if (bytes[i] === 0xFF && (bytes[i+1] === 0xFB || bytes[i+1] === 0xF3 || bytes[i+1] === 0xF2)) {
+              console.log(`[ContentTypeDetector] Detected MP3 audio by MPEG frame sync at offset ${i}`);
+              return this.cacheResult(cacheKey, { type: 'audio', displayName: 'MP3 Audio' });
+            }
           }
           
           // OGG: 4F 67 67 53 (OggS)

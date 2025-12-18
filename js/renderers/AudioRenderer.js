@@ -22,9 +22,20 @@ export class AudioRenderer extends BaseRenderer {
     
     const bytes = content instanceof Uint8Array ? content : new Uint8Array(content);
     
-    // MP3: FF FB or FF F3 or FF F2
-    if (bytes[0] === 0xFF && (bytes[1] === 0xFB || bytes[1] === 0xF3 || bytes[1] === 0xF2)) {
+    // MP3: Check for ID3 tag first (49 44 33 = "ID3")
+    if (bytes[0] === 0x49 && bytes[1] === 0x44 && bytes[2] === 0x33) {
+      console.log('[AudioRenderer] Detected MP3 by ID3 tag');
       return 'mp3';
+    }
+    
+    // MP3: Check for MPEG frame sync (FF FB or FF F3 or FF F2)
+    // Scan first 256 bytes for frame sync
+    const scanSize = Math.min(256, bytes.length);
+    for (let i = 0; i < scanSize - 1; i++) {
+      if (bytes[i] === 0xFF && (bytes[i+1] === 0xFB || bytes[i+1] === 0xF3 || bytes[i+1] === 0xF2)) {
+        console.log(`[AudioRenderer] Detected MP3 by MPEG frame sync at offset ${i}`);
+        return 'mp3';
+      }
     }
     
     // WAV: RIFF...WAVE
