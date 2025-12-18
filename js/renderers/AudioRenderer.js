@@ -58,8 +58,33 @@ export class AudioRenderer extends BaseRenderer {
     // M4A/AAC: ftyp with M4A
     if (bytes.length > 12 && bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
       const ftypString = String.fromCharCode(...bytes.slice(8, 12));
-      if (ftypString.includes('M4A')) return 'm4a';
+      if (ftypString.includes('M4A') || ftypString.includes('M4B')) return 'm4a';
       if (ftypString.includes('mp42')) return 'aac';
+    }
+    
+    // AAC: FF F1 or FF F9 (ADTS header)
+    if (bytes[0] === 0xFF && (bytes[1] === 0xF1 || bytes[1] === 0xF9)) {
+      return 'aac';
+    }
+    
+    // AIFF: FORM...AIFF
+    if (bytes[0] === 0x46 && bytes[1] === 0x4F && bytes[2] === 0x52 && bytes[3] === 0x4D) {
+      if (bytes.length >= 12 && bytes[8] === 0x41 && bytes[9] === 0x49 && bytes[10] === 0x46 && bytes[11] === 0x46) {
+        return 'aiff';
+      }
+    }
+    
+    // AMR: #!AMR
+    if (bytes[0] === 0x23 && bytes[1] === 0x21 && bytes[2] === 0x41 && bytes[3] === 0x4D && bytes[4] === 0x52) {
+      return 'amr';
+    }
+    
+    // Opus in OGG
+    if (bytes[0] === 0x4F && bytes[1] === 0x67 && bytes[2] === 0x67 && bytes[3] === 0x53) {
+      const opusCheck = String.fromCharCode(...bytes.slice(28, Math.min(36, bytes.length)));
+      if (opusCheck.includes('OpusHead')) {
+        return 'opus';
+      }
     }
     
     return 'unknown';
@@ -79,7 +104,10 @@ export class AudioRenderer extends BaseRenderer {
       'm4a': 'audio/mp4',
       'aac': 'audio/aac',
       'webm': 'audio/webm',
-      'opus': 'audio/opus'
+      'opus': 'audio/opus',
+      'aiff': 'audio/aiff',
+      'amr': 'audio/amr',
+      'wma': 'audio/x-ms-wma'
     };
     return mimeTypes[format] || 'audio/mpeg';
   }

@@ -113,19 +113,117 @@ export class ContentTypeDetector {
             return this.cacheResult(cacheKey, { type: 'audio', displayName: 'FLAC Audio' });
           }
           
-          // MP4/M4A: ftyp box
+          // AAC: FF F1 or FF F9 (ADTS header)
+          if (bytes[0] === 0xFF && (bytes[1] === 0xF1 || bytes[1] === 0xF9)) {
+            console.log('[ContentTypeDetector] Detected AAC audio by ADTS header');
+            return this.cacheResult(cacheKey, { type: 'audio', displayName: 'AAC Audio' });
+          }
+          
+          // AIFF: 46 4F 52 4D ... 41 49 46 46 (FORM...AIFF)
+          if (bytes[0] === 0x46 && bytes[1] === 0x4F && bytes[2] === 0x52 && bytes[3] === 0x4D) {
+            if (bytes.length >= 12 && bytes[8] === 0x41 && bytes[9] === 0x49 && bytes[10] === 0x46 && bytes[11] === 0x46) {
+              console.log('[ContentTypeDetector] Detected AIFF audio');
+              return this.cacheResult(cacheKey, { type: 'audio', displayName: 'AIFF Audio' });
+            }
+          }
+          
+          // AMR: 23 21 41 4D 52 (#!AMR)
+          if (bytes[0] === 0x23 && bytes[1] === 0x21 && bytes[2] === 0x41 && bytes[3] === 0x4D && bytes[4] === 0x52) {
+            console.log('[ContentTypeDetector] Detected AMR audio');
+            return this.cacheResult(cacheKey, { type: 'audio', displayName: 'AMR Audio' });
+          }
+          
+          // Opus in OGG container: Check for OpusHead
+          if (bytes[0] === 0x4F && bytes[1] === 0x67 && bytes[2] === 0x67 && bytes[3] === 0x53) {
+            // Look for OpusHead marker
+            const opusCheck = String.fromCharCode(...bytes.slice(28, 36));
+            if (opusCheck.includes('OpusHead')) {
+              console.log('[ContentTypeDetector] Detected Opus audio');
+              return this.cacheResult(cacheKey, { type: 'audio', displayName: 'Opus Audio' });
+            }
+          }
+          
+          // MP4/M4A/M4V/MOV: ftyp box
           if (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
             const ftypString = String.fromCharCode(...bytes.slice(8, 12));
-            if (ftypString.includes('M4A') || ftypString.includes('mp42')) {
+            console.log(`[ContentTypeDetector] ftyp: ${ftypString}`);
+            
+            // Audio formats
+            if (ftypString.includes('M4A') || ftypString.includes('M4B')) {
               console.log('[ContentTypeDetector] Detected M4A audio by ftyp');
               return this.cacheResult(cacheKey, { type: 'audio', displayName: 'M4A Audio' });
             }
+            
+            // Video formats
+            if (ftypString.includes('mp4') || ftypString.includes('isom') || 
+                ftypString.includes('avc1') || ftypString.includes('iso2')) {
+              console.log('[ContentTypeDetector] Detected MP4 video by ftyp');
+              return this.cacheResult(cacheKey, { type: 'video', displayName: 'MP4 Video' });
+            }
+            
+            if (ftypString.includes('qt') || ftypString.includes('M4V')) {
+              console.log('[ContentTypeDetector] Detected QuickTime/M4V video');
+              return this.cacheResult(cacheKey, { type: 'video', displayName: 'QuickTime Video' });
+            }
+            
+            // Default to video for unknown ftyp
             return this.cacheResult(cacheKey, { type: 'video', displayName: 'MP4 Video' });
           }
           
-          // WebM: 1A 45 DF A3
+          // WebM/MKV: 1A 45 DF A3 (EBML)
           if (bytes[0] === 0x1A && bytes[1] === 0x45 && bytes[2] === 0xDF && bytes[3] === 0xA3) {
+            // Check for webm or matroska
+            const ebmlCheck = String.fromCharCode(...bytes.slice(0, Math.min(100, bytes.length)));
+            if (ebmlCheck.includes('webm')) {
+              console.log('[ContentTypeDetector] Detected WebM video');
+              return this.cacheResult(cacheKey, { type: 'video', displayName: 'WebM Video' });
+            }
+            if (ebmlCheck.includes('matroska')) {
+              console.log('[ContentTypeDetector] Detected MKV video');
+              return this.cacheResult(cacheKey, { type: 'video', displayName: 'MKV Video' });
+            }
+            // Default to WebM
             return this.cacheResult(cacheKey, { type: 'video', displayName: 'WebM Video' });
+          }
+          
+          // AVI: 52 49 46 46 ... 41 56 49 20 (RIFF...AVI )
+          if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) {
+            if (bytes.length >= 12 && bytes[8] === 0x41 && bytes[9] === 0x56 && bytes[10] === 0x49 && bytes[11] === 0x20) {
+              console.log('[ContentTypeDetector] Detected AVI video');
+              return this.cacheResult(cacheKey, { type: 'video', displayName: 'AVI Video' });
+            }
+          }
+          
+          // FLV: 46 4C 56 (FLV)
+          if (bytes[0] === 0x46 && bytes[1] === 0x4C && bytes[2] === 0x56) {
+            console.log('[ContentTypeDetector] Detected FLV video');
+            return this.cacheResult(cacheKey, { type: 'video', displayName: 'FLV Video' });
+          }
+          
+          // MPEG/MPG: 00 00 01 BA or 00 00 01 B3
+          if (bytes[0] === 0x00 && bytes[1] === 0x00 && bytes[2] === 0x01) {
+            if (bytes[3] === 0xBA || bytes[3] === 0xB3) {
+              console.log('[ContentTypeDetector] Detected MPEG video');
+              return this.cacheResult(cacheKey, { type: 'video', displayName: 'MPEG Video' });
+            }
+          }
+          
+          // 3GP: ftyp with 3gp
+          if (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
+            const ftypString = String.fromCharCode(...bytes.slice(8, 12));
+            if (ftypString.includes('3gp') || ftypString.includes('3g2')) {
+              console.log('[ContentTypeDetector] Detected 3GP video');
+              return this.cacheResult(cacheKey, { type: 'video', displayName: '3GP Video' });
+            }
+          }
+          
+          // WMV/WMA/ASF: 30 26 B2 75 8E 66 CF 11 (ASF header)
+          if (bytes[0] === 0x30 && bytes[1] === 0x26 && bytes[2] === 0xB2 && bytes[3] === 0x75 &&
+              bytes[4] === 0x8E && bytes[5] === 0x66 && bytes[6] === 0xCF && bytes[7] === 0x11) {
+            // Check extended header to determine if audio or video
+            // For simplicity, default to video (WMV is more common)
+            console.log('[ContentTypeDetector] Detected WMV/ASF video');
+            return this.cacheResult(cacheKey, { type: 'video', displayName: 'WMV Video' });
           }
         }
       }

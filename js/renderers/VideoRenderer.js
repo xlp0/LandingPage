@@ -16,16 +16,37 @@ export class VideoRenderer extends BaseRenderer {
    * @returns {Object} { format: string, mimeType: string }
    */
   detectFormat(bytes) {
-    // MP4: Check for ftyp box
+    // MP4/MOV/M4V/3GP: Check for ftyp box
     if (bytes.length > 11 && bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
       const ftypString = String.fromCharCode(...bytes.slice(8, 12));
-      console.log(`[VideoRenderer] Detected MP4 with ftyp: ${ftypString}`);
+      console.log(`[VideoRenderer] Detected ftyp: ${ftypString}`);
+      
+      if (ftypString.includes('qt') || ftypString.includes('M4V')) {
+        return { format: 'mov', mimeType: 'video/quicktime' };
+      }
+      if (ftypString.includes('3gp') || ftypString.includes('3g2')) {
+        return { format: '3gp', mimeType: 'video/3gpp' };
+      }
+      if (ftypString.includes('mp4') || ftypString.includes('isom') || 
+          ftypString.includes('avc1') || ftypString.includes('iso2')) {
+        return { format: 'mp4', mimeType: 'video/mp4' };
+      }
+      // Default to MP4 for unknown ftyp
       return { format: 'mp4', mimeType: 'video/mp4' };
     }
     
-    // WebM: 1A 45 DF A3
+    // WebM/MKV: 1A 45 DF A3 (EBML)
     if (bytes[0] === 0x1A && bytes[1] === 0x45 && bytes[2] === 0xDF && bytes[3] === 0xA3) {
-      console.log('[VideoRenderer] Detected WebM by magic bytes');
+      const ebmlCheck = String.fromCharCode(...bytes.slice(0, Math.min(100, bytes.length)));
+      if (ebmlCheck.includes('webm')) {
+        console.log('[VideoRenderer] Detected WebM by EBML header');
+        return { format: 'webm', mimeType: 'video/webm' };
+      }
+      if (ebmlCheck.includes('matroska')) {
+        console.log('[VideoRenderer] Detected MKV by EBML header');
+        return { format: 'mkv', mimeType: 'video/x-matroska' };
+      }
+      // Default to WebM
       return { format: 'webm', mimeType: 'video/webm' };
     }
     
@@ -41,6 +62,27 @@ export class VideoRenderer extends BaseRenderer {
         console.log('[VideoRenderer] Detected AVI by magic bytes');
         return { format: 'avi', mimeType: 'video/x-msvideo' };
       }
+    }
+    
+    // FLV: 46 4C 56 (FLV)
+    if (bytes[0] === 0x46 && bytes[1] === 0x4C && bytes[2] === 0x56) {
+      console.log('[VideoRenderer] Detected FLV by magic bytes');
+      return { format: 'flv', mimeType: 'video/x-flv' };
+    }
+    
+    // MPEG/MPG: 00 00 01 BA or 00 00 01 B3
+    if (bytes[0] === 0x00 && bytes[1] === 0x00 && bytes[2] === 0x01) {
+      if (bytes[3] === 0xBA || bytes[3] === 0xB3) {
+        console.log('[VideoRenderer] Detected MPEG by magic bytes');
+        return { format: 'mpeg', mimeType: 'video/mpeg' };
+      }
+    }
+    
+    // WMV/ASF: 30 26 B2 75 8E 66 CF 11
+    if (bytes.length > 7 && bytes[0] === 0x30 && bytes[1] === 0x26 && bytes[2] === 0xB2 && bytes[3] === 0x75 &&
+        bytes[4] === 0x8E && bytes[5] === 0x66 && bytes[6] === 0xCF && bytes[7] === 0x11) {
+      console.log('[VideoRenderer] Detected WMV/ASF by magic bytes');
+      return { format: 'wmv', mimeType: 'video/x-ms-wmv' };
     }
     
     // Default to MP4 if unknown
@@ -70,8 +112,14 @@ export class VideoRenderer extends BaseRenderer {
     const badges = {
       'mp4': '<span style="background: #e74c3c; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">MP4</span>',
       'webm': '<span style="background: #9b59b6; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">WebM</span>',
+      'mkv': '<span style="background: #8e44ad; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">MKV</span>',
       'ogg': '<span style="background: #3498db; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">OGG</span>',
-      'avi': '<span style="background: #f39c12; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">AVI</span>'
+      'avi': '<span style="background: #f39c12; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">AVI</span>',
+      'mov': '<span style="background: #1abc9c; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">MOV</span>',
+      '3gp': '<span style="background: #16a085; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">3GP</span>',
+      'flv': '<span style="background: #e67e22; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">FLV</span>',
+      'mpeg': '<span style="background: #c0392b; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">MPEG</span>',
+      'wmv': '<span style="background: #2980b9; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">WMV</span>'
     };
     return badges[format] || badges['mp4'];
   }
