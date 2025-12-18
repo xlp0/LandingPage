@@ -156,21 +156,24 @@ export class ContentTypeDetector {
             }
             
             // Video formats
-            if (ftypString.includes('mp4') || ftypString.includes('isom') || 
-                ftypString.includes('avc1') || ftypString.includes('iso2')) {
-              console.log('[ContentTypeDetector] Detected MP4 video by ftyp');
-              return this.cacheResult(cacheKey, { type: 'video', displayName: 'MP4 Video' });
-            }
             
-            if (ftypString.includes('qt') || ftypString.includes('M4V')) {
-              console.log('[ContentTypeDetector] Detected QuickTime/M4V video');
-              return this.cacheResult(cacheKey, { type: 'video', displayName: 'QuickTime Video' });
+            // MOV/QuickTime formats (case-insensitive) - Check BEFORE MP4
+            if (ftypLower.includes('qt') || ftypLower.includes('m4v') || ftypString.includes('M4V')) {
+              console.log('[ContentTypeDetector] Detected MOV/QuickTime video');
+              return this.cacheResult(cacheKey, { type: 'video', displayName: 'MOV Video' });
             }
             
             // 3GP formats
             if (ftypString.includes('3gp') || ftypString.includes('3g2')) {
               console.log('[ContentTypeDetector] Detected 3GP video');
               return this.cacheResult(cacheKey, { type: 'video', displayName: '3GP Video' });
+            }
+            
+            // MP4 formats
+            if (ftypString.includes('mp4') || ftypString.includes('isom') || 
+                ftypString.includes('avc1') || ftypString.includes('iso2')) {
+              console.log('[ContentTypeDetector] Detected MP4 video by ftyp');
+              return this.cacheResult(cacheKey, { type: 'video', displayName: 'MP4 Video' });
             }
             
             // Default to video for unknown ftyp

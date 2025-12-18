@@ -19,19 +19,30 @@ export class VideoRenderer extends BaseRenderer {
     // MP4/MOV/M4V/3GP: Check for ftyp box
     if (bytes.length > 11 && bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
       const ftypString = String.fromCharCode(...bytes.slice(8, 12));
-      console.log(`[VideoRenderer] Detected ftyp: ${ftypString}`);
+      const ftypLower = ftypString.toLowerCase().trim();
+      console.log(`[VideoRenderer] Detected ftyp: "${ftypString}" (lowercase: "${ftypLower}")`);
       
-      if (ftypString.includes('qt') || ftypString.includes('M4V')) {
+      // MOV/QuickTime formats (case-insensitive)
+      if (ftypLower.includes('qt') || ftypLower.includes('m4v') || ftypString.includes('M4V')) {
+        console.log('[VideoRenderer] Detected MOV/QuickTime format');
         return { format: 'mov', mimeType: 'video/quicktime' };
       }
+      
+      // 3GP formats
       if (ftypString.includes('3gp') || ftypString.includes('3g2')) {
+        console.log('[VideoRenderer] Detected 3GP format');
         return { format: '3gp', mimeType: 'video/3gpp' };
       }
+      
+      // MP4 formats
       if (ftypString.includes('mp4') || ftypString.includes('isom') || 
           ftypString.includes('avc1') || ftypString.includes('iso2')) {
+        console.log('[VideoRenderer] Detected MP4 format');
         return { format: 'mp4', mimeType: 'video/mp4' };
       }
+      
       // Default to MP4 for unknown ftyp
+      console.log('[VideoRenderer] Unknown ftyp, defaulting to MP4');
       return { format: 'mp4', mimeType: 'video/mp4' };
     }
     
