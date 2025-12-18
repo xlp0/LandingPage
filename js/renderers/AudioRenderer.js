@@ -55,12 +55,22 @@ export class AudioRenderer extends BaseRenderer {
       return 'flac';
     }
     
-    // M4A/M4B: ftyp box (case-insensitive)
+    // M4A/M4B/DASH: ftyp box (case-insensitive)
     if (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
       const ftypString = String.fromCharCode(...bytes.slice(8, 12));
       const ftypLower = ftypString.toLowerCase().trim();
+      
       if (ftypLower.includes('m4a') || ftypLower.includes('m4b')) return 'm4a';
       if (ftypString.includes('mp42')) return 'aac';
+      
+      // DASH audio files - Check compatible brands for video codec absence
+      if (ftypLower.includes('dash')) {
+        const compatibleBrands = bytes.length >= 24 ? String.fromCharCode(...bytes.slice(16, 24)) : '';
+        const hasVideoCodec = compatibleBrands.includes('avc1') || 
+                             compatibleBrands.includes('hvc1') || 
+                             compatibleBrands.includes('hev1');
+        if (!hasVideoCodec) return 'm4a'; // DASH audio
+      }
     }
     
     // AAC: FF F1 or FF F9 (ADTS header)

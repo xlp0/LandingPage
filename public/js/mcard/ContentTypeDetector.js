@@ -147,12 +147,30 @@ export class ContentTypeDetector {
           if (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
             const ftypString = String.fromCharCode(...bytes.slice(8, 12));
             const ftypLower = ftypString.toLowerCase().trim();
-            console.log(`[ContentTypeDetector] ftyp: "${ftypString}" (lowercase: "${ftypLower}")`);
+            
+            // Also check compatible brands (bytes 16-23 for additional format info)
+            const compatibleBrands = bytes.length >= 24 ? String.fromCharCode(...bytes.slice(16, 24)) : '';
+            console.log(`[ContentTypeDetector] ftyp: "${ftypString}" (lowercase: "${ftypLower}"), compatible: "${compatibleBrands}"`);
             
             // Audio formats - Check for M4A/M4B (case-insensitive)
             if (ftypLower.includes('m4a') || ftypLower.includes('m4b')) {
               console.log('[ContentTypeDetector] Detected M4A audio by ftyp');
               return this.cacheResult(cacheKey, { type: 'audio', displayName: 'M4A Audio' });
+            }
+            
+            // DASH audio files - Check if it's audio-only DASH
+            // DASH files with "dash" ftyp but no video indicators are likely audio
+            if (ftypLower.includes('dash')) {
+              // Check file extension or compatible brands for audio indicators
+              // If no video track indicators (avc1, hvc1, etc.), assume audio
+              const hasVideoCodec = compatibleBrands.includes('avc1') || 
+                                   compatibleBrands.includes('hvc1') || 
+                                   compatibleBrands.includes('hev1');
+              
+              if (!hasVideoCodec) {
+                console.log('[ContentTypeDetector] Detected DASH audio (no video codec in compatible brands)');
+                return this.cacheResult(cacheKey, { type: 'audio', displayName: 'M4A Audio' });
+              }
             }
             
             // Video formats
