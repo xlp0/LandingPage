@@ -12,6 +12,9 @@ export class ContentTypeDetector {
   // ✅ PERFORMANCE: Cache detection results by card hash
   static cache = new Map();
   
+  // Cache version - increment this to invalidate all cached detections
+  static CACHE_VERSION = 3; // v3: Added DASH audio detection
+  
   /**
    * Cache and return result
    * @param {string} hash - Card hash
@@ -19,7 +22,7 @@ export class ContentTypeDetector {
    * @returns {Object}
    */
   static cacheResult(hash, result) {
-    this.cache.set(hash, result);
+    this.cache.set(hash, { ...result, version: this.CACHE_VERSION });
     return result;
   }
   
@@ -33,8 +36,15 @@ export class ContentTypeDetector {
     const cacheKey = card.hash;
     if (this.cache.has(cacheKey)) {
       const cached = this.cache.get(cacheKey);
-      console.log(`[ContentTypeDetector] ⚡ Cache hit for ${cacheKey.substring(0, 8)}: ${cached.type}`);
-      return cached;
+      
+      // Invalidate cache if version mismatch
+      if (cached.version !== this.CACHE_VERSION) {
+        console.log(`[ContentTypeDetector] 🔄 Cache invalidated for ${cacheKey.substring(0, 8)} (old version)`);
+        this.cache.delete(cacheKey);
+      } else {
+        console.log(`[ContentTypeDetector] ⚡ Cache hit for ${cacheKey.substring(0, 8)}: ${cached.type}`);
+        return cached;
+      }
     }
     
     try {
