@@ -30,30 +30,12 @@ export class CardViewer {
     const viewerContent = document.getElementById('viewerContent');
     const viewerActions = document.getElementById('viewerActions');
     
-    // ✅ Use library's ContentTypeInterpreter
-    const contentType = ContentTypeInterpreter.detect(card.getContent());
+    // ✅ Use our ContentTypeDetector with DASH audio support
+    const typeInfo = ContentTypeDetector.detect(card);
     const binaryContent = card.getContent(); // For magic byte detection
     const textContent = card.getContentAsText(); // For text pattern matching
     
-    // Map to our internal type (pass both binary and text content)
-    const detectedType = this.mapContentType(contentType, binaryContent, textContent);
-    
-    // Create typeInfo object with proper display name
-    const displayNames = {
-      'markdown': 'Markdown',
-      'latex': 'LaTeX',
-      'text': 'Text',
-      'json': 'JSON',
-      'image': 'Image',
-      'pdf': 'PDF',
-      'clm': 'CLM',
-      'video': 'Video',
-      'audio': 'Audio'
-    };
-    const typeInfo = { 
-      type: detectedType, 
-      displayName: displayNames[detectedType] || detectedType.toUpperCase() 
-    };
+    console.log('[CardViewer] Detected type:', typeInfo);
     
     // Use our detected type directly (don't let Redux override it)
     const renderType = typeInfo.type;
