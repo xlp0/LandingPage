@@ -1,5 +1,5 @@
 // Service Worker for MCard Manager PWA - ULTRA-FAST CACHING
-const CACHE_VERSION = 'v7';
+const CACHE_VERSION = 'v8';
 const CACHE_NAME = `mcard-manager-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `mcard-runtime-${CACHE_VERSION}`;
 const IMAGE_CACHE = `mcard-images-${CACHE_VERSION}`;
@@ -14,12 +14,12 @@ const CRITICAL_ASSETS = [
 
 // App shell assets (cache-first, aggressive caching)
 // Only include files that actually exist
+// NOTE: CardViewer.js and ContentTypeDetector.js excluded to allow hot updates
 const APP_SHELL_ASSETS = [
   '/public/css/mcard-manager.css',
   '/public/css/content-renderers.css',
   '/public/js/mcard-manager-new.js',
   '/public/js/mcard/MCardManager.js',
-  '/public/js/mcard/CardViewer.js',
   '/public/js/mcard/UIComponents.js',
   '/public/js/renderers/MarkdownRenderer.js',
   '/public/js/renderers/ImageRenderer.js',
