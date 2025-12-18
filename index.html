@@ -1163,6 +1163,29 @@ Supported browsers:
       // Handle shared content here
     }
 
+    // Apps Toggle Function
+    function toggleApps() {
+      const appsSubmenu = document.getElementById('appsSubmenu');
+      const appsChevron = document.getElementById('appsChevron');
+      
+      if (appsSubmenu.style.display === 'none') {
+        appsSubmenu.style.display = 'block';
+        if (appsChevron) {
+          appsChevron.style.transform = 'rotate(180deg)';
+        }
+      } else {
+        appsSubmenu.style.display = 'none';
+        if (appsChevron) {
+          appsChevron.style.transform = 'rotate(0deg)';
+        }
+      }
+      
+      // Re-initialize Lucide icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
     // Calendar View Functions
     function showCalendar() {
       console.log('[Calendar] Opening calendar view');
@@ -1199,6 +1222,13 @@ Supported browsers:
       }
       
       console.log('[Calendar] Calendar view closed');
+    }
+
+    // Map View Functions (placeholder)
+    function showMap() {
+      console.log('[Map] Opening map view');
+      alert('Map feature coming soon! This will show an interactive map view.');
+      // TODO: Implement map view similar to calendar
     }
 
     // ESC key to close calendar

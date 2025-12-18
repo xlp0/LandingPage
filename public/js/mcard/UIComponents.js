@@ -34,7 +34,7 @@ export class UIComponents {
     const types = [
       { id: 'all', name: 'All Cards', icon: 'package', count: getCount(categories.all) },
       { id: 'with-handles', name: 'With Handles', icon: 'tag', count: getCount(categories.withHandles) },
-      { id: 'calendar', name: 'Calendar', icon: 'calendar', count: '', isSpecial: true },
+      { id: 'apps', name: 'Apps', icon: 'grid', count: '', isExpandable: true },
       { id: 'clm', name: 'CLM', icon: 'box', count: getCount(categories.clm) },
       { id: 'markdown', name: 'Markdown', icon: 'file-text', count: getCount(categories.markdown) },
       { id: 'text', name: 'Text', icon: 'file-text', count: getCount(categories.text) },
@@ -45,17 +45,36 @@ export class UIComponents {
       { id: 'archives', name: 'Archives', icon: 'archive', count: getCount(categories.archives) },
       { id: 'other', name: 'Other', icon: 'folder', count: getCount(categories.other) }
     ];
+    
+    // External apps list
+    const externalApps = [
+      { id: 'calendar', name: 'Calendar', icon: 'calendar', action: 'showCalendar()' },
+      { id: 'map', name: 'Map', icon: 'map', action: 'showMap()' }
+    ];
 
     typeList.innerHTML = types.map(type => {
-      // Special handling for calendar
-      if (type.isSpecial && type.id === 'calendar') {
+      // Special handling for Apps (expandable)
+      if (type.isExpandable && type.id === 'apps') {
+        const appsHtml = externalApps.map(app => `
+          <div class="type-item app-item" onclick="${app.action}" title="${app.name}">
+            <div class="type-item-content">
+              <span class="type-icon" title="${app.name}"><i data-lucide="${app.icon}" style="width: 18px; height: 18px;"></i></span>
+              <span class="type-name">${app.name}</span>
+            </div>
+            <span class="type-count" style="opacity: 0.5;"><i data-lucide="external-link" style="width: 12px; height: 12px;"></i></span>
+          </div>
+        `).join('');
+        
         return `
-          <div class="type-item" onclick="showCalendar()" title="${type.name}">
+          <div class="type-item apps-header" onclick="toggleApps()" title="${type.name}">
             <div class="type-item-content">
               <span class="type-icon" title="${type.name}"><i data-lucide="${type.icon}" style="width: 20px; height: 20px;"></i></span>
               <span class="type-name">${type.name}</span>
             </div>
-            <span class="type-count" style="opacity: 0.5;"><i data-lucide="external-link" style="width: 14px; height: 14px;"></i></span>
+            <span class="type-count"><i data-lucide="chevron-down" id="appsChevron" style="width: 16px; height: 16px; transition: transform 0.2s;"></i></span>
+          </div>
+          <div class="apps-submenu" id="appsSubmenu" style="display: none; padding-left: 12px;">
+            ${appsHtml}
           </div>
         `;
       }
