@@ -55,10 +55,11 @@ export class AudioRenderer extends BaseRenderer {
       return 'flac';
     }
     
-    // M4A/AAC: ftyp with M4A
-    if (bytes.length > 12 && bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
+    // M4A/M4B: ftyp box (case-insensitive)
+    if (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
       const ftypString = String.fromCharCode(...bytes.slice(8, 12));
-      if (ftypString.includes('M4A') || ftypString.includes('M4B')) return 'm4a';
+      const ftypLower = ftypString.toLowerCase().trim();
+      if (ftypLower.includes('m4a') || ftypLower.includes('m4b')) return 'm4a';
       if (ftypString.includes('mp42')) return 'aac';
     }
     

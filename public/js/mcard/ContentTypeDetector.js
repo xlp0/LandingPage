@@ -146,10 +146,11 @@ export class ContentTypeDetector {
           // MP4/M4A/M4V/MOV: ftyp box
           if (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
             const ftypString = String.fromCharCode(...bytes.slice(8, 12));
-            console.log(`[ContentTypeDetector] ftyp: ${ftypString}`);
+            const ftypLower = ftypString.toLowerCase().trim();
+            console.log(`[ContentTypeDetector] ftyp: "${ftypString}" (lowercase: "${ftypLower}")`);
             
-            // Audio formats
-            if (ftypString.includes('M4A') || ftypString.includes('M4B')) {
+            // Audio formats - Check for M4A/M4B (case-insensitive)
+            if (ftypLower.includes('m4a') || ftypLower.includes('m4b')) {
               console.log('[ContentTypeDetector] Detected M4A audio by ftyp');
               return this.cacheResult(cacheKey, { type: 'audio', displayName: 'M4A Audio' });
             }
@@ -166,7 +167,14 @@ export class ContentTypeDetector {
               return this.cacheResult(cacheKey, { type: 'video', displayName: 'QuickTime Video' });
             }
             
+            // 3GP formats
+            if (ftypString.includes('3gp') || ftypString.includes('3g2')) {
+              console.log('[ContentTypeDetector] Detected 3GP video');
+              return this.cacheResult(cacheKey, { type: 'video', displayName: '3GP Video' });
+            }
+            
             // Default to video for unknown ftyp
+            console.log('[ContentTypeDetector] Unknown ftyp, defaulting to MP4 video');
             return this.cacheResult(cacheKey, { type: 'video', displayName: 'MP4 Video' });
           }
           
@@ -205,15 +213,6 @@ export class ContentTypeDetector {
             if (bytes[3] === 0xBA || bytes[3] === 0xB3) {
               console.log('[ContentTypeDetector] Detected MPEG video');
               return this.cacheResult(cacheKey, { type: 'video', displayName: 'MPEG Video' });
-            }
-          }
-          
-          // 3GP: ftyp with 3gp
-          if (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
-            const ftypString = String.fromCharCode(...bytes.slice(8, 12));
-            if (ftypString.includes('3gp') || ftypString.includes('3g2')) {
-              console.log('[ContentTypeDetector] Detected 3GP video');
-              return this.cacheResult(cacheKey, { type: 'video', displayName: '3GP Video' });
             }
           }
           
