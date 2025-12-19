@@ -189,10 +189,13 @@ export class ObjectFactory {
             clearcoatRoughness: 0.1
         });
         const crystalSphere = new THREE.Mesh(sphereGeom, sphereMat);
+        crystalSphere.renderOrder = 10; // Draw after internal contents
+        sphereMat.depthWrite = false;   // Don't block other pixels
         group.add(crystalSphere);
 
         // 2. Internal PKC Box
         const pkcBox = this.createPKCBox();
+        pkcBox.renderOrder = 5; // Draw before the outer sphere but after most things
         // Slightly scaled down to fit snugly inside the sphere
         pkcBox.scale.set(0.15, 0.15, 0.15);
         pkcBox.position.y = -0.15; // Centered relative to sphere
@@ -264,7 +267,7 @@ export class ObjectFactory {
 
         // Logo on top of lid
         const loader = new THREE.TextureLoader();
-        loader.load('data/materials/gasing_academy_logo.jpg', (texture) => {
+        loader.load('data/materials/gasing_academy_logo.jpg?v=3', (texture) => {
             const logoGeom = new THREE.PlaneGeometry(7, 7);
             const logoMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
             const logo = new THREE.Mesh(logoGeom, logoMat);
