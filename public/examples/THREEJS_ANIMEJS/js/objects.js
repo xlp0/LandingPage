@@ -273,74 +273,82 @@ export class ObjectFactory {
             { label: 'V-post', color: '#10b981' }   // Green
         ];
 
-        // Create CLM text texture
+        // Create CLM text texture (Square)
         const createCanvasTexture = (label, color) => {
             const canvas = document.createElement('canvas');
-            canvas.width = 256; canvas.height = 320;
+            canvas.width = 512; canvas.height = 512; // Square for slab faces
             const ctx = canvas.getContext('2d');
 
             // White background (solid)
             ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, 256, 320);
+            ctx.fillRect(0, 0, 512, 512);
 
             // Themed border
             ctx.strokeStyle = color;
-            ctx.lineWidth = 14;
-            ctx.strokeRect(7, 7, 242, 306);
+            ctx.lineWidth = 20;
+            ctx.strokeRect(10, 10, 492, 492);
 
             // Label box 'CLM' at top left
             ctx.fillStyle = color;
-            ctx.fillRect(20, 20, 70, 30);
+            ctx.fillRect(30, 30, 120, 50);
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 22px Arial';
-            ctx.fillText('CLM', 30, 42);
+            ctx.font = 'bold 36px Arial';
+            ctx.fillText('CLM', 50, 68);
 
-            // Big letter in middle
+            // Big text in middle
             ctx.fillStyle = color;
             ctx.textAlign = 'center';
 
             if (label === 'PROCESS') {
-                ctx.font = 'bold 44px Arial';
-                ctx.fillText('PROCESS', 128, 170);
+                ctx.font = 'bold 70px Arial';
+                ctx.fillText('PROCESS', 256, 250);
                 // Simple process icon
-                ctx.lineWidth = 4;
+                ctx.lineWidth = 6;
                 ctx.beginPath();
-                ctx.arc(88, 220, 15, 0, Math.PI * 2);
-                ctx.arc(128, 220, 15, 0, Math.PI * 2);
-                ctx.arc(168, 220, 15, 0, Math.PI * 2);
+                ctx.arc(176, 340, 30, 0, Math.PI * 2);
+                ctx.arc(256, 340, 30, 0, Math.PI * 2);
+                ctx.arc(336, 340, 30, 0, Math.PI * 2);
                 ctx.stroke();
             } else {
-                ctx.font = 'bold 64px Arial';
-                ctx.fillText(label, 128, 195);
+                ctx.font = 'bold 100px Arial';
+                ctx.fillText(label, 256, 280);
             }
 
             // Abstract lines at bottom
             ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 4;
+            ctx.lineWidth = 6;
             ctx.beginPath();
-            ctx.moveTo(40, 255); ctx.lineTo(216, 255);
-            ctx.moveTo(40, 285); ctx.lineTo(165, 285);
+            ctx.moveTo(80, 430); ctx.lineTo(432, 430);
+            ctx.moveTo(80, 460); ctx.lineTo(320, 460);
             ctx.stroke();
 
             return new THREE.CanvasTexture(canvas);
         };
 
-        const cardWidth = 1.6;
-        const cardHeight = 4.5;
+        // Dimensions for occupancy (75% volume utilization)
+        const thickness = 1.8;
+        const cardSize = 5.6;
 
         cardInfos.forEach((info, i) => {
             const texture = createCanvasTexture(info.label, info.color);
-            const cardMat = new THREE.MeshBasicMaterial({
-                map: texture,
-                side: THREE.DoubleSide
-            });
-            const cardGeom = new THREE.PlaneGeometry(cardWidth, cardHeight);
-            const card = new THREE.Mesh(cardGeom, cardMat);
 
-            // Evenly spread to occupy roughly 75% of cube width
-            const spacing = 1.8;
-            card.position.set(-spacing + i * spacing, 1, 0);
-            card.rotation.y = 0;
+            // Multi-material for the slab: Large faces are +X and -X
+            const labelMat = new THREE.MeshBasicMaterial({ map: texture });
+            const blankMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
+
+            // Materials for the 6 faces: [+X, -X, +Y, -Y, +Z, -Z]
+            const materials = [
+                labelMat, labelMat, // Labels on the sides
+                blankMat, blankMat,
+                blankMat, blankMat
+            ];
+
+            const cardGeom = new THREE.BoxGeometry(thickness, cardSize, cardSize);
+            const card = new THREE.Mesh(cardGeom, materials);
+
+            // Align in a row along X (bookshelf style)
+            const xPos = -2.1 + i * 2.1;
+            card.position.set(xPos, 1, 0);
             cardsGroup.add(card);
         });
         group.add(cardsGroup);
