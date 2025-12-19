@@ -224,32 +224,14 @@ export class ObjectFactory {
             transmission: 0.9,
             thickness: 0.5,
             roughness: 0.1,
-            metalness: 0,
+            metalness: 0.1,
             transparent: true,
-            opacity: 0.3,
-            side: THREE.DoubleSide
+            opacity: 0.4,
+            side: THREE.DoubleSide,
+            depthWrite: false // Allow seeing internal cards clearly
         });
 
-        // 1. Bottom Slanted Platform
-        const platform = new THREE.Group();
-
-        // Main base plate (slanted)
-        const baseGeom = new THREE.CylinderGeometry(4.5, 6, 1.2, 4); // Square-ish base with slanted sides
-        baseGeom.rotateY(Math.PI / 4);
-        const baseMesh = new THREE.Mesh(baseGeom, whiteMat);
-        platform.add(baseMesh);
-
-        // Blue middle stripe
-        const stripeGeom = new THREE.CylinderGeometry(4.8, 5.2, 0.4, 4);
-        stripeGeom.rotateY(Math.PI / 4);
-        const stripeMesh = new THREE.Mesh(stripeGeom, blueMat);
-        stripeMesh.position.y = 0;
-        platform.add(stripeMesh);
-
-        platform.position.y = -4;
-        group.add(platform);
-
-        // 2. Main Box Structure
+        // 1. Main Box Structure (Platform removed)
         const boxContainer = new THREE.Group();
 
         // Bottom Plate
@@ -283,7 +265,7 @@ export class ObjectFactory {
 
         group.add(boxContainer);
 
-        // 3. Internal Cards (M, V, P)
+        // 2. Internal Cards (M, V, P)
         const cardsGroup = new THREE.Group();
         const cardLabels = ['M', 'V', 'P'];
 
@@ -293,34 +275,42 @@ export class ObjectFactory {
             canvas.width = 256; canvas.height = 320;
             const ctx = canvas.getContext('2d');
 
-            // White background
+            // White background (solid)
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, 256, 320);
 
             // Blue border
             ctx.strokeStyle = '#00a0e9';
-            ctx.lineWidth = 8;
+            ctx.lineWidth = 12;
             ctx.strokeRect(10, 10, 236, 300);
 
             // Label box 'CLM' at top left
             ctx.fillStyle = '#00a0e9';
             ctx.fillRect(20, 20, 70, 30);
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 20px Arial';
+            ctx.font = 'bold 22px Arial';
             ctx.fillText('CLM', 30, 42);
 
             // Big letter in middle
             ctx.fillStyle = '#00a0e9';
-            ctx.font = 'bold 150px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText(label, 128, 200);
+
+            if (label === 'P') {
+                ctx.font = 'bold 120px Arial';
+                ctx.fillText('P', 90, 200);
+                ctx.font = 'bold 50px Arial';
+                ctx.fillText('CLM', 180, 185);
+            } else {
+                ctx.font = 'bold 150px Arial';
+                ctx.fillText(label, 128, 200);
+            }
 
             // Abstract lines at bottom
             ctx.strokeStyle = '#cccccc';
             ctx.lineWidth = 4;
             ctx.beginPath();
-            ctx.moveTo(40, 250); ctx.lineTo(216, 250);
-            ctx.moveTo(40, 280); ctx.lineTo(160, 280);
+            ctx.moveTo(40, 255); ctx.lineTo(216, 255);
+            ctx.moveTo(40, 285); ctx.lineTo(165, 285);
             ctx.stroke();
 
             return new THREE.CanvasTexture(canvas);
@@ -328,11 +318,15 @@ export class ObjectFactory {
 
         cardLabels.forEach((label, i) => {
             const texture = createCanvasTexture(label);
-            const cardMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide });
-            const cardGeom = new THREE.PlaneGeometry(3, 4);
+            const cardMat = new THREE.MeshBasicMaterial({
+                map: texture,
+                side: THREE.DoubleSide
+            });
+            const cardGeom = new THREE.PlaneGeometry(3.5, 4.5);
             const card = new THREE.Mesh(cardGeom, cardMat);
-            card.position.set(-1.2 + i * 1.2, 1, 0);
-            card.rotation.y = 0.2;
+            // Distribute cards along X, fanned out
+            card.position.set(-2.2 + i * 2.2, 1, 0);
+            card.rotation.y = 0.2 * (i - 1);
             cardsGroup.add(card);
         });
         group.add(cardsGroup);
