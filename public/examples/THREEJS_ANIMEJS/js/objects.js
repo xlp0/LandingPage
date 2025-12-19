@@ -325,20 +325,20 @@ export class ObjectFactory {
             return new THREE.CanvasTexture(canvas);
         };
 
-        // Dimensions for occupancy (75% volume utilization)
-        const thickness = 1.8;
-        const cardSize = 5.6;
+        // Dimensions for occupancy (75% volume utilization of space)
+        const thickness = 0.15; // Very little thickness as requested
+        const cardSize = 5.8;   // Snugly fit for more volume occupancy
 
         cardInfos.forEach((info, i) => {
             const texture = createCanvasTexture(info.label, info.color);
 
-            // Multi-material for the slab: Large faces are +X and -X
+            // Multi-material for the thin slab: Large faces are +X and -X (Bookshelf style)
             const labelMat = new THREE.MeshBasicMaterial({ map: texture });
             const blankMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
 
             // Materials for the 6 faces: [+X, -X, +Y, -Y, +Z, -Z]
             const materials = [
-                labelMat, labelMat, // Labels on the sides
+                labelMat, labelMat, // Labels on the broad side faces
                 blankMat, blankMat,
                 blankMat, blankMat
             ];
@@ -346,14 +346,15 @@ export class ObjectFactory {
             const cardGeom = new THREE.BoxGeometry(thickness, cardSize, cardSize);
             const card = new THREE.Mesh(cardGeom, materials);
 
-            // Align in a row along X (bookshelf style)
-            const xPos = -2.1 + i * 2.1;
+            // Align in a row along X reaching 75% of box width
+            // Spaced out so we can clearly see the Process card in the middle
+            const xPos = -2.4 + i * 2.4;
             card.position.set(xPos, 1, 0);
             cardsGroup.add(card);
         });
         group.add(cardsGroup);
 
-        // 4. PKC Label on Lid
+        // 3. PKC Label on Lid
         const pkcLabelCanvas = document.createElement('canvas');
         pkcLabelCanvas.width = 256; pkcLabelCanvas.height = 128;
         const pkcCtx = pkcLabelCanvas.getContext('2d');
