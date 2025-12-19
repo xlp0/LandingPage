@@ -29,6 +29,9 @@ UI components, CLM framework, and component specifications.
   - **clm-welcome-component.md** - Welcome component
   - **clm-ws-status-component.md** - WebSocket status component
 
+### 3D & Visualization
+- **3d-theater-component.md** - 🎭 3D Theater & Visualization engine
+
 ### Testing
 - **CLM_TESTING_SYSTEM.md** - Testing framework
 - **CLM_TESTING_QUICK_REFERENCE.md** - Quick reference

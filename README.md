@@ -20,6 +20,7 @@ A modern, **static-first, modular web application** with **serverless P2P commun
 - **LaTeX Math Rendering**: Mathematical equations using KaTeX (Obsidian-compatible)
 - **Mermaid Diagrams**: Flowcharts, sequence diagrams, class diagrams, and more
 - **Syntax Highlighting**: Code blocks with language-specific highlighting
+- **3D Visualization**: Interactive 3D object rendering using Three.js and Anime.js
 
 ### **🏗️ Modular Architecture**
 - **PKC Core Runtime**: Lightweight module loader with capability detection
@@ -57,7 +58,18 @@ A modern, **static-first, modular web application** with **serverless P2P commun
 
 ---
 
-## 📁 **Project Structure**
+## 🎭 **3D Visualization & Theater**
+
+The project includes a high-performance 3D visualization engine for viewing complex data structures and models.
+
+### **Features**
+- **Interactive Theater**: A dedicated environment for 3D object interaction (`examples/THREEJS_ANIMEJS/Theater_Example.html`)
+- **Procedural Modeling**: Generate complex shapes like the "Teapot" or "Microbes" on the fly
+- **Dynamic Lighting**: Interactive lighting presets (Neon, Sunset, Studio)
+- **Animated Timelines**: Smooth camera and object transitions powered by Anime.js
+- **High Performance**: Optimized using Three.js R147 with WebGL acceleration
+
+📁 **Project Structure**
 
 ```
 ├── README.md                          # This file
@@ -85,11 +97,11 @@ A modern, **static-first, modular web application** with **serverless P2P commun
 ├── modules.json                        # Module configuration
 ├── MODULES.md                          # Module system documentation
 ├── nginx-pkc.conf                      # Nginx server configuration
-└── pkc-docs/                           # Documentation files
-    ├── Personal Knowledge Container.md
-    ├── PKC as the Network.md
-    ├── LaTeX-Test.md
-    └── ...
+├── pkc-docs/                           # Documentation files
+├── examples/                           # Interactive demos
+│   └── THREEJS_ANIMEJS/
+│       └── Theater_Example.html         # 🎭 3D Theater Example
+└── ...
 ```
 
 ---
