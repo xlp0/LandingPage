@@ -62,6 +62,15 @@ export const CONFIG = {
      * - defaultCamera: Recommended camera preset
      */
     objects: {
+        crystal: {
+            icon: '🔮',
+            label: 'Crystal Ball',
+            desc: 'Mystical crystal ball with internal glow, caustics, and magical particles.',
+            type: 'object',
+            factory: 'createCrystal',
+            defaultLighting: 'neon',
+            defaultCamera: 'closeup'
+        },
         causalCone: {
             icon: '⏳',
             label: 'Causal Cone',
@@ -88,15 +97,6 @@ export const CONFIG = {
             factory: 'createTable',
             defaultLighting: 'soft',
             defaultCamera: 'orbit'
-        },
-        crystal: {
-            icon: '🔮',
-            label: 'Crystal Ball',
-            desc: 'Mystical crystal ball with internal glow, caustics, and magical particles.',
-            type: 'object',
-            factory: 'createCrystal',
-            defaultLighting: 'neon',
-            defaultCamera: 'closeup'
         },
         earth: {
             icon: '🌍',

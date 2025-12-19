@@ -328,8 +328,15 @@ export class ObjectFactory {
             });
             const cardGeom = new THREE.PlaneGeometry(3.6, 4.6);
             const card = new THREE.Mesh(cardGeom, cardMat);
-            // Straight alignment, distributed along X
-            card.position.set(-2.2 + i * 2.2, 1, 0);
+
+            // Evenly spread across the width of the cube (-2.5 to 2.5)
+            // This makes them look like they are sitting next to each other on a shelf
+            const totalWidth = 5.0;
+            const startX = -totalWidth / 2;
+            const spacing = totalWidth / (cardInfos.length - 1);
+
+            card.position.set(startX + i * spacing, 1, 0);
+            card.rotation.y = 0; // Perfectly straight bookshelf alignment
             cardsGroup.add(card);
         });
         group.add(cardsGroup);
