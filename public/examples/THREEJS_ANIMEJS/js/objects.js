@@ -387,28 +387,38 @@ export class ObjectFactory {
 
         // 3. PKC Label on the Side
         const pkcLabelCanvas = document.createElement('canvas');
-        pkcLabelCanvas.width = 256; pkcLabelCanvas.height = 128;
+        pkcLabelCanvas.width = 1024; pkcLabelCanvas.height = 128;
         const pkcCtx = pkcLabelCanvas.getContext('2d');
 
         // Transparent background
-        pkcCtx.clearRect(0, 0, 256, 128);
+        pkcCtx.clearRect(0, 0, 1024, 128);
 
         // Blue text
         pkcCtx.fillStyle = '#00a0e9';
-        pkcCtx.font = 'bold 80px Arial';
+        pkcCtx.font = 'bold 70px Arial';
         pkcCtx.textAlign = 'center';
-        pkcCtx.fillText('PKC', 128, 90);
+        pkcCtx.fillText('PKC with Monadic Cards', 512, 85);
 
         const pkcTexture = new THREE.CanvasTexture(pkcLabelCanvas);
-        const pkcLabelGeom = new THREE.PlaneGeometry(2.5, 1.25);
+        const pkcLabelGeom = new THREE.PlaneGeometry(6.0, 0.55);
         const pkcLabelMat = new THREE.MeshBasicMaterial({ map: pkcTexture, transparent: true });
 
-        // Front side of top plate
+        // All four sides of the top plate lid
+        const pkcLabelLeft = new THREE.Mesh(pkcLabelGeom, pkcLabelMat);
+        pkcLabelLeft.position.set(-3.51, 4, 0);
+        pkcLabelLeft.rotation.y = -Math.PI / 2;
+        boxContainer.add(pkcLabelLeft);
+
+        const pkcLabelRight = new THREE.Mesh(pkcLabelGeom, pkcLabelMat);
+        pkcLabelRight.position.set(3.51, 4, 0);
+        pkcLabelRight.rotation.y = Math.PI / 2;
+        boxContainer.add(pkcLabelRight);
+
+        // Front and Back
         const pkcLabelFront = new THREE.Mesh(pkcLabelGeom, pkcLabelMat);
         pkcLabelFront.position.set(0, 4, 3.51);
         boxContainer.add(pkcLabelFront);
 
-        // Back side of top plate
         const pkcLabelBack = new THREE.Mesh(pkcLabelGeom, pkcLabelMat);
         pkcLabelBack.position.set(0, 4, -3.51);
         pkcLabelBack.rotation.y = Math.PI;
