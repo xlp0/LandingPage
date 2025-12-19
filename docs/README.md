@@ -309,6 +309,9 @@ Documents are organized into these primary categories:
 
 ## 🔄 Recent Updates
 
+| Date | Document | Change |
+|------|----------|--------|
+| 2025-12-19 | `3d-theater-component.md` | Data-driven 3D objects, satellite Earth textures, local vendor libraries |
 | 2024-12-19 | `Theater_Example.html` | Modularized 3D Theater & Tone.js Audio Engine integration |
 | 2024-12-11 | `STATUS.md` | Project status report |
 | 2024-12-11 | `MCARD-JS-SETUP.md` | mcard-js v2.1.11 update |

@@ -63,13 +63,13 @@ A modern, **static-first, modular web application** with **serverless P2P commun
 The project includes a high-performance 3D visualization engine for viewing complex data structures and models.
 
 ### **Features**
-- **Interactive Theater**: A dedicated environment for 3D object interaction (`examples/THREEJS_ANIMEJS/Theater_Example.html`)
+- **Interactive Theater**: A dedicated environment for 3D object interaction (`public/examples/THREEJS_ANIMEJS/Theater_Example.html`)
+- **Data-Driven Objects**: 3D objects defined in JSON files (`data/objects/`) for easy extensibility
+- **Real Satellite Textures**: Earth with 2K satellite imagery from Solar System Scope
 - **Modular ESM Architecture**: Cleanly separated logic for scenes, objects, animations, and UI
 - **Synthesized Audio**: Procedural MIDI-like music generated in real-time using Tone.js
-- **UI Scalability**: Sleek object selection dropdown for improved navigation
-- **Procedural Modeling**: Generate complex shapes like the "Teapot" or "Microbes" on the fly
+- **Offline Support**: All vendor libraries (Three.js, Anime.js, Tone.js) hosted locally in `/js/vendor/`
 - **Dynamic Lighting**: Interactive lighting presets (Neon, Sunset, Studio)
-- **Animated Timelines**: Smooth camera and object transitions powered by Anime.js
 - **High Performance**: Optimized using Three.js R147 with WebGL acceleration
 
 📁 **Project Structure**
