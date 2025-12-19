@@ -267,10 +267,14 @@ export class ObjectFactory {
 
         // 2. Internal Cards (M, V, P)
         const cardsGroup = new THREE.Group();
-        const cardLabels = ['M', 'V', 'P'];
+        const cardInfos = [
+            { label: 'M', color: '#3b82f6' }, // Blue
+            { label: 'V', color: '#10b981' }, // Green
+            { label: 'P', color: '#8b5cf6' }  // Purple
+        ];
 
         // Create CLM text texture
-        const createCanvasTexture = (label) => {
+        const createCanvasTexture = (label, color) => {
             const canvas = document.createElement('canvas');
             canvas.width = 256; canvas.height = 320;
             const ctx = canvas.getContext('2d');
@@ -279,20 +283,20 @@ export class ObjectFactory {
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, 256, 320);
 
-            // Blue border
-            ctx.strokeStyle = '#00a0e9';
-            ctx.lineWidth = 12;
-            ctx.strokeRect(10, 10, 236, 300);
+            // Themed border
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 14;
+            ctx.strokeRect(7, 7, 242, 306);
 
             // Label box 'CLM' at top left
-            ctx.fillStyle = '#00a0e9';
+            ctx.fillStyle = color;
             ctx.fillRect(20, 20, 70, 30);
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 22px Arial';
             ctx.fillText('CLM', 30, 42);
 
             // Big letter in middle
-            ctx.fillStyle = '#00a0e9';
+            ctx.fillStyle = color;
             ctx.textAlign = 'center';
 
             if (label === 'P') {
@@ -306,7 +310,7 @@ export class ObjectFactory {
             }
 
             // Abstract lines at bottom
-            ctx.strokeStyle = '#cccccc';
+            ctx.strokeStyle = '#e2e8f0';
             ctx.lineWidth = 4;
             ctx.beginPath();
             ctx.moveTo(40, 255); ctx.lineTo(216, 255);
@@ -316,17 +320,16 @@ export class ObjectFactory {
             return new THREE.CanvasTexture(canvas);
         };
 
-        cardLabels.forEach((label, i) => {
-            const texture = createCanvasTexture(label);
+        cardInfos.forEach((info, i) => {
+            const texture = createCanvasTexture(info.label, info.color);
             const cardMat = new THREE.MeshBasicMaterial({
                 map: texture,
                 side: THREE.DoubleSide
             });
-            const cardGeom = new THREE.PlaneGeometry(3.5, 4.5);
+            const cardGeom = new THREE.PlaneGeometry(3.6, 4.6);
             const card = new THREE.Mesh(cardGeom, cardMat);
-            // Distribute cards along X, fanned out
+            // Straight alignment, distributed along X
             card.position.set(-2.2 + i * 2.2, 1, 0);
-            card.rotation.y = 0.2 * (i - 1);
             cardsGroup.add(card);
         });
         group.add(cardsGroup);
