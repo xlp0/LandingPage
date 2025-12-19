@@ -1,9 +1,9 @@
-import { SceneManager } from './scene.js';
-import { ObjectFactory } from './objects.js';
-import { AnimationManager } from './animations.js';
-import { UIManager } from './ui.js';
-import { AudioManager } from './audio.js';
-import { CONFIG } from './config.js';
+import { SceneManager } from './scene.js?v=10';
+import { ObjectFactory } from './objects.js?v=10';
+import { AnimationManager } from './animations.js?v=10';
+import { UIManager } from './ui.js?v=10';
+import { AudioManager } from './audio.js?v=10';
+import { CONFIG } from './config.js?v=10';
 
 class TheaterApp {
     constructor() {

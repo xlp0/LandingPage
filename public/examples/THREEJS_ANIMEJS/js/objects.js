@@ -631,31 +631,28 @@ export class ObjectFactory {
         const borderMaterial = new THREE.MeshBasicMaterial({ color: 0x22c55e });
 
         // Future Light Cone (upper) - apex at origin, widening upward
-        // ConeGeometry has apex at top by default, so we rotate 180° to point apex down
-        const futureConeGeom = new THREE.ConeGeometry(2.5, 3, 64, 1, true);
+        const futureConeGeom = new THREE.ConeGeometry(1.25, 1.5, 64, 1, true);
         const futureCone = new THREE.Mesh(futureConeGeom, futureMaterial);
-        futureCone.position.y = 1.5;  // Center of cone at y=1.5
+        futureCone.position.y = 0.75;  // Center of cone at y=0.75
         futureCone.rotation.x = Math.PI;  // Flip so apex points DOWN toward origin
         futureCone.name = 'futureCone';
         group.add(futureCone);
 
         // Past Light Cone (lower) - apex at origin, widening downward
-        // Apex naturally points up, so no rotation needed
-        const pastConeGeom = new THREE.ConeGeometry(2.5, 3, 64, 1, true);
+        const pastConeGeom = new THREE.ConeGeometry(1.25, 1.5, 64, 1, true);
         const pastCone = new THREE.Mesh(pastConeGeom, pastMaterial);
-        pastCone.position.y = -1.5;  // Center of cone at y=-1.5
-        // No rotation - apex points UP toward origin
+        pastCone.position.y = -0.75;  // Center of cone at y=-0.75
         pastCone.name = 'pastCone';
         group.add(pastCone);
 
         // Present Plane (horizontal plane with Science of Governance texture)
         const textureLoader = new THREE.TextureLoader();
-        const presentTexture = textureLoader.load('data/materials/science_of_governance.png');
+        const presentTexture = textureLoader.load('data/materials/science_of_governance.png?v=7');
         presentTexture.colorSpace = THREE.SRGBColorSpace;
 
         const presentMaterialWithTexture = new THREE.MeshPhysicalMaterial({
             map: presentTexture,
-            color: 0xffffff,  // White to show texture colors properly
+            color: 0xffffff,
             metalness: 0.0,
             roughness: 0.3,
             transparent: true,
@@ -663,94 +660,92 @@ export class ObjectFactory {
             side: THREE.DoubleSide
         });
 
-        // Image is 725x1024 (portrait), aspect ratio = 0.708
-        // Keep height at 5, width = 5 * 0.708 = 3.54 to maintain aspect ratio
-        const imageAspect = 725 / 1024;  // ~0.708
-        const planeHeight = 5;
-        const planeWidth = planeHeight * imageAspect;  // ~3.54
+        const imageAspect = 725 / 1024;
+        const planeHeight = 2.5;
+        const planeWidth = planeHeight * imageAspect;
         const presentGeom = new THREE.PlaneGeometry(planeWidth, planeHeight);
         const presentPlane = new THREE.Mesh(presentGeom, presentMaterialWithTexture);
-        presentPlane.rotation.x = -Math.PI / 2;  // Horizontal
+        presentPlane.rotation.x = -Math.PI / 2;
         presentPlane.name = 'presentPlane';
         group.add(presentPlane);
 
-        // Green border ring around the present plane
-        const borderGeom = new THREE.TorusGeometry(3.5, 0.03, 8, 64);
+        // Green border ring
+        const borderGeom = new THREE.TorusGeometry(1.75, 0.015, 8, 64);
         const borderRing = new THREE.Mesh(borderGeom, borderMaterial);
         borderRing.rotation.x = Math.PI / 2;
         borderRing.name = 'presentBorder';
         group.add(borderRing);
 
         // Time Axis (vertical line)
-        const timeAxisGeom = new THREE.CylinderGeometry(0.02, 0.02, 8, 8);
+        const timeAxisGeom = new THREE.CylinderGeometry(0.01, 0.01, 4, 8);
         const timeAxis = new THREE.Mesh(timeAxisGeom, axisMaterial);
         timeAxis.name = 'timeAxis';
         group.add(timeAxis);
 
         // Time arrow head
-        const timeArrowGeom = new THREE.ConeGeometry(0.12, 0.3, 16);
+        const timeArrowGeom = new THREE.ConeGeometry(0.06, 0.15, 16);
         const timeArrow = new THREE.Mesh(timeArrowGeom, axisMaterial);
-        timeArrow.position.y = 4.15;
+        timeArrow.position.y = 2.075;
         timeArrow.name = 'timeArrow';
         group.add(timeArrow);
 
         // Space Axis X (horizontal)
-        const spaceAxisXGeom = new THREE.CylinderGeometry(0.015, 0.015, 6, 8);
+        const spaceAxisXGeom = new THREE.CylinderGeometry(0.0075, 0.0075, 3, 8);
         const spaceAxisX = new THREE.Mesh(spaceAxisXGeom, axisMaterial);
         spaceAxisX.rotation.z = Math.PI / 2;
         spaceAxisX.name = 'spaceAxisX';
         group.add(spaceAxisX);
 
         // Space arrow X
-        const spaceArrowXGeom = new THREE.ConeGeometry(0.08, 0.2, 12);
+        const spaceArrowXGeom = new THREE.ConeGeometry(0.04, 0.1, 12);
         const spaceArrowX = new THREE.Mesh(spaceArrowXGeom, axisMaterial);
-        spaceArrowX.position.set(-3.1, 0, 0);
+        spaceArrowX.position.set(-1.55, 0, 0);
         spaceArrowX.rotation.z = Math.PI / 2;
         spaceArrowX.name = 'spaceArrowX';
         group.add(spaceArrowX);
 
         // Space Axis Z (horizontal, perpendicular)
-        const spaceAxisZGeom = new THREE.CylinderGeometry(0.015, 0.015, 6, 8);
+        const spaceAxisZGeom = new THREE.CylinderGeometry(0.0075, 0.0075, 3, 8);
         const spaceAxisZ = new THREE.Mesh(spaceAxisZGeom, axisMaterial);
         spaceAxisZ.rotation.x = Math.PI / 2;
         spaceAxisZ.name = 'spaceAxisZ';
         group.add(spaceAxisZ);
 
         // Origin sphere (the event)
-        const originGeom = new THREE.SphereGeometry(0.1, 16, 16);
+        const originGeom = new THREE.SphereGeometry(0.05, 16, 16);
         const origin = new THREE.Mesh(originGeom, originMaterial);
         origin.name = 'origin';
         group.add(origin);
 
         // Event indicators inside cones
         const futureEventMat = new THREE.MeshStandardMaterial({ color: 0x4a9eff });
-        const futureEvent = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), futureEventMat);
-        futureEvent.position.set(0.3, 1.5, 0.2);
+        const futureEvent = new THREE.Mesh(new THREE.SphereGeometry(0.04, 12, 12), futureEventMat);
+        futureEvent.position.set(0.15, 0.75, 0.1);
         futureEvent.name = 'futureEvent';
         group.add(futureEvent);
 
         const pastEventMat = new THREE.MeshStandardMaterial({ color: 0xff6b3d });
-        const pastEvent = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), pastEventMat);
-        pastEvent.position.set(-0.2, -1.2, 0.3);
+        const pastEvent = new THREE.Mesh(new THREE.SphereGeometry(0.04, 12, 12), pastEventMat);
+        pastEvent.position.set(-0.1, -0.6, 0.15);
         pastEvent.name = 'pastEvent';
         group.add(pastEvent);
 
-        // --- NEW: Round Shaped Platform (Base) ---
+        // --- Round Shaped Platform (Base) ---
         const standMaterial = new THREE.MeshStandardMaterial({ color: 0x2a1a0a, metalness: 0.3, roughness: 0.7 });
-        const standBase = new THREE.Mesh(new THREE.CylinderGeometry(3.5, 3.8, 0.4, 64), standMaterial);
-        standBase.position.y = -3.2; // Slightly below the bottom tip of the past cone
+        const standBase = new THREE.Mesh(new THREE.CylinderGeometry(1.75, 1.9, 0.2, 64), standMaterial);
+        standBase.position.y = -1.6;
         standBase.receiveShadow = true;
         standBase.castShadow = true;
         group.add(standBase);
 
-        const standStem = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.3, 0.2, 32), standMaterial);
-        standStem.position.y = -3.0; // Connecting base to the cone tip
+        const standStem = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.15, 0.1, 32), standMaterial);
+        standStem.position.y = -1.5;
         group.add(standStem);
 
         // Position the entire group so it sits above the floor
-        // Floor is at -1.5, so if we want the bottom of standBase (-3.4 total) to be at -1.5
-        // We lift by -1.5 - (-3.4) = 1.9
-        group.position.y = 1.9;
+        // Floor is at -1.5, bottom of standBase is at -1.6 - 0.1 = -1.7
+        // Offset = -1.5 - (-1.7) = 0.2
+        group.position.y = 0.2;
 
         return group;
     }
