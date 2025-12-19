@@ -434,24 +434,41 @@ export class ObjectFactory {
         const originMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
         const borderMaterial = new THREE.MeshBasicMaterial({ color: 0x22c55e });
 
-        // Future Light Cone (upper, pointing up)
+        // Future Light Cone (upper) - apex at origin, widening upward
+        // ConeGeometry has apex at top by default, so we rotate 180° to point apex down
         const futureConeGeom = new THREE.ConeGeometry(2.5, 3, 64, 1, true);
         const futureCone = new THREE.Mesh(futureConeGeom, futureMaterial);
-        futureCone.position.y = 1.5;
+        futureCone.position.y = 1.5;  // Center of cone at y=1.5
+        futureCone.rotation.x = Math.PI;  // Flip so apex points DOWN toward origin
         futureCone.name = 'futureCone';
         group.add(futureCone);
 
-        // Past Light Cone (lower, pointing down - rotated 180°)
+        // Past Light Cone (lower) - apex at origin, widening downward
+        // Apex naturally points up, so no rotation needed
         const pastConeGeom = new THREE.ConeGeometry(2.5, 3, 64, 1, true);
         const pastCone = new THREE.Mesh(pastConeGeom, pastMaterial);
-        pastCone.position.y = -1.5;
-        pastCone.rotation.x = Math.PI;  // Flip upside down
+        pastCone.position.y = -1.5;  // Center of cone at y=-1.5
+        // No rotation - apex points UP toward origin
         pastCone.name = 'pastCone';
         group.add(pastCone);
 
-        // Present Plane (horizontal green plane)
+        // Present Plane (horizontal plane with Science of Governance texture)
+        const textureLoader = new THREE.TextureLoader();
+        const presentTexture = textureLoader.load('data/materials/science_of_governance.png');
+        presentTexture.colorSpace = THREE.SRGBColorSpace;
+
+        const presentMaterialWithTexture = new THREE.MeshPhysicalMaterial({
+            map: presentTexture,
+            color: 0xffffff,  // White to show texture colors properly
+            metalness: 0.0,
+            roughness: 0.3,
+            transparent: true,
+            opacity: 0.9,
+            side: THREE.DoubleSide
+        });
+
         const presentGeom = new THREE.PlaneGeometry(5, 5);
-        const presentPlane = new THREE.Mesh(presentGeom, presentMaterial);
+        const presentPlane = new THREE.Mesh(presentGeom, presentMaterialWithTexture);
         presentPlane.rotation.x = -Math.PI / 2;  // Horizontal
         presentPlane.name = 'presentPlane';
         group.add(presentPlane);

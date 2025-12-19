@@ -62,6 +62,15 @@ export const CONFIG = {
      * - defaultCamera: Recommended camera preset
      */
     objects: {
+        causalCone: {
+            icon: '⏳',
+            label: 'Causal Cone',
+            desc: 'Spacetime light cone showing the causal structure of relativistic physics. Blue cone = future, orange = past, green = present.',
+            type: 'scene',
+            factory: 'createCausalCone',
+            defaultLighting: 'studio',
+            defaultCamera: 'orbit'
+        },
         teapot: {
             icon: '🫖',
             label: 'Teapot',
@@ -115,15 +124,6 @@ export const CONFIG = {
             factory: 'createMicrobes',
             defaultLighting: 'product',
             defaultCamera: 'closeup'
-        },
-        causalCone: {
-            icon: '⏳',
-            label: 'Causal Cone',
-            desc: 'Spacetime light cone showing the causal structure of relativistic physics. Blue cone = future, orange = past, green = present.',
-            type: 'scene',
-            factory: 'createCausalCone',
-            defaultLighting: 'studio',
-            defaultCamera: 'orbit'
         }
     },
 

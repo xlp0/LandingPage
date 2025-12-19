@@ -94,7 +94,7 @@
     "children": [
         {
             "name": "futureLightCone",
-            "comment": "Upper cone pointing toward future (time+)",
+            "comment": "Upper cone - apex points DOWN toward origin, widening upward (future)",
             "geometry": {
                 "type": "cone",
                 "radius": 2.5,
@@ -111,7 +111,7 @@
                     0
                 ],
                 "rotation": [
-                    0,
+                    3.14159,
                     0,
                     0
                 ]
@@ -119,7 +119,7 @@
         },
         {
             "name": "pastLightCone",
-            "comment": "Lower cone pointing toward past (time-)",
+            "comment": "Lower cone - apex points UP toward origin, widening downward (past)",
             "geometry": {
                 "type": "cone",
                 "radius": 2.5,
@@ -136,7 +136,7 @@
                     0
                 ],
                 "rotation": [
-                    3.14159,
+                    0,
                     0,
                     0
                 ]
