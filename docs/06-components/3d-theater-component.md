@@ -21,12 +21,14 @@ The Theater is now built using a **fully modular ESM (ES Modules)** architecture
 - **Dynamic Lighting Engine**: Built-in lighting presets (Studio, Neon, Sunset, etc.) with smooth transitions.
 - **Cinematic Camera**: Pre-set camera positions with eased transitions.
 - **Interactive Micro-animations**: UI elements enhanced with Anime.js spring/elastic easing.
+- **Synthesized Audio Engine**: Integrated **Tone.js** to provide procedural MIDI-like musical feedback for every user interaction (transitions, lighting, and camera changes).
 
 ## Technical Specifications
 - **Three.js Version**: r147
 - **Anime.js Version**: 3.2.2
+- **Tone.js Version**: r14
 - **Module System**: Browser-native ESM (No build step required)
-- **Performance**: GPU accelerated WebGL
+- **Performance**: GPU accelerated WebGL + Web Audio API
 
 ## Implementation Details
 The theater is implemented as a standalone interactive page in `examples/THREEJS_ANIMEJS/Theater_Example.html`. It serves as a blueprint for future CLM components that require 3D visualization capabilities.

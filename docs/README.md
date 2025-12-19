@@ -309,7 +309,7 @@ Documents are organized into these primary categories:
 
 ## 🔄 Recent Updates
 
-| 2024-12-19 | `Theater_Example.html` | Modularized 3D Theater & UI Dropdown update |
+| 2024-12-19 | `Theater_Example.html` | Modularized 3D Theater & Tone.js Audio Engine integration |
 | 2024-12-11 | `STATUS.md` | Project status report |
 | 2024-12-11 | `MCARD-JS-SETUP.md` | mcard-js v2.1.11 update |
 | 2024-12-11 | `SELF-HOSTED-CDN.md` | CDN architecture |

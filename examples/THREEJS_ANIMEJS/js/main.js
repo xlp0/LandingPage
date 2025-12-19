@@ -2,12 +2,14 @@ import { SceneManager } from './scene.js';
 import { ObjectFactory } from './objects.js';
 import { AnimationManager } from './animations.js';
 import { UIManager } from './ui.js';
+import { AudioManager } from './audio.js';
 import { CONFIG } from './config.js';
 
 class TheaterApp {
     constructor() {
         this.sceneManager = new SceneManager('canvas-container');
         this.animations = new AnimationManager(this.sceneManager);
+        this.audio = new AudioManager();
         this.ui = new UIManager(this);
         this.currentObject = null;
         this.currentObjectType = 'teapot';
@@ -16,6 +18,7 @@ class TheaterApp {
     async init() {
         try {
             this.sceneManager.init();
+            await this.audio.init();
             this.ui.init();
             this.createInitialObject();
 
@@ -43,6 +46,7 @@ class TheaterApp {
     switchObject(type) {
         if (this.animations.isAnimating) return;
 
+        this.audio.playSwitchSound();
         this.updateStatus('Loading ' + type + '...', true);
         this.animations.isAnimating = true;
 

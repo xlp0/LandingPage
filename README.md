@@ -65,6 +65,7 @@ The project includes a high-performance 3D visualization engine for viewing comp
 ### **Features**
 - **Interactive Theater**: A dedicated environment for 3D object interaction (`examples/THREEJS_ANIMEJS/Theater_Example.html`)
 - **Modular ESM Architecture**: Cleanly separated logic for scenes, objects, animations, and UI
+- **Synthesized Audio**: Procedural MIDI-like music generated in real-time using Tone.js
 - **UI Scalability**: Sleek object selection dropdown for improved navigation
 - **Procedural Modeling**: Generate complex shapes like the "Teapot" or "Microbes" on the fly
 - **Dynamic Lighting**: Interactive lighting presets (Neon, Sunset, Studio)

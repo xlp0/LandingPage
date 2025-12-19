@@ -17,6 +17,7 @@ export class UIManager {
             btn.addEventListener('click', (e) => {
                 const preset = e.target.dataset.camera;
                 this.updateActiveBtn('[data-camera]', e.target);
+                this.app.audio.playCameraSound(preset);
                 this.app.animations.animateCameraTo(preset, (t, a) => this.app.updateStatus(t, a));
             });
         });
@@ -26,6 +27,7 @@ export class UIManager {
             btn.addEventListener('click', (e) => {
                 const preset = e.target.dataset.lighting;
                 this.updateActiveBtn('[data-lighting]', e.target);
+                this.app.audio.playLightingSound(preset);
                 this.app.animations.animateLightingTo(preset, (t, a) => this.app.updateStatus(t, a));
             });
         });
@@ -34,6 +36,7 @@ export class UIManager {
         const playBtn = document.getElementById('play-btn');
         if (playBtn) {
             playBtn.addEventListener('click', () => {
+                this.app.audio.playTheme();
                 this.app.animations.playFullAnimation(this.app.currentObject, (t, a) => this.app.updateStatus(t, a));
             });
         }
