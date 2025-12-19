@@ -1,0 +1,27 @@
+[
+    {
+        "handle": "welcome",
+        "path": "data/demo/welcome.md"
+    },
+    {
+        "handle": "quick-guide",
+        "path": "data/demo/quick-guide.md"
+    },
+    {
+        "handle": "example-markdown",
+        "path": "data/demo/example-markdown.md"
+    },
+    {
+        "handle": "advanced-examples",
+        "path": "data/demo/advanced-examples.md"
+    },
+    {
+        "handle": "example-latex",
+        "path": "data/demo/example-latex.md"
+    },
+    {
+        "handle": "pkc-box-demo",
+        "path": "assets/videos/pkc_box_glamour_shot.webp",
+        "isBinary": true
+    }
+]

@@ -25,7 +25,7 @@
             "metalness": 0.1,
             "texture": {
                 "type": "image",
-                "url": "textures/earth.jpg"
+                "url": "./textures/earth.jpg"
             }
         },
         "clouds": {
@@ -35,7 +35,7 @@
             "side": "double",
             "texture": {
                 "type": "image",
-                "url": "textures/clouds.jpg"
+                "url": "./textures/clouds.jpg"
             }
         },
         "atmosphere": {

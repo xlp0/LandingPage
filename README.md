@@ -226,6 +226,25 @@ python3 -m http.server 8000 --bind 0.0.0.0
 
 ## 📖 **Usage**
 
+### **Demo MCard Data (public/data/demo)**
+
+The MCard Manager ships with a small set of demo cards that are **loaded from static files** rather than being embedded (hard-coded) inside JavaScript.
+
+The demo content lives under:
+- `public/data/demo/` (markdown/text demo content)
+- `public/data/demo/manifest.json` (list of demo items + their `@handle` names)
+- `public/assets/` (binary demo assets such as images/video)
+
+This approach is intentionally preferred over keeping demo data as hard-coded strings/blobs in JavaScript because it:
+- Keeps **content separate from code** (easier review and iteration)
+- Avoids code churn when demo content changes
+- Makes it easy to add/replace demo content by editing `manifest.json` and dropping files into `public/`
+- Works naturally with static hosting/CDNs and browser caching
+
+Notes:
+- Paths in `public/data/demo/manifest.json` are resolved under `/public/` (for example `data/demo/welcome.md` maps to `/public/data/demo/welcome.md`).
+- The demo includes a `@pkc-box-demo` asset using `.webp`. WebP is treated as an **image** in the UI; if the WebP is animated, it will **animate as an animated image** when rendered in the browser.
+
 ### **P2P Communication**
 ```javascript
 // Get P2P module

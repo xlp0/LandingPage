@@ -70,7 +70,9 @@ A visualization of relativistic causality—the "Light Cone."
 A demonstration of nested transparency and rendering priority:
 - **Crystal Sphere**: A high-transmission `MeshPhysicalMaterial` shell.
 - **Internal PKC Box**: A wooden storage box containing three "Polynomial" cards (PCard, MCard, VCard).
-- **GASing Academy Logo**: A high-resolution decal applied to the lid, visible through the sphere via tuned `renderOrder` and `depthWrite` settings.
+- **GASing Academy Logo**: A high-resolution decal applied to the lid.
+- **Omnidirectional Branding**: High-fidelity labels ("PKC with Monadic Cards") on all four sides of the lid, ensuring the identity is visible from any angle.
+- **Rendered MCard**: An MP4 visualization of the box's orbital rotation is available for inclusion in the PKC MCard registry.
 
 ### 2. **Type-Safe Data Definitions**
 All 3D objects are defined in JSON files with a schema (`schema.json`) that **makes illegal states unrepresentable**:
@@ -388,8 +390,9 @@ open http://localhost:8000/public/examples/THREEJS_ANIMEJS/Theater_Example.html
 - **Data-Driven Objects**: ✅ Complete
 - **Satellite Textures**: ✅ Earth with 2K imagery
 - **Causal Cone & Crystal Ball**: ✅ Integrated
+- **Omnidirectional Labeling**: ✅ Complete (4-side branding)
 - **Offline Support**: ✅ All vendor libraries local
-- **Last Updated**: December 19, 2025 (v10)
+- **Last Updated**: December 19, 2025 (v12)
 
 ---
 
