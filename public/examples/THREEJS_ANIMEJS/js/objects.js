@@ -265,12 +265,12 @@ export class ObjectFactory {
 
         group.add(boxContainer);
 
-        // 2. Internal Cards (M, V, P)
+        // 2. Internal Cards (V-pre, PROCESS, V-post)
         const cardsGroup = new THREE.Group();
         const cardInfos = [
-            { label: 'M', color: '#3b82f6' }, // Blue
-            { label: 'V', color: '#10b981' }, // Green
-            { label: 'P', color: '#8b5cf6' }  // Purple
+            { label: 'V-pre', color: '#10b981' },   // Green
+            { label: 'PROCESS', color: '#3b82f6' }, // Blue
+            { label: 'V-post', color: '#10b981' }   // Green
         ];
 
         // Create CLM text texture
@@ -299,14 +299,19 @@ export class ObjectFactory {
             ctx.fillStyle = color;
             ctx.textAlign = 'center';
 
-            if (label === 'P') {
-                ctx.font = 'bold 120px Arial';
-                ctx.fillText('P', 90, 200);
-                ctx.font = 'bold 50px Arial';
-                ctx.fillText('CLM', 180, 185);
+            if (label === 'PROCESS') {
+                ctx.font = 'bold 44px Arial';
+                ctx.fillText('PROCESS', 128, 170);
+                // Simple process icon
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.arc(88, 220, 15, 0, Math.PI * 2);
+                ctx.arc(128, 220, 15, 0, Math.PI * 2);
+                ctx.arc(168, 220, 15, 0, Math.PI * 2);
+                ctx.stroke();
             } else {
-                ctx.font = 'bold 150px Arial';
-                ctx.fillText(label, 128, 200);
+                ctx.font = 'bold 64px Arial';
+                ctx.fillText(label, 128, 195);
             }
 
             // Abstract lines at bottom
@@ -320,23 +325,22 @@ export class ObjectFactory {
             return new THREE.CanvasTexture(canvas);
         };
 
+        const cardWidth = 1.6;
+        const cardHeight = 4.5;
+
         cardInfos.forEach((info, i) => {
             const texture = createCanvasTexture(info.label, info.color);
             const cardMat = new THREE.MeshBasicMaterial({
                 map: texture,
                 side: THREE.DoubleSide
             });
-            const cardGeom = new THREE.PlaneGeometry(3.6, 4.6);
+            const cardGeom = new THREE.PlaneGeometry(cardWidth, cardHeight);
             const card = new THREE.Mesh(cardGeom, cardMat);
 
-            // Evenly spread across the width of the cube (-2.5 to 2.5)
-            // This makes them look like they are sitting next to each other on a shelf
-            const totalWidth = 5.0;
-            const startX = -totalWidth / 2;
-            const spacing = totalWidth / (cardInfos.length - 1);
-
-            card.position.set(startX + i * spacing, 1, 0);
-            card.rotation.y = 0; // Perfectly straight bookshelf alignment
+            // Evenly spread to occupy roughly 75% of cube width
+            const spacing = 1.8;
+            card.position.set(-spacing + i * spacing, 1, 0);
+            card.rotation.y = 0;
             cardsGroup.add(card);
         });
         group.add(cardsGroup);
