@@ -174,11 +174,28 @@ export class ObjectFactory {
     static createCrystalBall() {
         const group = new THREE.Group();
 
-        // Place the PKC Box as the primary object
+        // 1. Outer Crystal Sphere (Wrap)
+        const sphereGeom = new THREE.SphereGeometry(1.2, 64, 64);
+        const sphereMat = new THREE.MeshPhysicalMaterial({
+            color: 0xdef3ff,
+            transmission: 0.95, // Highly transparent
+            thickness: 0.5,
+            roughness: 0.05,
+            metalness: 0.1,
+            transparent: true,
+            opacity: 0.2, // Very faint surface
+            side: THREE.DoubleSide,
+            clearcoat: 1.0,
+            clearcoatRoughness: 0.1
+        });
+        const crystalSphere = new THREE.Mesh(sphereGeom, sphereMat);
+        group.add(crystalSphere);
+
+        // 2. Internal PKC Box
         const pkcBox = this.createPKCBox();
-        // Scaled up since the outer ball is gone
-        pkcBox.scale.set(0.18, 0.18, 0.18);
-        pkcBox.position.y = -0.5;
+        // Slightly scaled down to fit snugly inside the sphere
+        pkcBox.scale.set(0.15, 0.15, 0.15);
+        pkcBox.position.y = -0.15; // Centered relative to sphere
         group.add(pkcBox);
 
         const particleGeom = new THREE.BufferGeometry();
@@ -245,6 +262,17 @@ export class ObjectFactory {
         topPlate.position.y = 4;
         boxContainer.add(topPlate);
 
+        // Logo on top of lid
+        const loader = new THREE.TextureLoader();
+        loader.load('data/materials/gasing_academy_logo.jpg', (texture) => {
+            const logoGeom = new THREE.PlaneGeometry(7, 7);
+            const logoMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+            const logo = new THREE.Mesh(logoGeom, logoMat);
+            logo.position.y = 0.31; // Slightly above the plate
+            logo.rotation.x = -Math.PI / 2;
+            topPlate.add(logo);
+        });
+
         // Glass Walls
         const glassGeom = new THREE.BoxGeometry(6.8, 6, 6.8);
         const glassBox = new THREE.Mesh(glassGeom, glassMat);
@@ -269,7 +297,7 @@ export class ObjectFactory {
         const cardsGroup = new THREE.Group();
         const cardInfos = [
             { label: 'V-pre', color: '#10b981' },   // Green
-            { label: 'PROCESS', color: '#3b82f6' }, // Blue
+            { label: 'Polynomial', color: '#3b82f6' }, // Blue
             { label: 'V-post', color: '#10b981' }   // Green
         ];
 
@@ -299,9 +327,9 @@ export class ObjectFactory {
             ctx.fillStyle = color;
             ctx.textAlign = 'center';
 
-            if (label === 'PROCESS') {
+            if (label === 'Polynomial' || label === 'PROCESS') {
                 ctx.font = 'bold 70px Arial';
-                ctx.fillText('PROCESS', 256, 250);
+                ctx.fillText(label, 256, 250);
                 // Simple process icon
                 ctx.lineWidth = 6;
                 ctx.beginPath();
@@ -354,29 +382,34 @@ export class ObjectFactory {
         });
         group.add(cardsGroup);
 
-        // 3. PKC Label on Lid
+        // 3. PKC Label on the Side
         const pkcLabelCanvas = document.createElement('canvas');
         pkcLabelCanvas.width = 256; pkcLabelCanvas.height = 128;
         const pkcCtx = pkcLabelCanvas.getContext('2d');
+
+        // Transparent background
+        pkcCtx.clearRect(0, 0, 256, 128);
+
+        // Blue text
         pkcCtx.fillStyle = '#00a0e9';
-        pkcCtx.roundRect = pkcCtx.roundRect || function (x, y, w, h, r) {
-            this.beginPath(); this.moveTo(x + r, y); this.lineTo(x + w - r, y); this.quadraticCurveTo(x + w, y, x + w, y + r);
-            this.lineTo(x + w, y + h - r); this.quadraticCurveTo(x + w, y + h, x + w - r, y + h); this.lineTo(x + r, y + h);
-            this.quadraticCurveTo(x, y + h, x, y + h - r); this.lineTo(x, y + r); this.quadraticCurveTo(x, y, x + r, y); this.closePath();
-        };
-        pkcCtx.beginPath();
-        pkcCtx.roundRect(10, 10, 236, 108, 20);
-        pkcCtx.fill();
-        pkcCtx.fillStyle = '#ffffff';
-        pkcCtx.font = 'bold 64px Arial';
-        pkcCtx.fillText('PKC', 60, 85);
+        pkcCtx.font = 'bold 80px Arial';
+        pkcCtx.textAlign = 'center';
+        pkcCtx.fillText('PKC', 128, 90);
 
         const pkcTexture = new THREE.CanvasTexture(pkcLabelCanvas);
-        const pkcLabelGeom = new THREE.PlaneGeometry(3, 1.5);
-        const pkcLabel = new THREE.Mesh(pkcLabelGeom, new THREE.MeshBasicMaterial({ map: pkcTexture, transparent: true }));
-        pkcLabel.position.set(1.5, 4.31, 1.5);
-        pkcLabel.rotation.x = -Math.PI / 2;
-        group.add(pkcLabel);
+        const pkcLabelGeom = new THREE.PlaneGeometry(2.5, 1.25);
+        const pkcLabelMat = new THREE.MeshBasicMaterial({ map: pkcTexture, transparent: true });
+
+        // Front side of top plate
+        const pkcLabelFront = new THREE.Mesh(pkcLabelGeom, pkcLabelMat);
+        pkcLabelFront.position.set(0, 4, 3.51);
+        boxContainer.add(pkcLabelFront);
+
+        // Back side of top plate
+        const pkcLabelBack = new THREE.Mesh(pkcLabelGeom, pkcLabelMat);
+        pkcLabelBack.position.set(0, 4, -3.51);
+        pkcLabelBack.rotation.y = Math.PI;
+        boxContainer.add(pkcLabelBack);
 
         return group;
     }
