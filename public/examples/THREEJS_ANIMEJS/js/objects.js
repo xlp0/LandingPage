@@ -205,15 +205,6 @@ export class ObjectFactory {
         stem.position.y = -1.1;
         group.add(stem);
 
-        const clawMat = new THREE.MeshStandardMaterial({ color: 0xcc9933, metalness: 0.8, roughness: 0.3 });
-        for (let i = 0; i < 4; i++) {
-            const angle = (i / 4) * Math.PI * 2;
-            const claw = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.5, 8), clawMat);
-            claw.position.set(Math.cos(angle) * 0.5, -0.7, Math.sin(angle) * 0.5);
-            claw.rotation.x = -0.3; claw.rotation.z = -angle;
-            group.add(claw);
-        }
-
         group.position.y = 0.5;
         return group;
     }
@@ -292,50 +283,58 @@ export class ObjectFactory {
 
         group.add(boxContainer);
 
-        // 3. Internal Cards (CLM)
+        // 3. Internal Cards (M, V, P)
         const cardsGroup = new THREE.Group();
-        const cardCount = 4;
+        const cardLabels = ['M', 'V', 'P'];
 
         // Create CLM text texture
-        const createCanvasTexture = (text) => {
+        const createCanvasTexture = (label) => {
             const canvas = document.createElement('canvas');
             canvas.width = 256; canvas.height = 320;
             const ctx = canvas.getContext('2d');
+
+            // White background
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, 256, 320);
+
+            // Blue border
             ctx.strokeStyle = '#00a0e9';
-            ctx.lineWidth = 4;
+            ctx.lineWidth = 8;
             ctx.strokeRect(10, 10, 236, 300);
 
-            // Label box
+            // Label box 'CLM' at top left
             ctx.fillStyle = '#00a0e9';
-            ctx.fillRect(20, 20, 100, 40);
+            ctx.fillRect(20, 20, 70, 30);
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 24px Arial';
-            ctx.fillText(text, 35, 48);
+            ctx.font = 'bold 20px Arial';
+            ctx.fillText('CLM', 30, 42);
 
-            // Abstract lines representing card content
+            // Big letter in middle
+            ctx.fillStyle = '#00a0e9';
+            ctx.font = 'bold 150px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(label, 128, 200);
+
+            // Abstract lines at bottom
             ctx.strokeStyle = '#cccccc';
-            ctx.lineWidth = 2;
-            for (let i = 0; i < 5; i++) {
-                ctx.beginPath();
-                ctx.moveTo(30, 100 + i * 40);
-                ctx.lineTo(220, 100 + i * 40);
-                ctx.stroke();
-            }
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(40, 250); ctx.lineTo(216, 250);
+            ctx.moveTo(40, 280); ctx.lineTo(160, 280);
+            ctx.stroke();
+
             return new THREE.CanvasTexture(canvas);
         };
 
-        const clmTexture = createCanvasTexture('CLM');
-        const cardMat = new THREE.MeshBasicMaterial({ map: clmTexture, transparent: true, side: THREE.DoubleSide });
-        const cardGeom = new THREE.PlaneGeometry(3, 4);
-
-        for (let i = 0; i < cardCount; i++) {
+        cardLabels.forEach((label, i) => {
+            const texture = createCanvasTexture(label);
+            const cardMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide });
+            const cardGeom = new THREE.PlaneGeometry(3, 4);
             const card = new THREE.Mesh(cardGeom, cardMat);
-            card.position.set(-1.5 + i * 1, 1, 0);
+            card.position.set(-1.2 + i * 1.2, 1, 0);
             card.rotation.y = 0.2;
             cardsGroup.add(card);
-        }
+        });
         group.add(cardsGroup);
 
         // 4. PKC Label on Lid
