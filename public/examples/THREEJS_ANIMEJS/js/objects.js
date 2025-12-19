@@ -175,17 +175,20 @@ export class ObjectFactory {
         const group = new THREE.Group();
         const crystalMaterial = new THREE.MeshPhysicalMaterial({
             color: 0x8888ff, metalness: 0.0, roughness: 0.0, transmission: 0.95,
-            thickness: 2, envMapIntensity: 1, clearcoat: 1, clearcoatRoughness: 0, ior: 2.0
+            thickness: 2, envMapIntensity: 1, clearcoat: 1, clearcoatRoughness: 0, ior: 1.5
         });
         const ball = new THREE.Mesh(new THREE.SphereGeometry(1.2, 64, 64), crystalMaterial);
         ball.castShadow = true;
         group.add(ball);
 
-        const innerGlow = new THREE.Mesh(new THREE.SphereGeometry(0.8, 32, 32), new THREE.MeshBasicMaterial({ color: 0x4444ff, transparent: true, opacity: 0.3 }));
-        group.add(innerGlow);
+        // Place the PKC Box inside the crystal ball, scaled down
+        const pkcBox = this.createPKCBox();
+        pkcBox.scale.set(0.12, 0.12, 0.12);
+        pkcBox.position.y = -0.2;
+        group.add(pkcBox);
 
         const particleGeom = new THREE.BufferGeometry();
-        const particleCount = 200;
+        const particleCount = 100;
         const positions = new Float32Array(particleCount * 3);
         for (let i = 0; i < particleCount; i++) {
             const r = Math.random() * 0.9;
@@ -196,7 +199,7 @@ export class ObjectFactory {
             positions[i * 3 + 2] = r * Math.cos(phi);
         }
         particleGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        const particles = new THREE.Points(particleGeom, new THREE.PointsMaterial({ color: 0xaaaaff, size: 0.05, transparent: true, opacity: 0.8 }));
+        const particles = new THREE.Points(particleGeom, new THREE.PointsMaterial({ color: 0xaaaaff, size: 0.03, transparent: true, opacity: 0.6 }));
         particles.name = 'particles';
         group.add(particles);
 
@@ -218,6 +221,153 @@ export class ObjectFactory {
         }
 
         group.position.y = 0.5;
+        return group;
+    }
+
+    /**
+     * Create the PKC Box object from the reference image
+     * Features: Slanted platform, transparent box, internal CLM cards, PKC branding
+     */
+    static createPKCBox() {
+        const group = new THREE.Group();
+
+        // Materials
+        const whiteMat = new THREE.MeshPhongMaterial({ color: 0xf0f4f8 });
+        const blueMat = new THREE.MeshPhongMaterial({ color: 0x00a0e9 });
+        const glassMat = new THREE.MeshPhysicalMaterial({
+            color: 0xdef3ff,
+            transmission: 0.9,
+            thickness: 0.5,
+            roughness: 0.1,
+            metalness: 0,
+            transparent: true,
+            opacity: 0.3,
+            side: THREE.DoubleSide
+        });
+
+        // 1. Bottom Slanted Platform
+        const platform = new THREE.Group();
+
+        // Main base plate (slanted)
+        const baseGeom = new THREE.CylinderGeometry(4.5, 6, 1.2, 4); // Square-ish base with slanted sides
+        baseGeom.rotateY(Math.PI / 4);
+        const baseMesh = new THREE.Mesh(baseGeom, whiteMat);
+        platform.add(baseMesh);
+
+        // Blue middle stripe
+        const stripeGeom = new THREE.CylinderGeometry(4.8, 5.2, 0.4, 4);
+        stripeGeom.rotateY(Math.PI / 4);
+        const stripeMesh = new THREE.Mesh(stripeGeom, blueMat);
+        stripeMesh.position.y = 0;
+        platform.add(stripeMesh);
+
+        platform.position.y = -4;
+        group.add(platform);
+
+        // 2. Main Box Structure
+        const boxContainer = new THREE.Group();
+
+        // Bottom Plate
+        const plateGeom = new THREE.BoxGeometry(7, 0.6, 7);
+        const bottomPlate = new THREE.Mesh(plateGeom, whiteMat);
+        bottomPlate.position.y = -2;
+        boxContainer.add(bottomPlate);
+
+        // Top Lid
+        const topPlate = new THREE.Mesh(plateGeom, whiteMat);
+        topPlate.position.y = 4;
+        boxContainer.add(topPlate);
+
+        // Glass Walls
+        const glassGeom = new THREE.BoxGeometry(6.8, 6, 6.8);
+        const glassBox = new THREE.Mesh(glassGeom, glassMat);
+        glassBox.position.y = 1;
+        boxContainer.add(glassBox);
+
+        // Corner Pillars (4 blue rods)
+        const pillarGeom = new THREE.CylinderGeometry(0.15, 0.15, 6.6, 16);
+        const pillarPos = 3.2;
+        const pillars = [
+            [pillarPos, pillarPos], [pillarPos, -pillarPos], [-pillarPos, pillarPos], [-pillarPos, -pillarPos]
+        ];
+        pillars.forEach(p => {
+            const pillar = new THREE.Mesh(pillarGeom, blueMat);
+            pillar.position.set(p[0], 1, p[1]);
+            boxContainer.add(pillar);
+        });
+
+        group.add(boxContainer);
+
+        // 3. Internal Cards (CLM)
+        const cardsGroup = new THREE.Group();
+        const cardCount = 4;
+
+        // Create CLM text texture
+        const createCanvasTexture = (text) => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256; canvas.height = 320;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 256, 320);
+            ctx.strokeStyle = '#00a0e9';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(10, 10, 236, 300);
+
+            // Label box
+            ctx.fillStyle = '#00a0e9';
+            ctx.fillRect(20, 20, 100, 40);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText(text, 35, 48);
+
+            // Abstract lines representing card content
+            ctx.strokeStyle = '#cccccc';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                ctx.moveTo(30, 100 + i * 40);
+                ctx.lineTo(220, 100 + i * 40);
+                ctx.stroke();
+            }
+            return new THREE.CanvasTexture(canvas);
+        };
+
+        const clmTexture = createCanvasTexture('CLM');
+        const cardMat = new THREE.MeshBasicMaterial({ map: clmTexture, transparent: true, side: THREE.DoubleSide });
+        const cardGeom = new THREE.PlaneGeometry(3, 4);
+
+        for (let i = 0; i < cardCount; i++) {
+            const card = new THREE.Mesh(cardGeom, cardMat);
+            card.position.set(-1.5 + i * 1, 1, 0);
+            card.rotation.y = 0.2;
+            cardsGroup.add(card);
+        }
+        group.add(cardsGroup);
+
+        // 4. PKC Label on Lid
+        const pkcLabelCanvas = document.createElement('canvas');
+        pkcLabelCanvas.width = 256; pkcLabelCanvas.height = 128;
+        const pkcCtx = pkcLabelCanvas.getContext('2d');
+        pkcCtx.fillStyle = '#00a0e9';
+        pkcCtx.roundRect = pkcCtx.roundRect || function (x, y, w, h, r) {
+            this.beginPath(); this.moveTo(x + r, y); this.lineTo(x + w - r, y); this.quadraticCurveTo(x + w, y, x + w, y + r);
+            this.lineTo(x + w, y + h - r); this.quadraticCurveTo(x + w, y + h, x + w - r, y + h); this.lineTo(x + r, y + h);
+            this.quadraticCurveTo(x, y + h, x, y + h - r); this.lineTo(x, y + r); this.quadraticCurveTo(x, y, x + r, y); this.closePath();
+        };
+        pkcCtx.beginPath();
+        pkcCtx.roundRect(10, 10, 236, 108, 20);
+        pkcCtx.fill();
+        pkcCtx.fillStyle = '#ffffff';
+        pkcCtx.font = 'bold 64px Arial';
+        pkcCtx.fillText('PKC', 60, 85);
+
+        const pkcTexture = new THREE.CanvasTexture(pkcLabelCanvas);
+        const pkcLabelGeom = new THREE.PlaneGeometry(3, 1.5);
+        const pkcLabel = new THREE.Mesh(pkcLabelGeom, new THREE.MeshBasicMaterial({ map: pkcTexture, transparent: true }));
+        pkcLabel.position.set(1.5, 4.31, 1.5);
+        pkcLabel.rotation.x = -Math.PI / 2;
+        group.add(pkcLabel);
+
         return group;
     }
 
