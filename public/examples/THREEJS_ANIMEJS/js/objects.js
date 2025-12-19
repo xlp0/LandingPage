@@ -9,6 +9,7 @@ export class ObjectFactory {
             case 'earth': return this.createEarth();
             case 'solar': return this.createSolarSystem();
             case 'microbes': return this.createMicrobes();
+            case 'causalCone': return this.createCausalCone();
             default: return null;
         }
     }
@@ -387,5 +388,138 @@ export class ObjectFactory {
             }
         });
         group.position.y = 1; return group;
+    }
+
+    /**
+     * Create a Causal Cone (Light Cone) visualization
+     * Shows the spacetime structure of special relativity:
+     * - Blue upper cone: Future light cone (causally accessible future)
+     * - Orange lower cone: Past light cone (causally accessible past)
+     * - Green plane: Present moment (spacelike hypersurface)
+     * - Vertical axis: Time dimension
+     * - Horizontal axes: Space dimensions
+     */
+    static createCausalCone() {
+        const group = new THREE.Group();
+
+        // Materials matching the reference image
+        const futureMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0x4a9eff,  // Blue
+            metalness: 0.0,
+            roughness: 0.2,
+            transparent: true,
+            opacity: 0.6,
+            side: THREE.DoubleSide
+        });
+
+        const pastMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0xff6b3d,  // Orange
+            metalness: 0.0,
+            roughness: 0.2,
+            transparent: true,
+            opacity: 0.6,
+            side: THREE.DoubleSide
+        });
+
+        const presentMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0x4ade80,  // Green
+            metalness: 0.1,
+            roughness: 0.3,
+            transparent: true,
+            opacity: 0.5,
+            side: THREE.DoubleSide
+        });
+
+        const axisMaterial = new THREE.MeshBasicMaterial({ color: 0x1a1a2e });
+        const originMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const borderMaterial = new THREE.MeshBasicMaterial({ color: 0x22c55e });
+
+        // Future Light Cone (upper, pointing up)
+        const futureConeGeom = new THREE.ConeGeometry(2.5, 3, 64, 1, true);
+        const futureCone = new THREE.Mesh(futureConeGeom, futureMaterial);
+        futureCone.position.y = 1.5;
+        futureCone.name = 'futureCone';
+        group.add(futureCone);
+
+        // Past Light Cone (lower, pointing down - rotated 180°)
+        const pastConeGeom = new THREE.ConeGeometry(2.5, 3, 64, 1, true);
+        const pastCone = new THREE.Mesh(pastConeGeom, pastMaterial);
+        pastCone.position.y = -1.5;
+        pastCone.rotation.x = Math.PI;  // Flip upside down
+        pastCone.name = 'pastCone';
+        group.add(pastCone);
+
+        // Present Plane (horizontal green plane)
+        const presentGeom = new THREE.PlaneGeometry(5, 5);
+        const presentPlane = new THREE.Mesh(presentGeom, presentMaterial);
+        presentPlane.rotation.x = -Math.PI / 2;  // Horizontal
+        presentPlane.name = 'presentPlane';
+        group.add(presentPlane);
+
+        // Green border ring around the present plane
+        const borderGeom = new THREE.TorusGeometry(3.5, 0.03, 8, 64);
+        const borderRing = new THREE.Mesh(borderGeom, borderMaterial);
+        borderRing.rotation.x = Math.PI / 2;
+        borderRing.name = 'presentBorder';
+        group.add(borderRing);
+
+        // Time Axis (vertical line)
+        const timeAxisGeom = new THREE.CylinderGeometry(0.02, 0.02, 8, 8);
+        const timeAxis = new THREE.Mesh(timeAxisGeom, axisMaterial);
+        timeAxis.name = 'timeAxis';
+        group.add(timeAxis);
+
+        // Time arrow head
+        const timeArrowGeom = new THREE.ConeGeometry(0.12, 0.3, 16);
+        const timeArrow = new THREE.Mesh(timeArrowGeom, axisMaterial);
+        timeArrow.position.y = 4.15;
+        timeArrow.name = 'timeArrow';
+        group.add(timeArrow);
+
+        // Space Axis X (horizontal)
+        const spaceAxisXGeom = new THREE.CylinderGeometry(0.015, 0.015, 6, 8);
+        const spaceAxisX = new THREE.Mesh(spaceAxisXGeom, axisMaterial);
+        spaceAxisX.rotation.z = Math.PI / 2;
+        spaceAxisX.name = 'spaceAxisX';
+        group.add(spaceAxisX);
+
+        // Space arrow X
+        const spaceArrowXGeom = new THREE.ConeGeometry(0.08, 0.2, 12);
+        const spaceArrowX = new THREE.Mesh(spaceArrowXGeom, axisMaterial);
+        spaceArrowX.position.set(-3.1, 0, 0);
+        spaceArrowX.rotation.z = Math.PI / 2;
+        spaceArrowX.name = 'spaceArrowX';
+        group.add(spaceArrowX);
+
+        // Space Axis Z (horizontal, perpendicular)
+        const spaceAxisZGeom = new THREE.CylinderGeometry(0.015, 0.015, 6, 8);
+        const spaceAxisZ = new THREE.Mesh(spaceAxisZGeom, axisMaterial);
+        spaceAxisZ.rotation.x = Math.PI / 2;
+        spaceAxisZ.name = 'spaceAxisZ';
+        group.add(spaceAxisZ);
+
+        // Origin sphere (the event)
+        const originGeom = new THREE.SphereGeometry(0.1, 16, 16);
+        const origin = new THREE.Mesh(originGeom, originMaterial);
+        origin.name = 'origin';
+        group.add(origin);
+
+        // Event indicators inside cones
+        const futureEventMat = new THREE.MeshStandardMaterial({ color: 0x4a9eff });
+        const futureEvent = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), futureEventMat);
+        futureEvent.position.set(0.3, 1.5, 0.2);
+        futureEvent.name = 'futureEvent';
+        group.add(futureEvent);
+
+        const pastEventMat = new THREE.MeshStandardMaterial({ color: 0xff6b3d });
+        const pastEvent = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), pastEventMat);
+        pastEvent.position.set(-0.2, -1.2, 0.3);
+        pastEvent.name = 'pastEvent';
+        group.add(pastEvent);
+
+        // Add text labels using CSS2D or sprite (simplified here)
+        // The labels would be: "time" at top, "space" on side, "FUTURE"/"PAST" on cones
+
+        return group;
     }
 }
