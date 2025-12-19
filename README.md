@@ -64,9 +64,10 @@ The project includes a high-performance 3D visualization engine for viewing comp
 
 ### **Features**
 - **Interactive Theater**: A dedicated environment for 3D object interaction (`public/examples/THREEJS_ANIMEJS/Theater_Example.html`)
+- **Advanced Modeling**: High-fidelity representations including the **Causal Cone** (spacetime structure) and **PKC Box** within a Crystal Ball (nested transparency).
 - **Data-Driven Objects**: 3D objects defined in JSON files (`data/objects/`) for easy extensibility
 - **Real Satellite Textures**: Earth with 2K satellite imagery from Solar System Scope
-- **Modular ESM Architecture**: Cleanly separated logic for scenes, objects, animations, and UI
+- **Modular ESM Architecture**: Cleanly separated logic for scenes, objects, animations, and UI with built-in cache management.
 - **Synthesized Audio**: Procedural MIDI-like music generated in real-time using Tone.js
 - **Offline Support**: All vendor libraries (Three.js, Anime.js, Tone.js) hosted locally in `/js/vendor/`
 - **Dynamic Lighting**: Interactive lighting presets (Neon, Sunset, Studio)
@@ -367,7 +368,7 @@ graph TD
 - **Browser Support**: Modern browsers (2016+)
 - **Server Options**: 4+ (Python, Node.js, Nginx, IIS, static hosting)
 - **Documentation**: 1,800+ lines across 8 docs
-- **Last Updated**: November 7, 2025
+- **Last Updated**: December 19, 2025
 
 ---
 

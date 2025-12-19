@@ -1,7 +1,7 @@
 ---
 created: 2025-12-19T11:55:00+08:00
-modified: 2025-12-19T11:55:00+08:00
-subject: ABC Theatre, 3D Visualization, Data-Driven, Type Systems, Representable, Information Carriers
+modified: 2025-12-19T14:24:00+08:00
+subject: ABC Theatre, 3D Visualization, Causal Cone, PKC Box, Spacetime, Physics, Type Systems, Information Carriers
 title: "3D Theater Example: A Window to the ABC Theatre"
 authors: Ben Koo, Antigravity
 ---
@@ -52,6 +52,25 @@ Each 3D object (Teapot, Earth, Solar System, etc.) is an **information carrier**
 | 🌍 Earth | `earth.json` + `earth.jpg` | Satellite Texture + Cloud Layer + Moon Orbit |
 | ☀️ Solar System | `solar.json` | Sun + Planets + Asteroid Belt |
 | 🦠 Microbes | `microbes.json` | Petri Dish + Organisms |
+| ⏳ Causal Cone | `objects.js` (createCausalCone) | Spacetime Structure + Present Plane |
+| 🔮 Crystal Ball | `objects.js` (createCrystalBall) | PKC Box + Nested Transparency |
+
+### 3. **Specialized High-Fidelity Models**
+
+Beyond generic loaders, the Theatre features hand-crafted mathematical and conceptual models:
+
+#### **A. The Causal Cone (Spacetime Model)**
+A visualization of relativistic causality—the "Light Cone." 
+- **Future Cone (Blue)**: The region of spacetime that can be influenced by the origin event.
+- **Past Cone (Orange)**: The region of spacetime that can influence the origin event.
+- **Present Plane (Science of Governance)**: The 2D slice representing the "now," textured with the "Science of Governance" map.
+- **Tabletop Stand**: A mahogany base that grounds the model in the physical "theatre" space.
+
+#### **B. The PKC Box in a Crystal Ball**
+A demonstration of nested transparency and rendering priority:
+- **Crystal Sphere**: A high-transmission `MeshPhysicalMaterial` shell.
+- **Internal PKC Box**: A wooden storage box containing three "Polynomial" cards (PCard, MCard, VCard).
+- **GASing Academy Logo**: A high-resolution decal applied to the lid, visible through the sphere via tuned `renderOrder` and `depthWrite` settings.
 
 ### 2. **Type-Safe Data Definitions**
 All 3D objects are defined in JSON files with a schema (`schema.json`) that **makes illegal states unrepresentable**:
@@ -165,6 +184,18 @@ Every interaction on this stage follows the **REPL Cycle** (Read-Evaluate-Print-
 | **EVALUATE** | `reducer(state, action)` | Load JSON, create mesh | `object-loader.js` |
 | **PRINT** | `store.getState()` | Render to WebGL canvas | `scene.js` |
 | **LOOP** | `store.subscribe()` | Animate & wait for next action | `main.js` → `animate()` |
+
+---
+
+## 🛡️ Cache Management: The Versioning Protocol
+
+To ensure consistent performance and immediate updates across the decentralized network, the ABC Theatre implements a **Modular Versioning Protocol** (`?v=N`):
+
+1.  **Entry Point Versioning**: `Theater_Example.html` loads `main.js?v=10`.
+2.  **Modular Propagation**: `main.js` imports all internal components (`scene.js`, `objects.js`, etc.) with matching version strings.
+3.  **Asset Refresh**: Textures (e.g., `science_of_governance.png?v=7`) and logos include versioning to bypass browser caching and ensure the latest "Ground Truth" is visible.
+
+This arithmetized caching ensures that a "Hard Refresh" is rarely needed for the user to see the latest state of the Theatre.
 
 ### Integrating with LandingPage Redux Store
 
@@ -356,8 +387,9 @@ open http://localhost:8000/public/examples/THREEJS_ANIMEJS/Theater_Example.html
 - **Implementation Status**: ✅ Stable
 - **Data-Driven Objects**: ✅ Complete
 - **Satellite Textures**: ✅ Earth with 2K imagery
+- **Causal Cone & Crystal Ball**: ✅ Integrated
 - **Offline Support**: ✅ All vendor libraries local
-- **Last Updated**: December 19, 2025
+- **Last Updated**: December 19, 2025 (v10)
 
 ---
 
