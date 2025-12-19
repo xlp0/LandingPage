@@ -735,8 +735,22 @@ export class ObjectFactory {
         pastEvent.name = 'pastEvent';
         group.add(pastEvent);
 
-        // Add text labels using CSS2D or sprite (simplified here)
-        // The labels would be: "time" at top, "space" on side, "FUTURE"/"PAST" on cones
+        // --- NEW: Round Shaped Platform (Base) ---
+        const standMaterial = new THREE.MeshStandardMaterial({ color: 0x2a1a0a, metalness: 0.3, roughness: 0.7 });
+        const standBase = new THREE.Mesh(new THREE.CylinderGeometry(3.5, 3.8, 0.4, 64), standMaterial);
+        standBase.position.y = -3.2; // Slightly below the bottom tip of the past cone
+        standBase.receiveShadow = true;
+        standBase.castShadow = true;
+        group.add(standBase);
+
+        const standStem = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.3, 0.2, 32), standMaterial);
+        standStem.position.y = -3.0; // Connecting base to the cone tip
+        group.add(standStem);
+
+        // Position the entire group so it sits above the floor
+        // Floor is at -1.5, so if we want the bottom of standBase (-3.4 total) to be at -1.5
+        // We lift by -1.5 - (-3.4) = 1.9
+        group.position.y = 1.9;
 
         return group;
     }
