@@ -3,17 +3,30 @@
 ## Overview
 The 3D Theater Component is a high-performance visualization environment designed for interactive 3D content. It leverages **Three.js** for WebGL rendering and **Anime.js** for sophisticated animation timelines.
 
+## Architecture
+The Theater is now built using a **fully modular ESM (ES Modules)** architecture, separating concerns across multiple specialized files:
+
+- **`js/main.js`**: Application entry point and orchestration.
+- **`js/scene.js`**: Three.js engine setup (Renderer, Scene, Camera, Lighting).
+- **`js/objects.js`**: Procedural geometry factory for 3D models.
+- **`js/animations.js`**: Anime.js timeline and camera transition logic.
+- **`js/ui.js`**: Event handling and UI state management.
+- **`js/config.js`**: Centralized configuration for presets and object metadata.
+- **`css/theater.css`**: Decoupled styling for the 3D environment.
+
 ## Features
+- **Object Selection Dropdown**: Replaced the individual buttons with a sleek custom select menu for better scalability.
 - **Procedural Geometry**: Supports on-the-fly generation of 3D models (e.g., Teapots, Microbes, Planets).
-- **Physical Based Rendering (PBR)**: Uses `MeshPhysicalMaterial` for realistic surfaces including metalness, roughness, and clearcoat properties.
-- **Dynamic Lighting Engine**: Built-in lighting presets (Studio, Neon, Sunset, etc.) that can be transitioned smoothly via animation.
-- **Cinematic Camera**: Pre-set camera positions with eased transitions for looking at objects from multiple angles.
-- **Interactive Micro-animations**: UI buttons and object interactions enhanced with Anime.js spring/elastic easing.
+- **Physical Based Rendering (PBR)**: Uses `MeshPhysicalMaterial` for realistic surfaces.
+- **Dynamic Lighting Engine**: Built-in lighting presets (Studio, Neon, Sunset, etc.) with smooth transitions.
+- **Cinematic Camera**: Pre-set camera positions with eased transitions.
+- **Interactive Micro-animations**: UI elements enhanced with Anime.js spring/elastic easing.
 
 ## Technical Specifications
-- **Three.js Version**: r147 (Upgraded for `CapsuleGeometry` support)
+- **Three.js Version**: r147
 - **Anime.js Version**: 3.2.2
-- **Performance**: High (utilizes GPU accelerated WebGL)
+- **Module System**: Browser-native ESM (No build step required)
+- **Performance**: GPU accelerated WebGL
 
 ## Implementation Details
 The theater is implemented as a standalone interactive page in `examples/THREEJS_ANIMEJS/Theater_Example.html`. It serves as a blueprint for future CLM components that require 3D visualization capabilities.
