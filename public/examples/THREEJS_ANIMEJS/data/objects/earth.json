@@ -1,0 +1,124 @@
+{
+    "$schema": "./schema.json",
+    "id": "earth",
+    "version": "3.0",
+    "metadata": {
+        "icon": "🌍",
+        "label": "Earth",
+        "description": "Planet Earth with realistic satellite imagery texture, atmosphere, clouds, and orbiting moon.",
+        "type": "scene",
+        "defaultLighting": "space",
+        "defaultCamera": "orbit",
+        "credits": "Earth texture from Solar System Scope (CC BY 4.0)"
+    },
+    "transform": {
+        "position": [
+            0,
+            0.5,
+            0
+        ]
+    },
+    "materials": {
+        "earth": {
+            "type": "standard",
+            "roughness": 0.8,
+            "metalness": 0.1,
+            "texture": {
+                "type": "image",
+                "url": "textures/earth.jpg"
+            }
+        },
+        "clouds": {
+            "type": "standard",
+            "transparent": true,
+            "opacity": 0.4,
+            "side": "double",
+            "texture": {
+                "type": "image",
+                "url": "textures/clouds.jpg"
+            }
+        },
+        "atmosphere": {
+            "type": "basic",
+            "color": "#4da6ff",
+            "transparent": true,
+            "opacity": 0.12,
+            "side": "back"
+        },
+        "moon": {
+            "type": "standard",
+            "color": "#aaaaaa",
+            "roughness": 0.9
+        }
+    },
+    "children": [
+        {
+            "name": "earth",
+            "geometry": {
+                "type": "sphere",
+                "radius": 1.5,
+                "widthSegments": 64,
+                "heightSegments": 64
+            },
+            "material": "earth",
+            "castShadow": true,
+            "animation": {
+                "type": "rotation",
+                "axis": "y",
+                "speed": 0.002
+            }
+        },
+        {
+            "name": "clouds",
+            "geometry": {
+                "type": "sphere",
+                "radius": 1.52,
+                "widthSegments": 64,
+                "heightSegments": 64
+            },
+            "material": "clouds",
+            "animation": {
+                "type": "rotation",
+                "axis": "y",
+                "speed": 0.0018
+            }
+        },
+        {
+            "name": "atmosphere",
+            "geometry": {
+                "type": "sphere",
+                "radius": 1.65,
+                "widthSegments": 32,
+                "heightSegments": 32
+            },
+            "material": "atmosphere"
+        },
+        {
+            "name": "moon",
+            "geometry": {
+                "type": "sphere",
+                "radius": 0.3,
+                "widthSegments": 32,
+                "heightSegments": 32
+            },
+            "material": "moon",
+            "transform": {
+                "position": [
+                    3,
+                    0.5,
+                    0
+                ]
+            },
+            "animation": {
+                "type": "orbit",
+                "center": [
+                    0,
+                    0,
+                    0
+                ],
+                "radius": 3,
+                "speed": 0.3
+            }
+        }
+    ]
+}

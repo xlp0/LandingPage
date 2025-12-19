@@ -222,37 +222,71 @@ export class ObjectFactory {
 
     static createEarth() {
         const group = new THREE.Group();
-        const earthCanvas = document.createElement('canvas');
-        earthCanvas.width = 1024; earthCanvas.height = 512;
-        const ectx = earthCanvas.getContext('2d');
-        ectx.fillStyle = '#1a4d7c'; ectx.fillRect(0, 0, 1024, 512);
-        ectx.fillStyle = '#3d8c40';
-        ectx.beginPath(); ectx.ellipse(250, 200, 80, 120, 0.2, 0, Math.PI * 2); ectx.fill();
-        ectx.beginPath(); ectx.ellipse(280, 350, 50, 80, -0.3, 0, Math.PI * 2); ectx.fill();
-        ectx.beginPath(); ectx.ellipse(550, 180, 60, 50, 0, 0, Math.PI * 2); ectx.fill();
-        ectx.beginPath(); ectx.ellipse(550, 300, 70, 100, 0.1, 0, Math.PI * 2); ectx.fill();
-        ectx.beginPath(); ectx.ellipse(750, 180, 150, 80, 0, 0, Math.PI * 2); ectx.fill();
-        ectx.beginPath(); ectx.ellipse(850, 350, 50, 40, 0.3, 0, Math.PI * 2); ectx.fill();
+        const loader = new THREE.TextureLoader();
 
-        const earthTexture = new THREE.CanvasTexture(earthCanvas);
-        const earth = new THREE.Mesh(new THREE.SphereGeometry(1.5, 64, 64), new THREE.MeshStandardMaterial({ map: earthTexture, roughness: 0.8, metalness: 0.1 }));
-        earth.name = 'earth'; earth.castShadow = true;
+        // Get base path for textures (relative to HTML file location)
+        const texturePath = './textures/';
+        console.log('[Earth] Loading textures from:', texturePath);
+
+        // Load Earth texture (satellite imagery) with callbacks
+        const earthTexture = loader.load(
+            texturePath + 'earth.jpg',
+            (texture) => console.log('[Earth] ✅ Earth texture loaded successfully'),
+            undefined,
+            (err) => console.error('[Earth] ❌ Failed to load earth texture:', err)
+        );
+
+        const earth = new THREE.Mesh(
+            new THREE.SphereGeometry(1.5, 64, 64),
+            new THREE.MeshStandardMaterial({
+                map: earthTexture,
+                roughness: 0.8,
+                metalness: 0.1
+            })
+        );
+        earth.name = 'earth';
+        earth.castShadow = true;
         group.add(earth);
 
-        const cloudCanvas = document.createElement('canvas');
-        cloudCanvas.width = 512; cloudCanvas.height = 256;
-        const cctx = cloudCanvas.getContext('2d');
-        cctx.fillStyle = 'rgba(255,255,255,0.6)';
-        for (let i = 0; i < 100; i++) {
-            cctx.beginPath(); cctx.ellipse(Math.random() * 512, Math.random() * 256, 20 + Math.random() * 40, 10 + Math.random() * 20, Math.random() * Math.PI, 0, Math.PI * 2); cctx.fill();
-        }
-        const clouds = new THREE.Mesh(new THREE.SphereGeometry(1.55, 64, 64), new THREE.MeshStandardMaterial({ map: new THREE.CanvasTexture(cloudCanvas), transparent: true, opacity: 0.5, side: THREE.DoubleSide }));
+        // Load cloud texture with callbacks
+        const cloudTexture = loader.load(
+            texturePath + 'clouds.jpg',
+            (texture) => console.log('[Earth] ✅ Cloud texture loaded successfully'),
+            undefined,
+            (err) => console.error('[Earth] ❌ Failed to load cloud texture:', err)
+        );
+        const clouds = new THREE.Mesh(
+            new THREE.SphereGeometry(1.52, 64, 64),
+            new THREE.MeshStandardMaterial({
+                map: cloudTexture,
+                transparent: true,
+                opacity: 0.4,
+                side: THREE.DoubleSide
+            })
+        );
         clouds.name = 'clouds';
         group.add(clouds);
 
-        group.add(new THREE.Mesh(new THREE.SphereGeometry(1.7, 32, 32), new THREE.MeshBasicMaterial({ color: 0x88ccff, transparent: true, opacity: 0.15, side: THREE.BackSide })));
-        const moon = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32, 32), new THREE.MeshStandardMaterial({ color: 0xaaaaaa, roughness: 0.9 }));
-        moon.position.set(3, 0.5, 0); moon.name = 'moon';
+        // Atmosphere glow
+        const atmosphere = new THREE.Mesh(
+            new THREE.SphereGeometry(1.65, 32, 32),
+            new THREE.MeshBasicMaterial({
+                color: 0x4da6ff,
+                transparent: true,
+                opacity: 0.12,
+                side: THREE.BackSide
+            })
+        );
+        atmosphere.name = 'atmosphere';
+        group.add(atmosphere);
+
+        // Moon
+        const moon = new THREE.Mesh(
+            new THREE.SphereGeometry(0.3, 32, 32),
+            new THREE.MeshStandardMaterial({ color: 0xaaaaaa, roughness: 0.9 })
+        );
+        moon.position.set(3, 0.5, 0);
+        moon.name = 'moon';
         group.add(moon);
 
         group.position.y = 0.5;

@@ -74,9 +74,10 @@ class TheaterApp {
                 this.currentObject.scale.set(0, 0, 0);
                 this.sceneManager.scene.add(this.currentObject);
 
-                // Update info panel
-                document.getElementById('object-title').textContent = CONFIG.objects[type].title;
-                document.getElementById('object-desc').textContent = CONFIG.objects[type].desc;
+                // Update info panel using new CONFIG structure
+                const objConfig = CONFIG.objects[type];
+                document.getElementById('object-title').textContent = `${objConfig.icon} ${objConfig.label}`;
+                document.getElementById('object-desc').textContent = objConfig.desc;
 
                 anime({
                     targets: this.currentObject.scale,

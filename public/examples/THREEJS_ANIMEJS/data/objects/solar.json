@@ -1,0 +1,153 @@
+{
+    "$schema": "./schema.json",
+    "id": "solar",
+    "version": "1.0",
+    "metadata": {
+        "icon": "☀️",
+        "label": "Solar System",
+        "description": "Miniature solar system with orbiting planets and asteroid belt.",
+        "type": "scene",
+        "defaultLighting": "space",
+        "defaultCamera": "top"
+    },
+    "transform": {
+        "position": [
+            0,
+            0,
+            0
+        ],
+        "rotation": [
+            0,
+            0,
+            0
+        ],
+        "scale": [
+            0.8,
+            0.8,
+            0.8
+        ]
+    },
+    "materials": {
+        "sun": {
+            "type": "basic",
+            "color": "#ffdd44"
+        },
+        "sunGlow": {
+            "type": "basic",
+            "color": "#ffaa00",
+            "transparent": true,
+            "opacity": 0.3,
+            "side": "back"
+        },
+        "orbit": {
+            "type": "basic",
+            "color": "#333344",
+            "side": "double",
+            "transparent": true,
+            "opacity": 0.3
+        },
+        "rings": {
+            "type": "basic",
+            "color": "#aa9966",
+            "side": "double",
+            "transparent": true,
+            "opacity": 0.7
+        }
+    },
+    "children": [
+        {
+            "name": "sun",
+            "geometry": {
+                "type": "sphere",
+                "radius": 0.8,
+                "widthSegments": 32,
+                "heightSegments": 32
+            },
+            "material": "sun",
+            "animation": {
+                "type": "rotation",
+                "axis": "y",
+                "speed": 0.01
+            }
+        },
+        {
+            "name": "sunGlow",
+            "geometry": {
+                "type": "sphere",
+                "radius": 1.0,
+                "widthSegments": 32,
+                "heightSegments": 32
+            },
+            "material": "sunGlow"
+        }
+    ],
+    "planets": [
+        {
+            "name": "mercury",
+            "color": "#888888",
+            "size": 0.1,
+            "distance": 1.5,
+            "orbitSpeed": 0.04
+        },
+        {
+            "name": "venus",
+            "color": "#ddaa66",
+            "size": 0.15,
+            "distance": 2.0,
+            "orbitSpeed": 0.03
+        },
+        {
+            "name": "earthOrbit",
+            "color": "#4488ff",
+            "size": 0.16,
+            "distance": 2.6,
+            "orbitSpeed": 0.02
+        },
+        {
+            "name": "mars",
+            "color": "#cc4422",
+            "size": 0.12,
+            "distance": 3.2,
+            "orbitSpeed": 0.015
+        },
+        {
+            "name": "jupiter",
+            "color": "#ddaa88",
+            "size": 0.4,
+            "distance": 4.2,
+            "orbitSpeed": 0.008
+        },
+        {
+            "name": "saturn",
+            "color": "#ddcc88",
+            "size": 0.35,
+            "distance": 5.2,
+            "orbitSpeed": 0.006,
+            "hasRings": true,
+            "ringInnerRadius": 0.49,
+            "ringOuterRadius": 0.77
+        },
+        {
+            "name": "uranus",
+            "color": "#88dddd",
+            "size": 0.25,
+            "distance": 6.0,
+            "orbitSpeed": 0.004
+        },
+        {
+            "name": "neptune",
+            "color": "#4466ff",
+            "size": 0.24,
+            "distance": 6.8,
+            "orbitSpeed": 0.003
+        }
+    ],
+    "asteroidBelt": {
+        "count": 500,
+        "innerRadius": 3.6,
+        "outerRadius": 4.0,
+        "heightVariance": 0.2,
+        "particleSize": 0.03,
+        "color": "#666666"
+    }
+}

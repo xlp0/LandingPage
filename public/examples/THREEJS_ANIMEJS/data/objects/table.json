@@ -1,0 +1,195 @@
+{
+    "$schema": "./schema.json",
+    "id": "table",
+    "version": "1.0",
+    "metadata": {
+        "icon": "🪑",
+        "label": "Table",
+        "description": "Wooden dining table with detailed wood grain texture and metal fixtures.",
+        "type": "object",
+        "defaultLighting": "soft",
+        "defaultCamera": "orbit"
+    },
+    "transform": {
+        "position": [
+            0,
+            0,
+            0
+        ],
+        "rotation": [
+            0,
+            0,
+            0
+        ],
+        "scale": [
+            1,
+            1,
+            1
+        ]
+    },
+    "materials": {
+        "wood": {
+            "type": "standard",
+            "color": "#8B4513",
+            "roughness": 0.7,
+            "metalness": 0.0,
+            "texture": {
+                "type": "procedural",
+                "generator": "woodGrain",
+                "size": [
+                    512,
+                    512
+                ]
+            }
+        },
+        "metal": {
+            "type": "standard",
+            "color": "#444444",
+            "metalness": 0.8,
+            "roughness": 0.3
+        }
+    },
+    "children": [
+        {
+            "name": "top",
+            "geometry": {
+                "type": "box",
+                "width": 3,
+                "height": 0.15,
+                "depth": 2
+            },
+            "material": "wood",
+            "castShadow": true,
+            "receiveShadow": true,
+            "transform": {
+                "position": [
+                    0,
+                    1,
+                    0
+                ]
+            }
+        },
+        {
+            "name": "leg1",
+            "geometry": {
+                "type": "cylinder",
+                "radiusTop": 0.08,
+                "radiusBottom": 0.1,
+                "height": 2.3,
+                "radialSegments": 16
+            },
+            "material": "metal",
+            "castShadow": true,
+            "transform": {
+                "position": [
+                    -1.3,
+                    -0.15,
+                    0.8
+                ]
+            }
+        },
+        {
+            "name": "leg2",
+            "geometry": {
+                "type": "cylinder",
+                "radiusTop": 0.08,
+                "radiusBottom": 0.1,
+                "height": 2.3,
+                "radialSegments": 16
+            },
+            "material": "metal",
+            "castShadow": true,
+            "transform": {
+                "position": [
+                    1.3,
+                    -0.15,
+                    0.8
+                ]
+            }
+        },
+        {
+            "name": "leg3",
+            "geometry": {
+                "type": "cylinder",
+                "radiusTop": 0.08,
+                "radiusBottom": 0.1,
+                "height": 2.3,
+                "radialSegments": 16
+            },
+            "material": "metal",
+            "castShadow": true,
+            "transform": {
+                "position": [
+                    -1.3,
+                    -0.15,
+                    -0.8
+                ]
+            }
+        },
+        {
+            "name": "leg4",
+            "geometry": {
+                "type": "cylinder",
+                "radiusTop": 0.08,
+                "radiusBottom": 0.1,
+                "height": 2.3,
+                "radialSegments": 16
+            },
+            "material": "metal",
+            "castShadow": true,
+            "transform": {
+                "position": [
+                    1.3,
+                    -0.15,
+                    -0.8
+                ]
+            }
+        },
+        {
+            "name": "crossbar1",
+            "geometry": {
+                "type": "cylinder",
+                "radiusTop": 0.03,
+                "radiusBottom": 0.03,
+                "height": 2.6,
+                "radialSegments": 8
+            },
+            "material": "metal",
+            "transform": {
+                "position": [
+                    0,
+                    -0.5,
+                    0.8
+                ],
+                "rotation": [
+                    0,
+                    0,
+                    1.5708
+                ]
+            }
+        },
+        {
+            "name": "crossbar2",
+            "geometry": {
+                "type": "cylinder",
+                "radiusTop": 0.03,
+                "radiusBottom": 0.03,
+                "height": 2.6,
+                "radialSegments": 8
+            },
+            "material": "metal",
+            "transform": {
+                "position": [
+                    0,
+                    -0.5,
+                    -0.8
+                ],
+                "rotation": [
+                    0,
+                    0,
+                    1.5708
+                ]
+            }
+        }
+    ]
+}

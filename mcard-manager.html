@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MCard Manager</title>
-  
+
   <!-- PWA Meta Tags -->
   <meta name="description" content="Content-addressable card management system with local-first storage">
   <meta name="theme-color" content="#007acc">
@@ -12,21 +13,21 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="MCard Manager">
-  
+
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json">
-  
+
   <!-- Performance Optimization: Resource Hints -->
   <!-- Preconnect to CDN origins for faster loading -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-  
+
   <!-- Preload critical CSS -->
-  <link rel="preload" href="/css/mcard-manager.css" as="style">
-  
+  <link rel="preload" href="/public/css/mcard-manager.css" as="style">
+
   <!-- Preload critical JavaScript -->
-  <link rel="preload" href="/js/mcard-manager-new.js" as="script" crossorigin>
-  
+  <link rel="preload" href="/public/js/mcard-manager-new.js" as="script" crossorigin>
+
   <!-- Define process.env for browser compatibility -->
   <script>
     // Redux Toolkit expects process.env.NODE_ENV
@@ -36,19 +37,19 @@
       }
     };
   </script>
-  
+
   <!-- Auto-generate Import Map based on current URL -->
   <script>
     // Must run synchronously before any module imports
-    (function() {
+    (function () {
       const { protocol, hostname, port } = window.location;
       let baseUrl = `${protocol}//${hostname}`;
       if (port && port !== '80' && port !== '443') {
         baseUrl += `:${port}`;
       }
-      
-      const vendorPath = `${baseUrl}/vendor`;
-      
+
+      const vendorPath = `${baseUrl}/public/vendor`;
+
       const importMap = {
         imports: {
           'redux': `${vendorPath}/redux/redux.esm.js`,
@@ -56,34 +57,36 @@
           'immer': `${vendorPath}/redux/immer-esm.js`,
           'reselect': `${vendorPath}/redux/reselect-esm.js`,
           '@reduxjs/toolkit': `${vendorPath}/redux/toolkit.esm.js`,
-          'mcard-js': `${baseUrl}/js/vendor/mcard-js.bundle.js`
+          'mcard-js': `${baseUrl}/public/js/vendor/mcard-js.bundle.js`
         }
       };
-      
+
       const script = document.createElement('script');
       script.type = 'importmap';
       script.textContent = JSON.stringify(importMap, null, 2);
       document.currentScript.parentNode.insertBefore(script, document.currentScript.nextSibling);
-      
+
       if (hostname === 'localhost' || hostname === '127.0.0.1') {
         console.log('🌍 Auto-detected BASE_URL:', baseUrl);
         console.log('📦 Import Map:', importMap);
       }
     })();
   </script>
-  
+
   <!-- Lucide Icons - Self-Hosted -->
-  <script src="/vendor/lucide/lucide.min.js"></script>
+  <script src="/public/vendor/lucide/lucide.min.js"></script>
   <!-- MCard Manager CSS -->
-  <link rel="stylesheet" href="/css/mcard-manager.css">
+  <link rel="stylesheet" href="/public/css/mcard-manager.css">
   <!-- Content Renderers CSS -->
-  <link rel="stylesheet" href="/css/content-renderers.css">
+  <link rel="stylesheet" href="/public/css/content-renderers.css">
 </head>
+
 <body>
   <div class="container">
     <div class="header">
       <div class="header-left">
-        <button class="header-btn" onclick="window.location.href='/'" style="margin-right: 12px;" title="Back to Landing Page">
+        <button class="header-btn" onclick="window.location.href='/'" style="margin-right: 12px;"
+          title="Back to Landing Page">
           <i data-lucide="home" style="width: 16px; height: 16px;"></i>
           Home
         </button>
@@ -105,6 +108,67 @@
         </button>
       </div>
       <input type="file" id="fileInput" multiple style="display: none;">
+    </div>
+
+    <!-- Full-Width Calendar View -->
+    <div class="calendar-view" id="calendarView" style="display: none;">
+      <div class="calendar-header">
+        <button class="header-btn" onclick="hideCalendar()">
+          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+          Close Calendar
+        </button>
+        <h2 style="margin: 0; flex: 1; text-align: center;">
+          <i data-lucide="calendar" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
+          Public Calendar
+        </h2>
+        <div style="width: 120px;"></div>
+      </div>
+      <div class="calendar-container">
+        <iframe id="calendarFrame"
+          src="https://calendar.google.com/calendar/embed?src=83eaf0af7e929d74dc166a19beb26b471f351697c5b0ba8d92e3a9a30540ca8d%40group.calendar.google.com&ctz=Asia%2FMakassar"
+          style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="no">
+        </iframe>
+      </div>
+    </div>
+
+    <!-- Full-Width Map View -->
+    <div class="calendar-view" id="mapView" style="display: none;">
+      <div class="calendar-header">
+        <button class="header-btn" onclick="hideMap()">
+          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+          Close Map
+        </button>
+        <h2 style="margin: 0; flex: 1; text-align: center;">
+          <i data-lucide="map" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
+          IoT Map
+        </h2>
+        <div style="width: 120px;"></div>
+      </div>
+      <div class="calendar-container">
+        <iframe id="mapFrame" src="https://iotmap.pkc.pub/" style="border: 0; width: 100%; height: 100%;"
+          frameborder="0" scrolling="yes">
+        </iframe>
+      </div>
+    </div>
+
+    <!-- Full-Width 3D Viewer -->
+    <div class="calendar-view" id="threeDView" style="display: none;">
+      <div class="calendar-header">
+        <button class="header-btn" onclick="hide3DViewer()">
+          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+          Close Viewer
+        </button>
+        <h2 style="margin: 0; flex: 1; text-align: center;">
+          <i data-lucide="box" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
+          3D Theater
+        </h2>
+        <div style="width: 120px;"></div>
+      </div>
+      <div class="calendar-container">
+        <iframe id="threeDFrame" src="/public/examples/THREEJS_ANIMEJS/Theater_Example.html"
+          style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="no">
+        </iframe>
+      </div>
     </div>
 
     <div class="main-content">
@@ -132,9 +196,12 @@
         <div class="column-header">
           <h3 id="columnTitle">All MCards</h3>
           <div style="position: relative; margin-top: 8px;">
-            <i data-lucide="search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #999;"></i>
-            <input type="text" class="search-box" placeholder="Search files or @handle..." id="searchBox" style="width: 100%; padding-left: 40px; padding-right: 40px;">
-            <button class="filter-toggle-btn" id="filterToggleBtn" onclick="toggleSearchFilters()" title="Search filters">
+            <i data-lucide="search"
+              style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #999;"></i>
+            <input type="text" class="search-box" placeholder="Search files or @handle..." id="searchBox"
+              style="width: 100%; padding-left: 40px; padding-right: 40px;">
+            <button class="filter-toggle-btn" id="filterToggleBtn" onclick="toggleSearchFilters()"
+              title="Search filters">
               <i data-lucide="filter" style="width: 16px; height: 16px;"></i>
             </button>
           </div>
@@ -206,11 +273,15 @@
         <div class="viewer-header">
           <h3 id="viewerTitle">Select an MCard</h3>
           <div class="viewer-actions" id="viewerActions" style="display: none;">
-            <button class="btn" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="downloadCurrentCard()">
+            <button class="btn"
+              style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;"
+              onclick="downloadCurrentCard()">
               <i data-lucide="download" style="width: 16px; height: 16px;"></i>
               Download
             </button>
-            <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="deleteCurrentCard()">
+            <button class="btn btn-secondary"
+              style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;"
+              onclick="deleteCurrentCard()">
               <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
               Delete
             </button>
@@ -225,13 +296,20 @@
             <p>Drag & drop files here or click Upload button</p>
             <div style="margin-top: 20px;">
               <p style="font-size: 14px; color: #666; margin-bottom: 12px;"><strong>Supported Types:</strong></p>
-              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; text-align: left; max-width: 400px; margin: 0 auto;">
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="file-text" style="width: 16px; height: 16px;"></i> Text</div>
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="image" style="width: 16px; height: 16px;"></i> Images</div>
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="video" style="width: 16px; height: 16px;"></i> Videos</div>
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="music" style="width: 16px; height: 16px;"></i> Audio</div>
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="file" style="width: 16px; height: 16px;"></i> Documents</div>
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="archive" style="width: 16px; height: 16px;"></i> Archives</div>
+              <div
+                style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; text-align: left; max-width: 400px; margin: 0 auto;">
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="file-text"
+                    style="width: 16px; height: 16px;"></i> Text</div>
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="image"
+                    style="width: 16px; height: 16px;"></i> Images</div>
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="video"
+                    style="width: 16px; height: 16px;"></i> Videos</div>
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="music"
+                    style="width: 16px; height: 16px;"></i> Audio</div>
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="file"
+                    style="width: 16px; height: 16px;"></i> Documents</div>
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="archive"
+                    style="width: 16px; height: 16px;"></i> Archives</div>
               </div>
             </div>
           </div>
@@ -242,7 +320,8 @@
       <div class="chat-panel hidden" id="chatPanel">
         <div class="chat-header">
           <h3>
-            <i data-lucide="message-square" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
+            <i data-lucide="message-square"
+              style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
             Chat Assistant
           </h3>
           <button class="chat-close-btn" onclick="toggleChat()">
@@ -252,18 +331,14 @@
         <div class="chat-messages" id="chatMessages">
           <div class="chat-message assistant">
             <div class="chat-message-bubble">
-              👋 Hello! I'm your MCard assistant. I can help you manage your files, answer questions about content-addressable storage, or just chat!
+              👋 Hello! I'm your MCard assistant. I can help you manage your files, answer questions about
+              content-addressable storage, or just chat!
             </div>
             <div class="chat-message-time">Just now</div>
           </div>
         </div>
         <div class="chat-input-container">
-          <textarea 
-            class="chat-input" 
-            id="chatInput" 
-            placeholder="Type your message here..."
-            rows="3"
-          ></textarea>
+          <textarea class="chat-input" id="chatInput" placeholder="Type your message here..." rows="3"></textarea>
           <button class="chat-send-btn" onclick="sendChatMessage()">
             <i data-lucide="send" style="width: 14px; height: 14px;"></i>
             Send Message
@@ -275,7 +350,8 @@
       <div class="chat-panel hidden" id="editPanel">
         <div class="chat-header">
           <h3 id="editPanelTitle">
-            <i data-lucide="edit-3" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
+            <i data-lucide="edit-3"
+              style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
             <span id="editPanelTitleText">New Text Card</span>
           </h3>
           <button class="chat-close-btn" onclick="closeEditPanel()">
@@ -286,16 +362,12 @@
           <!-- Handle Name Input -->
           <div style="margin-bottom: 16px;">
             <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px;">
-              <i data-lucide="tag" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
+              <i data-lucide="tag"
+                style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
               Handle Name
             </label>
-            <input 
-              type="text" 
-              id="editHandleName" 
-              class="search-box" 
-              placeholder="e.g., my-document, readme, notes"
-              style="width: 100%; padding: 10px 12px;"
-            />
+            <input type="text" id="editHandleName" class="search-box" placeholder="e.g., my-document, readme, notes"
+              style="width: 100%; padding: 10px 12px;" />
             <p style="font-size: 12px; color: #666; margin-top: 4px;">
               Optional: Give this card a friendly name for easy reference
             </p>
@@ -304,32 +376,21 @@
           <!-- Content Editor -->
           <div style="margin-bottom: 16px;">
             <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px;">
-              <i data-lucide="file-text" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
+              <i data-lucide="file-text"
+                style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
               Content
             </label>
-            <textarea 
-              id="editContentArea" 
-              class="chat-input" 
-              placeholder="Enter your content here..."
-              style="width: 100%; min-height: 300px; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 13px; line-height: 1.6; resize: vertical;"
-            ></textarea>
+            <textarea id="editContentArea" class="chat-input" placeholder="Enter your content here..."
+              style="width: 100%; min-height: 300px; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 13px; line-height: 1.6; resize: vertical;"></textarea>
           </div>
 
           <!-- Action Buttons -->
           <div style="display: flex; gap: 8px; justify-content: flex-end;">
-            <button 
-              class="btn btn-secondary" 
-              onclick="closeEditPanel()"
-              style="font-size: 14px; padding: 10px 20px;"
-            >
+            <button class="btn btn-secondary" onclick="closeEditPanel()" style="font-size: 14px; padding: 10px 20px;">
               <i data-lucide="x" style="width: 14px; height: 14px;"></i>
               Cancel
             </button>
-            <button 
-              class="btn" 
-              onclick="saveEditedCard()"
-              style="font-size: 14px; padding: 10px 20px;"
-            >
+            <button class="btn" onclick="saveEditedCard()" style="font-size: 14px; padding: 10px 20px;">
               <i data-lucide="save" style="width: 14px; height: 14px;"></i>
               <span id="editSaveButtonText">Save</span>
             </button>
@@ -363,7 +424,7 @@
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       sidebar.classList.toggle('collapsed');
-      
+
       // Re-initialize Lucide icons after DOM change
       if (window.lucide) {
         setTimeout(() => lucide.createIcons(), 100);
@@ -377,9 +438,9 @@
         console.warn('[Sidebar] Element not found');
         return;
       }
-      
+
       const isMobile = window.innerWidth <= 768;
-      
+
       if (isMobile) {
         // Always collapse on mobile
         if (!sidebar.classList.contains('collapsed')) {
@@ -397,10 +458,10 @@
 
     // Run immediately when script loads
     initializeSidebarState();
-    
+
     // Also run on DOMContentLoaded to be safe
     window.addEventListener('DOMContentLoaded', initializeSidebarState);
-    
+
     // Re-check on window resize
     let resizeTimer;
     window.addEventListener('resize', () => {
@@ -408,7 +469,7 @@
       resizeTimer = setTimeout(() => {
         const sidebar = document.getElementById('sidebar');
         const isMobile = window.innerWidth <= 768;
-        
+
         // Auto-collapse when resizing to mobile
         if (isMobile && !sidebar.classList.contains('collapsed')) {
           sidebar.classList.add('collapsed');
@@ -427,9 +488,9 @@
     function toggleSearchFilters() {
       const filtersPanel = document.getElementById('searchFilters');
       const toggleBtn = document.getElementById('filterToggleBtn');
-      
+
       console.log('[Filter] Toggle clicked, current display:', filtersPanel.style.display);
-      
+
       if (filtersPanel.style.display === 'none' || filtersPanel.style.display === '') {
         filtersPanel.style.display = 'block';
         toggleBtn.classList.add('active');
@@ -439,12 +500,164 @@
         toggleBtn.classList.remove('active');
         console.log('[Filter] Hiding filters panel');
       }
-      
+
       // Re-initialize Lucide icons
       if (window.lucide) {
         setTimeout(() => lucide.createIcons(), 100);
       }
     }
+
+    // Apps Toggle Function
+    function toggleApps() {
+      const appsSubmenu = document.getElementById('appsSubmenu');
+      const appsChevron = document.getElementById('appsChevron');
+
+      if (appsSubmenu.style.display === 'none') {
+        appsSubmenu.style.display = 'block';
+        if (appsChevron) {
+          appsChevron.style.transform = 'rotate(180deg)';
+        }
+      } else {
+        appsSubmenu.style.display = 'none';
+        if (appsChevron) {
+          appsChevron.style.transform = 'rotate(0deg)';
+        }
+      }
+
+      // Re-initialize Lucide icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    // Calendar View Functions
+    function showCalendar() {
+      console.log('[Calendar] Opening calendar view');
+      const calendarView = document.getElementById('calendarView');
+      const mainContent = document.querySelector('.main-content');
+
+      // Hide main content
+      if (mainContent) {
+        mainContent.style.display = 'none';
+      }
+
+      // Show calendar view
+      calendarView.style.display = 'flex';
+
+      // Re-initialize Lucide icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+      console.log('[Calendar] Calendar view opened');
+    }
+
+    function hideCalendar() {
+      console.log('[Calendar] Closing calendar view');
+      const calendarView = document.getElementById('calendarView');
+      const mainContent = document.querySelector('.main-content');
+
+      // Hide calendar view
+      calendarView.style.display = 'none';
+
+      // Show main content
+      if (mainContent) {
+        mainContent.style.display = 'flex';
+      }
+
+      console.log('[Calendar] Calendar view closed');
+    }
+
+    // Map View Functions
+    function showMap() {
+      console.log('[Map] Opening map view');
+      const mapView = document.getElementById('mapView');
+      const mainContent = document.querySelector('.main-content');
+
+      // Hide main content
+      if (mainContent) {
+        mainContent.style.display = 'none';
+      }
+
+      // Show map view
+      mapView.style.display = 'flex';
+
+      // Re-initialize Lucide icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+      console.log('[Map] Map view opened');
+    }
+
+    function hideMap() {
+      console.log('[Map] Closing map view');
+      const mapView = document.getElementById('mapView');
+      const mainContent = document.querySelector('.main-content');
+
+      // Hide map view
+      mapView.style.display = 'none';
+
+      // Show main content
+      if (mainContent) {
+        mainContent.style.display = 'flex';
+      }
+
+      console.log('[Map] Map view closed');
+    }
+
+    // 3D Viewer Functions
+    function show3DViewer() {
+      console.log('[3D Viewer] Opening 3D theater');
+      const threeDView = document.getElementById('threeDView');
+      const mainContent = document.querySelector('.main-content');
+
+      // Hide main content
+      if (mainContent) {
+        mainContent.style.display = 'none';
+      }
+
+      // Show 3D view
+      threeDView.style.display = 'flex';
+
+      // Re-initialize Lucide icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+      console.log('[3D Viewer] 3D theater opened');
+    }
+
+    function hide3DViewer() {
+      console.log('[3D Viewer] Closing 3D theater');
+      const threeDView = document.getElementById('threeDView');
+      const mainContent = document.querySelector('.main-content');
+
+      // Hide 3D view
+      threeDView.style.display = 'none';
+
+      // Show main content
+      if (mainContent) {
+        mainContent.style.display = 'flex';
+      }
+
+      console.log('[3D Viewer] 3D theater closed');
+    }
+
+    // ESC key to close calendar, map or 3d viewer
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (document.getElementById('calendarView').style.display === 'flex') {
+          hideCalendar();
+        }
+        if (document.getElementById('mapView').style.display === 'flex') {
+          hideMap();
+        }
+        if (document.getElementById('threeDView').style.display === 'flex') {
+          hide3DViewer();
+        }
+      }
+    });
 
     function applySearchFilters() {
       // Get filter values
@@ -454,7 +667,7 @@
       const images = document.getElementById('filterImages').checked;
       const videos = document.getElementById('filterVideos').checked;
       const sortBy = document.querySelector('input[name="sortBy"]:checked').value;
-      
+
       // Store filters in window object for MCardManager to access
       window.searchFilters = {
         withHandles,
@@ -464,7 +677,7 @@
         videos,
         sortBy
       };
-      
+
       // Trigger search update
       if (window.mcardManager) {
         window.mcardManager.applyFiltersAndSearch();
@@ -478,10 +691,10 @@
       document.getElementById('filterMarkdown').checked = false;
       document.getElementById('filterImages').checked = false;
       document.getElementById('filterVideos').checked = false;
-      
+
       // Reset sort to newest
       document.querySelector('input[name="sortBy"][value="newest"]').checked = true;
-      
+
       // Clear filters and refresh
       window.searchFilters = null;
       if (window.mcardManager) {
@@ -490,15 +703,15 @@
     }
 
     // Close filters when clicking outside
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
       const filtersPanel = document.getElementById('searchFilters');
       const toggleBtn = document.getElementById('filterToggleBtn');
       const searchBox = document.getElementById('searchBox');
-      
+
       if (filtersPanel && toggleBtn && searchBox) {
-        if (!filtersPanel.contains(event.target) && 
-            !toggleBtn.contains(event.target) && 
-            !searchBox.contains(event.target)) {
+        if (!filtersPanel.contains(event.target) &&
+          !toggleBtn.contains(event.target) &&
+          !searchBox.contains(event.target)) {
           filtersPanel.style.display = 'none';
           toggleBtn.classList.remove('active');
         }
@@ -507,10 +720,10 @@
   </script>
 
   <!-- Performance Monitoring -->
-  <script src="/js/performance-monitor.js"></script>
+  <script src="/public/js/performance-monitor.js"></script>
 
   <!-- MCard Manager JavaScript (Modular Version) -->
-  <script type="module" src="/js/mcard-manager-new.js"></script>
+  <script type="module" src="/public/js/mcard-manager-new.js"></script>
 
   <!-- PWA Service Worker Registration -->
   <script>
@@ -520,16 +733,16 @@
         navigator.serviceWorker.register('/sw.js')
           .then((registration) => {
             console.log('[PWA] Service Worker registered successfully:', registration.scope);
-            
+
             // Check for updates
             registration.addEventListener('updatefound', () => {
               const newWorker = registration.installing;
               console.log('[PWA] New service worker found, installing...');
-              
+
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                   console.log('[PWA] New version available! Refresh to update.');
-                  
+
                   // Show update notification
                   if (confirm('A new version of MCard Manager is available. Reload to update?')) {
                     newWorker.postMessage({ type: 'SKIP_WAITING' });
@@ -560,7 +773,7 @@
       console.log('[PWA] Install prompt available');
       e.preventDefault();
       deferredPrompt = e;
-      
+
       // Show custom install button (optional)
       showInstallPromotion();
     });
@@ -678,15 +891,15 @@
       // Install button handler
       document.getElementById('install-btn').addEventListener('click', async () => {
         if (!deferredPrompt) return;
-        
+
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         console.log('[PWA] User choice:', outcome);
-        
+
         if (outcome === 'accepted') {
           console.log('[PWA] App installed successfully!');
         }
-        
+
         deferredPrompt = null;
         banner.style.animation = 'slideDown 0.3s ease-out reverse';
         setTimeout(() => banner.remove(), 300);
@@ -696,7 +909,7 @@
       document.getElementById('dismiss-btn').addEventListener('click', () => {
         banner.style.animation = 'slideDown 0.3s ease-out reverse';
         setTimeout(() => banner.remove(), 300);
-        
+
         // Remember dismissal for 7 days
         localStorage.setItem('pwa-install-dismissed', Date.now());
       });
@@ -723,4 +936,5 @@
     }
   </script>
 </body>
+
 </html>

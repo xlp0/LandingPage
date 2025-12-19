@@ -1,0 +1,226 @@
+{
+    "$schema": "./schema.json",
+    "id": "crystal",
+    "version": "1.0",
+    "metadata": {
+        "icon": "🔮",
+        "label": "Crystal Ball",
+        "description": "Mystical crystal ball with internal glow, caustics, and magical particles.",
+        "type": "object",
+        "defaultLighting": "neon",
+        "defaultCamera": "closeup"
+    },
+    "transform": {
+        "position": [
+            0,
+            0.5,
+            0
+        ],
+        "rotation": [
+            0,
+            0,
+            0
+        ],
+        "scale": [
+            1,
+            1,
+            1
+        ]
+    },
+    "materials": {
+        "crystal": {
+            "type": "physical",
+            "color": "#8888ff",
+            "metalness": 0.0,
+            "roughness": 0.0,
+            "transmission": 0.95,
+            "thickness": 2,
+            "clearcoat": 1,
+            "clearcoatRoughness": 0,
+            "ior": 2.0
+        },
+        "glow": {
+            "type": "basic",
+            "color": "#4444ff",
+            "transparent": true,
+            "opacity": 0.3
+        },
+        "stand": {
+            "type": "standard",
+            "color": "#2a1a0a",
+            "metalness": 0.3,
+            "roughness": 0.7
+        },
+        "claw": {
+            "type": "standard",
+            "color": "#cc9933",
+            "metalness": 0.8,
+            "roughness": 0.3
+        }
+    },
+    "children": [
+        {
+            "name": "ball",
+            "geometry": {
+                "type": "sphere",
+                "radius": 1.2,
+                "widthSegments": 64,
+                "heightSegments": 64
+            },
+            "material": "crystal",
+            "castShadow": true
+        },
+        {
+            "name": "innerGlow",
+            "geometry": {
+                "type": "sphere",
+                "radius": 0.8,
+                "widthSegments": 32,
+                "heightSegments": 32
+            },
+            "material": "glow"
+        },
+        {
+            "name": "particles",
+            "geometry": {
+                "type": "particles",
+                "count": 200,
+                "distribution": "spherical",
+                "radius": 0.9
+            },
+            "material": {
+                "type": "points",
+                "color": "#aaaaff",
+                "size": 0.05,
+                "transparent": true,
+                "opacity": 0.8
+            },
+            "animated": true
+        },
+        {
+            "name": "base",
+            "geometry": {
+                "type": "cylinder",
+                "radiusTop": 0.8,
+                "radiusBottom": 1,
+                "height": 0.3,
+                "radialSegments": 32
+            },
+            "material": "stand",
+            "castShadow": true,
+            "transform": {
+                "position": [
+                    0,
+                    -1.4,
+                    0
+                ]
+            }
+        },
+        {
+            "name": "stem",
+            "geometry": {
+                "type": "cylinder",
+                "radiusTop": 0.3,
+                "radiusBottom": 0.4,
+                "height": 0.4,
+                "radialSegments": 32
+            },
+            "material": "stand",
+            "transform": {
+                "position": [
+                    0,
+                    -1.1,
+                    0
+                ]
+            }
+        },
+        {
+            "name": "claw1",
+            "geometry": {
+                "type": "cone",
+                "radius": 0.1,
+                "height": 0.5,
+                "radialSegments": 8
+            },
+            "material": "claw",
+            "transform": {
+                "position": [
+                    0.5,
+                    -0.7,
+                    0
+                ],
+                "rotation": [
+                    -0.3,
+                    0,
+                    0
+                ]
+            }
+        },
+        {
+            "name": "claw2",
+            "geometry": {
+                "type": "cone",
+                "radius": 0.1,
+                "height": 0.5,
+                "radialSegments": 8
+            },
+            "material": "claw",
+            "transform": {
+                "position": [
+                    0,
+                    -0.7,
+                    0.5
+                ],
+                "rotation": [
+                    -0.3,
+                    0,
+                    -1.5708
+                ]
+            }
+        },
+        {
+            "name": "claw3",
+            "geometry": {
+                "type": "cone",
+                "radius": 0.1,
+                "height": 0.5,
+                "radialSegments": 8
+            },
+            "material": "claw",
+            "transform": {
+                "position": [
+                    -0.5,
+                    -0.7,
+                    0
+                ],
+                "rotation": [
+                    -0.3,
+                    0,
+                    -3.1416
+                ]
+            }
+        },
+        {
+            "name": "claw4",
+            "geometry": {
+                "type": "cone",
+                "radius": 0.1,
+                "height": 0.5,
+                "radialSegments": 8
+            },
+            "material": "claw",
+            "transform": {
+                "position": [
+                    0,
+                    -0.7,
+                    -0.5
+                ],
+                "rotation": [
+                    -0.3,
+                    0,
+                    -4.7124
+                ]
+            }
+        }
+    ]
+}

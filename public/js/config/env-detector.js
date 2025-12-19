@@ -11,15 +11,15 @@ export class EnvDetector {
    */
   static getBaseUrl() {
     const { protocol, hostname, port } = window.location;
-    
+
     // Build base URL from current location
     let baseUrl = `${protocol}//${hostname}`;
-    
+
     // Add port if not default (80 for http, 443 for https)
     if (port && port !== '80' && port !== '443') {
       baseUrl += `:${port}`;
     }
-    
+
     return baseUrl;
   }
 
@@ -29,20 +29,20 @@ export class EnvDetector {
    */
   static getEnvironment() {
     const { hostname } = window.location;
-    
+
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       return 'development';
     }
-    
+
     if (hostname.includes('dev.pkc.pub')) {
       return 'staging';
     }
-    
+
     // henry.pkc.pub, ben.pkc.pub, etc.
     if (hostname.includes('.pkc.pub')) {
       return 'production';
     }
-    
+
     // Default to production for unknown domains
     return 'production';
   }
@@ -52,7 +52,7 @@ export class EnvDetector {
    * @returns {string} CSS directory path
    */
   static getCssPath() {
-    return `${this.getBaseUrl()}/css`;
+    return `${this.getBaseUrl()}/public/css`;
   }
 
   /**
@@ -60,7 +60,7 @@ export class EnvDetector {
    * @returns {string} Vendor directory path
    */
   static getVendorPath() {
-    return `${this.getBaseUrl()}/vendor`;
+    return `${this.getBaseUrl()}/public/vendor`;
   }
 
   /**
@@ -89,19 +89,19 @@ export class EnvDetector {
    */
   static getWebSocketUrl(path = '/ws/') {
     const { protocol, hostname, port } = window.location;
-    
+
     // Use wss:// for HTTPS, ws:// for HTTP
     const wsProtocol = protocol === 'https:' ? 'wss:' : 'ws:';
-    
+
     let wsUrl = `${wsProtocol}//${hostname}`;
-    
+
     // Add port if not default
     if (port && port !== '80' && port !== '443') {
       wsUrl += `:${port}`;
     }
-    
+
     wsUrl += path;
-    
+
     return wsUrl;
   }
 
@@ -142,7 +142,7 @@ export class EnvDetector {
    */
   static generateImportMap() {
     const vendorPath = this.getVendorPath();
-    
+
     return {
       imports: {
         'redux': `${vendorPath}/redux/redux.esm.js`,
@@ -150,7 +150,7 @@ export class EnvDetector {
         'immer': `${vendorPath}/redux/immer.esm.js`,
         'reselect': `${vendorPath}/redux/reselect.esm.js`,
         '@reduxjs/toolkit': `${vendorPath}/redux/toolkit.esm.js`,
-        'mcard-js': '/js/vendor/mcard-js.bundle.js'
+        'mcard-js': '/public/js/vendor/mcard-js.bundle.js'
       }
     };
   }
@@ -179,15 +179,15 @@ export class EnvDetector {
         resolve();
         return;
       }
-      
+
       const link = document.createElement('link');
       link.rel = 'stylesheet';
       link.href = this.getCssUrl(filename);
       if (id) link.id = id;
-      
+
       link.onload = () => resolve();
       link.onerror = () => reject(new Error(`Failed to load CSS: ${filename}`));
-      
+
       document.head.appendChild(link);
     });
   }
@@ -206,14 +206,14 @@ export class EnvDetector {
         resolve();
         return;
       }
-      
+
       const script = document.createElement('script');
       script.src = this.getVendorUrl(vendor, filename);
       if (id) script.id = id;
-      
+
       script.onload = () => resolve();
       script.onerror = () => reject(new Error(`Failed to load script: ${vendor}/${filename}`));
-      
+
       document.head.appendChild(script);
     });
   }

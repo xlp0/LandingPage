@@ -1,0 +1,473 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://pkc.pub/schemas/3d-object.json",
+    "title": "3D Object Definition",
+    "description": "Schema for declarative 3D object definitions used by the Theater viewer",
+    "type": "object",
+    "required": [
+        "id",
+        "version",
+        "metadata"
+    ],
+    "properties": {
+        "$schema": {
+            "type": "string",
+            "description": "Reference to this schema file"
+        },
+        "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "description": "Unique identifier for this object"
+        },
+        "version": {
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+$",
+            "description": "Version of this object definition"
+        },
+        "metadata": {
+            "type": "object",
+            "required": [
+                "icon",
+                "label",
+                "description",
+                "type"
+            ],
+            "properties": {
+                "icon": {
+                    "type": "string",
+                    "description": "Emoji icon for UI display"
+                },
+                "label": {
+                    "type": "string",
+                    "description": "Human-readable name"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Extended description shown in info panel"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "object",
+                        "scene"
+                    ],
+                    "description": "Whether this is a single object or complex scene"
+                },
+                "defaultLighting": {
+                    "type": "string",
+                    "description": "Recommended lighting preset"
+                },
+                "defaultCamera": {
+                    "type": "string",
+                    "description": "Recommended camera preset"
+                }
+            }
+        },
+        "transform": {
+            "$ref": "#/definitions/transform"
+        },
+        "materials": {
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/material"
+            },
+            "description": "Named materials that can be referenced by children"
+        },
+        "children": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/meshNode"
+            },
+            "description": "Child mesh nodes"
+        },
+        "planets": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/planet"
+            },
+            "description": "Planet definitions for solar system scenes"
+        },
+        "asteroidBelt": {
+            "$ref": "#/definitions/asteroidBelt"
+        },
+        "microbeTypes": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/microbeType"
+            }
+        }
+    },
+    "definitions": {
+        "transform": {
+            "type": "object",
+            "properties": {
+                "position": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    },
+                    "minItems": 3,
+                    "maxItems": 3,
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                "rotation": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    },
+                    "minItems": 3,
+                    "maxItems": 3,
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "description": "Euler rotation in radians"
+                },
+                "scale": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    },
+                    "minItems": 3,
+                    "maxItems": 3,
+                    "default": [
+                        1,
+                        1,
+                        1
+                    ]
+                }
+            }
+        },
+        "material": {
+            "type": "object",
+            "required": [
+                "type"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "basic",
+                        "standard",
+                        "physical",
+                        "points"
+                    ],
+                    "description": "Three.js material type"
+                },
+                "color": {
+                    "type": "string",
+                    "pattern": "^#[0-9a-fA-F]{6}$",
+                    "description": "Hex color"
+                },
+                "metalness": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "roughness": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "transparent": {
+                    "type": "boolean"
+                },
+                "opacity": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "transmission": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "thickness": {
+                    "type": "number"
+                },
+                "clearcoat": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "clearcoatRoughness": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "ior": {
+                    "type": "number"
+                },
+                "side": {
+                    "type": "string",
+                    "enum": [
+                        "front",
+                        "back",
+                        "double"
+                    ]
+                },
+                "texture": {
+                    "$ref": "#/definitions/texture"
+                }
+            }
+        },
+        "texture": {
+            "type": "object",
+            "required": [
+                "type"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "procedural",
+                        "image",
+                        "url"
+                    ]
+                },
+                "generator": {
+                    "type": "string",
+                    "description": "Name of procedural texture generator function"
+                },
+                "size": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                },
+                "url": {
+                    "type": "string",
+                    "format": "uri"
+                }
+            }
+        },
+        "geometry": {
+            "type": "object",
+            "required": [
+                "type"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "sphere",
+                        "box",
+                        "cylinder",
+                        "cone",
+                        "torus",
+                        "ring",
+                        "plane",
+                        "capsule",
+                        "icosahedron",
+                        "particles"
+                    ]
+                },
+                "radius": {
+                    "type": "number"
+                },
+                "radiusTop": {
+                    "type": "number"
+                },
+                "radiusBottom": {
+                    "type": "number"
+                },
+                "width": {
+                    "type": "number"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "depth": {
+                    "type": "number"
+                },
+                "tube": {
+                    "type": "number"
+                },
+                "arc": {
+                    "type": "number"
+                },
+                "widthSegments": {
+                    "type": "integer"
+                },
+                "heightSegments": {
+                    "type": "integer"
+                },
+                "radialSegments": {
+                    "type": "integer"
+                },
+                "tubularSegments": {
+                    "type": "integer"
+                },
+                "scale": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    },
+                    "minItems": 3,
+                    "maxItems": 3
+                }
+            }
+        },
+        "meshNode": {
+            "type": "object",
+            "required": [
+                "name",
+                "geometry"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "geometry": {
+                    "$ref": "#/definitions/geometry"
+                },
+                "material": {
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "$ref": "#/definitions/material"
+                        }
+                    ]
+                },
+                "transform": {
+                    "$ref": "#/definitions/transform"
+                },
+                "castShadow": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "receiveShadow": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "animated": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "animation": {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "rotation",
+                                "orbit",
+                                "float"
+                            ]
+                        },
+                        "axis": {
+                            "type": "string",
+                            "enum": [
+                                "x",
+                                "y",
+                                "z"
+                            ]
+                        },
+                        "speed": {
+                            "type": "number"
+                        },
+                        "center": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            }
+                        },
+                        "radius": {
+                            "type": "number"
+                        }
+                    }
+                }
+            }
+        },
+        "planet": {
+            "type": "object",
+            "required": [
+                "name",
+                "color",
+                "size",
+                "distance",
+                "orbitSpeed"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "number"
+                },
+                "distance": {
+                    "type": "number"
+                },
+                "orbitSpeed": {
+                    "type": "number"
+                },
+                "hasRings": {
+                    "type": "boolean"
+                },
+                "ringInnerRadius": {
+                    "type": "number"
+                },
+                "ringOuterRadius": {
+                    "type": "number"
+                }
+            }
+        },
+        "asteroidBelt": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "innerRadius": {
+                    "type": "number"
+                },
+                "outerRadius": {
+                    "type": "number"
+                },
+                "heightVariance": {
+                    "type": "number"
+                },
+                "particleSize": {
+                    "type": "number"
+                },
+                "color": {
+                    "type": "string"
+                }
+            }
+        },
+        "microbeType": {
+            "type": "object",
+            "required": [
+                "type",
+                "color",
+                "count"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "count": {
+                    "type": "integer"
+                },
+                "geometry": {
+                    "$ref": "#/definitions/geometry"
+                }
+            }
+        }
+    }
+}

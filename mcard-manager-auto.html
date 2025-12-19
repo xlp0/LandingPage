@@ -1,34 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MCard File Manager</title>
-  
+
   <!-- Auto-detect environment and inject import map -->
   <script type="module">
-    import EnvDetector from '/js/config/env-detector.js';
-    
+    import EnvDetector from '/public/js/config/env-detector.js';
+
     // Inject import map dynamically based on current URL
     EnvDetector.injectImportMap();
-    
+
     // Make config available globally
     window.ENV_CONFIG = EnvDetector.getConfig();
   </script>
-  
+
   <!-- Lucide Icons - Auto-detected path -->
   <script type="module">
-    import EnvDetector from '/js/config/env-detector.js';
+    import EnvDetector from '/public/js/config/env-detector.js';
     await EnvDetector.loadVendorScript('lucide', 'lucide.min.js', 'lucide-icons');
   </script>
-  
+
   <!-- MCard Manager CSS - Auto-detected path -->
   <script type="module">
-    import EnvDetector from '/js/config/env-detector.js';
+    import EnvDetector from '/public/js/config/env-detector.js';
     await EnvDetector.loadCSS('mcard-manager.css', 'mcard-manager-css');
     await EnvDetector.loadCSS('content-renderers.css', 'content-renderers-css');
   </script>
 </head>
+
 <body>
   <div class="container">
     <div class="header">
@@ -69,8 +71,10 @@
         <div class="column-header">
           <h3 id="columnTitle">All MCards</h3>
           <div style="position: relative; margin-top: 8px;">
-            <i data-lucide="search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #999;"></i>
-            <input type="text" class="search-box" placeholder="Search..." id="searchBox" style="width: 100%; padding-left: 40px;">
+            <i data-lucide="search"
+              style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #999;"></i>
+            <input type="text" class="search-box" placeholder="Search..." id="searchBox"
+              style="width: 100%; padding-left: 40px;">
           </div>
         </div>
         <div class="mcard-list" id="mcardList">
@@ -88,11 +92,15 @@
         <div class="viewer-header">
           <h3 id="viewerTitle">Select an MCard</h3>
           <div class="viewer-actions" id="viewerActions" style="display: none;">
-            <button class="btn" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="downloadCurrentCard()">
+            <button class="btn"
+              style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;"
+              onclick="downloadCurrentCard()">
               <i data-lucide="download" style="width: 16px; height: 16px;"></i>
               Download
             </button>
-            <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="deleteCurrentCard()">
+            <button class="btn btn-secondary"
+              style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;"
+              onclick="deleteCurrentCard()">
               <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
               Delete
             </button>
@@ -107,13 +115,20 @@
             <p>Drag & drop files here or click Upload button</p>
             <div style="margin-top: 20px;">
               <p style="font-size: 14px; color: #666; margin-bottom: 12px;"><strong>Supported Types:</strong></p>
-              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; text-align: left; max-width: 400px; margin: 0 auto;">
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="file-text" style="width: 16px; height: 16px;"></i> Text</div>
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="image" style="width: 16px; height: 16px;"></i> Images</div>
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="video" style="width: 16px; height: 16px;"></i> Videos</div>
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="music" style="width: 16px; height: 16px;"></i> Audio</div>
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="file" style="width: 16px; height: 16px;"></i> Documents</div>
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="archive" style="width: 16px; height: 16px;"></i> Archives</div>
+              <div
+                style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; text-align: left; max-width: 400px; margin: 0 auto;">
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="file-text"
+                    style="width: 16px; height: 16px;"></i> Text</div>
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="image"
+                    style="width: 16px; height: 16px;"></i> Images</div>
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="video"
+                    style="width: 16px; height: 16px;"></i> Videos</div>
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="music"
+                    style="width: 16px; height: 16px;"></i> Audio</div>
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="file"
+                    style="width: 16px; height: 16px;"></i> Documents</div>
+                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="archive"
+                    style="width: 16px; height: 16px;"></i> Archives</div>
               </div>
             </div>
           </div>
@@ -124,7 +139,8 @@
       <div class="chat-panel hidden" id="chatPanel">
         <div class="chat-header">
           <h3>
-            <i data-lucide="message-square" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
+            <i data-lucide="message-square"
+              style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
             Chat Assistant
           </h3>
           <button class="chat-close-btn" onclick="toggleChat()">
@@ -134,18 +150,14 @@
         <div class="chat-messages" id="chatMessages">
           <div class="chat-message assistant">
             <div class="chat-message-bubble">
-              👋 Hello! I'm your MCard assistant. I can help you manage your files, answer questions about content-addressable storage, or just chat!
+              👋 Hello! I'm your MCard assistant. I can help you manage your files, answer questions about
+              content-addressable storage, or just chat!
             </div>
             <div class="chat-message-time">Just now</div>
           </div>
         </div>
         <div class="chat-input-container">
-          <textarea 
-            class="chat-input" 
-            id="chatInput" 
-            placeholder="Type your message here..."
-            rows="3"
-          ></textarea>
+          <textarea class="chat-input" id="chatInput" placeholder="Type your message here..." rows="3"></textarea>
           <button class="chat-send-btn" onclick="sendChatMessage()">
             <i data-lucide="send" style="width: 14px; height: 14px;"></i>
             Send Message
@@ -175,6 +187,7 @@
   </div>
 
   <!-- MCard Manager JavaScript (Modular Version) -->
-  <script type="module" src="/js/mcard-manager-new.js"></script>
+  <script type="module" src="/public/js/mcard-manager-new.js"></script>
 </body>
+
 </html>

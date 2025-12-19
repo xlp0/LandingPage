@@ -22,15 +22,15 @@ export class UIComponents {
       categories = { all: allCards };
     }
     const typeList = document.getElementById('typeList');
-    
+
     if (!typeList) {
       console.error('[UIComponents] typeList element not found!');
       return;
     }
-    
+
     // Helper to safely get count
     const getCount = (arr) => (arr && arr.length) || 0;
-    
+
     const types = [
       { id: 'all', name: 'All Cards', icon: 'package', count: getCount(categories.all) },
       { id: 'with-handles', name: 'With Handles', icon: 'tag', count: getCount(categories.withHandles) },
@@ -45,11 +45,12 @@ export class UIComponents {
       { id: 'archives', name: 'Archives', icon: 'archive', count: getCount(categories.archives) },
       { id: 'other', name: 'Other', icon: 'folder', count: getCount(categories.other) }
     ];
-    
+
     // External apps list
     const externalApps = [
       { id: 'calendar', name: 'Calendar', icon: 'calendar', action: 'showCalendar()' },
-      { id: 'map', name: 'Map', icon: 'map', action: 'showMap()' }
+      { id: 'map', name: 'Map', icon: 'map', action: 'showMap()' },
+      { id: '3d', name: '3D Viewer', icon: 'box', action: 'show3DViewer()' }
     ];
 
     typeList.innerHTML = types.map(type => {
@@ -64,7 +65,7 @@ export class UIComponents {
             <span class="type-count" style="opacity: 0.5;"><i data-lucide="external-link" style="width: 12px; height: 12px;"></i></span>
           </div>
         `).join('');
-        
+
         return `
           <div class="type-item apps-header" onclick="toggleApps()" title="${type.name}">
             <div class="type-item-content">
@@ -78,7 +79,7 @@ export class UIComponents {
           </div>
         `;
       }
-      
+
       // Normal card type
       return `
         <div class="type-item ${type.id === currentType ? 'active' : ''}" onclick="selectType('${type.id}')" title="${type.name}">
@@ -90,13 +91,13 @@ export class UIComponents {
         </div>
       `;
     }).join('');
-    
+
     // Initialize Lucide icons
     if (window.lucide) {
       lucide.createIcons();
     }
   }
-  
+
   /**
    * Render MCard list
    * @param {Array} cards
@@ -105,7 +106,7 @@ export class UIComponents {
   static async renderCards(cards, collection = null) {
     const mcardList = document.getElementById('mcardList');
     if (!mcardList) return;
-    
+
     if (cards.length === 0) {
       mcardList.innerHTML = `
         <div class="empty-state">
@@ -118,7 +119,7 @@ export class UIComponents {
       if (window.lucide) lucide.createIcons();
       return;
     }
-    
+
     // Fetch handles for all cards using IndexedDB index
     const cardHandles = new Map();
     if (collection && collection.engine.db) {
@@ -127,7 +128,7 @@ export class UIComponents {
         const tx = db.transaction('handles', 'readonly');
         const store = tx.objectStore('handles');
         const index = store.index('by-hash');
-        
+
         for (const card of cards) {
           try {
             // Query by hash using the 'by-hash' index
@@ -143,18 +144,18 @@ export class UIComponents {
         console.warn('[UIComponents] Failed to fetch handles:', e);
       }
     }
-    
+
     mcardList.innerHTML = cards.map(card => {
       // ✅ Use ContentTypeDetector for unified detection
       const typeInfo = ContentTypeDetector.detect(card);
       const type = typeInfo.type;
       const binaryContent = card.getContent();
-      
+
       const icon = UIComponents.getFileIcon(type);
       const time = UIComponents.formatTime(card.g_time);
       const size = UIComponents.formatBytes(card.getContent().length);
       const badge = UIComponents.getTypeBadge(type, binaryContent);
-      
+
       // Display names for types
       const displayNames = {
         'markdown': 'Markdown',
@@ -167,11 +168,11 @@ export class UIComponents {
         'audio': 'Audio'
       };
       const displayName = displayNames[type] || type.toUpperCase();
-      
+
       // ✅ Get handle for this card
       const handle = cardHandles.get(card.hash);
       const handleBadge = handle ? `<span style="background: #4ade80; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">@${handle}</span>` : '';
-      
+
       return `
         <div class="mcard-item" onclick="viewCard('${card.hash}')">
           <div class="mcard-item-header">
@@ -192,10 +193,10 @@ export class UIComponents {
         </div>
       `;
     }).join('');
-    
+
     if (window.lucide) lucide.createIcons();
   }
-  
+
   /**
    * Show loading state in viewer
    */
@@ -208,7 +209,7 @@ export class UIComponents {
       </div>
     `;
   }
-  
+
   /**
    * Show empty state in viewer
    */
@@ -216,7 +217,7 @@ export class UIComponents {
     const viewerContent = document.getElementById('viewerContent');
     const viewerTitle = document.getElementById('viewerTitle');
     const viewerActions = document.getElementById('viewerActions');
-    
+
     viewerTitle.textContent = 'Select an MCard';
     viewerActions.style.display = 'none';
     viewerContent.innerHTML = `
@@ -234,7 +235,7 @@ export class UIComponents {
     `;
     if (window.lucide) lucide.createIcons();
   }
-  
+
   /**
    * Get file icon based on detected type
    * @param {string} type
@@ -248,7 +249,7 @@ export class UIComponents {
     if (type === 'binary') return '<i data-lucide="file" style="width: 24px; height: 24px;"></i>';
     return '<i data-lucide="file" style="width: 24px; height: 24px;"></i>';
   }
-  
+
   /**
    * Format GTime to readable string
    * @param {GTime|string} gtime - GTime object or ISO string
@@ -256,7 +257,7 @@ export class UIComponents {
    */
   static formatTime(gtime) {
     if (!gtime) return 'Unknown';
-    
+
     // ✅ Handle GTime object (has toISOString method)
     let timestamp;
     if (typeof gtime === 'object' && gtime.toISOString) {
@@ -266,24 +267,24 @@ export class UIComponents {
     } else {
       return 'Unknown';
     }
-    
+
     // Parse and format
     const date = new Date(timestamp);
     if (isNaN(date.getTime())) {
       // If invalid date, show the raw GTime string
       return timestamp.substring(0, 19).replace('T', ' ');
     }
-    
+
     const now = new Date();
     const diff = now - date;
-    
+
     if (diff < 60000) return 'Just now';
     if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
     if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
     if (diff < 604800000) return Math.floor(diff / 86400000) + 'd ago';
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
-  
+
   /**
    * Format bytes to human readable
    * @param {number} bytes
@@ -296,7 +297,7 @@ export class UIComponents {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
   }
-  
+
   /**
    * Show toast notification
    * @param {string} message
@@ -306,19 +307,19 @@ export class UIComponents {
     // Remove existing toasts
     const existing = document.querySelectorAll('.toast');
     existing.forEach(t => t.remove());
-    
+
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
     toast.textContent = message;
     document.body.appendChild(toast);
-    
+
     setTimeout(() => toast.classList.add('show'), 10);
     setTimeout(() => {
       toast.classList.remove('show');
       setTimeout(() => toast.remove(), 300);
     }, 3000);
   }
-  
+
   /**
    * Update stats display
    * @param {number} count
@@ -329,7 +330,7 @@ export class UIComponents {
       statsEl.textContent = `${count} MCard${count !== 1 ? 's' : ''}`;
     }
   }
-  
+
   /**
    * Map library content type to our internal type
    * ✅ Uses library first, then checks magic bytes for images
@@ -340,7 +341,7 @@ export class UIComponents {
    */
   static mapContentType(contentType, binaryContent = null, textContent = '') {
     const lowerType = contentType.toLowerCase();
-    
+
     // ✅ Check for images by magic bytes if library says "application/octet-stream"
     if (lowerType.includes('octet-stream') && binaryContent && binaryContent.length > 4) {
       const bytes = binaryContent instanceof Uint8Array ? binaryContent : new Uint8Array(binaryContent);
@@ -361,7 +362,7 @@ export class UIComponents {
         return 'image';
       }
     }
-    
+
     // ✅ TRUST THE LIBRARY FIRST
     if (lowerType.includes('image')) return 'image';
     if (lowerType.includes('video')) return 'video';
@@ -369,7 +370,7 @@ export class UIComponents {
     if (lowerType.includes('pdf')) return 'pdf';
     if (lowerType.includes('json')) return 'json';
     if (lowerType.includes('markdown')) return 'markdown';
-    
+
     // ✅ Check for YAML (library might detect it)
     if (lowerType.includes('yaml')) {
       // Check if it's a CLM file (YAML with CLM structure)
@@ -382,12 +383,12 @@ export class UIComponents {
       // Regular YAML
       return 'yaml';
     }
-    
+
     // ✅ ENHANCE for text types
     if (lowerType.includes('text') && textContent) {
       // Check for CLM (YAML-based, highest priority for text)
       if ((textContent.includes('abstract:') && textContent.includes('concrete:') && textContent.includes('balanced:')) ||
-          textContent.includes('clm:')) {
+        textContent.includes('clm:')) {
         return 'clm';
       }
       // Check for markdown patterns
@@ -402,10 +403,10 @@ export class UIComponents {
       }
       return 'text';
     }
-    
+
     return 'text'; // default
   }
-  
+
   /**
    * Get type badge HTML with specific format detection
    * @param {string} type - Internal type (image, video, etc.)
@@ -433,7 +434,7 @@ export class UIComponents {
         return '<span style="background: #4ec9b0; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">WEBP</span>';
       }
     }
-    
+
     // Detect specific format for videos
     if (type === 'video' && binaryContent && binaryContent.length > 12) {
       const bytes = binaryContent instanceof Uint8Array ? binaryContent : new Uint8Array(binaryContent);
@@ -446,7 +447,7 @@ export class UIComponents {
         return '<span style="background: #c586c0; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">WEBM</span>';
       }
     }
-    
+
     // Default badges for other types
     const badges = {
       'markdown': '<span style="background: #007acc; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">MD</span>',

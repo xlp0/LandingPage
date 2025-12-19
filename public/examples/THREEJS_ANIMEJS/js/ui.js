@@ -1,10 +1,15 @@
+import { CONFIG } from './config.js';
+
 export class UIManager {
     constructor(app) {
         this.app = app;
     }
 
     init() {
-        // Object dropdown
+        // Populate object dropdown from CONFIG
+        this.populateObjectSelect();
+
+        // Object dropdown event
         const objectSelect = document.getElementById('object-select');
         if (objectSelect) {
             objectSelect.addEventListener('change', (e) => {
@@ -52,5 +57,26 @@ export class UIManager {
         anime({ targets: '#control-panel', translateY: [50, 0], opacity: [0, 1], duration: 800, delay: 200, easing: 'easeOutQuart' });
         anime({ targets: '#info-panel', translateX: [-50, 0], opacity: [0, 1], duration: 800, delay: 100, easing: 'easeOutQuart' });
         anime({ targets: '#indicator', translateX: [50, 0], opacity: [0, 1], duration: 800, delay: 150, easing: 'easeOutQuart' });
+    }
+
+    /**
+     * Dynamically populate the object select dropdown from CONFIG.objects
+     */
+    populateObjectSelect() {
+        const select = document.getElementById('object-select');
+        if (!select) return;
+
+        // Clear existing options
+        select.innerHTML = '';
+
+        // Generate options from CONFIG.objects registry
+        for (const [id, obj] of Object.entries(CONFIG.objects)) {
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = `${obj.icon} ${obj.label}`;
+            select.appendChild(option);
+        }
+
+        console.log('[UI] Object dropdown populated with', Object.keys(CONFIG.objects).length, 'items');
     }
 }

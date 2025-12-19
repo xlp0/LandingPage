@@ -1,0 +1,149 @@
+{
+    "$schema": "./schema.json",
+    "id": "microbes",
+    "version": "1.0",
+    "metadata": {
+        "icon": "🦠",
+        "label": "Microbes",
+        "description": "Microscopic organisms floating in a petri dish environment.",
+        "type": "scene",
+        "defaultLighting": "product",
+        "defaultCamera": "closeup"
+    },
+    "transform": {
+        "position": [
+            0,
+            1,
+            0
+        ],
+        "rotation": [
+            0,
+            0,
+            0
+        ],
+        "scale": [
+            1,
+            1,
+            1
+        ]
+    },
+    "materials": {
+        "dish": {
+            "type": "physical",
+            "color": "#ffffff",
+            "transmission": 0.9,
+            "roughness": 0.1,
+            "thickness": 0.5
+        },
+        "agar": {
+            "type": "standard",
+            "color": "#eedd99",
+            "roughness": 0.6,
+            "transparent": true,
+            "opacity": 0.8
+        }
+    },
+    "children": [
+        {
+            "name": "dish",
+            "geometry": {
+                "type": "cylinder",
+                "radiusTop": 2.5,
+                "radiusBottom": 2.5,
+                "height": 0.3,
+                "radialSegments": 64
+            },
+            "material": "dish",
+            "transform": {
+                "position": [
+                    0,
+                    -1,
+                    0
+                ]
+            }
+        },
+        {
+            "name": "agar",
+            "geometry": {
+                "type": "cylinder",
+                "radiusTop": 2.4,
+                "radiusBottom": 2.4,
+                "height": 0.15,
+                "radialSegments": 64
+            },
+            "material": "agar",
+            "transform": {
+                "position": [
+                    0,
+                    -0.9,
+                    0
+                ]
+            }
+        }
+    ],
+    "microbeTypes": [
+        {
+            "type": "bacteria",
+            "color": "#44dd44",
+            "count": 30,
+            "geometry": {
+                "type": "capsule",
+                "radius": 0.05,
+                "length": 0.15,
+                "capSegments": 8,
+                "radialSegments": 16
+            },
+            "flagella": {
+                "count": 3,
+                "radius": 0.005,
+                "length": 0.15
+            }
+        },
+        {
+            "type": "virus",
+            "color": "#dd4444",
+            "count": 15,
+            "geometry": {
+                "type": "icosahedron",
+                "radius": 0.08,
+                "detail": 0
+            },
+            "spikes": {
+                "radius": 0.015,
+                "height": 0.06
+            }
+        },
+        {
+            "type": "amoeba",
+            "color": "#8888dd",
+            "count": 8,
+            "geometry": {
+                "type": "sphere",
+                "radius": 0.15,
+                "widthSegments": 16,
+                "heightSegments": 16,
+                "deform": true,
+                "deformAmplitude": 0.2,
+                "deformFrequency": 5
+            }
+        }
+    ],
+    "microbeSpawnArea": {
+        "type": "cylinder",
+        "radius": 2.0,
+        "minY": -0.7,
+        "maxY": -0.2
+    },
+    "microbeAnimation": {
+        "float": true,
+        "floatSpeedRange": [
+            0.5,
+            1.5
+        ],
+        "rotation": true,
+        "rotationSpeed": [
+            0.005,
+            0.003
+        ]
+    }
+}
