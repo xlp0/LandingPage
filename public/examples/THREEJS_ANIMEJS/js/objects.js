@@ -467,7 +467,12 @@ export class ObjectFactory {
             side: THREE.DoubleSide
         });
 
-        const presentGeom = new THREE.PlaneGeometry(5, 5);
+        // Image is 725x1024 (portrait), aspect ratio = 0.708
+        // Keep height at 5, width = 5 * 0.708 = 3.54 to maintain aspect ratio
+        const imageAspect = 725 / 1024;  // ~0.708
+        const planeHeight = 5;
+        const planeWidth = planeHeight * imageAspect;  // ~3.54
+        const presentGeom = new THREE.PlaneGeometry(planeWidth, planeHeight);
         const presentPlane = new THREE.Mesh(presentGeom, presentMaterialWithTexture);
         presentPlane.rotation.x = -Math.PI / 2;  // Horizontal
         presentPlane.name = 'presentPlane';

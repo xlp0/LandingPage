@@ -12,7 +12,7 @@ class TheaterApp {
         this.audio = new AudioManager();
         this.ui = new UIManager(this);
         this.currentObject = null;
-        this.currentObjectType = 'teapot';
+        this.currentObjectType = 'causalCone';
     }
 
     async init() {
@@ -37,7 +37,7 @@ class TheaterApp {
     }
 
     createInitialObject() {
-        this.currentObject = ObjectFactory.create('teapot');
+        this.currentObject = ObjectFactory.create('causalCone');
         if (this.currentObject) {
             this.sceneManager.scene.add(this.currentObject);
         }
