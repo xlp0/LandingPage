@@ -222,7 +222,7 @@ This is a **Sum Type**—exactly one variant is active at any time.
 
 ### 3. Cubic Models Slice (`js/redux/slices/cubic-models-slice.js`)
 
-**Purpose:** Implements the **三套東西 (Three Sets)** CLM pattern.
+**Purpose:** Implements the **Triad (Three Sets)** CLM pattern.
 
 **The CLM Triad (Product Type):**
 ```
@@ -301,9 +301,38 @@ The `clm-middleware.js` bridges **iframe-based CLM components** with the **Redux
 │         └──────────────│ • Dispatch actions │◄──────────────┘               │
 │       broadcastState   │ • Broadcast state  │                               │
 │                        │ • Detect timeouts  │                               │
+│                        └─────────┬──────────┘                               │
+│                                  │                                          │
+│                                  ▼                                          │
+│                        ┌────────────────────┐                               │
+│                        │   PTR Runtime      │                               │
+│                        │ (Process-Token-    │                               │
+│                        │  Result)           │                               │
+│                        ├────────────────────┤                               │
+│                        │ • Execute CLM YAML │                               │
+│                        │ • Produce VCards   │                               │
+│                        │ • Verify Success   │                               │
+│                        │ • Content-address  │                               │
 │                        └────────────────────┘                               │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### PTR: The CLM Runtime
+
+**PTR (Process-Token-Result)** is the execution engine for CLM:
+
+| PTR Phase | Meaning | CLM Mapping |
+|-----------|---------|-------------|
+| **Process** | The transformation to execute | CLM YAML definition |
+| **Token** | The input/output data carrier | MCard (content-addressed) |
+| **Result** | The verified outcome | VCard (success witness) |
+
+PTR bridges the **declarative CLM definitions** with the **imperative Redux actions**:
+
+```
+CLM (Declarative)  →  PTR Runtime  →  Redux (Imperative)
+    YAML file          Execution        dispatch(action)
 ```
 
 **Event Types (Sum Type):**
