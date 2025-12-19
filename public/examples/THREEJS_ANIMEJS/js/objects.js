@@ -173,18 +173,12 @@ export class ObjectFactory {
 
     static createCrystalBall() {
         const group = new THREE.Group();
-        const crystalMaterial = new THREE.MeshPhysicalMaterial({
-            color: 0x8888ff, metalness: 0.0, roughness: 0.0, transmission: 0.95,
-            thickness: 2, envMapIntensity: 1, clearcoat: 1, clearcoatRoughness: 0, ior: 1.5
-        });
-        const ball = new THREE.Mesh(new THREE.SphereGeometry(1.2, 64, 64), crystalMaterial);
-        ball.castShadow = true;
-        group.add(ball);
 
-        // Place the PKC Box inside the crystal ball, scaled down
+        // Place the PKC Box as the primary object
         const pkcBox = this.createPKCBox();
-        pkcBox.scale.set(0.12, 0.12, 0.12);
-        pkcBox.position.y = -0.2;
+        // Scaled up since the outer ball is gone
+        pkcBox.scale.set(0.18, 0.18, 0.18);
+        pkcBox.position.y = -0.5;
         group.add(pkcBox);
 
         const particleGeom = new THREE.BufferGeometry();
