@@ -7,7 +7,7 @@
 
 // ✅ Import from mcard-js library
 import { ContentTypeInterpreter } from 'mcard-js';
-import { ContentTypeDetector } from './ContentTypeDetector.js';
+import { ContentTypeDetector } from './BrowserContentTypeDetector.js';
 import { UIComponents } from './UIComponents.js';
 import store from '../../../js/redux/store.js';
 import { renderContent, extractHandles } from '../../../js/redux/slices/content-renderer-slice.js';

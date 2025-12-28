@@ -19,7 +19,8 @@ import {
 // Keep UI components (not part of library)
 import { UIComponents } from './UIComponents.js';
 import { CardViewer } from './CardViewer.js';
-import { ContentTypeDetector } from './ContentTypeDetector.js';
+import { ContentTypeDetector } from './BrowserContentTypeDetector.js';
+import { getDemoMCardImportSources } from './DemoMCardImportSources.js';
 
 export class MCardManager {
   constructor() {
@@ -29,6 +30,97 @@ export class MCardManager {
     this.currentType = 'all';
     this.viewer = new CardViewer();
     this.searchDebounceTimer = null;  // For debounced search
+  }
+
+  _sanitizeHandlePart(value) {
+    return String(value)
+      .toLowerCase()
+      .replace(/\.[^./\\]+$/, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+  }
+
+  async _listDirectoryPaths(dirPath) {
+    try {
+      const res = await fetch(`${dirPath}?t=${Date.now()}`, { cache: 'no-cache' });
+      if (!res.ok)
+        return [];
+
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const links = Array.from(doc.querySelectorAll('a'));
+
+      return links
+        .map(a => a.getAttribute('href'))
+        .filter(Boolean)
+        .filter(href => href !== '../' && href !== './')
+        .map(href => {
+          const pathname = new URL(href, window.location.origin + dirPath).pathname;
+          const isDir = href.endsWith('/');
+          return { pathname, isDir };
+        })
+        .filter(item => item.pathname.startsWith(dirPath) && item.pathname !== dirPath);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  async _collectFilesRecursively(rootDirPath, maxFiles = 500) {
+    const results = [];
+    const visited = new Set();
+    const queue = [rootDirPath.endsWith('/') ? rootDirPath : `${rootDirPath}/`];
+
+    while (queue.length > 0 && results.length < maxFiles) {
+      const dirPath = queue.shift();
+      if (visited.has(dirPath))
+        continue;
+      visited.add(dirPath);
+
+      const items = await this._listDirectoryPaths(dirPath);
+      for (const item of items) {
+        if (item.isDir) {
+          if (!visited.has(item.pathname)) {
+            queue.push(item.pathname);
+          }
+        } else {
+          results.push(item.pathname);
+          if (results.length >= maxFiles)
+            break;
+        }
+      }
+    }
+
+    return results;
+  }
+
+  async _upsertHandleLoaded({ handle, url, isBinary, updateIfChanged }) {
+    const contentRes = await fetch(`${url}?t=${Date.now()}`, { cache: 'no-cache' });
+    if (!contentRes.ok) {
+      console.warn(`[MCardManager] Demo asset not found for @${handle}:`, url, contentRes.status);
+      return;
+    }
+
+    let newCard;
+    if (isBinary) {
+      const buf = await contentRes.arrayBuffer();
+      newCard = await MCard.create(new Uint8Array(buf));
+    } else {
+      const text = await contentRes.text();
+      newCard = await MCard.create(text);
+    }
+
+    const existingHash = await this.collection.resolveHandle(handle);
+    if (existingHash) {
+      if (!updateIfChanged || existingHash === newCard.hash)
+        return;
+
+      await this.collection.add(newCard);
+      await this.collection.updateHandle(handle, newCard);
+      return;
+    }
+
+    await this.collection.addWithHandle(newCard, handle);
   }
   
   /**
@@ -71,58 +163,89 @@ export class MCardManager {
   async updateStartupCards() {
     if (!this.collection) return;
 
-    let entries;
-    try {
-      const res = await fetch(`/public/data/demo/manifest.json?t=${Date.now()}`, { cache: 'no-cache' });
-      if (!res.ok) {
-        console.warn('[MCardManager] Demo manifest not found:', res.status);
-        return;
+    const sources = await getDemoMCardImportSources();
+    for (const source of sources) {
+      if (!source || !source.kind)
+        continue;
+
+      if (source.kind === 'manifest') {
+        try {
+          const res = await fetch(`${source.url}?t=${Date.now()}`, { cache: 'no-cache' });
+          if (!res.ok)
+            continue;
+
+          const entries = await res.json();
+          if (!Array.isArray(entries) || entries.length === 0)
+            continue;
+
+          for (const entry of entries) {
+            if (!entry || !entry.handle || !entry.path)
+              continue;
+
+            const handle = String(entry.handle).trim();
+            try {
+              validateHandle(handle);
+            } catch {
+              continue;
+            }
+
+            const relativePath = String(entry.path).replace(/^\/+/, '');
+            const baseUrl = (source.baseUrl || '/').endsWith('/') ? (source.baseUrl || '/') : `${source.baseUrl}/`;
+            const url = `${baseUrl}${relativePath}`;
+            const ext = relativePath.split('.').pop().toLowerCase();
+            const textExts = source.textExtensions || [];
+            const inferredBinary = textExts.length > 0 ? !textExts.includes(ext) : !!entry.isBinary;
+            const isBinary = typeof entry.isBinary === 'boolean' ? entry.isBinary : inferredBinary;
+            await this._upsertHandleLoaded({ handle, url, isBinary, updateIfChanged: !!source.updateIfChanged });
+          }
+        } catch (e) {
+        }
+
+        continue;
       }
-      entries = await res.json();
-    } catch (error) {
-      console.warn('[MCardManager] Failed to load demo manifest:', error);
-      return;
-    }
 
-    if (!Array.isArray(entries) || entries.length === 0) return;
+      if (source.kind === 'directory') {
+        try {
+          const dir = source.dir;
+          if (!dir)
+            continue;
 
-    for (const entry of entries) {
-      if (!entry || !entry.handle || !entry.path) continue;
+          const files = source.recursive
+            ? await this._collectFilesRecursively(dir)
+            : (await this._listDirectoryPaths(dir)).filter(i => !i.isDir).map(i => i.pathname);
 
-      const handle = String(entry.handle).trim();
-      const relativePath = String(entry.path).replace(/^\/+/, '');
-      const url = `/public/${relativePath}`;
+          for (const pathname of files) {
+            if (Array.isArray(source.skipPrefixes) && source.skipPrefixes.some(p => pathname.startsWith(p)))
+              continue;
 
-      try {
-        const contentRes = await fetch(`${url}?t=${Date.now()}`, { cache: 'no-cache' });
-        if (!contentRes.ok) {
-          console.warn(`[MCardManager] Demo asset not found for @${handle}:`, url, contentRes.status);
-          continue;
+            const relative = pathname.replace(/^\/public\//, '');
+            const ext = (relative.split('.').pop() || '').toLowerCase();
+
+            if (Array.isArray(source.includeExtensions) && source.includeExtensions.length > 0) {
+              if (!source.includeExtensions.includes(ext))
+                continue;
+            }
+
+            const handlePrefix = source.handlePrefix || 'data';
+            const handleKey = source.recursive ? relative : (relative.split('/').pop() || relative);
+            const handlePart = this._sanitizeHandlePart(handleKey);
+            const normalizedHandlePart = handlePart.replace(new RegExp(`^${handlePrefix}-`), '');
+            const handle = normalizedHandlePart ? `${handlePrefix}-${normalizedHandlePart}` : handlePrefix;
+            try {
+              validateHandle(handle);
+            } catch {
+              continue;
+            }
+
+            const textExts = source.textExtensions || [];
+            const isBinary = source.isBinaryByDefault
+              ? (textExts.length > 0 ? !textExts.includes(ext) : true)
+              : (textExts.length > 0 ? !textExts.includes(ext) : false);
+
+            await this._upsertHandleLoaded({ handle, url: pathname, isBinary, updateIfChanged: !!source.updateIfChanged });
+          }
+        } catch (e) {
         }
-
-        let newCard;
-        if (entry.isBinary) {
-          const buf = await contentRes.arrayBuffer();
-          newCard = await MCard.create(new Uint8Array(buf));
-        } else {
-          const text = await contentRes.text();
-          newCard = await MCard.create(text);
-        }
-
-        const existingHash = await this.collection.resolveHandle(handle);
-        if (existingHash && existingHash === newCard.hash) {
-          continue;
-        }
-
-        await this.collection.add(newCard);
-
-        if (existingHash) {
-          await this.collection.updateHandle(handle, newCard);
-        } else {
-          await this.collection.addWithHandle(newCard, handle);
-        }
-      } catch (error) {
-        console.warn(`[MCardManager] Failed to update startup card @${entry.handle}:`, error);
       }
     }
   }

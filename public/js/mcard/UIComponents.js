@@ -7,7 +7,7 @@
 
 // ✅ Import from mcard-js library
 import { ContentTypeInterpreter } from 'mcard-js';
-import { ContentTypeDetector } from './ContentTypeDetector.js';
+import { ContentTypeDetector } from './BrowserContentTypeDetector.js';
 
 export class UIComponents {
   /**

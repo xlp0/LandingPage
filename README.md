@@ -226,23 +226,31 @@ python3 -m http.server 8000 --bind 0.0.0.0
 
 ## 📖 **Usage**
 
-### **Demo MCard Data (public/data/demo)**
+### **Demo MCard Imports (central configuration)**
 
-The MCard Manager ships with a small set of demo cards that are **loaded from static files** rather than being embedded (hard-coded) inside JavaScript.
+The MCard Manager ships with a small set of demo/default cards that are **loaded from static files** rather than being embedded (hard-coded) inside JavaScript.
 
-The demo content lives under:
-- `public/data/demo/` (markdown/text demo content)
-- `public/data/demo/manifest.json` (list of demo items + their `@handle` names)
-- `public/assets/` (binary demo assets such as images/video)
+The single source of truth for *what gets imported* (manifest + directory scans) is:
+- `public/js/mcard/DemoMCardImportSources.js`
+
+By default, it imports from:
+- `public/data/demo/manifest.json` (curated demo items + their `@handle` names)
+- `public/data/` (recursive scan for additional content)
+- `public/assets/videos/` (video scan for default video MCards)
 
 This approach is intentionally preferred over keeping demo data as hard-coded strings/blobs in JavaScript because it:
 - Keeps **content separate from code** (easier review and iteration)
 - Avoids code churn when demo content changes
-- Makes it easy to add/replace demo content by editing `manifest.json` and dropping files into `public/`
+- Makes it easy to add/replace demo content by dropping files into `public/` and adjusting the central import config
 - Works naturally with static hosting/CDNs and browser caching
 
+Overrides:
+- `MCARD_DEMO_IMPORT_SOURCES` (JSON array) can override the default sources.
+  - In localhost development, `DemoMCardImportSources.js` will attempt to read it from `/.env`.
+  - In production/static hosting, prefer setting it via `app-config.json` as `mcardDemoImportSources`.
+
 Notes:
-- Paths in `public/data/demo/manifest.json` are resolved under `/public/` (for example `data/demo/welcome.md` maps to `/public/data/demo/welcome.md`).
+- Manifest paths are resolved under `/public/` (for example `data/demo/welcome.md` maps to `/public/data/demo/welcome.md`).
 - The demo includes a `@pkc-box-demo` asset using `.webp`. WebP is treated as an **image** in the UI; if the WebP is animated, it will **animate as an animated image** when rendered in the browser.
 
 ### **P2P Communication**
