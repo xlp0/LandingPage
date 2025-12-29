@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bali Adventure - Ubud Rice Terraces</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        #root {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback, useRef } = React;
+
+        const BaliAdventure = () => {
+            const [gameState, setGameState] = useState('title'); // title, playing, paused, gameover, victory
+            const [player, setPlayer] = useState({ x: 400, y: 300, direction: 'down', health: 100, offerings: 0, keys: 0 });
+            const [currentLevel, setCurrentLevel] = useState(0);
+            const [npcs, setNpcs] = useState([]);
+            const [items, setItems] = useState([]);
+            const [obstacles, setObstacles] = useState([]);
+            const [dialogBox, setDialogBox] = useState(null);
+            const [inventory, setInventory] = useState([]);
+            const [score, setScore] = useState(0);
+            const [particles, setParticles] = useState([]);
+            const [dayTime, setDayTime] = useState(0); // 0-100 for day cycle
+            const keysPressed = useRef({});
+            const gameLoopRef = useRef();
+
+            const levels = [
+                {
+                    name: "Ubud Rice Terraces",
+                    background: "linear-gradient(180deg, #87CEEB 0%, #98FB98 30%, #228B22 60%, #006400 100%)",
+                    description: "Collect offerings among the sacred rice paddies",
+                    requiredOfferings: 5,
+                    music: "gamelan"
+                },
+                {
+                    name: "Tanah Lot Temple",
+                    background: "linear-gradient(180deg, #FF6B35 0%, #F7C59F 30%, #2F4F4F 60%, #1a1a2e 100%)",
+                    description: "Navigate the sea temple at sunset",
+                    requiredOfferings: 7,
+                    music: "waves"
+                },
+                {
+                    name: "Mount Agung",
+                    background: "linear-gradient(180deg, #4a0080 0%, #800080 30%, #2d2d2d 60%, #1a1a1a 100%)",
+                    description: "Climb the sacred volcano",
+                    requiredOfferings: 10,
+                    music: "mystical"
+                }
+            ];
+
+            // Initialize level
+            const initLevel = useCallback((levelIndex) => {
+                const level = levels[levelIndex];
+
+                // Generate items (offerings, keys, health)
+                const newItems = [];
+                for (let i = 0; i < level.requiredOfferings + 3; i++) {
+                    newItems.push({
+                        id: i,
+                        type: Math.random() > 0.7 ? 'health' : 'offering',
+                        x: 50 + Math.random() * 700,
+                        y: 50 + Math.random() * 400,
+                        collected: false,
+                        bobOffset: Math.random() * Math.PI * 2
+                    });
+                }
+
+                // Add temple key
+                newItems.push({
+                    id: 'key',
+                    type: 'key',
+                    x: 700,
+                    y: 100 + Math.random() * 300,
+                    collected: false,
+                    bobOffset: 0
+                });
+
+                // Generate obstacles (temple stones, water, trees)
+                const newObstacles = [];
+                for (let i = 0; i < 8 + levelIndex * 3; i++) {
+                    newObstacles.push({
+                        id: i,
+                        type: ['stone', 'water', 'tree'][Math.floor(Math.random() * 3)],
+                        x: 80 + Math.random() * 640,
+                        y: 80 + Math.random() * 340,
+                        width: 40 + Math.random() * 40,
+                        height: 40 + Math.random() * 40
+                    });
+                }
+
+                // Generate NPCs
+                const newNpcs = [
+                    {
+                        id: 0,
+                        type: 'priest',
+                        x: 600,
+                        y: 250,
+                        dialog: [
+                            "Om Swastiastu, traveler!",
+                            "The temple awaits those who bring offerings.",
+                            `Collect ${level.requiredOfferings} canang sari to proceed.`
+                        ]
+                    },
+                    {
+                        id: 1,
+                        type: 'dancer',
+                        x: 200,
+                        y: 150,
+                        dialog: [
+                            "The Legong dance tells ancient stories...",
+                            "Watch for the spirits in the sacred places.",
+                            "May Dewi Sri bless your journey!"
+                        ]
+                    }
+                ];
+
+                setItems(newItems);
+                setObstacles(newObstacles);
+                setNpcs(newNpcs);
+                setPlayer(p => ({ ...p, x: 100, y: 300, health: Math.min(p.health + 30, 100) }));
+            }, []);
+
+            // Start game
+            const startGame = () => {
+                setGameState('playing');
+                setCurrentLevel(0);
+                setPlayer({ x: 100, y: 300, direction: 'down', health: 100, offerings: 0, keys: 0 });
+                setScore(0);
+                setInventory([]);
+                initLevel(0);
+            };
+
+            // Collision detection
+            const checkCollision = (x, y, width, height, obj) => {
+                return x < obj.x + (obj.width || 30) &&
+                    x + width > obj.x &&
+                    y < obj.y + (obj.height || 30) &&
+                    y + height > obj.y;
+            };
+
+            // Game loop
+            useEffect(() => {
+                if (gameState !== 'playing') return;
+
+                const gameLoop = () => {
+                    setPlayer(prev => {
+                        let newX = prev.x;
+                        let newY = prev.y;
+                        let newDirection = prev.direction;
+                        const speed = 4;
+
+                        if (keysPressed.current['ArrowUp'] || keysPressed.current['KeyW']) {
+                            newY -= speed;
+                            newDirection = 'up';
+                        }
+                        if (keysPressed.current['ArrowDown'] || keysPressed.current['KeyS']) {
+                            newY += speed;
+                            newDirection = 'down';
+                        }
+                        if (keysPressed.current['ArrowLeft'] || keysPressed.current['KeyA']) {
+                            newX -= speed;
+                            newDirection = 'left';
+                        }
+                        if (keysPressed.current['ArrowRight'] || keysPressed.current['KeyD']) {
+                            newX += speed;
+                            newDirection = 'right';
+                        }
+
+                        // Boundary check
+                        newX = Math.max(10, Math.min(770, newX));
+                        newY = Math.max(10, Math.min(470, newY));
+
+                        // Obstacle collision
+                        for (const obs of obstacles) {
+                            if (checkCollision(newX, newY, 20, 20, obs)) {
+                                if (obs.type === 'water') {
+                                    // Water damages player
+                                    return { ...prev, health: prev.health - 0.5, direction: newDirection };
+                                }
+                                // Block movement for solid obstacles
+                                newX = prev.x;
+                                newY = prev.y;
+                                break;
+                            }
+                        }
+
+                        return { ...prev, x: newX, y: newY, direction: newDirection };
+                    });
+
+                    // Item collection
+                    setItems(prevItems => {
+                        return prevItems.map(item => {
+                            if (!item.collected && checkCollision(player.x, player.y, 20, 20, { x: item.x, y: item.y, width: 25, height: 25 })) {
+                                // Collect item
+                                if (item.type === 'offering') {
+                                    setPlayer(p => ({ ...p, offerings: p.offerings + 1 }));
+                                    setScore(s => s + 100);
+                                    spawnParticles(item.x, item.y, '#FFD700');
+                                } else if (item.type === 'health') {
+                                    setPlayer(p => ({ ...p, health: Math.min(100, p.health + 20) }));
+                                    spawnParticles(item.x, item.y, '#FF69B4');
+                                } else if (item.type === 'key') {
+                                    setPlayer(p => ({ ...p, keys: p.keys + 1 }));
+                                    spawnParticles(item.x, item.y, '#00FFFF');
+                                }
+                                return { ...item, collected: true };
+                            }
+                            return item;
+                        });
+                    });
+
+                    // Update particles
+                    setParticles(prev => prev
+                        .map(p => ({ ...p, y: p.y - 2, life: p.life - 2, opacity: p.life / 100 }))
+                        .filter(p => p.life > 0)
+                    );
+
+                    // Day/night cycle
+                    setDayTime(prev => (prev + 0.05) % 100);
+
+                    // Check level completion
+                    if (player.offerings >= levels[currentLevel].requiredOfferings && player.keys > 0) {
+                        if (currentLevel < levels.length - 1) {
+                            setCurrentLevel(c => c + 1);
+                            setPlayer(p => ({ ...p, offerings: 0, keys: 0 }));
+                            initLevel(currentLevel + 1);
+                            setScore(s => s + 500);
+                        } else {
+                            setGameState('victory');
+                        }
+                    }
+
+                    // Check game over
+                    if (player.health <= 0) {
+                        setGameState('gameover');
+                    }
+                };
+
+                gameLoopRef.current = setInterval(gameLoop, 1000 / 60);
+                return () => clearInterval(gameLoopRef.current);
+            }, [gameState, player, obstacles, currentLevel, initLevel]);
+
+            // Spawn particles
+            const spawnParticles = (x, y, color) => {
+                const newParticles = [];
+                for (let i = 0; i < 8; i++) {
+                    newParticles.push({
+                        id: Date.now() + i,
+                        x: x + (Math.random() - 0.5) * 20,
+                        y: y,
+                        color,
+                        life: 100,
+                        opacity: 1
+                    });
+                }
+                setParticles(prev => [...prev, ...newParticles]);
+            };
+
+            // Keyboard handlers
+            useEffect(() => {
+                const handleKeyDown = (e) => {
+                    keysPressed.current[e.code] = true;
+
+                    if (e.code === 'Escape') {
+                        setGameState(prev => prev === 'playing' ? 'paused' : prev === 'paused' ? 'playing' : prev);
+                    }
+                    if (e.code === 'Space' && gameState === 'playing') {
+                        // Interact with NPCs
+                        for (const npc of npcs) {
+                            if (Math.abs(player.x - npc.x) < 50 && Math.abs(player.y - npc.y) < 50) {
+                                setDialogBox({
+                                    speaker: npc.type === 'priest' ? 'Pedanda' : 'Dancer',
+                                    text: npc.dialog[Math.floor(Math.random() * npc.dialog.length)]
+                                });
+                                setTimeout(() => setDialogBox(null), 3000);
+                            }
+                        }
+                    }
+                };
+
+                const handleKeyUp = (e) => {
+                    keysPressed.current[e.code] = false;
+                };
+
+                window.addEventListener('keydown', handleKeyDown);
+                window.addEventListener('keyup', handleKeyUp);
+                return () => {
+                    window.removeEventListener('keydown', handleKeyDown);
+                    window.removeEventListener('keyup', handleKeyUp);
+                };
+            }, [gameState, npcs, player]);
+
+            // Render player sprite
+            const renderPlayer = () => {
+                const directions = {
+                    up: '🧑‍🦱',
+                    down: '🧑',
+                    left: '🚶',
+                    right: '🚶'
+                };
+                return (
+                    <div
+                        style={{
+                            position: 'absolute',
+                            left: player.x,
+                            top: player.y,
+                            fontSize: '24px',
+                            transform: player.direction === 'left' ? 'scaleX(-1)' : 'scaleX(1)',
+                            transition: 'transform 0.1s',
+                            filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.5))',
+                            zIndex: 10
+                        }
+                        }
+                    >
+                        {directions[player.direction]}
+                    </div>
+                );
+            };
+
+            // Title Screen
+            if (gameState === 'title') {
+                return (
+                    <div style={{
+                        width: '100%',
+                        height: '100vh',
+                        background: 'linear-gradient(180deg, #FF6B35 0%, #F7931E 20%, #FFD700 40%, #228B22 70%, #006400 100%)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontFamily: '"Palatino Linotype", "Book Antiqua", Palatino, serif',
+                        overflow: 'hidden',
+                        position: 'relative'
+                    }
+                    }>
+                        {/* Decorative temples */}
+                        < div style={{ position: 'absolute', bottom: 0, width: '100%', height: '200px', display: 'flex', justifyContent: 'space-around', alignItems: 'flex-end' }}>
+                            {
+                                [...Array(5)].map((_, i) => (
+                                    <div key={i} style={{
+                                        width: '80px',
+                                        height: `${100 + i * 20}px`,
+                                        background: 'linear-gradient(180deg, #8B4513 0%, #654321 100%)',
+                                        clipPath: 'polygon(20% 100%, 80% 100%, 90% 80%, 70% 70%, 80% 50%, 60% 40%, 70% 20%, 50% 0%, 30% 20%, 40% 40%, 20% 50%, 30% 70%, 10% 80%)',
+                                        opacity: 0.8
+                                    }} />
+                                ))}
+                        </div>
+
+                        {/* Floating offerings */}
+                        {
+                            [...Array(15)].map((_, i) => (
+                                <div key={i} style={{
+                                    position: 'absolute',
+                                    left: `${10 + Math.random() * 80}%`,
+                                    top: `${10 + Math.random() * 60}%`,
+                                    fontSize: '24px',
+                                    animation: `float ${3 + Math.random() * 2}s ease-in-out infinite`,
+                                    animationDelay: `${Math.random() * 2}s`
+                                }}>
+                                    {['🌺', '🌸', '🪷', '🌼', '🍃'][Math.floor(Math.random() * 5)]}
+                                </div>
+                            ))}
+
+                        <style>{`
+                  @keyframes float {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-20px); }
+                  }
+                  @keyframes pulse {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.05); }
+                  }
+                  @keyframes glow {
+                    0%, 100% { text-shadow: 0 0 20px #FFD700, 0 0 40px #FF6B35; }
+                    50% { text-shadow: 0 0 40px #FFD700, 0 0 80px #FF6B35; }
+                  }
+                `}</style>
+
+                        < h1 style={{
+                            fontSize: '4rem',
+                            color: '#FFF',
+                            textShadow: '4px 4px 8px rgba(0,0,0,0.5), 0 0 40px #FFD700',
+                            marginBottom: '10px',
+                            animation: 'glow 3s ease-in-out infinite',
+                            zIndex: 10
+                        }}>
+                            🏝️ BALI ADVENTURE 🏝️
+                        </h1>
+
+                        < h2 style={{
+                            fontSize: '1.5rem',
+                            color: '#FFF8DC',
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                            marginBottom: '40px',
+                            zIndex: 10
+                        }}>
+                            Journey Through the Island of the Gods
+                        </h2>
+
+                        < button
+                            onClick={startGame}
+                            style={{
+                                padding: '20px 60px',
+                                fontSize: '1.5rem',
+                                background: 'linear-gradient(180deg, #FFD700 0%, #FF8C00 100%)',
+                                border: '4px solid #8B4513',
+                                borderRadius: '15px',
+                                cursor: 'pointer',
+                                fontFamily: 'inherit',
+                                fontWeight: 'bold',
+                                color: '#4a2c00',
+                                boxShadow: '0 8px 16px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.3)',
+                                animation: 'pulse 2s ease-in-out infinite',
+                                zIndex: 10
+                            }}
+                        >
+                            🙏 Begin Journey 🙏
+                        </button>
+
+                        < div style={{
+                            marginTop: '40px',
+                            color: '#FFF',
+                            textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+                            textAlign: 'center',
+                            zIndex: 10
+                        }}>
+                            <p>⬆️⬇️⬅️➡️ or WASD to move </p>
+                            < p > SPACE to interact • ESC to pause </p>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Victory Screen
+            if (gameState === 'victory') {
+                return (
+                    <div style={{
+                        width: '100%',
+                        height: '100vh',
+                        background: 'radial-gradient(circle, #FFD700 0%, #FF6B35 50%, #4a0080 100%)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontFamily: '"Palatino Linotype", serif'
+                    }
+                    }>
+                        <style>{`
+                  @keyframes victoryGlow {
+                    0%, 100% { filter: drop-shadow(0 0 20px gold); }
+                    50% { filter: drop-shadow(0 0 40px gold); }
+                  }
+                `}</style>
+                        < div style={{ fontSize: '100px', animation: 'victoryGlow 2s infinite' }}>🏆</div>
+                        < h1 style={{ fontSize: '3rem', color: '#FFF', textShadow: '0 0 20px gold' }}>
+                            VICTORY!
+                        </h1>
+                        < h2 style={{ color: '#FFD700', fontSize: '1.5rem' }}>
+                            You have honored the temples of Bali!
+                        </h2>
+                        < p style={{ color: '#FFF', fontSize: '2rem', margin: '20px' }}>
+                            Final Score: {score + 1000}
+                        </p>
+                        < button
+                            onClick={() => setGameState('title')}
+                            style={{
+                                padding: '15px 40px',
+                                fontSize: '1.2rem',
+                                background: 'linear-gradient(180deg, #FFD700 0%, #FF8C00 100%)',
+                                border: '3px solid #8B4513',
+                                borderRadius: '10px',
+                                cursor: 'pointer',
+                                fontWeight: 'bold'
+                            }}
+                        >
+                            Play Again
+                        </button>
+                    </div>
+                );
+            }
+
+            // Game Over Screen
+            if (gameState === 'gameover') {
+                return (
+                    <div style={{
+                        width: '100%',
+                        height: '100vh',
+                        background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontFamily: '"Palatino Linotype", serif'
+                    }
+                    }>
+                        <div style={{ fontSize: '80px' }}>💀</div>
+                        < h1 style={{ fontSize: '3rem', color: '#e94560' }}>
+                            Game Over
+                        </h1>
+                        < p style={{ color: '#FFF', fontSize: '1.2rem' }}>
+                            The spirits have claimed you...
+                        </p>
+                        < p style={{ color: '#FFD700', fontSize: '1.5rem', margin: '20px' }}>
+                            Score: {score}
+                        </p>
+                        < button
+                            onClick={startGame}
+                            style={{
+                                padding: '15px 40px',
+                                fontSize: '1.2rem',
+                                background: 'linear-gradient(180deg, #e94560 0%, #c23a5a 100%)',
+                                border: '3px solid #800020',
+                                borderRadius: '10px',
+                                cursor: 'pointer',
+                                color: '#FFF',
+                                fontWeight: 'bold'
+                            }}
+                        >
+                            Try Again
+                        </button>
+                    </div>
+                );
+            }
+
+            // Paused Screen
+            if (gameState === 'paused') {
+                return (
+                    <div style={{
+                        width: '100%',
+                        height: '100vh',
+                        background: 'rgba(0,0,0,0.8)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontFamily: '"Palatino Linotype", serif'
+                    }
+                    }>
+                        <h1 style={{ fontSize: '3rem', color: '#FFD700' }}>⏸️ PAUSED </h1>
+                        < button
+                            onClick={() => setGameState('playing')}
+                            style={{
+                                margin: '20px',
+                                padding: '15px 40px',
+                                fontSize: '1.2rem',
+                                background: 'linear-gradient(180deg, #FFD700 0%, #FF8C00 100%)',
+                                border: '3px solid #8B4513',
+                                borderRadius: '10px',
+                                cursor: 'pointer',
+                                fontWeight: 'bold'
+                            }}
+                        >
+                            Resume
+                        </button>
+                        < button
+                            onClick={() => setGameState('title')}
+                            style={{
+                                padding: '15px 40px',
+                                fontSize: '1.2rem',
+                                background: 'linear-gradient(180deg, #888 0%, #666 100%)',
+                                border: '3px solid #444',
+                                borderRadius: '10px',
+                                cursor: 'pointer',
+                                color: '#FFF',
+                                fontWeight: 'bold'
+                            }}
+                        >
+                            Main Menu
+                        </button>
+                    </div>
+                );
+            }
+
+            // Main Game
+            const level = levels[currentLevel];
+            const dayNightOverlay = dayTime > 50
+                ? `rgba(0, 0, 50, ${(dayTime - 50) * 0.008})`
+                : `rgba(255, 200, 100, ${(50 - dayTime) * 0.002})`;
+
+            return (
+                <div style={{
+                    width: '100%',
+                    height: '100vh',
+                    background: level.background,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    fontFamily: '"Palatino Linotype", serif'
+                }}>
+                    {/* Day/Night overlay */}
+                    < div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: dayNightOverlay,
+                        pointerEvents: 'none',
+                        zIndex: 100
+                    }} />
+
+                    {/* Game canvas */}
+                    <div style={
+                        {
+                            width: '800px',
+                            height: '500px',
+                            margin: '20px auto',
+                            background: 'rgba(0,0,0,0.2)',
+                            borderRadius: '15px',
+                            border: '4px solid #8B4513',
+                            position: 'relative',
+                            boxShadow: '0 10px 30px rgba(0,0,0,0.5), inset 0 0 50px rgba(0,0,0,0.2)'
+                        }
+                    }>
+                        {/* Background decorations */}
+                        < div style={{ position: 'absolute', top: 10, right: 10, fontSize: '40px', opacity: 0.3 }}>🗿</div>
+                        < div style={{ position: 'absolute', bottom: 10, left: 10, fontSize: '30px', opacity: 0.3 }}>🌴</div>
+                        < div style={{ position: 'absolute', top: 10, left: 10, fontSize: '30px', opacity: 0.3 }}>🌴</div>
+
+                        {/* Obstacles */}
+                        {
+                            obstacles.map(obs => (
+                                <div
+                                    key={obs.id}
+                                    style={{
+                                        position: 'absolute',
+                                        left: obs.x,
+                                        top: obs.y,
+                                        width: obs.width,
+                                        height: obs.height,
+                                        borderRadius: obs.type === 'water' ? '50%' : '5px',
+                                        background: obs.type === 'stone'
+                                            ? 'linear-gradient(135deg, #8B8B83 0%, #696969 100%)'
+                                            : obs.type === 'water'
+                                                ? 'linear-gradient(180deg, #4169E1 0%, #1E90FF 100%)'
+                                                : 'linear-gradient(180deg, #228B22 0%, #006400 100%)',
+                                        boxShadow: obs.type === 'water'
+                                            ? '0 0 10px rgba(30,144,255,0.5)'
+                                            : '2px 2px 5px rgba(0,0,0,0.3)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: obs.type === 'tree' ? '24px' : '16px'
+                                    }}
+                                >
+                                    {obs.type === 'stone' && '🗿'}
+                                    {obs.type === 'tree' && '🌳'}
+                                    {obs.type === 'water' && '💧'}
+                                </div>
+                            ))}
+
+                        {/* Items */}
+                        {
+                            items.filter(i => !i.collected).map(item => (
+                                <div
+                                    key={item.id}
+                                    style={{
+                                        position: 'absolute',
+                                        left: item.x,
+                                        top: item.y + Math.sin(Date.now() / 300 + item.bobOffset) * 5,
+                                        fontSize: '24px',
+                                        filter: 'drop-shadow(0 0 10px rgba(255,215,0,0.8))',
+                                        animation: 'pulse 1s infinite'
+                                    }}
+                                >
+                                    {item.type === 'offering' && '🌺'}
+                                    {item.type === 'health' && '💖'}
+                                    {item.type === 'key' && '🗝️'}
+                                </div>
+                            ))}
+
+                        {/* NPCs */}
+                        {
+                            npcs.map(npc => (
+                                <div
+                                    key={npc.id}
+                                    style={{
+                                        position: 'absolute',
+                                        left: npc.x,
+                                        top: npc.y,
+                                        fontSize: '32px',
+                                        filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.5))'
+                                    }}
+                                >
+                                    {npc.type === 'priest' && '🧙'}
+                                    {npc.type === 'dancer' && '💃'}
+                                </div>
+                            ))}
+
+                        {/* Player */}
+                        {renderPlayer()}
+
+                        {/* Particles */}
+                        {
+                            particles.map(p => (
+                                <div
+                                    key={p.id}
+                                    style={{
+                                        position: 'absolute',
+                                        left: p.x,
+                                        top: p.y,
+                                        width: '8px',
+                                        height: '8px',
+                                        borderRadius: '50%',
+                                        background: p.color,
+                                        opacity: p.opacity,
+                                        boxShadow: `0 0 10px ${p.color}`
+                                    }}
+                                />
+                            ))}
+
+                        {/* Temple Gate (goal) */}
+                        <div style={
+                            {
+                                position: 'absolute',
+                                right: 20,
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                fontSize: '50px',
+                                opacity: player.offerings >= level.requiredOfferings && player.keys > 0 ? 1 : 0.4,
+                                filter: player.offerings >= level.requiredOfferings && player.keys > 0
+                                    ? 'drop-shadow(0 0 20px gold)'
+                                    : 'grayscale(50%)',
+                                transition: 'all 0.5s'
+                            }
+                        }>
+                            ⛩️
+                        </div>
+
+                        {/* Dialog Box */}
+                        {
+                            dialogBox && (
+                                <div style={
+                                    {
+                                        position: 'absolute',
+                                        bottom: 20,
+                                        left: '50%',
+                                        transform: 'translateX(-50%)',
+                                        background: 'rgba(139, 69, 19, 0.95)',
+                                        border: '3px solid #FFD700',
+                                        borderRadius: '10px',
+                                        padding: '15px 25px',
+                                        color: '#FFF',
+                                        maxWidth: '80%',
+                                        zIndex: 50
+                                    }
+                                }>
+                                    <strong style={{ color: '#FFD700' }}> {dialogBox.speaker}: </strong>
+                                    < p style={{ margin: '5px 0 0 0' }
+                                    }> {dialogBox.text} </p>
+                                </div>
+                            )}
+                    </div>
+
+                    {/* HUD */}
+                    <div style={
+                        {
+                            position: 'absolute',
+                            top: 10,
+                            left: 10,
+                            right: 10,
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            padding: '10px 20px',
+                            background: 'rgba(139, 69, 19, 0.8)',
+                            borderRadius: '10px',
+                            color: '#FFF',
+                            zIndex: 101
+                        }
+                    }>
+                        {/* Left HUD */}
+                        < div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+                            {/* Health */}
+                            < div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <span>❤️</span>
+                                < div style={{
+                                    width: '150px',
+                                    height: '20px',
+                                    background: '#333',
+                                    borderRadius: '10px',
+                                    overflow: 'hidden',
+                                    border: '2px solid #FFD700'
+                                }}>
+                                    <div style={
+                                        {
+                                            width: `${player.health}%`,
+                                            height: '100%',
+                                            background: player.health > 50
+                                                ? 'linear-gradient(90deg, #00ff00, #88ff88)'
+                                                : player.health > 25
+                                                    ? 'linear-gradient(90deg, #ffff00, #ffaa00)'
+                                                    : 'linear-gradient(90deg, #ff0000, #ff6666)',
+                                            transition: 'width 0.3s'
+                                        }
+                                    } />
+                                </div>
+                            </div>
+
+                            {/* Offerings */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                <span>🌺</span>
+                                < span style={{
+                                    color: player.offerings >= level.requiredOfferings ? '#00ff00' : '#FFF',
+                                    fontWeight: 'bold'
+                                }}>
+                                    {player.offerings} / {level.requiredOfferings}
+                                </span>
+                            </div>
+
+                            {/* Keys */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                <span>🗝️</span>
+                                < span style={{ color: player.keys > 0 ? '#FFD700' : '#888' }}> {player.keys} </span>
+                            </div>
+                        </div>
+
+                        {/* Center - Level Name */}
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#FFD700' }}>
+                                {level.name}
+                            </div>
+                            < div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
+                                {level.description}
+                            </div>
+                        </div>
+
+                        {/* Right HUD */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                <span>⭐</span>
+                                < span style={{ fontWeight: 'bold', color: '#FFD700' }}> {score} </span>
+                            </div>
+                            < div style={{ fontSize: '1.5rem' }}>
+                                {dayTime < 25 ? '🌅' : dayTime < 50 ? '☀️' : dayTime < 75 ? '🌆' : '🌙'}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Instructions */}
+                    <div style={
+                        {
+                            position: 'absolute',
+                            bottom: 10,
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            background: 'rgba(0,0,0,0.6)',
+                            padding: '8px 20px',
+                            borderRadius: '20px',
+                            color: '#FFF',
+                            fontSize: '0.9rem',
+                            zIndex: 101
+                        }
+                    }>
+                        WASD / Arrows: Move • SPACE: Talk • ESC: Pause
+                    </div>
+
+                    < style > {`
+                @keyframes pulse {
+                  0%, 100% { transform: scale(1); }
+                  50% { transform: scale(1.1); }
+                }
+              `}</style>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<BaliAdventure />);
+    </script>
+</body>
+
+</html>

@@ -1,7 +1,7 @@
 # PKC Landing Page
 ## Personal Knowledge Container (PKC) - Decentralized Communication System
 
-A modern, **static-first, modular web application** with **serverless P2P communication capabilities** built entirely with browser-native WebRTC APIs. Features rich markdown documentation viewing, LaTeX math rendering, Mermaid diagrams, and **zero-dependency peer-to-peer networking**.
+A modern, **static-first, modular web application** with **serverless P2P communication capabilities** built entirely with browser-native WebRTC APIs. Features rich markdown documentation viewing, LaTeX math rendering, Mermaid diagrams, **interactive games**, and **zero-dependency peer-to-peer networking**.
 
 ---
 
@@ -20,10 +20,15 @@ A modern, **static-first, modular web application** with **serverless P2P commun
 - **LaTeX Math Rendering**: Mathematical equations using KaTeX (Obsidian-compatible)
 - **Mermaid Diagrams**: Flowcharts, sequence diagrams, class diagrams, and more
 - **Syntax Highlighting**: Code blocks with language-specific highlighting
-- **3D Visualization**: Interactive 3D object rendering using Three.js and Anime.js
+- **3D Visualization**: Interactive 3D object rendering using Three.js and Anime.js by the **MCard Manager**
+
+### **🎮 Interactive Games & Simulations**
+- **Bali Adventure**: Explore the Ubud Rice Terraces in a React-based 2D RPG (`public/examples/games/play_ubud.html`)
+- **3D Theater**: High-fidelity 3D visualization engine for viewing complex data structures
 
 ### **🏗️ Modular Architecture**
 - **PKC Core Runtime**: Lightweight module loader with capability detection
+- **mcard-js Integration**: Core MCard functionality powered by the robust `mcard-js` library
 - **Progressive Enhancement**: Works as static files, modules add features when supported
 - **WebRTC/WebSocket Support**: Automatic capability detection and graceful degradation
 - **Static Hosting Ready**: Deploy anywhere (GitHub Pages, Netlify, S3, etc.)
@@ -91,6 +96,13 @@ The project includes a high-performance 3D visualization engine for viewing comp
 │           ├── example.html          (300 lines) - Full P2P test interface
 │           ├── debug-test.html       (250 lines) - Diagnostic tools
 │           └── README.md             (500 lines) - P2P API documentation
+├── public/
+│   ├── examples/games/                # 🎮 Game examples (React/JSX)
+│   │   ├── UbudRiceTerraces.jsx      # Bali Adventure source code
+│   │   └── play_ubud.html            # Playable game wrapper
+│   └── js/mcard/                      # MCard Management System
+│       ├── MCardManager.js            # Core logic (via mcard-js)
+│       └── BrowserContentTypeDetector.js # Hybrid content type detection
 ├── docs/                              # 📚 Comprehensive documentation
 │   ├── architecture-serverless-p2p.md    # P2P system architecture
 │   ├── p2p-serverless-implementation.md  # Implementation details
@@ -128,6 +140,7 @@ python3 -m http.server 8000 --bind 0.0.0.0
 ### **2. Access Application**
 - **Landing Page**: `http://localhost:8000` or `http://YOUR_IP:8000`
 - **P2P Demo**: `http://localhost:8000/js/modules/p2p-serverless/example.html`
+- **Bali Adventure**: `http://localhost:8000/public/examples/games/play_ubud.html`
 - **Documentation**: `http://localhost:8000/pkc-docs-index.html`
 
 ### **3. Test P2P (2 Devices)**
@@ -224,7 +237,13 @@ python3 -m http.server 8000 --bind 0.0.0.0
 
 ---
 
-## 📖 **Usage**
+## 📖 **MCard Architecture & Usage**
+
+### **Architecture Overhaul (v2)**
+The MCard system has been rebuilt to rely on the robust `mcard-js` library for core operations while upgrading specific browser behaviors:
+- **`MCardManager.js`**: Now orchestrated via `mcard-js`'s `CardCollection` and `IndexedDBEngine`, ensuring reliable persistence and querying.
+- **`BrowserContentTypeDetector.js`**: A hybrid detection system that combines library-standard MIME detection with a custom "Expanded Binary" detector for audio/video formats (MP4, FLAC, MKV, etc.) and specific CLM text patterns.
+- **Handle Support**: Native support for friendly names (`@welcome`, `@readme`) alongside content-addressed hashes.
 
 ### **Demo MCard Imports (central configuration)**
 
@@ -388,14 +407,14 @@ graph TD
 
 ## 📊 **Project Stats**
 
-- **Lines of Code**: ~4,000+ lines (including docs)
+- **Lines of Code**: ~4,500+ lines (including docs + new game examples)
 - **Modules**: 3 active (markdown-renderer, net-gateway, p2p-serverless)
 - **P2P Bundle Size**: 20KB (uncompressed)
 - **Libraries**: Pure browser APIs (WebRTC, BroadcastChannel, etc.)
 - **Browser Support**: Modern browsers (2016+)
 - **Server Options**: 4+ (Python, Node.js, Nginx, IIS, static hosting)
 - **Documentation**: 1,800+ lines across 8 docs
-- **Last Updated**: December 19, 2025
+- **Last Updated**: December 30, 2025
 
 ---
 
@@ -409,6 +428,7 @@ python3 -m http.server 8000 --bind 0.0.0.0
 # Access from any device on your network:
 # Landing Page: http://YOUR_LOCAL_IP:8000
 # P2P Demo: http://YOUR_LOCAL_IP:8000/js/modules/p2p-serverless/example.html
+# Bali Game: http://YOUR_LOCAL_IP:8000/public/examples/games/play_ubud.html
 ```
 
 ### **P2P Testing**
