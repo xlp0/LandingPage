@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABC.js Music Sheet Viewer</title>
+    <!-- ABC.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.1/dist/abcjs-basic-min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f2eb;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c1810;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            background: #5d4e6d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #4a3d57;
+            transform: translateY(-1px);
+        }
+
+        button.active {
+            background: #2c1810;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .music-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        .abc-container {
+            background: #2c1810;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .abc-container h3 {
+            color: #e8dcc8;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1em;
+        }
+
+        .abc-notation {
+            background: #1a100a;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #a8e6cf;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .abc-notation .header {
+            color: #ffd93d;
+        }
+
+        .abc-notation .notes {
+            color: #a8e6cf;
+        }
+
+        #music-render {
+            min-height: 200px;
+        }
+
+        .play-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .play-btn {
+            background: #4a9c6d;
+            padding: 10px 30px;
+        }
+
+        .play-btn:hover {
+            background: #3a8c5d;
+        }
+
+        .stop-btn {
+            background: #c75050;
+            padding: 10px 30px;
+        }
+
+        .stop-btn:hover {
+            background: #b74040;
+        }
+
+        .info-box {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-box h3 {
+            color: #2c1810;
+            margin-top: 0;
+        }
+
+        .info-box code {
+            background: #f0ebe3;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+
+        th,
+        td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f0ebe3;
+            color: #2c1810;
+        }
+
+        .section-title {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Animated cursor highlighting for playing notes */
+        .abcjs-highlight {
+            fill: #ff6b6b !important;
+            animation: pulse 0.3s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.7;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🎵 ABC.js Music Sheet Viewer</h1>
+    <p class="subtitle">Using ABC Notation — a simple text-based music format</p>
+
+    <div class="controls">
+        <button onclick="loadSong('twinkle')" id="btn-twinkle" class="active">Twinkle Twinkle</button>
+        <button onclick="loadSong('ode')" id="btn-ode">Ode to Joy</button>
+        <button onclick="loadSong('greensleeves')" id="btn-greensleeves">Greensleeves</button>
+        <button onclick="loadSong('minuet')" id="btn-minuet">Minuet in G</button>
+        <button onclick="loadSong('canon')" id="btn-canon">Pachelbel Canon</button>
+    </div>
+
+    <div class="main-container">
+        <div>
+            <p class="section-title">Rendered Sheet Music</p>
+            <div class="music-container">
+                <div id="music-render"></div>
+                <div class="play-controls">
+                    <button class="play-btn" onclick="playMusic()">▶ Play</button>
+                    <button class="stop-btn" onclick="stopMusic()">■ Stop</button>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <p class="section-title">ABC Notation Source</p>
+            <div class="abc-container">
+                <h3>📝 ABC Code (editable text format)</h3>
+                <div class="abc-notation" id="abc-source"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <h3>Understanding ABC Notation</h3>
+        <p>ABC is a text-based music notation that's easy to read and write. Here's a quick reference:</p>
+
+        <table>
+            <tr>
+                <th>Element</th>
+                <th>ABC Syntax</th>
+                <th>Meaning</th>
+            </tr>
+            <tr>
+                <td>Header</td>
+                <td><code>X:</code>, <code>T:</code>, <code>M:</code>, <code>K:</code></td>
+                <td>Reference number, Title, Meter, Key</td>
+            </tr>
+            <tr>
+                <td>Notes</td>
+                <td><code>C D E F G A B</code></td>
+                <td>Notes in lower octave</td>
+            </tr>
+            <tr>
+                <td>Higher octave</td>
+                <td><code>c d e f g a b</code></td>
+                <td>Lowercase = octave higher</td>
+            </tr>
+            <tr>
+                <td>Note length</td>
+                <td><code>C2</code>, <code>C/2</code>, <code>C4</code></td>
+                <td>Double, half, quadruple length</td>
+            </tr>
+            <tr>
+                <td>Rests</td>
+                <td><code>z</code>, <code>z2</code></td>
+                <td>Rest, double-length rest</td>
+            </tr>
+            <tr>
+                <td>Bar lines</td>
+                <td><code>|</code>, <code>|]</code>, <code>||</code></td>
+                <td>Bar, end bar, double bar</td>
+            </tr>
+            <tr>
+                <td>Chords</td>
+                <td><code>[CEG]</code></td>
+                <td>Notes played together</td>
+            </tr>
+            <tr>
+                <td>Sharps/Flats</td>
+                <td><code>^C</code>, <code>_B</code>, <code>=C</code></td>
+                <td>C#, Bb, C natural</td>
+            </tr>
+            <tr>
+                <td>Two staves</td>
+                <td><code>%%staves {RH LH}</code></td>
+                <td>Grand staff (piano)</td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        // ============================================
+        // ABC NOTATION DATASETS
+        // ============================================
+
+        const songs = {
+            twinkle: `X:1
+T:Twinkle Twinkle Little Star
+C:Traditional
+M:4/4
+L:1/4
+Q:1/4=100
+K:C
+%%staves {RH LH}
+V:RH clef=treble name="Right Hand"
+V:LH clef=bass name="Left Hand"
+%
+[V:RH] C C G G | A A G2 | F F E E | D D C2 |
+[V:LH] [C,E,G,]2 [C,E,G,]2 | [F,A,]2 [C,E,G,]2 | [D,F,]2 [C,E,]2 | [G,,B,,]2 [C,E,G,]2 |
+%
+[V:RH] G G F F | E E D2 | G G F F | E E D2 |
+[V:LH] [C,E,G,]2 [D,F,]2 | [C,E,]2 [G,,B,,]2 | [C,E,G,]2 [D,F,]2 | [C,E,]2 [G,,B,,]2 |
+%
+[V:RH] C C G G | A A G2 | F F E E | D D C2 |]
+[V:LH] [C,E,G,]2 [C,E,G,]2 | [F,A,]2 [C,E,G,]2 | [D,F,]2 [C,E,]2 | [G,,B,,]2 [C,E,G,]2 |]`,
+
+            ode: `X:1
+T:Ode to Joy
+C:Ludwig van Beethoven
+M:4/4
+L:1/4
+Q:1/4=120
+K:C
+%%staves {RH LH}
+V:RH clef=treble name="Right Hand"
+V:LH clef=bass name="Left Hand"
+%
+[V:RH] E E F G | G F E D | C C D E | E3/2 D/ D2 |
+[V:LH] [C,G,]4 | [G,,B,,]2 [G,,B,,]2 | [A,,C,E,]2 [A,,C,E,]2 | [G,,B,,D,]4 |
+%
+[V:RH] E E F G | G F E D | C C D E | D3/2 C/ C2 |
+[V:LH] [C,G,]4 | [G,,B,,]2 [G,,B,,]2 | [A,,C,E,]2 [A,,C,E,]2 | [G,,B,,]2 [C,E,G,]2 |
+%
+[V:RH] D D E C | D E/F/ E C | D E/F/ E D | C D G,2 |
+[V:LH] [G,,B,,]4 | [C,E,G,]2 [C,E,G,]2 | [C,E,G,]2 [G,,B,,]2 | [A,,C,E,]2 [G,,B,,D,]2 |
+%
+[V:RH] E E F G | G F E D | C C D E | D3/2 C/ C2 |]
+[V:LH] [C,G,]4 | [G,,B,,]2 [G,,B,,]2 | [A,,C,E,]2 [A,,C,E,]2 | [G,,B,,]2 [C,E,G,]2 |]`,
+
+            greensleeves: `X:1
+T:Greensleeves
+C:Traditional English
+M:6/8
+L:1/8
+Q:3/8=60
+K:Am
+%%staves {RH LH}
+V:RH clef=treble name="Right Hand"
+V:LH clef=bass name="Left Hand"
+%
+[V:RH] A | c2 d e>fe | d2 B G>AB | c2 A A>^GA | B2 ^G E2 A |
+[V:LH] z | [A,E]3 [A,E]3 | [G,D]3 [G,D]3 | [A,E]3 [A,E]3 | [E,B,]3 [E,B,]3 |
+%
+[V:RH] c2 d e>fe | d2 B G>AB | c>BA ^G>EG | A2 A A2 z |
+[V:LH] [A,E]3 [A,E]3 | [G,D]3 [G,D]3 | [A,E]3 [E,B,]3 | [A,E]3 [A,E]3 |
+%
+[V:RH] g2 g g>fg | e2 c A>Bc | d2 d d>cd | B2 ^G E2 A |
+[V:LH] [C,G,]3 [C,G,]3 | [A,E]3 [A,E]3 | [D,A,]3 [D,A,]3 | [E,B,]3 [E,B,]3 |
+%
+[V:RH] g2 g g>fg | e2 c A>Bc | d>cB ^G>EG | A2 A A2 |]
+[V:LH] [C,G,]3 [C,G,]3 | [A,E]3 [A,E]3 | [D,A,]3 [E,B,]3 | [A,E]3 [A,E]3 |]`,
+
+            minuet: `X:1
+T:Minuet in G
+C:Christian Petzold (attr. J.S. Bach)
+M:3/4
+L:1/8
+Q:1/4=120
+K:G
+%%staves {RH LH}
+V:RH clef=treble name="Right Hand"
+V:LH clef=bass name="Left Hand"
+%
+[V:RH] d2 GABc | d2 G2 G2 | e2 cdef | g2 G2 G2 |
+[V:LH] G,2 D2 D2 | G,2 D2 B,2 | C2 E2 E2 | G,2 D2 B,2 |
+%
+[V:RH] c2 dcBA | B2 cBAG | F2 GABc | d2 A2 A2 |
+[V:LH] A,2 F,2 F,2 | G,2 D2 B,2 | D,2 D2 D2 | D,2 F,2 A,2 |
+%
+[V:RH] d2 GABc | d2 G2 G2 | e2 cdef | g2 G2 G2 |
+[V:LH] G,2 D2 D2 | G,2 D2 B,2 | C2 E2 E2 | G,2 D2 B,2 |
+%
+[V:RH] c2 dcBA | B2 cBAG | A2 BAGe | G4 z2 |]
+[V:LH] A,2 F,2 F,2 | G,2 D2 B,2 | D,2 D,2 D2 | G,4 z2 |]`,
+
+            canon: `X:1
+T:Canon in D (Theme)
+C:Johann Pachelbel
+M:4/4
+L:1/8
+Q:1/4=60
+K:D
+%%staves {RH LH}
+V:RH clef=treble name="Right Hand"
+V:LH clef=bass name="Left Hand"
+%
+[V:RH] F4 E4 | D4 C4 | B,4 A,4 | B,4 C4 |
+[V:LH] D,4 A,,4 | B,,4 F,4 | G,4 D,4 | G,4 A,4 |
+%
+[V:RH] D4 C4 | B,4 A,4 | G,4 F,4 | G,4 A,4 |
+[V:LH] D,4 A,,4 | B,,4 F,4 | G,4 D,4 | G,4 A,4 |
+%
+[V:RH] d2f2 e2d2 | d2c2 c2B2 | B2d2 A2d2 | d2B2 c2e2 |
+[V:LH] D,4 A,,4 | B,,4 F,4 | G,4 D,4 | G,4 A,4 |
+%
+[V:RH] d2f2 a2g2 | f2d2 d2c2 | B2d2 g2f2 | g2B2 c2e2 |
+[V:LH] D,4 A,,4 | B,,4 F,4 | G,4 D,4 | G,4 A,4 |
+%
+[V:RH] d8 |]
+[V:LH] D,8 |]`
+        };
+
+        // ============================================
+        // RENDERING AND PLAYBACK
+        // ============================================
+
+        let currentSong = 'twinkle';
+        let synthControl = null;
+        let visualObj = null;
+
+        function formatAbcForDisplay(abc) {
+            // Syntax highlight the ABC notation for display
+            return abc
+                .split('\n')
+                .map(line => {
+                    if (line.match(/^[A-Z]:/)) {
+                        return `<span class="header">${escapeHtml(line)}</span>`;
+                    } else if (line.startsWith('%%')) {
+                        return `<span class="header">${escapeHtml(line)}</span>`;
+                    } else {
+                        return `<span class="notes">${escapeHtml(line)}</span>`;
+                    }
+                })
+                .join('\n');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function renderMusic(songKey) {
+            const abc = songs[songKey];
+
+            // Display the ABC notation source
+            document.getElementById('abc-source').innerHTML = formatAbcForDisplay(abc);
+
+            // Render the sheet music
+            visualObj = ABCJS.renderAbc('music-render', abc, {
+                responsive: 'resize',
+                staffwidth: 400,
+                paddingleft: 10,
+                paddingright: 10,
+                paddingtop: 20,
+                paddingbottom: 20,
+                scale: 1.0,
+                add_classes: true
+            })[0];
+        }
+
+        function loadSong(songKey) {
+            // Stop any playing music
+            stopMusic();
+
+            currentSong = songKey;
+
+            // Update button states
+            document.querySelectorAll('.controls button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('btn-' + songKey).classList.add('active');
+
+            // Render the music
+            renderMusic(songKey);
+        }
+
+        function playMusic() {
+            if (ABCJS.synth.supportsAudio()) {
+                stopMusic();
+
+                // Create cursor control for animated playback
+                const cursorControl = new ABCJS.TimingCallbacks(visualObj, {
+                    beatCallback: beatCallback,
+                    eventCallback: eventCallback,
+                    lineEndCallback: lineEndCallback
+                });
+
+                synthControl = new ABCJS.synth.CreateSynth();
+                synthControl.init({
+                    visualObj: visualObj,
+                    options: {
+                        soundFontUrl: "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/",
+                        pan: [0, 0]
+                    }
+                }).then(() => {
+                    return synthControl.prime();
+                }).then(() => {
+                    synthControl.start();
+                    cursorControl.start();
+                }).catch(err => {
+                    console.error("Audio error:", err);
+                    alert("Audio playback error. Try clicking play again.");
+                });
+            } else {
+                alert("Audio is not supported in this browser.");
+            }
+        }
+
+        // Callback functions for cursor animation
+        let currentNotes = [];
+
+        function beatCallback(beatNumber, totalBeats, totalTime) {
+            // Called on each beat - optional visual feedback
+        }
+
+        function eventCallback(event) {
+            if (event) {
+                // Remove previous highlighting
+                currentNotes.forEach(note => {
+                    note.classList.remove('abcjs-highlight');
+                });
+                currentNotes = [];
+
+                // Highlight current notes
+                if (event.elements) {
+                    event.elements.forEach(note => {
+                        note.classList.add('abcjs-highlight');
+                        currentNotes.push(note);
+                    });
+                }
+            }
+        }
+
+        function lineEndCallback(info) {
+            // Called when a line ends - optional
+        }
+
+        function stopMusic() {
+            if (synthControl) {
+                synthControl.stop();
+                synthControl = null;
+            }
+
+            // Clear any highlighted notes
+            currentNotes.forEach(note => {
+                note.classList.remove('abcjs-highlight');
+            });
+            currentNotes = [];
+        }
+
+        // Initial render
+        loadSong('twinkle');
+    </script>
+</body>
+
+</html>

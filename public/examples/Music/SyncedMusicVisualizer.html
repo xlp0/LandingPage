@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synchronized Music Sheet & Waveform Visualizer</title>
+    <!-- OSMD Library -->
+    <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.8.6/build/opensheetmusicdisplay.min.js"></script>
+    <!-- Tone.js for audio synthesis -->
+    <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Instrument Sans', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0a0e14 0%, #1a222d 100%);
+            color: #e6edf3;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: 600;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #00d4ff, #ff7b00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #8b949e;
+            font-size: 1.1em;
+        }
+
+        /* Song Selector */
+        .song-selector {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .song-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .song-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .song-btn.active {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border-color: #00d4ff;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Split Panel Layout */
+        .panels {
+            display: grid;
+            grid-template-rows: auto 300px;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            background: rgba(18, 24, 32, 0.6);
+            border: 1px solid #2a3544;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 16px 20px;
+            background: rgba(26, 34, 45, 0.8);
+            border-bottom: 1px solid #2a3544;
+            font-size: 14px;
+            font-weight: 500;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Music Sheet Panel */
+        .music-sheet-panel {
+            min-height: 400px;
+        }
+
+        #osmd-container {
+            padding: 30px;
+            background: #fff;
+            min-height: 350px;
+            overflow-x: auto;
+        }
+
+        /* Waveform Panel */
+        .waveform-panel {
+            position: relative;
+        }
+
+        .waveform-canvas-container {
+            height: 220px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #waveform-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: rgba(26, 34, 45, 0.6);
+            border-radius: 12px;
+            flex-wrap: wrap;
+        }
+
+        .transport-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .transport-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .play-btn {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ff7b00, #e94560);
+            border-color: #ff7b00;
+        }
+
+        .play-btn:hover {
+            box-shadow: 0 4px 15px rgba(255, 123, 0, 0.4);
+        }
+
+        .transport-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* Time Display */
+        .time-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+            padding-left: 20px;
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .time-current {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            font-weight: 500;
+            color: #00d4ff;
+        }
+
+        .time-total {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #8b949e;
+        }
+
+        /* Status */
+        .status-bar {
+            padding: 12px 20px;
+            background: rgba(26, 34, 45, 0.4);
+            border-radius: 8px;
+            text-align: center;
+            color: #8b949e;
+            font-size: 13px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #484f58;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🎼 Synchronized Music Visualizer</h1>
+            <div class="subtitle">Sheet Music + Real-time Waveform</div>
+        </header>
+
+        <!-- Song Selector -->
+        <div class="song-selector" id="songSelector">
+            <!-- Will be populated by JavaScript -->
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar" id="statusBar">Select a song to begin</div>
+
+        <!-- Split Panels -->
+        <div class="panels">
+            <!-- Music Sheet Panel -->
+            <div class="panel music-sheet-panel">
+                <div class="panel-header">📄 Music Sheet</div>
+                <div id="osmd-container">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎵</div>
+                        <div>Music sheet will appear here</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Waveform Panel -->
+            <div class="panel waveform-panel">
+                <div class="panel-header">🌊 Audio Waveform</div>
+                <div class="waveform-canvas-container">
+                    <canvas id="waveform-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Playback Controls -->
+        <div class="controls">
+            <button class="transport-btn" id="stopBtn" title="Stop">
+                <svg viewBox="0 0 24 24">
+                    <rect x="6" y="6" width="12" height="12" />
+                </svg>
+            </button>
+            <button class="transport-btn play-btn" id="playBtn" title="Play/Pause" disabled>
+                <svg viewBox="0 0 24 24" id="play-icon">
+                    <polygon points="8 5 19 12 8 19 8 5" />
+                </svg>
+                <svg viewBox="0 0 24 24" id="pause-icon" style="display:none;">
+                    <rect x="6" y="4" width="4" height="16" />
+                    <rect x="14" y="4" width="4" height="16" />
+                </svg>
+            </button>
+            <div class="time-info">
+                <div class="time-current" id="currentTime">00:00</div>
+                <div class="time-total">/ <span id="totalTime">00:00</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Songs Data -->
+    <script src="./songs-data.js"></script>
+
+    <script>
+        class SyncedMusicVisualizer {
+            constructor() {
+                this.osmd = null;
+                this.synth = null;
+                this.isPlaying = false;
+                this.currentSong = null;
+                this.analyser = null;
+                this.animationId = null;
+                this.allNotes = [];
+                this.currentNoteIndex = 0;
+                this.tempo = 120;
+
+                // Canvas setup
+                this.canvas = document.getElementById('waveform-canvas');
+                this.ctx = this.canvas.getContext('2d');
+
+                this.init();
+            }
+
+            async init() {
+                this.setupCanvas();
+                this.loadSongsList();
+                this.setupEventListeners();
+
+                // Initialize Tone.js
+                await Tone.start();
+
+                // Create analyser for waveform
+                this.analyser = Tone.getContext().createAnalyser();
+                this.analyser.fftSize = 2048;
+                this.analyser.smoothingTimeConstant = 0.8;
+
+                // Create synth
+                this.synth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: 'triangle' },
+                    envelope: { attack: 0.005, decay: 0.1, sustain: 0.3, release: 1 }
+                });
+
+                // Connect synth to analyser and destination
+                this.synth.connect(this.analyser);
+                this.analyser.connect(Tone.getDestination());
+            }
+
+            setupCanvas() {
+                const container = this.canvas.parentElement;
+                const dpr = window.devicePixelRatio || 1;
+
+                this.canvas.width = container.clientWidth * dpr;
+                this.canvas.height = container.clientHeight * dpr;
+                this.canvas.style.width = container.clientWidth + 'px';
+                this.canvas.style.height = container.clientHeight + 'px';
+                this.ctx.scale(dpr, dpr);
+
+                window.addEventListener('resize', () => {
+                    this.canvas.width = container.clientWidth * dpr;
+                    this.canvas.height = container.clientHeight * dpr;
+                    this.canvas.style.width = container.clientWidth + 'px';
+                    this.canvas.style.height = container.clientHeight + 'px';
+                    this.ctx.scale(dpr, dpr);
+                });
+
+                this.drawEmptyWaveform();
+            }
+
+            loadSongsList() {
+                const container = document.getElementById('songSelector');
+
+                Object.keys(SONGS_DATA).forEach(key => {
+                    const song = SONGS_DATA[key];
+                    const btn = document.createElement('button');
+                    btn.className = 'song-btn';
+                    btn.textContent = song.title;
+                    btn.dataset.songId = key;
+                    btn.addEventListener('click', () => this.loadSong(key));
+                    container.appendChild(btn);
+                });
+            }
+
+            setupEventListeners() {
+                document.getElementById('playBtn').addEventListener('click', () => this.togglePlay());
+                document.getElementById('stopBtn').addEventListener('click', () => this.stop());
+            }
+
+            async loadSong(songId) {
+                try {
+                    this.stop();
+
+                    const song = SONGS_DATA[songId];
+                    this.currentSong = song;
+
+                    // Update UI
+                    document.querySelectorAll('.song-btn').forEach(btn => {
+                        btn.classList.toggle('active', btn.dataset.songId === songId);
+                    });
+
+                    document.getElementById('statusBar').textContent = `Loading "${song.title}"...`;
+
+                    // Load into OSMD
+                    if (!this.osmd) {
+                        this.osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay('osmd-container', {
+                            autoResize: true,
+                            backend: 'svg',
+                            drawingParameters: 'compact'
+                        });
+                    }
+
+                    await this.osmd.load(song.xml);
+                    await this.osmd.render();
+
+                    // Initialize cursor
+                    this.osmd.cursor.show();
+                    this.osmd.cursor.reset();
+
+                    // Extract notes for playback
+                    this.extractNotes();
+
+                    // Enable play button
+                    document.getElementById('playBtn').disabled = false;
+                    document.getElementById('statusBar').textContent = `Ready: "${song.title}" by ${song.composer}`;
+
+                } catch (error) {
+                    console.error('Error loading song:', error);
+                    document.getElementById('statusBar').textContent = `Error: ${error.message}`;
+                }
+            }
+
+            async togglePlay() {
+                if (this.isPlaying) {
+                    this.pause();
+                } else {
+                    await this.play();
+                }
+            }
+
+            async play() {
+                if (!this.currentSong) return;
+
+                this.isPlaying = true;
+                this.updatePlayButton();
+                this.currentNoteIndex = 0;
+
+                // Reset cursor
+                if (this.osmd && this.osmd.cursor) {
+                    this.osmd.cursor.reset();
+                }
+
+                // Start note playback
+                this.playNotes();
+
+                // Start waveform animation
+                this.startWaveformAnimation();
+
+                document.getElementById('statusBar').textContent = `Playing: "${this.currentSong.title}"`;
+            }
+
+            pause() {
+                this.isPlaying = false;
+                this.updatePlayButton();
+                Tone.Transport.pause();
+
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                    this.animationId = null;
+                }
+
+                document.getElementById('statusBar').textContent = `Paused: "${this.currentSong.title}"`;
+            }
+
+            stop() {
+                this.isPlaying = false;
+                this.updatePlayButton();
+                Tone.Transport.stop();
+                Tone.Transport.cancel();
+                this.currentNoteIndex = 0;
+
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                    this.animationId = null;
+                }
+
+                // Reset cursor
+                if (this.osmd && this.osmd.cursor) {
+                    this.osmd.cursor.reset();
+                }
+
+                this.drawEmptyWaveform();
+
+                if (this.currentSong) {
+                    document.getElementById('statusBar').textContent = `Ready: "${this.currentSong.title}"`;
+                }
+            }
+
+            extractNotes() {
+                this.allNotes = [];
+
+                if (!this.osmd || !this.osmd.cursor) return;
+
+                this.osmd.cursor.reset();
+
+                while (!this.osmd.cursor.Iterator.EndReached) {
+                    const voices = this.osmd.cursor.VoicesUnderCursor();
+                    let notesAtPosition = [];
+
+                    for (const voice of voices) {
+                        for (const note of voice.Notes) {
+                            if (!note.isRest() && note.Pitch) {
+                                const pitch = note.Pitch;
+                                const octave = pitch.Octave;
+                                const tone = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'][pitch.FundamentalNote];
+                                const noteName = tone + octave;
+                                notesAtPosition.push(noteName);
+                            }
+                        }
+                    }
+
+                    this.allNotes.push({
+                        notes: notesAtPosition,
+                        duration: 0.5 // Fixed duration for demo
+                    });
+
+                    this.osmd.cursor.next();
+                }
+
+                this.osmd.cursor.reset();
+            }
+
+            playNotes() {
+                if (!this.isPlaying || this.currentNoteIndex >= this.allNotes.length) {
+                    if (this.currentNoteIndex >= this.allNotes.length) {
+                        this.stop();
+                    }
+                    return;
+                }
+
+                const noteData = this.allNotes[this.currentNoteIndex];
+
+                // Move cursor
+                if (this.currentNoteIndex > 0 && this.osmd && this.osmd.cursor) {
+                    this.osmd.cursor.next();
+                }
+
+                // Play notes at this position
+                for (const note of noteData.notes) {
+                    this.synth.triggerAttackRelease(note, noteData.duration * 0.8);
+                }
+
+                this.currentNoteIndex++;
+
+                // Schedule next note
+                setTimeout(() => this.playNotes(), noteData.duration * 1000);
+            }
+
+            updatePlayButton() {
+                const playIcon = document.getElementById('play-icon');
+                const pauseIcon = document.getElementById('pause-icon');
+
+                if (this.isPlaying) {
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'block';
+                } else {
+                    playIcon.style.display = 'block';
+                    pauseIcon.style.display = 'none';
+                }
+            }
+
+            startWaveformAnimation() {
+                const animate = () => {
+                    if (!this.isPlaying) return;
+
+                    this.drawWaveform();
+                    this.animationId = requestAnimationFrame(animate);
+                };
+                animate();
+            }
+
+            drawWaveform() {
+                const width = this.canvas.clientWidth;
+                const height = this.canvas.clientHeight;
+
+                // Get frequency data
+                const bufferLength = this.analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                this.analyser.getByteFrequencyData(dataArray);
+
+                // Clear canvas
+                this.ctx.fillStyle = '#0a0e14';
+                this.ctx.fillRect(0, 0, width, height);
+
+                // Draw bars
+                const barCount = 64;
+                const barWidth = width / barCount;
+
+                for (let i = 0; i < barCount; i++) {
+                    const dataIndex = Math.floor((i / barCount) * bufferLength);
+                    const value = dataArray[dataIndex] / 255;
+                    const barHeight = value * height * 0.8;
+
+                    const hue = 180 + (value * 60); // Cyan to blue
+                    this.ctx.fillStyle = `hsla(${hue}, 70%, 60%, 0.8)`;
+
+                    const x = i * barWidth;
+                    const y = height - barHeight;
+
+                    this.ctx.fillRect(x, y, barWidth - 2, barHeight);
+                }
+            }
+
+            drawEmptyWaveform() {
+                const width = this.canvas.clientWidth;
+                const height = this.canvas.clientHeight;
+
+                this.ctx.fillStyle = '#0a0e14';
+                this.ctx.fillRect(0, 0, width, height);
+
+                // Draw empty bars
+                const barCount = 64;
+                const barWidth = width / barCount;
+
+                for (let i = 0; i < barCount; i++) {
+                    this.ctx.fillStyle = 'rgba(42, 53, 68, 0.3)';
+                    const x = i * barWidth;
+                    this.ctx.fillRect(x, height - 20, barWidth - 2, 20);
+                }
+            }
+        }
+
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            new SyncedMusicVisualizer();
+        });
+    </script>
+</body>
+
+</html>

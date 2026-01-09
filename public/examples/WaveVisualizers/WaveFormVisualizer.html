@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waveform Analyzer with Audio Library</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Instrument+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Core styling preserved from original - abbreviated for demonstration */
+        :root {
+            --bg-primary: #0a0e14;
+            --bg-secondary: #121820;
+            --bg-tertiary: #1a222d;
+            --border-color: #2a3544;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-cyan: #00d4ff;
+            --accent-orange: #ff7b00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Instrument Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .app-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        /* Audio Library Panel - NEW */
+        .library-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .library-header {
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .library-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .library-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.15s ease;
+        }
+
+        .library-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .library-item.active {
+            background: rgba(0, 212, 255, 0.15);
+            border-left: 3px solid var(--accent-cyan);
+        }
+
+        .library-item-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .library-item-info {
+            flex: 1;
+        }
+
+        .library-item-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .library-item-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .library-item-type {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(255, 123, 0, 0.2);
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--accent-orange);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .empty-library {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        /* Visualization and other styles abbreviated */
+        .visualization-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .waveform-container {
+            position: relative;
+            height: 300px;
+            padding: 20px;
+        }
+
+        .waveform-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .controls {
+            padding: 16px;
+            background: var(--bg-tertiary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            background: var(--accent-cyan);
+            border: none;
+            border-radius: 6px;
+            color: var(--bg-primary);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="logo">🎵 Waveform Analyzer</div>
+            <div>
+                <input type="file" id="audioInput" accept="audio/*" style="display:none">
+                <button class="btn" onclick="document.getElementById('audioInput').click()">Load Custom Audio</button>
+            </div>
+        </header>
+
+        <!-- Audio Library Panel -->
+        <div class="library-panel">
+            <div class="library-header">
+                <span>📚 Audio Library</span>
+                <span id="libraryCount">0 files</span>
+            </div>
+            <div class="library-list" id="libraryList">
+                <div class="empty-library">
+                    No audio files in library. Add files to <code>audio/</code> directory and update
+                    <code>audio-library.js</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Waveform Visualization -->
+        <div class="visualization-panel">
+            <div class="waveform-container">
+                <canvas class="waveform-canvas" id="waveformCanvas"></canvas>
+            </div>
+            <div class="controls">
+                <button class="btn" id="playBtn" disabled>▶ Play</button>
+                <span id="status">Load an audio file to begin</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="./audio/audio-library.js"></script>
+    <script>
+        class WaveformVisualizer {
+            constructor() {
+                this.audioContext = null;
+                this.audioBuffer = null;
+                this.sourceNode = null;
+                this.isPlaying = false;
+                this.currentFile = null;
+
+                this.canvas = document.getElementById('waveformCanvas');
+                this.ctx = this.canvas.getContext('2d');
+
+                this.init();
+            }
+
+            init() {
+                this.setupCanvas();
+                this.loadLibrary();
+                this.setupEventListeners();
+            }
+
+            setupCanvas() {
+                const container = this.canvas.parentElement;
+                this.canvas.width = container.clientWidth;
+                this.canvas.height = container.clientHeight;
+
+                window.addEventListener('resize', () => {
+                    this.canvas.width = container.clientWidth;
+                    this.canvas.height = container.clientHeight;
+                    this.renderWaveform();
+                });
+            }
+
+            loadLibrary() {
+                const list = document.getElementById('libraryList');
+
+                if (typeof AUDIO_LIBRARY === 'undefined' || AUDIO_LIBRARY.length === 0) {
+                    return; // Keep empty state
+                }
+
+                list.innerHTML = '';
+                document.getElementById('libraryCount').textContent = `${AUDIO_LIBRARY.length} file${AUDIO_LIBRARY.length !== 1 ? 's' : ''}`;
+
+                AUDIO_LIBRARY.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'library-item';
+                    div.dataset.id = item.id;
+
+                    div.innerHTML = `
+                        <div class="library-item-icon">🎵</div>
+                        <div class="library-item-info">
+                            <div class="library-item-name">${this.truncateName(item.name)}</div>
+                            <div class="library-item-meta">
+                                <span class="library-item-type">${item.type}</span>
+                                ${item.description ? ' • ' + item.description : ''}
+                            </div>
+                        </div>
+                    `;
+
+                    div.addEventListener('click', () => this.loadFromLibrary(item));
+                    list.appendChild(div);
+                });
+            }
+
+            truncateName(name, maxLength = 40) {
+                return name.length > maxLength ? name.substring(0, maxLength) + '...' : name;
+            }
+
+            setupEventListeners() {
+                document.getElementById('audioInput').addEventListener('change', (e) => {
+                    if (e.target.files[0]) {
+                        this.loadCustomFile(e.target.files[0]);
+                    }
+                });
+
+                document.getElementById('playBtn').addEventListener('click', () => this.togglePlay());
+            }
+
+            async loadFromLibrary(item) {
+                try {
+                    document.getElementById('status').textContent = `Loading ${item.name}...`;
+
+                    // Use embedded base64 data instead of fetching
+                    const response = await fetch(item.data);
+                    const arrayBuffer = await response.arrayBuffer();
+                    await this.processAudioBuffer(arrayBuffer, item.name);
+
+                    // Update active state
+                    document.querySelectorAll('.library-item').forEach(el => el.classList.remove('active'));
+                    document.querySelector(`[data-id="${item.id}"]`).classList.add('active');
+
+                } catch (error) {
+                    console.error('Error loading from library:', error);
+                    document.getElementById('status').textContent = `Error: ${error.message}`;
+                }
+            }
+
+            async loadCustomFile(file) {
+                try {
+                    document.getElementById('status').textContent = `Loading ${file.name}...`;
+
+                    const arrayBuffer = await file.arrayBuffer();
+                    await this.processAudioBuffer(arrayBuffer, file.name);
+
+                    // Clear library selection
+                    document.querySelectorAll('.library-item').forEach(el => el.classList.remove('active'));
+
+                } catch (error) {
+                    console.error('Error loading custom file:', error);
+                    document.getElementById('status').textContent = `Error: ${error.message}`;
+                }
+            }
+
+            async processAudioBuffer(arrayBuffer, filename) {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                this.audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                this.currentFile = filename;
+
+                this.renderWaveform();
+                document.getElementById('playBtn').disabled = false;
+                document.getElementById('status').textContent = `Loaded: ${filename} | ${this.audioBuffer.duration.toFixed(2)}s | ${this.audioBuffer.sampleRate}Hz`;
+            }
+
+            renderWaveform() {
+                if (!this.audioBuffer) return;
+
+                const width = this.canvas.width;
+                const height = this.canvas.height;
+                const ctx = this.ctx;
+
+                ctx.clearRect(0, 0, width, height);
+
+                const channelData = this.audioBuffer.getChannelData(0);
+                const step = Math.ceil(channelData.length / width);
+                const amp = height / 2;
+
+                ctx.fillStyle = 'rgba(0, 212, 255, 0.2)';
+                ctx.strokeStyle = 'rgba(0, 212, 255, 0.8)';
+                ctx.lineWidth = 1;
+
+                ctx.beginPath();
+                ctx.moveTo(0, amp);
+
+                for (let i = 0; i < width; i++) {
+                    const index = Math.floor(i * step);
+                    const value = channelData[index] || 0;
+                    const y = amp - (value * amp);
+                    ctx.lineTo(i, y);
+                }
+
+                ctx.lineTo(width, amp);
+
+                for (let i = width; i >= 0; i--) {
+                    const index = Math.floor(i * step);
+                    const value = channelData[index] || 0;
+                    const y = amp + (value * amp);
+                    ctx.lineTo(i, y);
+                }
+
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            togglePlay() {
+                if (this.isPlaying) {
+                    this.pause();
+                } else {
+                    this.play();
+                }
+            }
+
+            play() {
+                if (!this.audioBuffer) return;
+
+                this.sourceNode = this.audioContext.createBufferSource();
+                this.sourceNode.buffer = this.audioBuffer;
+                this.sourceNode.connect(this.audioContext.destination);
+                this.sourceNode.start(0);
+
+                this.isPlaying = true;
+                document.getElementById('playBtn').textContent = '⏸ Pause';
+
+                this.sourceNode.onended = () => {
+                    this.isPlaying = false;
+                    document.getElementById('playBtn').textContent = '▶ Play';
+                };
+            }
+
+            pause() {
+                if (this.sourceNode) {
+                    this.sourceNode.stop();
+                    this.isPlaying = false;
+                    document.getElementById('playBtn').textContent = '▶ Play';
+                }
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            new WaveformVisualizer();
+        });
+    </script>
+</body>
+
+</html>

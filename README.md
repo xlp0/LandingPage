@@ -100,6 +100,16 @@ The project includes a high-performance 3D visualization engine for viewing comp
 │   ├── examples/games/                # 🎮 Game examples (React/JSX)
 │   │   ├── UbudRiceTerraces.jsx      # Bali Adventure source code
 │   │   └── play_ubud.html            # Playable game wrapper
+│   ├── examples/Music/                # 🎵 Music notation visualizers
+│   │   ├── ABCMusic.html             # ABC.js notation renderer
+│   │   ├── OSMD.html                 # OpenSheetMusicDisplay player
+│   │   ├── VexMusic.html             # VexFlow renderer
+│   │   ├── SyncedMusicVisualizer.html # Synchronized sheet + waveform
+│   │   └── *.musicxml                # MusicXML score files
+│   ├── examples/WaveVisualizers/     # 🌊 Audio waveform analysis
+│   │   └── WaveFormVisualizer.html   # Waveform analyzer with library
+│   ├── examples/3DGames/              # 🎮 3D interactive visualizations
+│   │   └── MorphismCube/             # Category theory morphism cube
 │   └── js/mcard/                      # MCard Management System
 │       ├── MCardManager.js            # Core logic (via mcard-js)
 │       └── BrowserContentTypeDetector.js # Hybrid content type detection

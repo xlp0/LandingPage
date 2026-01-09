@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Morphism Cube — Recursion Schemes in 3D</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-panel: rgba(15, 15, 25, 0.9);
+            --text-primary: #e8e6e3;
+            --text-secondary: #8a8a9a;
+            --accent-fold: #ff6b6b;
+            --accent-unfold: #4ecdc4;
+            --accent-temporal: #a855f7;
+            --accent-spatial: #f59e0b;
+            --accent-combined: #ec4899;
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glow-soft: 0 0 40px rgba(168, 85, 247, 0.15);
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .overlay {
+            position: fixed;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .overlay>* {
+            pointer-events: auto;
+        }
+
+        /* Header */
+        .header {
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(180deg, rgba(10, 10, 15, 0.95) 0%, transparent 100%);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .header-left h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            margin-bottom: 0.2rem;
+        }
+
+        .header-left h1 span {
+            font-style: italic;
+            color: var(--accent-temporal);
+        }
+
+        .header-left .subtitle {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        /* View Controls */
+        .view-controls {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            max-width: 500px;
+            justify-content: flex-end;
+        }
+
+        .view-btn {
+            background: var(--bg-panel);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .view-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+        }
+
+        .view-btn.active {
+            border-color: var(--accent-temporal);
+            color: var(--text-primary);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+        }
+
+        .view-btn .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .view-btn.temporal .dot {
+            background: var(--accent-temporal);
+        }
+
+        .view-btn.spatial .dot {
+            background: var(--accent-spatial);
+        }
+
+        .view-btn.composition .dot {
+            background: var(--accent-combined);
+        }
+
+        .view-btn.fold .dot {
+            background: var(--accent-fold);
+        }
+
+        .view-btn.unfold .dot {
+            background: var(--accent-unfold);
+        }
+
+        .view-btn.iso .dot {
+            background: linear-gradient(135deg, var(--accent-temporal), var(--accent-spatial));
+        }
+
+        /* Face Label */
+        .face-label {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .face-label.visible {
+            opacity: 1;
+        }
+
+        .face-label h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
+        }
+
+        .face-label .face-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            max-width: 400px;
+            line-height: 1.6;
+        }
+
+        /* Info Panel */
+        .info-panel {
+            bottom: 2rem;
+            left: 2rem;
+            width: 320px;
+            background: var(--bg-panel);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            backdrop-filter: blur(20px);
+            box-shadow: var(--glow-soft);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .info-panel.hidden {
+            transform: translateX(-120%);
+            opacity: 0;
+        }
+
+        .info-panel h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-panel h2 .symbol {
+            font-size: 1.3rem;
+            opacity: 0.8;
+        }
+
+        .info-panel .etymology {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .info-panel .type-sig {
+            font-size: 0.75rem;
+            background: rgba(168, 85, 247, 0.1);
+            padding: 0.5rem 0.7rem;
+            border-radius: 5px;
+            margin-bottom: 0.8rem;
+            font-family: 'JetBrains Mono', monospace;
+            border-left: 3px solid var(--accent-temporal);
+        }
+
+        .info-panel .description {
+            font-size: 0.78rem;
+            line-height: 1.55;
+            color: var(--text-secondary);
+        }
+
+        .info-panel .used-for {
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .info-panel .used-for h3 {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            margin-bottom: 0.4rem;
+        }
+
+        .info-panel .used-for p {
+            font-size: 0.75rem;
+            color: var(--accent-unfold);
+        }
+
+        /* Face Contents Panel */
+        .face-contents {
+            bottom: 2rem;
+            right: 2rem;
+            width: 280px;
+            background: var(--bg-panel);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .face-contents h3 {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .face-contents h3 .current-face {
+            color: var(--accent-temporal);
+            font-weight: 600;
+        }
+
+        .face-node {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .face-node:last-child {
+            border-bottom: none;
+        }
+
+        .face-node:hover {
+            padding-left: 0.5rem;
+        }
+
+        .face-node:hover .node-name {
+            color: var(--text-primary);
+        }
+
+        .face-node .node-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .face-node .node-name {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+
+        .face-node .node-symbol {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-left: auto;
+            opacity: 0.6;
+        }
+
+        /* Controls hint */
+        .controls-hint {
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 1.5rem;
+            background: var(--bg-panel);
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .controls-hint span {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .controls-hint kbd {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+        }
+
+        /* Tooltip */
+        #tooltip {
+            position: fixed;
+            background: var(--bg-panel);
+            border: 1px solid var(--glass-border);
+            padding: 0.4rem 0.7rem;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.15s;
+            backdrop-filter: blur(10px);
+        }
+
+        #tooltip.visible {
+            opacity: 1;
+        }
+
+        /* Transition indicator */
+        .transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, transparent 0%, rgba(10, 10, 15, 0.3) 100%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 5;
+        }
+
+        .transition-overlay.active {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="canvas-container"></div>
+    <div class="transition-overlay" id="transition-overlay"></div>
+
+    <div class="overlay header">
+        <div class="header-left">
+            <h1>The <span>Morphism</span> Cube</h1>
+            <div class="subtitle">Recursion Schemes in Category Theory</div>
+        </div>
+        <div class="view-controls">
+            <button class="view-btn iso active" data-view="isometric">
+                <span class="dot"></span>
+                Isometric
+            </button>
+            <button class="view-btn temporal" data-view="temporal">
+                <span class="dot"></span>
+                Temporal Face
+            </button>
+            <button class="view-btn spatial" data-view="spatial">
+                <span class="dot"></span>
+                Spatial Face
+            </button>
+            <button class="view-btn composition" data-view="composition">
+                <span class="dot"></span>
+                Composition
+            </button>
+            <button class="view-btn fold" data-view="fold">
+                <span class="dot"></span>
+                Fold Side
+            </button>
+            <button class="view-btn unfold" data-view="unfold">
+                <span class="dot"></span>
+                Unfold Side
+            </button>
+        </div>
+    </div>
+
+    <div class="overlay face-label" id="face-label">
+        <h2 id="face-title">Temporal Extension</h2>
+        <p class="face-desc" id="face-desc">The vertical dimension represents temporal awareness—access to computation
+            history (histomorphism) and future lookahead (futumorphism).</p>
+    </div>
+
+    <div class="overlay info-panel" id="info-panel">
+        <h2><span class="symbol" id="info-symbol">⦇⦈</span> <span id="info-name">Catamorphism</span></h2>
+        <div class="etymology" id="info-etymology">κατά (down) + μορφή (form)</div>
+        <div class="type-sig" id="info-type">μF → A</div>
+        <div class="description" id="info-desc">
+            The fundamental fold operation. Consumes an inductive structure to produce a value.
+        </div>
+        <div class="used-for">
+            <h3>Used For</h3>
+            <p id="info-use">Fold / Consume structures</p>
+        </div>
+    </div>
+
+    <div class="overlay face-contents" id="face-contents">
+        <h3>Viewing: <span class="current-face" id="current-face-name">Isometric</span></h3>
+        <div id="face-nodes"></div>
+    </div>
+
+    <div class="overlay controls-hint">
+        <span><kbd>Drag</kbd> Rotate</span>
+        <span><kbd>Scroll</kbd> Zoom</span>
+        <span><kbd>Click</kbd> Select</span>
+    </div>
+
+    <div id="tooltip"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // =====================================================
+        // MORPHISM DATA
+        // =====================================================
+        const morphisms = {
+            cata: {
+                name: "Catamorphism",
+                symbol: "⦇⦈",
+                etymology: "κατά (down) + μορφή (form)",
+                type: "μF → A",
+                desc: "The fundamental fold operation. Consumes an inductive structure to produce a value. The unique F-algebra homomorphism from the initial algebra.",
+                use: "Fold / Consume structures",
+                position: [0, 0, 0],
+                color: 0xff6b6b,
+                colorHex: "#ff6b6b",
+                family: "fold",
+                faces: ["fold", "basic", "isometric"]
+            },
+            ana: {
+                name: "Anamorphism",
+                symbol: "⦃⦄",
+                etymology: "ἀνά (up) + μορφή (form)",
+                type: "A → νF",
+                desc: "The fundamental unfold operation. Produces a coinductive structure from a seed value. The unique F-coalgebra homomorphism to the final coalgebra.",
+                use: "Unfold / Generate structures",
+                position: [0, 0, 1],
+                color: 0x4ecdc4,
+                colorHex: "#4ecdc4",
+                family: "unfold",
+                faces: ["unfold", "basic", "isometric"]
+            },
+            hylo: {
+                name: "Hylomorphism",
+                symbol: "⦃⦇⦈⦄",
+                etymology: "ὕλη (matter) + μορφή (form)",
+                type: "A → B",
+                desc: "Composition of anamorphism followed by catamorphism. Builds then immediately consumes. Can be fused to eliminate intermediate structure.",
+                use: "Build then consume (deforestation)",
+                position: [0, 0, 0.5],
+                color: 0xec4899,
+                colorHex: "#ec4899",
+                family: "combined",
+                faces: ["composition", "isometric"]
+            },
+            para: {
+                name: "Paramorphism",
+                symbol: "{⦅⦆}",
+                etymology: "παρά (beside) + μορφή (form)",
+                type: "μF → A",
+                desc: "Fold with access to the original substructure alongside the recursive result. Enables primitive recursion patterns.",
+                use: "Fold + original structure access",
+                position: [1, 0, 0],
+                color: 0xf59e0b,
+                colorHex: "#f59e0b",
+                family: "fold",
+                faces: ["fold", "spatial", "isometric"]
+            },
+            apo: {
+                name: "Apomorphism",
+                symbol: "⦃+νF⦄",
+                etymology: "ἀπό (from) + μορφή (form)",
+                type: "A → νF",
+                desc: "Unfold with the ability to shortcut to a completed result. Can continue unfolding or inject a finished substructure.",
+                use: "Unfold + early termination",
+                position: [1, 0, 1],
+                color: 0xf59e0b,
+                colorHex: "#f59e0b",
+                family: "unfold",
+                faces: ["unfold", "spatial", "isometric"]
+            },
+            topo: {
+                name: "Toposmorphism",
+                symbol: "⦇×μF⦈∘⦃+νF⦄",
+                etymology: "τόπος (place) + μορφή (form)",
+                type: "A → B",
+                desc: "Full spatial awareness: combines paramorphism's structure access with apomorphism's shortcut capability.",
+                use: "Bidirectional spatial transformation",
+                position: [1, 0, 0.5],
+                color: 0xec4899,
+                colorHex: "#ec4899",
+                family: "combined",
+                faces: ["composition", "spatial", "isometric"]
+            },
+            histo: {
+                name: "Histomorphism",
+                symbol: "⦇Cofree⦈",
+                etymology: "ἱστός (web) + μορφή (form)",
+                type: "μF → A",
+                desc: "Fold with access to all previously computed results via the Cofree comonad. Enables course-of-values recursion.",
+                use: "Fold + computation history",
+                position: [0, 1, 0],
+                color: 0xa855f7,
+                colorHex: "#a855f7",
+                family: "fold",
+                faces: ["fold", "temporal", "isometric"]
+            },
+            futu: {
+                name: "Futumorphism",
+                symbol: "⦃Free⦄",
+                etymology: "futurus (future) + μορφή (form)",
+                type: "A → νF",
+                desc: "Unfold that can produce multiple layers at once via the Free monad. Enables lookahead in generation.",
+                use: "Unfold + multi-layer generation",
+                position: [0, 1, 1],
+                color: 0xa855f7,
+                colorHex: "#a855f7",
+                family: "unfold",
+                faces: ["unfold", "temporal", "isometric"]
+            },
+            chrono: {
+                name: "Chronomorphism",
+                symbol: "⦇Cofree⦈∘⦃Free⦄",
+                etymology: "χρόνος (time) + μορφή (form)",
+                type: "A → B",
+                desc: "Full temporal awareness: history access (past) combined with lookahead (future). The most powerful time-aware scheme.",
+                use: "Bidirectional temporal transformation",
+                position: [0, 1, 0.5],
+                color: 0xec4899,
+                colorHex: "#ec4899",
+                family: "combined",
+                faces: ["composition", "temporal", "isometric"]
+            },
+            dyna: {
+                name: "Dynamorphism",
+                symbol: "⦇⦈∘⦃⦄+memo",
+                etymology: "δύναμις (power) + μορφή (form)",
+                type: "A → B",
+                desc: "Hylomorphism with memoization. Used for dynamic programming where intermediate results are cached and reused.",
+                use: "Dynamic programming / Memoization",
+                position: [1, 1, 0.5],
+                color: 0xec4899,
+                colorHex: "#ec4899",
+                family: "combined",
+                faces: ["composition", "temporal", "spatial", "isometric"]
+            }
+        };
+
+        // Face definitions with camera positions and descriptions
+        const faces = {
+            isometric: {
+                name: "Isometric",
+                title: "The Morphism Cube",
+                desc: "All recursion schemes organized in 3D: Temporal (up), Spatial (right), Composition (depth).",
+                theta: Math.PI / 4,
+                phi: Math.PI / 3,
+                radius: 6,
+                showLabel: false
+            },
+            temporal: {
+                name: "Temporal Face",
+                title: "Temporal Extension",
+                desc: "The vertical dimension: Histomorphism adds access to computation history via Cofree comonad. Futumorphism adds lookahead via Free monad. Chronomorphism combines both for full temporal awareness.",
+                theta: 0,
+                phi: Math.PI / 2,
+                radius: 5.5,
+                showLabel: true
+            },
+            spatial: {
+                name: "Spatial Face",
+                title: "Spatial Extension",
+                desc: "The horizontal dimension: Paramorphism adds access to original structure during fold. Apomorphism adds shortcut capability during unfold. Toposmorphism combines both for full spatial awareness.",
+                theta: Math.PI / 2,
+                phi: Math.PI / 2,
+                radius: 5.5,
+                showLabel: true
+            },
+            composition: {
+                name: "Composition Axis",
+                title: "Fold ∘ Unfold",
+                desc: "The depth dimension: How catamorphism (fold) and anamorphism (unfold) compose. Hylomorphism is their direct composition. Extensions maintain this pattern.",
+                theta: Math.PI / 4,
+                phi: Math.PI / 2,
+                radius: 5.5,
+                showLabel: true
+            },
+            fold: {
+                name: "Fold Side",
+                title: "Catamorphism Family",
+                desc: "All fold operations: consuming inductive structures. From basic catamorphism to paramorphism (+ structure) to histomorphism (+ history).",
+                theta: -Math.PI / 6,
+                phi: Math.PI / 2.5,
+                radius: 5.5,
+                showLabel: true
+            },
+            unfold: {
+                name: "Unfold Side",
+                title: "Anamorphism Family",
+                desc: "All unfold operations: producing coinductive structures. From basic anamorphism to apomorphism (+ shortcut) to futumorphism (+ lookahead).",
+                theta: Math.PI + Math.PI / 6,
+                phi: Math.PI / 2.5,
+                radius: 5.5,
+                showLabel: true
+            }
+        };
+
+        // =====================================================
+        // THREE.JS SETUP
+        // =====================================================
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setClearColor(0x0a0a0f, 1);
+        container.appendChild(renderer.domElement);
+
+        // Camera state
+        let currentView = 'isometric';
+        let targetSpherical = { theta: Math.PI / 4, phi: Math.PI / 3, radius: 6 };
+        let spherical = { ...targetSpherical };
+        let isAnimating = false;
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0x404050, 0.5);
+        scene.add(ambientLight);
+
+        const pointLight1 = new THREE.PointLight(0xa855f7, 1, 20);
+        pointLight1.position.set(5, 5, 5);
+        scene.add(pointLight1);
+
+        const pointLight2 = new THREE.PointLight(0x4ecdc4, 0.8, 20);
+        pointLight2.position.set(-5, 3, -5);
+        scene.add(pointLight2);
+
+        const pointLight3 = new THREE.PointLight(0xf59e0b, 0.6, 20);
+        pointLight3.position.set(5, -3, -5);
+        scene.add(pointLight3);
+
+        // =====================================================
+        // CREATE CUBE STRUCTURE
+        // =====================================================
+        const cubeSize = 2;
+        const cubeGroup = new THREE.Group();
+
+        // Cube faces (semi-transparent)
+        const faceMaterials = {
+            temporal: new THREE.MeshBasicMaterial({
+                color: 0xa855f7, transparent: true, opacity: 0.03, side: THREE.DoubleSide
+            }),
+            spatial: new THREE.MeshBasicMaterial({
+                color: 0xf59e0b, transparent: true, opacity: 0.03, side: THREE.DoubleSide
+            }),
+            composition: new THREE.MeshBasicMaterial({
+                color: 0xec4899, transparent: true, opacity: 0.03, side: THREE.DoubleSide
+            })
+        };
+
+        // Create face planes
+        const planeGeo = new THREE.PlaneGeometry(cubeSize, cubeSize);
+
+        // Top face (temporal)
+        const topFace = new THREE.Mesh(planeGeo, faceMaterials.temporal);
+        topFace.position.set(0.5, cubeSize / 2 + 0.5, 0.5);
+        topFace.rotation.x = -Math.PI / 2;
+        cubeGroup.add(topFace);
+
+        // Right face (spatial)  
+        const rightFace = new THREE.Mesh(planeGeo, faceMaterials.spatial);
+        rightFace.position.set(cubeSize / 2 + 0.5, 0.5, 0.5);
+        rightFace.rotation.y = Math.PI / 2;
+        cubeGroup.add(rightFace);
+
+        // Front face (composition)
+        const frontFace = new THREE.Mesh(planeGeo, faceMaterials.composition);
+        frontFace.position.set(0.5, 0.5, cubeSize / 2 + 0.5);
+        cubeGroup.add(frontFace);
+
+        // Cube edges
+        const edgeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+        const edges = new THREE.EdgesGeometry(edgeGeometry);
+        const edgeMaterial = new THREE.LineBasicMaterial({
+            color: 0x4a4a5a,
+            transparent: true,
+            opacity: 0.8
+        });
+        const cubeEdges = new THREE.LineSegments(edges, edgeMaterial);
+        cubeEdges.position.set(0.5, 0.5, 0.5);
+        cubeGroup.add(cubeEdges);
+
+        scene.add(cubeGroup);
+
+        // =====================================================
+        // CREATE AXIS INDICATORS
+        // =====================================================
+        const axisLength = 2.8;
+        const axisOffset = -0.7;
+
+        // Temporal axis (Y)
+        const createAxis = (start, end, color) => {
+            const geom = new THREE.BufferGeometry().setFromPoints([start, end]);
+            const mat = new THREE.LineBasicMaterial({ color, opacity: 0.6, transparent: true });
+            return new THREE.Line(geom, mat);
+        };
+
+        // Arrow helper function
+        const createArrow = (origin, direction, length, color) => {
+            const arrow = new THREE.ArrowHelper(
+                direction.normalize(),
+                origin,
+                length,
+                color,
+                0.15,
+                0.08
+            );
+            return arrow;
+        };
+
+        const temporalArrow = createArrow(
+            new THREE.Vector3(axisOffset, -0.5, axisOffset),
+            new THREE.Vector3(0, 1, 0),
+            axisLength,
+            0xa855f7
+        );
+        scene.add(temporalArrow);
+
+        const spatialArrow = createArrow(
+            new THREE.Vector3(-0.5, axisOffset, axisOffset),
+            new THREE.Vector3(1, 0, 0),
+            axisLength,
+            0xf59e0b
+        );
+        scene.add(spatialArrow);
+
+        const compArrow = createArrow(
+            new THREE.Vector3(axisOffset, axisOffset, -0.5),
+            new THREE.Vector3(0, 0, 1),
+            axisLength,
+            0xec4899
+        );
+        scene.add(compArrow);
+
+        // =====================================================
+        // CREATE NODES
+        // =====================================================
+        const nodes = {};
+        const nodeGroup = new THREE.Group();
+
+        Object.entries(morphisms).forEach(([key, data]) => {
+            // Main sphere
+            const geometry = new THREE.SphereGeometry(0.13, 32, 32);
+            const material = new THREE.MeshStandardMaterial({
+                color: data.color,
+                emissive: data.color,
+                emissiveIntensity: 0.35,
+                metalness: 0.4,
+                roughness: 0.3
+            });
+
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(
+                data.position[0] * cubeSize - cubeSize / 2 + 0.5,
+                data.position[1] * cubeSize - cubeSize / 2 + 0.5,
+                data.position[2] * cubeSize - cubeSize / 2 + 0.5
+            );
+            mesh.userData = { key, ...data };
+
+            // Glow ring
+            const ringGeometry = new THREE.RingGeometry(0.16, 0.22, 32);
+            const ringMaterial = new THREE.MeshBasicMaterial({
+                color: data.color,
+                transparent: true,
+                opacity: 0.25,
+                side: THREE.DoubleSide
+            });
+            const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+            ring.position.copy(mesh.position);
+
+            // Outer glow
+            const glowGeometry = new THREE.SphereGeometry(0.2, 16, 16);
+            const glowMaterial = new THREE.MeshBasicMaterial({
+                color: data.color,
+                transparent: true,
+                opacity: 0.1
+            });
+            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+            glow.position.copy(mesh.position);
+
+            nodeGroup.add(mesh);
+            nodeGroup.add(ring);
+            nodeGroup.add(glow);
+            nodes[key] = { mesh, ring, glow, data };
+        });
+
+        scene.add(nodeGroup);
+
+        // =====================================================
+        // CREATE CONNECTIONS
+        // =====================================================
+        const connections = [
+            // Fold family (vertical left)
+            ['cata', 'histo', 0xa855f7, 0.5],
+            ['cata', 'para', 0xf59e0b, 0.5],
+
+            // Unfold family (vertical right)
+            ['ana', 'futu', 0xa855f7, 0.5],
+            ['ana', 'apo', 0xf59e0b, 0.5],
+
+            // Composition (depth)
+            ['cata', 'hylo', 0xec4899, 0.4],
+            ['ana', 'hylo', 0xec4899, 0.4],
+            ['para', 'topo', 0xec4899, 0.4],
+            ['apo', 'topo', 0xec4899, 0.4],
+            ['histo', 'chrono', 0xec4899, 0.4],
+            ['futu', 'chrono', 0xec4899, 0.4],
+
+            // Cross connections to dyna
+            ['para', 'dyna', 0x555555, 0.25],
+            ['histo', 'dyna', 0x555555, 0.25],
+            ['topo', 'dyna', 0x555555, 0.25],
+            ['chrono', 'dyna', 0x555555, 0.25],
+
+            // Horizontal temporal layer
+            ['histo', 'futu', 0xa855f7, 0.3],
+            ['para', 'apo', 0xf59e0b, 0.3]
+        ];
+
+        const connectionLines = [];
+        connections.forEach(([from, to, color, opacity]) => {
+            const fromPos = nodes[from].mesh.position;
+            const toPos = nodes[to].mesh.position;
+
+            const lineGeom = new THREE.BufferGeometry().setFromPoints([fromPos, toPos]);
+            const lineMat = new THREE.LineBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: opacity
+            });
+            const line = new THREE.Line(lineGeom, lineMat);
+            scene.add(line);
+            connectionLines.push(line);
+        });
+
+        // =====================================================
+        // INTERACTION
+        // =====================================================
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let selectedNode = null;
+        let hoveredNode = null;
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+
+        function updateInfoPanel(data) {
+            document.getElementById('info-symbol').textContent = data.symbol;
+            document.getElementById('info-name').textContent = data.name;
+            document.getElementById('info-etymology').textContent = data.etymology;
+            document.getElementById('info-type').textContent = data.type;
+            document.getElementById('info-desc').textContent = data.desc;
+            document.getElementById('info-use').textContent = data.use;
+        }
+
+        function updateFaceContents(viewKey) {
+            const faceNodesContainer = document.getElementById('face-nodes');
+            const currentFaceName = document.getElementById('current-face-name');
+
+            currentFaceName.textContent = faces[viewKey].name;
+
+            // Filter morphisms that belong to this face
+            const relevantMorphisms = Object.entries(morphisms).filter(([key, data]) => {
+                if (viewKey === 'isometric') return true;
+                return data.faces.includes(viewKey);
+            });
+
+            faceNodesContainer.innerHTML = relevantMorphisms.map(([key, data]) => `
+                <div class="face-node" data-key="${key}">
+                    <div class="node-color" style="background: ${data.colorHex}"></div>
+                    <span class="node-name">${data.name}</span>
+                    <span class="node-symbol">${data.symbol}</span>
+                </div>
+            `).join('');
+
+            // Add click handlers
+            faceNodesContainer.querySelectorAll('.face-node').forEach(node => {
+                node.addEventListener('click', () => {
+                    const key = node.dataset.key;
+                    selectNode(key);
+                });
+            });
+        }
+
+        function selectNode(key) {
+            const nodeData = nodes[key];
+            if (!nodeData) return;
+
+            selectedNode = nodeData.mesh;
+            updateInfoPanel(nodeData.data);
+
+            // Reset all nodes
+            Object.values(nodes).forEach(({ mesh, ring, glow }) => {
+                mesh.material.emissiveIntensity = 0.35;
+                ring.material.opacity = 0.25;
+                glow.material.opacity = 0.1;
+            });
+
+            // Highlight selected
+            nodeData.mesh.material.emissiveIntensity = 0.9;
+            nodeData.ring.material.opacity = 0.6;
+            nodeData.glow.material.opacity = 0.25;
+        }
+
+        function switchView(viewKey) {
+            if (viewKey === currentView) return;
+
+            currentView = viewKey;
+            const face = faces[viewKey];
+
+            // Update buttons
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.view === viewKey);
+            });
+
+            // Set target camera position
+            targetSpherical = {
+                theta: face.theta,
+                phi: face.phi,
+                radius: face.radius
+            };
+            isAnimating = true;
+
+            // Show transition overlay
+            const overlay = document.getElementById('transition-overlay');
+            overlay.classList.add('active');
+            setTimeout(() => overlay.classList.remove('active'), 300);
+
+            // Update face label
+            const faceLabel = document.getElementById('face-label');
+            document.getElementById('face-title').textContent = face.title;
+            document.getElementById('face-desc').textContent = face.desc;
+
+            if (face.showLabel) {
+                setTimeout(() => faceLabel.classList.add('visible'), 200);
+                setTimeout(() => faceLabel.classList.remove('visible'), 2500);
+            } else {
+                faceLabel.classList.remove('visible');
+            }
+
+            // Update face contents panel
+            updateFaceContents(viewKey);
+        }
+
+        // Mouse events
+        function onMouseMove(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            if (isDragging) {
+                const deltaX = event.clientX - previousMousePosition.x;
+                const deltaY = event.clientY - previousMousePosition.y;
+
+                spherical.theta -= deltaX * 0.008;
+                spherical.phi -= deltaY * 0.008;
+                spherical.phi = Math.max(0.2, Math.min(Math.PI - 0.2, spherical.phi));
+
+                targetSpherical.theta = spherical.theta;
+                targetSpherical.phi = spherical.phi;
+
+                previousMousePosition = { x: event.clientX, y: event.clientY };
+
+                // Clear active view button when manually rotating
+                document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+                currentView = 'custom';
+                return;
+            }
+
+            raycaster.setFromCamera(mouse, camera);
+            const meshes = Object.values(nodes).map(n => n.mesh);
+            const intersects = raycaster.intersectObjects(meshes);
+
+            const tooltip = document.getElementById('tooltip');
+
+            if (intersects.length > 0) {
+                hoveredNode = intersects[0].object;
+                document.body.style.cursor = 'pointer';
+
+                tooltip.textContent = hoveredNode.userData.name;
+                tooltip.style.left = event.clientX + 12 + 'px';
+                tooltip.style.top = event.clientY + 12 + 'px';
+                tooltip.classList.add('visible');
+            } else {
+                hoveredNode = null;
+                document.body.style.cursor = 'default';
+                tooltip.classList.remove('visible');
+            }
+        }
+
+        function onMouseDown(e) {
+            if (e.target.closest('.view-btn') || e.target.closest('.face-node')) return;
+            isDragging = true;
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+            isAnimating = false;
+        }
+
+        function onMouseUp() {
+            isDragging = false;
+        }
+
+        function onClick(event) {
+            if (event.target.closest('.view-btn') || event.target.closest('.face-node')) return;
+            if (hoveredNode) {
+                selectNode(hoveredNode.userData.key);
+            }
+        }
+
+        function onWheel(e) {
+            spherical.radius += e.deltaY * 0.008;
+            spherical.radius = Math.max(3, Math.min(12, spherical.radius));
+            targetSpherical.radius = spherical.radius;
+        }
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mousedown', onMouseDown);
+        window.addEventListener('mouseup', onMouseUp);
+        window.addEventListener('click', onClick);
+        window.addEventListener('wheel', onWheel);
+
+        // View button handlers
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', () => switchView(btn.dataset.view));
+        });
+
+        // =====================================================
+        // ANIMATION LOOP
+        // =====================================================
+        let time = 0;
+
+        function lerp(a, b, t) {
+            return a + (b - a) * t;
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.01;
+
+            // Smooth camera animation
+            if (isAnimating) {
+                const speed = 0.06;
+                spherical.theta = lerp(spherical.theta, targetSpherical.theta, speed);
+                spherical.phi = lerp(spherical.phi, targetSpherical.phi, speed);
+                spherical.radius = lerp(spherical.radius, targetSpherical.radius, speed);
+
+                // Check if close enough to stop
+                const dist = Math.abs(spherical.theta - targetSpherical.theta) +
+                    Math.abs(spherical.phi - targetSpherical.phi) +
+                    Math.abs(spherical.radius - targetSpherical.radius);
+                if (dist < 0.01) {
+                    isAnimating = false;
+                }
+            }
+
+            // Update camera position
+            camera.position.x = spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta);
+            camera.position.y = spherical.radius * Math.cos(spherical.phi);
+            camera.position.z = spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta);
+            camera.lookAt(0.3, 0.3, 0.3);
+
+            // Animate nodes
+            Object.values(nodes).forEach(({ ring, glow }, i) => {
+                ring.rotation.x = Math.sin(time + i * 0.5) * 0.2;
+                ring.rotation.y = time * 0.4 + i * 0.3;
+
+                // Pulse glow
+                const pulse = 1 + Math.sin(time * 1.5 + i) * 0.15;
+                glow.scale.set(pulse, pulse, pulse);
+            });
+
+            // Animate lights subtly
+            pointLight1.position.x = Math.sin(time * 0.2) * 5;
+            pointLight1.position.z = Math.cos(time * 0.2) * 5;
+
+            renderer.render(scene, camera);
+        }
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Initialize
+        updateFaceContents('isometric');
+        updateInfoPanel(morphisms.cata);
+        animate();
+    </script>
+</body>
+
+</html>

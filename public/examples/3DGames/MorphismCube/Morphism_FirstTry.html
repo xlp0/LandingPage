@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Morphism Cube — Recursion Schemes in 3D</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-panel: rgba(15, 15, 25, 0.85);
+            --text-primary: #e8e6e3;
+            --text-secondary: #8a8a9a;
+            --accent-fold: #ff6b6b;
+            --accent-unfold: #4ecdc4;
+            --accent-temporal: #a855f7;
+            --accent-spatial: #f59e0b;
+            --accent-combined: #ec4899;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glow-soft: 0 0 40px rgba(168, 85, 247, 0.15);
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .overlay {
+            position: fixed;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .overlay>* {
+            pointer-events: auto;
+        }
+
+        /* Header */
+        .header {
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem 3rem;
+            background: linear-gradient(180deg, rgba(10, 10, 15, 0.95) 0%, transparent 100%);
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            margin-bottom: 0.3rem;
+        }
+
+        .header h1 span {
+            font-style: italic;
+            color: var(--accent-temporal);
+        }
+
+        .header .subtitle {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        /* Info Panel */
+        .info-panel {
+            bottom: 2rem;
+            left: 2rem;
+            width: 340px;
+            background: var(--bg-panel);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(20px);
+            box-shadow: var(--glow-soft);
+        }
+
+        .info-panel h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-panel h2 .symbol {
+            font-size: 1.5rem;
+        }
+
+        .info-panel .etymology {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .info-panel .type-sig {
+            font-size: 0.8rem;
+            background: rgba(168, 85, 247, 0.1);
+            padding: 0.6rem 0.8rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            border-left: 3px solid var(--accent-temporal);
+        }
+
+        .info-panel .description {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .info-panel .used-for {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .info-panel .used-for h3 {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-panel .used-for p {
+            font-size: 0.8rem;
+            color: var(--accent-unfold);
+        }
+
+        /* Legend */
+        .legend {
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-panel);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .legend h3 {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-secondary);
+            margin-bottom: 0.8rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .legend-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .legend-color.fold {
+            background: var(--accent-fold);
+        }
+
+        .legend-color.unfold {
+            background: var(--accent-unfold);
+        }
+
+        .legend-color.temporal {
+            background: var(--accent-temporal);
+        }
+
+        .legend-color.spatial {
+            background: var(--accent-spatial);
+        }
+
+        .legend-color.combined {
+            background: var(--accent-combined);
+        }
+
+        /* Axis Labels */
+        .axis-labels {
+            top: 50%;
+            right: 2rem;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .axis-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+        }
+
+        .axis-label .arrow {
+            font-size: 1rem;
+        }
+
+        .axis-label.temporal .arrow {
+            color: var(--accent-temporal);
+        }
+
+        .axis-label.spatial .arrow {
+            color: var(--accent-spatial);
+        }
+
+        .axis-label.composition .arrow {
+            color: var(--accent-combined);
+        }
+
+        /* Controls hint */
+        .controls-hint {
+            top: 50%;
+            left: 2rem;
+            transform: translateY(-50%);
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            line-height: 2;
+        }
+
+        .controls-hint kbd {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            margin-right: 0.3rem;
+        }
+
+        /* Node tooltip */
+        #tooltip {
+            position: fixed;
+            background: var(--bg-panel);
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.2s;
+            backdrop-filter: blur(10px);
+        }
+
+        #tooltip.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="canvas-container"></div>
+
+    <div class="overlay header">
+        <h1>The <span>Morphism</span> Cube</h1>
+        <div class="subtitle">Recursion Schemes in Category Theory</div>
+    </div>
+
+    <div class="overlay info-panel" id="info-panel">
+        <h2><span class="symbol">⦇⦈</span> <span id="info-name">Catamorphism</span></h2>
+        <div class="etymology" id="info-etymology">κατά (down) + μορφή (form)</div>
+        <div class="type-sig" id="info-type">μF → A</div>
+        <div class="description" id="info-desc">
+            The fundamental fold operation. Consumes an inductive structure to produce a value.
+            The unique F-algebra homomorphism from the initial algebra.
+        </div>
+        <div class="used-for">
+            <h3>Used For</h3>
+            <p id="info-use">Fold / Consume structures</p>
+        </div>
+    </div>
+
+    <div class="overlay legend">
+        <h3>Dimensions</h3>
+        <div class="legend-item">
+            <div class="legend-color fold"></div>
+            <span>Fold (Catamorphism family)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color unfold"></div>
+            <span>Unfold (Anamorphism family)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color temporal"></div>
+            <span>Temporal extension</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color spatial"></div>
+            <span>Spatial extension</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color combined"></div>
+            <span>Combined schemes</span>
+        </div>
+    </div>
+
+    <div class="overlay axis-labels">
+        <div class="axis-label temporal">
+            <span class="arrow">↑</span>
+            <span>Temporal</span>
+        </div>
+        <div class="axis-label spatial">
+            <span class="arrow">→</span>
+            <span>Spatial</span>
+        </div>
+        <div class="axis-label composition">
+            <span class="arrow">↗</span>
+            <span>Composition</span>
+        </div>
+    </div>
+
+    <div class="overlay controls-hint">
+        <div><kbd>Drag</kbd> Rotate</div>
+        <div><kbd>Scroll</kbd> Zoom</div>
+        <div><kbd>Click</kbd> Select node</div>
+    </div>
+
+    <div id="tooltip"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Morphism data
+        const morphisms = {
+            // Basic (no extension)
+            cata: {
+                name: "Catamorphism",
+                symbol: "⦇⦈",
+                etymology: "κατά (down) + μορφή (form)",
+                type: "μF → A",
+                desc: "The fundamental fold operation. Consumes an inductive structure to produce a value. The unique F-algebra homomorphism from the initial algebra.",
+                use: "Fold / Consume structures",
+                position: [0, 0, 0],
+                color: 0xff6b6b,
+                family: "fold"
+            },
+            ana: {
+                name: "Anamorphism",
+                symbol: "⦃⦄",
+                etymology: "ἀνά (up) + μορφή (form)",
+                type: "A → νF",
+                desc: "The fundamental unfold operation. Produces a coinductive structure from a seed value. The unique F-coalgebra homomorphism to the final coalgebra.",
+                use: "Unfold / Generate structures",
+                position: [0, 0, 1],
+                color: 0x4ecdc4,
+                family: "unfold"
+            },
+            hylo: {
+                name: "Hylomorphism",
+                symbol: "⦃⦇⦈⦄",
+                etymology: "ὕλη (matter) + μορφή (form)",
+                type: "A → B",
+                desc: "Composition of anamorphism followed by catamorphism. Builds an intermediate structure then immediately consumes it. Can be fused to eliminate the intermediate.",
+                use: "Build then consume (deforestation)",
+                position: [0, 0, 0.5],
+                color: 0xec4899,
+                family: "combined"
+            },
+
+            // Spatial extension
+            para: {
+                name: "Paramorphism",
+                symbol: "{⦅⦆}",
+                etymology: "παρά (beside) + μορφή (form)",
+                type: "μF → A",
+                desc: "Fold with access to the original substructure alongside the recursive result. Enables primitive recursion patterns where you need both the processed result and the original input.",
+                use: "Fold + original structure access",
+                position: [1, 0, 0],
+                color: 0xf59e0b,
+                family: "fold"
+            },
+            apo: {
+                name: "Apomorphism",
+                symbol: "⦃+νF⦄",
+                etymology: "ἀπό (from) + μορφή (form)",
+                type: "A → νF",
+                desc: "Unfold with the ability to shortcut to a completed result. Can either continue unfolding or inject a finished substructure directly.",
+                use: "Unfold + early termination",
+                position: [1, 0, 1],
+                color: 0xf59e0b,
+                family: "unfold"
+            },
+            topo: {
+                name: "Toposmorphism",
+                symbol: "⦇×μF⦈ ∘ ⦃+νF⦄",
+                etymology: "τόπος (place) + μορφή (form)",
+                type: "A → B",
+                desc: "Full spatial awareness: combines paramorphism's structure access with apomorphism's shortcut capability. The spatial counterpart to chronomorphism.",
+                use: "Bidirectional spatial transformation",
+                position: [1, 0, 0.5],
+                color: 0xec4899,
+                family: "combined"
+            },
+
+            // Temporal extension
+            histo: {
+                name: "Histomorphism",
+                symbol: "⦇Cofree⦈",
+                etymology: "ἱστός (web/tissue) + μορφή (form)",
+                type: "μF → A",
+                desc: "Fold with access to all previously computed results via the Cofree comonad. Enables course-of-values recursion with full history.",
+                use: "Fold + access to computation history",
+                position: [0, 1, 0],
+                color: 0xa855f7,
+                family: "fold"
+            },
+            futu: {
+                name: "Futumorphism",
+                symbol: "⦃Free⦄",
+                etymology: "futurus (future) + μορφή (form)",
+                type: "A → νF",
+                desc: "Unfold that can produce multiple layers at once via the Free monad. Enables lookahead in the generation process.",
+                use: "Unfold + multi-layer generation",
+                position: [0, 1, 1],
+                color: 0xa855f7,
+                family: "unfold"
+            },
+            chrono: {
+                name: "Chronomorphism",
+                symbol: "⦇Cofree⦈ ∘ ⦃Free⦄",
+                etymology: "χρόνος (time) + μορφή (form)",
+                type: "A → B",
+                desc: "Full temporal awareness: combines histomorphism's access to the past with futumorphism's ability to see the future. The most powerful time-aware recursion scheme.",
+                use: "Bidirectional temporal transformation",
+                position: [0, 1, 0.5],
+                color: 0xec4899,
+                family: "combined"
+            },
+
+            // Combined (Spatial + Temporal) - the "DYNA" corner
+            dyna: {
+                name: "Dynamorphism",
+                symbol: "⦇⦈ ∘ ⦃⦄ + memo",
+                etymology: "δύναμις (power) + μορφή (form)",
+                type: "A → B",
+                desc: "Hylomorphism with memoization. Often used for dynamic programming where intermediate results are cached and reused.",
+                use: "Dynamic programming / Memoized recursion",
+                position: [1, 1, 0.5],
+                color: 0xec4899,
+                family: "combined"
+            }
+        };
+
+        // Scene setup
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setClearColor(0x0a0a0f, 1);
+        container.appendChild(renderer.domElement);
+
+        // Camera position
+        camera.position.set(4, 3, 4);
+        camera.lookAt(0, 0, 0);
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0x404050, 0.5);
+        scene.add(ambientLight);
+
+        const pointLight1 = new THREE.PointLight(0xa855f7, 1, 20);
+        pointLight1.position.set(5, 5, 5);
+        scene.add(pointLight1);
+
+        const pointLight2 = new THREE.PointLight(0x4ecdc4, 0.8, 20);
+        pointLight2.position.set(-5, 3, -5);
+        scene.add(pointLight2);
+
+        // Create cube wireframe
+        const cubeSize = 2;
+        const cubeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+        const edgesGeometry = new THREE.EdgesGeometry(cubeGeometry);
+        const edgeMaterial = new THREE.LineBasicMaterial({
+            color: 0x3a3a4a,
+            transparent: true,
+            opacity: 0.6
+        });
+        const cubeEdges = new THREE.LineSegments(edgesGeometry, edgeMaterial);
+        cubeEdges.position.set(0.5, 0.5, 0.5);
+        scene.add(cubeEdges);
+
+        // Create axis lines with labels
+        const axisLength = 2.5;
+
+        // Temporal axis (Y - up)
+        const temporalAxisGeom = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(-0.5, -0.3, -0.5),
+            new THREE.Vector3(-0.5, axisLength, -0.5)
+        ]);
+        const temporalAxis = new THREE.Line(temporalAxisGeom, new THREE.LineBasicMaterial({ color: 0xa855f7, opacity: 0.7, transparent: true }));
+        scene.add(temporalAxis);
+
+        // Spatial axis (X - right)
+        const spatialAxisGeom = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(-0.3, -0.5, -0.5),
+            new THREE.Vector3(axisLength, -0.5, -0.5)
+        ]);
+        const spatialAxis = new THREE.Line(spatialAxisGeom, new THREE.LineBasicMaterial({ color: 0xf59e0b, opacity: 0.7, transparent: true }));
+        scene.add(spatialAxis);
+
+        // Composition axis (Z - forward)
+        const compAxisGeom = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(-0.5, -0.5, -0.3),
+            new THREE.Vector3(-0.5, -0.5, axisLength)
+        ]);
+        const compAxis = new THREE.Line(compAxisGeom, new THREE.LineBasicMaterial({ color: 0xec4899, opacity: 0.7, transparent: true }));
+        scene.add(compAxis);
+
+        // Node meshes
+        const nodes = {};
+        const nodeGroup = new THREE.Group();
+
+        Object.entries(morphisms).forEach(([key, data]) => {
+            // Create sphere for each morphism
+            const geometry = new THREE.SphereGeometry(0.12, 32, 32);
+            const material = new THREE.MeshStandardMaterial({
+                color: data.color,
+                emissive: data.color,
+                emissiveIntensity: 0.3,
+                metalness: 0.3,
+                roughness: 0.4
+            });
+
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(
+                data.position[0] * cubeSize - cubeSize / 2 + 0.5,
+                data.position[1] * cubeSize - cubeSize / 2 + 0.5,
+                data.position[2] * cubeSize - cubeSize / 2 + 0.5
+            );
+            mesh.userData = { key, ...data };
+
+            // Add glow ring
+            const ringGeometry = new THREE.RingGeometry(0.15, 0.2, 32);
+            const ringMaterial = new THREE.MeshBasicMaterial({
+                color: data.color,
+                transparent: true,
+                opacity: 0.3,
+                side: THREE.DoubleSide
+            });
+            const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+            ring.position.copy(mesh.position);
+
+            nodeGroup.add(mesh);
+            nodeGroup.add(ring);
+            nodes[key] = { mesh, ring };
+        });
+
+        scene.add(nodeGroup);
+
+        // Connection lines between related morphisms
+        const connections = [
+            // Basic to Spatial
+            ['cata', 'para', 0xf59e0b],
+            ['ana', 'apo', 0xf59e0b],
+
+            // Basic to Temporal
+            ['cata', 'histo', 0xa855f7],
+            ['ana', 'futu', 0xa855f7],
+
+            // Composition axis
+            ['cata', 'hylo', 0xec4899],
+            ['ana', 'hylo', 0xec4899],
+            ['para', 'topo', 0xec4899],
+            ['apo', 'topo', 0xec4899],
+            ['histo', 'chrono', 0xec4899],
+            ['futu', 'chrono', 0xec4899],
+
+            // To DYNA corner
+            ['para', 'dyna', 0x666666],
+            ['histo', 'dyna', 0x666666],
+            ['topo', 'dyna', 0x666666],
+            ['chrono', 'dyna', 0x666666]
+        ];
+
+        connections.forEach(([from, to, color]) => {
+            const fromPos = nodes[from].mesh.position;
+            const toPos = nodes[to].mesh.position;
+
+            const lineGeom = new THREE.BufferGeometry().setFromPoints([fromPos, toPos]);
+            const lineMat = new THREE.LineBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.4
+            });
+            const line = new THREE.Line(lineGeom, lineMat);
+            scene.add(line);
+        });
+
+        // Raycaster for interaction
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let selectedNode = null;
+        let hoveredNode = null;
+
+        // Update info panel
+        function updateInfoPanel(data) {
+            document.getElementById('info-name').textContent = data.name;
+            document.getElementById('info-panel').querySelector('.symbol').textContent = data.symbol;
+            document.getElementById('info-etymology').textContent = data.etymology;
+            document.getElementById('info-type').textContent = data.type;
+            document.getElementById('info-desc').textContent = data.desc;
+            document.getElementById('info-use').textContent = data.use;
+        }
+
+        // Mouse interaction
+        function onMouseMove(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const meshes = Object.values(nodes).map(n => n.mesh);
+            const intersects = raycaster.intersectObjects(meshes);
+
+            const tooltip = document.getElementById('tooltip');
+
+            if (intersects.length > 0) {
+                const node = intersects[0].object;
+                hoveredNode = node;
+                document.body.style.cursor = 'pointer';
+
+                tooltip.textContent = node.userData.name;
+                tooltip.style.left = event.clientX + 15 + 'px';
+                tooltip.style.top = event.clientY + 15 + 'px';
+                tooltip.classList.add('visible');
+            } else {
+                hoveredNode = null;
+                document.body.style.cursor = 'default';
+                tooltip.classList.remove('visible');
+            }
+        }
+
+        function onClick(event) {
+            if (hoveredNode) {
+                selectedNode = hoveredNode;
+                updateInfoPanel(hoveredNode.userData);
+
+                // Animate selection
+                Object.values(nodes).forEach(({ mesh, ring }) => {
+                    mesh.material.emissiveIntensity = 0.3;
+                    ring.material.opacity = 0.3;
+                });
+
+                const nodeData = nodes[hoveredNode.userData.key];
+                nodeData.mesh.material.emissiveIntensity = 0.8;
+                nodeData.ring.material.opacity = 0.6;
+            }
+        }
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('click', onClick);
+
+        // Orbit controls (simple implementation)
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let spherical = { theta: Math.PI / 4, phi: Math.PI / 3, radius: 6 };
+
+        container.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+        });
+
+        container.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        container.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+
+            const deltaX = e.clientX - previousMousePosition.x;
+            const deltaY = e.clientY - previousMousePosition.y;
+
+            spherical.theta -= deltaX * 0.01;
+            spherical.phi -= deltaY * 0.01;
+            spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi));
+
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+        });
+
+        container.addEventListener('wheel', (e) => {
+            spherical.radius += e.deltaY * 0.01;
+            spherical.radius = Math.max(3, Math.min(12, spherical.radius));
+        });
+
+        // Animation
+        let time = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.01;
+
+            // Update camera from spherical coordinates
+            camera.position.x = spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta);
+            camera.position.y = spherical.radius * Math.cos(spherical.phi);
+            camera.position.z = spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta);
+            camera.lookAt(0, 0.3, 0);
+
+            // Animate rings
+            Object.values(nodes).forEach(({ ring }, i) => {
+                ring.rotation.x = Math.sin(time + i * 0.5) * 0.3;
+                ring.rotation.y = time * 0.5 + i * 0.3;
+            });
+
+            // Subtle node pulsing
+            Object.values(nodes).forEach(({ mesh }, i) => {
+                const scale = 1 + Math.sin(time * 2 + i) * 0.05;
+                mesh.scale.set(scale, scale, scale);
+            });
+
+            // Animate lights
+            pointLight1.position.x = Math.sin(time * 0.3) * 5;
+            pointLight1.position.z = Math.cos(time * 0.3) * 5;
+
+            renderer.render(scene, camera);
+        }
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Start animation
+        animate();
+
+        // Initialize with catamorphism selected
+        updateInfoPanel(morphisms.cata);
+    </script>
+</body>
+
+</html>

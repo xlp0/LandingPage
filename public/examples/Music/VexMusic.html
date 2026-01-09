@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Sheet Viewer</title>
+    <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.3/build/cjs/vexflow.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f9f6f0;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c1810;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        #music-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 14px;
+            cursor: pointer;
+            background: #4a6741;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #3a5331;
+        }
+
+        button.active {
+            background: #2c1810;
+        }
+
+        .song-info {
+            text-align: center;
+            padding: 15px;
+            background: #f0ebe3;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .song-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c1810;
+        }
+
+        .song-composer {
+            color: #666;
+            font-style: italic;
+        }
+
+        .legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0ebe3;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+
+        .legend h3 {
+            margin-top: 0;
+            color: #2c1810;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🎼 Music Sheet Viewer</h1>
+    <p class="subtitle">Demonstrating dynamic music notation with different datasets</p>
+
+    <div class="controls">
+        <button onclick="loadSong('twinkle')" id="btn-twinkle" class="active">Twinkle Twinkle</button>
+        <button onclick="loadSong('ode')" id="btn-ode">Ode to Joy</button>
+        <button onclick="loadSong('scale')" id="btn-scale">C Major Scale</button>
+        <button onclick="loadSong('chord')" id="btn-chord">Chord Progression</button>
+    </div>
+
+    <div class="song-info">
+        <div class="song-title" id="song-title">Twinkle Twinkle Little Star</div>
+        <div class="song-composer" id="song-composer">Traditional</div>
+    </div>
+
+    <div id="music-container"></div>
+
+    <div class="legend">
+        <h3>About This Demo</h3>
+        <p>This page demonstrates how the same rendering code can display different music by simply changing the data.
+            Each button loads a different dataset containing notes for both the treble (right hand) and bass (left hand)
+            clefs.</p>
+        <p>The music is rendered using <strong>VexFlow</strong>, an open-source JavaScript library for music notation.
+        </p>
+    </div>
+
+    <script>
+        // Access VexFlow from the global Vex object
+        const { Renderer, Stave, StaveNote, Voice, Formatter, StaveConnector } = Vex.Flow;
+
+        // ============================================
+        // MUSIC DATA SETS - Change these to show different music!
+        // ============================================
+
+        const songs = {
+            twinkle: {
+                title: "Twinkle Twinkle Little Star",
+                composer: "Traditional",
+                timeSignature: "4/4",
+                // Each measure contains arrays of notes for treble and bass
+                measures: [
+                    {
+                        treble: [
+                            { keys: ["c/4"], duration: "q" },
+                            { keys: ["c/4"], duration: "q" },
+                            { keys: ["g/4"], duration: "q" },
+                            { keys: ["g/4"], duration: "q" }
+                        ],
+                        bass: [
+                            { keys: ["c/3", "e/3", "g/3"], duration: "h" },
+                            { keys: ["c/3", "e/3", "g/3"], duration: "h" }
+                        ]
+                    },
+                    {
+                        treble: [
+                            { keys: ["a/4"], duration: "q" },
+                            { keys: ["a/4"], duration: "q" },
+                            { keys: ["g/4"], duration: "h" }
+                        ],
+                        bass: [
+                            { keys: ["f/3", "a/3"], duration: "h" },
+                            { keys: ["c/3", "e/3", "g/3"], duration: "h" }
+                        ]
+                    },
+                    {
+                        treble: [
+                            { keys: ["f/4"], duration: "q" },
+                            { keys: ["f/4"], duration: "q" },
+                            { keys: ["e/4"], duration: "q" },
+                            { keys: ["e/4"], duration: "q" }
+                        ],
+                        bass: [
+                            { keys: ["d/3", "f/3"], duration: "h" },
+                            { keys: ["c/3", "e/3"], duration: "h" }
+                        ]
+                    },
+                    {
+                        treble: [
+                            { keys: ["d/4"], duration: "q" },
+                            { keys: ["d/4"], duration: "q" },
+                            { keys: ["c/4"], duration: "h" }
+                        ],
+                        bass: [
+                            { keys: ["g/2", "b/2"], duration: "h" },
+                            { keys: ["c/3", "e/3", "g/3"], duration: "h" }
+                        ]
+                    }
+                ]
+            },
+
+            ode: {
+                title: "Ode to Joy",
+                composer: "Ludwig van Beethoven",
+                timeSignature: "4/4",
+                measures: [
+                    {
+                        treble: [
+                            { keys: ["e/4"], duration: "q" },
+                            { keys: ["e/4"], duration: "q" },
+                            { keys: ["f/4"], duration: "q" },
+                            { keys: ["g/4"], duration: "q" }
+                        ],
+                        bass: [
+                            { keys: ["c/3", "g/3"], duration: "w" }
+                        ]
+                    },
+                    {
+                        treble: [
+                            { keys: ["g/4"], duration: "q" },
+                            { keys: ["f/4"], duration: "q" },
+                            { keys: ["e/4"], duration: "q" },
+                            { keys: ["d/4"], duration: "q" }
+                        ],
+                        bass: [
+                            { keys: ["g/2", "b/2"], duration: "h" },
+                            { keys: ["g/2", "b/2"], duration: "h" }
+                        ]
+                    },
+                    {
+                        treble: [
+                            { keys: ["c/4"], duration: "q" },
+                            { keys: ["c/4"], duration: "q" },
+                            { keys: ["d/4"], duration: "q" },
+                            { keys: ["e/4"], duration: "q" }
+                        ],
+                        bass: [
+                            { keys: ["a/2", "c/3", "e/3"], duration: "h" },
+                            { keys: ["a/2", "c/3", "e/3"], duration: "h" }
+                        ]
+                    },
+                    {
+                        treble: [
+                            { keys: ["e/4"], duration: "qd" },
+                            { keys: ["d/4"], duration: "8" },
+                            { keys: ["d/4"], duration: "h" }
+                        ],
+                        bass: [
+                            { keys: ["g/2", "b/2", "d/3"], duration: "w" }
+                        ]
+                    }
+                ]
+            },
+
+            scale: {
+                title: "C Major Scale (Contrary Motion)",
+                composer: "Exercise",
+                timeSignature: "4/4",
+                measures: [
+                    {
+                        treble: [
+                            { keys: ["c/4"], duration: "q" },
+                            { keys: ["d/4"], duration: "q" },
+                            { keys: ["e/4"], duration: "q" },
+                            { keys: ["f/4"], duration: "q" }
+                        ],
+                        bass: [
+                            { keys: ["c/4"], duration: "q" },
+                            { keys: ["b/3"], duration: "q" },
+                            { keys: ["a/3"], duration: "q" },
+                            { keys: ["g/3"], duration: "q" }
+                        ]
+                    },
+                    {
+                        treble: [
+                            { keys: ["g/4"], duration: "q" },
+                            { keys: ["a/4"], duration: "q" },
+                            { keys: ["b/4"], duration: "q" },
+                            { keys: ["c/5"], duration: "q" }
+                        ],
+                        bass: [
+                            { keys: ["f/3"], duration: "q" },
+                            { keys: ["e/3"], duration: "q" },
+                            { keys: ["d/3"], duration: "q" },
+                            { keys: ["c/3"], duration: "q" }
+                        ]
+                    },
+                    {
+                        treble: [
+                            { keys: ["c/5"], duration: "q" },
+                            { keys: ["b/4"], duration: "q" },
+                            { keys: ["a/4"], duration: "q" },
+                            { keys: ["g/4"], duration: "q" }
+                        ],
+                        bass: [
+                            { keys: ["c/3"], duration: "q" },
+                            { keys: ["d/3"], duration: "q" },
+                            { keys: ["e/3"], duration: "q" },
+                            { keys: ["f/3"], duration: "q" }
+                        ]
+                    },
+                    {
+                        treble: [
+                            { keys: ["f/4"], duration: "q" },
+                            { keys: ["e/4"], duration: "q" },
+                            { keys: ["d/4"], duration: "q" },
+                            { keys: ["c/4"], duration: "q" }
+                        ],
+                        bass: [
+                            { keys: ["g/3"], duration: "q" },
+                            { keys: ["a/3"], duration: "q" },
+                            { keys: ["b/3"], duration: "q" },
+                            { keys: ["c/4"], duration: "q" }
+                        ]
+                    }
+                ]
+            },
+
+            chord: {
+                title: "Common Chord Progression",
+                composer: "I - V - vi - IV in C Major",
+                timeSignature: "4/4",
+                measures: [
+                    {
+                        treble: [
+                            { keys: ["e/4", "g/4", "c/5"], duration: "w" }
+                        ],
+                        bass: [
+                            { keys: ["c/3"], duration: "h" },
+                            { keys: ["g/2"], duration: "h" }
+                        ]
+                    },
+                    {
+                        treble: [
+                            { keys: ["d/4", "g/4", "b/4"], duration: "w" }
+                        ],
+                        bass: [
+                            { keys: ["g/2"], duration: "h" },
+                            { keys: ["d/3"], duration: "h" }
+                        ]
+                    },
+                    {
+                        treble: [
+                            { keys: ["c/4", "e/4", "a/4"], duration: "w" }
+                        ],
+                        bass: [
+                            { keys: ["a/2"], duration: "h" },
+                            { keys: ["e/3"], duration: "h" }
+                        ]
+                    },
+                    {
+                        treble: [
+                            { keys: ["c/4", "f/4", "a/4"], duration: "w" }
+                        ],
+                        bass: [
+                            { keys: ["f/2"], duration: "h" },
+                            { keys: ["c/3"], duration: "h" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // ============================================
+        // RENDERING CODE
+        // ============================================
+
+        function renderMusic(songKey) {
+            const song = songs[songKey];
+            const container = document.getElementById('music-container');
+            container.innerHTML = '';
+
+            // Update song info
+            document.getElementById('song-title').textContent = song.title;
+            document.getElementById('song-composer').textContent = song.composer;
+
+            // Calculate dimensions
+            const measureWidth = 200;
+            const totalWidth = Math.max(820, song.measures.length * measureWidth + 60);
+            const height = 280;
+
+            // Create renderer
+            const renderer = new Renderer(container, Renderer.Backends.SVG);
+            renderer.resize(totalWidth, height);
+            const context = renderer.getContext();
+            context.setFont('Arial', 10);
+
+            const startX = 10;
+            const trebleY = 40;
+            const bassY = 150;
+
+            song.measures.forEach((measure, index) => {
+                const x = startX + index * measureWidth;
+                const width = measureWidth;
+                const isFirst = index === 0;
+                const isLast = index === song.measures.length - 1;
+
+                // Create staves
+                const trebleStave = new Stave(x, trebleY, width);
+                const bassStave = new Stave(x, bassY, width);
+
+                if (isFirst) {
+                    trebleStave.addClef('treble').addTimeSignature(song.timeSignature);
+                    bassStave.addClef('bass').addTimeSignature(song.timeSignature);
+                }
+
+                if (isLast) {
+                    trebleStave.setEndBarType(Vex.Flow.Barline.type.END);
+                    bassStave.setEndBarType(Vex.Flow.Barline.type.END);
+                }
+
+                trebleStave.setContext(context).draw();
+                bassStave.setContext(context).draw();
+
+                // Draw brace connector on first measure
+                if (isFirst) {
+                    const brace = new StaveConnector(trebleStave, bassStave);
+                    brace.setType(StaveConnector.type.BRACE);
+                    brace.setContext(context).draw();
+
+                    const lineLeft = new StaveConnector(trebleStave, bassStave);
+                    lineLeft.setType(StaveConnector.type.SINGLE_LEFT);
+                    lineLeft.setContext(context).draw();
+                }
+
+                // Create notes
+                const trebleNotes = measure.treble.map(n =>
+                    new StaveNote({ keys: n.keys, duration: n.duration, clef: 'treble' })
+                );
+
+                const bassNotes = measure.bass.map(n =>
+                    new StaveNote({ keys: n.keys, duration: n.duration, clef: 'bass' })
+                );
+
+                // Create voices and add notes
+                const trebleVoice = new Voice({ num_beats: 4, beat_value: 4 }).setStrict(false);
+                const bassVoice = new Voice({ num_beats: 4, beat_value: 4 }).setStrict(false);
+
+                trebleVoice.addTickables(trebleNotes);
+                bassVoice.addTickables(bassNotes);
+
+                // Format and draw
+                new Formatter().joinVoices([trebleVoice]).format([trebleVoice], width - 50);
+                new Formatter().joinVoices([bassVoice]).format([bassVoice], width - 50);
+
+                trebleVoice.draw(context, trebleStave);
+                bassVoice.draw(context, bassStave);
+            });
+        }
+
+        function loadSong(songKey) {
+            // Update button states
+            document.querySelectorAll('.controls button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('btn-' + songKey).classList.add('active');
+
+            // Render the music
+            renderMusic(songKey);
+        }
+
+        // Initial render
+        loadSong('twinkle');
+    </script>
+</body>
+
+</html>

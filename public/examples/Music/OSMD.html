@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenSheetMusicDisplay Player</title>
+    <!-- OSMD Library -->
+    <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.8.6/build/opensheetmusicdisplay.min.js"></script>
+    <!-- Tone.js for audio synthesis -->
+    <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #eee;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 5px;
+            font-weight: 300;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 25px;
+            font-size: 0.95em;
+        }
+
+        .song-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .song-btn {
+            padding: 12px 24px;
+            font-size: 14px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            transition: all 0.3s;
+        }
+
+        .song-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .song-btn.active {
+            background: #e94560;
+            border-color: #e94560;
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+        }
+
+        .music-container {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        #osmd-container {
+            min-height: 300px;
+            overflow-x: auto;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .play-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .play-btn.play {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            color: white;
+        }
+
+        .play-btn.play:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(74, 222, 128, 0.5);
+        }
+
+        .play-btn.pause {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+        }
+
+        .play-btn.stop {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+            color: white;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+        }
+
+        .play-btn.stop:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(248, 113, 113, 0.5);
+        }
+
+        .tempo-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+        }
+
+        .tempo-control input[type="range"] {
+            width: 120px;
+            accent-color: #e94560;
+        }
+
+        .tempo-value {
+            min-width: 70px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+
+        .progress-container {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e94560, #ff6b9d);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .progress-time {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #e94560;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-card h3 {
+            margin-top: 0;
+            color: #e94560;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .info-card p {
+            margin: 0;
+            color: #aaa;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .info-card code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            color: #4ade80;
+        }
+
+        .song-title-display {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .song-title-display h2 {
+            margin: 0;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .song-title-display .composer {
+            color: #666;
+            font-style: italic;
+            font-size: 0.9em;
+        }
+
+        /* Style the cursor */
+        .osmd-cursor {
+            background-color: rgba(233, 69, 96, 0.3) !important;
+            border-left: 3px solid #e94560 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🎼 OpenSheetMusicDisplay Player</h1>
+    <p class="subtitle">Interactive sheet music with playback cursor • Powered by OSMD + Tone.js</p>
+
+    <div class="song-selector">
+        <button class="song-btn active" onclick="loadSong('twinkle')" id="btn-twinkle">Twinkle Twinkle</button>
+        <button class="song-btn" onclick="loadSong('ode')" id="btn-ode">Ode to Joy</button>
+        <button class="song-btn" onclick="loadSong('scale')" id="btn-scale">C Major Scale</button>
+        <button class="song-btn" onclick="loadSong('minuet')" id="btn-minuet">Minuet</button>
+    </div>
+
+    <div class="controls">
+        <button class="play-btn play" id="play-btn" onclick="togglePlay()">▶</button>
+        <button class="play-btn stop" onclick="stopPlayback()">■</button>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-time">
+                <span id="current-time">0:00</span>
+                <span id="total-time">0:00</span>
+            </div>
+        </div>
+
+        <div class="tempo-control">
+            <span>🎚️ Tempo:</span>
+            <input type="range" id="tempo-slider" min="40" max="200" value="100" onchange="updateTempo()">
+            <span class="tempo-value" id="tempo-value">100 BPM</span>
+        </div>
+    </div>
+
+    <div class="music-container">
+        <div class="song-title-display">
+            <h2 id="display-title">Twinkle Twinkle Little Star</h2>
+            <div class="composer" id="display-composer">Traditional</div>
+        </div>
+        <div id="osmd-container">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading sheet music...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <div class="info-card">
+            <h3>🎹 How It Works</h3>
+            <p>This player uses <strong>OpenSheetMusicDisplay</strong> to render MusicXML scores and
+                <strong>Tone.js</strong> for audio synthesis. The cursor follows along as the music plays.
+            </p>
+        </div>
+        <div class="info-card">
+            <h3>📄 MusicXML Format</h3>
+            <p>MusicXML is the standard interchange format for digital sheet music. It's supported by Finale, Sibelius,
+                MuseScore, and most notation software.</p>
+        </div>
+        <div class="info-card">
+            <h3>⌨️ Controls</h3>
+            <p>Click <strong>Play</strong> to start playback with cursor. Adjust <strong>tempo</strong> with the slider.
+                The cursor highlights the current position in the score.</p>
+        </div>
+    </div>
+
+    <!-- Songs data module -->
+    <script src="./songs-data.js"></script>
+
+    <script>
+        // ============================================
+        // OSMD & PLAYBACK ENGINE
+        // ============================================
+
+        let osmd = null;
+        let isPlaying = false;
+        let currentNoteIndex = 0;
+        let playbackTimer = null;
+        let tempo = 100;
+        let allNotes = [];
+        let startTime = 0;
+        let totalDuration = 0;
+
+        // Initialize Tone.js synth
+        const synth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: 'triangle' },
+            envelope: {
+                attack: 0.02,
+                decay: 0.1,
+                sustain: 0.3,
+                release: 0.8
+            }
+        }).toDestination();
+
+        // Initialize OSMD
+        async function initOSMD() {
+            osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay("osmd-container", {
+                autoResize: true,
+                drawTitle: false,
+                drawComposer: false,
+                drawCredits: false,
+                drawPartNames: true,
+                drawMeasureNumbers: true,
+                backend: "svg"
+            });
+
+            // Load initial song
+            await loadSong('twinkle');
+        }
+
+        async function loadSong(songKey) {
+            // Stop any current playback
+            stopPlayback();
+
+            // Update UI
+            document.querySelectorAll('.song-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + songKey).classList.add('active');
+
+            const songData = SONGS_DATA[songKey];
+            document.getElementById('display-title').textContent = songData.title;
+            document.getElementById('display-composer').textContent = songData.composer;
+
+            // Show loading
+            document.getElementById('osmd-container').innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading sheet music...</p>
+                </div>
+            `;
+
+            try {
+                // Load the embedded XML content directly
+                await osmd.load(songData.xml);
+                osmd.render();
+
+                // Initialize cursor
+                osmd.cursor.show();
+                osmd.cursor.reset();
+
+                // Extract notes for playback
+                extractNotes();
+                updateProgress(0);
+
+            } catch (error) {
+                console.error("Error loading music:", error);
+                document.getElementById('osmd-container').innerHTML = `
+                    <div class="loading">
+                        <p style="color: red;">Error loading sheet music. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function extractNotes() {
+            allNotes = [];
+            let currentTime = 0;
+
+            // Reset cursor and iterate through all notes
+            osmd.cursor.reset();
+
+            while (!osmd.cursor.Iterator.EndReached) {
+                const voices = osmd.cursor.VoicesUnderCursor();
+                const noteDuration = osmd.cursor.Iterator.CurrentSourceTimestamp.RealValue;
+
+                let notesAtPosition = [];
+
+                for (const voice of voices) {
+                    for (const note of voice.Notes) {
+                        if (!note.isRest()) {
+                            const pitch = note.Pitch;
+                            if (pitch) {
+                                const noteName = pitchToNoteName(pitch);
+                                const duration = note.Length.RealValue * (60 / tempo) * 4;
+                                notesAtPosition.push({
+                                    name: noteName,
+                                    duration: duration
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (notesAtPosition.length > 0 || allNotes.length === 0) {
+                    const stepDuration = osmd.cursor.Iterator.CurrentSourceTimestamp.RealValue;
+                    allNotes.push({
+                        notes: notesAtPosition,
+                        time: currentTime,
+                        stepDuration: stepDuration
+                    });
+                }
+
+                osmd.cursor.next();
+
+                // Calculate time for next step
+                const beatDuration = 60 / tempo;
+                currentTime += beatDuration;
+            }
+
+            totalDuration = currentTime;
+            osmd.cursor.reset();
+
+            // Update total time display
+            document.getElementById('total-time').textContent = formatTime(totalDuration);
+        }
+
+        function pitchToNoteName(pitch) {
+            const stepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+            const step = stepNames[pitch.FundamentalNote % 7];
+            const octave = pitch.Octave;
+            let accidental = '';
+
+            if (pitch.Accidental === 1) accidental = '#';
+            else if (pitch.Accidental === -1) accidental = 'b';
+
+            return step + accidental + octave;
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function updateProgress(currentTime) {
+            const progress = totalDuration > 0 ? (currentTime / totalDuration) * 100 : 0;
+            document.getElementById('progress-fill').style.width = progress + '%';
+            document.getElementById('current-time').textContent = formatTime(currentTime);
+        }
+
+        async function togglePlay() {
+            if (isPlaying) {
+                pausePlayback();
+            } else {
+                await startPlayback();
+            }
+        }
+
+        async function startPlayback() {
+            // Start Tone.js context (required for browsers)
+            await Tone.start();
+
+            isPlaying = true;
+            document.getElementById('play-btn').textContent = '⏸';
+            document.getElementById('play-btn').classList.remove('play');
+            document.getElementById('play-btn').classList.add('pause');
+
+            playNotes();
+        }
+
+        function pausePlayback() {
+            isPlaying = false;
+            document.getElementById('play-btn').textContent = '▶';
+            document.getElementById('play-btn').classList.remove('pause');
+            document.getElementById('play-btn').classList.add('play');
+
+            if (playbackTimer) {
+                clearTimeout(playbackTimer);
+            }
+        }
+
+        function stopPlayback() {
+            pausePlayback();
+            currentNoteIndex = 0;
+            if (osmd && osmd.cursor) {
+                osmd.cursor.reset();
+            }
+            updateProgress(0);
+            synth.releaseAll();
+        }
+
+        function playNotes() {
+            if (!isPlaying || currentNoteIndex >= allNotes.length) {
+                if (currentNoteIndex >= allNotes.length) {
+                    stopPlayback();
+                }
+                return;
+            }
+
+            const noteData = allNotes[currentNoteIndex];
+
+            // Move cursor
+            if (currentNoteIndex > 0) {
+                osmd.cursor.next();
+            }
+
+            // Play all notes at this position
+            for (const note of noteData.notes) {
+                const duration = Math.max(0.1, note.duration * 0.8);
+                synth.triggerAttackRelease(note.name, duration);
+            }
+
+            // Update progress
+            updateProgress(noteData.time);
+
+            // Schedule next note
+            currentNoteIndex++;
+
+            if (currentNoteIndex < allNotes.length) {
+                const beatDuration = (60 / tempo) * 1000; // ms per beat
+                playbackTimer = setTimeout(playNotes, beatDuration);
+            } else {
+                // End of piece
+                setTimeout(() => {
+                    stopPlayback();
+                }, 1000);
+            }
+        }
+
+        function updateTempo() {
+            tempo = parseInt(document.getElementById('tempo-slider').value);
+            document.getElementById('tempo-value').textContent = tempo + ' BPM';
+
+            // Re-extract notes with new tempo
+            if (osmd && osmd.graphic) {
+                const wasPlaying = isPlaying;
+                const savedIndex = currentNoteIndex;
+
+                if (wasPlaying) {
+                    pausePlayback();
+                }
+
+                extractNotes();
+                currentNoteIndex = savedIndex;
+
+                if (wasPlaying) {
+                    startPlayback();
+                }
+            }
+        }
+
+        // Initialize on page load
+        window.onload = initOSMD;
+    </script>
+</body>
+
+</html>
