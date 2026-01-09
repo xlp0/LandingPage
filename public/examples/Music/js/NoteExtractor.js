@@ -7,15 +7,28 @@ class NoteExtractor {
 
     /**
      * Convert OSMD pitch to Tone.js format (e.g., "C4", "F#5")
+     * OSMD uses chromatic scale: 0=C, 2=D, 4=E, 5=F, 7=G, 9=A, 11=B
      */
     pitchToString(pitch) {
-        const noteName = this.config.NOTE_NAMES[pitch.FundamentalNote % 7];
+        // Map chromatic scale (0-11) to note names
+        const chromaticToNote = {
+            0: 'C', 1: 'C#', 2: 'D', 3: 'D#', 4: 'E', 5: 'F',
+            6: 'F#', 7: 'G', 8: 'G#', 9: 'A', 10: 'A#', 11: 'B'
+        };
         
+        const noteName = chromaticToNote[pitch.FundamentalNote];
+        
+        // Apply accidental if present (overrides chromatic sharp)
         let accidental = '';
         if (pitch.Accidental === 1) accidental = '#';
         else if (pitch.Accidental === -1) accidental = 'b';
         
         const octave = pitch.Octave + this.config.OCTAVE_OFFSET;
+        
+        // If note already has sharp from chromatic and accidental is set, use accidental
+        if (noteName.includes('#') && accidental) {
+            return noteName[0] + accidental + octave;
+        }
         
         return noteName + accidental + octave;
     }
