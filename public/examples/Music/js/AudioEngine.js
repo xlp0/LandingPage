@@ -81,6 +81,19 @@ class AudioEngine {
 
             this.osmd.cursor.show();
             this.osmd.cursor.reset();
+            
+            // Style cursor for visibility (OSMD default is 1px tall, z-index -1)
+            // Use setTimeout because OSMD may reset styles after show()
+            setTimeout(() => {
+                if (this.osmd && this.osmd.cursor && this.osmd.cursor.cursorElement) {
+                    const cursor = this.osmd.cursor.cursorElement;
+                    cursor.style.zIndex = '100';
+                    cursor.style.height = '120px';
+                    cursor.style.width = '3px';
+                    cursor.style.backgroundColor = '#33cc33';
+                    cursor.style.opacity = '0.6';
+                }
+            }, 100);
 
             this.allNotes = this.noteExtractor.extractFromOSMD(this.osmd);
             this.currentNoteIndex = 0;

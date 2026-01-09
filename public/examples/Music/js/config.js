@@ -24,7 +24,14 @@ const MusicVisualizerConfig = {
     OSMD_OPTIONS: {
         autoResize: true,
         backend: 'svg',
-        drawingParameters: 'compact'
+        drawingParameters: 'compact',
+        followCursor: true,
+        cursorsOptions: [{
+            type: 0,
+            color: '#33cc33',
+            alpha: 0.5,
+            follow: true
+        }]
     }
 };
 

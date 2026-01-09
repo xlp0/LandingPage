@@ -33,19 +33,28 @@ This directory contains interactive music notation libraries and synchronized au
   - Support for various musical elements (clefs, time signatures, etc.)
 
 #### 4. **Synchronized Music Visualizer**
-Two versions available:
+Three versions available:
 - `SyncedMusicVisualizer.html` - Monolithic version (all-in-one)
-- `SyncedMusicVisualizerV2.html` - **Modular version** (recommended)
+- `SyncedMusicVisualizerV2.html` - Modular version with 2D waveform
+- `SyncedMusicVisualizerV3.html` - **3D version with interactive controls** (recommended)
 
+**V1 & V2 Features**:
 - **Integration**: OSMD + Tone.js + Redux + Canvas API
-- **Features**:
-  - **Dual-panel interface**: Sheet music (top) + Waveform (bottom)
-  - **Real-time synchronization**: Sheet cursor moves with audio playback
-  - **Audio synthesis**: Tone.js PolySynth with triangle oscillator
-  - **Visual feedback**: 64-band FFT frequency spectrum visualization
-  - **State management**: Plain Redux with playback and song reducers
-  - **Interactive controls**: Play/Pause/Stop with time display
-- **Purpose**: Demonstrates integrated approach to music education and analysis
+- **Dual-panel interface**: Sheet music (top) + Waveform (bottom)
+- **Real-time synchronization**: Sheet cursor moves with audio playback
+- **Audio synthesis**: Tone.js PolySynth with triangle oscillator
+- **Visual feedback**: 64-band FFT frequency spectrum visualization
+- **State management**: Plain Redux with playback and song reducers
+
+**V3 New Features**:
+- **3D Visualization**: Three.js-powered 3D audio bars with real-time FFT data
+- **Interactive Camera**: OrbitControls for mouse drag rotation and zoom
+- **Smooth Animations**: anime.js for fluid UI transitions
+- **Modern Styling**: Tailwind CSS with gradient backgrounds
+- **Enhanced Cursor**: Visible green cursor for score following
+- **All Libraries Local**: No external CDN dependencies
+
+**Purpose**: Demonstrates integrated approach to music education and analysis with modern 3D visualization
 
 ## 🎵 Music Files
 
@@ -182,7 +191,22 @@ SyncedMusicVisualizerV2.html (88 lines)
 
 ## 📝 Changelog
 
-### January 9, 2026 - V2 Modular Refactor (Latest)
+### January 9, 2026 - V3 3D Visualizer (Latest)
+- **Created** `SyncedMusicVisualizerV3.html` - 3D interactive version
+- **Added** Three.js r128 for 3D visualization with 32 animated bars
+- **Added** OrbitControls for mouse drag rotation and zoom (15-80 units)
+- **Added** anime.js v3.2.2 for smooth UI animations
+- **Added** Tailwind CSS runtime for modern gradient styling
+- **Downloaded** all external libraries locally to `js/lib/`:
+  - `three.min.js` (654 KB)
+  - `OrbitControls.js` (26 KB)
+  - `anime.min.js` (17 KB)
+  - `tailwind.js` (Tailwind runtime)
+- **Fixed** OSMD cursor visibility with custom styling (120px height, green color)
+- **Enhanced** 3D bars react to FFT data with emissive lighting
+- **Improved** side-by-side layout: sheet music + 3D visualization
+
+### January 9, 2026 - V2 Modular Refactor
 - **Created** `SyncedMusicVisualizerV2.html` - new modular version
 - **Extracted** CSS to `css/visualizer.css` with CSS variables
 - **Extracted** Redux store to `js/store.js`
