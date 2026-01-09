@@ -1,0 +1,49 @@
+{
+    "name": "@pkc/markdown-renderer",
+    "version": "1.0.0",
+    "description": "Markdown renderer with LaTeX math and Mermaid diagram support",
+    "type": "module",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "exports": {
+        ".": "./dist/index.js"
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
+    "keywords": [
+        "markdown",
+        "latex",
+        "katex",
+        "mermaid",
+        "renderer",
+        "documentation",
+        "browser"
+    ],
+    "author": "PKC Contributors",
+    "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xlp0/LandingPage.git",
+        "directory": "packages/markdown-renderer"
+    },
+    "bugs": {
+        "url": "https://github.com/xlp0/LandingPage/issues"
+    },
+    "homepage": "https://github.com/xlp0/LandingPage/tree/main/packages/markdown-renderer#readme",
+    "scripts": {
+        "build": "node build.js",
+        "prepublishOnly": "npm run build"
+    },
+    "devDependencies": {
+        "esbuild": "^0.27.1"
+    },
+    "dependencies": {
+        "katex": "^0.16.25"
+    },
+    "peerDependencies": {
+        "@pkc/core": "^1.0.0"
+    }
+}

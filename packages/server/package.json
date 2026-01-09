@@ -1,0 +1,50 @@
+{
+    "name": "pkc-server",
+    "version": "1.0.0",
+    "description": "Server utilities for PKC including WebSocket gateway and Express middleware",
+    "type": "module",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "exports": {
+        ".": "./dist/index.js",
+        "./ws-server": "./dist/ws-server.js",
+        "./room-registry": "./dist/room-registry.js"
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
+    "keywords": [
+        "websocket",
+        "express",
+        "server",
+        "pkc",
+        "p2p",
+        "signaling"
+    ],
+    "author": "PKC Contributors",
+    "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xlp0/LandingPage.git",
+        "directory": "packages/server"
+    },
+    "bugs": {
+        "url": "https://github.com/xlp0/LandingPage/issues"
+    },
+    "homepage": "https://github.com/xlp0/LandingPage/tree/main/packages/server#readme",
+    "scripts": {
+        "build": "node build.js",
+        "prepublishOnly": "npm run build"
+    },
+    "devDependencies": {
+        "esbuild": "^0.27.1"
+    },
+    "dependencies": {
+        "express": "^4.18.2",
+        "ws": "^8.18.3",
+        "cors": "^2.8.5"
+    },
+    "peerDependencies": {}
+}

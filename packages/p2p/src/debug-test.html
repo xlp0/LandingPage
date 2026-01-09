@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P2P Debug Test</title>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+    .pass { background: #d4edda; color: #155724; }
+    .fail { background: #f8d7da; color: #721c24; }
+    .info { background: #d1ecf1; color: #0c5460; }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    pre {
+      background: #f5f5f5;
+      padding: 10px;
+      border-radius: 3px;
+      overflow-x: auto;
+    }
+    #log {
+      height: 300px;
+      overflow-y: auto;
+      background: #000;
+      color: #0f0;
+      padding: 10px;
+      font-family: 'Courier New', monospace;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 P2P Serverless - Debug Test</h1>
+  
+  <div class="section info">
+    <h2>Test Instructions</h2>
+    <ol>
+      <li>Check if all prerequisites pass below</li>
+      <li>Open this page in TWO tabs</li>
+      <li>In Tab 1: Click "Create Offer"</li>
+      <li>Copy the offer JSON that appears</li>
+      <li>In Tab 2: Paste it and click "Accept Offer"</li>
+      <li>Copy the answer JSON from Tab 2</li>
+      <li>In Tab 1: Paste answer and click "Apply Answer"</li>
+      <li>Wait for connection...</li>
+    </ol>
+  </div>
+
+  <div class="section" id="prereq-check">
+    <h2>Prerequisites Check</h2>
+    <div id="prereq-results">Running checks...</div>
+  </div>
+
+  <div class="section">
+    <h2>Connection Test</h2>
+    
+    <div style="display: flex; gap: 20px;">
+      <div style="flex: 1;">
+        <h3>Step 1: Create Offer (Tab 1)</h3>
+        <button onclick="createOffer()">Create Offer</button>
+        <div id="offer-output"></div>
+      </div>
+      
+      <div style="flex: 1;">
+        <h3>Step 2: Accept Offer (Tab 2)</h3>
+        <textarea id="offer-input" rows="10" style="width: 100%;" placeholder="Paste offer JSON here"></textarea>
+        <button onclick="acceptOffer()">Accept Offer</button>
+        <div id="answer-output"></div>
+      </div>
+    </div>
+    
+    <div style="margin-top: 20px;">
+      <h3>Step 3: Apply Answer (Tab 1)</h3>
+      <textarea id="answer-input" rows="10" style="width: 100%;" placeholder="Paste answer JSON here"></textarea>
+      <button onclick="applyAnswer()">Apply Answer</button>
+    </div>
+    
+    <div style="margin-top: 20px;">
+      <h3>Status</h3>
+      <div id="connection-status" style="padding: 10px; background: #eee;">Not connected</div>
+      <button onclick="sendTestMessage()">Send Test Message</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Debug Log</h2>
+    <button onclick="clearLog()">Clear Log</button>
+    <div id="log"></div>
+  </div>
+
+  <script type="module">
+    let pc = null;
+    let dataChannel = null;
+    let remotePeerId = null;
+
+    window.log = function(msg) {
+      const logDiv = document.getElementById('log');
+      const time = new Date().toLocaleTimeString();
+      logDiv.innerHTML += `[${time}] ${msg}<br>`;
+      logDiv.scrollTop = logDiv.scrollHeight;
+      console.log(msg);
+    };
+
+    window.clearLog = function() {
+      document.getElementById('log').innerHTML = '';
+    };
+
+    // Check prerequisites
+    function checkPrerequisites() {
+      const results = document.getElementById('prereq-results');
+      let html = '<ul>';
+      let allPass = true;
+
+      // Check WebRTC
+      if (typeof RTCPeerConnection !== 'undefined') {
+        html += '<li class="pass">✅ WebRTC (RTCPeerConnection) available</li>';
+      } else {
+        html += '<li class="fail">❌ WebRTC (RTCPeerConnection) NOT available</li>';
+        allPass = false;
+      }
+
+      // Check HTTPS or localhost
+      const isSecure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+      if (isSecure) {
+        html += '<li class="pass">✅ Secure context (HTTPS or localhost)</li>';
+      } else {
+        html += '<li class="fail">❌ Not a secure context - WebRTC may not work</li>';
+        allPass = false;
+      }
+
+      // Check ES6 modules
+      html += '<li class="pass">✅ ES6 modules supported (script loaded)</li>';
+
+      html += '</ul>';
+      
+      if (allPass) {
+        html = '<div class="pass">' + html + '<p><strong>All checks passed! Ready to test.</strong></p></div>';
+      } else {
+        html = '<div class="fail">' + html + '<p><strong>Some checks failed. Connection may not work.</strong></p></div>';
+      }
+      
+      results.innerHTML = html;
+    }
+
+    // Create offer
+    window.createOffer = async function() {
+      try {
+        log('Creating RTCPeerConnection...');
+        
+        const iceServers = [
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:stun1.l.google.com:19302' }
+        ];
+        
+        pc = new RTCPeerConnection({ iceServers });
+        log('RTCPeerConnection created');
+
+        // Setup handlers
+        pc.onicecandidate = (event) => {
+          if (event.candidate) {
+            log('ICE candidate: ' + event.candidate.candidate.substring(0, 50) + '...');
+          } else {
+            log('ICE gathering complete');
+          }
+        };
+
+        pc.onconnectionstatechange = () => {
+          log('Connection state: ' + pc.connectionState);
+          updateConnectionStatus();
+        };
+
+        pc.oniceconnectionstatechange = () => {
+          log('ICE connection state: ' + pc.iceConnectionState);
+        };
+
+        // Create data channel
+        log('Creating data channel...');
+        dataChannel = pc.createDataChannel('test', { ordered: true });
+        
+        dataChannel.onopen = () => {
+          log('✅ Data channel OPENED!');
+          updateConnectionStatus();
+        };
+        
+        dataChannel.onclose = () => {
+          log('Data channel closed');
+          updateConnectionStatus();
+        };
+        
+        dataChannel.onmessage = (event) => {
+          log('📨 Received message: ' + event.data);
+        };
+
+        // Create offer
+        log('Creating offer...');
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        log('Offer created and set as local description');
+
+        // Wait for ICE gathering
+        await new Promise((resolve) => {
+          if (pc.iceGatheringState === 'complete') {
+            resolve();
+          } else {
+            pc.addEventListener('icegatheringstatechange', function handler() {
+              if (pc.iceGatheringState === 'complete') {
+                pc.removeEventListener('icegatheringstatechange', handler);
+                resolve();
+              }
+            });
+          }
+        });
+
+        const offerData = {
+          type: 'offer',
+          sdp: pc.localDescription
+        };
+
+        const output = document.getElementById('offer-output');
+        output.innerHTML = '<h4>Copy this offer:</h4><pre>' + JSON.stringify(offerData, null, 2) + '</pre>';
+        
+        log('✅ Offer ready! Copy it to Tab 2');
+        
+      } catch (e) {
+        log('❌ Error creating offer: ' + e.message);
+        console.error(e);
+      }
+    };
+
+    // Accept offer
+    window.acceptOffer = async function() {
+      try {
+        const offerText = document.getElementById('offer-input').value;
+        if (!offerText) {
+          alert('Please paste the offer JSON first');
+          return;
+        }
+
+        const offerData = JSON.parse(offerText);
+        log('Parsed offer data');
+
+        log('Creating RTCPeerConnection...');
+        const iceServers = [
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:stun1.l.google.com:19302' }
+        ];
+        
+        pc = new RTCPeerConnection({ iceServers });
+        log('RTCPeerConnection created');
+
+        // Setup handlers
+        pc.onicecandidate = (event) => {
+          if (event.candidate) {
+            log('ICE candidate: ' + event.candidate.candidate.substring(0, 50) + '...');
+          } else {
+            log('ICE gathering complete');
+          }
+        };
+
+        pc.onconnectionstatechange = () => {
+          log('Connection state: ' + pc.connectionState);
+          updateConnectionStatus();
+        };
+
+        pc.oniceconnectionstatechange = () => {
+          log('ICE connection state: ' + pc.iceConnectionState);
+        };
+
+        // Handle data channel
+        pc.ondatachannel = (event) => {
+          log('Received data channel');
+          dataChannel = event.channel;
+          
+          dataChannel.onopen = () => {
+            log('✅ Data channel OPENED!');
+            updateConnectionStatus();
+          };
+          
+          dataChannel.onclose = () => {
+            log('Data channel closed');
+            updateConnectionStatus();
+          };
+          
+          dataChannel.onmessage = (event) => {
+            log('📨 Received message: ' + event.data);
+          };
+        };
+
+        // Set remote description
+        log('Setting remote description...');
+        await pc.setRemoteDescription(new RTCSessionDescription(offerData.sdp));
+        log('Remote description set');
+
+        // Create answer
+        log('Creating answer...');
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        log('Answer created and set as local description');
+
+        // Wait for ICE gathering
+        await new Promise((resolve) => {
+          if (pc.iceGatheringState === 'complete') {
+            resolve();
+          } else {
+            pc.addEventListener('icegatheringstatechange', function handler() {
+              if (pc.iceGatheringState === 'complete') {
+                pc.removeEventListener('icegatheringstatechange', handler);
+                resolve();
+              }
+            });
+          }
+        });
+
+        const answerData = {
+          type: 'answer',
+          sdp: pc.localDescription
+        };
+
+        const output = document.getElementById('answer-output');
+        output.innerHTML = '<h4>Copy this answer back to Tab 1:</h4><pre>' + JSON.stringify(answerData, null, 2) + '</pre>';
+        
+        log('✅ Answer ready! Copy it back to Tab 1');
+        
+      } catch (e) {
+        log('❌ Error accepting offer: ' + e.message);
+        console.error(e);
+      }
+    };
+
+    // Apply answer
+    window.applyAnswer = async function() {
+      try {
+        const answerText = document.getElementById('answer-input').value;
+        if (!answerText) {
+          alert('Please paste the answer JSON first');
+          return;
+        }
+
+        const answerData = JSON.parse(answerText);
+        log('Parsed answer data');
+
+        if (!pc) {
+          log('❌ No peer connection - create offer first');
+          return;
+        }
+
+        log('Setting remote description...');
+        await pc.setRemoteDescription(new RTCSessionDescription(answerData.sdp));
+        log('✅ Remote description set');
+        log('Waiting for connection...');
+        
+      } catch (e) {
+        log('❌ Error applying answer: ' + e.message);
+        console.error(e);
+      }
+    };
+
+    // Send test message
+    window.sendTestMessage = function() {
+      if (!dataChannel || dataChannel.readyState !== 'open') {
+        log('❌ Data channel not open');
+        return;
+      }
+
+      const msg = 'Hello from ' + new Date().toLocaleTimeString();
+      dataChannel.send(msg);
+      log('📤 Sent: ' + msg);
+    };
+
+    // Update connection status
+    function updateConnectionStatus() {
+      const statusDiv = document.getElementById('connection-status');
+      
+      if (!pc) {
+        statusDiv.innerHTML = '⚪ No connection';
+        statusDiv.style.background = '#eee';
+        return;
+      }
+
+      const state = pc.connectionState;
+      const channelOpen = dataChannel && dataChannel.readyState === 'open';
+
+      if (channelOpen) {
+        statusDiv.innerHTML = '🟢 CONNECTED - Data channel open!';
+        statusDiv.style.background = '#d4edda';
+      } else if (state === 'connecting') {
+        statusDiv.innerHTML = '🟡 Connecting...';
+        statusDiv.style.background = '#fff3cd';
+      } else if (state === 'connected') {
+        statusDiv.innerHTML = '🟢 Connected (waiting for data channel)';
+        statusDiv.style.background = '#d1ecf1';
+      } else if (state === 'failed') {
+        statusDiv.innerHTML = '🔴 Connection FAILED';
+        statusDiv.style.background = '#f8d7da';
+      } else {
+        statusDiv.innerHTML = '⚪ State: ' + state;
+        statusDiv.style.background = '#eee';
+      }
+    }
+
+    // Run prerequisite check
+    checkPrerequisites();
+    log('Debug test page loaded');
+    
+  </script>
+</body>
+</html>

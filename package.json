@@ -1,11 +1,15 @@
 {
-  "name": "landingpage",
+  "name": "pkc-landing-page-monorepo",
   "version": "1.0.0",
-  "description": "A modern web-based viewer for PKC (Personal Knowledge Container) design documentation with support for markdown rendering, LaTeX mathematical equations, and Mermaid diagrams.",
+  "private": true,
+  "description": "PKC Landing Page - Monorepo for PKC packages and web application",
   "main": "index.js",
   "directories": {
     "doc": "docs"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
@@ -14,7 +18,12 @@
     "install-browsers": "playwright install",
     "report": "playwright show-report",
     "ws-server": "node ws-server.js",
-    "build:mcard": "esbuild build-mcard-bundle.js --bundle --format=esm --outfile=public/js/vendor/mcard-js.bundle.js --platform=browser"
+    "build:mcard": "esbuild build-mcard-bundle.js --bundle --format=esm --outfile=public/js/vendor/mcard-js.bundle.js --platform=browser",
+    "build": "npm run build --workspaces",
+    "publish:all": "npm publish --workspaces",
+    "version:major": "npm version major --workspaces",
+    "version:minor": "npm version minor --workspaces",
+    "version:patch": "npm version patch --workspaces"
   },
   "repository": {
     "type": "git",

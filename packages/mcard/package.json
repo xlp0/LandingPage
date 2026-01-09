@@ -1,0 +1,49 @@
+{
+    "name": "@pkc/mcard",
+    "version": "1.0.0",
+    "description": "MCard management system for browser environments with IndexedDB support",
+    "type": "module",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "exports": {
+        ".": "./dist/index.js",
+        "./manager": "./dist/MCardManager.js",
+        "./viewer": "./dist/CardViewer.js",
+        "./detector": "./dist/BrowserContentTypeDetector.js"
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
+    "keywords": [
+        "mcard",
+        "knowledge-management",
+        "indexeddb",
+        "browser",
+        "content-addressing",
+        "pkc"
+    ],
+    "author": "PKC Contributors",
+    "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xlp0/LandingPage.git",
+        "directory": "packages/mcard"
+    },
+    "bugs": {
+        "url": "https://github.com/xlp0/LandingPage/issues"
+    },
+    "homepage": "https://github.com/xlp0/LandingPage/tree/main/packages/mcard#readme",
+    "scripts": {
+        "build": "node build.js",
+        "prepublishOnly": "npm run build"
+    },
+    "devDependencies": {
+        "esbuild": "^0.27.1"
+    },
+    "dependencies": {
+        "mcard-js": "^2.1.13"
+    },
+    "peerDependencies": {}
+}

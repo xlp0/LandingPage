@@ -327,8 +327,7 @@
                 this.loadSongsList();
                 this.setupEventListeners();
 
-                // Initialize Tone.js
-                await Tone.start();
+                // Note: Tone.start() now called in togglePlay() for user gesture requirement
 
                 // Create analyser for waveform
                 this.analyser = Tone.getContext().createAnalyser();
@@ -430,6 +429,9 @@
             }
 
             async togglePlay() {
+                // Ensure Tone.js audio context is started (required by browsers on user gesture)
+                await Tone.start();
+
                 if (this.isPlaying) {
                     this.pause();
                 } else {

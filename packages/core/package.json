@@ -1,0 +1,45 @@
+{
+    "name": "@pkc/core",
+    "version": "1.0.0",
+    "description": "PKC Core - Lightweight module loader and capability detection for browser environments",
+    "type": "module",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "exports": {
+        ".": "./dist/index.js"
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
+    "keywords": [
+        "pkc",
+        "module-loader",
+        "capability-detection",
+        "browser",
+        "webrtc",
+        "websocket",
+        "indexeddb"
+    ],
+    "author": "PKC Contributors",
+    "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xlp0/LandingPage.git",
+        "directory": "packages/core"
+    },
+    "bugs": {
+        "url": "https://github.com/xlp0/LandingPage/issues"
+    },
+    "homepage": "https://github.com/xlp0/LandingPage/tree/main/packages/core#readme",
+    "scripts": {
+        "build": "node build.js",
+        "prepublishOnly": "npm run build"
+    },
+    "devDependencies": {
+        "esbuild": "^0.27.1"
+    },
+    "dependencies": {},
+    "peerDependencies": {}
+}

@@ -1,0 +1,51 @@
+{
+    "name": "@pkc/p2p",
+    "version": "1.0.0",
+    "description": "Serverless P2P networking using WebRTC with manual invitation exchange",
+    "type": "module",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "exports": {
+        ".": "./dist/index.js",
+        "./connection": "./dist/connection.js",
+        "./discovery": "./dist/discovery.js",
+        "./qr-code": "./dist/qr-code.js",
+        "./config": "./dist/config.js"
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
+    "keywords": [
+        "p2p",
+        "webrtc",
+        "serverless",
+        "peer-to-peer",
+        "decentralized",
+        "networking",
+        "browser"
+    ],
+    "author": "PKC Contributors",
+    "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xlp0/LandingPage.git",
+        "directory": "packages/p2p"
+    },
+    "bugs": {
+        "url": "https://github.com/xlp0/LandingPage/issues"
+    },
+    "homepage": "https://github.com/xlp0/LandingPage/tree/main/packages/p2p#readme",
+    "scripts": {
+        "build": "node build.js",
+        "prepublishOnly": "npm run build"
+    },
+    "devDependencies": {
+        "esbuild": "^0.27.1"
+    },
+    "dependencies": {},
+    "peerDependencies": {
+        "@pkc/core": "^1.0.0"
+    }
+}

@@ -1,0 +1,8 @@
+src/
+build.js
+*.test.js
+*.spec.js
+.DS_Store
+node_modules/
+example.html
+debug-test.html
