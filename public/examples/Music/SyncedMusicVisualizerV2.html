@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synchronized Music Sheet & Waveform Visualizer</title>
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.8.6/build/opensheetmusicdisplay.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/redux@4.2.1/dist/redux.min.js"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="./css/visualizer.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🎼 Synchronized Music Visualizer</h1>
+            <div class="subtitle">Sheet Music + Real-time Waveform</div>
+        </header>
+
+        <!-- Song Selector -->
+        <div class="song-selector" id="songSelector"></div>
+
+        <!-- Status Bar -->
+        <div class="status-bar" id="statusBar">Select a song to begin</div>
+
+        <!-- Split Panels -->
+        <div class="panels">
+            <!-- Music Sheet Panel -->
+            <div class="panel music-sheet-panel">
+                <div class="panel-header">📄 Music Sheet</div>
+                <div id="osmd-container">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎵</div>
+                        <div>Music sheet will appear here</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Waveform Panel -->
+            <div class="panel waveform-panel">
+                <div class="panel-header">🌊 Audio Waveform</div>
+                <div class="waveform-canvas-container">
+                    <canvas id="waveform-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Playback Controls -->
+        <div class="controls">
+            <button class="transport-btn" id="stopBtn" title="Stop">
+                <svg viewBox="0 0 24 24">
+                    <rect x="6" y="6" width="12" height="12" />
+                </svg>
+            </button>
+            <button class="transport-btn play-btn" id="playBtn" title="Play/Pause" disabled>
+                <svg viewBox="0 0 24 24" id="play-icon">
+                    <polygon points="8 5 19 12 8 19 8 5" />
+                </svg>
+                <svg viewBox="0 0 24 24" id="pause-icon" style="display:none;">
+                    <rect x="6" y="4" width="4" height="16" />
+                    <rect x="14" y="4" width="4" height="16" />
+                </svg>
+            </button>
+            <div class="time-info">
+                <div class="time-current" id="currentTime">00:00</div>
+                <div class="time-total">/ <span id="totalTime">00:00</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Scripts -->
+    <script src="./songs-data.js"></script>
+    <script src="./js/config.js"></script>
+    <script src="./js/store.js"></script>
+    <script src="./js/NoteExtractor.js"></script>
+    <script src="./js/AudioEngine.js"></script>
+    <script src="./js/UIManager.js"></script>
+    <script src="./js/main.js"></script>
+</body>
+
+</html>

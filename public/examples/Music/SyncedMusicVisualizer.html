@@ -9,6 +9,9 @@
     <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.8.6/build/opensheetmusicdisplay.min.js"></script>
     <!-- Tone.js for audio synthesis -->
     <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.min.js"></script>
+    <!-- Redux (plain) -->
+    <script src="https://cdn.jsdelivr.net/npm/redux@4.2.1/dist/redux.min.js"></script>
+
     <link
         href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap"
         rel="stylesheet">
@@ -303,103 +306,158 @@
     <script src="./songs-data.js"></script>
 
     <script>
-        class SyncedMusicVisualizer {
-            constructor() {
+        // --- REDUX STORE SETUP (Plain Redux) ---
+        const { createStore, combineReducers } = Redux;
+
+        // Action Types
+        const ActionTypes = {
+            SET_STATUS: 'SET_STATUS',
+            SET_PLAYING: 'SET_PLAYING',
+            SET_TIME: 'SET_TIME',
+            SET_DURATION: 'SET_DURATION',
+            RESET_PLAYBACK: 'RESET_PLAYBACK',
+            START_LOADING: 'START_LOADING',
+            SONG_LOADED: 'SONG_LOADED',
+            LOAD_ERROR: 'LOAD_ERROR'
+        };
+
+        // Action Creators
+        const setStatus = (status) => ({ type: ActionTypes.SET_STATUS, payload: status });
+        const setPlaying = (isPlaying) => ({ type: ActionTypes.SET_PLAYING, payload: isPlaying });
+        const setTime = (time) => ({ type: ActionTypes.SET_TIME, payload: time });
+        const setDuration = (duration) => ({ type: ActionTypes.SET_DURATION, payload: duration });
+        const resetPlayback = () => ({ type: ActionTypes.RESET_PLAYBACK });
+        const startLoading = (data) => ({ type: ActionTypes.START_LOADING, payload: data });
+        const songLoaded = (data) => ({ type: ActionTypes.SONG_LOADED, payload: data });
+        const loadError = (error) => ({ type: ActionTypes.LOAD_ERROR, payload: error });
+
+        // Playback Reducer
+        const playbackInitialState = {
+            isPlaying: false,
+            currentTime: 0,
+            duration: 0,
+            status: 'Ready'
+        };
+
+        function playbackReducer(state = playbackInitialState, action) {
+            switch (action.type) {
+                case ActionTypes.SET_STATUS:
+                    return { ...state, status: action.payload };
+                case ActionTypes.SET_PLAYING:
+                    return { ...state, isPlaying: action.payload };
+                case ActionTypes.SET_TIME:
+                    return { ...state, currentTime: action.payload };
+                case ActionTypes.SET_DURATION:
+                    return { ...state, duration: action.payload };
+                case ActionTypes.RESET_PLAYBACK:
+                    return { ...state, isPlaying: false, currentTime: 0, status: 'Ready' };
+                default:
+                    return state;
+            }
+        }
+
+        // Song Reducer
+        const songInitialState = {
+            currentSongId: null,
+            title: 'No Song Selected',
+            composer: '',
+            isLoading: false,
+            error: null
+        };
+
+        function songReducer(state = songInitialState, action) {
+            switch (action.type) {
+                case ActionTypes.START_LOADING:
+                    return { ...state, isLoading: true, error: null, title: action.payload.title };
+                case ActionTypes.SONG_LOADED:
+                    return { ...state, isLoading: false, currentSongId: action.payload.id, title: action.payload.title, composer: action.payload.composer };
+                case ActionTypes.LOAD_ERROR:
+                    return { ...state, isLoading: false, error: action.payload, title: 'Error Loading Song' };
+                default:
+                    return state;
+            }
+        }
+
+        // Combined Store
+        const rootReducer = combineReducers({
+            playback: playbackReducer,
+            song: songReducer
+        });
+
+        const store = createStore(rootReducer);
+
+
+        // --- AUDIO & LOGIC ENGINE (Non-UI) ---
+        class AudioEngine {
+            constructor(store) {
+                this.store = store;
                 this.osmd = null;
                 this.synth = null;
-                this.isPlaying = false;
-                this.currentSong = null;
                 this.analyser = null;
-                this.animationId = null;
                 this.allNotes = [];
                 this.currentNoteIndex = 0;
-                this.tempo = 120;
+                this.animationId = null;
 
-                // Canvas setup
-                this.canvas = document.getElementById('waveform-canvas');
-                this.ctx = this.canvas.getContext('2d');
-
-                this.init();
+                // Subscribe to store changes
+                this.unsubscribe = store.subscribe(() => this.handleStateChange());
+                this.lastState = store.getState();
             }
 
             async init() {
-                this.setupCanvas();
-                this.loadSongsList();
-                this.setupEventListeners();
-
-                // Note: Tone.start() now called in togglePlay() for user gesture requirement
-
-                // Create analyser for waveform
-                this.analyser = Tone.getContext().createAnalyser();
-                this.analyser.fftSize = 2048;
-                this.analyser.smoothingTimeConstant = 0.8;
-
-                // Create synth
-                this.synth = new Tone.PolySynth(Tone.Synth, {
-                    oscillator: { type: 'triangle' },
-                    envelope: { attack: 0.005, decay: 0.1, sustain: 0.3, release: 1 }
-                });
-
-                // Connect synth to analyser and destination
-                this.synth.connect(this.analyser);
-                this.analyser.connect(Tone.getDestination());
+                // Audio setup deferred until user gesture (see initAudio)
+                this.audioInitialized = false;
             }
 
-            setupCanvas() {
-                const container = this.canvas.parentElement;
-                const dpr = window.devicePixelRatio || 1;
-
-                this.canvas.width = container.clientWidth * dpr;
-                this.canvas.height = container.clientHeight * dpr;
-                this.canvas.style.width = container.clientWidth + 'px';
-                this.canvas.style.height = container.clientHeight + 'px';
-                this.ctx.scale(dpr, dpr);
-
-                window.addEventListener('resize', () => {
-                    this.canvas.width = container.clientWidth * dpr;
-                    this.canvas.height = container.clientHeight * dpr;
-                    this.canvas.style.width = container.clientWidth + 'px';
-                    this.canvas.style.height = container.clientHeight + 'px';
-                    this.ctx.scale(dpr, dpr);
-                });
-
-                this.drawEmptyWaveform();
+            async initAudio() {
+                if (this.audioInitialized) return;
+                try {
+                    await Tone.start();
+                    console.log("Tone.js started, state:", Tone.context.state);
+                    
+                    // Use Tone.js FFT for analysis
+                    this.fft = new Tone.FFT(64);
+                    
+                    // Create synth and connect to both FFT and destination
+                    this.synth = new Tone.PolySynth(Tone.Synth, {
+                        oscillator: { type: 'triangle' },
+                        envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.5 },
+                        volume: -6
+                    });
+                    
+                    // Chain: synth -> fft -> destination
+                    this.synth.connect(this.fft);
+                    this.synth.toDestination();
+                    
+                    this.audioInitialized = true;
+                    console.log("Audio initialized successfully, synth ready");
+                } catch (e) {
+                    console.warn("Audio initialization failed:", e);
+                }
             }
 
-            loadSongsList() {
-                const container = document.getElementById('songSelector');
+            handleStateChange() {
+                const state = this.store.getState();
+                const prev = this.lastState;
+                this.lastState = state;
 
-                Object.keys(SONGS_DATA).forEach(key => {
-                    const song = SONGS_DATA[key];
-                    const btn = document.createElement('button');
-                    btn.className = 'song-btn';
-                    btn.textContent = song.title;
-                    btn.dataset.songId = key;
-                    btn.addEventListener('click', () => this.loadSong(key));
-                    container.appendChild(btn);
-                });
-            }
-
-            setupEventListeners() {
-                document.getElementById('playBtn').addEventListener('click', () => this.togglePlay());
-                document.getElementById('stopBtn').addEventListener('click', () => this.stop());
+                if (state.playback.isPlaying !== prev.playback.isPlaying) {
+                    if (state.playback.isPlaying) {
+                        this.startInternalPlayback();
+                    } else {
+                        this.pauseInternalPlayback();
+                    }
+                }
             }
 
             async loadSong(songId) {
+                const song = SONGS_DATA[songId];
+                if (!song) return;
+
+                this.store.dispatch(startLoading({ title: song.title }));
+                this.store.dispatch(setStatus('Loading...'));
+                this.stop();
+
                 try {
-                    this.stop();
-
-                    const song = SONGS_DATA[songId];
-                    this.currentSong = song;
-
-                    // Update UI
-                    document.querySelectorAll('.song-btn').forEach(btn => {
-                        btn.classList.toggle('active', btn.dataset.songId === songId);
-                    });
-
-                    document.getElementById('statusBar').textContent = `Loading "${song.title}"...`;
-
-                    // Load into OSMD
                     if (!this.osmd) {
                         this.osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay('osmd-container', {
                             autoResize: true,
@@ -411,171 +469,271 @@
                     await this.osmd.load(song.xml);
                     await this.osmd.render();
 
-                    // Initialize cursor
                     this.osmd.cursor.show();
                     this.osmd.cursor.reset();
 
-                    // Extract notes for playback
-                    this.extractNotes();
+                    this.allNotes = this.extractNotes();
+                    this.currentNoteIndex = 0;
 
-                    // Enable play button
-                    document.getElementById('playBtn').disabled = false;
-                    document.getElementById('statusBar').textContent = `Ready: "${song.title}" by ${song.composer}`;
+                    const estimatedDuration = this.allNotes.length * 0.5;
 
-                } catch (error) {
-                    console.error('Error loading song:', error);
-                    document.getElementById('statusBar').textContent = `Error: ${error.message}`;
+                    this.store.dispatch(songLoaded({
+                        id: songId,
+                        title: song.title,
+                        composer: song.composer
+                    }));
+                    this.store.dispatch(setDuration(estimatedDuration));
+                    this.store.dispatch(setTime(0));
+                    this.store.dispatch(setStatus('Ready'));
+                } catch (err) {
+                    console.error("Error loading song:", err);
+                    this.store.dispatch(loadError(err.message));
                 }
             }
 
             async togglePlay() {
-                // Ensure Tone.js audio context is started (required by browsers on user gesture)
-                await Tone.start();
+                // Initialize audio on first user gesture
+                await this.initAudio();
 
-                if (this.isPlaying) {
-                    this.pause();
+                const state = this.store.getState();
+                if (state.playback.isPlaying) {
+                    this.store.dispatch(setPlaying(false));
+                    this.store.dispatch(setStatus('Paused'));
                 } else {
-                    await this.play();
+                    if (state.song.currentSongId) {
+                        this.store.dispatch(setPlaying(true));
+                        this.store.dispatch(setStatus('Playing'));
+                    }
                 }
-            }
-
-            async play() {
-                if (!this.currentSong) return;
-
-                this.isPlaying = true;
-                this.updatePlayButton();
-                this.currentNoteIndex = 0;
-
-                // Reset cursor
-                if (this.osmd && this.osmd.cursor) {
-                    this.osmd.cursor.reset();
-                }
-
-                // Start note playback
-                this.playNotes();
-
-                // Start waveform animation
-                this.startWaveformAnimation();
-
-                document.getElementById('statusBar').textContent = `Playing: "${this.currentSong.title}"`;
-            }
-
-            pause() {
-                this.isPlaying = false;
-                this.updatePlayButton();
-                Tone.Transport.pause();
-
-                if (this.animationId) {
-                    cancelAnimationFrame(this.animationId);
-                    this.animationId = null;
-                }
-
-                document.getElementById('statusBar').textContent = `Paused: "${this.currentSong.title}"`;
             }
 
             stop() {
-                this.isPlaying = false;
-                this.updatePlayButton();
-                Tone.Transport.stop();
-                Tone.Transport.cancel();
+                this.store.dispatch(resetPlayback());
+                this.pauseInternalPlayback();
                 this.currentNoteIndex = 0;
-
-                if (this.animationId) {
-                    cancelAnimationFrame(this.animationId);
-                    this.animationId = null;
-                }
-
-                // Reset cursor
                 if (this.osmd && this.osmd.cursor) {
                     this.osmd.cursor.reset();
                 }
-
-                this.drawEmptyWaveform();
-
-                if (this.currentSong) {
-                    document.getElementById('statusBar').textContent = `Ready: "${this.currentSong.title}"`;
-                }
             }
 
-            extractNotes() {
-                this.allNotes = [];
+            // --- Internal Audio/Music Logic ---
 
-                if (!this.osmd || !this.osmd.cursor) return;
-
-                this.osmd.cursor.reset();
-
-                while (!this.osmd.cursor.Iterator.EndReached) {
-                    const voices = this.osmd.cursor.VoicesUnderCursor();
-                    let notesAtPosition = [];
-
-                    for (const voice of voices) {
-                        for (const note of voice.Notes) {
-                            if (!note.isRest() && note.Pitch) {
-                                const pitch = note.Pitch;
-                                const octave = pitch.Octave;
-                                const tone = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'][pitch.FundamentalNote];
-                                const noteName = tone + octave;
-                                notesAtPosition.push(noteName);
-                            }
-                        }
-                    }
-
-                    this.allNotes.push({
-                        notes: notesAtPosition,
-                        duration: 0.5 // Fixed duration for demo
-                    });
-
-                    this.osmd.cursor.next();
+            startInternalPlayback() {
+                if (this.currentNoteIndex >= this.allNotes.length) {
+                    this.currentNoteIndex = 0;
+                    if (this.osmd) this.osmd.cursor.reset();
                 }
-
-                this.osmd.cursor.reset();
+                this.playNextNote();
+                this.startClock();
             }
 
-            playNotes() {
-                if (!this.isPlaying || this.currentNoteIndex >= this.allNotes.length) {
-                    if (this.currentNoteIndex >= this.allNotes.length) {
-                        this.stop();
-                    }
+            pauseInternalPlayback() {
+                if (this.playbackTimeout) clearTimeout(this.playbackTimeout);
+                if (this.clockTimer) clearInterval(this.clockTimer);
+            }
+
+            playNextNote() {
+                const state = this.store.getState();
+                if (!state.playback.isPlaying) return;
+
+                if (this.currentNoteIndex >= this.allNotes.length) {
+                    this.store.dispatch(setPlaying(false));
+                    this.store.dispatch(setStatus('Finished'));
                     return;
                 }
 
                 const noteData = this.allNotes[this.currentNoteIndex];
 
-                // Move cursor
-                if (this.currentNoteIndex > 0 && this.osmd && this.osmd.cursor) {
-                    this.osmd.cursor.next();
+                // Play notes (if synth available and notes exist)
+                if (this.synth && noteData.notes && noteData.notes.length > 0) {
+                    try {
+                        const now = Tone.now();
+                        noteData.notes.forEach(pitch => {
+                            this.synth.triggerAttackRelease(pitch, "8n", now);
+                        });
+                    } catch (e) {
+                        console.warn("Synth trigger failed:", e);
+                    }
                 }
 
-                // Play notes at this position
-                for (const note of noteData.notes) {
-                    this.synth.triggerAttackRelease(note, noteData.duration * 0.8);
+                // Advance OSMD cursor
+                if (this.osmd) {
+                    this.osmd.cursor.next();
                 }
 
                 this.currentNoteIndex++;
 
-                // Schedule next note
-                setTimeout(() => this.playNotes(), noteData.duration * 1000);
-            }
-
-            updatePlayButton() {
-                const playIcon = document.getElementById('play-icon');
-                const pauseIcon = document.getElementById('pause-icon');
-
-                if (this.isPlaying) {
-                    playIcon.style.display = 'none';
-                    pauseIcon.style.display = 'block';
-                } else {
-                    playIcon.style.display = 'block';
-                    pauseIcon.style.display = 'none';
+                // Tick the store time immediately for better responsiveness
+                if (this.currentNoteIndex % 2 === 0) {
+                    this.store.dispatch(setTime(this.currentNoteIndex * 0.5));
                 }
+
+                // Schedule next note
+                this.playbackTimeout = setTimeout(() => this.playNextNote(), 500);
             }
 
-            startWaveformAnimation() {
-                const animate = () => {
-                    if (!this.isPlaying) return;
+            startClock() {
+                if (this.clockTimer) clearInterval(this.clockTimer);
+                this.clockTimer = setInterval(() => {
+                    const time = this.currentNoteIndex * 0.5;
+                    this.store.dispatch(setTime(time));
+                }, 500); // Sync rhythm with playNextNote
+            }
 
+            extractNotes() {
+                this.allNotes = [];
+                if (!this.osmd || !this.osmd.cursor) return [];
+                this.osmd.cursor.reset();
+                while (!this.osmd.cursor.Iterator.EndReached) {
+                    const voices = this.osmd.cursor.VoicesUnderCursor();
+                    let notesAtPosition = [];
+                    for (const voice of voices) {
+                        for (const note of voice.Notes) {
+                            if (!note.isRest() && note.Pitch) {
+                                const pitch = note.Pitch;
+                                const noteNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+                                const noteName = noteNames[pitch.FundamentalNote % 7];
+                                // OSMD octave needs +3 offset for standard notation (C4 = middle C)
+                                let accidental = '';
+                                if (pitch.Accidental === 1) accidental = '#';
+                                else if (pitch.Accidental === -1) accidental = 'b';
+                                const octave = pitch.Octave + 3;
+                                notesAtPosition.push(noteName + accidental + octave);
+                            }
+                        }
+                    }
+                    if (notesAtPosition.length > 0) {
+                        this.allNotes.push({ notes: notesAtPosition, duration: 0.5 });
+                    }
+                    this.osmd.cursor.next();
+                }
+                this.osmd.cursor.reset();
+                console.log("Extracted notes:", this.allNotes.slice(0, 5));
+                return this.allNotes;
+            }
+
+            getFFT() {
+                return this.fft;
+            }
+        }
+
+
+        // --- UI MANAGER (Purely Reactive) ---
+        class UIManager {
+            constructor(store, audioEngine) {
+                this.store = store;
+                this.audioEngine = audioEngine;
+                this.canvas = document.getElementById('waveform-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.animationLoop = null;
+
+                // DOM Elements
+                this.elSongSelector = document.getElementById('songSelector');
+                this.elStatusBar = document.getElementById('statusBar');
+                this.elPlayBtn = document.getElementById('playBtn');
+                this.elStopBtn = document.getElementById('stopBtn');
+                this.elTimeCurrent = document.getElementById('currentTime');
+                this.elTimeTotal = document.getElementById('totalTime');
+                this.playIcon = document.getElementById('play-icon');
+                this.pauseIcon = document.getElementById('pause-icon');
+
+                // Subscribe
+                this.store.subscribe(() => this.render());
+
+                // Init
+                this.setupCanvas();
+                this.initSongList();
+                this.bindEvents();
+                this.startWaveformLoop();
+            }
+
+            setupCanvas() {
+                const container = this.canvas.parentElement;
+                const dpr = window.devicePixelRatio || 1;
+                const resize = () => {
+                    this.canvas.width = container.clientWidth * dpr;
+                    this.canvas.height = container.clientHeight * dpr;
+                    this.canvas.style.width = container.clientWidth + 'px';
+                    this.canvas.style.height = container.clientHeight + 'px';
+                    this.ctx.scale(dpr, dpr);
+                };
+                window.addEventListener('resize', resize);
+                resize();
+            }
+
+            initSongList() {
+                Object.keys(SONGS_DATA).forEach(key => {
+                    const song = SONGS_DATA[key];
+                    const btn = document.createElement('button');
+                    btn.className = 'song-btn';
+                    btn.textContent = song.title;
+                    btn.onclick = () => {
+                        if (this.audioEngine) {
+                            this.audioEngine.loadSong(key);
+                        } else {
+                            console.error("AudioEngine NOT initialized");
+                            alert("Audio system failed to initialize. Please check your browser's audio settings.");
+                        }
+                    };
+                    this.elSongSelector.appendChild(btn);
+                });
+            }
+
+            bindEvents() {
+                this.elPlayBtn.onclick = () => this.audioEngine.togglePlay();
+                this.elStopBtn.onclick = () => this.audioEngine.stop();
+            }
+
+            // Main Render Loop (Reactive)
+            render() {
+                const state = this.store.getState();
+                const { playback, song } = state;
+
+                // 1. Status Bar
+                if (song.isLoading) {
+                    this.elStatusBar.textContent = `Loading "${song.title}"...`;
+                } else if (song.error) {
+                    this.elStatusBar.textContent = `Error: ${song.error}`;
+                } else if (playback.isPlaying) {
+                    this.elStatusBar.textContent = `Playing: "${song.title}"`;
+                } else if (song.currentSongId) {
+                    this.elStatusBar.textContent = `Ready: "${song.title}" by ${song.composer || 'Unknown'}`;
+                } else {
+                    this.elStatusBar.textContent = 'Select a song to begin';
+                }
+
+                // 2. Play Button State
+                this.elPlayBtn.disabled = !song.currentSongId || song.isLoading;
+                if (playback.isPlaying) {
+                    this.playIcon.style.display = 'none';
+                    this.pauseIcon.style.display = 'block';
+                } else {
+                    this.playIcon.style.display = 'block';
+                    this.pauseIcon.style.display = 'none';
+                }
+
+                // 3. Time Display
+                this.elTimeCurrent.textContent = this.formatTime(playback.currentTime);
+                this.elTimeTotal.textContent = this.formatTime(playback.duration);
+
+                // 4. Song Buttons Selection
+                Array.from(this.elSongSelector.children).forEach(btn => {
+                    const isSelected = btn.textContent === song.title;
+                    btn.classList.toggle('active', isSelected);
+                });
+            }
+
+            formatTime(seconds) {
+                const min = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const sec = Math.floor(seconds % 60).toString().padStart(2, '0');
+                return `${min}:${sec}`;
+            }
+
+            // Waveform uses high-frequency loop (separate from Redux state updates)
+            startWaveformLoop() {
+                const animate = () => {
                     this.drawWaveform();
-                    this.animationId = requestAnimationFrame(animate);
+                    requestAnimationFrame(animate);
                 };
                 animate();
             }
@@ -583,58 +741,51 @@
             drawWaveform() {
                 const width = this.canvas.clientWidth;
                 const height = this.canvas.clientHeight;
+                const fft = this.audioEngine.getFFT();
 
-                // Get frequency data
-                const bufferLength = this.analyser.frequencyBinCount;
-                const dataArray = new Uint8Array(bufferLength);
-                this.analyser.getByteFrequencyData(dataArray);
-
-                // Clear canvas
                 this.ctx.fillStyle = '#0a0e14';
                 this.ctx.fillRect(0, 0, width, height);
 
-                // Draw bars
-                const barCount = 64;
+                if (!fft) return;
+
+                // Tone.js FFT returns values in dB (-Infinity to 0)
+                const values = fft.getValue();
+                const barCount = values.length;
                 const barWidth = width / barCount;
 
                 for (let i = 0; i < barCount; i++) {
-                    const dataIndex = Math.floor((i / barCount) * bufferLength);
-                    const value = dataArray[dataIndex] / 255;
+                    // Convert dB to 0-1 range (dB values are typically -100 to 0)
+                    const db = values[i];
+                    const value = Math.max(0, (db + 100) / 100);
                     const barHeight = value * height * 0.8;
 
-                    const hue = 180 + (value * 60); // Cyan to blue
+                    const hue = 180 + (value * 60);
                     this.ctx.fillStyle = `hsla(${hue}, 70%, 60%, 0.8)`;
-
-                    const x = i * barWidth;
-                    const y = height - barHeight;
-
-                    this.ctx.fillRect(x, y, barWidth - 2, barHeight);
-                }
-            }
-
-            drawEmptyWaveform() {
-                const width = this.canvas.clientWidth;
-                const height = this.canvas.clientHeight;
-
-                this.ctx.fillStyle = '#0a0e14';
-                this.ctx.fillRect(0, 0, width, height);
-
-                // Draw empty bars
-                const barCount = 64;
-                const barWidth = width / barCount;
-
-                for (let i = 0; i < barCount; i++) {
-                    this.ctx.fillStyle = 'rgba(42, 53, 68, 0.3)';
-                    const x = i * barWidth;
-                    this.ctx.fillRect(x, height - 20, barWidth - 2, 20);
+                    this.ctx.fillRect(i * barWidth, height - barHeight, barWidth - 2, barHeight);
                 }
             }
         }
 
-        // Initialize when page loads
-        window.addEventListener('DOMContentLoaded', () => {
-            new SyncedMusicVisualizer();
-        });
+        // --- BOOTSTRAP ---
+        async function bootstrap() {
+            if (window.app) return; // Prevent double init
+
+            const audioEngine = new AudioEngine(store);
+            await audioEngine.init();
+
+            const uiManager = new UIManager(store, audioEngine);
+
+            // Expose for debugging
+            window.app = { store, audioEngine, uiManager };
+            console.log("App Bootstrapped Successfully");
+        }
+
+        // Handle bothDOMContentLoaded and cases where script runs after it fired
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', bootstrap);
+        } else {
+            bootstrap();
+        }
     </script>
 </body>
 
