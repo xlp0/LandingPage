@@ -291,6 +291,9 @@
             }
 
             initSongList() {
+                // Clear existing buttons to prevent duplicates
+                this.elSongSelector.innerHTML = '';
+                
                 Object.keys(SONGS_DATA).forEach(key => {
                     const song = SONGS_DATA[key];
                     const btn = document.createElement('button');
@@ -388,7 +391,10 @@
 
         // --- BOOTSTRAP V4 ---
         async function bootstrap() {
-            if (window.app) return;
+            if (window.app) {
+                console.log("App already bootstrapped, skipping");
+                return;
+            }
 
             const threeVisualizer = new ThreeVisualizer('three-container');
             
@@ -408,8 +414,9 @@
             console.log("✨ V4 App Bootstrapped - Web Workers + Performance Monitoring enabled");
         }
 
+        // Only bootstrap once
         if (document.readyState === 'loading') {
-            window.addEventListener('DOMContentLoaded', bootstrap);
+            document.addEventListener('DOMContentLoaded', bootstrap, { once: true });
         } else {
             bootstrap();
         }
