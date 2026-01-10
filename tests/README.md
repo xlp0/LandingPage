@@ -114,6 +114,24 @@ This suite validates the core functionality of the enhanced music visualizer:
 5. **Performance Metrics**: Validates that render times and worker dispatch metrics are calculated and displayed.
 6. **Robustness**: Verifies that all components initialize correctly after a page reload.
 
+### `landing-page-features.spec.js` 🆕
+
+**Main Test: "Landing Page (MCard Manager) Features"**
+
+This suite validates the core functionality of the MCard Manager interface.
+**Prerequisite**: This test requires the Landing Page server running on port 8888 (start with `node run-landing-clm.mjs`).
+
+1. **PWA Install Handling**: Automatically dismisses the "Install MCard Manager" dialog (handling wait times).
+2. **UI Integrity**: Verifies Header (MCard Manager title, buttons) and Sidebar visibility.
+3. **App Navigation**: Opens and closes embedded applications:
+   - Music Visualizer V5
+   - IoT Map
+   - 3D Viewer
+4. **Feature Panels**: Verifies opening of:
+   - "New Text" card creation panel
+   - "Chat" assistant panel
+   - **Bug Fix Verification**: Ensures the Chat Panel toggles correctly even if initially hidden by CSS class.
+
 ## Test Architecture
 
 ### Browser Contexts
@@ -195,6 +213,9 @@ If you prefer manual testing instead of automated tests:
 - ✅ Synchronized playback and timer advancement (Music)
 - ✅ Performance metrics tracking (Music)
 - ✅ Interaction state management (Music)
+- ✅ Landing Page UI & Navigation
+- ✅ PWA Dialog Management
+- ✅ Embedded App Loading
 
 ## Performance Metrics
 

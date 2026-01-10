@@ -36,17 +36,17 @@ window.navigateToViewer = () => {
 window.navigateBack = () => {
   console.log('[MobileNav] navigateBack called, current state:', mobileNavState);
   const mainContent = document.querySelector('.main-content');
-  
+
   if (!mainContent) {
     console.error('[MobileNav] mainContent not found');
     return;
   }
-  
+
   if (window.innerWidth > 640) {
     console.log('[MobileNav] Not on mobile, ignoring');
     return;
   }
-  
+
   if (mobileNavState === 'viewer') {
     console.log('[MobileNav] Going back from viewer to cards');
     mainContent.classList.remove('show-viewer');
@@ -58,7 +58,7 @@ window.navigateBack = () => {
     mainContent.classList.remove('show-viewer');
     mobileNavState = 'types';
   }
-  
+
   console.log('[MobileNav] New state:', mobileNavState);
 };
 
@@ -85,7 +85,14 @@ window.createTextCard = () => manager.createTextCard();
 window.toggleChat = () => {
   const chatPanel = document.getElementById('chatPanel');
   if (chatPanel) {
-    chatPanel.style.display = chatPanel.style.display === 'none' ? 'flex' : 'none';
+    // Handle initial state (empty string) correctly
+    const isVisible = chatPanel.style.display === 'flex';
+    chatPanel.style.display = isVisible ? 'none' : 'flex';
+
+    // Also ensure hidden class is removed if present
+    if (!isVisible) {
+      chatPanel.classList.remove('hidden');
+    }
   }
 };
 
@@ -102,53 +109,53 @@ window.saveEditedCard = async () => {
   const mode = panel.dataset.mode;
   const hash = panel.dataset.hash;
   const oldHandle = panel.dataset.handle;
-  
+
   const handleInput = document.getElementById('editHandleName');
   const contentArea = document.getElementById('editContentArea');
-  
+
   const newHandle = handleInput.value.trim();
   const content = contentArea.value;
-  
+
   if (!content) {
     alert('Content cannot be empty');
     return;
   }
-  
+
   try {
     if (mode === 'create') {
       // Create new card
       const { MCard } = await import('mcard-js');
       const card = await MCard.create(content);
       await manager.collection.add(card);
-      
+
       // Add handle if provided
       if (newHandle) {
         await manager.collection.addWithHandle(card, newHandle);
       }
-      
+
       await manager.loadCards();
       await manager.viewCard(card.hash);
       window.closeEditPanel();
-      
+
       const message = newHandle ? `Created card with handle @${newHandle}` : 'Card created';
       const { UIComponents } = await import('./mcard/UIComponents.js');
       UIComponents.showToast(message, 'success');
-      
+
     } else if (mode === 'edit') {
       // Update existing card - use updateHandle API
       const { MCard } = await import('mcard-js');
       const newCard = await MCard.create(content);
       await manager.collection.add(newCard);
-      
+
       // ✅ Use updateHandle to point handle to new card (creates version history)
       if (newHandle) {
         await manager.collection.updateHandle(newHandle, newCard);
       }
-      
+
       await manager.loadCards();
       await manager.viewCard(newCard.hash);
       window.closeEditPanel();
-      
+
       const { UIComponents } = await import('./mcard/UIComponents.js');
       UIComponents.showToast(`Saved @${newHandle}`, 'success');
     }
@@ -162,7 +169,7 @@ window.saveEditedCard = async () => {
 function initMobileNav() {
   const mainContent = document.querySelector('.main-content');
   if (!mainContent) return;
-  
+
   if (window.innerWidth <= 640) {
     // Ensure we start at types view on mobile
     mainContent.classList.remove('show-cards', 'show-viewer');

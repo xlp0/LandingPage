@@ -435,7 +435,8 @@ graph TD
 - **Browser Support**: Modern browsers (2016+)
 - **Server Options**: 4+ (Python, Node.js, Nginx, IIS, static hosting)
 - **Documentation**: 1,800+ lines across 8 docs
-- **Last Updated**: December 30, 2025
+- **Automated Tests**: P2P Connectivity, Music Visualizer, Landing Page Features (Playwright)
+- **Last Updated**: January 2026
 
 ---
 

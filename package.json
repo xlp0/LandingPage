@@ -1,9 +1,24 @@
 {
   "name": "pkc-landing-page-monorepo",
   "version": "1.0.0",
-  "private": true,
-  "description": "PKC Landing Page - Monorepo for PKC packages and web application",
+  "description": "PKC Landing Page & Server - A Personal Knowledge Container web application and server",
   "main": "index.js",
+  "bin": {
+    "pkc-landing-page": "./bin/pkc-landing.js"
+  },
+  "files": [
+    "public",
+    "js",
+    "server",
+    "routes",
+    "bin",
+    "index.js",
+    "ws-server.js",
+    "room-*.mjs",
+    "room-*.js",
+    "config.js",
+    "app-config.json"
+  ],
   "directories": {
     "doc": "docs"
   },
@@ -54,7 +69,7 @@
     "js-yaml": "^4.1.0",
     "katex": "^0.16.25",
     "mathjax": "^4.0.0",
-    "mcard-js": "^2.1.13",
+    "mcard-js": "^2.1.23",
     "redux": "^5.0.1",
     "ws": "^8.18.3"
   }
