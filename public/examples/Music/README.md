@@ -62,6 +62,22 @@ Four versions available:
 - **Same Features as V3**: All 3D visualization and interactive controls
 - **Measurable Improvements**: ~20ms render time, <1ms worker dispatch
 
+**V5 Recommended Features**:
+- **Universal File Loader**: Loads music files from any source
+- **Caching**: Stores frequently used music files for faster access
+- **Reusable Architecture**: Modular design for easy integration with other projects
+
+**V5 Universal File Loader Features ⭐**
+- **FileLoaderV5 Module**: Universal, reusable file loading system
+- **Multi-Format Support**: XML, JSON, text, binary, images
+- **Intelligent Caching**: Automatic caching with Map-based storage
+- **Progress Tracking**: Real-time loading progress callbacks
+- **Retry Logic**: Automatic retry with configurable delays
+- **Request Deduplication**: Prevents duplicate simultaneous requests
+- **Statistics Dashboard**: Monitor cache hits, requests, and performance
+- **Fully Reusable**: Can be used in any project, not just music apps
+- **Zero Dependencies**: Pure JavaScript, framework-agnostic
+
 **Purpose**: Demonstrates integrated approach to music education and analysis with modern 3D visualization and high-performance architecture
 
 ## 🎵 Music Files
@@ -199,7 +215,24 @@ SyncedMusicVisualizerV2.html (88 lines)
 
 ## 📝 Changelog
 
-### January 10, 2026 - V4 Web Workers Edition (Latest)
+### January 10, 2026 - V5 Universal File Loader Edition (Latest) ⭐
+- **Created** `FileLoaderV5.js` (450 lines) - Universal, reusable file loading module
+- **Created** `AudioEngineV5.js` - Audio engine with FileLoader integration
+- **Created** `SyncedMusicVisualizerV5.html` - Demonstrates FileLoader capabilities
+- **Added** FILELOADER-README.md - Comprehensive documentation
+- **Features**:
+  - Multi-format support (XML, JSON, text, binary, images)
+  - Intelligent caching with Map-based storage
+  - Progress tracking with real-time callbacks
+  - Automatic retry logic with configurable delays
+  - Request deduplication (prevents duplicate loads)
+  - Statistics dashboard (cache hits, requests, performance)
+  - Timeout handling and error recovery
+- **Reusability**: FileLoader can be used in ANY project, not just music apps
+- **Zero Dependencies**: Pure JavaScript, framework-agnostic
+- **Performance**: <1ms for cached files, automatic request optimization
+
+### January 10, 2026 - V4 Web Workers Edition
 - **Created** `SyncedMusicVisualizerV4.html` - High-performance version with Web Workers
 - **Added** Web Worker for note extraction (`js/workers/noteExtractor.worker.js`)
 - **Created** `AudioEngineV4.js` with async worker communication
