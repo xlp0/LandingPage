@@ -63,7 +63,7 @@ class UIManagerV4 {
      */
     _cacheElements() {
         const { selectors } = this.config;
-        
+
         for (const [key, id] of Object.entries(selectors)) {
             const element = document.getElementById(id);
             if (!element) {
@@ -84,11 +84,11 @@ class UIManagerV4 {
         // Initialize components
         this.initSongList();
         this.bindEvents();
-        
+
         if (this.config.performanceMonitoring) {
             this.startPerformanceMonitoring();
         }
-        
+
         this.startVisualizationLoop();
     }
 
@@ -126,7 +126,7 @@ class UIManagerV4 {
         btn.className = 'px-5 py-2.5 rounded-full bg-slate-700/50 border border-slate-600 text-sm font-medium hover:bg-slate-600/50 hover:-translate-y-0.5 transition-all';
         btn.textContent = song.title;
         btn.dataset.songKey = key;
-        
+
         btn.onclick = () => {
             if (this.config.buttonAnimation && typeof anime !== 'undefined') {
                 anime({
@@ -138,7 +138,7 @@ class UIManagerV4 {
             }
             this.audioEngine.loadSong(key);
         };
-        
+
         return btn;
     }
 
@@ -149,7 +149,7 @@ class UIManagerV4 {
         if (this.elements.playBtn) {
             this.elements.playBtn.onclick = () => this.audioEngine.togglePlay();
         }
-        
+
         if (this.elements.stopBtn) {
             this.elements.stopBtn.onclick = () => this.audioEngine.stop();
         }
@@ -183,8 +183,14 @@ class UIManagerV4 {
             statusText = `Loading "${song.title}"...`;
         } else if (song.error) {
             statusText = `Error: ${song.error}`;
-        } else if (playback.isPlaying) {
+        } else if (playback.status === 'Playing') {
             statusText = `Playing: "${song.title}"`;
+        } else if (playback.status === 'Paused') {
+            statusText = `Paused: "${song.title}"`;
+        } else if (playback.status === 'Stopped') {
+            statusText = `Stopped: "${song.title}"`;
+        } else if (playback.status === 'Finished') {
+            statusText = `Finished: "${song.title}"`;
         } else if (song.currentSongId) {
             statusText = `Ready: "${song.title}" by ${song.composer || 'Unknown'}`;
         }
@@ -200,11 +206,11 @@ class UIManagerV4 {
         if (!this.elements.playBtn) return;
 
         this.elements.playBtn.disabled = !song.currentSongId || song.isLoading;
-        
+
         if (this.elements.playIcon) {
             this.elements.playIcon.classList.toggle('hidden', playback.isPlaying);
         }
-        
+
         if (this.elements.pauseIcon) {
             this.elements.pauseIcon.classList.toggle('hidden', !playback.isPlaying);
         }
@@ -218,7 +224,7 @@ class UIManagerV4 {
         if (this.elements.currentTime) {
             this.elements.currentTime.textContent = this.formatTime(playback.currentTime);
         }
-        
+
         if (this.elements.totalTime) {
             this.elements.totalTime.textContent = this.formatTime(playback.duration);
         }
@@ -232,7 +238,7 @@ class UIManagerV4 {
         if (!this.elements.songSelector) return;
 
         const buttons = this.elements.songSelector.children;
-        
+
         for (const btn of buttons) {
             const isSelected = btn.textContent === song.title;
             btn.classList.toggle('bg-gradient-to-r', isSelected);
@@ -265,10 +271,10 @@ class UIManagerV4 {
                 const values = fft.getValue();
                 this.visualizer.updateBars(values);
             }
-            
+
             this.visualizationFrameId = requestAnimationFrame(animate);
         };
-        
+
         animate();
     }
 
@@ -284,15 +290,15 @@ class UIManagerV4 {
             const metrics = this.audioEngine.metrics;
             if (metrics && metrics.renderTime > 0) {
                 this.elements.perfMetrics.classList.remove('hidden');
-                
+
                 if (this.elements.metricRender) {
                     this.elements.metricRender.textContent = `${metrics.renderTime.toFixed(1)}ms`;
                 }
-                
+
                 if (this.elements.metricWorker) {
                     this.elements.metricWorker.textContent = `${metrics.workerTime.toFixed(1)}ms`;
                 }
-                
+
                 if (this.elements.metricTotal) {
                     const total = metrics.renderTime + metrics.workerTime;
                     this.elements.metricTotal.textContent = `${total.toFixed(1)}ms`;
@@ -331,7 +337,7 @@ class UIManagerV4 {
         if (this.elements.playBtn) {
             this.elements.playBtn.onclick = null;
         }
-        
+
         if (this.elements.stopBtn) {
             this.elements.stopBtn.onclick = null;
         }

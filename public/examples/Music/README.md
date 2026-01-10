@@ -65,7 +65,9 @@ Four versions available:
 **V5 Recommended Features**:
 - **Universal File Loader**: Loads music files from any source
 - **Caching**: Stores frequently used music files for faster access
-- **Reusable Architecture**: Modular design for easy integration with other projects
+- **Reusable Architecture**: Modular design for easy integration
+- **Optimized Playback**: Instant stop on song selection and restart on "Play"
+- **Automated Testing**: Comprehensive Playwright UI test suite
 
 **V5 Universal File Loader Features ⭐**
 - **FileLoaderV5 Module**: Universal, reusable file loading system
@@ -78,7 +80,14 @@ Four versions available:
 - **Fully Reusable**: Can be used in any project, not just music apps
 - **Zero Dependencies**: Pure JavaScript, framework-agnostic
 
-**Purpose**: Demonstrates integrated approach to music education and analysis with modern 3D visualization and high-performance architecture
+**V5 Playback & UX Enhancements 🎵**
+- **Immediate Silence**: Selecting a new song now immediate stops playback of the previous one.
+- **Consistent Start**: Clicking the "Play" button always restarts the song from 00:00.
+- **Improved Status Reporting**: Status bar now explicitly shows `Paused`, `Stopped`, and `Finished` states.
+
+**V5 Automated Testing 🧪**
+- **Playwright Suite**: New `tests/music-visualizer-v5.spec.js` for E2E validation.
+- **Coverage**: Page load, song selection, playback control, timer accuracy, and performance metrics.
 
 ## 🎵 Music Files
 
@@ -215,7 +224,15 @@ SyncedMusicVisualizerV2.html (88 lines)
 
 ## 📝 Changelog
 
-### January 10, 2026 - V5 Universal File Loader Edition (Latest) ⭐
+### January 10, 2026 - V5 Playback & Testing Update (Latest) ⭐
+- **Added** `tests/music-visualizer-v5.spec.js` - Comprehensive Playwright UI testing suite
+- **Modified** `AudioEngineV5.js`:
+  - Implemented immediate stop on new song selection
+  - Implemented "Restart on Play" behavior (always starts from 00:00)
+- **Modified** `UIManagerV4.js` - Added explicit status reporting for `Paused`, `Stopped`, and `Finished` states
+- **Updated** `SyncedMusicVisualizerV5.html` with improved UX and testability attributes
+
+### January 10, 2026 - V5 Universal File Loader Edition
 - **Created** `FileLoaderV5.js` (450 lines) - Universal, reusable file loading module
 - **Created** `AudioEngineV5.js` - Audio engine with FileLoader integration
 - **Created** `SyncedMusicVisualizerV5.html` - Demonstrates FileLoader capabilities

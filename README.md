@@ -104,6 +104,7 @@ The project includes a high-performance 3D visualization engine for viewing comp
 │   │   ├── ABCMusic.html             # ABC.js notation renderer
 │   │   ├── OSMD.html                 # OpenSheetMusicDisplay player
 │   │   ├── VexMusic.html             # VexFlow renderer
+│   │   ├── SyncedMusicVisualizerV5.html # 🆕 V5 with Universal File Loader & E2E tests
 │   │   ├── SyncedMusicVisualizer.html # Synchronized sheet + waveform
 │   │   └── *.musicxml                # MusicXML score files
 │   ├── examples/WaveVisualizers/     # 🌊 Audio waveform analysis

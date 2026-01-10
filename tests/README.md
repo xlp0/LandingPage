@@ -97,6 +97,23 @@ This test automates the complete P2P connection flow:
 
 Tests error handling with expired invitation codes.
 
+### `music-visualizer-v5.spec.js` 🆕
+
+**Main Test: "Synchronized Music Visualizer V5"**
+
+This suite validates the core functionality of the enhanced music visualizer:
+
+1. **Initial State**: Verifies page load, header content, and default song selection.
+2. **Song Selection**: Tests clicking song buttons and verifying that "Ready" status and sheet music (SVG) appear.
+3. **Playback Control**: 
+   - **Play**: Verifies timer advancement and status change to "Playing".
+   - **Pause**: Verifies status change to "Paused" and icon toggling.
+   - **Stop**: Verifies timer reset to 00:00 and status change to "Stopped".
+   - **Restart on Play**: Confirms that clicking Play always restarts from the beginning.
+4. **Immediate Stop**: Verifies that selecting a new song while playing immediately stops all audio/visual playback.
+5. **Performance Metrics**: Validates that render times and worker dispatch metrics are calculated and displayed.
+6. **Robustness**: Verifies that all components initialize correctly after a page reload.
+
 ## Test Architecture
 
 ### Browser Contexts
@@ -171,15 +188,13 @@ If you prefer manual testing instead of automated tests:
 
 ## Test Coverage
 
-- ✅ Invitation creation and modal display
-- ✅ QR code generation
-- ✅ Cross-tab code exchange
-- ✅ WebRTC connection establishment
-- ✅ Real-time messaging
-- ✅ Connection status updates
-- ✅ Error handling (expired codes)
-- ✅ Disconnect functionality
-- ✅ UI responsiveness and accessibility
+- ✅ Invitation creation and modal display (P2P)
+- ✅ WebRTC connection establishment (P2P)
+- ✅ Real-time messaging (P2P)
+- ✅ MusicXML rendering with OSMD (Music)
+- ✅ Synchronized playback and timer advancement (Music)
+- ✅ Performance metrics tracking (Music)
+- ✅ Interaction state management (Music)
 
 ## Performance Metrics
 

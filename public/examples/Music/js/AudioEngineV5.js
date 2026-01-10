@@ -5,7 +5,7 @@ class AudioEngineV5 {
     constructor(store, config, fileLoader = null) {
         this.store = store;
         this.config = config;
-        
+
         // Use provided FileLoader or create new one
         this.fileLoader = fileLoader || new FileLoaderV5({
             cache: true,
@@ -19,7 +19,7 @@ class AudioEngineV5 {
                 console.error(`Failed to load ${url}:`, error);
             }
         });
-        
+
         this.osmd = null;
         this.synth = null;
         this.fft = null;
@@ -31,14 +31,14 @@ class AudioEngineV5 {
         this.currentSongId = null;
         this.currentSongTitle = '';
         this.currentSongComposer = '';
-        
+
         // Performance metrics
         this.metrics = {
             renderTime: 0,
             workerTime: 0,
             loadTime: 0
         };
-        
+
         this._initWorker();
     }
 
@@ -52,9 +52,9 @@ class AudioEngineV5 {
         if (type === 'NOTES_EXTRACTED') {
             this.allNotes = notes;
             this.currentNoteIndex = 0;
-            
+
             const estimatedDuration = this.allNotes.length * this.config.NOTE_DURATION;
-            
+
             this.store.dispatch(Actions.songLoaded({
                 id: this.currentSongId,
                 title: this.currentSongTitle,
@@ -62,7 +62,7 @@ class AudioEngineV5 {
             }));
             this.store.dispatch(Actions.setDuration(estimatedDuration));
             this.store.dispatch(Actions.setStatus('Ready'));
-            
+
             console.log(`✅ Worker extracted ${notes.length} notes`);
         } else if (type === 'EXTRACTION_ERROR') {
             console.error('Worker extraction error:', error);
@@ -72,19 +72,19 @@ class AudioEngineV5 {
 
     async initAudio() {
         if (this.audioInitialized) return;
-        
+
         try {
             // Don't wait for Tone.start() - it requires user gesture
             Tone.start().catch(e => {
                 console.log("Tone.js will start on user interaction");
             });
-            
+
             this.fft = new Tone.FFT(this.config.FFT_SIZE);
-            
+
             this.synth = new Tone.PolySynth(Tone.Synth, this.config.SYNTH);
             this.synth.connect(this.fft);
             this.synth.toDestination();
-            
+
             this.audioInitialized = true;
             console.log("Audio initialized successfully");
         } catch (e) {
@@ -97,6 +97,7 @@ class AudioEngineV5 {
      * @param {string} songId - Song identifier
      */
     async loadSong(songId) {
+        this.stop();
         const song = SONGS_DATA[songId];
         if (!song) {
             console.error(`Song not found: ${songId}`);
@@ -121,7 +122,7 @@ class AudioEngineV5 {
             // FileLoader is ready for external file loading if needed
             const loadStart = performance.now();
             console.log(`📂 Loading MusicXML (embedded)`);
-            
+
             // Simulate minimal load time for embedded XML
             this.metrics.loadTime = performance.now() - loadStart;
 
@@ -130,12 +131,12 @@ class AudioEngineV5 {
             await this.osmd.load(song.xml);
             await this.osmd.render();
             this.metrics.renderTime = performance.now() - renderStart;
-            
+
             console.log(`✅ Rendered in ${this.metrics.renderTime.toFixed(1)}ms`);
 
             this.osmd.cursor.show();
             this.osmd.cursor.reset();
-            
+
             // Style cursor
             setTimeout(() => {
                 if (this.osmd && this.osmd.cursor && this.osmd.cursor.cursorElement) {
@@ -151,7 +152,7 @@ class AudioEngineV5 {
             // Extract notes using Web Worker
             this.store.dispatch(Actions.setStatus('Extracting notes...'));
             const workerStart = performance.now();
-            
+
             const cursorData = this.serializeCursorData();
             this.noteWorker.postMessage({
                 type: 'EXTRACT_NOTES',
@@ -160,9 +161,9 @@ class AudioEngineV5 {
                     noteDuration: this.config.NOTE_DURATION
                 }
             });
-            
+
             this.metrics.workerTime = performance.now() - workerStart;
-            
+
             console.log(`📊 Performance: Load=${this.metrics.loadTime.toFixed(1)}ms, Render=${this.metrics.renderTime.toFixed(1)}ms, Worker dispatch=${this.metrics.workerTime.toFixed(1)}ms`);
 
         } catch (error) {
@@ -177,12 +178,12 @@ class AudioEngineV5 {
      */
     async preloadSongs(songIds) {
         console.log(`🔄 Preloading ${songIds.length} songs...`);
-        
+
         const urls = songIds
             .map(id => SONGS_DATA[id])
             .filter(song => song)
             .map(song => song.xml);
-        
+
         try {
             await this.fileLoader.preload(urls);
             console.log(`✅ Preloaded ${urls.length} songs`);
@@ -234,7 +235,7 @@ class AudioEngineV5 {
 
     async togglePlay() {
         const state = this.store.getState();
-        
+
         if (state.playback.isPlaying) {
             this.pause();
         } else {
@@ -247,6 +248,13 @@ class AudioEngineV5 {
             await this.initAudio();
         }
 
+        // Always restart from the beginning
+        this.currentNoteIndex = 0;
+        this.store.dispatch(Actions.setTime(0));
+        if (this.osmd && this.osmd.cursor) {
+            this.osmd.cursor.reset();
+        }
+
         this.store.dispatch(Actions.setPlaying(true));
         this.store.dispatch(Actions.setStatus('Playing'));
         this.playNextNote();
@@ -255,7 +263,7 @@ class AudioEngineV5 {
     pause() {
         this.store.dispatch(Actions.setPlaying(false));
         this.store.dispatch(Actions.setStatus('Paused'));
-        
+
         if (this.playbackTimeout) {
             clearTimeout(this.playbackTimeout);
             this.playbackTimeout = null;
@@ -267,7 +275,7 @@ class AudioEngineV5 {
         this.currentNoteIndex = 0;
         this.store.dispatch(Actions.setTime(0));
         this.store.dispatch(Actions.setStatus('Stopped'));
-        
+
         if (this.osmd && this.osmd.cursor) {
             this.osmd.cursor.reset();
         }
@@ -315,22 +323,22 @@ class AudioEngineV5 {
 
     destroy() {
         this.stop();
-        
+
         if (this.noteWorker) {
             this.noteWorker.terminate();
             this.noteWorker = null;
         }
-        
+
         if (this.synth) {
             this.synth.dispose();
             this.synth = null;
         }
-        
+
         if (this.fft) {
             this.fft.dispose();
             this.fft = null;
         }
-        
+
         // FileLoader cleanup is optional - it can be reused
         // this.fileLoader.dispose();
     }
