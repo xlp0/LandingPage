@@ -2,6 +2,39 @@
 
 This directory contains interactive music notation libraries and synchronized audio-visual demonstrations using browser-based technologies.
 
+## 🚀 Quick Start
+
+### Running the HTTP Server
+
+To view these examples, you need to run the MCard HTTP service:
+
+```bash
+# From the LandingPage root directory
+./start-mcard-server.sh
+```
+
+The script will:
+- ✅ Check for Node.js installation
+- ✅ Install dependencies if needed
+- ✅ Find an available port (default: 4000)
+- ✅ Start the server with mcard-js integration
+
+**Access URLs:**
+- **Home Page**: `http://localhost:4000`
+- **Music Examples**: `http://localhost:4000/public/examples/Music/`
+- **V5 Visualizer**: `http://localhost:4000/public/examples/Music/SyncedMusicVisualizerV5.html`
+
+**Alternative (Manual Start):**
+```bash
+# Install dependencies (first time only)
+npm install
+
+# Start server on port 4000
+PORT=4000 node ws-server.js
+```
+
+**Note**: A simple Python HTTP server won't work for all features. Use the Node.js server for full mcard-js integration and WebSocket support.
+
 ## 📚 Contents
 
 ### Music Notation Libraries
