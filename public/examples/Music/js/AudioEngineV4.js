@@ -53,8 +53,11 @@ class AudioEngineV4 {
         if (this.audioInitialized) return;
         
         try {
-            await Tone.start();
-            console.log("Tone.js started, state:", Tone.context.state);
+            // Don't wait for Tone.start() - it requires user gesture
+            // Just set up the audio graph, Tone will start on first interaction
+            Tone.start().catch(e => {
+                console.log("Tone.js will start on user interaction");
+            });
             
             this.fft = new Tone.FFT(this.config.FFT_SIZE);
             
