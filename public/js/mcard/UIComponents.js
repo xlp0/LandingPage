@@ -50,7 +50,10 @@ export class UIComponents {
     const externalApps = [
       { id: 'calendar', name: 'Calendar', icon: 'calendar', action: 'showCalendar()' },
       { id: 'map', name: 'Map', icon: 'map', action: 'showMap()' },
-      { id: '3d', name: '3D Viewer', icon: 'box', action: 'show3DViewer()' }
+      { id: '3d', name: '3D Viewer', icon: 'box', action: 'show3DViewer()' },
+      { id: 'music', name: 'Music Visualizer', icon: 'music', action: 'showMusicVisualizer()' },
+      { id: 'morphism1', name: 'Morphism Cube v1', icon: 'cube', action: 'showMorphismV1()' },
+      { id: 'morphism2', name: 'Morphism Cube v2', icon: 'box', action: 'showMorphismV2()' }
     ];
 
     typeList.innerHTML = types.map(type => {
