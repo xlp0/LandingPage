@@ -101,10 +101,20 @@ class UIManagerV4 {
         // Clear existing content (including loading indicator)
         this.elements.songSelector.innerHTML = '';
 
-        Object.entries(this.songsData).forEach(([key, song]) => {
+        const songKeys = Object.keys(this.songsData);
+        songKeys.forEach((key, index) => {
+            const song = this.songsData[key];
             const btn = this._createSongButton(key, song);
             this.elements.songSelector.appendChild(btn);
         });
+
+        // Auto-select first song after buttons are created
+        if (songKeys.length > 0) {
+            setTimeout(() => {
+                const firstKey = songKeys[0];
+                this.audioEngine.loadSong(firstKey);
+            }, 100);
+        }
     }
 
     /**
