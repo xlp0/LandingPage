@@ -25,6 +25,8 @@ A modern, **static-first, modular web application** with **serverless P2P commun
 ### **🎮 Interactive Games & Simulations**
 - **Bali Adventure**: Explore the Ubud Rice Terraces in a React-based 2D RPG (`public/examples/games/play_ubud.html`)
 - **3D Theater**: High-fidelity 3D visualization engine for viewing complex data structures
+- **Music Visualizer V5**: Interactive music notation with 3D frequency visualization, Web Workers, and FileLoader caching (`public/examples/Music/SyncedMusicVisualizerV5.html`)
+- **Morphism Cube**: Category theory recursion schemes visualized in 3D (`public/examples/3DGames/MorphismCube/`)
 
 ### **🏗️ Modular Architecture**
 - **PKC Core Runtime**: Lightweight module loader with capability detection
@@ -141,7 +143,10 @@ The project includes a high-performance 3D visualization engine for viewing comp
 git clone https://github.com/xlp0/LandingPage.git
 cd LandingPage
 
-# Start local server (port 8000)
+# Start MCard HTTP server with mcard-js integration (recommended)
+./start-mcard-server.sh
+
+# Or use Python HTTP server (basic features only)
 python3 -m http.server 8000 --bind 0.0.0.0
 
 # Or for local network access (all devices on WiFi)
@@ -149,7 +154,12 @@ python3 -m http.server 8000 --bind 0.0.0.0
 ```
 
 ### **2. Access Application**
-- **Landing Page**: `http://localhost:8000` or `http://YOUR_IP:8000`
+- **Landing Page**: `http://localhost:4000` (with mcard-js) or `http://localhost:8000` (Python)
+- **MCard Manager**: `http://localhost:4000/index.html` - Main interface with Apps navigation
+- **Apps Navigation**: Click "Apps" in sidebar to access:
+  - Calendar, Map, 3D Viewer
+  - Music Visualizer V5
+  - Morphism Cube v1 & v2
 - **P2P Demo**: `http://localhost:8000/js/modules/p2p-serverless/example.html`
 - **Bali Adventure**: `http://localhost:8000/public/examples/games/play_ubud.html`
 - **Documentation**: `http://localhost:8000/pkc-docs-index.html`

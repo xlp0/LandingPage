@@ -46,7 +46,17 @@ export class UIComponents {
       { id: 'other', name: 'Other', icon: 'folder', count: getCount(categories.other) }
     ];
 
-    // External apps list
+    /**
+     * External apps list - Apps shown in the expandable Apps submenu
+     * Each app opens in a full-width iframe view with close button and ESC key support
+     * 
+     * Apps include:
+     * - Calendar: Google Calendar integration
+     * - Map: IoT Map visualization
+     * - 3D Viewer: Three.js 3D Theater
+     * - Music Visualizer: Interactive music notation with 3D frequency visualization
+     * - Morphism Cube v1 & v2: Category theory recursion schemes in 3D
+     */
     const externalApps = [
       { id: 'calendar', name: 'Calendar', icon: 'calendar', action: 'showCalendar()' },
       { id: 'map', name: 'Map', icon: 'map', action: 'showMap()' },

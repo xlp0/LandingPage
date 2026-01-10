@@ -1397,7 +1397,13 @@ Supported browsers:
       console.log('[3D Viewer] 3D theater closed');
     }
 
-    // Toggle Apps submenu
+    /**
+     * Toggle Apps submenu visibility
+     * Expands/collapses the Apps section in the sidebar to show/hide:
+     * - Calendar, Map, 3D Viewer
+     * - Music Visualizer V5
+     * - Morphism Cube v1 & v2
+     */
     function toggleApps() {
       const appsSubmenu = document.getElementById('appsSubmenu');
       const appsChevron = document.getElementById('appsChevron');
@@ -1410,7 +1416,11 @@ Supported browsers:
       }
     }
 
-    // Music Visualizer Functions
+    /**
+     * Music Visualizer V5 - Show/Hide Functions
+     * Opens the Music Visualizer V5 in full-width iframe
+     * Features: Sheet music rendering, 3D frequency visualization, Web Workers, FileLoader caching
+     */
     function showMusicVisualizer() {
       console.log('[Music] Opening music visualizer');
       const musicView = document.getElementById('musicView');
@@ -1443,7 +1453,11 @@ Supported browsers:
       console.log('[Music] Music visualizer closed');
     }
 
-    // Morphism Cube v1 Functions
+    /**
+     * Morphism Cube v1 - Show/Hide Functions
+     * Opens the first version of the Morphism Cube visualization
+     * Features: Category theory recursion schemes (catamorphism, anamorphism, etc.) in 3D
+     */
     function showMorphismV1() {
       console.log('[Morphism] Opening Morphism Cube v1');
       const morphismV1View = document.getElementById('morphismV1View');
@@ -1476,7 +1490,11 @@ Supported browsers:
       console.log('[Morphism] Morphism Cube v1 closed');
     }
 
-    // Morphism Cube v2 Functions
+    /**
+     * Morphism Cube v2 - Show/Hide Functions
+     * Opens the second version of the Morphism Cube visualization
+     * Features: Enhanced category theory recursion schemes visualization
+     */
     function showMorphismV2() {
       console.log('[Morphism] Opening Morphism Cube v2');
       const morphismV2View = document.getElementById('morphismV2View');
