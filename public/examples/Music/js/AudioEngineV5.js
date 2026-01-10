@@ -43,7 +43,8 @@ class AudioEngineV5 {
     }
 
     _initWorker() {
-        this.noteWorker = new Worker('./js/workers/noteExtractor.worker.js');
+        // Add cache-busting parameter to force worker reload
+        this.noteWorker = new Worker('./js/workers/noteExtractor.worker.js?v=' + Date.now());
         this.noteWorker.onmessage = (e) => this.handleWorkerMessage(e.data);
     }
 
@@ -154,7 +155,10 @@ class AudioEngineV5 {
             const cursorData = this.serializeCursorData();
             this.noteWorker.postMessage({
                 type: 'EXTRACT_NOTES',
-                data: cursorData
+                data: {
+                    cursorPositions: cursorData,
+                    noteDuration: this.config.NOTE_DURATION
+                }
             });
             
             this.metrics.workerTime = performance.now() - workerStart;

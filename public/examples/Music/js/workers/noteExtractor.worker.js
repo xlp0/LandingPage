@@ -31,19 +31,19 @@ function extractNotesFromData(data) {
     const allNotes = [];
     const { cursorPositions, noteDuration } = data;
     
-    for (const position of cursorPositions) {
-        const notesAtPosition = [];
+    // cursorPositions is an array of arrays, where each inner array contains note objects
+    for (const notesAtPosition of cursorPositions) {
+        const noteStrings = [];
         
-        for (const noteData of position.notes) {
-            if (!noteData.isRest && noteData.pitch) {
-                const noteString = pitchToString(noteData.pitch);
-                notesAtPosition.push(noteString);
-            }
+        // Each position is an array of note objects with fundamentalNote, octave, accidental
+        for (const noteData of notesAtPosition) {
+            const noteString = pitchToString(noteData);
+            noteStrings.push(noteString);
         }
         
-        if (notesAtPosition.length > 0) {
+        if (noteStrings.length > 0) {
             allNotes.push({
-                notes: notesAtPosition,
+                notes: noteStrings,
                 duration: noteDuration
             });
         }
