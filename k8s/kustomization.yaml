@@ -40,7 +40,7 @@ resources:
 # Images to use (for image tag management)
 images:
   - name: henry768/landingpage
-    newTag: argocd-latest
+    newTag: main
 
 # Replicas (can be overridden per environment)
 replicas:
