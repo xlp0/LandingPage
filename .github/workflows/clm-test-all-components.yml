@@ -250,3 +250,37 @@ jobs:
           echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "📊 [View detailed results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+
+  deploy-to-test:
+    needs: test-components
+    runs-on: ubuntu-latest
+    if: ${{ always() && github.ref == 'refs/heads/main' }}
+    name: Deploy to test.pkc.pub
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Trigger ArgoCD Sync
+        run: |
+          echo "### 🚀 Deploying to test.pkc.pub" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status**: Deployment triggered via ArgoCD" >> $GITHUB_STEP_SUMMARY
+          echo "**URL**: https://test.pkc.pub" >> $GITHUB_STEP_SUMMARY
+          echo "**Timestamp**: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "ArgoCD will automatically sync the cluster to match the Git state." >> $GITHUB_STEP_SUMMARY
+          echo "Tests do not need to pass for deployment - this is a continuous deployment environment." >> $GITHUB_STEP_SUMMARY
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Deployment Summary
+        if: always()
+        run: |
+          echo "### Deployment Summary 📊" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: test.pkc.pub" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Run**: [${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Note**: This deployment runs regardless of test results. ArgoCD will continuously sync the cluster." >> $GITHUB_STEP_SUMMARY

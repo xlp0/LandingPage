@@ -20,8 +20,8 @@ resources:
   - deployment-dev-with-configmap.yaml
   - configmap-dev.yaml
   - service.yaml
-  # - ingress.yaml  # Old ingress for dev.pkc.pub (not used in ArgoCD test)
-  - ingress-argocd-test.yaml  # ArgoCD test ingress for argocd-test.pkc.pub
+  - ingress-test.pkc.pub.yaml  # Main ingress for test.pkc.pub
+  # - ingress-argocd-test.yaml  # Old test ingress (commented out)
 
 # ConfigMap generator (alternative to configmap-dev.yaml)
 # configMapGenerator:
