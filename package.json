@@ -15,7 +15,6 @@
     "index.js",
     "ws-server.js",
     "room-*.mjs",
-    "room-*.js",
     "config.js",
     "app-config.json"
   ],
@@ -33,7 +32,7 @@
     "install-browsers": "playwright install",
     "report": "playwright show-report",
     "ws-server": "node ws-server.js",
-    "build:mcard": "esbuild build-mcard-bundle.js --bundle --format=esm --outfile=public/js/vendor/mcard-js.bundle.js --platform=browser",
+    "build:mcard": "esbuild scripts/build-mcard-bundle.js --bundle --format=esm --outfile=public/js/vendor/mcard-js.bundle.js --platform=browser",
     "build": "npm run build --workspaces",
     "publish:all": "npm publish --workspaces",
     "version:major": "npm version major --workspaces",

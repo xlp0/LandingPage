@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#667eea">
-    
+
     <!-- Aggressive cache control to prevent stale code -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    
+
     <title>WebRTC Dashboard - P2P Chat Rooms</title>
     <link rel="stylesheet" href="styles.css">
     <!-- iOS Safari specific -->
     <meta name="format-detection" content="telephone=no">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🌐</text></svg>">
-    
+    <link rel="apple-touch-icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🌐</text></svg>">
+
     <!-- Check for existing authentication -->
     <script>
         // Check if user is already authenticated from main site
@@ -26,7 +29,7 @@
             try {
                 const userStr = localStorage.getItem('user');
                 const token = localStorage.getItem('auth_token');
-                
+
                 if (userStr && token) {
                     const user = JSON.parse(userStr);
                     console.log('[WebRTC Dashboard] Found authenticated user:', user);
@@ -37,7 +40,7 @@
             }
             return null;
         }
-        
+
         // Pre-populate user name if authenticated
         window.addEventListener('DOMContentLoaded', () => {
             const user = checkExistingAuth();
@@ -45,9 +48,9 @@
                 const userNameInput = document.getElementById('user-name');
                 const authStatus = document.getElementById('auth-status');
                 const authUserDisplay = document.getElementById('auth-user-display');
-                
+
                 let displayName = '';
-                
+
                 if (user.name) {
                     displayName = user.name;
                     if (userNameInput) userNameInput.value = user.name;
@@ -57,7 +60,7 @@
                     if (userNameInput) userNameInput.value = displayName;
                     console.log('[WebRTC Dashboard] Pre-populated from email:', user.email);
                 }
-                
+
                 // Show auth status badge
                 if (authStatus && authUserDisplay && displayName) {
                     authUserDisplay.textContent = displayName;
@@ -67,6 +70,7 @@
         });
     </script>
 </head>
+
 <body>
     <div class="dashboard-container">
         <!-- Login View (Shown First) -->
@@ -75,14 +79,17 @@
                 <div class="login-header">
                     <h1>🌐 WebRTC Dashboard</h1>
                     <p>Serverless P2P Chat Rooms</p>
-                    <div id="auth-status" style="margin-top: 10px; padding: 8px 12px; background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.5); border-radius: 6px; font-size: 14px; display: none;">
+                    <div id="auth-status"
+                        style="margin-top: 10px; padding: 8px 12px; background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.5); border-radius: 6px; font-size: 14px; display: none;">
                         ✓ Authenticated as <span id="auth-user-display"></span>
                     </div>
                 </div>
                 <div class="login-form">
                     <input type="text" id="user-name" placeholder="Enter your name..." value="" maxlength="50">
                     <button id="login-btn" class="primary-btn">Login</button>
-                    <a href="/index.html" style="display: block; margin-top: 12px; color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 14px;">← Back to Home</a>
+                    <a href="/index.html"
+                        style="display: block; margin-top: 12px; color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 14px;">←
+                        Back to Home</a>
                 </div>
             </div>
         </div>
@@ -95,7 +102,8 @@
                 <div class="header-actions">
                     <div class="user-badge-editable">
                         <span>👤</span>
-                        <input type="text" id="current-user-name" class="user-name-edit" placeholder="Your name..." maxlength="50">
+                        <input type="text" id="current-user-name" class="user-name-edit" placeholder="Your name..."
+                            maxlength="50">
                         <button id="save-user-name-btn" class="save-name-btn" title="Save name">✔️</button>
                     </div>
                     <button id="create-room-btn" class="primary-btn">➕ Create Room</button>
@@ -140,7 +148,7 @@
                 <div class="participants-panel">
                     <h3>Participants (<span id="participant-count">0</span>)</h3>
                     <div id="participants-list" class="participants-list"></div>
-                    
+
                     <!-- Host Controls -->
                     <div id="host-controls" class="host-controls host-only hidden">
                         <h4>Host Controls</h4>
@@ -197,7 +205,8 @@
                 <div class="modal-body">
                     <p>Enter your display name to request access to this room:</p>
                     <input type="text" id="join-name-input" placeholder="Your name..." maxlength="50">
-                    <textarea id="join-message-input" placeholder="Optional message to host..." maxlength="200"></textarea>
+                    <textarea id="join-message-input" placeholder="Optional message to host..."
+                        maxlength="200"></textarea>
                     <div class="modal-actions">
                         <button id="send-join-request-btn" class="primary-btn">Send Request</button>
                         <button id="cancel-join-btn">Cancel</button>
@@ -216,7 +225,8 @@
                 <div class="modal-body">
                     <p>Select a participant to transfer host privileges to:</p>
                     <div id="transfer-participants-list" class="transfer-list"></div>
-                    <textarea id="transfer-reason" placeholder="Optional reason for transfer..." maxlength="200"></textarea>
+                    <textarea id="transfer-reason" placeholder="Optional reason for transfer..."
+                        maxlength="200"></textarea>
                     <div class="modal-actions">
                         <button id="confirm-transfer-btn" class="primary-btn" disabled>Transfer Host</button>
                         <button class="close-modal">Cancel</button>
@@ -235,14 +245,15 @@
                 <div class="modal-body">
                     <div class="create-room-form">
                         <input type="text" id="room-name" placeholder="Room name..." maxlength="50">
-                        <textarea id="room-description" placeholder="Room description (optional)..." maxlength="200"></textarea>
+                        <textarea id="room-description" placeholder="Room description (optional)..."
+                            maxlength="200"></textarea>
                         <div class="room-options">
                             <label>
                                 <input type="checkbox" id="require-approval" checked>
                                 Require host approval for new members
                             </label>
                             <label>
-                                Max participants: 
+                                Max participants:
                                 <select id="max-participants">
                                     <option value="5">5</option>
                                     <option value="10" selected>10</option>
@@ -279,21 +290,22 @@
     </button>
 
     <!-- Redux from CDN - Load synchronously before modules -->
-    <script crossorigin src="https://unpkg.com/redux@4/dist/redux.js"></script>
-    <script crossorigin src="https://unpkg.com/@reduxjs/toolkit@1.9.7/dist/redux-toolkit.umd.js"></script>
-    
+    <!-- Redux from Local Libs -->
+    <script src="/js/libs/redux.min.js"></script>
+    <script src="/js/libs/redux-toolkit.min.js"></script>
+
     <!-- Scripts -->
     <script type="module">
         // Dynamic cache busting using timestamp
         const cacheBuster = Date.now();
-        
+
         // Initialize Redux Store
         let store = null;
-        
+
         async function initReduxStore() {
             try {
                 console.log('[Dashboard] Initializing Redux store...');
-                
+
                 // Wait for Redux Toolkit to be available
                 if (!window.RTK) {
                     console.error('[Dashboard] ❌ Redux Toolkit not loaded! Waiting...');
@@ -307,13 +319,13 @@
                         }, 100);
                     });
                 }
-                
+
                 // Import Redux slices (from shared store directory)
                 const authModule = await import(`../../store/authSlice.js?v=${cacheBuster}`);
                 const connectionModule = await import(`../../store/connectionSlice.js?v=${cacheBuster}`);
                 const roomsModule = await import(`../../store/roomsSlice.js?v=${cacheBuster}`);
                 const peersModule = await import(`../../store/peersSlice.js?v=${cacheBuster}`);
-                
+
                 // Create store
                 const { configureStore } = window.RTK;
                 store = configureStore({
@@ -324,7 +336,7 @@
                         peers: peersModule.default
                     }
                 });
-                
+
                 // Load existing auth state from localStorage
                 const userStr = localStorage.getItem('user');
                 const token = localStorage.getItem('auth_token');
@@ -334,10 +346,10 @@
                     store.dispatch(authModule.setAuth({ user, token, refreshToken }));
                     console.log('[Dashboard] Redux auth state loaded:', user);
                 }
-                
+
                 // Make store globally available
                 window.reduxStore = store;
-                
+
                 console.log('[Dashboard] ✅ Redux store initialized');
                 return store;
             } catch (error) {
@@ -345,22 +357,22 @@
                 throw error;
             }
         }
-        
+
         // Initialize dashboard
         async function initDashboard() {
             try {
                 // Initialize Redux first
                 await initReduxStore();
-                
+
                 // Load configuration
                 const { loadConfig } = await import(`./config.js?v=${cacheBuster}`);
                 await loadConfig();
-                
+
                 // Load dashboard manager
                 const { DashboardManager } = await import(`./dashboard-manager-v2.js?v=${cacheBuster}`);
                 window.dashboard = new DashboardManager(store);
                 await window.dashboard.init();
-                
+
                 // Setup mobile participants toggle
                 setupMobileParticipantsToggle();
             } catch (error) {
@@ -368,7 +380,7 @@
                 document.getElementById('connection-text').textContent = 'Failed to initialize';
             }
         }
-        
+
         // Wait for DOM to be ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initDashboard);
@@ -387,34 +399,34 @@
             // Store join parameters for after initialization
             window.pendingRoomJoin = { roomId, token, instant };
         }
-        
+
         // Mobile participants panel toggle
         function setupMobileParticipantsToggle() {
             const toggle = document.getElementById('mobile-participants-toggle');
             const panel = document.querySelector('.participants-panel');
-            
+
             if (!toggle || !panel) return;
-            
+
             // Show toggle button on mobile
             if (window.innerWidth <= 768) {
                 toggle.style.display = 'block';
             }
-            
+
             toggle.addEventListener('click', () => {
                 panel.classList.toggle('mobile-open');
                 toggle.textContent = panel.classList.contains('mobile-open') ? '✕' : '👥';
             });
-            
+
             // Close panel when clicking outside
             document.addEventListener('click', (e) => {
-                if (panel.classList.contains('mobile-open') && 
-                    !panel.contains(e.target) && 
+                if (panel.classList.contains('mobile-open') &&
+                    !panel.contains(e.target) &&
                     !toggle.contains(e.target)) {
                     panel.classList.remove('mobile-open');
                     toggle.textContent = '👥';
                 }
             });
-            
+
             // Handle window resize
             window.addEventListener('resize', () => {
                 if (window.innerWidth <= 768) {
@@ -427,4 +439,5 @@
         }
     </script>
 </body>
+
 </html>

@@ -477,6 +477,46 @@ python3 -m http.server 8000 --bind 0.0.0.0
 
 ---
 
+## 🧪 **Testing**
+
+The project includes a comprehensive Playwright E2E test suite.
+
+### Quick Start
+
+```bash
+# Start WebSocket server (required)
+node ws-server.js
+
+# Run all tests
+npx playwright test --project=chromium
+
+# Run CLM Dashboard tests only
+npx playwright test tests/test-clm-*.spec.cjs --project=chromium
+
+# View HTML report
+npx playwright show-report
+```
+
+### Test Coverage
+
+| Category | Tests | Description |
+|----------|-------|-------------|
+| CLM Dashboard | 18+ | Component loading, iframe isolation, performance |
+| Landing Page | 6 | PWA modal, sidebar, app views, chat panel |
+| Music Visualizer | 5+ | Audio playback, sync, timer display |
+
+### Documentation
+
+For detailed test documentation including:
+- Complete test file reference
+- Selector patterns and wait strategies
+- Recent fixes and technical details
+- Contribution guidelines
+
+See **[tests/TEST_DOCUMENTATION.md](tests/TEST_DOCUMENTATION.md)**
+
+---
+
 ## 📄 **License**
 
 This project is provided as-is for exploring PKC design concepts and serverless P2P communication.
