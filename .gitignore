@@ -70,3 +70,6 @@ k8s/secret-r2-credentials-real.yaml
 *-credentials-real.yaml
 *.secret.yaml
 .secrets/
+
+# Runtime PID files
+*.pid
