@@ -2,195 +2,186 @@
 
 This document provides comprehensive documentation of the Playwright E2E test suite for the PKC Landing Page project.
 
-## Overview
+## Test Organization
 
-The test suite validates the functionality of the CLM (Concrete Logic Manifest) Dashboard, landing page features, and embedded components using Playwright for browser automation.
+The test suite is organized into three categories with separate Playwright projects:
 
-## Test Statistics
+| Category | Directory | Purpose | Timeout | Command |
+|----------|-----------|---------|---------|---------|
+| 🚀 **Smoke** | `tests/smoke/` | Fast navigation validation | 30s | `npm run test:smoke` |
+| 🧩 **Components** | `tests/components/` | CLM component testing | 60s | `npm run test:components` |
+| 🎨 **Features** | `tests/features/` | Deep feature testing | 120s | `npm run test:features` |
 
-| Metric | Value |
-|--------|-------|
-| Total Test Files | 17 |
-| Total Test Cases | 30+ |
-| Average Runtime | ~30 seconds |
-| Browser Target | Chromium |
-
-## Test Categories
-
-### 1. CLM Dashboard Tests (14 files, 18+ tests)
-
-These tests validate the CLM Dashboard component loading, isolation, and performance.
-
-| Test File | Component Tested | Description |
-|-----------|------------------|-------------|
-| `test-clm-youtube-viewer.spec.cjs` | YouTube Video Viewer | Video embedding, component isolation, performance measurement |
-| `test-clm-welcome.spec.cjs` | Welcome Component | Main welcome screen, component recovery, performance |
-| `test-clm-wikipedia-search.spec.cjs` | Wikipedia Search | Search functionality, iframe loading |
-| `test-clm-wikipedia-viewer.spec.cjs` | Wikipedia Viewer | Knowledge base viewer, content display |
-| `test-clm-google-maps.spec.cjs` | Google Maps | Map embedding, iframe isolation |
-| `test-clm-grafana-faro.spec.cjs` | Grafana Faro | Observability dashboard component |
-| `test-clm-hero-content.spec.cjs` | Hero Content | Landing page hero section |
-| `test-clm-p2p-status.spec.cjs` | P2P Status Panel | Peer-to-peer connection status |
-| `test-clm-pkc-viewer.spec.cjs` | PKC Document Viewer | Document viewing functionality |
-| `test-clm-user-list.spec.cjs` | User Account List | User directory display |
-| `test-clm-user-detail.spec.cjs` | User Account Detail | Individual user details |
-| `test-clm-external-site-demo.spec.cjs` | External Website Demo | External site embedding |
-| `test-clm-redux-state-viewer.spec.cjs` | Redux Store Monitor | Redux state inspection |
-| `test-clm-crash-test.spec.cjs` | Intentional Failure | Component failure recovery |
-
-### 2. Landing Page Tests (1 file, 6 tests)
-
-| Test File | Tests Included |
-|-----------|----------------|
-| `landing-page-features.spec.js` | PWA modal dismissal, Header elements, Sidebar navigation, Music Visualizer view, 3D Viewer loading, Chat panel toggle |
-
-### 3. Music Visualizer Tests (1 file, 5+ tests)
-
-| Test File | Tests Included |
-|-----------|----------------|
-| `music-visualizer-v5.spec.js` | Page loading, Song selection, Play/pause controls, Audio synchronization, Timer display |
-
-## Prerequisites
-
-### Required Services
-
-Before running tests, ensure the following services are running:
+## Quick Start
 
 ```bash
-# Start the WebSocket server (port 3000)
+# Start WebSocket server (required for CLM/component tests)
 node ws-server.js
 
-# The Playwright config auto-starts Python HTTP server (port 8000)
+# Run smoke tests only (~15s) - ideal for quick validation
+npm run test:smoke
+
+# Run component tests (~60s)
+npm run test:components
+
+# Run feature tests (~120s)
+npm run test:features
+
+# Run all tests
+npm run test
+
+# View HTML report
+npm run report
 ```
 
-### Environment Setup
+## Directory Structure
 
-```bash
-# Install dependencies
-npm install
+```
+tests/
+├── smoke/                    # Fast navigation tests
+│   ├── landing-page.spec.js  # Page load, header, sidebar
+│   ├── clm-dashboard.spec.cjs # Dashboard load, registry
+│   └── apps-menu.spec.js     # Apps menu navigation
+├── components/               # CLM component tests
+│   ├── test-clm-youtube-viewer.spec.cjs
+│   ├── test-clm-welcome.spec.cjs
+│   └── ... (14 component tests)
+├── features/                 # Complex feature tests
+│   ├── music-visualizer-v5.spec.js
+│   ├── chat-panel.spec.js
+│   └── new-text-card.spec.js
+├── fixtures/                 # Shared test utilities
+│   └── clm-helpers.js
+├── test-components/          # JSON component configs
+└── test-results/             # Test output
+```
 
-# Install Playwright browsers
-npx playwright install chromium
+## Smoke Tests
+
+Fast validation tests that should pass in ~15 seconds.
+
+### Landing Page (`tests/smoke/landing-page.spec.js`)
+- Page loads with correct title
+- Header elements are visible
+- Sidebar is visible and collapsible
+- Apps menu opens
+- Main content container is visible
+
+### CLM Dashboard (`tests/smoke/clm-dashboard.spec.cjs`)
+> **Note:** Requires WebSocket server on port 3000
+
+- Dashboard loads successfully
+- Component registry populates sidebar
+- Loading overlay disappears
+- Layout columns are visible
+
+### Apps Menu (`tests/smoke/apps-menu.spec.js`)
+- Apps submenu contains expected items
+- Music Visualizer view opens/closes
+- Map view opens/closes
+- 3D Viewer opens/closes
+
+## Component Tests
+
+CLM Dashboard component tests (14 files).
+
+| Component | Test File |
+|-----------|-----------|
+| YouTube Video Viewer | `test-clm-youtube-viewer.spec.cjs` |
+| Welcome | `test-clm-welcome.spec.cjs` |
+| Wikipedia Search | `test-clm-wikipedia-search.spec.cjs` |
+| Wikipedia Viewer | `test-clm-wikipedia-viewer.spec.cjs` |
+| Google Maps | `test-clm-google-maps.spec.cjs` |
+| Grafana Faro | `test-clm-grafana-faro.spec.cjs` |
+| Hero Content | `test-clm-hero-content.spec.cjs` |
+| P2P Status | `test-clm-p2p-status.spec.cjs` |
+| PKC Viewer | `test-clm-pkc-viewer.spec.cjs` |
+| User List | `test-clm-user-list.spec.cjs` |
+| User Detail | `test-clm-user-detail.spec.cjs` |
+| External Site Demo | `test-clm-external-site-demo.spec.cjs` |
+| Redux State Viewer | `test-clm-redux-state-viewer.spec.cjs` |
+| Crash Test | `test-clm-crash-test.spec.cjs` |
+
+## Feature Tests
+
+Deep testing of complex features.
+
+### Music Visualizer (`tests/features/music-visualizer-v5.spec.js`)
+- Initial page state
+- Song selection and rendering
+- Playback controls (play/pause/stop)
+- Performance metrics
+- Song change behavior
+
+### Chat Panel (`tests/features/chat-panel.spec.js`)
+- Panel opens and closes
+- Can be reopened after closing
+- Contains input elements
+
+### New Text Card (`tests/features/new-text-card.spec.js`)
+- Panel opens with correct elements
+- Allows text input
+
+## Shared Fixtures
+
+### `tests/fixtures/clm-helpers.js`
+
+Common utilities for CLM Dashboard testing:
+
+```javascript
+const { navigateToDashboard, waitForDashboardReady, clickComponent, 
+        verifyComponentIframe, setupComponent } = require('./fixtures/clm-helpers');
 ```
 
 ## Running Tests
 
-### Run All Tests
+### By Category
 
 ```bash
-npx playwright test --project=chromium
+npm run test:smoke        # Quick validation
+npm run test:components   # CLM components
+npm run test:features     # Deep features
 ```
 
-### Run Specific Test Category
+### With Options
 
 ```bash
-# CLM Dashboard tests only
-npx playwright test tests/test-clm-*.spec.cjs --project=chromium
-
-# Landing page features
-npx playwright test tests/landing-page-features.spec.js --project=chromium
-
-# Music visualizer
-npx playwright test tests/music-visualizer-v5.spec.js --project=chromium
+npm run test:ui           # Interactive UI mode
+npm run test:headed       # See browser
+npm run test:debug        # Debug mode
 ```
 
-### Run with Workers
+### Filtered
 
 ```bash
-# Parallel execution (4 workers)
-npx playwright test --project=chromium --workers=4
+# Run specific test file
+npx playwright test tests/smoke/landing-page.spec.js
+
+# Run tests matching pattern
+npm run test:smoke -- --grep "Landing Page"
 ```
 
-### View HTML Report
+## Prerequisites
+
+1. **Python** - For static file server (Playwright auto-starts on port 8000)
+2. **Node.js** - For WebSocket server (port 3000, required for CLM tests)
 
 ```bash
-npx playwright show-report
+# Install Playwright browsers
+npm run install-browsers
 ```
 
-## Technical Details
+## Recent Updates (January 2026)
 
-### CLM Dashboard Architecture
+### Test Reorganization
+- Separated tests into smoke, components, and features categories
+- Added Playwright projects with category-specific timeouts
+- Created shared fixtures for common operations
 
-The CLM Dashboard uses a Finder-style two-column layout:
-- **Types Column**: Categories of components (Internal, External, Games, etc.)
-- **Components Column**: Individual components within selected type
-
-Components are loaded in isolated iframes with `id="iframe-{hash}"` pattern.
-
-### Test Selectors
-
-| Element | Selector Pattern |
-|---------|-----------------|
-| Component items | `div.component-item:has-text("Name")` |
-| Component iframes | `iframe#iframe-{component-hash}` |
-| Loading overlay | `.loading-overlay` |
-| Component list | `.component-item` |
-
-### Wait Strategies
-
-Tests use explicit waits for reliability:
-```javascript
-// Wait for loading overlay to disappear
-await page.waitForSelector('.loading-overlay', { state: 'hidden', timeout: 15000 });
-
-// Wait for component list to populate
-await page.waitForSelector('.component-item', { timeout: 15000 });
-```
-
-## Recent Fixes (January 2026)
-
-### 1. Redux Toolkit ESM Compatibility
-
-**Issue**: `ReferenceError: process is not defined` in `redux-toolkit.esm.js`
-
-**Solution**: Added process polyfill to `index-clm-dashboard.html`:
-```html
-<script>window.process = { env: { NODE_ENV: 'production' } };</script>
-```
-
-### 2. Selector Updates
-
-| Original Selector | Updated Selector | Reason |
-|------------------|------------------|--------|
-| `button:has-text("Name")` | `div.component-item:has-text("Name")` | Dashboard uses div elements, not buttons |
-| `data-component-id="name"` | `id="iframe-name"` | Matches actual iframe ID pattern |
-| `h2:has-text("YouTube")` | `h1:has-text("YouTube")` | Component uses h1 heading |
-
-### 3. mcard-js Library Fixes
-
-- Patched ESM imports in `node_modules/mcard-js/dist/` to include `.js` extensions
-- Reconstructed missing `schema/mcard_schema.sql` file
-
-### 4. Redux Localization
-
-Replaced CDN dependencies with local copies:
-- `js/libs/redux.min.js` (UMD)
-- `js/libs/redux-toolkit.min.js` (UMD)
-- `js/libs/redux.esm.js` (ESM)
-- `js/libs/redux-toolkit.esm.js` (ESM)
-
-## Removed Tests
-
-The following tests were removed due to complex multi-tab/multi-user scenarios that require additional infrastructure:
-
-| Test File | Reason for Removal |
-|-----------|-------------------|
-| `e2e/landing-page.spec.cjs` | Element timeout issues |
-| `e2e/tic-tac-toe.spec.cjs` | Browser context lifecycle issues |
-| `e2e/video-meeting.spec.cjs` | Browser context lifecycle issues |
-| `e2e/webrtc-dashboard.spec.cjs` | Multi-user room creation complexity |
-| `p2p-connection.spec.cjs` | P2P dialog events not triggering |
-| `test-webrtc-dashboard-create-room.spec.cjs` | 120s timeout exceeded |
-| `test-webrtc-dashboard-multiple-rooms-and-users.spec.cjs` | Element not found |
-| `test-website.spec.cjs` | Tests deleted legacy page |
-
-## Contributing
-
-When adding new tests:
-1. Use the established selector patterns
-2. Include proper wait strategies
-3. Add console logging for debugging
-4. Update this documentation
+### Fixes Applied
+- Process polyfill for Redux Toolkit ESM compatibility
+- PWA modal dismissal improvements
+- Selector updates for CLM dashboard
 
 ## License
 
