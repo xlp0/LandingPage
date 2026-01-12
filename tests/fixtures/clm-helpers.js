@@ -7,10 +7,7 @@
  */
 
 const { expect } = require('@playwright/test');
-
-// Use port 8000 for Playwright tests (Python HTTP server started by Playwright)
-// Use port 3000 only when WebSocket server is running separately
-const CLM_DASHBOARD_URL = 'http://localhost:8000/archive/html/index-clm-dashboard.html';
+const { CLM_DASHBOARD_URL } = require('./test-config');
 
 /**
  * Navigate to CLM Dashboard and wait for it to fully load

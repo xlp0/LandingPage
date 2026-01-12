@@ -37,6 +37,80 @@ A modern, **static-first, modular web application** with **serverless P2P commun
 
 ---
 
+## 🧊 **CLM-Based Development Architecture**
+
+This project is built on the **Cubic Logic Model (CLM)** - 三套東西 (Three Sets) principle. Every component, test, and feature follows the CLM structure:
+
+### **Core Principle: mcard-js Integration**
+
+The entire project is **served and run through mcard-js**, providing:
+
+| Server | Port | Purpose |
+|--------|------|---------|
+| **Node WebSocket Server** | 3000 | HTTP + WebSocket + API endpoints |
+| **Express Static Server** | 3000 | Serves all static files and CLM components |
+
+```bash
+# Start the unified server (HTTP + WebSocket + CLM APIs)
+node ws-server.js  # Serves on port 3000
+```
+
+### **CLM Component Structure**
+
+Every CLM component follows the **Abstract → Concrete → Balanced** pattern:
+
+```yaml
+# Example from clm-registry.yaml
+- hash: "youtube-viewer"
+  name: "YouTube Video Viewer"
+  abstract:
+    context: "Video content presentation"
+    goal: "Embed and control YouTube playback"
+  concrete:
+    implementation: "components/youtube-viewer.html"
+    sandbox: "allow-scripts allow-same-origin"
+  balanced:
+    metrics_endpoint: "/metrics/youtube-viewer"
+    expected_load_time_ms: 800
+```
+
+### **CLM-Driven Testing**
+
+All tests are organized using CLM principles:
+
+| Test Category | Purpose | CLM Alignment |
+|---------------|---------|---------------|
+| **Smoke Tests** (`tests/smoke/`) | Fast navigation validation | Abstract (goal verification) |
+| **Component Tests** (`tests/components/`) | Isolated component testing | Concrete (implementation) |
+| **Feature Tests** (`tests/features/`) | Deep feature validation | Balanced (metrics & outcomes) |
+
+```bash
+# Run tests by CLM category
+npm run test:smoke       # Abstract - Does it load correctly?
+npm run test:components  # Concrete - Does the implementation work?
+npm run test:features    # Balanced - Does it meet performance metrics?
+```
+
+### **CLM Dashboard**
+
+The CLM Dashboard (`/archive/html/index-clm-dashboard.html`) provides:
+
+- **Registry Browser**: View all registered CLM components
+- **Component Isolation**: Each component runs in its own iframe
+- **Failure Containment**: Crashing components don't affect others
+- **Performance Metrics**: Real-time component load time monitoring
+
+### **Key CLM Endpoints**
+
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /api/clm/registry` | Returns all registered CLM components |
+| `GET /api/clm/component/:id` | Returns specific component configuration |
+| `GET /api/clm/health/:id` | Health check for component |
+| `POST /api/clm/telemetry` | Receives component telemetry data |
+
+---
+
 ## 🔄 **P2P Architecture Highlights**
 
 ### **Serverless Design Principles**

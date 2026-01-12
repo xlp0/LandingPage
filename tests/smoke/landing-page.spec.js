@@ -10,7 +10,7 @@
 
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'http://localhost:8888/index.html';
+const BASE_URL = 'http://localhost:3000/index.html';
 
 test.describe('Landing Page - Smoke Tests', () => {
 
