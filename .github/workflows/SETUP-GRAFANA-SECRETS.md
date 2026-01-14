@@ -96,9 +96,10 @@ Pastikan semua 4 secrets sudah muncul di list:
 ### ❌ Error: "Failed to connect to MinIO"
 **Fix:**
 1. Verify MinIO credentials
-2. Test connection:
+2. Ensure using correct API endpoint with port 9000
+3. Test connection:
    ```bash
-   mc alias set myminio https://minio.pkc.pub ACCESS_KEY SECRET_KEY
+   mc alias set myminio https://minio.pkc.pub:9000 ACCESS_KEY SECRET_KEY
    mc ls myminio
    ```
 

@@ -142,8 +142,9 @@ Workflow berjalan otomatis:
 **Solution:**
 - Verify `MINIO_ACCESS_KEY` dan `MINIO_SECRET_KEY`
 - Check MinIO bucket permissions
-- MinIO is behind reverse proxy on standard HTTPS port (443)
-- Test connection: `mc alias set myminio https://minio.pkc.pub ACCESS_KEY SECRET_KEY`
+- MinIO API endpoint menggunakan port 9000 (separate dari web console)
+- Endpoint format: `minio.pkc.pub:9000` (HTTPS on port 9000)
+- Test connection: `mc alias set myminio https://minio.pkc.pub:9000 ACCESS_KEY SECRET_KEY`
 
 ### Issue: No data for specific metrics
 **Solution:**

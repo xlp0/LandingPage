@@ -14,13 +14,15 @@ import pytz
 
 def get_minio_client():
     """Initialize MinIO client"""
-    endpoint = os.getenv('MINIO_ENDPOINT', 'minio.pkc.pub')
+    endpoint = os.getenv('MINIO_ENDPOINT', 'minio.pkc.pub:9000')
     access_key = os.getenv('MINIO_ACCESS_KEY')
     secret_key = os.getenv('MINIO_SECRET_KEY')
     
     if not access_key or not secret_key:
         print("❌ MinIO credentials not set")
         sys.exit(1)
+    
+    print(f"🔌 Connecting to MinIO API endpoint: {endpoint}")
     
     try:
         client = Minio(
