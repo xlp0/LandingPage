@@ -66,7 +66,7 @@ def upload_file(client, bucket_name, file_path, object_name):
 
 def main():
     metrics_dir = "grafana-metrics"
-    bucket_name = "grafana-metrics"
+    bucket_name = "pkc"
     
     print("🚀 Starting upload to MinIO")
     
@@ -76,10 +76,10 @@ def main():
     # Ensure bucket exists
     ensure_bucket_exists(client, bucket_name)
     
-    # Get current timestamp for organizing files
+    # Get current date in WITA timezone (UTC+8) for folder structure
     wita_tz = pytz.timezone('Asia/Makassar')
     now = datetime.now(wita_tz)
-    date_path = now.strftime('%Y/%m/%d')
+    date_folder = now.strftime('%Y-%m-%d')
     
     # Find all JSON files in metrics directory
     json_files = glob.glob(f"{metrics_dir}/*.json")
@@ -100,8 +100,8 @@ def main():
     for file_path in json_files:
         filename = os.path.basename(file_path)
         
-        # Organize files by date
-        object_name = f"{date_path}/{filename}"
+        # Organize files by date (format: YYYY-MM-DD)
+        object_name = f"grafana-metrics/{date_folder}/{filename}"
         
         success = upload_file(client, bucket_name, file_path, object_name)
         

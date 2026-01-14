@@ -75,9 +75,10 @@ Pastikan semua 4 secrets sudah muncul di list:
 
 #### Option B: Check di MinIO
 1. Login ke MinIO console: https://minio.pkc.pub
-2. Buka bucket `grafana-metrics`
-3. Navigate ke folder: `2026/01/14/` (sesuai tanggal hari ini)
+2. Buka bucket `pkc`
+3. Navigate ke folder: `grafana-metrics/2026-01-14/` (sesuai tanggal hari ini)
 4. Download file `zitadel_metrics_*.json`
+5. **Public URL:** https://minio.pkc.pub/browser/pkc/grafana-metrics/2026-01-14
 
 ## 🔍 Troubleshooting
 

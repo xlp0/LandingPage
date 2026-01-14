@@ -74,15 +74,18 @@ grafana-metrics/
 └── upload_results.json
 ```
 
-### MinIO Storage:
+### MinIO Storage (bucket: pkc):
 ```
-grafana-metrics/
-├── 2026/
-│   └── 01/
-│       └── 14/
-│           ├── zitadel_metrics_20260114_010000.json
-│           └── latest_summary.json
+pkc/
+├── grafana-metrics/
+│   ├── 2026-01-14/
+│   │   ├── zitadel_metrics_20260114_010000.json
+│   │   └── latest_summary.json
+│   └── 2026-01-15/
+│       └── ...
 ```
+
+**Public Access URL:** https://minio.pkc.pub/browser/pkc/grafana-metrics/{date}
 
 ## 📝 Output Format
 
