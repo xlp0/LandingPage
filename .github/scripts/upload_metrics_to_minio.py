@@ -8,13 +8,14 @@ import sys
 import json
 import glob
 from datetime import datetime
-from minio import Minio
-from minio.error import S3Error
+import boto3
+from botocore.exceptions import ClientError
+from botocore.client import Config
 import pytz
 
-def get_minio_client():
-    """Initialize MinIO client"""
-    endpoint = os.getenv('MINIO_ENDPOINT', 'minio.pkc.pub:9000')
+def get_s3_client():
+    """Initialize S3 client for MinIO"""
+    endpoint = os.getenv('MINIO_ENDPOINT', 'https://minio.pkc.pub')
     access_key = os.getenv('MINIO_ACCESS_KEY')
     secret_key = os.getenv('MINIO_SECRET_KEY')
     
@@ -22,45 +23,60 @@ def get_minio_client():
         print("❌ MinIO credentials not set")
         sys.exit(1)
     
-    print(f"🔌 Connecting to MinIO API endpoint: {endpoint}")
+    print(f"🔌 Connecting to MinIO S3 endpoint: {endpoint}")
     
     try:
-        client = Minio(
-            endpoint,
-            access_key=access_key,
-            secret_key=secret_key,
-            secure=True
+        # Use boto3 S3 client with MinIO endpoint
+        client = boto3.client(
+            's3',
+            endpoint_url=endpoint,
+            aws_access_key_id=access_key,
+            aws_secret_access_key=secret_key,
+            config=Config(signature_version='s3v4'),
+            region_name='us-east-1'  # MinIO default region
         )
-        print(f"✅ Connected to MinIO: {endpoint}")
+        
+        # Test connection by listing buckets
+        client.list_buckets()
+        print(f"✅ Connected to MinIO S3 API: {endpoint}")
         return client
     except Exception as e:
         print(f"❌ Failed to connect to MinIO: {e}")
+        print(f"   Endpoint: {endpoint}")
+        print(f"   Make sure MinIO S3 API is accessible at this URL")
         sys.exit(1)
 
 def ensure_bucket_exists(client, bucket_name):
     """Create bucket if it doesn't exist"""
     try:
-        client.make_bucket(bucket_name)
-        print(f"✅ Created bucket: {bucket_name}")
-    except S3Error as e:
-        if e.code == 'BucketAlreadyOwnedByYou' or e.code == 'BucketAlreadyExists':
-            print(f"✅ Bucket already exists: {bucket_name}")
+        client.head_bucket(Bucket=bucket_name)
+        print(f"✅ Bucket exists: {bucket_name}")
+    except ClientError as e:
+        error_code = e.response['Error']['Code']
+        if error_code == '404':
+            try:
+                client.create_bucket(Bucket=bucket_name)
+                print(f"✅ Created bucket: {bucket_name}")
+            except ClientError as create_error:
+                print(f"⚠️  Could not create bucket: {create_error}")
+                print(f"   Assuming bucket exists, will try upload anyway")
         else:
-            print(f"⚠️  Bucket check skipped (assuming exists): {bucket_name}")
-            print(f"   If upload fails, manually create bucket via MinIO console")
+            print(f"⚠️  Bucket check skipped: {e}")
+            print(f"   Assuming bucket exists, will try upload anyway")
 
 def upload_file(client, bucket_name, file_path, object_name):
-    """Upload file to MinIO"""
+    """Upload file to MinIO using S3 API"""
     try:
-        client.fput_object(
-            bucket_name,
-            object_name,
-            file_path,
-            content_type="application/json"
-        )
+        with open(file_path, 'rb') as f:
+            client.put_object(
+                Bucket=bucket_name,
+                Key=object_name,
+                Body=f,
+                ContentType='application/json'
+            )
         print(f"  ✅ Uploaded: {object_name}")
         return True
-    except S3Error as e:
+    except ClientError as e:
         print(f"  ❌ Failed to upload {file_path}: {e}")
         return False
 
@@ -70,8 +86,8 @@ def main():
     
     print("🚀 Starting upload to MinIO")
     
-    # Initialize MinIO client
-    client = get_minio_client()
+    # Initialize S3 client for MinIO
+    client = get_s3_client()
     
     # Ensure bucket exists
     ensure_bucket_exists(client, bucket_name)

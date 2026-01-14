@@ -96,11 +96,12 @@ Pastikan semua 4 secrets sudah muncul di list:
 ### ❌ Error: "Failed to connect to MinIO"
 **Fix:**
 1. Verify MinIO credentials
-2. Ensure using correct API endpoint with port 9000
-3. Test connection:
+2. MinIO di belakang reverse proxy - gunakan URL standard tanpa port
+3. Test connection dengan AWS CLI:
    ```bash
-   mc alias set myminio https://minio.pkc.pub:9000 ACCESS_KEY SECRET_KEY
-   mc ls myminio
+   aws configure set aws_access_key_id YOUR_ACCESS_KEY
+   aws configure set aws_secret_access_key YOUR_SECRET_KEY
+   aws s3 ls --endpoint-url https://minio.pkc.pub
    ```
 
 ### ⚠️ Warning: "No data for [metric_name]"
