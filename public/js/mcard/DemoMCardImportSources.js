@@ -38,43 +38,12 @@ function parseDotEnv(raw) {
   return out;
 }
 
+/**
+ * Get demo import sources - defaults to EMPTY for clean startup.
+ * Set MCARD_DEMO_IMPORT_SOURCES env var to opt-in to demo content.
+ */
 export async function getDemoMCardImportSources() {
-  const defaultSources = [
-    {
-      kind: 'manifest',
-      url: '/public/data/demo/manifest.json',
-      baseUrl: '/public/',
-      updateIfChanged: true
-    },
-    {
-      kind: 'directory',
-      dir: '/public/data/',
-      recursive: true,
-      skipPrefixes: ['/public/data/demo/', '/public/data/chapters/'],
-      handlePrefix: 'data',
-      isBinaryByDefault: false,
-      textExtensions: ['md', 'markdown', 'txt', 'json', 'yaml', 'yml', 'csv', 'sql', 'xml', 'html', 'js', 'css'],
-      updateIfChanged: false
-    },
-    {
-      kind: 'directory',
-      dir: '/public/assets/videos/',
-      recursive: false,
-      handlePrefix: 'video',
-      includeExtensions: ['mp4', 'webm', 'mov', 'm4v', 'mkv', 'avi', 'flv', 'mpeg', 'mpg', 'wmv'],
-      isBinaryByDefault: true,
-      updateIfChanged: false
-    }
-  ];
-
-  // Add CLM Chapters - Using pre-generated manifest (more reliable)
-  defaultSources.push({
-    kind: 'manifest',
-    url: '/public/data/chapters/manifest.json',
-    baseUrl: '/public/data/chapters/',
-    updateIfChanged: true
-  });
-
+  // Check for env override first - allows opt-in to demo content
   const appConfigValue = getEnvValue('mcardDemoImportSources');
   if (appConfigValue && String(appConfigValue).trim()) {
     try {
@@ -113,5 +82,27 @@ export async function getDemoMCardImportSources() {
   } catch {
   }
 
-  return defaultSources;
+  // Default: empty sources - start with a clean slate
+  return [];
+}
+
+/**
+ * Get full demo sources for manual opt-in loading.
+ * Call this explicitly to load demo content.
+ */
+export function getFullDemoSources() {
+  return [
+    {
+      kind: 'manifest',
+      url: '/public/data/demo/manifest.json',
+      baseUrl: '/public/',
+      updateIfChanged: true
+    },
+    {
+      kind: 'manifest',
+      url: '/public/data/chapters/manifest.json',
+      baseUrl: '/public/data/chapters/',
+      updateIfChanged: true
+    }
+  ];
 }

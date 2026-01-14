@@ -1,5 +1,5 @@
 // Service Worker for MCard Manager PWA - ULTRA-FAST CACHING
-const CACHE_VERSION = 'v8';
+const CACHE_VERSION = 'v9';
 const CACHE_NAME = `mcard-manager-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `mcard-runtime-${CACHE_VERSION}`;
 const IMAGE_CACHE = `mcard-images-${CACHE_VERSION}`;
@@ -56,7 +56,7 @@ self.addEventListener('install', (event) => {
       PRELOAD_CDN ? caches.open(CDN_CACHE).then((cache) => {
         console.log('[SW] 🌐 Preloading CDN assets for instant second load...');
         return Promise.allSettled(
-          CDN_ASSETS.map(url => 
+          CDN_ASSETS.map(url =>
             fetch(url)
               .then(response => {
                 if (response.ok) {
@@ -69,22 +69,22 @@ self.addEventListener('install', (event) => {
         );
       }) : Promise.resolve()
     ])
-    .then(() => {
-      console.log('[SW] ✅ Service worker installed - READY FOR INSTANT LOADING!');
-      return self.skipWaiting();
-    })
-    .catch((error) => {
-      console.error('[SW] ❌ Installation failed:', error);
-    })
+      .then(() => {
+        console.log('[SW] ✅ Service worker installed - READY FOR INSTANT LOADING!');
+        return self.skipWaiting();
+      })
+      .catch((error) => {
+        console.error('[SW] ❌ Installation failed:', error);
+      })
   );
 });
 
 // Activate event - clean up old caches but keep current ones
 self.addEventListener('activate', (event) => {
   console.log('[SW] ⚡ Activating service worker...');
-  
+
   const currentCaches = [CACHE_NAME, RUNTIME_CACHE, IMAGE_CACHE, CDN_CACHE];
-  
+
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
@@ -135,7 +135,7 @@ self.addEventListener('fetch', (event) => {
             if (response && response.ok) {
               caches.open(CACHE_NAME).then(c => c.put(request, response.clone()));
             }
-          }).catch(() => {});
+          }).catch(() => { });
           return cachedResponse;
         }
         // Not in cache, fetch and cache
@@ -173,7 +173,7 @@ self.addEventListener('fetch', (event) => {
           fetchPromise; // Trigger background update
           return cachedResponse;
         }
-        
+
         // Not cached yet, wait for network
         return fetchPromise;
       })
@@ -182,9 +182,9 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Strategy 3: CDN Cache First (Long-lived external resources)
-  if (url.hostname.includes('cdn.jsdelivr.net') || 
-      url.hostname.includes('unpkg.com') || 
-      url.hostname.includes('cdnjs.cloudflare.com')) {
+  if (url.hostname.includes('cdn.jsdelivr.net') ||
+    url.hostname.includes('unpkg.com') ||
+    url.hostname.includes('cdnjs.cloudflare.com')) {
     event.respondWith(
       caches.open(CDN_CACHE).then((cache) => {
         return cache.match(request).then((cachedResponse) => {
@@ -256,7 +256,7 @@ self.addEventListener('fetch', (event) => {
         console.log('[SW] 💾 Runtime cache hit');
         return cachedResponse;
       }
-      
+
       return fetch(request).then((response) => {
         if (response && response.ok) {
           // Clone before using
@@ -266,12 +266,12 @@ self.addEventListener('fetch', (event) => {
         return response;
       }).catch((error) => {
         console.error('[SW] ❌ Fetch failed:', error);
-        
+
         // Offline fallback for navigation
         if (request.mode === 'navigate') {
           return caches.match('/mcard-manager.html');
         }
-        
+
         throw error;
       });
     })
@@ -281,7 +281,7 @@ self.addEventListener('fetch', (event) => {
 // Background sync for offline actions
 self.addEventListener('sync', (event) => {
   console.log('[SW] Background sync:', event.tag);
-  
+
   if (event.tag === 'sync-cards') {
     event.waitUntil(
       // Implement sync logic here
@@ -293,7 +293,7 @@ self.addEventListener('sync', (event) => {
 // Push notifications (optional)
 self.addEventListener('push', (event) => {
   console.log('[SW] Push notification received');
-  
+
   const options = {
     body: event.data ? event.data.text() : 'New update available',
     icon: '/icons/icon-192x192.png',
@@ -323,11 +323,11 @@ self.addEventListener('notificationclick', (event) => {
 // Message handler for communication with main app
 self.addEventListener('message', (event) => {
   console.log('[SW] Message received:', event.data);
-  
+
   if (event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-  
+
   if (event.data.type === 'CLEAR_CACHE') {
     event.waitUntil(
       caches.keys().then((cacheNames) => {

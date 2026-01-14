@@ -124,15 +124,25 @@ export class MCardManager {
 
     const existingHash = await this.collection.resolveHandle(handle);
     if (existingHash) {
-      if (!updateIfChanged || existingHash === newCard.hash)
+      // Handle already exists
+      if (!updateIfChanged || existingHash === newCard.hash) {
         return;
+      }
 
-      await this.collection.add(newCard);
+      const existingContent = await this.collection.get(newCard.hash);
+      if (!existingContent) {
+        await this.collection.add(newCard);
+      }
       await this.collection.updateHandle(handle, newCard);
       return;
     }
 
-    await this.collection.addWithHandle(newCard, handle);
+    const existingContent = await this.collection.get(newCard.hash);
+    if (existingContent) {
+      await this.collection.engine.registerHandle(handle, newCard.hash);
+    } else {
+      await this.collection.addWithHandle(newCard, handle);
+    }
   }
 
   /**
@@ -281,9 +291,8 @@ export class MCardManager {
       const count = await this.collection.count();
       console.log(`[MCardManager] Loading ${count} cards from collection`);
 
-      // Always update startup cards on every load to ensure they have latest content
-      console.log('[MCardManager] Updating startup cards...');
-      await this.updateStartupCards();
+      // NOTE: updateStartupCards() is now only called once in init(), not on every load
+      // This prevents duplicate event regeneration on page refresh
 
       const cards = await this.collection.getAllMCardsRaw();
       console.log(`[MCardManager] Loaded ${cards.length} cards`);
@@ -613,10 +622,20 @@ export class MCardManager {
    * Delete current card
    */
   async deleteCurrentCard() {
+    console.log('[MCardManager] deleteCurrentCard called');
     const card = this.viewer.getCurrentCard();
-    if (!card) return;
+    if (!card) {
+      console.warn('[MCardManager] No card found in viewer');
+      return;
+    }
+    console.log('[MCardManager] Deleting card:', card.hash);
 
-    if (!confirm('Are you sure you want to delete this MCard?')) return;
+    // Use custom confirmation to avoid browser auto-dismiss issues
+    const confirmed = await this.showConfirmDialog('Are you sure you want to delete this MCard?');
+    if (!confirmed) {
+      console.log('[MCardManager] Delete cancelled by user');
+      return;
+    }
 
     try {
       await this.db.delete(card.hash);
@@ -633,14 +652,22 @@ export class MCardManager {
    * Remove all duplicate event cards in a batch
    */
   async batchRemoveDuplications() {
+    console.log('[MCardManager] batchRemoveDuplications called');
     const categories = await this.categorizeCards(this.allCards);
     const dupes = categories.duplications || [];
+    console.log(`[MCardManager] Found ${dupes.length} duplicates`);
+
     if (dupes.length === 0) {
       UIComponents.showToast('No duplications to remove', 'info');
       return;
     }
 
-    if (!confirm(`Are you sure you want to remove all ${dupes.length} duplicate events?`)) return;
+    // Use custom confirmation
+    const confirmed = await this.showConfirmDialog(`Are you sure you want to remove all ${dupes.length} duplicate events?`);
+    if (!confirmed) {
+      console.log('[MCardManager] Batch remove cancelled by user');
+      return;
+    }
 
     try {
       for (const card of dupes) {
@@ -652,6 +679,92 @@ export class MCardManager {
       console.error('[MCardManager] Error batch removing duplications:', error);
       UIComponents.showToast('Failed to remove duplications', 'error');
     }
+  }
+
+  /**
+   * Show custom confirmation dialog (replaces native confirm())
+   * @param {string} message
+   * @returns {Promise<boolean>}
+   */
+  showConfirmDialog(message) {
+    return new Promise((resolve) => {
+      // Create backdrop
+      const backdrop = document.createElement('div');
+      backdrop.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      `;
+
+      // Create dialog
+      const dialog = document.createElement('div');
+      dialog.style.cssText = `
+        background: #1e1e1e;
+        border-radius: 8px;
+        padding: 24px;
+        max-width: 400px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      `;
+
+      dialog.innerHTML = `
+        <h3 style="margin: 0 0 16px 0; color: #fff; font-size: 18px;">Confirm</h3>
+        <p style="margin: 0 0 24px 0; color: #ccc; line-height: 1.5;">${message}</p>
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+          <button id="cancelBtn" style="
+            background: #3e3e42;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+          ">Cancel</button>
+          <button id="confirmBtn" style="
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+          ">Delete</button>
+        </div>
+      `;
+
+      backdrop.appendChild(dialog);
+      document.body.appendChild(backdrop);
+
+      const cleanup = () => {
+        document.body.removeChild(backdrop);
+      };
+
+      dialog.querySelector('#confirmBtn').onclick = () => {
+        cleanup();
+        resolve(true);
+      };
+
+      dialog.querySelector('#cancelBtn').onclick = () => {
+        cleanup();
+        resolve(false);
+      };
+
+      // ESC key to cancel
+      const handleKeydown = (e) => {
+        if (e.key === 'Escape') {
+          cleanup();
+          document.removeEventListener('keydown', handleKeydown);
+          resolve(false);
+        }
+      };
+      document.addEventListener('keydown', handleKeydown);
+    });
   }
 
   /**

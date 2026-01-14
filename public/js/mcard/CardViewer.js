@@ -168,7 +168,7 @@ export class CardViewer {
           <i data-lucide="download" style="width: 16px; height: 16px;"></i>
           Download
         </button>
-        <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="deleteCurrentCard()">
+        <button type="button" class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="deleteCurrentCard(event)">
           <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
           Delete
         </button>
@@ -180,7 +180,7 @@ export class CardViewer {
           <i data-lucide="download" style="width: 16px; height: 16px;"></i>
           Download
         </button>
-        <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="deleteCurrentCard()">
+        <button type="button" class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="deleteCurrentCard(event)">
           <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
           Delete
         </button>

@@ -280,9 +280,9 @@
         <div class="column-header">
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <h3 id="columnTitle">All MCards</h3>
-            <button id="batchRemoveBtn" class="btn btn-secondary"
+            <button type="button" id="batchRemoveBtn" class="btn btn-secondary"
               style="display: none; background: #e74c3c; color: white; border: none; font-size: 11px; padding: 4px 10px; border-radius: 4px; align-items: center; gap: 4px;"
-              onclick="batchRemoveDuplications()">
+              onclick="batchRemoveDuplications(event)">
               <i data-lucide="trash-2" style="width: 12px; height: 12px;"></i>
               Remove All
             </button>
@@ -634,7 +634,7 @@
   <script src="/public/js/performance-monitor.js"></script>
 
   <!-- MCard Manager JavaScript (Modular Version) -->
-  <script type="module" src="/public/js/mcard-manager-new.js?v=12"></script>
+  <script type="module" src="/public/js/mcard-manager-new.js?v=18"></script>
 
   <!-- PWA Service Worker Registration -->
   <script>
