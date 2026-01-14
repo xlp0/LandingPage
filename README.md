@@ -29,11 +29,12 @@ A modern, **static-first, modular web application** with **serverless P2P commun
 - **Morphism Cube**: Category theory recursion schemes visualized in 3D (`public/examples/3DGames/MorphismCube/`)
 
 ### **🏗️ Modular Architecture**
-- **PKC Core Runtime**: Lightweight module loader with capability detection
-- **mcard-js Integration**: Core MCard functionality powered by the robust `mcard-js` library
-- **Progressive Enhancement**: Works as static files, modules add features when supported
-- **WebRTC/WebSocket Support**: Automatic capability detection and graceful degradation
-- **Static Hosting Ready**: Deploy anywhere (GitHub Pages, Netlify, S3, etc.)
+- **MCard Manager**: Advanced card management with IndexedDB persistence, handle support (`@welcome`), and **Duplications** detection (v11+).
+
+### **🧹 Automated Duplicate Management**
+- **Smart Detection**: Detects duplicate-type MCards (`{"type": "duplicate"}`) via `BrowserContentTypeDetector`.
+- **Batch Operations**: Quick removal of all duplicate entries to maintain a clean knowledge container.
+- **Sidebar Integration**: Real-time count of duplicates with a distinct UI badge.
 
 ---
 
@@ -49,10 +50,14 @@ The entire project is **served and run through mcard-js**, providing:
 |--------|------|---------|
 | **Node WebSocket Server** | 3000 | HTTP + WebSocket + API endpoints |
 | **Express Static Server** | 3000 | Serves all static files and CLM components |
+| **MCard Dev Server** | 4000 | Configurable dev server via `mcard-js` |
 
 ```bash
 # Start the unified server (HTTP + WebSocket + CLM APIs)
 node ws-server.js  # Serves on port 3000
+
+# Start MCard-managed server (Integrated with serve.yaml)
+./start-mcard-server.sh  # Default port 4000
 ```
 
 ### **CLM Component Structure**
@@ -108,6 +113,22 @@ The CLM Dashboard (`/archive/html/index-clm-dashboard.html`) provides:
 | `GET /api/clm/component/:id` | Returns specific component configuration |
 | `GET /api/clm/health/:id` | Health check for component |
 | `POST /api/clm/telemetry` | Receives component telemetry data |
+
+---
+
+## 🧠 **AI Project Synthesis & Architectural Commentary**
+
+### **The Philosophy of Failure Containment**
+The PKC Landing Page isn't just a website; it's a **resilient execution environment**. By adopting the **Cubic Logic Model (CLM)**, the project moves away from monolithic web design toward a "Micro-Frontend of Functions." Each component is treated as a mathematical transformation `f(goal, process) → output`. Isolation via iframes ensures that the "blast radius" of any specific failure (e.g., a heavy 3D game or a buggy external integration) is strictly limited, preserving the integrity of the host container.
+
+### **Static-First, Decentralized-Always**
+The pivot from `libp2p` to a **native WebRTC serverless model** represents a critical realization: true decentralization requires removing even the "hidden" centralization of bootstrap nodes. By leveraging manual invitation exchanges (URL/QR), PKC establishes a trust-based, zero-infrastructure network that thrives on local connectivity without sacrificing privacy.
+
+### **The MCard Backbone**
+The integration of `mcard-js` transforms the browser from a simple viewer into a professional knowledge manager. The hybrid detection system in `BrowserContentTypeDetector.js` bridges the gap between structured JSON data and binary media, allowing the container to "understand" its contents rather than just "storing" them. This creates a foundation for **Semantic Knowledge Containers** where the data defines the UI.
+
+### **Evolutionary Trajectory**
+The system is currently transitioning from a **passive listener** (basic indexing) to an **active organizer** (as seen in the Duplications Category). Future phases involving CRDT-based state synchronization and Gossip protocols will further solidify PKC as a robust alternative to centralized cloud silos.
 
 ---
 
