@@ -38,14 +38,14 @@ def get_minio_client():
 def ensure_bucket_exists(client, bucket_name):
     """Create bucket if it doesn't exist"""
     try:
-        if not client.bucket_exists(bucket_name):
-            client.make_bucket(bucket_name)
-            print(f"✅ Created bucket: {bucket_name}")
-        else:
-            print(f"✅ Bucket exists: {bucket_name}")
+        client.make_bucket(bucket_name)
+        print(f"✅ Created bucket: {bucket_name}")
     except S3Error as e:
-        print(f"❌ Error with bucket: {e}")
-        sys.exit(1)
+        if e.code == 'BucketAlreadyOwnedByYou' or e.code == 'BucketAlreadyExists':
+            print(f"✅ Bucket already exists: {bucket_name}")
+        else:
+            print(f"⚠️  Bucket check skipped (assuming exists): {bucket_name}")
+            print(f"   If upload fails, manually create bucket via MinIO console")
 
 def upload_file(client, bucket_name, file_path, object_name):
     """Upload file to MinIO"""
