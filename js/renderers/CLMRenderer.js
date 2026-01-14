@@ -14,15 +14,29 @@ export class CLMRenderer {
   }
 
   /**
+   * Unicode-safe Base64 encoder
+   */
+  toBase64(str) {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
+  }
+
+  /**
+   * Unicode-safe Base64 decoder
+   */
+  fromBase64(str) {
+    return decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+  }
+
+  /**
    * Check if this renderer can handle the content
    */
   canRender(content, options = {}) {
     if (typeof content !== 'string') return false;
-    
+
     // Check for CLM structure
-    return content.includes('specification:') && 
-           content.includes('implementation:') && 
-           (content.includes('verification:') || content.includes('balanced:'));
+    return content.includes('specification:') &&
+      content.includes('implementation:') &&
+      (content.includes('verification:') || content.includes('balanced:'));
   }
 
   /**
@@ -37,17 +51,17 @@ export class CLMRenderer {
         verification: {},
         metadata: {}
       };
-      
+
       let currentSection = null;
       let currentSubsection = null;
       let indentLevel = 0;
-      
+
       for (const line of lines) {
         const trimmed = line.trim();
-        
+
         // Skip comments and empty lines
         if (trimmed.startsWith('#') || trimmed === '') continue;
-        
+
         // Detect main sections
         if (trimmed.startsWith('specification:')) {
           currentSection = 'specification';
@@ -62,18 +76,18 @@ export class CLMRenderer {
           currentSection = 'metadata';
           continue;
         }
-        
+
         // Parse key-value pairs
         if (trimmed.includes(':') && currentSection) {
           const [key, ...valueParts] = trimmed.split(':');
           const value = valueParts.join(':').trim();
-          
+
           if (!result[currentSection][key]) {
             result[currentSection][key] = value || {};
           }
         }
       }
-      
+
       return result;
     } catch (error) {
       console.error('[CLM] Error parsing YAML:', error);
@@ -86,7 +100,7 @@ export class CLMRenderer {
    */
   async render(content, options = {}) {
     const parsed = this.parseYAML(content);
-    
+
     if (!parsed) {
       return `<div class="clm-error">Failed to parse CLM content</div>`;
     }
@@ -155,11 +169,11 @@ export class CLMRenderer {
 
         <!-- Execution Controls -->
         <div class="clm-execution-controls">
-          <button onclick="window.clmRenderer.executeCLM(this)" class="clm-execute-btn" data-clm-content='${btoa(JSON.stringify(parsed))}' data-clm-raw='${btoa(content)}'>
+          <button onclick="window.clmRenderer.executeCLM(this)" class="clm-execute-btn" data-clm-content='${this.toBase64(JSON.stringify(parsed))}' data-clm-raw='${this.toBase64(content)}'>
             <i data-lucide="play" style="width: 16px; height: 16px;"></i>
             Execute CLM
           </button>
-          <button onclick="window.clmRenderer.runTests(this)" class="clm-test-btn" data-clm-content='${btoa(JSON.stringify(parsed))}' data-clm-raw='${btoa(content)}'>
+          <button onclick="window.clmRenderer.runTests(this)" class="clm-test-btn" data-clm-content='${this.toBase64(JSON.stringify(parsed))}' data-clm-raw='${this.toBase64(content)}'>
             <i data-lucide="check-square" style="width: 16px; height: 16px;"></i>
             Run Tests
           </button>
@@ -196,7 +210,7 @@ export class CLMRenderer {
     }
 
     let html = '<div class="clm-properties">';
-    
+
     for (const [key, value] of Object.entries(section)) {
       if (typeof value === 'string' && value) {
         html += `
@@ -214,7 +228,7 @@ export class CLMRenderer {
         `;
       }
     }
-    
+
     html += '</div>';
     return html;
   }
@@ -236,11 +250,11 @@ export class CLMRenderer {
     const rawContent = atob(button.dataset.clmRaw);
     const resultsDiv = button.closest('.clm-container').querySelector('.clm-execution-results');
     const resultsContent = resultsDiv.querySelector('.clm-results-content');
-    
+
     // Show results panel
     resultsDiv.style.display = 'block';
     resultsContent.innerHTML = '<div class="clm-loading">Executing...</div>';
-    
+
     try {
       // Get input from user (simple prompt for now)
       const inputStr = prompt('Enter input (JSON format):', '{}');
@@ -248,12 +262,12 @@ export class CLMRenderer {
         resultsDiv.style.display = 'none';
         return;
       }
-      
+
       const input = JSON.parse(inputStr);
-      
+
       // Execute using BrowserCLMRunner
       const result = await this.runner.execute(rawContent, input);
-      
+
       if (result.success) {
         resultsContent.innerHTML = `
           <div class="clm-result-success">
@@ -296,7 +310,7 @@ export class CLMRenderer {
           </div>
         `;
       }
-      
+
       // Re-initialize Lucide icons
       if (window.lucide) {
         lucide.createIcons();
@@ -315,7 +329,7 @@ export class CLMRenderer {
           </div>
         </div>
       `;
-      
+
       if (window.lucide) {
         lucide.createIcons();
       }
@@ -330,15 +344,15 @@ export class CLMRenderer {
     const rawContent = atob(button.dataset.clmRaw);
     const resultsDiv = button.closest('.clm-container').querySelector('.clm-execution-results');
     const resultsContent = resultsDiv.querySelector('.clm-results-content');
-    
+
     // Show results panel
     resultsDiv.style.display = 'block';
     resultsContent.innerHTML = '<div class="clm-loading">Running tests...</div>';
-    
+
     try {
       // Run tests using BrowserCLMRunner
       const testResults = await this.runner.runTests(rawContent);
-      
+
       if (testResults.success) {
         resultsContent.innerHTML = `
           <div class="clm-result-success">
@@ -416,7 +430,7 @@ export class CLMRenderer {
           </div>
         `;
       }
-      
+
       // Re-initialize Lucide icons
       if (window.lucide) {
         lucide.createIcons();
@@ -435,7 +449,7 @@ export class CLMRenderer {
           </div>
         </div>
       `;
-      
+
       if (window.lucide) {
         lucide.createIcons();
       }
@@ -477,7 +491,7 @@ export class CLMRenderer {
     const tests = [];
     const testRegex = /- name:\s*"([^"]+)"\s+type:\s*"([^"]+)"\s+input:\s*(\d+)\s+expected:\s*(\d+)/g;
     let match;
-    
+
     while ((match = testRegex.exec(rawContent)) !== null) {
       tests.push({
         name: match[1],
@@ -486,7 +500,7 @@ export class CLMRenderer {
         expected: parseInt(match[4])
       });
     }
-    
+
     return tests;
   }
 
@@ -497,33 +511,33 @@ export class CLMRenderer {
     try {
       const base64Data = button.getAttribute('data-clm-content');
       const rawBase64 = button.getAttribute('data-clm-raw');
-      const parsed = JSON.parse(atob(base64Data));
-      const rawContent = atob(rawBase64);
+      const parsed = JSON.parse(this.fromBase64(base64Data));
+      const rawContent = this.fromBase64(rawBase64);
       const resultsDiv = button.closest('.clm-container').querySelector('.clm-execution-results');
       const resultsContent = resultsDiv.querySelector('.clm-results-content');
-      
+
       // Extract implementation code from raw YAML content
       let code = '';
-      
+
       // Find the start of code block
       const codeStart = rawContent.indexOf('code: |');
       if (codeStart !== -1) {
         // Get everything after "code: |"
         const afterCode = rawContent.substring(codeStart + 7); // 7 = length of "code: |"
-        
+
         // Find the next top-level key (dependencies, metadata, etc.)
         // Top-level keys have 4 spaces or less indentation
         const lines = afterCode.split('\n');
         const codeLines = [];
-        
+
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i];
-          
+
           // Stop if we hit a line with 4 or fewer leading spaces (next YAML key)
           if (line.length > 0 && !line.startsWith('      ') && line.trim() !== '') {
             break;
           }
-          
+
           // Add line, removing 6-space indentation
           if (line.startsWith('      ')) {
             codeLines.push(line.substring(6));
@@ -531,19 +545,19 @@ export class CLMRenderer {
             codeLines.push(''); // Preserve empty lines
           }
         }
-        
+
         code = codeLines.join('\n').trim();
       }
-      
+
       if (!code) {
         resultsContent.innerHTML = '<div class="clm-error">No implementation code found</div>';
         resultsDiv.style.display = 'block';
         return;
       }
-      
+
       // Strip TypeScript type annotations for browser execution
       code = this.stripTypeScript(code);
-      
+
       // Create execution sandbox
       const logs = [];
       const customConsole = {
@@ -551,11 +565,11 @@ export class CLMRenderer {
         error: (...args) => logs.push({ type: 'error', message: args.join(' ') }),
         warn: (...args) => logs.push({ type: 'warn', message: args.join(' ') })
       };
-      
+
       // Detect if code expects numeric input or object data
-      const expectsObject = code.includes('context.input') && 
-                           (code.includes('.hash') || code.includes('.type') || code.includes('.content'));
-      
+      const expectsObject = code.includes('context.input') &&
+        (code.includes('.hash') || code.includes('.type') || code.includes('.content'));
+
       // Create context object with appropriate input
       const context = {
         input: expectsObject ? {
@@ -567,12 +581,12 @@ export class CLMRenderer {
           timestamp: Date.now()
         } : 5 // Default numeric input for calculators
       };
-      
+
       // Execute code in sandbox
       const startTime = performance.now();
       let result;
       let error = null;
-      
+
       try {
         // Create function from code with context
         // Wrap in IIFE to create fresh scope for each execution
@@ -586,15 +600,15 @@ export class CLMRenderer {
       } catch (e) {
         error = e;
       }
-      
+
       const executionTime = (performance.now() - startTime).toFixed(2);
-      
+
       // Display results
       let html = '<div class="clm-execution-output">';
-      
+
       // Show execution time
       html += `<div class="clm-exec-time">⏱️ Execution time: ${executionTime}ms</div>`;
-      
+
       // Show console logs
       if (logs.length > 0) {
         html += '<div class="clm-console-logs"><h5>Console Output:</h5>';
@@ -603,11 +617,11 @@ export class CLMRenderer {
         });
         html += '</div>';
       }
-      
+
       // Show return value
       if (result !== undefined) {
         html += `<div class="clm-return-value"><h5>Return Value:</h5>`;
-        
+
         // Check if result is a DOM element
         if (result instanceof Element) {
           html += `<div class="clm-dom-result">`;
@@ -621,23 +635,23 @@ export class CLMRenderer {
         } else {
           html += `<pre>${this.escapeHtml(JSON.stringify(result, null, 2))}</pre>`;
         }
-        
+
         html += `</div>`;
       }
-      
+
       // Show error if any
       if (error) {
         html += `<div class="clm-error"><h5>Error:</h5><pre>${this.escapeHtml(error.toString())}</pre></div>`;
       }
-      
+
       html += '</div>';
-      
+
       resultsContent.innerHTML = html;
       resultsDiv.style.display = 'block';
-      
+
       // Re-initialize Lucide icons
       if (window.lucide) lucide.createIcons();
-      
+
     } catch (e) {
       console.error('[CLMRenderer] Execution error:', e);
       alert('Failed to execute CLM: ' + e.message);
@@ -651,11 +665,11 @@ export class CLMRenderer {
     try {
       const base64Data = button.getAttribute('data-clm-content');
       const rawBase64 = button.getAttribute('data-clm-raw');
-      const parsed = JSON.parse(atob(base64Data));
-      const rawContent = atob(rawBase64);
+      const parsed = JSON.parse(this.fromBase64(base64Data));
+      const rawContent = this.fromBase64(rawBase64);
       const resultsDiv = button.closest('.clm-container').querySelector('.clm-execution-results');
       const resultsContent = resultsDiv.querySelector('.clm-results-content');
-      
+
       // Extract implementation code from raw YAML
       let implCode = '';
       const codeStart = rawContent.indexOf('code: |');
@@ -663,7 +677,7 @@ export class CLMRenderer {
         const afterCode = rawContent.substring(codeStart + 7);
         const lines = afterCode.split('\n');
         const codeLines = [];
-        
+
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i];
           if (line.length > 0 && !line.startsWith('      ') && line.trim() !== '') {
@@ -675,40 +689,40 @@ export class CLMRenderer {
             codeLines.push('');
           }
         }
-        
+
         implCode = codeLines.join('\n').trim();
       }
-      
+
       // Strip TypeScript
       implCode = this.stripTypeScript(implCode);
-      
+
       // Extract tests from YAML
       const tests = this.extractTests(rawContent);
-      
+
       if (!implCode) {
         resultsContent.innerHTML = '<div class="clm-error">No implementation code found</div>';
         resultsDiv.style.display = 'block';
         return;
       }
-      
+
       if (!Array.isArray(tests) || tests.length === 0) {
         resultsContent.innerHTML = '<div class="clm-error">No tests found</div>';
         resultsDiv.style.display = 'block';
         return;
       }
-      
+
       // Run tests
       const testResults = [];
       let passed = 0;
       let failed = 0;
-      
+
       tests.forEach((test, index) => {
         try {
           // Create context with test input
           const context = {
             input: test.input
           };
-          
+
           // Execute code with context in fresh scope
           const fn = new Function('console', 'context', `
             'use strict';
@@ -717,11 +731,11 @@ export class CLMRenderer {
             })();
           `);
           const result = fn(console, context);
-          
+
           // Check result
           const expected = test.expected || test.output;
           const testPassed = JSON.stringify(result) === JSON.stringify(expected);
-          
+
           testResults.push({
             index: index + 1,
             input: test.input,
@@ -729,10 +743,10 @@ export class CLMRenderer {
             actual: result,
             passed: testPassed
           });
-          
+
           if (testPassed) passed++;
           else failed++;
-          
+
         } catch (e) {
           testResults.push({
             index: index + 1,
@@ -742,7 +756,7 @@ export class CLMRenderer {
           failed++;
         }
       });
-      
+
       // Display test results
       let html = '<div class="clm-test-results">';
       html += `<div class="clm-test-summary">`;
@@ -750,15 +764,15 @@ export class CLMRenderer {
       html += `<span class="clm-test-failed">✗ ${failed} failed</span>`;
       html += `<span class="clm-test-total">Total: ${testResults.length}</span>`;
       html += `</div>`;
-      
+
       html += '<div class="clm-test-list">';
       testResults.forEach(test => {
         const status = test.passed ? 'passed' : 'failed';
         const icon = test.passed ? '✓' : '✗';
-        
+
         html += `<div class="clm-test-case clm-test-${status}">`;
         html += `<div class="clm-test-header">${icon} Test ${test.index}</div>`;
-        
+
         if (test.error) {
           html += `<div class="clm-test-error">${this.escapeHtml(test.error)}</div>`;
         } else {
@@ -768,15 +782,15 @@ export class CLMRenderer {
           html += `<div class="clm-test-detail"><strong>Expected:</strong> ${this.escapeHtml(JSON.stringify(test.expected))}</div>`;
           html += `<div class="clm-test-detail"><strong>Actual:</strong> ${this.escapeHtml(JSON.stringify(test.actual))}</div>`;
         }
-        
+
         html += `</div>`;
       });
       html += '</div>';
       html += '</div>';
-      
+
       resultsContent.innerHTML = html;
       resultsDiv.style.display = 'block';
-      
+
     } catch (e) {
       console.error('[CLMRenderer] Test execution error:', e);
       alert('Failed to run tests: ' + e.message);

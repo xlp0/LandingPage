@@ -7,19 +7,19 @@
  */
 
 // ✅ Import from mcard-js library
-import { 
-  MCard, 
+import {
+  MCard,
   CardCollection,
-  IndexedDBEngine, 
+  IndexedDBEngine,
   ContentTypeInterpreter,
   validateHandle,
   HandleValidationError
 } from 'mcard-js';
 
 // Keep UI components (not part of library)
-import { UIComponents } from './UIComponents.js';
-import { CardViewer } from './CardViewer.js';
-import { ContentTypeDetector } from './BrowserContentTypeDetector.js';
+import { UIComponents } from './UIComponents.js?v=12';
+import { CardViewer } from './CardViewer.js?v=12';
+import { ContentTypeDetector } from './BrowserContentTypeDetector.js?v=12';
 import { getDemoMCardImportSources } from './DemoMCardImportSources.js';
 
 export class MCardManager {
@@ -52,15 +52,27 @@ export class MCardManager {
       const links = Array.from(doc.querySelectorAll('a'));
 
       return links
-        .map(a => a.getAttribute('href'))
-        .filter(Boolean)
-        .filter(href => href !== '../' && href !== './')
-        .map(href => {
+        .filter(a => {
+          const href = a.getAttribute('href');
+          return href && href !== '../' && href !== './';
+        })
+        .map(a => {
+          const href = a.getAttribute('href');
+          // Support serve-index (no trailing slash but has icon-directory class)
+          // or standard nginx/apache (trailing slash)
+          const isDirClass = a.classList.contains('icon-directory') || a.parentElement?.classList?.contains('icon-directory');
+          const isDir = href.endsWith('/') || isDirClass;
+
           const pathname = new URL(href, window.location.origin + dirPath).pathname;
-          const isDir = href.endsWith('/');
           return { pathname, isDir };
         })
-        .filter(item => item.pathname.startsWith(dirPath) && item.pathname !== dirPath);
+        .filter(item => {
+          // Ensure it's a child path
+          // Note: serve-index hrefs are usually relative (foo) or absolute path (/public/...)
+          // pathname resolution should handle it.
+          // We just want to ensure we don't go up.
+          return item.pathname.startsWith(dirPath) && item.pathname !== dirPath;
+        });
     } catch (e) {
       return [];
     }
@@ -122,7 +134,7 @@ export class MCardManager {
 
     await this.collection.addWithHandle(newCard, handle);
   }
-  
+
   /**
    * Initialize the manager
    * ✅ Uses IndexedDBEngine from mcard-js library
@@ -130,29 +142,29 @@ export class MCardManager {
   async init() {
     try {
       console.log('[MCardManager] Initializing with mcard-js library...');
-      
+
       // ✅ Initialize IndexedDBEngine from library
       this.db = new IndexedDBEngine('mcard-storage');
       await this.db.init();
       console.log('[MCardManager] ✅ IndexedDBEngine initialized (mcard-js v2.1.8)');
-      
+
       // ✅ Initialize CardCollection for handle support
       this.collection = new CardCollection(this.db);
       console.log('[MCardManager] ✅ CardCollection initialized with handle support');
-      
+
       // Load cards
       console.log('[MCardManager] Starting loadCards...');
       await this.loadCards();
       console.log('[MCardManager] loadCards complete');
-      
+
       // Setup UI
       console.log('[MCardManager] Setting up event listeners...');
       this.setupEventListeners();
       console.log('[MCardManager] Event listeners setup complete');
-      
+
       UIComponents.showToast('MCard Manager ready', 'success');
       console.log('[MCardManager] Initialization complete!');
-      
+
     } catch (error) {
       console.error('[MCardManager] Initialization error:', error);
       console.error('[MCardManager] Error stack:', error.stack);
@@ -185,20 +197,30 @@ export class MCardManager {
             const handle = String(entry.handle).trim();
             try {
               validateHandle(handle);
-            } catch {
+            } catch (ve) {
+              console.warn(`[MCardManager] Invalid handle in manifest: ${handle}`, ve);
               continue;
             }
 
             const relativePath = String(entry.path).replace(/^\/+/, '');
             const baseUrl = (source.baseUrl || '/').endsWith('/') ? (source.baseUrl || '/') : `${source.baseUrl}/`;
             const url = `${baseUrl}${relativePath}`;
+
+            console.log(`[MCardManager] Loading manifest entry: ${handle} -> ${url}`);
+
             const ext = relativePath.split('.').pop().toLowerCase();
             const textExts = source.textExtensions || [];
             const inferredBinary = textExts.length > 0 ? !textExts.includes(ext) : !!entry.isBinary;
             const isBinary = typeof entry.isBinary === 'boolean' ? entry.isBinary : inferredBinary;
-            await this._upsertHandleLoaded({ handle, url, isBinary, updateIfChanged: !!source.updateIfChanged });
+
+            try {
+              await this._upsertHandleLoaded({ handle, url, isBinary, updateIfChanged: !!source.updateIfChanged });
+            } catch (loadErr) {
+              console.error(`[MCardManager] Failed to load ${handle}:`, loadErr);
+            }
           }
         } catch (e) {
+          console.error('[MCardManager] Error processing manifest source:', e);
         }
 
         continue;
@@ -249,8 +271,8 @@ export class MCardManager {
       }
     }
   }
-  
-  
+
+
   /**
    * Load all cards from the collection
    */
@@ -258,27 +280,27 @@ export class MCardManager {
     try {
       const count = await this.collection.count();
       console.log(`[MCardManager] Loading ${count} cards from collection`);
-      
+
       // Always update startup cards on every load to ensure they have latest content
       console.log('[MCardManager] Updating startup cards...');
       await this.updateStartupCards();
-      
+
       const cards = await this.collection.getAllMCardsRaw();
       console.log(`[MCardManager] Loaded ${cards.length} cards`);
-      
+
       // Store cards in instance variable
       this.allCards = cards;
-      
+
       console.log('[MCardManager] Rendering file types...');
       const categories = await this.categorizeCards(cards);
       UIComponents.renderFileTypes(cards, this.currentType, categories);
-      
+
       console.log('[MCardManager] Showing cards for type:', this.currentType);
       this.showCardsForType(this.currentType);
-      
+
       console.log('[MCardManager] Updating stats...');
       UIComponents.updateStats(this.allCards.length);
-      
+
       console.log('[MCardManager] Load complete!');
     } catch (error) {
       console.error('[MCardManager] Error loading cards:', error);
@@ -286,7 +308,7 @@ export class MCardManager {
       UIComponents.showToast('Failed to load cards', 'error');
     }
   }
-  
+
   /**
    * Categorize cards by content 
    * Uses ContentTypeInterpreter from mcard-js library
@@ -295,7 +317,7 @@ export class MCardManager {
    */
   async categorizeCards(cards) {
     console.log('[MCardManager] ✅ Using ContentTypeDetector for categorization');
-    
+
     const categories = {
       all: cards,
       withHandles: [],
@@ -307,9 +329,10 @@ export class MCardManager {
       audio: [],
       documents: [],
       archives: [],
+      duplications: [],
       other: []
     };
-    
+
     // Fetch all cards with handles
     const cardsWithHandles = new Set();
     if (this.collection && this.collection.engine.db) {
@@ -318,14 +341,14 @@ export class MCardManager {
         const tx = db.transaction('handles', 'readonly');
         const store = tx.objectStore('handles');
         const allHandles = await store.getAll();
-        
+
         console.log('[MCardManager] Found handles in DB:', allHandles.length);
-        
+
         // Debug: Log first handle structure
         if (allHandles.length > 0) {
           console.log('[MCardManager] First handle structure:', allHandles[0]);
         }
-        
+
         // Build set of hashes that have handles
         allHandles.forEach(handleObj => {
           // ✅ Handle object structure: { handle: 'name', currentHash: '...' }
@@ -334,60 +357,76 @@ export class MCardManager {
           console.log('[MCardManager] Handle:', handleName, '→', handleHash?.substring(0, 8));
           if (handleHash) {
             cardsWithHandles.add(handleHash);
+            // Store mapping for category detection
+            this._handleMap = this._handleMap || new Map();
+            this._handleMap.set(handleHash, handleName);
           }
         });
-        
+
         console.log('[MCardManager] Cards with handles Set size:', cardsWithHandles.size);
       } catch (error) {
         console.error('[MCardManager] Error fetching handles:', error);
       }
     }
-    
+
+    // Ensure handle map exists even if DB fail
+    this._handleMap = this._handleMap || new Map();
+
     for (const card of cards) {
       // Check if this card has handles
       const hasHandle = cardsWithHandles.has(card.hash);
-      
+
       if (hasHandle) {
         categories.withHandles.push(card);
       }
-      
+
       // ✅ Use ContentTypeDetector for unified detection
       const typeInfo = ContentTypeDetector.detect(card);
       const type = typeInfo.type;
-      
+
       console.log(`[MCardManager] Detected "${type}" (${typeInfo.displayName}) for card ${card.hash.substring(0, 8)}`);
-      
+
       // Categorize by detected type
       if (type === 'clm') {
         categories.clm.push(card);
-      } 
+      }
+      else if (type === 'duplicate') {
+        categories.duplications.push(card);
+      }
       else if (type === 'markdown') {
         categories.markdown.push(card);
-      } 
+      }
       else if (type === 'text' || type === 'json') {
         categories.text.push(card);
-      } 
+      }
       else if (type === 'image') {
         categories.images.push(card);
-      } 
+      }
       else if (type === 'audio') {
         categories.audio.push(card);
-      } 
+      }
       else if (type === 'video') {
         categories.videos.push(card);
-      } 
+      }
       else if (type === 'pdf') {
         categories.documents.push(card);
-      } 
+      }
       else {
         // Everything else goes to other
         categories.other.push(card);
       }
     }
-    
+
+    // Sort CLM cards by handle for better UX
+    categories.clm.sort((a, b) => {
+      const hA = this._handleMap.get(a.hash) || '';
+      const hB = this._handleMap.get(b.hash) || '';
+      return hA.localeCompare(hB);
+    });
+
     return categories;
   }
-  
+
   /**
    * Setup event listeners
    */
@@ -397,14 +436,14 @@ export class MCardManager {
     if (fileInput) {
       fileInput.addEventListener('change', (e) => this.handleFileUpload(e));
     }
-    
+
     // Search box (supports @handle syntax)
     const searchBox = document.getElementById('searchBox');
     if (searchBox) {
       searchBox.addEventListener('input', (e) => this.searchByHandle(e.target.value));
       searchBox.placeholder = 'Search files or @handle...';
     }
-    
+
     // Drag and drop
     const uploadSection = document.getElementById('uploadSection');
     if (uploadSection) {
@@ -412,11 +451,11 @@ export class MCardManager {
         e.preventDefault();
         uploadSection.style.borderColor = '#667eea';
       });
-      
+
       uploadSection.addEventListener('dragleave', () => {
         uploadSection.style.borderColor = '#3e3e42';
       });
-      
+
       uploadSection.addEventListener('drop', async (e) => {
         e.preventDefault();
         uploadSection.style.borderColor = '#3e3e42';
@@ -424,7 +463,7 @@ export class MCardManager {
       });
     }
   }
-  
+
   /**
    * Handle file upload
    * @param {Event} event
@@ -432,7 +471,7 @@ export class MCardManager {
   async handleFileUpload(event) {
     const files = event.target.files;
     if (!files || files.length === 0) return;
-    
+
     for (const file of files) {
       try {
         const bytes = new Uint8Array(await file.arrayBuffer());
@@ -444,19 +483,19 @@ export class MCardManager {
         UIComponents.showToast(`Failed to upload ${file.name}`, 'error');
       }
     }
-    
+
     await this.loadCards();
     UIComponents.showToast(`Uploaded ${files.length} file(s)`, 'success');
     event.target.value = '';
   }
-  
+
   /**
    * Handle file drop
    * @param {FileList} files
    */
   async handleFileDrop(files) {
     if (!files || files.length === 0) return;
-    
+
     for (const file of files) {
       try {
         const bytes = new Uint8Array(await file.arrayBuffer());
@@ -466,11 +505,11 @@ export class MCardManager {
         console.error(`[MCardManager] Error dropping ${file.name}:`, error);
       }
     }
-    
+
     await this.loadCards();
     UIComponents.showToast(`Added ${files.length} file(s)`, 'success');
   }
-  
+
   /**
    * Select a file type filter
    * @param {string} typeId
@@ -481,7 +520,7 @@ export class MCardManager {
     UIComponents.renderFileTypes(this.allCards, this.currentType, categories);
     this.showCardsForType(typeId);
   }
-  
+
   /**
    * Show cards for selected type
    * @param {string} typeId
@@ -490,14 +529,23 @@ export class MCardManager {
   async showCardsForType(typeId) {
     // ✅ Categorize using library's ContentTypeInterpreter
     const categories = await this.categorizeCards(this.allCards);
-    
+
     // ✅ Map kebab-case to camelCase for category lookup
     const categoryMap = {
       'with-handles': 'withHandles'
     };
     const categoryKey = categoryMap[typeId] || typeId;
     const cards = categories[categoryKey] || [];
-    
+
+    // Toggle batch remove button
+    const batchRemoveBtn = document.getElementById('batchRemoveBtn');
+    if (batchRemoveBtn) {
+      batchRemoveBtn.style.display = (typeId === 'duplications') ? 'flex' : 'none';
+      if (typeId === 'duplications' && window.lucide) {
+        setTimeout(() => lucide.createIcons(), 50);
+      }
+    }
+
     const columnTitle = document.getElementById('columnTitle');
     if (columnTitle) {
       const typeNames = {
@@ -511,15 +559,16 @@ export class MCardManager {
         'audio': 'Audio Cards',
         'documents': 'Document Cards',
         'archives': 'Archive Cards',
+        'duplications': 'Duplicate Events',
         'other': 'Other Cards'
       };
       columnTitle.textContent = typeNames[typeId] || 'MCards';
     }
-    
+
     // ✅ Pass collection for handle lookup
     await UIComponents.renderCards(cards, this.collection);
   }
-  
+
   /**
    * View a card
    * @param {string} hash
@@ -531,23 +580,23 @@ export class MCardManager {
         UIComponents.showToast('Card not found', 'error');
         return;
       }
-      
+
       // ✅ Pass collection for handle lookup in viewer
       await this.viewer.view(card, this.collection);
-      
+
     } catch (error) {
       console.error('[MCardManager] Error viewing card:', error);
       UIComponents.showToast('Failed to view card', 'error');
     }
   }
-  
+
   /**
    * Download current card
    */
   downloadCurrentCard() {
     const card = this.viewer.getCurrentCard();
     if (!card) return;
-    
+
     const typeInfo = ContentTypeDetector.detect(card);
     const blob = new Blob([card.getContent()], { type: 'application/octet-stream' });
     const url = URL.createObjectURL(blob);
@@ -556,19 +605,19 @@ export class MCardManager {
     a.download = `${typeInfo.displayName}-${card.hash.substring(0, 8)}`;
     a.click();
     URL.revokeObjectURL(url);
-    
+
     UIComponents.showToast('Download started', 'success');
   }
-  
+
   /**
    * Delete current card
    */
   async deleteCurrentCard() {
     const card = this.viewer.getCurrentCard();
     if (!card) return;
-    
+
     if (!confirm('Are you sure you want to delete this MCard?')) return;
-    
+
     try {
       await this.db.delete(card.hash);
       await this.loadCards();
@@ -579,7 +628,32 @@ export class MCardManager {
       UIComponents.showToast('Failed to delete card', 'error');
     }
   }
-  
+
+  /**
+   * Remove all duplicate event cards in a batch
+   */
+  async batchRemoveDuplications() {
+    const categories = await this.categorizeCards(this.allCards);
+    const dupes = categories.duplications || [];
+    if (dupes.length === 0) {
+      UIComponents.showToast('No duplications to remove', 'info');
+      return;
+    }
+
+    if (!confirm(`Are you sure you want to remove all ${dupes.length} duplicate events?`)) return;
+
+    try {
+      for (const card of dupes) {
+        await this.db.delete(card.hash);
+      }
+      await this.loadCards();
+      UIComponents.showToast(`Removed ${dupes.length} duplicate events`, 'success');
+    } catch (error) {
+      console.error('[MCardManager] Error batch removing duplications:', error);
+      UIComponents.showToast('Failed to remove duplications', 'error');
+    }
+  }
+
   /**
    * Copy hash to clipboard
    * @param {string} hash
@@ -599,7 +673,7 @@ export class MCardManager {
       UIComponents.showToast('Hash copied', 'success');
     }
   }
-  
+
   /**
    * Handle search with debouncing
    * Searches both content (IndexedDB) and hash (client-side)
@@ -610,26 +684,26 @@ export class MCardManager {
     if (this.searchDebounceTimer) {
       clearTimeout(this.searchDebounceTimer);
     }
-    
+
     // If empty query, show current type
     if (!query.trim()) {
       await this.showCardsForType(this.currentType);
       return;
     }
-    
+
     // Debounce search by 300ms
     this.searchDebounceTimer = setTimeout(async () => {
       try {
         console.log('[MCardManager] Searching for:', query);
         const q = query.toLowerCase();
-        
+
         // ✅ 1. Search by hash (fast, client-side)
-        const hashMatches = this.allCards.filter(card => 
+        const hashMatches = this.allCards.filter(card =>
           card.hash.toLowerCase().includes(q)
         );
-        
+
         console.log('[MCardManager] Hash matches:', hashMatches.length);
-        
+
         // ✅ 2. Search by handle name (fast, client-side)
         let handleMatches = [];
         try {
@@ -638,22 +712,22 @@ export class MCardManager {
           const tx = db.transaction('handles', 'readonly');
           const store = tx.objectStore('handles');
           const allHandles = await store.getAll();
-          
+
           // Find handles that match the query
-          const matchingHandles = allHandles.filter(h => 
+          const matchingHandles = allHandles.filter(h =>
             h.handle && h.handle.toLowerCase().includes(q)
           );
-          
+
           // Get cards for matching handles
           handleMatches = this.allCards.filter(card =>
             matchingHandles.some(h => h.currentHash === card.hash)
           );
-          
+
           console.log('[MCardManager] Handle matches:', handleMatches.length);
         } catch (handleError) {
           console.log('[MCardManager] Handle search failed:', handleError);
         }
-        
+
         // ✅ 3. Search by content (IndexedDB full-text search)
         let contentMatches = [];
         try {
@@ -668,33 +742,33 @@ export class MCardManager {
             return content.includes(q);
           });
         }
-        
+
         // ✅ Combine all results (remove duplicates by hash)
         const resultMap = new Map();
-        
+
         // Add hash matches first (highest priority)
         hashMatches.forEach(card => {
           resultMap.set(card.hash, card);
         });
-        
+
         // Add handle matches (second priority)
         handleMatches.forEach(card => {
           if (!resultMap.has(card.hash)) {
             resultMap.set(card.hash, card);
           }
         });
-        
+
         // Add content matches (third priority)
         contentMatches.forEach(card => {
           if (!resultMap.has(card.hash)) {
             resultMap.set(card.hash, card);
           }
         });
-        
+
         const combinedResults = Array.from(resultMap.values());
-        
+
         console.log('[MCardManager] Total unique results:', combinedResults.length);
-        
+
         // Update column title to show search results
         const columnTitle = document.getElementById('columnTitle');
         if (columnTitle) {
@@ -704,13 +778,13 @@ export class MCardManager {
           const total = combinedResults.length;
           columnTitle.textContent = `Search: "${query}" (${total} results: ${hashCount} hash, ${handleCount} handle, ${contentCount} content)`;
         }
-        
+
         // Render combined results
         await UIComponents.renderCards(combinedResults, this.collection);
-        
+
       } catch (error) {
         console.error('[MCardManager] Search error:', error);
-        
+
         // Ultimate fallback: simple client-side search
         console.log('[MCardManager] Using ultimate fallback search');
         const filtered = this.allCards.filter(card => {
@@ -719,17 +793,17 @@ export class MCardManager {
           const q = query.toLowerCase();
           return content.includes(q) || hash.includes(q);
         });
-        
+
         const columnTitle = document.getElementById('columnTitle');
         if (columnTitle) {
           columnTitle.textContent = `Search: "${query}" (${filtered.length} results)`;
         }
-        
+
         await UIComponents.renderCards(filtered, this.collection);
       }
     }, 300); // 300ms debounce
   }
-  
+
   /**
    * Open card creation form in viewer area
    */
@@ -737,7 +811,7 @@ export class MCardManager {
     const viewerTitle = document.getElementById('viewerTitle');
     const viewerActions = document.getElementById('viewerActions');
     const viewerContent = document.getElementById('viewerContent');
-    
+
     // Update title
     viewerTitle.innerHTML = `
       <div style="display: flex; align-items: center; gap: 8px;">
@@ -750,10 +824,10 @@ export class MCardManager {
         <span style="font-size: 16px; font-weight: 600;">Create New Card</span>
       </div>
     `;
-    
+
     // Hide default viewer actions
     viewerActions.style.display = 'none';
-    
+
     // Show creation form in viewer content
     viewerContent.innerHTML = `
       <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
@@ -833,7 +907,7 @@ Try creating a card with some markdown!"
         </div>
       </div>
     `;
-    
+
     // Focus content area
     setTimeout(() => {
       const contentArea = document.getElementById('newCardContent');
@@ -841,7 +915,7 @@ Try creating a card with some markdown!"
       if (window.lucide) lucide.createIcons();
     }, 100);
   }
-  
+
   /**
    * Toggle in-place edit mode in viewer
    */
@@ -852,18 +926,18 @@ Try creating a card with some markdown!"
         UIComponents.showToast('Card not found', 'error');
         return;
       }
-      
+
       const viewerContent = document.getElementById('viewerContent');
       const editBtn = document.getElementById('editBtn');
       const saveBtn = document.getElementById('saveBtn');
       const cancelBtn = document.getElementById('cancelBtn');
-      
+
       // Store original content for cancel
       if (!viewerContent.dataset.originalContent) {
         viewerContent.dataset.originalContent = card.getContentAsText();
         viewerContent.dataset.originalHash = hash;
       }
-      
+
       // Replace viewer content with textarea
       viewerContent.innerHTML = `
         <textarea 
@@ -884,24 +958,24 @@ Try creating a card with some markdown!"
           "
         >${card.getContentAsText()}</textarea>
       `;
-      
+
       // Toggle buttons
       editBtn.style.display = 'none';
       saveBtn.style.display = 'flex';
       cancelBtn.style.display = 'flex';
-      
+
       // Focus editor
       setTimeout(() => {
         document.getElementById('inPlaceEditor').focus();
       }, 100);
-      
+
       console.log('[MCardManager] Entered edit mode for:', handle, hash.substring(0, 8));
     } catch (error) {
       console.error('[MCardManager] Error entering edit mode:', error);
       UIComponents.showToast('Failed to enter edit mode', 'error');
     }
   }
-  
+
   /**
    * Save in-place edit
    */
@@ -912,18 +986,18 @@ Try creating a card with some markdown!"
         UIComponents.showToast('Editor not found', 'error');
         return;
       }
-      
+
       const newContent = editor.value;
       if (!newContent.trim()) {
         UIComponents.showToast('Content cannot be empty', 'error');
         return;
       }
-      
+
       // Create new card with updated content
       const { MCard } = await import('mcard-js');
       const newCard = await MCard.create(newContent);
       await this.collection.add(newCard);
-      
+
       // Update handle to point to new card (if handle exists)
       if (handle) {
         await this.collection.updateHandle(handle, newCard);
@@ -933,17 +1007,17 @@ Try creating a card with some markdown!"
         UIComponents.showToast('Card saved successfully', 'success');
         console.log('[MCardManager] Saved card without handle');
       }
-      
+
       // Reload and view updated card
       await this.loadCards();
       await this.viewCard(newCard.hash);
-      
+
     } catch (error) {
       console.error('[MCardManager] Error saving edit:', error);
       UIComponents.showToast('Failed to save: ' + error.message, 'error');
     }
   }
-  
+
   /**
    * Cancel in-place edit mode
    */
@@ -957,7 +1031,7 @@ Try creating a card with some markdown!"
       UIComponents.showToast('Failed to cancel edit', 'error');
     }
   }
-  
+
   /**
    * Save new card from creation form
    */
@@ -965,24 +1039,24 @@ Try creating a card with some markdown!"
     try {
       const handleInput = document.getElementById('newCardHandle');
       const contentArea = document.getElementById('newCardContent');
-      
+
       if (!contentArea) {
         UIComponents.showToast('Content area not found', 'error');
         return;
       }
-      
+
       const content = contentArea.value.trim();
       const handle = handleInput ? handleInput.value.trim() : '';
-      
+
       if (!content) {
         UIComponents.showToast('Please enter some content', 'error');
         return;
       }
-      
+
       // Create the card
       const { MCard } = await import('mcard-js');
       const newCard = await MCard.create(content);
-      
+
       // Add to collection
       if (handle) {
         // Validate handle
@@ -990,14 +1064,14 @@ Try creating a card with some markdown!"
           UIComponents.showToast('Handle must contain only lowercase letters, numbers, and hyphens', 'error');
           return;
         }
-        
+
         // Check if handle exists
         const existingHash = await this.collection.resolveHandle(handle);
         if (existingHash) {
           UIComponents.showToast(`Handle @${handle} already exists`, 'error');
           return;
         }
-        
+
         // Add with handle
         await this.collection.addWithHandle(newCard, handle);
         UIComponents.showToast(`Created card with handle @${handle}`, 'success');
@@ -1008,24 +1082,24 @@ Try creating a card with some markdown!"
         UIComponents.showToast('Card created successfully', 'success');
         console.log('[MCardManager] Created card without handle');
       }
-      
+
       // Reload cards and view the new one
       await this.loadCards();
       await this.viewCard(newCard.hash);
-      
+
     } catch (error) {
       console.error('[MCardManager] Error creating card:', error);
       UIComponents.showToast('Failed to create card: ' + error.message, 'error');
     }
   }
-  
+
   /**
    * Cancel new card creation
    */
   cancelNewCard() {
     const viewerTitle = document.getElementById('viewerTitle');
     const viewerContent = document.getElementById('viewerContent');
-    
+
     // Reset viewer to default state
     viewerTitle.textContent = 'Select an MCard';
     viewerContent.innerHTML = `
@@ -1039,11 +1113,11 @@ Try creating a card with some markdown!"
         <p style="color: #888; font-size: 14px;">Select a card from the list to view its content</p>
       </div>
     `;
-    
+
     if (window.lucide) lucide.createIcons();
     console.log('[MCardManager] Cancelled card creation');
   }
-  
+
   /**
    * Create a new text card (legacy - now uses panel)
    */
@@ -1051,9 +1125,9 @@ Try creating a card with some markdown!"
     // Open the creation form in viewer area
     this.openNewTextPanel();
   }
-  
+
   // =========== Handle Management ===========
-  
+
   /**
    * Create a handle for a card
    * ✅ Uses library's handle validation and CardCollection
@@ -1062,26 +1136,26 @@ Try creating a card with some markdown!"
   async createHandle(hash) {
     const handleName = prompt('Enter a friendly name for this card:\n(e.g., my-document, 文檔, مستند)');
     if (!handleName) return;
-    
+
     try {
       // ✅ Validate handle using library
       validateHandle(handleName);
-      
+
       // Verify card exists
       const card = await this.collection.get(hash);
       if (!card) {
         throw new Error('Card not found');
       }
-      
+
       // ✅ Register handle directly (card already exists)
       await this.collection.engine.registerHandle(handleName, hash);
-      
+
       UIComponents.showToast(`Handle "${handleName}" created`, 'success');
-      
+
       // Refresh view to show handle
       await this.loadCards(); // Reload to show handle in list
       await this.viewCard(hash);
-      
+
     } catch (error) {
       if (error instanceof HandleValidationError) {
         UIComponents.showToast(`Invalid handle: ${error.message}`, 'error');
@@ -1091,7 +1165,7 @@ Try creating a card with some markdown!"
       }
     }
   }
-  
+
   /**
    * Get card by handle
    * ✅ Uses CardCollection.getByHandle
@@ -1110,7 +1184,7 @@ Try creating a card with some markdown!"
       UIComponents.showToast('Failed to resolve handle', 'error');
     }
   }
-  
+
   /**
    * Update handle to point to new card
    * ✅ Uses CardCollection.updateHandle
@@ -1123,19 +1197,19 @@ Try creating a card with some markdown!"
       if (!card) {
         throw new Error('Card not found');
       }
-      
+
       await this.collection.updateHandle(handle, card);
       UIComponents.showToast(`Handle "${handle}" updated`, 'success');
-      
+
       // Refresh view
       await this.viewCard(newHash);
-      
+
     } catch (error) {
       console.error('[MCardManager] Error updating handle:', error);
       UIComponents.showToast('Failed to update handle', 'error');
     }
   }
-  
+
   /**
    * Get handle history
    * ✅ Uses CardCollection.getHandleHistory
@@ -1144,21 +1218,21 @@ Try creating a card with some markdown!"
   async getHandleHistory(handle) {
     try {
       const history = await this.collection.getHandleHistory(handle);
-      
+
       if (!history || history.length === 0) {
         UIComponents.showToast(`No history for "${handle}"`, 'info');
         return;
       }
-      
+
       // Display history in a modal or panel
       this.showHandleHistory(handle, history);
-      
+
     } catch (error) {
       console.error('[MCardManager] Error getting handle history:', error);
       UIComponents.showToast('Failed to get history', 'error');
     }
   }
-  
+
   /**
    * Show handle history UI
    * @param {string} handle - Handle name
@@ -1183,13 +1257,13 @@ Try creating a card with some markdown!"
         </div>
       </div>
     `;
-    
+
     // Add to page
     const container = document.createElement('div');
     container.innerHTML = historyHtml;
     document.body.appendChild(container.firstElementChild);
   }
-  
+
   /**
    * Search by handle
    * @param {string} query - Search query
@@ -1211,14 +1285,14 @@ Try creating a card with some markdown!"
   async applyFiltersAndSearch() {
     const searchBox = document.getElementById('searchBox');
     const query = searchBox ? searchBox.value : '';
-    
+
     // Get current cards for the selected type
     let cards = await this.getCardsForType(this.currentType);
-    
+
     // Apply filters if they exist
     if (window.searchFilters) {
       const filters = window.searchFilters;
-      
+
       // Filter by handles
       if (filters.withHandles) {
         const cardsWithHandles = new Set();
@@ -1233,7 +1307,7 @@ Try creating a card with some markdown!"
         }
         cards = cards.filter(card => cardsWithHandles.has(card.hash));
       }
-      
+
       // Filter by capital letters (content starts with capital)
       if (filters.capital) {
         cards = cards.filter(card => {
@@ -1241,17 +1315,17 @@ Try creating a card with some markdown!"
           return content.length > 0 && content[0] === content[0].toUpperCase() && content[0] !== content[0].toLowerCase();
         });
       }
-      
+
       // Filter by markdown
       if (filters.markdown) {
         cards = cards.filter(card => {
           const contentType = ContentTypeInterpreter.detect(card.getContent());
-          return contentType.toLowerCase().includes('markdown') || 
-                 card.getContentAsText().includes('# ') ||
-                 card.getContentAsText().includes('## ');
+          return contentType.toLowerCase().includes('markdown') ||
+            card.getContentAsText().includes('# ') ||
+            card.getContentAsText().includes('## ');
         });
       }
-      
+
       // Filter by images
       if (filters.images) {
         cards = cards.filter(card => {
@@ -1259,7 +1333,7 @@ Try creating a card with some markdown!"
           return contentType.toLowerCase().includes('image');
         });
       }
-      
+
       // Filter by videos
       if (filters.videos) {
         cards = cards.filter(card => {
@@ -1267,7 +1341,7 @@ Try creating a card with some markdown!"
           return contentType.toLowerCase().includes('video');
         });
       }
-      
+
       // Apply sorting
       if (filters.sortBy === 'oldest') {
         cards.sort((a, b) => a.hash.localeCompare(b.hash));
@@ -1281,7 +1355,7 @@ Try creating a card with some markdown!"
         });
       }
     }
-    
+
     // Apply text search if query exists
     if (query.trim()) {
       const q = query.toLowerCase();
@@ -1291,7 +1365,7 @@ Try creating a card with some markdown!"
         return hash.includes(q) || content.includes(q);
       });
     }
-    
+
     // Render filtered cards
     await UIComponents.renderCards(cards, this.collection);
   }
@@ -1303,7 +1377,7 @@ Try creating a card with some markdown!"
    */
   async getCardsForType(typeId) {
     const categories = await this.categorizeCards(this.allCards);
-    
+
     switch (typeId) {
       case 'all': return categories.all || [];
       case 'with-handles': return categories.withHandles || [];

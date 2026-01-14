@@ -22,10 +22,10 @@ export class ContentTypeDetector {
   static xmlDetector = new XMLDetector();
   static jsonDetector = new JSONDetector();
   static yamlDetector = new YAMLDetector();
-  
+
   // Cache version - increment this to invalidate all cached detections
-  static CACHE_VERSION = 8; // v8: Use mcard-js detectors directly (browser-safe imports)
-  
+  static CACHE_VERSION = 11; // v11: Added 'duplicate' event detection
+
   /**
    * Cache and return result
    * @param {string} hash - Card hash
@@ -157,11 +157,48 @@ export class ContentTypeDetector {
     if (!text)
       return null;
 
-    if ((text.includes('specification:') || text.includes('Specification:')) &&
-        (text.includes('implementation:') || text.includes('Implementation:')) &&
-        (text.includes('verification:') || text.includes('Verification:') ||
-         text.includes('balanced:') || text.includes('Balanced:'))) {
+    // Primary Pattern: CLM files have a top-level 'clm:' key in YAML format
+    // The key must be at the start of a line
+    const hasClmKey = /^clm:/m.test(text) || /\nclm:/m.test(text);
+
+    if (hasClmKey) {
       return { type: 'clm', displayName: 'CLM' };
+    }
+
+    // Fallback Pattern 1: specification/implementation/verification structure
+    const hasSpec = text.includes('specification:') || text.includes('Specification:');
+    const hasImpl = text.includes('implementation:') || text.includes('Implementation:');
+    const hasVerify = text.includes('verification:') || text.includes('Verification:');
+
+    if (hasSpec && hasImpl && hasVerify) {
+      return { type: 'clm', displayName: 'CLM' };
+    }
+
+    // Pattern 2: abstract/concrete/balanced structure (common in chapter files)
+    const hasAbstract = text.includes('abstract:') || text.includes('Abstract:');
+    const hasConcrete = text.includes('concrete:') || text.includes('Concrete:');
+    const hasBalanced = text.includes('balanced:') || text.includes('Balanced:');
+
+    if (hasAbstract && hasConcrete && hasBalanced) {
+      return { type: 'clm', displayName: 'CLM' };
+    }
+
+    return null;
+  }
+
+  static detectDuplicateEvent(text) {
+    if (!text) return null;
+
+    try {
+      // Duplication events are JSON with type: "duplicate"
+      if (text.trim().startsWith('{') && text.includes('"type"') && text.includes('"duplicate"')) {
+        const data = JSON.parse(text);
+        if (data.type === 'duplicate') {
+          return { type: 'duplicate', displayName: 'Duplicate Event' };
+        }
+      }
+    } catch (e) {
+      // Not JSON or parse error, ignore
     }
 
     return null;
@@ -204,7 +241,7 @@ export class ContentTypeDetector {
 
     // AIFF: 46 4F 52 4D ... 41 49 46 46 (FORM...AIFF)
     if (bytes.length >= 12 && bytes[0] === 0x46 && bytes[1] === 0x4F && bytes[2] === 0x52 && bytes[3] === 0x4D &&
-        bytes[8] === 0x41 && bytes[9] === 0x49 && bytes[10] === 0x46 && bytes[11] === 0x46) {
+      bytes[8] === 0x41 && bytes[9] === 0x49 && bytes[10] === 0x46 && bytes[11] === 0x46) {
       return { mimeType: 'audio/aiff', result: { type: 'audio', displayName: 'AIFF Audio' } };
     }
 
@@ -255,7 +292,7 @@ export class ContentTypeDetector {
 
     // AVI: 52 49 46 46 ... 41 56 49 20 (RIFF...AVI )
     if (bytes.length >= 12 && bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 &&
-        bytes[8] === 0x41 && bytes[9] === 0x56 && bytes[10] === 0x49 && bytes[11] === 0x20) {
+      bytes[8] === 0x41 && bytes[9] === 0x56 && bytes[10] === 0x49 && bytes[11] === 0x20) {
       return { mimeType: 'video/x-msvideo', result: { type: 'video', displayName: 'AVI Video' } };
     }
 
@@ -271,13 +308,13 @@ export class ContentTypeDetector {
 
     // WMV/ASF: 30 26 B2 75 8E 66 CF 11
     if (bytes.length >= 8 && bytes[0] === 0x30 && bytes[1] === 0x26 && bytes[2] === 0xB2 && bytes[3] === 0x75 &&
-        bytes[4] === 0x8E && bytes[5] === 0x66 && bytes[6] === 0xCF && bytes[7] === 0x11) {
+      bytes[4] === 0x8E && bytes[5] === 0x66 && bytes[6] === 0xCF && bytes[7] === 0x11) {
       return { mimeType: 'video/x-ms-wmv', result: { type: 'video', displayName: 'WMV Video' } };
     }
 
     return null;
   }
-  
+
   /**
    * Detect content type from MCard
    * @param {MCard} card
@@ -288,7 +325,7 @@ export class ContentTypeDetector {
     const cacheKey = card.hash;
     if (this.cache.has(cacheKey)) {
       const cached = this.cache.get(cacheKey);
-      
+
       // Invalidate cache if version mismatch
       if (cached.version !== this.CACHE_VERSION) {
         console.log(`[ContentTypeDetector] 🔄 Cache invalidated for ${cacheKey.substring(0, 8)} (old version)`);
@@ -298,7 +335,7 @@ export class ContentTypeDetector {
         return cached;
       }
     }
-    
+
     try {
       const rawContent = card.getContent();
       const contentBytes = typeof rawContent === 'string'
@@ -341,6 +378,10 @@ export class ContentTypeDetector {
         if (clm)
           return this.cacheResult(cacheKey, clm);
 
+        const duplicate = this.detectDuplicateEvent(textSample);
+        if (duplicate)
+          return this.cacheResult(cacheKey, duplicate);
+
         const lines = textSample.split('\n').slice(0, 20);
         const firstLine = lines[0] || '';
 
@@ -376,7 +417,7 @@ export class ContentTypeDetector {
       return this.cacheResult(card.hash, { type: 'unknown', displayName: 'Unknown' });
     }
   }
-  
+
   /**
    * Categorize cards by type
    * @param {MCard[]} cards
@@ -399,9 +440,9 @@ export class ContentTypeDetector {
     cards.forEach(card => {
       const typeInfo = ContentTypeDetector.detect(card);
       const type = typeInfo.type;
-      
+
       categories.all.push(card);
-      
+
       // Categorize by detected type
       if (type === 'clm') {
         categories.clm.push(card);

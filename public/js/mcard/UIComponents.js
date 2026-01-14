@@ -7,7 +7,7 @@
 
 // ✅ Import from mcard-js library
 import { ContentTypeInterpreter } from 'mcard-js';
-import { ContentTypeDetector } from './BrowserContentTypeDetector.js';
+import { ContentTypeDetector } from './BrowserContentTypeDetector.js?v=12';
 
 export class UIComponents {
   /**
@@ -36,6 +36,7 @@ export class UIComponents {
       { id: 'with-handles', name: 'With Handles', icon: 'tag', count: getCount(categories.withHandles) },
       { id: 'apps', name: 'Apps', icon: 'grid', count: '', isExpandable: true },
       { id: 'clm', name: 'CLM', icon: 'box', count: getCount(categories.clm) },
+      { id: 'duplications', name: 'Duplications', icon: 'trash-2', count: getCount(categories.duplications) },
       { id: 'markdown', name: 'Markdown', icon: 'file-text', count: getCount(categories.markdown) },
       { id: 'text', name: 'Text', icon: 'file-text', count: getCount(categories.text) },
       { id: 'images', name: 'Images', icon: 'image', count: getCount(categories.images) },
@@ -159,7 +160,6 @@ export class UIComponents {
     }
 
     mcardList.innerHTML = cards.map(card => {
-      // ✅ Use ContentTypeDetector for unified detection
       const typeInfo = ContentTypeDetector.detect(card);
       const type = typeInfo.type;
       const binaryContent = card.getContent();
@@ -256,6 +256,7 @@ export class UIComponents {
    */
   static getFileIcon(type) {
     if (type === 'clm') return '<i data-lucide="box" style="width: 24px; height: 24px;"></i>';
+    if (type === 'duplicate') return '<i data-lucide="trash-2" style="width: 24px; height: 24px;"></i>';
     if (type === 'image') return '<i data-lucide="image" style="width: 24px; height: 24px;"></i>';
     if (type === 'pdf') return '<i data-lucide="file-text" style="width: 24px; height: 24px;"></i>';
     if (type === 'text' || type === 'markdown' || type === 'json') return '<i data-lucide="file-text" style="width: 24px; height: 24px;"></i>';
@@ -344,81 +345,7 @@ export class UIComponents {
     }
   }
 
-  /**
-   * Map library content type to our internal type
-   * ✅ Uses library first, then checks magic bytes for images
-   * @param {string} contentType - From ContentTypeInterpreter.detect()
-   * @param {Uint8Array} binaryContent - Binary content for magic byte detection
-   * @param {string} textContent - Text content for pattern matching
-   * @returns {string}
-   */
-  static mapContentType(contentType, binaryContent = null, textContent = '') {
-    const lowerType = contentType.toLowerCase();
 
-    // ✅ Check for images by magic bytes if library says "application/octet-stream"
-    if (lowerType.includes('octet-stream') && binaryContent && binaryContent.length > 4) {
-      const bytes = binaryContent instanceof Uint8Array ? binaryContent : new Uint8Array(binaryContent);
-      // PNG: 89 50 4E 47
-      if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
-        return 'image';
-      }
-      // JPEG: FF D8 FF
-      if (bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF) {
-        return 'image';
-      }
-      // GIF: 47 49 46
-      if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
-        return 'image';
-      }
-      // WebP: 52 49 46 46 (RIFF)
-      if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) {
-        return 'image';
-      }
-    }
-
-    // ✅ TRUST THE LIBRARY FIRST
-    if (lowerType.includes('image')) return 'image';
-    if (lowerType.includes('video')) return 'video';
-    if (lowerType.includes('audio')) return 'audio';
-    if (lowerType.includes('pdf')) return 'pdf';
-    if (lowerType.includes('json')) return 'json';
-    if (lowerType.includes('markdown')) return 'markdown';
-
-    // ✅ Check for YAML (library might detect it)
-    if (lowerType.includes('yaml')) {
-      // Check if it's a CLM file (YAML with CLM structure)
-      if (textContent && (
-        (textContent.includes('abstract:') && textContent.includes('concrete:') && textContent.includes('balanced:')) ||
-        textContent.includes('clm:')
-      )) {
-        return 'clm';
-      }
-      // Regular YAML
-      return 'yaml';
-    }
-
-    // ✅ ENHANCE for text types
-    if (lowerType.includes('text') && textContent) {
-      // Check for CLM (YAML-based, highest priority for text)
-      if ((textContent.includes('abstract:') && textContent.includes('concrete:') && textContent.includes('balanced:')) ||
-        textContent.includes('clm:')) {
-        return 'clm';
-      }
-      // Check for markdown patterns
-      if (
-        textContent.match(/^#{1,6}\s+/m) ||
-        textContent.match(/\[.+\]\(.+\)/) ||
-        textContent.match(/```[\s\S]*?```/) ||
-        textContent.match(/^\s*[-*+]\s+/m) ||
-        textContent.match(/^\s*\d+\.\s+/m)
-      ) {
-        return 'markdown';
-      }
-      return 'text';
-    }
-
-    return 'text'; // default
-  }
 
   /**
    * Get type badge HTML with specific format detection
@@ -467,7 +394,8 @@ export class UIComponents {
       'text': '<span style="background: #6a9955; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">TXT</span>',
       'json': '<span style="background: #ce9178; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">JSON</span>',
       'pdf': '<span style="background: #f48771; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">PDF</span>',
-      'clm': '<span style="background: #4fc3f7; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">CLM</span>'
+      'clm': '<span style="background: #4fc3f7; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">CLM</span>',
+      'duplicate': '<span style="background: #ffb74d; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">DUPE</span>'
     };
     return badges[type] || '';
   }

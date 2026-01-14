@@ -3,7 +3,7 @@
  * Modular architecture for MCard file management
  */
 
-import { MCardManager } from './mcard/MCardManager.js';
+import { MCardManager } from './mcard/MCardManager.js?v=12';
 
 // Create global manager instance
 const manager = new MCardManager();
@@ -81,6 +81,7 @@ window.viewCard = (hash) => {
 
 window.downloadCurrentCard = () => manager.downloadCurrentCard();
 window.deleteCurrentCard = () => manager.deleteCurrentCard();
+window.batchRemoveDuplications = () => manager.batchRemoveDuplications();
 window.createTextCard = () => manager.createTextCard();
 window.toggleChat = () => {
   const chatPanel = document.getElementById('chatPanel');

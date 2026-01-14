@@ -278,7 +278,15 @@
           Back to Types
         </div>
         <div class="column-header">
-          <h3 id="columnTitle">All MCards</h3>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h3 id="columnTitle">All MCards</h3>
+            <button id="batchRemoveBtn" class="btn btn-secondary"
+              style="display: none; background: #e74c3c; color: white; border: none; font-size: 11px; padding: 4px 10px; border-radius: 4px; align-items: center; gap: 4px;"
+              onclick="batchRemoveDuplications()">
+              <i data-lucide="trash-2" style="width: 12px; height: 12px;"></i>
+              Remove All
+            </button>
+          </div>
           <div style="position: relative; margin-top: 8px;">
             <i data-lucide="search"
               style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #999;"></i>
@@ -626,7 +634,7 @@
   <script src="/public/js/performance-monitor.js"></script>
 
   <!-- MCard Manager JavaScript (Modular Version) -->
-  <script type="module" src="/public/js/mcard-manager-new.js?v=1766078645"></script>
+  <script type="module" src="/public/js/mcard-manager-new.js?v=12"></script>
 
   <!-- PWA Service Worker Registration -->
   <script>
@@ -1407,7 +1415,7 @@ Supported browsers:
     function toggleApps() {
       const appsSubmenu = document.getElementById('appsSubmenu');
       const appsChevron = document.getElementById('appsChevron');
-      
+
       if (appsSubmenu && appsChevron) {
         const isHidden = appsSubmenu.style.display === 'none';
         appsSubmenu.style.display = isHidden ? 'block' : 'none';

@@ -9,7 +9,7 @@ import { MarkdownRenderer } from './MarkdownRenderer.js';
 import { ImageRenderer } from './ImageRenderer.js';
 import { TextRenderer } from './TextRenderer.js';
 import { PDFRenderer } from './PDFRenderer.js';
-import { CLMRenderer } from './CLMRenderer.js';
+import { CLMRenderer } from './CLMRenderer.js?v=unicode_fix';
 import { LatexRenderer } from './LatexRenderer.js';
 import { AudioRenderer } from './AudioRenderer.js';
 import { VideoRenderer } from './VideoRenderer.js';
@@ -19,13 +19,13 @@ export class RendererRegistry {
     this.renderers = new Map();
     this.initialized = false;
   }
-  
+
   /**
    * Initialize all renderers
    */
   async initialize() {
     if (this.initialized) return;
-    
+
     try {
       // Register all available renderers
       this.register(new CLMRenderer());
@@ -36,7 +36,7 @@ export class RendererRegistry {
       this.register(new PDFRenderer());
       this.register(new AudioRenderer());
       this.register(new VideoRenderer());
-      
+
       this.initialized = true;
       console.log('[RendererRegistry] Initialized with renderers:', Array.from(this.renderers.keys()));
     } catch (error) {
@@ -44,7 +44,7 @@ export class RendererRegistry {
       throw error;
     }
   }
-  
+
   /**
    * Register a renderer
    * @param {BaseRenderer} renderer - Renderer instance
@@ -53,11 +53,11 @@ export class RendererRegistry {
     if (!renderer || !renderer.contentType) {
       throw new Error('Invalid renderer: must have contentType property');
     }
-    
+
     this.renderers.set(renderer.contentType, renderer);
     console.log(`[RendererRegistry] Registered renderer for: ${renderer.contentType}`);
   }
-  
+
   /**
    * Get renderer for content type
    * @param {string} contentType - Content type
@@ -66,7 +66,7 @@ export class RendererRegistry {
   getRenderer(contentType) {
     return this.renderers.get(contentType) || null;
   }
-  
+
   /**
    * Check if renderer exists for content type
    * @param {string} contentType - Content type
@@ -75,7 +75,7 @@ export class RendererRegistry {
   hasRenderer(contentType) {
     return this.renderers.has(contentType);
   }
-  
+
   /**
    * Render content using appropriate renderer
    * @param {string} contentType - Content type
@@ -87,9 +87,9 @@ export class RendererRegistry {
     if (!this.initialized) {
       await this.initialize();
     }
-    
+
     const renderer = this.getRenderer(contentType);
-    
+
     if (!renderer) {
       console.warn(`[RendererRegistry] No renderer found for type: ${contentType}`);
       // Fallback to text renderer
@@ -102,7 +102,7 @@ export class RendererRegistry {
       }
       throw new Error(`No renderer available for content type: ${contentType}`);
     }
-    
+
     try {
       return await renderer.render(content, options);
     } catch (error) {
@@ -110,7 +110,7 @@ export class RendererRegistry {
       throw error;
     }
   }
-  
+
   /**
    * Get all registered content types
    * @returns {Array<string>}
@@ -118,7 +118,7 @@ export class RendererRegistry {
   getRegisteredTypes() {
     return Array.from(this.renderers.keys());
   }
-  
+
   /**
    * Get renderer metadata
    * @param {string} contentType - Content type
@@ -128,7 +128,7 @@ export class RendererRegistry {
     const renderer = this.getRenderer(contentType);
     return renderer ? renderer.getMetadata() : null;
   }
-  
+
   /**
    * Unregister a renderer
    * @param {string} contentType - Content type
@@ -137,7 +137,7 @@ export class RendererRegistry {
     this.renderers.delete(contentType);
     console.log(`[RendererRegistry] Unregistered renderer for: ${contentType}`);
   }
-  
+
   /**
    * Clear all renderers
    */
