@@ -10,7 +10,7 @@
  * - Application lifecycle (DOMContentLoaded, resize events)
  */
 
-import { MCardManager } from './mcard/MCardManager.js?v=18';
+import { MCardManager } from './mcard/MCardManager.js?v=19';
 
 // Create global manager instance
 const manager = new MCardManager();

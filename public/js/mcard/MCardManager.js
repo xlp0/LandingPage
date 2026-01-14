@@ -162,7 +162,12 @@ export class MCardManager {
       this.collection = new CardCollection(this.db);
       console.log('[MCardManager] ✅ CardCollection initialized with handle support');
 
-      // Load cards
+      // Load startup demo cards
+      console.log('[MCardManager] Loading startup cards...');
+      await this.updateStartupCards();
+      console.log('[MCardManager] Startup cards loaded');
+
+      // Load cards from database
       console.log('[MCardManager] Starting loadCards...');
       await this.loadCards();
       console.log('[MCardManager] loadCards complete');
