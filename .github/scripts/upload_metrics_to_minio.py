@@ -14,7 +14,7 @@ import pytz
 
 def get_minio_client():
     """Initialize MinIO client"""
-    endpoint = os.getenv('MINIO_ENDPOINT', 'minio.pkc.pub:9000')
+    endpoint = os.getenv('MINIO_ENDPOINT', 'minio.pkc.pub')
     access_key = os.getenv('MINIO_ACCESS_KEY')
     secret_key = os.getenv('MINIO_SECRET_KEY')
     
