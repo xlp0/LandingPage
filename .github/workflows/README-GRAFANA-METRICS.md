@@ -142,9 +142,9 @@ Workflow berjalan otomatis:
 **Solution:**
 - Verify `MINIO_ACCESS_KEY` dan `MINIO_SECRET_KEY`
 - Check MinIO bucket permissions
-- MinIO di belakang reverse proxy, gunakan standard HTTPS URL: `https://minio.pkc.pub`
-- Workflow menggunakan boto3 S3 client (kompatibel dengan MinIO)
-- Test connection dengan AWS CLI: `aws s3 ls --endpoint-url https://minio.pkc.pub`
+- **PENTING:** Endpoint harus tanpa `https://` prefix: `minio.pkc.pub` (bukan `https://minio.pkc.pub`)
+- MinIO Python client menggunakan parameter `secure=True` untuk HTTPS
+- Test connection: `mc alias set myminio https://minio.pkc.pub ACCESS_KEY SECRET_KEY`
 
 ### Issue: No data for specific metrics
 **Solution:**
