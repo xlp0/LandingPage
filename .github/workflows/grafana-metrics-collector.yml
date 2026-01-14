@@ -44,7 +44,7 @@ jobs:
       - name: Upload metrics to MinIO
         if: success()
         env:
-          MINIO_ENDPOINT: minio.pkc.pub
+          MINIO_ENDPOINT: minio.pkc.pub:9000
           MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
           MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
         run: |

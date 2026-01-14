@@ -142,7 +142,8 @@ Workflow berjalan otomatis:
 **Solution:**
 - Verify `MINIO_ACCESS_KEY` dan `MINIO_SECRET_KEY`
 - Check MinIO bucket permissions
-- Test connection: `mc alias set myminio https://minio.pkc.pub ACCESS_KEY SECRET_KEY`
+- Ensure using API port (minio.pkc.pub:9000, not web console)
+- Test connection: `mc alias set myminio https://minio.pkc.pub:9000 ACCESS_KEY SECRET_KEY`
 
 ### Issue: No data for specific metrics
 **Solution:**
