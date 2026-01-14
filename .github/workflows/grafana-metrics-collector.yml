@@ -9,7 +9,7 @@ on:
       time_range:
         description: 'Time range for metrics (e.g., 1h, 6h, 24h)'
         required: false
-        default: '1h'
+        default: '24h'
 
 jobs:
   collect-metrics:
@@ -31,12 +31,12 @@ jobs:
       - name: Create metrics directory
         run: mkdir -p grafana-metrics
       
-      - name: Collect ZITADEL metrics from Grafana
+      - name: Collect metrics from all Grafana dashboards
         env:
           GRAFANA_URL: https://grafana.pkc.pub
           GRAFANA_USERNAME: ${{ secrets.GRAFANA_USERNAME }}
           GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
-          TIME_RANGE: ${{ github.event.inputs.time_range || '1h' }}
+          TIME_RANGE: ${{ github.event.inputs.time_range || '24h' }}
         run: |
           chmod +x .github/scripts/collect_grafana_metrics.py
           python3 .github/scripts/collect_grafana_metrics.py

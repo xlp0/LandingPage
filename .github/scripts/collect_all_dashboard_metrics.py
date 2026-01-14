@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Grafana Metrics Collector
-Collects metrics from Grafana dashboards using Grafana API
+Grafana Dashboard Metrics Collector
+Collects metrics data from all Grafana dashboards using Prometheus queries
 """
 
 import os
@@ -14,36 +14,20 @@ import pytz
 def get_grafana_session(base_url, username, password):
     """Login to Grafana and return session"""
     session = requests.Session()
-    
-    login_url = f"{base_url}/login"
-    login_data = {
-        "user": username,
-        "password": password
-    }
+    session.auth = (username, password)
+    session.verify = False  # Skip SSL verification
     
     try:
-        response = session.post(login_url, json=login_data)
+        response = session.get(f"{base_url}/api/org", timeout=10)
         response.raise_for_status()
-        print(f"✅ Successfully logged in to Grafana")
+        print(f"✅ Successfully connected to Grafana")
         return session
     except requests.exceptions.RequestException as e:
-        print(f"❌ Failed to login to Grafana: {e}")
+        print(f"❌ Failed to connect to Grafana: {e}")
         sys.exit(1)
 
-def get_dashboard_info(session, base_url, dashboard_uid):
-    """Get dashboard information"""
-    url = f"{base_url}/api/dashboards/uid/{dashboard_uid}"
-    
-    try:
-        response = session.get(url)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"❌ Failed to get dashboard info: {e}")
-        return None
-
-def query_prometheus_via_grafana(session, base_url, query, time_range='1h'):
-    """Query Prometheus metrics via Grafana API"""
+def query_prometheus_via_grafana(session, base_url, query, time_range='24h'):
+    """Query Prometheus metrics via Grafana API using /api/ds/query endpoint"""
     
     # Calculate time range
     now = datetime.now(pytz.UTC)
@@ -55,24 +39,58 @@ def query_prometheus_via_grafana(session, base_url, query, time_range='1h'):
         days = int(time_range[:-1])
         start_time = now - timedelta(days=days)
     else:
-        start_time = now - timedelta(hours=1)
+        start_time = now - timedelta(hours=24)
     
-    # Grafana datasource query endpoint
-    url = f"{base_url}/api/datasources/proxy/1/api/v1/query_range"
+    # Use Grafana's unified query API endpoint
+    url = f"{base_url}/api/ds/query"
     
-    params = {
-        'query': query,
-        'start': int(start_time.timestamp()),
-        'end': int(now.timestamp()),
-        'step': '60s'  # 1 minute resolution
+    # Prepare query payload for Prometheus data source
+    payload = {
+        "queries": [
+            {
+                "refId": "A",
+                "expr": query,
+                "range": True,
+                "instant": False,
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                },
+                "intervalMs": 60000,
+                "maxDataPoints": 1000
+            }
+        ],
+        "from": str(int(start_time.timestamp() * 1000)),
+        "to": str(int(now.timestamp() * 1000))
     }
     
     try:
-        response = session.get(url, params=params)
+        response = session.post(url, json=payload, timeout=30)
         response.raise_for_status()
-        return response.json()
+        data = response.json()
+        
+        # Extract Prometheus-style response from Grafana's response
+        if 'results' in data and 'A' in data['results']:
+            frames = data['results']['A'].get('frames', [])
+            if frames:
+                # Convert to Prometheus format
+                return {
+                    'status': 'success',
+                    'data': {
+                        'resultType': 'matrix',
+                        'result': frames
+                    }
+                }
+        
+        return {
+            'status': 'success',
+            'data': {
+                'resultType': 'matrix',
+                'result': []
+            }
+        }
     except requests.exceptions.RequestException as e:
-        print(f"⚠️  Query failed: {query[:50]}... - {e}")
+        print(f"    ⚠️  Query failed: {query[:80]}... - {e}")
         return None
 
 def get_dashboard_panels(session, base_url, dashboard_uid):
@@ -80,7 +98,7 @@ def get_dashboard_panels(session, base_url, dashboard_uid):
     url = f"{base_url}/api/dashboards/uid/{dashboard_uid}"
     
     try:
-        response = session.get(url)
+        response = session.get(url, timeout=10)
         response.raise_for_status()
         data = response.json()
         dashboard = data.get('dashboard', {})
@@ -95,6 +113,7 @@ def extract_queries_from_panel(panel):
     targets = panel.get('targets', [])
     
     for target in targets:
+        # Handle different query formats
         expr = target.get('expr')
         if expr:
             queries.append({
@@ -161,11 +180,11 @@ def collect_dashboard_metrics(session, base_url, dashboard_uid, dashboard_name, 
     return metrics_data
 
 def collect_zitadel_metrics(session, base_url, time_range):
-    """Collect ZITADEL authentication and user monitoring metrics"""
+    """Collect ZITADEL metrics (special handling)"""
     
     print(f"\n📊 Collecting ZITADEL metrics")
     
-    # Common ZITADEL metrics to collect
+    # ZITADEL-specific queries
     queries = {
         "active_sessions": 'zitadel_active_sessions_total',
         "failed_logins": 'rate(zitadel_failed_auth_requests_total[5m])',
@@ -195,12 +214,15 @@ def collect_zitadel_metrics(session, base_url, time_range):
             metrics_data["metrics"][metric_name] = result.get('data', {})
             print(f"    ✅ Collected {metric_name}")
         else:
-            metrics_data["metrics"][metric_name] = None
+            metrics_data["metrics"][metric_name] = {
+                "resultType": "matrix",
+                "result": []
+            }
             print(f"    ⚠️  No data for {metric_name}")
     
     return metrics_data
 
-def save_metrics(metrics_data, dashboard_name, output_dir="grafana-metrics"):
+def save_metrics(metrics_data, dashboard_name, output_dir):
     """Save metrics to JSON file"""
     
     os.makedirs(output_dir, exist_ok=True)
@@ -217,16 +239,12 @@ def save_metrics(metrics_data, dashboard_name, output_dir="grafana-metrics"):
     return filename
 
 def main():
-    # Get environment variables
+    # Configuration
     grafana_url = os.getenv('GRAFANA_URL', 'https://grafana.pkc.pub')
     username = os.getenv('GRAFANA_USERNAME', 'admin')
-    password = os.getenv('GRAFANA_PASSWORD')
+    password = os.getenv('GRAFANA_PASSWORD', 'r8RKaVP3rzJe6MsuloQv9B4G2UPzSe387DMpOY0r')
     time_range = os.getenv('TIME_RANGE', '24h')
-    output_dir = os.getenv('OUTPUT_DIR', 'grafana-metrics')
-    
-    if not password:
-        print("❌ GRAFANA_PASSWORD environment variable not set")
-        sys.exit(1)
+    output_dir = os.getenv('OUTPUT_DIR', '/home/ubuntu1234/grafana-data')
     
     # Dashboard list (UID, Name)
     dashboard_list = [
@@ -248,19 +266,22 @@ def main():
         ("zitadel-auth", "ZITADEL Authentication & User Monitoring"),
     ]
     
-    print(f"🚀 Starting Grafana metrics collection")
+    print(f"🚀 Starting Grafana Metrics Collection")
     print(f"   URL: {grafana_url}")
     print(f"   Time range: {time_range}")
     print(f"   User: {username}")
     print(f"   Output: {output_dir}")
     print(f"   Dashboards: {len(dashboard_list)}")
     
+    # Disable SSL warnings
+    import urllib3
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    
     # Login to Grafana
     session = get_grafana_session(grafana_url, username, password)
     
     # Collect metrics from all dashboards
     collected_count = 0
-    total_metrics = 0
     
     for dashboard_uid, dashboard_name in dashboard_list:
         try:
@@ -275,7 +296,6 @@ def main():
             if metrics_data:
                 save_metrics(metrics_data, dashboard_name, output_dir)
                 collected_count += 1
-                total_metrics += len([m for m in metrics_data["metrics"].values() if m is not None])
         except Exception as e:
             print(f"  ❌ Error collecting {dashboard_name}: {e}")
     
@@ -285,18 +305,17 @@ def main():
         "time_range": time_range,
         "total_dashboards": len(dashboard_list),
         "collected": collected_count,
-        "total_metrics": total_metrics,
         "output_directory": output_dir
     }
     
-    summary_file = f"{output_dir}/latest_summary.json"
+    summary_file = f"{output_dir}/collection_summary.json"
     with open(summary_file, 'w') as f:
         json.dump(summary, f, indent=2)
     
     print(f"\n✅ Metrics collection completed!")
     print(f"   Total dashboards: {len(dashboard_list)}")
     print(f"   Collected: {collected_count}")
-    print(f"   Total metrics: {total_metrics}")
+    print(f"   Output directory: {output_dir}")
     print(f"   Summary: {summary_file}")
 
 if __name__ == "__main__":

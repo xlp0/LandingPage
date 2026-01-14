@@ -2,16 +2,16 @@
 
 ## 📋 Overview
 
-Workflow GitHub Actions ini secara otomatis mengumpulkan metrics dari Grafana dashboard (khususnya ZITADEL Authentication and User Monitoring) dan menyimpannya ke MinIO storage.
+Workflow GitHub Actions ini secara otomatis mengumpulkan metrics dari **semua Grafana dashboards** (16 dashboards termasuk Kubernetes cluster metrics dan ZITADEL Authentication) dan menyimpannya ke MinIO storage bucket `pkc`.
 
 ## 🎯 Features
 
-- ✅ Otomatis collect metrics dari Grafana setiap jam
+- ✅ Otomatis collect metrics dari **16 Grafana dashboards** setiap jam
 - ✅ Support manual trigger untuk testing
-- ✅ Query metrics melalui Grafana API ke Prometheus
-- ✅ Export data dalam format JSON
-- ✅ Upload otomatis ke MinIO storage
-- ✅ Organize files berdasarkan tanggal (YYYY/MM/DD)
+- ✅ Query metrics melalui Grafana API ke Prometheus (last **24 hours**)
+- ✅ Export data dalam format JSON (satu file per dashboard)
+- ✅ Upload otomatis ke MinIO storage (bucket: **pkc**)
+- ✅ Organize files berdasarkan tanggal (YYYY-MM-DD)
 - ✅ Artifact retention untuk backup
 
 ## 🔧 Setup Instructions
@@ -41,12 +41,31 @@ File workflow: `.github/workflows/grafana-metrics-collector.yml`
 2. Pergi ke tab `Actions`
 3. Pilih workflow "Grafana Metrics Collector"
 4. Klik `Run workflow`
-5. (Optional) Ubah time range (default: 1h)
+5. (Optional) Ubah time range (default: 24h)
 6. Klik tombol hijau `Run workflow`
 
 ## 📊 Metrics Collected
 
-Workflow ini mengumpulkan metrics ZITADEL berikut:
+Workflow ini mengumpulkan metrics dari **16 dashboards** berikut:
+
+### Kubernetes Dashboards (15):
+1. **Kubernetes / API server** - API server performance
+2. **Kubernetes / Compute Resources / Cluster** - Cluster resources
+3. **Kubernetes / Compute Resources / Namespace (Pods)** - Namespace pod resources
+4. **Kubernetes / Compute Resources / Namespace (Workloads)** - Workload resources
+5. **Kubernetes / Compute Resources / Node (Pods)** - Node pod resources
+6. **Kubernetes / Compute Resources / Pod** - Individual pod metrics
+7. **Kubernetes / Controller Manager** - Controller manager metrics
+8. **Kubernetes / Kubelet** - Kubelet metrics
+9. **Kubernetes / Networking / Cluster** - Cluster networking
+10. **Kubernetes / Networking / Namespace (Pods)** - Namespace networking
+11. **Kubernetes / Networking / Namespace (Workload)** - Workload networking
+12. **Kubernetes / Networking / Pod** - Pod networking
+13. **Kubernetes / Persistent Volumes** - Storage metrics
+14. **Kubernetes / Proxy** - Kube-proxy metrics
+15. **Kubernetes / Scheduler** - Scheduler metrics
+
+### ZITADEL Metrics:
 
 ### Authentication Metrics:
 - **active_sessions** - Total active user sessions
@@ -69,7 +88,11 @@ Workflow ini mengumpulkan metrics ZITADEL berikut:
 ### Local Artifacts (GitHub Actions):
 ```
 grafana-metrics/
-├── zitadel_metrics_20260114_010000.json
+├── kubernetes_api_server_20260114_010000.json
+├── kubernetes_compute_resources_cluster_20260114_010000.json
+├── kubernetes_networking_cluster_20260114_010000.json
+├── zitadel_authentication_&_user_monitoring_20260114_010000.json
+├── ... (16 dashboard files total)
 ├── latest_summary.json
 └── upload_results.json
 ```
@@ -79,8 +102,12 @@ grafana-metrics/
 pkc/
 ├── grafana-metrics/
 │   ├── 2026-01-14/
-│   │   ├── zitadel_metrics_20260114_010000.json
-│   │   └── latest_summary.json
+│   │   ├── kubernetes_api_server_20260114_010000.json
+│   │   ├── kubernetes_compute_resources_cluster_20260114_010000.json
+│   │   ├── zitadel_authentication_&_user_monitoring_20260114_010000.json
+│   │   ├── ... (16 dashboard files)
+│   │   ├── latest_summary.json
+│   │   └── upload_results.json
 │   └── 2026-01-15/
 │       └── ...
 ```
@@ -113,11 +140,11 @@ pkc/
 ```json
 {
   "collection_time": "2026-01-14T01:00:00+00:00",
-  "time_range": "1h",
-  "source": "ZITADEL",
-  "metrics_collected": 10,
-  "total_metrics": 10,
-  "filename": "grafana-metrics/zitadel_metrics_20260114_010000.json"
+  "time_range": "24h",
+  "total_dashboards": 16,
+  "collected": 16,
+  "total_metrics": 450,
+  "output_directory": "grafana-metrics"
 }
 ```
 
