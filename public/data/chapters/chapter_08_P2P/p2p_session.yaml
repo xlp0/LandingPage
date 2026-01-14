@@ -1,0 +1,44 @@
+
+version: "1.0"
+chapter:
+  id: 8
+  title: P2P
+clm:
+  abstract:
+    concept: SessionRecording
+    description: Record a P2P session into linked MCards
+  concrete:
+    manifestation: Session Recorder
+    description: Uses session_record builtin
+    boundary: intrinsic
+    builtin: session_record
+    runtime: network
+    config:
+      sessionId: "session_01"
+      operation: "batch"
+      operations:
+        - operation: "init"
+          maxBufferSize: 3
+        - operation: "add"
+          sender: "Alice"
+          content: "Hello"
+        - operation: "add"
+          sender: "Bob"
+          content: "Hi Alice"
+        - operation: "add"
+          sender: "Alice"
+          content: "How are you?"
+        - operation: "add"
+          sender: "Bob"
+          content: "Good, thanks." 
+          # This 4th message should trigger flush (size 3)
+          # buffer: [Hello] -> [Hello, Hi] -> [Hello, Hi, How] -> FLUSH (seq 0) -> [Good]
+        - operation: "flush" 
+          # Discards [Good] to MCard (seq 1)
+          
+  balanced:
+    description: Returns final checkpointhash
+
+examples:
+  - name: "Batch Record"
+    input: {}

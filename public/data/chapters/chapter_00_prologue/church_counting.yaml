@@ -1,0 +1,41 @@
+chapter:
+  id: "prologue_counting"
+  title: "Counting with Functions"
+  mvp_card: "The Counter"
+  pkc_task: "Initialize Identity"
+
+clm:
+  abstract:
+    concept: "Church Numerals"
+    description: "Definition of numbers as process iteration (Church Encoding)."
+  concrete:
+    runtime: lambda
+    operation: normalize
+    strategy: normal
+    maxSteps: 100
+  balanced:
+    description: "Verifying properties of Church Numerals via Beta Reduction."
+    test_cases:
+      - given: "Successor of Zero"
+        when:
+          expression: "(\\n.\\f.\\x.f (n f x)) (\\f.\\x.x)"
+        then:
+          success: true
+          # We expect normalized form to be ONE
+          
+examples:
+  - name: "Successor of Zero (1)"
+    input:
+      expression: "(\\n.\\f.\\x.f (n f x)) (\\f.\\x.x)" # SUCC ZERO
+    expected_output: "(λf.(λx.(f x)))" # ONE
+
+  - name: "Successor of One (2)"
+    input:
+      expression: "(\\n.\\f.\\x.f (n f x)) (\\f.\\x.f x)" # SUCC ONE
+    expected_output: "(λf.(λx.(f (f x))))" # TWO
+
+  - name: "Addition 1 + 1"
+    input:
+      # ADD = \m.\n.\f.\x.m f (n f x)
+      expression: "(\\m.\\n.\\f.\\x.m f (n f x)) (\\f.\\x.f x) (\\f.\\x.f x)"
+    expected_output: "(λf.(λx.(f (f x))))" # TWO

@@ -1,0 +1,30 @@
+version: '1.0'
+chapter:
+  id: 413
+  title: 'Verify Loader Databases'
+  mvp_card: DB Verifier
+  pkc_task: Verify Consistency
+clm:
+  abstract:
+    concept: Verification
+  concrete:
+    manifestation: Script Execution
+    runtime: python
+    code_file: module://chapters.chapter_04_load_dir.verify_loader_dbs:verify_databases
+    input_arguments:
+      db_py: "data/ingestion/loader_python.db"
+      db_js: "data/ingestion/loader_js.db"
+    test_cases:
+      - description: "Compare DBs"
+        given: "Two populated DBs"
+        when:
+          params:
+             db_py: "data/ingestion/loader_python.db"
+             db_js: "data/ingestion/loader_js.db"
+        then:
+          success: true
+          match: true
+  balanced:
+    expectation: Identity
+    expected_results:
+      success: true

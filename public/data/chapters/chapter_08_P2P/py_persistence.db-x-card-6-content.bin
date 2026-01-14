@@ -1,0 +1,133 @@
+{
+  "type": "p2p_session_summary",
+  "sessionId": "py_persistence_1765270317148",
+  "originalHeadHash": "bed39c67086a8794fd4f430b26c5f17870b5492d730b6cbb6f60bc0834648522",
+  "fullTranscript": [
+    {
+      "sender": "Robot-X1",
+      "content": "Archiving to local sector.",
+      "timestamp": 1765270317148
+    },
+    {
+      "sender": "Robot-X1",
+      "content": "Integrity check: PENDING.",
+      "timestamp": 1765270317148
+    },
+    {
+      "sender": "Agent-Doe",
+      "content": "Observing network traffic.",
+      "timestamp": 1765270317148
+    },
+    {
+      "sender": "Robot-X1",
+      "content": "Storage: PERSISTENT.",
+      "timestamp": 1765270317148
+    },
+    {
+      "sender": "Agent-Smith",
+      "content": "Observing network traffic.",
+      "timestamp": 1765270317148
+    },
+    {
+      "sender": "Agent-Smith",
+      "content": "Observing network traffic.",
+      "timestamp": 1765270317151
+    },
+    {
+      "sender": "Agent-Doe",
+      "content": "The cake is a lie.",
+      "timestamp": 1765270317151
+    },
+    {
+      "sender": "Agent-Doe",
+      "content": "Unauthorized access detected.",
+      "timestamp": 1765270317151
+    },
+    {
+      "sender": "Agent-Doe",
+      "content": "The cake is a lie.",
+      "timestamp": 1765270317151
+    },
+    {
+      "sender": "Agent-Smith",
+      "content": "The owl flies at midnight.",
+      "timestamp": 1765270317151
+    },
+    {
+      "sender": "Agent-Smith",
+      "content": "Unauthorized access detected.",
+      "timestamp": 1765270317152
+    },
+    {
+      "sender": "Agent-Doe",
+      "content": "Observing network traffic.",
+      "timestamp": 1765270317152
+    },
+    {
+      "sender": "Robot-X1",
+      "content": "Archiving to local sector.",
+      "timestamp": 1765270317152
+    },
+    {
+      "sender": "Robot-X1",
+      "content": "Parameters received.",
+      "timestamp": 1765270317152
+    },
+    {
+      "sender": "Human",
+      "content": "Initiating contact.",
+      "timestamp": 1765270317152
+    },
+    {
+      "sender": "Agent-Smith",
+      "content": "The cake is a lie.",
+      "timestamp": 1765270317153
+    },
+    {
+      "sender": "Robot-X1",
+      "content": "Going to sleep mode.",
+      "timestamp": 1765270317153
+    },
+    {
+      "sender": "Human",
+      "content": "Acknowledge.",
+      "timestamp": 1765270317153
+    },
+    {
+      "sender": "Agent-Smith",
+      "content": "The cake is a lie.",
+      "timestamp": 1765270317153
+    },
+    {
+      "sender": "Agent-Doe",
+      "content": "Observing network traffic.",
+      "timestamp": 1765270317153
+    },
+    {
+      "sender": "Agent-Doe",
+      "content": "The owl flies at midnight.",
+      "timestamp": 1765270317154
+    },
+    {
+      "sender": "Robot-X1",
+      "content": "Parameters received.",
+      "timestamp": 1765270317154
+    },
+    {
+      "sender": "Agent-Smith",
+      "content": "The cake is a lie.",
+      "timestamp": 1765270317154
+    },
+    {
+      "sender": "Robot-X1",
+      "content": "Archiving to local sector.",
+      "timestamp": 1765270317154
+    },
+    {
+      "sender": "Agent-Smith",
+      "content": "Unauthorized access detected.",
+      "timestamp": 1765270317154
+    }
+  ],
+  "timestamp": 1765270317158
+}

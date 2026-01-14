@@ -1,0 +1,30 @@
+# CLM: WebSocket Server - Status
+# Uses the builtin: websocket_server to check server status
+
+chapter:
+  id: "ws_server_status"
+  title: "WebSocket Server Status"
+
+clm:
+  abstract_spec:
+    concept: "Check WebSocket Server Status"
+    purpose: "Check if the WebSocket gateway server is running"
+
+  concrete_impl:
+    builtin: websocket_server
+    config:
+      port: 8765
+      host: "localhost"
+      action: "status"
+
+  balanced_exp:
+    test_cases:
+      - given: "Check server status"
+        when:
+          action: "status"
+        then:
+          success: true
+
+metadata:
+  version: "1.0.0"
+  tags: [websocket, server, builtin]

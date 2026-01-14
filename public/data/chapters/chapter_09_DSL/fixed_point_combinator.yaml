@@ -1,0 +1,92 @@
+# Fixed-Point Combinator - The Engine of Recursion
+#
+# This CLM demonstrates the Y combinator, which enables recursion in lambda calculus.
+# The Y combinator is the foundation of self-reference and meta-circular definition.
+#
+# Y = λf.(λx.f (x x)) (λx.f (x x))
+#
+# The Y combinator satisfies: Y F = F (Y F)
+# This means any function F can call itself, enabling recursive definitions.
+#
+# Note: The standard Y combinator diverges under strict evaluation.
+# We use the Z combinator (call-by-value Y) or demonstrate the fixed-point property
+# with a single step to avoid infinite loops.
+
+version: '1.1'
+
+chapter:
+  id: 907
+  title: 'Fixed-Point Combinator'
+  mvp_card: 'The Engine of Recursion'
+  pkc_task: 'Enable Self-Reference via Fixed Points'
+
+clm:
+  abstract_spec:
+    context: "Lambda Calculus Recursion Theory"
+    goal: "Demonstrate how the Y combinator enables recursive function definitions."
+    success_criteria: "Fixed-point property is verified: Y F = F (Y F) conceptually."
+
+  concrete_impl:
+    runtime: lambda
+    builtin: true
+    inputs: ["recursive_function"]
+    process: "normalize"
+    outputs: ["fixed_point_result"]
+    description: |
+      The Y combinator allows defining recursive functions without explicit self-reference.
+      
+      Example: Factorial
+        FACT = Y (λf.λn. IF (ISZERO n) ONE (MULT n (f (PRED n))))
+      
+      The key insight is that Y provides self-reference: Y g = g (Y g)
+      This is the foundation of meta-circular interpretation.
+
+  balanced_exp:
+    expectation: "Fixed-point property demonstrations."
+    test_cases:
+      # Demonstrate that Omega = (λx.x x)(λx.x x) is the simplest self-application
+      # We won't fully reduce Omega (it diverges), but we can show the structure
+      
+      # Test 1: Self-application of identity
+      - given: "Self-Application of Identity: (λx.x x)(λy.y) = (λy.y)(λy.y) = (λy.y)"
+        when:
+          arguments:
+            expression: "(\\x.x x) (\\y.y)"
+        then:
+          result: "(λy.y)"
+
+      # Test 2: Applying I to itself gives I
+      - given: "Identity Fixed Point: I I = I"
+        when:
+          arguments:
+            expression: "(\\x.x) (\\y.y)"
+        then:
+          result: "(λy.y)"
+
+      # Test 3: K applied to itself and I gives K
+      - given: "Constant Self-Application: K K I = K"
+        when:
+          arguments:
+            expression: "(\\x.\\y.x) (\\a.\\b.a) (\\c.c)"
+        then:
+          result: "(λa.(λb.a))"
+
+examples:
+  - name: "Self-Application Pattern"
+    description: "The omega pattern (λx.x x) applied to identity"
+    input:
+      expression: "(\\x.x x) (\\y.y)"
+    expected_output: "(λy.y)"
+
+  - name: "Identity is a Fixed Point of Itself"
+    description: "I I = I demonstrates trivial fixed point"
+    input:
+      expression: "(\\x.x) (\\z.z)"
+    expected_output: "(λz.z)"
+
+  - name: "Simulated Fixed Point Step"
+    description: "One step of Y F = F (Y F) pattern"
+    input:
+      # Simulate: (λf.f f) g = g g (self-application)
+      expression: "(\\f.f f) (\\x.x)"
+    expected_output: "(λx.x)"

@@ -1,0 +1,29 @@
+version: '1.0'
+chapter:
+  id: 106
+  title: 'Arithmetic: The Addition PCard (WASM)'
+  mvp_card: The Adder (WASM)
+  pkc_task: Compute Sum
+clm:
+  abstract:
+    concept: Commutative Monoid Operation
+    description: 'The Principle: a + b = b + a'
+  concrete:
+    manifestation: WASM Addition
+    description: The Implementation
+    runtime: wasm
+    wasm_module: bin/logic.wasm
+    input_type: mcard
+    output_type: mcard
+    process_type: custom
+  balanced:
+    expectation: Summation Correctness
+    description: The Evidence
+    expected_results:
+      success: true
+    test_cases:
+      - given: "100 + 200"
+        when:
+          context: { a: 100, b: 200 }
+        then:
+          result: 300

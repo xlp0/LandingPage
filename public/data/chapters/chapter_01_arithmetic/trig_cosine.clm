@@ -1,0 +1,43 @@
+abstract:
+  name: Cosine Function
+  purpose: Calculates the cosine of an angle in radians.
+  version: 1.0.0
+  tags:
+  - math
+  - trigonometry
+  - cosine
+  inputs:
+    angle:
+      type: float
+      description: Angle in radians
+  outputs:
+    result:
+      type: float
+      description: Cosine value
+  preconditions:
+  - angle is a valid float
+  postconditions:
+  - result is a float
+concrete:
+  runtime: python
+  operation: custom
+  entry_point: custom_cos
+  implementation:
+    inputs:
+      angle: float
+  code_file: trig_impl.py
+  input_type: mcard
+  output_type: mcard
+  process_type: custom
+balanced:
+  owner: math_dept
+  test_cases:
+  - given: '0.0'
+    when:
+      operation: custom
+    then:
+      result: 1.0
+      epsilon: 1e-9
+  expectations:
+    description: Must return correct value for test inputs
+    criteria: accuracy < 1e-9

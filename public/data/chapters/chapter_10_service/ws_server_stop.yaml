@@ -1,0 +1,29 @@
+# CLM: WebSocket Server - Stop
+# Uses the builtin: websocket_server to stop the server
+
+chapter:
+  id: "ws_server_stop"
+  title: "Stop WebSocket Server"
+
+clm:
+  abstract_spec:
+    concept: "Stop WebSocket Gateway Server"
+    purpose: "Stop a running WebSocket server"
+
+  concrete_impl:
+    builtin: websocket_server
+    config:
+      port: 8765
+      action: "stop"
+
+  balanced_exp:
+    test_cases:
+      - given: "Stop server"
+        when:
+          action: "stop"
+        then:
+          success: true
+
+metadata:
+  version: "1.0.0"
+  tags: [websocket, server, builtin]

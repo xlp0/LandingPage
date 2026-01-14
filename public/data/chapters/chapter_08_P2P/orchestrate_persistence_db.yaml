@@ -1,0 +1,52 @@
+version: "1.0"
+chapter:
+  id: 8.8.1
+  title: Orchestrate Robot Persistence with DB
+clm:
+  abstract:
+    concept: Orchestration
+  concrete:
+    manifestation: Multi-Agent Logic
+    runtime: network
+    builtin: clm_orchestrator
+    boundary: intrinsic
+    config:
+      steps:
+        # 1. Start Signaling Server (Background)
+        # 1. Start Signaling Server (Background)
+        - action: start_signaling_server
+          name: "Launch Signaling Server"
+          port: 3000
+          id_key: "server_id"
+          wait_after: 2000
+
+        # 2. Start Peer Listener (Background CLM)
+        # We also need a listener for the p2p parts to work if the logic relies on it.
+        # But wait, persistence_simulation.yaml logic (persistence_logic.js) creates its own runners (Human, Robot, etc).
+        # It uses 'generic_session.yaml' which uses 'session_record' builtin.
+        # It doesn't seem to explicitly use 'webrtc_connect' in the JS loop currently (it just simulates ops).
+        # However, if we want to follow "Orchestrator.yaml" style, we should launch the listener too.
+        # But 'persistence_logic.js' is self-contained simulation of logic.
+        
+        # 3. Run Persistence Simulation in Separate Process with Env Var
+        - action: run_clm_background
+          name: "Run Persistence Simulation"
+          file: "persistence_simulation.yaml"
+          env:
+             MCARD_DB_PATH: "../chapters/chapter_08_P2P/robot_persistence_test.db"
+          id_key: "sim_pid"
+          # Wait enough time for it to complete (it has 5 turns + summary)
+          wait_after: 15000 
+
+        # 4. Teardown
+        # 4. Teardown
+        - action: stop_signaling_server
+          name: "Stop Signaling Server"
+          id_key: "server_id"
+
+  balanced:
+    expectation: Persistence simulation runs with 'robot_persistence_test.db'
+
+examples:
+  - name: "Run Persistence with DB"
+    input: {}

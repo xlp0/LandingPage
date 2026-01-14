@@ -1,0 +1,119 @@
+# Step-by-Step Arithmetic with IO Monad Logging
+#
+# This CLM demonstrates complex Church numeral arithmetic with full reduction tracing.
+# The Lambda runtime provides an "IO Monad-like" effect: each reduction step is recorded
+# as a content-addressed hash in the reduction path.
+#
+# The key insight: Lambda Calculus is pure, but the PTR provides observability
+# by logging each step as an immutable MCard. This is the "IO Monad" pattern:
+#   IO a = World → (a, World')
+#
+# In our context:
+#   Reduction = TermHash → (TermHash', ReductionPath)
+#
+# Each step in the reduction path is a "logged effect" — an observable side-effect
+# that doesn't pollute the pure computation but provides a trace for debugging.
+
+version: '1.1'
+
+chapter:
+  id: 908
+  title: 'Step-by-Step Arithmetic with IO Logging'
+  mvp_card: 'The Traced Computation'
+  pkc_task: 'Demonstrate Reduction Tracing as IO Effect'
+
+clm:
+  abstract_spec:
+    context: "IO Monad Pattern via Reduction Logging"
+    goal: "Perform complex Church numeral arithmetic and observe step-by-step reduction."
+    success_criteria: "Each arithmetic operation completes with a non-empty reduction path, proving observability."
+
+  concrete_impl:
+    runtime: lambda
+    builtin: true
+    inputs: ["expression"]
+    process: "normalize"  # Full normalization with reduction path trace
+    outputs: ["result", "reductionPath"]
+    description: |
+      The IO Monad pattern in pure lambda calculus:
+      
+      1. **Pure Computation**: The lambda expression itself
+      2. **IO Effect**: The reduction path logged by PTR
+      3. **Result**: The final normal form
+      
+      Church Numerals used:
+        ZERO = λf.λx.x
+        ONE  = λf.λx.f x
+        TWO  = λf.λx.f (f x)
+        THREE = λf.λx.f (f (f x))
+        
+      Operations:
+        SUCC = λn.λf.λx.f (n f x)
+        ADD  = λm.λn.λf.λx.m f (n f x)
+        MULT = λm.λn.λf.m (n f)
+        POW  = λm.λn.n m
+
+  balanced_exp:
+    expectation: "Complex arithmetic reduces with observable steps."
+    test_cases:
+      # Test 1: 2 + 2 = 4 (demonstrates addition with trace)
+      - given: "Addition: TWO + TWO = FOUR"
+        when:
+          arguments:
+            # ADD 2 2 = (λm.λn.λf.λx.m f (n f x)) 2 2
+            expression: "(\\m.\\n.\\f.\\x.m f (n f x)) (\\f.\\x.f (f x)) (\\f.\\x.f (f x))"
+        then:
+          result: "(λf.(λx.(f (f (f (f x))))))"
+
+      # Test 2: 2 × 3 = 6 (demonstrates multiplication)
+      - given: "Multiplication: TWO × THREE = SIX"
+        when:
+          arguments:
+            # MULT 2 3 = (λm.λn.λf.m (n f)) 2 3
+            expression: "(\\m.\\n.\\f.m (n f)) (\\f.\\x.f (f x)) (\\f.\\x.f (f (f x)))"
+        then:
+          result: "(λf.(λx.(f (f (f (f (f (f x))))))))"
+
+      # Test 3: 2^3 = 8 (demonstrates exponentiation - most complex)
+      - given: "Exponentiation: TWO ^ THREE = EIGHT"
+        when:
+          arguments:
+            # POW 2 3 = (λm.λn.n m) 2 3 = 3 2 = 2^3
+            expression: "(\\m.\\n.n m) (\\f.\\x.f (f x)) (\\f.\\x.f (f (f x)))"
+        then:
+          # Alpha-equivalent form: 8 applications of the first variable
+          result: "(λx.(λx'.(x (x (x (x (x (x (x (x x'))))))))))"
+
+      # Test 4: (1 + 1) × 2 = 4 (demonstrates composition)
+      - given: "Composition: (ONE + ONE) × TWO = FOUR"
+        when:
+          arguments:
+            # MULT (ADD 1 1) 2
+            expression: "(\\m.\\n.\\f.m (n f)) ((\\m.\\n.\\f.\\x.m f (n f x)) (\\f.\\x.f x) (\\f.\\x.f x)) (\\f.\\x.f (f x))"
+        then:
+          result: "(λf.(λx.(f (f (f (f x))))))"
+
+examples:
+  - name: "2 + 2 = 4 (Full Trace)"
+    description: "Church addition with reduction path as IO effect"
+    input:
+      expression: "(\\m.\\n.\\f.\\x.m f (n f x)) (\\f.\\x.f (f x)) (\\f.\\x.f (f x))"
+    expected_output: "(λf.(λx.(f (f (f (f x))))))"
+
+  - name: "2 × 3 = 6"
+    description: "Church multiplication"
+    input:
+      expression: "(\\m.\\n.\\f.m (n f)) (\\f.\\x.f (f x)) (\\f.\\x.f (f (f x)))"
+    expected_output: "(λf.(λx.(f (f (f (f (f (f x))))))))"
+
+  - name: "2^3 = 8 (Exponentiation)"
+    description: "Church exponentiation - the most reduction steps"
+    input:
+      expression: "(\\m.\\n.n m) (\\f.\\x.f (f x)) (\\f.\\x.f (f (f x)))"
+    expected_output: "(λx.(λx'.(x (x (x (x (x (x (x (x x'))))))))))"
+
+  - name: "(1+1) × 2 = 4 (Nested Operations)"
+    description: "Demonstrates compositional arithmetic"
+    input:
+      expression: "(\\m.\\n.\\f.m (n f)) ((\\m.\\n.\\f.\\x.m f (n f x)) (\\f.\\x.f x) (\\f.\\x.f x)) (\\f.\\x.f (f x))"
+    expected_output: "(λf.(λx.(f (f (f (f x))))))"

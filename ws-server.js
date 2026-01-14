@@ -85,6 +85,12 @@ app.use((req, res, next) => {
 });
 
 // Serve public folder for CSS, JS, and other assets - moved before root static middleware
+// Serve public folder for CSS, JS, and other assets - moved before root static middleware
+import serveIndex from 'serve-index';
+
+// Enable directory listing for public folder
+app.use('/public', express.static(path.join(__dirname, 'public')), serveIndex(path.join(__dirname, 'public'), { 'icons': true }));
+
 app.use(express.static(path.join(__dirname, 'public')));
 // Also serve from root for backward compatibility with some paths
 app.use(express.static(path.join(__dirname)));

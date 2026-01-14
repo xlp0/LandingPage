@@ -1,0 +1,36 @@
+version: "1.0"
+chapter:
+  id: 8
+  title: P2P
+clm:
+  abstract:
+    concept: SessionRecording
+    description: Record a P2P session step
+  concrete:
+    manifestation: Session Recorder
+    description: Uses session_record builtin
+    boundary: intrinsic
+    builtin: session_record
+    runtime: network
+    config:
+      sessionId: ${params.sessionId}
+      operation: ${params.operation}
+      operations: ${params.operations}
+      maxBufferSize: ${params.maxBufferSize}
+      initialHeadHash: ${params.initialHeadHash}
+      sender: ${params.sender}
+      content: ${params.content}
+  balanced:
+    expectation: Operation success
+    test_cases:
+      - given: "Simple Record"
+        when:
+          params:
+            sessionId: "test-session"
+            operation: "add"
+            maxBufferSize: 5
+            initialHeadHash: null
+            sender: "TestUser"
+            content: "Test Content"
+        then:
+          success: true  # Only check success flag, not full structure

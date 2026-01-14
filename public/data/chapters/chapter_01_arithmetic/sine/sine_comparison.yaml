@@ -1,0 +1,33 @@
+version: '1.0'
+chapter:
+  id: 112
+  title: 'Arithmetic: Sine Implementation Benchmark'
+  mvp_card: The Mathematician
+  pkc_task: Compare Algorithms
+clm:
+  abstract:
+    concept: Algorithm Efficiency
+    description: Comparing Native vs Taylor (Py) vs Chebyshev (Py/C/Rust)
+  concrete:
+    description: Run benchmark loop
+    code_file: sine_benchmark_simple.py
+    entry_point: benchmark
+    runtime: python
+    input_type: mcard
+    output_type: mcard
+    process_type: custom
+  balanced:
+    expectation: Native is faster
+    description: Standard math.sin is implemented in C and optimized. Taylor series in pure Python will be significantly slower.
+    input_arguments:
+      iterations: 100000
+    expected_results:
+      winner: math.sin
+
+examples:
+  - name: "Sine benchmark comparison"
+    input:
+      iterations: 1000
+    expected_output:
+      success: true
+      algorithms_tested: 5

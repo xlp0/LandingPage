@@ -1,0 +1,37 @@
+chapter:
+  id: 4.2
+  title: "Filesystem Loader - Docs"
+  mvp_card: "Docs Loader"
+  pkc_task: "Load Doc Files"
+
+clm:
+  abstract:
+    purpose: "Load files from docs directory and measure metrics."
+    inputs:
+      source_dir: { type: "string" }
+    outputs:
+      metrics: { type: "object" }
+
+  concrete:
+    runtime: "python"
+    entry_point: "run_benchmark"
+    builtin: "loader"
+    input_type: "directory"
+    process_type: "load_files"
+    output_type: "metrics"
+    implementation:
+      inputs:
+        source_dir: "string"
+
+  balanced:
+    input_arguments:
+      source_dir: "docs"
+    test_cases:
+      - description: "Load docs directory"
+        given: "Docs directory"
+        when:
+          params:
+            source_dir: "docs"
+            recursive: true
+        then:
+          success: true

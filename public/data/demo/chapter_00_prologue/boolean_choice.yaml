@@ -1,0 +1,63 @@
+# Boolean Choice - Logic as Selection
+#
+# In Lambda Calculus, Booleans are functions that select between two options.
+# TRUE  = λx.λy.x (Selects First)
+# FALSE = λx.λy.y (Selects Second)
+
+version: '1.1'
+
+chapter:
+  id: 001
+  title: 'Boolean Choice'
+  mvp_card: 'The Selector'
+  pkc_task: 'Understand Logic as Selection'
+
+clm:
+  abstract_spec:
+    context: "Boolean logic allows decision making."
+    goal: "Demonstrate how TRUE and FALSE select between two arguments."
+    success_criteria: "TRUE selects first arg, FALSE selects second arg."
+
+  concrete_impl:
+    runtime: lambda
+    process: normalize
+    io_effects:
+      enabled: true
+      console: true
+      format: minimal
+    description: |
+      TRUE  = λx.λy.x
+      FALSE = λx.λy.y
+      
+      (TRUE A B) reduces to A
+      (FALSE A B) reduces to B
+
+  balanced_exp:
+    expectation: "Booleans correctly select their arguments."
+    test_cases:
+      - given: "TRUE selects the first argument"
+        when:
+          arguments:
+            expression: "(\\x.\\y.x) First Second"
+        then:
+          result_contains: "First"
+
+      - given: "FALSE selects the second argument"
+        when:
+          arguments:
+            expression: "(\\x.\\y.y) First Second"
+        then:
+          result_contains: "Second"
+
+examples:
+  - name: "TRUE Selection"
+    description: "TRUE returns the first option"
+    input:
+      expression: "(\\x.\\y.x) First Second"
+    result_contains: "First"
+
+  - name: "FALSE Selection"
+    description: "FALSE returns the second option"
+    input:
+      expression: "(\\x.\\y.y) First Second"
+    result_contains: "Second"

@@ -1,0 +1,62 @@
+version: '1.0'
+chapter:
+  id: 202
+  title: 'Content Handle: The Versioning PCard (JS)'
+  mvp_card: The Versioner (JS)
+  pkc_task: Update Handle and Preserve History via Javascript
+  description: 'This PCard demonstrates handle versioning in JavaScript.
+    '
+clm:
+  abstract:
+    concept: Immutable Versioning with Mutable Reference
+    description: 'The Principle: Data Immutability is preserved.
+      '
+    math_model: "Version = (Handle, [Hash\u2081, Hash\u2082, ..., Hash\u2099])"
+  concrete:
+    manifestation: Handle Update Operation
+    description: Update a handle to point to new content
+    runtime: javascript
+    operation: custom
+    code_file: handle_logic.js
+    implementation:
+      inputs:
+        context: dict
+    input_type: mcard
+    output_type: mcard
+    process_type: custom
+  balanced:
+    expectation: Version History Integrity
+    description: 'The Evidence: After N updates, the history contains N-1 entries.
+      '
+    invariants:
+    - len(history) == num_updates
+    - history is ordered newest-first
+    - previous hash exists in card table
+    expected_results:
+      success: true
+examples:
+- name: Single Update
+  handle: my_doc
+  versions:
+  - content: Version 1
+  - content: Version 2
+  expected_history_length: 1
+- name: Multiple Updates
+  handle: evolving_doc
+  versions:
+  - content: Draft
+  - content: Review
+  - content: Final
+  expected_history_length: 2
+- name: Content Lineage
+  handle: specification
+  versions:
+  - content: '# Spec v0.1
+      Initial draft'
+  - content: '# Spec v0.2
+      Added requirements'
+  - content: '# Spec v0.3
+      Added implementation notes'
+  - content: '# Spec v1.0
+      Approved for release'
+  expected_history_length: 3

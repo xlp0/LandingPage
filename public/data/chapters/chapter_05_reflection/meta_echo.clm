@@ -1,0 +1,45 @@
+type: PCard
+metadata:
+  name: Meta Echo Interpreter
+  version: 1.0.0
+abstract:
+  purpose: Acts as a meta-interpreter that simply echoes the input PCard.
+  inputs:
+    pcard:
+      type: object
+      description: The PCard definition to execute
+    data:
+      type: any
+      description: The input data for the PCard
+  outputs:
+    result:
+      type: string
+concrete:
+  runtime: python
+  operation: custom
+  code: "import json\n\n# Handle complex input\ndata_content = \"Unknown\"\n\
+    if isinstance(target, dict):\n    # CLM Loader merging means target IS\
+    \ the input dict\n    # Try to find the original input content\n    if\
+    \ '__input_content__' in target:\n         inner = target['__input_content__']\n\
+    \         if isinstance(inner, dict) and '__input_content__' in inner:\n \
+    \            data_content = str(inner['__input_content__'])\n         else:\n\
+    \             data_content = str(inner)\n    else:\n         # Fallback to stringifying\
+    \ the whole dict if no content key\n         data_content = str(target)\nelif isinstance(target,\
+    \ bytes):\n    data_content = target.decode('utf-8')\nelse:\n    data_content = str(target)\n\n\
+    # Context info\nsource_pcard_name = context.get('source_pcard_title',\
+    \ 'Unknown PCard')\nsource_runtime = context.get('concrete', {}).get('runtime',\
+    \ 'unknown')\n\nresult = f\"Meta-Interpreted [{source_pcard_name}] (Runtime:\
+    \ {source_runtime}) Input: {data_content}\"\n"
+  input_type: mcard
+  output_type: mcard
+  process_type: custom
+balanced:
+  test_cases:
+  - description: Should echo input with meta-interpretation prefix
+    given: TestInput
+    when:
+      operation: custom
+    then:
+      result: 'Meta-Interpreted [Unknown PCard] (Runtime: unknown) Input: TestInput'
+  expected_results:
+    success: true

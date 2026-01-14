@@ -1,0 +1,27 @@
+chapter:
+  id: "network_sync_client"
+  title: "MCard Sync Client"
+
+clm:
+  abstract:
+    concept: "Synchronization Consumer"
+    description: "Pull MCards from a remote sync server"
+
+  concrete:
+    runtime: network
+    manifestation: "HTTP Sync Pull"
+    builtin: mcard_sync
+    config:
+      url: "http://localhost:3001/sync"
+      mode: "pull"
+
+  balanced:
+    expectation: "Successfully sync when server is available"
+    description: |
+      This CLM requires a running sync server on localhost:3001.
+      To test manually:
+        1. Start the sync server: npm --prefix mcard-js run clm:all -- chapter_07_network/sync_server.yaml
+        2. Then run this client: npm --prefix mcard-js run demo:clm -- chapters/chapter_07_network/sync_client.yaml
+
+# No examples - requires external server to be running
+# This CLM is skipped in automated tests but can be tested manually

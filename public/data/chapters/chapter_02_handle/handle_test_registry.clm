@@ -1,0 +1,121 @@
+version: '1.0'
+chapter:
+  id: 204
+  title: 'Content Handle: Self-Referential Test Data'
+  mvp_card: The Meta-Test
+  pkc_task: Store and Retrieve Test Cases via Handles
+  description: 'This PCard demonstrates using the Content Handle system to manage
+
+    its own test data. Test examples are stored as MCards and referenced
+
+    by handles. This creates a self-referential, content-addressed
+
+    test data management system.
+
+    '
+clm:
+  abstract:
+    concept: Self-Referential Content Addressing
+    description: 'The Principle: Test data is itself content-addressed.
+
+      Each test example is stored as an MCard with a stable handle.
+
+      To run tests, we resolve handles to retrieve the latest test cases.
+
+      This embodies the Yoneda Lemma: "An object is defined by its relationships."
+
+      '
+    math_model: "TestRegistry = Handle \u2192 MCard(TestExample)\nRunTest(handle)\
+      \ = Resolve(handle) >>= ParseYAML >>= Execute\n"
+  concrete:
+    manifestation: Handle-Based Test Registry
+    description: 'Load test data YAML files, store them as MCards, register handles.
+
+      Use handles to retrieve and execute test cases dynamically.
+
+      '
+    runtime: python
+    operation: custom
+    code_file: handle_test_registry.py
+    entry_point: run_tests_from_handles
+    implementation:
+      inputs:
+        context: dict
+    input_type: mcard
+    output_type: mcard
+    process_type: custom
+  balanced:
+    expectation: Test Data Integrity via Content Addressing
+    description: 'The Evidence: Test cases retrieved by handle match the original
+      data.
+
+      Updates to test cases create new versions while preserving history.
+
+      '
+    invariants:
+    - Test data is immutable (stored as MCard)
+    - Handle always resolves to latest version
+    - History tracks all test case revisions
+    expected_results:
+      success: true
+    test_cases:
+    - name: Retrieve Single Update Registry Entry
+      given: A registry populated from single_update.yaml
+      when:
+        context:
+          handles:
+          - single_update
+      then:
+        result_contains: single_update
+    - name: Retrieve Multiple Updates Registry Entry
+      given: A registry populated from multiple_updates.yaml
+      when:
+        context:
+          handles:
+          - multiple_updates
+      then:
+        result_contains: multiple_updates
+    - name: Retrieve Content Lineage Registry Entry
+      given: A registry populated from content_lineage.yaml
+      when:
+        context:
+          handles:
+          - content_lineage
+      then:
+        result_contains: content_lineage
+test_data_registry:
+  description: 'These test examples are stored as separate YAML files, loaded into
+    MCards,
+
+    and registered with handles matching their ''name'' field.
+
+    '
+  sources:
+  - file: test_data/single_update.yaml
+    handle: single_update
+  - file: test_data/multiple_updates.yaml
+    handle: multiple_updates
+  - file: test_data/content_lineage.yaml
+    handle: content_lineage
+meta_examples:
+- name: Retrieve Single Update Test
+  handle: single_update
+  expected_fields:
+  - name
+  - handle
+  - versions
+  - expected_history_length
+- name: Retrieve Multiple Updates Test
+  handle: multiple_updates
+  expected_fields:
+  - name
+  - handle
+  - versions
+  - expected_history_length
+- name: Retrieve Content Lineage Test
+  handle: content_lineage
+  expected_fields:
+  - name
+  - handle
+  - versions
+  - expected_history_length

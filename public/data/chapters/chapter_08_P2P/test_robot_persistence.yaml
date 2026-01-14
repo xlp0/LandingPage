@@ -1,0 +1,25 @@
+# JavaScript-Only CLM - Use persistence_simulation.yaml for Python
+# This CLM requires Node.js and npx tsx. Skip in Python runner.
+version: "1.0"
+type: VCard  # Marks as definition/reference, not executable standalone
+chapter:
+  id: 8.6
+  title: P2P Robot Persistence Test (JavaScript Only)
+  note: "For Python, use persistence_simulation.yaml instead"
+clm:
+  abstract:
+    concept: PersistentSession
+    description: "Robot Persistence Demo (Node.js version)"
+  concrete:
+    manifestation: Robot Persistence Demo
+    boundary: extrinsic
+    runtime: node
+    builtin: run_command
+    config:
+      command: "npx tsx examples/run-p2p-robot-persistence-demo.ts"
+  balanced:
+    expectation: Operation success
+
+examples:
+  - name: "Run Robot Persistence Demo"
+    input: {}

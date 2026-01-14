@@ -1,0 +1,30 @@
+# Signaling Server CLM
+# This CLM can be run in both Python and JavaScript runtimes.
+# The signaling_server builtin starts a WebSocket-based signaling server for P2P coordination.
+version: "1.0"
+chapter:
+  id: 8.9
+  title: Signaling Server Service
+clm:
+  abstract:
+    concept: WebRTCSignaling
+    description: Runs a simple signaling server for P2P coordination
+  concrete:
+    manifestation: Signaling Server
+    boundary: extrinsic
+    builtin: signaling_server
+    runtime: network
+    config:
+      port: 3000
+      background: true
+  balanced:
+    expectation: Server Running
+    description: Listens on port 3000
+    test_cases:
+      - description: "Start signaling server"
+        given: "Server config"
+        when:
+          params:
+            port: 3000
+        then:
+          success: true

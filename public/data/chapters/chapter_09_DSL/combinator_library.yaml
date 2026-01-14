@@ -1,0 +1,102 @@
+# Combinator Library - The Building Blocks of Meta-Programming
+#
+# This CLM defines the foundational combinators used in meta-circular programming.
+# These combinators are the "atoms" from which all higher-order functions are composed.
+#
+# Key Combinators:
+#   I = λx.x              (Identity)
+#   K = λx.λy.x           (Constant / TRUE)
+#   KI = λx.λy.y          (Flip / FALSE)
+#   S = λx.λy.λz.x z (y z) (Substitution)
+#   B = λx.λy.λz.x (y z)  (Composition)
+#   C = λx.λy.λz.x z y    (Flip arguments)
+#   W = λx.λy.x y y       (Duplicate)
+#
+# The S and K combinators are Turing-complete: any computable function can be
+# expressed using only S and K. This validates the completeness of the CLM runtime.
+
+version: '1.1'
+
+chapter:
+  id: 906
+  title: 'Combinator Library'
+  mvp_card: 'The Atomic Operators'
+  pkc_task: 'Define Turing-Complete Basis'
+
+clm:
+  abstract_spec:
+    context: "Lambda Calculus Combinatory Logic"
+    goal: "Define and verify the fundamental combinators that form a Turing-complete basis."
+    success_criteria: "All combinators reduce to their expected normal forms."
+
+  concrete_impl:
+    runtime: lambda
+    builtin: true
+    inputs: ["combinator", "arguments"]
+    process: "normalize"
+    outputs: ["result"]
+
+  balanced_exp:
+    expectation: "Each combinator produces its canonical reduction."
+    test_cases:
+      # I x → x
+      - given: "Identity Combinator: I x = x"
+        when:
+          arguments:
+            expression: "(\\x.x) a"
+        then:
+          result: "a"
+
+      # K x y → x
+      - given: "Constant Combinator: K x y = x"
+        when:
+          arguments:
+            expression: "(\\x.\\y.x) a b"
+        then:
+          result: "a"
+
+      # KI x y → y
+      - given: "Flip Constant: KI x y = y"
+        when:
+          arguments:
+            expression: "(\\x.\\y.y) a b"
+        then:
+          result: "b"
+
+      # S K K x → x (proving S K K = I)
+      - given: "SKK Identity: S K K x = x"
+        when:
+          arguments:
+            # S = λx.λy.λz.x z (y z)
+            # S K K = λz.K z (K z) = λz.z = I
+            expression: "(\\x.\\y.\\z.x z (y z)) (\\a.\\b.a) (\\a.\\b.a) m"
+        then:
+          result: "m"
+
+examples:
+  - name: "Identity (I)"
+    description: "I = λx.x returns its argument unchanged"
+    input:
+      expression: "(\\x.x) hello"
+    expected_output: "hello"
+
+  - name: "Constant (K)"
+    description: "K = λx.λy.x ignores the second argument"
+    input:
+      expression: "(\\x.\\y.x) first second"
+    expected_output: "first"
+
+  - name: "Composition (B)"
+    description: "B f g x = f (g x)"
+    input:
+      # B = λf.λg.λx.f (g x)
+      # B add1 double 3 = add1 (double 3)
+      # Using identity for simplicity: B I I x = I (I x) = x
+      expression: "(\\f.\\g.\\x.f (g x)) (\\a.a) (\\b.b) value"
+    expected_output: "value"
+
+  - name: "SKK equals I"
+    description: "The fundamental theorem: S K K reduces to the identity combinator"
+    input:
+      expression: "(\\x.\\y.\\z.x z (y z)) (\\a.\\b.a) (\\a.\\b.a) test"
+    expected_output: "test"

@@ -1,0 +1,58 @@
+version: '1.0'
+chapter:
+  id: 420
+  title: 'Orchestrator: Cross-Runtime Loader Loading'
+  mvp_card: The Orchestrator
+  pkc_task: Coordinate Independent Loader Processes
+clm:
+  abstract:
+    concept: Orchestration
+  concrete:
+    manifestation: Multi-Process Coordination
+    runtime: network
+    builtin: clm_orchestrator
+    config:
+      steps:
+        # Run Python Loader (Blocking)
+        - action: run_clm
+          name: "Python Loader"
+          file: "load_dir_py.clm"
+          input:
+            source_dir: "docs"
+            db_path: "data/ingestion/loader_python.db"
+          continue_on_error: false
+
+        # Run JS Loader (Blocking)
+        - action: run_clm
+          name: "JS Loader"
+          file: "load_dir_js.clm"
+          input:
+            source_dir: "docs"
+            db_path: "data/ingestion/loader_js.db"
+          continue_on_error: false
+
+        # Verify
+        - action: run_clm
+          name: "Verify Consistency"
+          file: "verify_loaders.clm"
+          input:
+            db_py: "data/ingestion/loader_python.db"
+            db_js: "data/ingestion/loader_js.db"
+          wait_after: 1000
+
+
+
+  balanced:
+    expectation: Success
+    description: "All loader steps execute successfully and verification passes"
+    test_cases:
+      - description: "Full orchestration run with Python and JS loaders"
+        given: "docs directory exists with files to load"
+        then:
+          success: true
+      - description: "Verification step confirms loader consistency"
+        given: "Both loaders have completed"
+        then:
+          success: true
+    expected_results:
+      success: true

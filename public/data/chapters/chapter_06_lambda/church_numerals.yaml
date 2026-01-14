@@ -1,0 +1,66 @@
+# Lambda Calculus - Church Numerals
+#
+# Demonstrates Church encoding of natural numbers and arithmetic operations.
+# Church numerals encode numbers as repeated function application.
+
+chapter:
+  id: 61
+  title: "Lambda Calculus - Church Numerals"
+  description: "Church encoding of natural numbers"
+  mvp_card: "Church Encoding"
+  pkc_task: "Closure Verification"
+
+clm:
+  abstract:
+    concept: "Church Encoding"
+    specification: |
+      Church numerals encode natural numbers as Lambda terms:
+      
+      0 = λf.λx.x
+      1 = λf.λx.f x
+      2 = λf.λx.f (f x)
+      n = λf.λx.f^n x  (f applied n times)
+      
+      Successor: SUCC = λn.λf.λx.f (n f x)
+      Addition: ADD = λm.λn.λf.λx.m f (n f x)
+      
+      All numerals are closed terms (no free variables).
+
+  balanced:
+    input_arguments:
+      numeral: "\\f.\\x.f (f x)"  # Church 2
+    expected_output:
+      closed: true
+      normalForm: true
+
+  concrete:
+    runtime: javascript
+    code_file: church_numerals.js
+
+examples:
+  - name: "Church 0"
+    description: "Zero - identity on second argument"
+    input:
+      expression: "\\f.\\x.x"
+    expected_output:
+      closed: true
+      normalForm: true
+      churchValue: 0
+      
+  - name: "Church 1"
+    description: "One - single application"
+    input:
+      expression: "\\f.\\x.f x"
+    expected_output:
+      closed: true
+      normalForm: true
+      churchValue: 1
+      
+  - name: "Church 2"
+    description: "Two - double application"
+    input:
+      expression: "\\f.\\x.f (f x)"
+    expected_output:
+      closed: true
+      normalForm: true
+      churchValue: 2

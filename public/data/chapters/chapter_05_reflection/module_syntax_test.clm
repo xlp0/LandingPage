@@ -1,0 +1,28 @@
+type: PCard
+metadata:
+  name: Module Syntax Test
+  version: 1.0.0
+abstract:
+  purpose: Test module:// syntax in code_file.
+  inputs:
+    name:
+      type: string
+  outputs:
+    result:
+      type: string
+concrete:
+  runtime: python
+  operation: custom
+  code_file: dummy_logic_module.py
+  entry_point: dummy_module_func
+  input_type: mcard
+  output_type: mcard
+  process_type: custom
+balanced:
+  test_cases:
+  - description: Should return prefixed string
+    given: Hello
+    then:
+      result: 'Module Execution: Hello'
+  expected_results:
+    success: true

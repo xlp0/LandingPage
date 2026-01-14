@@ -1,0 +1,28 @@
+type: PCard
+metadata:
+  name: Recursive Hello World
+  version: 1.0.0
+abstract:
+  purpose: Demonstrate recursive CLM execution.
+  inputs:
+    name:
+      type: string
+  outputs:
+    greeting:
+      type: string
+concrete:
+  runtime: meta_echo.clm
+  transform_function: echo
+  input_type: mcard
+  output_type: mcard
+  process_type: custom
+balanced:
+  test_cases:
+  - description: Should return meta-prefixed string
+    given: World
+    when:
+      operation: custom
+    then:
+      result: 'Meta-Interpreted [Recursive Hello World] (Runtime: meta_echo.clm) Input: World'
+  expected_results:
+    success: true

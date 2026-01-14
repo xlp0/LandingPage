@@ -1,0 +1,56 @@
+abstract:
+  purpose: Verify identity and maintain evolutionary state
+  inputs:
+    identity_data:
+      type: dict
+      description: Identity information to verify
+  outputs:
+    verification_result:
+      type: dict
+      description: Result of identity verification
+  preconditions:
+  - identity_data must contain valid ID and signature
+  postconditions:
+  - verification_result indicates valid or invalid identity
+concrete:
+  runtime: python
+  operation: custom
+  implementation:
+    type: python
+    builtin: identity_verify
+    inputs:
+      identity_data: dict
+  code: "# Simple identity verification logic\nidentity = context.get('identity_data',\
+    \ {})\nif not identity:\n    # If no context provided, try to parse target as\
+    \ JSON\n    import json\n    try:\n        content = target.decode('utf-8')\n\
+    \        if content.strip():\n            identity = json.loads(content)\n   \
+    \ except:\n        pass\n\nvalid = False\ndetails = \"No identity data provided\"\
+    \n\nif identity:\n    # Simulate verification check\n    if 'id' in identity and\
+    \ 'owner' in identity:\n        valid = True\n        details = f\"Verified identity:\
+    \ {identity['id']}\"\n    else:\n        details = \"Missing required identity\
+    \ fields\"\n        \nresult = {\n    'valid': valid,\n    'details': details,\n\
+    \    'timestamp': 1701244800.0\n}\n"
+  input_type: mcard
+  output_type: mcard
+  process_type: custom
+balanced:
+  test_cases:
+  - given: '{"id": "fib-001", "owner": "did:key:123"}'
+    when:
+      operation: custom
+    then:
+      verification_result:
+        valid: true
+  - given: '{}'
+    when:
+      operation: custom
+    then:
+      verification_result:
+        valid: false
+  expectations:
+    performance:
+      max_time_ms: 100
+    quality:
+      correctness: verified
+    safety:
+    - Must validate identity structure

@@ -1,0 +1,29 @@
+# CLM: Static Server - Stop
+# Uses the builtin: static_server to stop the server
+
+chapter:
+  id: "static_server_stop"
+  title: "Stop Static Server"
+
+clm:
+  abstract_spec:
+    concept: "Stop HTTP Static Server"
+    purpose: "Stop a running static file server"
+
+  concrete_impl:
+    builtin: static_server
+    config:
+      port: 8888
+      action: "stop"
+
+  balanced_exp:
+    test_cases:
+      - given: "Stop server"
+        when:
+          action: "stop"
+        then:
+          success: true
+
+metadata:
+  version: "1.0.0"
+  tags: [http, server, builtin]

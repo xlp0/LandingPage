@@ -1,0 +1,73 @@
+# Dimension Validator - Meta-Circular CLM Structure Validation
+#
+# This CLM validates that other CLMs conform to the triadic structure.
+# It is a meta-circular definition: a CLM that describes the requirements for CLMs.
+#
+# Key Insight: The CLM language must be able to describe itself.
+# This is the "Turing Machine" test for the meta-language.
+
+version: '1.1'
+
+chapter:
+  id: 904
+  title: 'CLM Dimension Validator'
+  mvp_card: 'The Self-Referential Schema'
+  pkc_task: 'Verify Triadic Completeness'
+
+clm:
+  abstract_spec:
+    context: "Meta-Circular Language Definition"
+    goal: "Ensure all CLM documents contain the complete Cubical Triad: abstract, concrete, balanced."
+    success_criteria: "Each dimension's required keys are present and the document parses correctly."
+
+  concrete_impl:
+    runtime: lambda
+    builtin: true
+    inputs: ["clm_document"]
+    process: "normalize"
+    outputs: ["validation_result"]
+
+  balanced_exp:
+    expectation: "The validator should recognize valid and invalid CLM structures."
+    test_cases:
+      # Test 1: A complete CLM structure (represented as nested Church encoding)
+      # We encode presence as TRUE (λx.λy.x) and absence as FALSE (λx.λy.y)
+      # AND all three dimensions: AND (AND abstract concrete) balanced
+      - given: "Complete Triad: abstract ∧ concrete ∧ balanced = TRUE"
+        when:
+          arguments:
+            # AND TRUE (AND TRUE TRUE) = TRUE
+            # AND = λp.λq.p q p, TRUE = λx.λy.x
+            expression: "(\\p.\\q.p q p) (\\x.\\y.x) ((\\p.\\q.p q p) (\\x.\\y.x) (\\x.\\y.x))"
+        then:
+          result: "(λx.(λy.x))"
+
+      # Test 2: Missing one dimension (concrete is FALSE)
+      - given: "Incomplete Triad: abstract ∧ FALSE ∧ balanced = FALSE"
+        when:
+          arguments:
+            # AND TRUE (AND FALSE TRUE) = FALSE
+            expression: "(\\p.\\q.p q p) (\\x.\\y.x) ((\\p.\\q.p q p) (\\x.\\y.y) (\\x.\\y.x))"
+        then:
+          result: "(λx.(λy.y))"
+
+      # Test 3: All dimensions missing
+      - given: "Empty CLM: FALSE ∧ FALSE ∧ FALSE = FALSE"
+        when:
+          arguments:
+            expression: "(\\p.\\q.p q p) (\\x.\\y.y) ((\\p.\\q.p q p) (\\x.\\y.y) (\\x.\\y.y))"
+        then:
+          result: "(λx.(λy.y))"
+
+examples:
+  - name: "Valid CLM Document"
+    description: "A CLM with all three dimensions evaluates to TRUE"
+    input:
+      expression: "(\\p.\\q.p q p) (\\x.\\y.x) ((\\p.\\q.p q p) (\\x.\\y.x) (\\x.\\y.x))"
+    expected_output: "(λx.(λy.x))"
+
+  - name: "Invalid CLM Document"
+    description: "A CLM missing any dimension evaluates to FALSE"
+    input:
+      expression: "(\\p.\\q.p q p) (\\x.\\y.x) ((\\p.\\q.p q p) (\\x.\\y.y) (\\x.\\y.x))"
+    expected_output: "(λx.(λy.y))"

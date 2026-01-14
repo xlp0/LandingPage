@@ -1,0 +1,69 @@
+version: "1.0"
+chapter:
+  id: 8.8.0
+  title: P2P Multi-Agent Orchestrator
+clm:
+  abstract:
+    concept: Orchestration
+  concrete:
+    manifestation: Multi-Agent Logic
+    runtime: network
+    builtin: clm_orchestrator
+    boundary: intrinsic
+    config:
+      steps:
+        # 1. Start Signaling Server (using PTR's builtin)
+        - action: start_signaling_server
+          name: "Launch Signaling Server"
+          port: 3000
+          id_key: "server_id"
+          wait_after: 2000
+
+        # 1. Start Listener (Background)
+        - action: run_clm_background
+          name: "Start Listener"
+          file: "peer_listener.yaml"
+          id_key: "listener_pid"
+          input:
+            signaling_url: "http://localhost:3000/signal"
+          wait_after: 2000
+
+        # 3. Connector Handshake Test
+        - action: run_clm
+          name: "Run Peer Connector"
+          file: "peer_connector.yaml"
+          input:
+            signaling_url: "http://localhost:3000/signal"
+          continue_on_error: false
+
+        # 4. Run Main Tests Sequence
+        - action: run_clm
+          file: "summarize_session.yaml"
+          continue_on_error: true # Summarize without session might fail if not auto-init
+        
+        # New Native Simulation CLMs
+        - action: run_clm
+          file: "persistence_simulation.yaml"
+        - action: run_clm
+          file: "long_session_simulation.yaml"
+
+        # Previous Shell-based Wrappers (Retain for comparison or remove?)
+        # Keeping them for now to ensure we don't regress on functionalities we haven't fully ported (like multi-process agents if strictly needed)
+        # But 'persistence_simulation' covers the robot logic. 
+        # let's replace them.
+
+
+        # 5. Teardown
+        - action: stop_process
+          name: "Stop Listener"
+          pid_key: "listener_pid"
+        - action: stop_signaling_server
+          name: "Stop Signaling Server"
+          id_key: "server_id"
+
+  balanced:
+    expectation: Full conversation simulation and summary
+
+examples:
+  - name: "Run Simulation"
+    input: {}

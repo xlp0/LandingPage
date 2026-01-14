@@ -1,0 +1,49 @@
+version: '1.0'
+chapter:
+  id: 201
+  title: 'Content Handle: The Naming PCard (JS)'
+  mvp_card: The Handle (JS)
+  pkc_task: Assign and Resolve Names via Javascript
+  description: 'This PCard demonstrates the Content Handle system in JavaScript.
+    '
+clm:
+  abstract:
+    concept: Referential Transparency with Mutable Binding
+    description: "The Principle: A name (handle) is a fixed point in the semantic\
+      \ space,\nwhile the content it references can evolve through versioning.\n"
+    math_model: "Pointer = Name \u2192 Hash \u2192 Content"
+  concrete:
+    manifestation: Handle Registration
+    description: Register a handle pointing to an MCard
+    runtime: javascript
+    operation: custom
+    code_file: handle_logic.js
+    implementation:
+      inputs:
+        context: dict
+    input_type: mcard
+    output_type: mcard
+    process_type: custom
+  balanced:
+    expectation: Handle Resolution
+    description: 'The Evidence: A registered handle resolves to the correct content.
+      '
+    invariants:
+    - 'Handle syntax: ^[a-z][a-z0-9_]{0,62}$'
+    - Resolution is deterministic
+    - Updates preserve history
+    expected_results:
+      success: true
+examples:
+- name: Register and Resolve
+  handle: my_first_doc
+  content: Hello, World!
+  expected_resolved: true
+- name: Handle with Underscore
+  handle: project_roadmap_v2
+  content: Project Roadmap Version 2
+  expected_resolved: true
+- name: Max Length Handle (63 chars)
+  handle: a_very_long_handle_name_that_is_exactly_sixty_three_characters
+  content: Max length content
+  expected_resolved: true

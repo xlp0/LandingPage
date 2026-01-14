@@ -1,0 +1,50 @@
+version: "1.0"
+chapter:
+  id: 05
+  title: "Loader: Recursive Control"
+  mvp_card: "Recursive Benchmark"
+  pkc_task: "Benchmark Data Loading"
+clm:
+  abstract:
+    concept: "Data Ingestion"
+    description: "Load dataset with configurable recursion"
+  concrete:
+    manifestation: "Built-in PTR Loader"
+    description: "Uses mcard.loader.load_file_to_collection"
+    runtime: "python"
+    operation: "loader"
+    input_type: "directory"
+    process_type: "benchmark"
+    output_type: "sqlite"
+  balanced:
+    description: "Returns process metrics JSON"
+    input_arguments:
+      source_dir: "chapters/chapter_04_load_dir/test_data"
+    output_arguments:
+      db_path: "data/loader_recursive.db"
+    expected_results:
+      success: true
+    test_cases:
+    - description: "Recursive Scan (Deep)"
+      given: "Start Benchmark"
+      when:
+        params:
+          recursive: true
+        context:
+          output_arguments:
+            db_path: "data/loader_recursive.db"
+      then:
+        success: true
+        # Should find ALL files (Text in root + Binary deep)
+
+    - description: "Flat Scan (Root Only)"
+      given: "Start Benchmark"
+      when:
+        params:
+          recursive: false
+        context:
+          output_arguments:
+            db_path: "data/loader_flat.db"
+      then:
+        success: true
+        # Should only find root text files, skipping 'images', 'audio', 'mixed' subdirs

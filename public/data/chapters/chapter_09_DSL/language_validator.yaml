@@ -1,0 +1,59 @@
+version: '1.0'
+
+chapter:
+  id: 901
+  title: 'CLM Language Semantic Validator'
+  mvp_card: 'The MCard-TTL (True Type Logic)'
+  pkc_task: 'Verify Core Language Semantics'
+
+clm:
+  abstract_spec:
+    context: "Cubical Logic Model (CLM) v1.1 - The Language of PKC"
+    goal: "Exercise the self-hosting semantics of CLM utilizing built-in runtimes and lambda calculus."
+    success_criteria: "The triad (Abstract, Concrete, Balanced) must correctly orchestrate functional evaluation without external Python dependency."
+    concept: "Self-Defining Semantic Framework"
+
+  concrete_impl:
+    # manifestation: "Internal Semantic Evaluator"
+    # runtime: lambda (Optional, default)
+    # builtin: true   (Optional, managed automatically)
+    inputs: ["expression"]
+    process: "normalize"
+    outputs: ["result"]
+    action: "normalize" # Legacy alias for process
+
+  balanced_exp:
+    expectation: "Accurate lambda normalization and handle resolution"
+    test_cases:
+      - given: "The Identity Transformation: (λx. x) OK"
+        when:
+          arguments:
+            expression: "(\\x. x) OK"
+        then:
+          result: "OK"
+          
+      - given: "The Alpha Equivalence: (λy. y) (λx. x)"
+        when:
+          arguments:
+            expression: "(\\y. y) (\\x. x)"
+        then:
+          result: "(λx.x)"
+
+      - given: "Recursive Synthesis: Successor of 1 is 2 (Church Numeral)"
+        when:
+          arguments:
+            # Succ = \n.\f.\x. f (n f x)
+            # 1 = \f.\x. f x
+            expression: "(\\n. \\f. \\x. f (n f x)) (\\f. \\x. f x)"
+        then:
+          result: "(λf.(λx.(f (f x))))"
+
+      - given: "Logical Synthesis: TRUE AND FALSE => FALSE (Church Boolean)"
+        when:
+          arguments:
+            # TRUE = \x.\y. x
+            # FALSE = \x.\y. y
+            # AND = \p.\q. p q p
+            expression: "(\\p. \\q. p q p) (\\x. \\y. x) (\\x. \\y. y)"
+        then:
+          result: "(λx.(λy.y))"

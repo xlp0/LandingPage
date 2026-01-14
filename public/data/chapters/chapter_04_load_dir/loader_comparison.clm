@@ -1,0 +1,31 @@
+version: '1.0'
+chapter:
+  id: 410
+  title: 'Cross-Runtime Loader Comparison'
+  mvp_card: The Loader Verifier
+  pkc_task: Verify JS and Python Loader Parity
+clm:
+  abstract:
+    concept: Runtime Parity
+    description: 'Ensure Python and JavaScript loaders produce identical metrics and hashes for the same dataset.'
+  concrete:
+    manifestation: Comparison Script
+    description: Executes Python and Node loaders via an orchestrator script and compares results.
+    runtime: python
+    code_file: module://chapters.chapter_04_load_dir.cross_runtime_comparison:compare_loaders
+    input_arguments:
+      source_dir: "docs"
+      recursive: true
+    test_cases:
+      - description: "Compare Python and JS loaders on docs directory"
+        given: "Standard docs directory"
+        when:
+          params:
+            source_dir: "docs"
+            recursive: true
+  balanced:
+    expectation: Identity
+    description: 'The metrics and content hashes must be identical.'
+    expected_results:
+      success: true
+      match: true

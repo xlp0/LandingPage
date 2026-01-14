@@ -1,0 +1,262 @@
+type: PCard
+metadata:
+  name: Complex Arithmetic Calculator
+  version: 1.0.0
+  description: Performs complex arithmetic calculations including power, root, logarithm,
+    and compound operations
+  authors:
+  - MCard Demo
+  tags:
+  - math
+  - arithmetic
+  - python
+  - complex
+abstract:
+  purpose: Perform complex arithmetic calculations on numeric input
+  inputs:
+    value:
+      type: float
+      description: Input numeric value for calculations
+    operation:
+      type: string
+      description: The arithmetic operation to perform
+      enum:
+      - power
+      - sqrt
+      - log
+      - compound_interest
+      - quadratic
+      - geometric_mean
+    params:
+      type: dict
+      description: Additional parameters for the operation
+  outputs:
+    result:
+      type: float
+      description: Result of the arithmetic operation
+  preconditions:
+  - value must be a valid number
+  - operation must be one of the supported types
+  - params must provide required arguments for the operation
+  postconditions:
+  - result is correctly calculated per mathematical definition
+  - result handles edge cases (division by zero, negative roots, etc.)
+concrete:
+  runtime: python
+  operation: custom
+  entry_point: calculate
+  code_file: complex_arithmetic_impl.py
+  input_type: mcard
+  output_type: mcard
+  process_type: custom
+balanced:
+  expectations:
+    precision: 1e-6
+    performance:
+      max_latency: 50ms
+  test_cases:
+  - description: 2^10 = 1024
+    given: '2'
+    when:
+      operation: power
+      params:
+        exponent: 10
+    then:
+      result: 1024
+  - description: 3^5 = 243
+    given: '3'
+    when:
+      operation: power
+      params:
+        exponent: 5
+    then:
+      result: 243
+  - description: 1.5^4 = 5.0625
+    given: '1.5'
+    when:
+      operation: power
+      params:
+        exponent: 4
+    then:
+      result: 5.0625
+  - description: sqrt(144) = 12
+    given: '144'
+    when:
+      operation: sqrt
+      params:
+        n: 2
+    then:
+      result: 12.0
+  - description: cube root of 27 = 3
+    given: '27'
+    when:
+      operation: sqrt
+      params:
+        n: 3
+    then:
+      result: 3.0
+  - description: 4th root of 625 = 5
+    given: '625'
+    when:
+      operation: sqrt
+      params:
+        n: 4
+    then:
+      result: 5.0
+  - description: log10(1000) = 3
+    given: '1000'
+    when:
+      operation: log
+      params:
+        base: 10
+    then:
+      result: 3.0
+  - description: log2(256) = 8
+    given: '256'
+    when:
+      operation: log
+      params:
+        base: 2
+    then:
+      result: 8.0
+  - description: ln(e^3) = 3 (natural log)
+    given: '20.0855369232'
+    when:
+      operation: log
+      params:
+        base: 2.7182818285
+    then:
+      result: 3.0
+      epsilon: 1e-6
+  - description: $1000 at 5% annual, monthly compounding for 1 year
+    given: '1000'
+    when:
+      operation: compound_interest
+      params:
+        rate: 0.05
+        periods_per_year: 12
+        years: 1
+    then:
+      result: 1051.1618983
+      epsilon: 1e-6
+  - description: $5000 at 8% annual, quarterly compounding for 5 years
+    given: '5000'
+    when:
+      operation: compound_interest
+      params:
+        rate: 0.08
+        periods_per_year: 4
+        years: 5
+    then:
+      result: 7429.7369799
+      epsilon: 1e-5
+  - description: $10000 at 3.5% annual, daily compounding for 10 years
+    given: '10000'
+    when:
+      operation: compound_interest
+      params:
+        rate: 0.035
+        periods_per_year: 365
+        years: 10
+    then:
+      result: 14190.437372
+      epsilon: 1e-5
+  - description: x^2 - 5x + 6 = 0 has roots 2 and 3
+    given: '1'
+    when:
+      operation: quadratic
+      params:
+        b: -5
+        c: 6
+    then:
+      discriminant: 1
+      real_count: 2
+  - description: x^2 - 4x + 4 = 0 has one root (double) at 2
+    given: '1'
+    when:
+      operation: quadratic
+      params:
+        b: -4
+        c: 4
+    then:
+      discriminant: 0
+      real_count: 1
+  - description: x^2 + x + 1 = 0 has no real roots
+    given: '1'
+    when:
+      operation: quadratic
+      params:
+        b: 1
+        c: 1
+    then:
+      discriminant: -3
+      real_count: 0
+  - description: Geometric mean of 2, 8 = 4
+    given: '2'
+    when:
+      operation: geometric_mean
+      params:
+        values:
+        - 8
+    then:
+      result: 4.0
+  - description: Geometric mean of 4, 1, 1/32 = 0.5
+    given: '4'
+    when:
+      operation: geometric_mean
+      params:
+        values:
+        - 1
+        - 0.03125
+    then:
+      result: 0.5
+  - description: Geometric mean of 1, 2, 4, 8 = 2.8284271247
+    given: '1'
+    when:
+      operation: geometric_mean
+      params:
+        values:
+        - 2
+        - 4
+        - 8
+    then:
+      result: 2.8284271247
+      epsilon: 1e-9
+  - description: Harmonic mean of 1, 4, 4 = 2
+    given: '1'
+    when:
+      operation: harmonic_mean
+      params:
+        values:
+        - 4
+        - 4
+    then:
+      result: 2.0
+  - description: Harmonic mean of 2, 3, 6 = 3
+    given: '2'
+    when:
+      operation: harmonic_mean
+      params:
+        values:
+        - 3
+        - 6
+    then:
+      result: 3.0
+  - description: "e^1 using 15 terms \u2248 2.7182818285"
+    given: '1'
+    when:
+      operation: taylor_exp
+      params:
+        terms: 15
+    then:
+      result: 2.7182818285
+      epsilon: 1e-8
+  - description: "e^2 using 15 terms \u2248 7.3890560989"
+    given: '2'
+    when:
+      operation: taylor_exp
+      params:
+        terms: 15
+    then:
+      result: 7.3890560989
+      epsilon: 1e-6

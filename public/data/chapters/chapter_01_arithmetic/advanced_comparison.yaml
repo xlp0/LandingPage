@@ -1,0 +1,72 @@
+version: '1.0'
+chapter:
+  id: 110
+  title: 'Arithmetic: The Advanced Polyglot Consensus'
+  mvp_card: The Scientific Calculator
+  pkc_task: Verify Advanced Operations
+clm:
+  abstract:
+    concept: Mathematical Universality
+    description: 'The Principle: Math is the same in every language'
+  concrete:
+    manifestation: Mixed Arithmetic & Trigonometry
+    description: Executing add, mul, sin, cos in 6 languages
+    runtime: python
+    code_file: module://chapters.chapter_01_arithmetic.advanced_logic:advanced_polyglot_logic
+    runtimes_config:
+    - name: python
+      file: logic_advanced.py
+      entry: calculate
+    - name: javascript
+      file: logic_advanced.js
+    - name: rust
+      binary: bin/logic_advanced_rs
+    - name: c
+      binary: bin/logic_advanced_c
+    - name: wasm
+      module: bin/logic_advanced.wasm
+    # - name: lean
+    #   file: logic_advanced.lean
+    - name: r
+      file: logic_advanced.R
+    - name: julia
+      file: logic_advanced.jl
+    input_type: mcard
+    output_type: mcard
+    process_type: custom
+  balanced:
+    expectation: Scientific Consensus
+    description: 'The Evidence: All runtimes agree on all operations'
+    examples:
+    - op: add
+      a: 10.5
+      b: 20.25
+    - op: mul
+      a: 2.5
+      b: 4.0
+    - op: sin
+      a: 0.0
+      b: 0.0
+    - op: cos
+      a: 0.0
+      b: 0.0
+    - op: sin
+      a: 1.57079632679
+      b: 0.0
+    - op: add
+      a: -5.0
+      b: 10.0
+    - op: mul
+      a: -2.0
+      b: -2.0
+    - op: cos
+      a: 3.14159265359
+      b: 0.0
+    - op: sin
+      a: 3.14159265359
+      b: 0.0
+    - op: add
+      a: 100.0
+      b: 0.001
+    expected_results:
+      success: true

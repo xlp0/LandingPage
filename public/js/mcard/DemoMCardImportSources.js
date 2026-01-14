@@ -50,7 +50,7 @@ export async function getDemoMCardImportSources() {
       kind: 'directory',
       dir: '/public/data/',
       recursive: true,
-      skipPrefixes: ['/public/data/demo/'],
+      skipPrefixes: ['/public/data/demo/', '/public/data/chapters/'],
       handlePrefix: 'data',
       isBinaryByDefault: false,
       textExtensions: ['md', 'markdown', 'txt', 'json', 'yaml', 'yml', 'csv', 'sql', 'xml', 'html', 'js', 'css'],
@@ -66,6 +66,14 @@ export async function getDemoMCardImportSources() {
       updateIfChanged: false
     }
   ];
+
+  // Add CLM Chapters - Using pre-generated manifest (more reliable)
+  defaultSources.push({
+    kind: 'manifest',
+    url: '/public/data/chapters/manifest.json',
+    baseUrl: '/public/data/chapters/',
+    updateIfChanged: true
+  });
 
   const appConfigValue = getEnvValue('mcardDemoImportSources');
   if (appConfigValue && String(appConfigValue).trim()) {

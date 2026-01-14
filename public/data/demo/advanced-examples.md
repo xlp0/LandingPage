@@ -2,12 +2,17 @@
 
 This card demonstrates advanced rendering features including LaTeX math, TikZ diagrams, and Mermaid diagrams.
 
+
+ABC 123 XYZ
+
 ## LaTeX Math Rendering
 
 ### Inline Math
+
 You can write inline math like this: $E = mc^2$ or $\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$
 
 ### Display Math
+
 Display equations are centered and larger:
 
 $$
@@ -19,6 +24,7 @@ $$
 $$
 
 ### Complex Equations
+
 $$
 \nabla \times \vec{\mathbf{B}} -\, \frac1c\, \frac{\partial\vec{\mathbf{E}}}{\partial t} = \frac{4\pi}{c}\vec{\mathbf{j}}
 $$
@@ -30,6 +36,7 @@ $$
 ## TikZ Diagrams
 
 ### Simple Node Graph
+
 ```tikz
 \begin{tikzpicture}
   \node[circle,draw] (A) at (0,0) {A};
@@ -42,6 +49,7 @@ $$
 ```
 
 ### Flow Diagram
+
 ```tikz
 \begin{tikzpicture}[node distance=2cm]
   \node[rectangle,draw] (start) {Start};
@@ -59,6 +67,7 @@ $$
 ## Mermaid Diagrams
 
 ### Flowchart
+
 ```mermaid
 flowchart TD
     A[Start] --> B{Is it working?}
@@ -70,13 +79,14 @@ flowchart TD
 ```
 
 ### Sequence Diagram
+
 ```mermaid
 sequenceDiagram
     participant User
     participant Browser
     participant Server
     participant Database
-    
+  
     User->>Browser: Click Upload
     Browser->>Server: POST /upload
     Server->>Database: Store File
@@ -86,6 +96,7 @@ sequenceDiagram
 ```
 
 ### Class Diagram
+
 ```mermaid
 classDiagram
     class MCard {
@@ -105,12 +116,13 @@ classDiagram
         +put(hash, data)
         +get(hash)
     }
-    
+  
     CardCollection --> MCard
     CardCollection --> IndexedDBEngine
 ```
 
 ### Git Graph
+
 ```mermaid
 gitGraph
     commit id: "Initial commit"
@@ -138,6 +150,7 @@ graph LR
 ```
 
 ## Related Cards
+
 - @welcome - Introduction
 - @example-markdown - Basic markdown examples
 - @quick-guide - Getting started guide

@@ -1,0 +1,37 @@
+version: '1.0'
+chapter:
+  id: 108
+  title: 'Arithmetic: The Polyglot Consensus'
+  mvp_card: The Universal Verifier
+  pkc_task: Verify Cross-Language Consistency
+clm:
+  abstract:
+    concept: Universal Truth
+    description: 'The Principle: Truth is invariant across representations'
+  concrete:
+    manifestation: Multi-Runtime Execution
+    description: Executing logic in Python, JS, Rust, C, WASM, and Lean
+    runtime: python
+    code_file: module://chapters.chapter_01_arithmetic.comparison_logic:compare_runtimes_logic
+    runtimes_config:
+    - name: python
+      file: logic.py
+      entry: add
+    - name: javascript
+      file: logic.js
+    - name: rust
+      binary: bin/logic_rs
+    - name: c
+      binary: bin/logic_c
+    - name: wasm
+      module: bin/logic.wasm
+    - name: lean
+      file: logic.lean
+    input_type: mcard
+    output_type: mcard
+    process_type: custom
+  balanced:
+    expectation: Consensus
+    description: 'The Evidence: All runtimes produce identical results'
+    expected_results:
+      success: true

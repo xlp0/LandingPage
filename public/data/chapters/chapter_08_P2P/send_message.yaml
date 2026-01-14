@@ -1,0 +1,37 @@
+version: "1.0"
+chapter:
+  id: 8.8.1
+  title: P2P Agent Message
+clm:
+  abstract:
+    concept: AgentMessage
+    description: "Send a message to a P2P session"
+  concrete:
+    manifestation: Send Single Message
+    boundary: extrinsic
+    builtin: session_record
+    runtime: network
+    config:
+      sessionId: "${params.sessionId}"
+      operation: "batch"
+      operations:
+        - operation: "init"
+          initialHeadHash: "${params.headHash}"
+          maxBufferSize: 5
+        - operation: "add"
+          sender: "${params.sender}"
+          content: "${params.content}"
+        - operation: "flush"
+  balanced:
+    expectation: Message persisted and hash returned
+    test_cases:
+      - description: "Send a test message"
+        given: "A session and message"
+        when:
+          params:
+            sessionId: "test-session"
+            headHash: null
+            sender: "TestAgent"
+            content: "Hello World"
+        then:
+          success: true

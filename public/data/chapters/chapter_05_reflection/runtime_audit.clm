@@ -1,0 +1,28 @@
+
+version: "1.0"
+chapter:
+  id: 06
+  title: "Reflection: Runtime Audit"
+  mvp_card: "The Auditor"
+  pkc_task: "Verification"
+clm:
+  abstract:
+    concept: "Polyglot Distribution"
+    description: "Analyze the diversity of concrete manifestations across the Prologue."
+  concrete:
+    manifestation: "Python Analyzer"
+    runtime: "python"
+    code_file: "reflection_logic.py"
+    entry_point: "audit_runtimes"
+    input_type: "directory"
+    process_type: "transform"
+    output_type: "json"
+  balanced:
+    description: "Returns statistics on runtime usage"
+    test_cases:
+      - description: "Audit Runtime Usage"
+        given: "Project Root"
+        when:
+          params: {}
+        then:
+          success: true

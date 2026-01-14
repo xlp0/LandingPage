@@ -1,0 +1,50 @@
+# Lambda Calculus Beta Reduction Example
+#
+# Demonstrates Lambda Calculus operations using JavaScript.
+# Implements a simple Lambda calculus interpreter.
+
+chapter:
+  id: 60
+  title: "Lambda Calculus - Beta Reduction"
+  description: "Demonstrate beta reduction: (λx.x) y → y"
+  mvp_card: "Lambda β-reduction"
+  pkc_task: "Normalization"
+
+clm:
+  abstract:
+    concept: "Beta Reduction"
+    specification: |
+      λ-calculus β-rule: (λx.M) N →β M[x:=N]
+      
+      This example shows the identity function applied to y:
+      (λx.x) y reduces to y
+
+  balanced:
+    input_arguments:
+      expression: "(\\x.x) y"
+    expected_output:
+      normalized: "y"
+      steps: 1
+
+  concrete:
+    runtime: javascript
+    code_file: beta_reduction.js
+
+examples:
+  - name: "Identity application"
+    description: "(λx.x) y → y"
+    input:
+      expression: "(\\x.x) y"
+    expected_output:
+      normalized: "y"
+      steps: 1
+      normalForm: true
+      
+  - name: "K combinator"
+    description: "(λx.λy.x) a → λy.a"
+    input:
+      expression: "(\\x.\\y.x) a"
+    expected_output:
+      normalized: "(λy.a)"
+      steps: 1
+      normalForm: true

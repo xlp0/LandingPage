@@ -1,0 +1,79 @@
+type: PCard
+metadata:
+  name: Cosine Function
+  version: 1.0.0
+  description: Calculates the cosine of an angle in radians using Taylor Series.
+  authors:
+  - Demo User
+  tags:
+  - math
+  - trigonometry
+  - python
+  - algorithm
+abstract:
+  purpose: Calculate the cosine of an input angle provided in radians.
+  inputs:
+    angle:
+      type: float
+      description: Angle in radians
+      constraints:
+      - must be a valid float number
+  outputs:
+    cosine_value:
+      type: float
+      description: Cosine of the angle
+      range:
+      - -1.0
+      - 1.0
+  preconditions:
+  - Input must be a numeric value
+  postconditions:
+  - Output must be between -1.0 and 1.0
+concrete:
+  runtime: python
+  operation: custom
+  implementation:
+    inputs:
+      angle: float
+  code_file: cosine_impl.py
+  input_type: mcard
+  output_type: mcard
+  process_type: custom
+balanced:
+  expectations:
+    precision: 1e-9
+    performance:
+      max_latency: 20ms
+  test_cases:
+  - description: Cosine of 0 should be 1
+    given: '0.0'
+    when:
+      operation: custom
+      input: '0.0'
+    then:
+      result: 1.0
+      epsilon: 1e-9
+  - description: Cosine of PI/2 should be approx 0
+    given: '1.57079632679'
+    when:
+      operation: custom
+      input: '1.57079632679'
+    then:
+      result: 0.0
+      epsilon: 1e-9
+  - description: Cosine of PI should be -1
+    given: '3.14159265359'
+    when:
+      operation: custom
+      input: '3.14159265359'
+    then:
+      result: -1.0
+      epsilon: 1e-8
+  - description: Cosine of PI/3 (60 deg) should be 0.5
+    given: '1.0471975512'
+    when:
+      operation: custom
+      input: '1.0471975512'
+    then:
+      result: 0.5
+      epsilon: 1e-9

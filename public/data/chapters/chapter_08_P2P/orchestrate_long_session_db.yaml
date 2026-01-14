@@ -1,0 +1,44 @@
+version: "1.0"
+chapter:
+  id: 8.8.2
+  title: Orchestrate Long Session with DB
+clm:
+  abstract:
+    concept: Orchestration
+  concrete:
+    manifestation: Multi-Agent Logic
+    runtime: network
+    builtin: clm_orchestrator
+    boundary: intrinsic
+    config:
+      steps:
+        # 1. Start Signaling Server (Background)
+        # 1. Start Signaling Server (Background)
+        - action: start_signaling_server
+          name: "Launch Signaling Server"
+          port: 3000
+          id_key: "server_id"
+          wait_after: 2000
+
+        # 2. Run Long Session Simulation in Separate Process with Env Var
+        - action: run_clm_background
+          name: "Run Long Session Simulation"
+          file: "long_session_simulation.yaml"
+          env:
+             MCARD_DB_PATH: "../chapters/chapter_08_P2P/long_session_test.db"
+          id_key: "sim_pid"
+          # Wait enough time for it to complete (20-30 messages)
+          wait_after: 15000 
+
+        # 3. Teardown
+        # 3. Teardown
+        - action: stop_signaling_server
+          name: "Stop Signaling Server"
+          id_key: "server_id"
+
+  balanced:
+    expectation: Long session simulation runs with 'long_session_test.db'
+
+examples:
+  - name: "Run Long Session with DB"
+    input: {}

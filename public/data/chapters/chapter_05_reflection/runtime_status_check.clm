@@ -1,0 +1,46 @@
+abstract:
+  purpose: Check availability and status of all polyglot runtimes
+  inputs:
+    trigger:
+      type: string
+      description: Trigger for runtime check (any value)
+  outputs:
+    runtime_status:
+      type: dict
+      description: Detailed status for all runtimes
+  preconditions:
+  - PTREngine must be initialized
+  postconditions:
+  - Returns runtime status for all 6 runtimes
+  - Ensures at least one runtime is available
+concrete:
+  runtime: python
+  operation: custom
+  implementation:
+    type: python
+    builtin: runtime_check
+    inputs:
+      trigger: string
+  code: "from mcard.ptr.core.runtime import RuntimeFactory\n\n# Get detailed status\n\
+    status = RuntimeFactory.get_detailed_status()\nRuntimeFactory.print_status(verbose=False)\n\
+    \n# Return status dict\nresult = {\n    'available_count': sum(1 for rt in status.values()\
+    \ if rt['available']),\n    'total_count': len(status),\n    'at_least_one_available':\
+    \ RuntimeFactory.at_least_one_available(),\n    'runtimes': status\n}\n"
+  input_type: mcard
+  output_type: mcard
+  process_type: custom
+balanced:
+  test_cases:
+  - given: check
+    when:
+      operation: custom
+    then:
+      runtime_status:
+        at_least_one_available: true
+  expectations:
+    performance:
+      max_time_ms: 1000
+    quality:
+      correctness: verified
+    safety:
+    - Must ensure at least one runtime is available

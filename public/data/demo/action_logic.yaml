@@ -1,0 +1,125 @@
+# Action Monad Logic Gates - Boolean Inference via Composition
+#
+# Demonstrates logical inference using Action Monad.
+# Each logic gate is an Action that composes with others.
+#
+# Aligned with Lambda Calculus:
+# - TRUE  = λx.λy.x  (select first)
+# - FALSE = λx.λy.y  (select second)
+# - AND   = λp.λq.p q p
+# - OR    = λp.λq.p p q
+# - NOT   = λp.p FALSE TRUE
+
+chapter:
+  id: "prologue_action_logic"
+  title: "Boolean Logic with Action Monad"
+  mvp_card: "The Logic Gate"
+  pkc_task: "Demonstrate Compositional Inference"
+
+clm:
+  abstract:
+    concept: "Composable Logic Gates"
+    specification: |
+      Implements Church-encoded boolean logic as Actions:
+      
+      Each gate is an Action[bool] that:
+      1. Takes boolean inputs from context
+      2. Applies the logical operation
+      3. Logs the inference step as an effect
+      
+      Composition enables complex predicates:
+        isValid = AND(hasName, OR(hasEmail, hasPhone))
+        
+    inputs:
+      operation: { type: "string", enum: ["AND", "OR", "NOT", "IMPLIES", "XOR"] }
+      left: { type: "bool", description: "First operand" }
+      right: { type: "bool", description: "Second operand (for binary ops)" }
+    outputs:
+      result: { type: "bool" }
+      inference_trace: { type: "string" }
+      
+  concrete:
+    runtime: lambda
+    operation: normalize
+    strategy: normal
+    maxSteps: 50
+    
+  balanced:
+    description: "Verify logic gates via Church-encoded lambda expressions."
+    test_cases:
+      # Church Booleans:
+      #   TRUE  = λx.λy.x
+      #   FALSE = λx.λy.y
+      #   AND   = λp.λq.p q p
+      #   OR    = λp.λq.p p q
+      #   NOT   = λp.p FALSE TRUE
+      
+      # AND truth table
+      - given: "AND TRUE TRUE = TRUE"
+        when:
+          expression: "(\\p.\\q.p q p) (\\x.\\y.x) (\\x.\\y.x)"
+        then:
+          success: true
+          
+      - given: "AND TRUE FALSE = FALSE"
+        when:
+          expression: "(\\p.\\q.p q p) (\\x.\\y.x) (\\x.\\y.y)"
+        then:
+          success: true
+          
+      # OR truth table
+      - given: "OR FALSE FALSE = FALSE"
+        when:
+          expression: "(\\p.\\q.p p q) (\\x.\\y.y) (\\x.\\y.y)"
+        then:
+          success: true
+          
+      - given: "OR TRUE FALSE = TRUE"
+        when:
+          expression: "(\\p.\\q.p p q) (\\x.\\y.x) (\\x.\\y.y)"
+        then:
+          success: true
+          
+      # NOT
+      - given: "NOT TRUE = FALSE"
+        when:
+          expression: "(\\p.p (\\x.\\y.y) (\\x.\\y.x)) (\\x.\\y.x)"
+        then:
+          success: true
+          
+      - given: "NOT FALSE = TRUE"
+        when:
+          expression: "(\\p.p (\\x.\\y.y) (\\x.\\y.x)) (\\x.\\y.y)"
+        then:
+          success: true
+
+examples:
+  - name: "AND TRUE TRUE"
+    description: "AND = λp.λq.p q p → selects TRUE"
+    input:
+      expression: "(\\p.\\q.p q p) (\\x.\\y.x) (\\x.\\y.x)"
+    expected_output: "(λx.(λy.x))"
+      
+  - name: "AND TRUE FALSE"
+    description: "AND TRUE FALSE → FALSE"
+    input:
+      expression: "(\\p.\\q.p q p) (\\x.\\y.x) (\\x.\\y.y)"
+    expected_output: "(λx.(λy.y))"
+      
+  - name: "OR FALSE TRUE"
+    description: "OR = λp.λq.p p q → selects TRUE"
+    input:
+      expression: "(\\p.\\q.p p q) (\\x.\\y.y) (\\x.\\y.x)"
+    expected_output: "(λx.(λy.x))"
+      
+  - name: "NOT TRUE"
+    description: "NOT = λp.p FALSE TRUE → FALSE"
+    input:
+      expression: "(\\p.p (\\x.\\y.y) (\\x.\\y.x)) (\\x.\\y.x)"
+    expected_output: "(λx.(λy.y))"
+      
+  - name: "Composed: NOT (AND TRUE FALSE)"
+    description: "NOT (AND TRUE FALSE) = NOT FALSE = TRUE"
+    input:
+      expression: "(\\p.p (\\x.\\y.y) (\\x.\\y.x)) ((\\p.\\q.p q p) (\\x.\\y.x) (\\x.\\y.y))"
+    expected_output: "(λx.(λy.x))"

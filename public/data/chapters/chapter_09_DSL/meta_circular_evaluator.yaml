@@ -1,0 +1,87 @@
+# Meta-Circular Evaluator - The Heart of Self-Definition
+#
+# This CLM demonstrates the meta-circular evaluator concept from SICP.
+# "The evaluator, which determines the meaning of expressions in a programming language,
+#  is just another program." - Abelson & Sussman
+#
+# We encode a simple "IF-THEN-ELSE" construct using pure lambda calculus,
+# demonstrating that the CLM runtime can interpret its own control structures.
+
+version: '1.1'
+
+chapter:
+  id: 905
+  title: 'Meta-Circular Evaluator'
+  mvp_card: 'The Self-Interpreting Language'
+  pkc_task: 'Demonstrate Turing Completeness via Self-Reference'
+
+clm:
+  abstract_spec:
+    context: "SICP Meta-Circular Evaluator Principles"
+    goal: "Implement IF-THEN-ELSE as a lambda abstraction, proving the language can define its own control flow."
+    success_criteria: "IF TRUE A B → A, IF FALSE A B → B"
+
+  concrete_impl:
+    runtime: lambda
+    builtin: true
+    inputs: ["condition", "then_branch", "else_branch"]
+    process: "normalize"
+    outputs: ["selected_branch"]
+    description: |
+      The IF combinator is defined as: IF = λp.λa.λb.p a b
+      This is identical to Church Boolean application:
+        TRUE a b  → a
+        FALSE a b → b
+      
+      This shows that booleans ARE control structures in lambda calculus.
+
+  balanced_exp:
+    expectation: "IF combinator correctly selects branches based on condition."
+    test_cases:
+      # IF TRUE "yes" "no" → "yes"
+      - given: "IF TRUE selects THEN branch"
+        when:
+          arguments:
+            # IF = λp.λa.λb.p a b applied to TRUE, "yes", "no"
+            # TRUE = λx.λy.x
+            expression: "(\\p.\\a.\\b.p a b) (\\x.\\y.x) yes no"
+        then:
+          result: "yes"
+
+      # IF FALSE "yes" "no" → "no"
+      - given: "IF FALSE selects ELSE branch"
+        when:
+          arguments:
+            # IF = λp.λa.λb.p a b applied to FALSE, "yes", "no"
+            # FALSE = λx.λy.y
+            expression: "(\\p.\\a.\\b.p a b) (\\x.\\y.y) yes no"
+        then:
+          result: "no"
+
+      # Nested IF: IF TRUE (IF FALSE a b) c → b
+      - given: "Nested IF evaluates inner condition"
+        when:
+          arguments:
+            expression: "(\\p.\\a.\\b.p a b) (\\x.\\y.x) ((\\p.\\a.\\b.p a b) (\\x.\\y.y) a b) c"
+        then:
+          result: "b"
+
+examples:
+  - name: "Simple IF TRUE"
+    description: "Selecting the first argument when condition is TRUE"
+    input:
+      expression: "(\\p.\\a.\\b.p a b) (\\x.\\y.x) first second"
+    expected_output: "first"
+
+  - name: "Simple IF FALSE"
+    description: "Selecting the second argument when condition is FALSE"
+    input:
+      expression: "(\\p.\\a.\\b.p a b) (\\x.\\y.y) first second"
+    expected_output: "second"
+
+  - name: "IF with Lambda Values"
+    description: "IF can select between lambda expressions"
+    input:
+      # IF TRUE (λx.x) (λx.x x) → identity function
+      expression: "(\\p.\\a.\\b.p a b) (\\x.\\y.x) (\\z.z) (\\z.z z)"
+    expected_output: "(λz.z)"

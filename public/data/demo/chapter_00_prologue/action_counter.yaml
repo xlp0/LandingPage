@@ -1,0 +1,87 @@
+# Action Monad Counter - Demonstrating Monadic Counting
+#
+# This CLM demonstrates the Action Monad for stateful counting.
+# Actions are composed using bind (>>=) to sequence operations.
+#
+# Monad Laws demonstrated:
+#   1. Left Identity:   pure(x).bind(f) = f(x)
+#   2. Right Identity:  m.bind(pure) = m
+#   3. Associativity:   m.bind(f).bind(g) = m.bind(λx. f(x).bind(g))
+
+chapter:
+  id: "prologue_action_counter"
+  title: "Counting with Action Monad"
+  mvp_card: "The Action Counter"
+  pkc_task: "Demonstrate Monadic Composition"
+
+clm:
+  abstract:
+    concept: "Action Monad Counting"
+    specification: |
+      Uses Action Monad to implement a counter that:
+      - Wraps values with pure/return
+      - Composes increment operations via bind
+      - Accumulates effects (logs) through composition
+      
+      Each increment is an Action[int] that:
+      1. Takes current count from context
+      2. Returns count + 1
+      3. Logs the operation as an effect
+      
+    inputs:
+      initial_count: { type: "int", description: "Starting count value" }
+      increment_times: { type: "int", description: "Number of times to increment" }
+    outputs:
+      final_count: { type: "int" }
+      operation_log: { type: "list[str]" }
+      
+  concrete:
+    runtime: lambda
+    operation: normalize
+    strategy: normal
+    maxSteps: 100
+    
+  balanced:
+    description: "Verify counting via Church numerals and successor function."
+    test_cases:
+      # SUCC = λn.λf.λx.f (n f x)
+      # ZERO = λf.λx.x
+      # ONE  = λf.λx.f x
+      # TWO  = λf.λx.f (f x)
+      - given: "SUCC ZERO = ONE"
+        when:
+          expression: "(\\n.\\f.\\x.f (n f x)) (\\f.\\x.x)"
+        then:
+          success: true
+          
+      - given: "SUCC ONE = TWO"
+        when:
+          expression: "(\\n.\\f.\\x.f (n f x)) (\\f.\\x.f x)"
+        then:
+          success: true
+          
+      - given: "SUCC (SUCC ZERO) = TWO"
+        when:
+          expression: "(\\n.\\f.\\x.f (n f x)) ((\\n.\\f.\\x.f (n f x)) (\\f.\\x.x))"
+        then:
+          success: true
+
+examples:
+  # Church numeral counting demonstrations
+  - name: "Successor of Zero (0 → 1)"
+    description: "SUCC ZERO reduces to ONE: λf.λx.f x"
+    input:
+      expression: "(\\n.\\f.\\x.f (n f x)) (\\f.\\x.x)"
+    expected_output: "(λf.(λx.(f x)))"
+      
+  - name: "Successor of One (1 → 2)"
+    description: "SUCC ONE reduces to TWO: λf.λx.f (f x)"
+    input:
+      expression: "(\\n.\\f.\\x.f (n f x)) (\\f.\\x.f x)"
+    expected_output: "(λf.(λx.(f (f x))))"
+      
+  - name: "Triple Successor (0 → 3)"
+    description: "SUCC (SUCC (SUCC ZERO)) = THREE"
+    input:
+      expression: "(\\n.\\f.\\x.f (n f x)) ((\\n.\\f.\\x.f (n f x)) ((\\n.\\f.\\x.f (n f x)) (\\f.\\x.x)))"
+    expected_output: "(λf.(λx.(f (f (f x)))))"

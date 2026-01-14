@@ -1,0 +1,28 @@
+
+version: "1.0"
+chapter:
+  id: 8
+  title: P2P
+clm:
+  abstract:
+    concept: PeerListener
+    description: Listens for incoming WebRTC connections
+  concrete:
+    manifestation: WebRTC Listener
+    description: Uses webrtc_listen builtin
+    boundary: extrinsic
+    builtin: webrtc_listen
+    runtime: network
+    code_file: ./p2p_logic.js
+    config:
+      signaling_url: "mock://p2p"  # Use mock for standalone; orchestrator overrides
+      peer_id: "listener_01"
+      allowed_peers: ["connector_01"]
+      on_message: onMessage
+  balanced:
+    expectation: Connection established
+    description: Returns listener status
+
+examples:
+  - name: "Listen"
+    input: {}

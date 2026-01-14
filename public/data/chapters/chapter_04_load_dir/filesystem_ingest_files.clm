@@ -1,0 +1,47 @@
+chapter:
+  id: 4.2
+  title: "Filesystem Loader – Collection Ingest"
+  mvp_card: "Directory Ingestor"
+  pkc_task: "Data Loading"
+
+clm:
+  abstract:
+    purpose: "Ingest files from a directory into a CardCollection and return an ingest report."
+    inputs:
+      source_dir: { type: "string", description: "Root directory to ingest" }
+      recursive: { type: "bool", default: true }
+      db_path: { type: "string", description: "Target SQLite database path" }
+    outputs:
+      ingest_report:
+        type: "object"
+        fields:
+          total_files: { type: "int" }
+          ingested: { type: "int" }
+          skipped: { type: "int" }
+          errors: { type: "list", item: { type: "string" } }
+
+  concrete:
+    runtime: "python"   # new mcard-js runtime or Python PCard wrapper
+    code_file: "loader_logic.py"   # for Python-side compatibility
+    entry_point: "run_loader_benchmark"
+    builtin: "ingest_files"
+    input_type: "directory"
+    process_type: "ingest_files"
+    output_type: "collection_ingest_report"
+
+  balanced:
+    input_arguments:
+      source_dir: "chapters/chapter_04_load_dir/test_data"
+      recursive: true
+      db_path: "data/loader_clm.db"
+    expected_results:
+      # High-level success criteria; concrete runtimes can refine
+      min_ingested: 1
+    test_cases:
+      - description: "Ingest files into collection from chapter_04_load_dir test_data"
+        given: "Start filesystem ingest_files benchmark"
+        when:
+          params:
+            recursive: true
+        then:
+          success: true

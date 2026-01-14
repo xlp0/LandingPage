@@ -1,0 +1,34 @@
+version: "1.0"
+chapter:
+  id: 05
+  title: "Loader: Triadic Small"
+  mvp_card: "Triadic Benchmark"
+  pkc_task: "Benchmark Data Loading"
+clm:
+  abstract:
+    concept: "Data Ingestion"
+    description: "Load small dataset into 3-tier storage (MCard, Handle, Vector)"
+  concrete:
+    manifestation: "Built-in PTR Loader"
+    description: "Uses mcard.loader.load_file_to_collection"
+    runtime: "python"
+    operation: "loader"
+    input_type: "directory"
+    process_type: "benchmark"
+    output_type: "sqlite"
+  balanced:
+    description: "Returns process metrics JSON"
+    input_arguments:
+      source_dir: "chapters/chapter_04_load_dir/test_data"
+      recursive: true
+    output_arguments:
+      db_path: "data/triadic_small.db"
+    expected_results:
+      success: true
+    test_cases:
+    - description: "Benchmark Triadic Small loading"
+      given: "Start Benchmark"
+      when:
+        params: {}
+      then:
+        success: true

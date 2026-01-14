@@ -1,0 +1,34 @@
+version: '1.0'
+chapter:
+  id: 108
+  title: 'Arithmetic: Multiplication (Lean 4)'
+  mvp_card: The Multiplier (Lean)
+  pkc_task: Compute Product
+clm:
+  abstract:
+    concept: Ring Multiplication
+    description: 'The Principle: a × b forms a commutative ring with addition'
+    math_model: '∀ a b : ℕ, a * b = b * a (commutativity)'
+  concrete:
+    manifestation: Lean 4 Multiplication
+    description: Verified multiplication via Lean's type system
+    runtime: lean
+    code_file: lean_multiply.lean
+    input_type: mcard
+    output_type: mcard
+    process_type: custom
+  balanced:
+    expectation: Product Correctness
+    description: 'Multiplying two integers produces their mathematical product'
+    test_cases:
+      - given: '{"a": 6, "b": 7}'
+        then:
+          result: 42
+      - given: '{"a": 0, "b": 100}'
+        then:
+          result: 0
+      - given: '{"a": -3, "b": 4}'
+        then:
+          result: -12
+    expected_results:
+      success: true

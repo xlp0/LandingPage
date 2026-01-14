@@ -1,0 +1,27 @@
+version: '1.0'
+chapter:
+  id: 412
+  title: 'Load Dir (JS)'
+  mvp_card: JS Loader
+  pkc_task: Load Files via JS Builtin
+clm:
+  abstract:
+    concept: Loading
+  concrete:
+    manifestation: Builtin Execution
+    runtime: javascript
+    builtin: loader
+    input_arguments:
+      source_dir: "docs"
+      recursive: true
+      db_path: "data/ingestion/loader_js.db"
+    test_cases:
+      - description: "Load docs"
+        given: "docs dir"
+        when:
+          params:
+            source_dir: "docs"
+  balanced:
+    expectation: Success
+    expected_results:
+      success: true

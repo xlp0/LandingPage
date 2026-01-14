@@ -1,0 +1,45 @@
+chapter:
+  id: "network_sync_server"
+  title: "MCard Sync Server"
+
+clm:
+  abstract:
+    concept: "Synchronization Provider"
+    manifestation: "Sync Server Configuration"
+
+  concrete:
+    runtime: javascript
+    code: |
+      // Sync server configuration validator
+      function validateSyncConfig(ctx) {
+        const port = ctx.port || 3001;
+        const basePath = ctx.base_path || '/sync';
+        return {
+          valid: true,
+          port: port,
+          base_path: basePath,
+          endpoint: 'http://localhost:' + port + basePath
+        };
+      }
+      const ctx = typeof target === 'object' ? target : {};
+      const result = validateSyncConfig(ctx);
+      result;
+
+  balanced:
+    description: "Validates sync server configuration."
+    test_cases:
+      - given: "Default configuration"
+        when: {}
+        then:
+          valid: true
+
+examples:
+  - name: "Validate default sync config"
+    input:
+      port: 3001
+      base_path: "/sync"
+    expected_output:
+      valid: true
+      port: 3001
+      base_path: "/sync"
+      endpoint: "http://localhost:3001/sync"

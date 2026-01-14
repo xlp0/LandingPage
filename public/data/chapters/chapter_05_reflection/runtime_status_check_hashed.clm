@@ -1,0 +1,48 @@
+abstract:
+  purpose: Check availability and status of all polyglot runtimes
+  description: "This PCard checks the availability of all 6 polyglot runtimes (Python,\
+    \ JavaScript, \nRust, C, WASM, Lean). It uses a content-addressed approach with\
+    \ fallback mechanism:\n1. First attempts to load implementation from MCard using\
+    \ code_hash\n2. Falls back to loading from file if MCard is not available\n"
+  inputs:
+    trigger:
+      type: string
+      description: Trigger for runtime check (any value)
+  outputs:
+    runtime_status:
+      type: dict
+      description: Detailed status for all runtimes
+  preconditions:
+  - PTREngine must be initialized
+  postconditions:
+  - Returns runtime status for all 6 runtimes
+  - Ensures at least one runtime is available
+concrete:
+  runtime: python
+  operation: custom
+  implementation:
+    type: python
+    builtin: runtime_check
+    inputs:
+      trigger: string
+  code_hash: nonexistent_hash_for_fallback_test
+  code_file: runtime_status_impl.py
+  fallback_file: runtime_status_impl.py
+  input_type: mcard
+  output_type: mcard
+  process_type: custom
+balanced:
+  test_cases:
+  - given: check
+    when:
+      operation: custom
+    then:
+      runtime_status:
+        at_least_one_available: true
+  expectations:
+    performance:
+      max_time_ms: 1000
+    quality:
+      correctness: verified
+    safety:
+    - Must ensure at least one runtime is available

@@ -1,0 +1,7 @@
+name: "multiple_updates"
+handle: "evolving_doc"
+versions:
+  - content: "Draft"
+  - content: "Review"
+  - content: "Final"
+expected_history_length: 2

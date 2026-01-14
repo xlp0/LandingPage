@@ -1,0 +1,71 @@
+version: '1.0'
+chapter:
+  id: 204
+  title: 'Content Handle: Versioning Builtin'
+  mvp_card: The Versioner Builtin
+  pkc_task: Update Handle and Preserve History via Builtin
+  description: |
+    This CLM demonstrates handle versioning using the built-in handle_version
+    operation. No custom code file is required - the PTR provides this
+    functionality natively in both Python and JavaScript runtimes.
+clm:
+  abstract:
+    concept: Immutable Versioning with Mutable Reference
+    description: |
+      The Principle: Data Immutability is preserved.
+      Each update creates a new MCard with a new hash.
+      The handle (mutable pointer) is re-bound to the new hash.
+      History is accumulated as a Writer Monad log.
+    math_model: "Version = (Handle, [Hash₁, Hash₂, ..., Hashₙ])"
+  concrete:
+    manifestation: Handle Version Builtin
+    description: Update a handle to point to new content using builtin operation
+    builtin: handle_version
+    implementation:
+      inputs:
+        context: dict
+    input_type: mcard
+    output_type: mcard
+    process_type: builtin
+  balanced:
+    expectation: Version History Integrity
+    description: |
+      The Evidence: After N updates, the history contains N-1 entries.
+      Each entry records the previous hash and timestamp.
+    invariants:
+    - len(history) == num_updates
+    - history is ordered newest-first
+    - previous hash exists in card table
+    expected_results:
+      success: true
+examples:
+- name: Single Update
+  input:
+    handle: my_doc
+    versions:
+    - content: Version 1
+    - content: Version 2
+  expected_output:
+    success: true
+    history_length: 1
+- name: Multiple Updates
+  input:
+    handle: evolving_doc
+    versions:
+    - content: Draft
+    - content: Review
+    - content: Final
+  expected_output:
+    success: true
+    history_length: 2
+- name: Content Lineage
+  input:
+    handle: specification
+    versions:
+    - content: '# Spec v0.1 - Initial draft'
+    - content: '# Spec v0.2 - Added requirements'
+    - content: '# Spec v0.3 - Added implementation notes'
+    - content: '# Spec v1.0 - Approved for release'
+  expected_output:
+    success: true
+    history_length: 3

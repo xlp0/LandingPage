@@ -1,0 +1,32 @@
+chapter:
+  id: "network_basic"
+  title: "HTTP Fetch Example"
+
+clm:
+  abstract:
+    concept: "Fetch Data"
+    manifestation: "JSON Response"
+  
+  concrete:
+    runtime: network
+    builtin: http_request
+    config:
+      method: GET
+      url: "https://jsonplaceholder.typicode.com/todos/1"
+
+  balanced:
+    test_cases:
+      - given: "Fetch TODO"
+        when: {}
+        then:
+          success: true
+
+examples:
+  - name: "Fetch TODO item from JSONPlaceholder"
+    input: {}
+    expected_output:
+      success: true
+      body:
+        userId: 1
+        id: 1
+        completed: false

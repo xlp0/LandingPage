@@ -1,0 +1,28 @@
+
+version: "1.0"
+chapter:
+  id: 06
+  title: "Reflection: The Inventory"
+  mvp_card: "The Librarian"
+  pkc_task: "Cataloging"
+clm:
+  abstract:
+    concept: "Metacognition (Self-Knowledge)"
+    description: "Scan the entire Prologue to catalog all established Truths (CLMs)."
+  concrete:
+    manifestation: "Python Scanner"
+    runtime: "python"
+    code_file: "reflection_logic.py"
+    entry_point: "generate_inventory"
+    input_type: "directory"
+    process_type: "transform"
+    output_type: "json"
+  balanced:
+    description: "Returns a complete inventory of all CLM files"
+    test_cases:
+      - description: "Generate Full Inventory"
+        given: "Project Root"
+        when:
+          params: {}
+        then:
+          success: true
