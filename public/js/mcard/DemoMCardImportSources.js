@@ -82,8 +82,16 @@ export async function getDemoMCardImportSources() {
   } catch {
   }
 
-  // Default: empty sources - start with a clean slate
-  return [];
+  // Default: load demo directory as initial sample dataset
+  // This provides users with example content to explore the application
+  return [
+    {
+      kind: 'manifest',
+      url: '/public/data/demo/manifest.json',
+      baseUrl: '/public/',
+      updateIfChanged: true
+    }
+  ];
 }
 
 /**
