@@ -17,7 +17,7 @@ const CRITICAL_ASSETS = [
 const APP_SHELL_ASSETS = [
   '/public/css/mcard-manager.css',
   '/public/css/content-renderers.css',
-  '/public/js/mcard-manager-new.js',
+  '/public/js/app-bootstrap.js',
   '/public/js/mcard/MCardManager.js',
   '/public/js/mcard/CardViewer.js',
   '/public/js/mcard/UIComponents.js',

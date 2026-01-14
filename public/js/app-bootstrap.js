@@ -1,6 +1,13 @@
 /**
- * MCard Manager - Main Entry Point
- * Modular architecture for MCard file management
+ * MCard Manager Application Bootstrap
+ * 
+ * Main entry point that initializes the MCard Manager application.
+ * Handles:
+ * - MCardManager instantiation and global window binding
+ * - Mobile navigation routing
+ * - Global event handlers for HTML onclick attributes
+ * - Edit panel functionality
+ * - Application lifecycle (DOMContentLoaded, resize events)
  */
 
 import { MCardManager } from './mcard/MCardManager.js?v=18';
