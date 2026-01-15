@@ -298,21 +298,7 @@ if (document.readyState === 'loading') {
   viewManager.init();
 }
 
-// Expose globally for onclick handlers
-window.viewManager = viewManager;
-
-// Legacy function wrappers for backward compatibility
-// These allow existing onclick="showCalendar()" to continue working
-function showCalendar() { viewManager.show('calendar'); }
-function hideCalendar() { viewManager.hide('calendar'); }
-function showMap() { viewManager.show('map'); }
-function hideMap() { viewManager.hide('map'); }
-function show3DViewer() { viewManager.show('threeD'); }
-function hide3DViewer() { viewManager.hide('threeD'); }
-function showMusicVisualizer() { viewManager.show('music'); }
-function hideMusicVisualizer() { viewManager.hide('music'); }
-function showMorphismV1() { viewManager.show('morphismV1'); }
-function hideMorphismV1() { viewManager.hide('morphismV1'); }
-function showMorphismV2() { viewManager.show('morphismV2'); }
-function hideMorphismV2() { viewManager.hide('morphismV2'); }
-function toggleApps() { viewManager.toggleSubmenu('apps'); }
+// Export for module usage
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ViewManager;
+}

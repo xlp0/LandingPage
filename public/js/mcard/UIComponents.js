@@ -48,30 +48,26 @@ export class UIComponents {
     ];
 
     /**
-     * External apps list - Apps shown in the expandable Apps submenu
+     * External apps list - Data-driven from ViewManager configuration
+     * Dynamically loads from /public/config/app-views.json
      * Each app opens in a full-width iframe view with close button and ESC key support
-     * 
-     * Apps include:
-     * - Calendar: Google Calendar integration
-     * - Map: IoT Map visualization
-     * - 3D Viewer: Three.js 3D Theater
-     * - Music Visualizer: Interactive music notation with 3D frequency visualization
-     * - Morphism Cube v1 & v2: Category theory recursion schemes in 3D
      */
-    const externalApps = [
-      { id: 'calendar', name: 'Calendar', icon: 'calendar', action: 'showCalendar()' },
-      { id: 'map', name: 'Map', icon: 'map', action: 'showMap()' },
-      { id: '3d', name: '3D Viewer', icon: 'box', action: 'show3DViewer()' },
-      { id: 'music', name: 'Music Visualizer', icon: 'music', action: 'showMusicVisualizer()' },
-      { id: 'morphism1', name: 'Morphism Cube v1', icon: 'cube', action: 'showMorphismV1()' },
-      { id: 'morphism2', name: 'Morphism Cube v2', icon: 'box', action: 'showMorphismV2()' }
-    ];
+    const externalApps = window.viewManager ? 
+      window.viewManager.getViewIds().map(viewId => {
+        const config = window.viewManager.getViewConfig(viewId);
+        return {
+          id: viewId,
+          name: config.label,
+          icon: config.icon,
+          viewId: viewId
+        };
+      }) : [];
 
     typeList.innerHTML = types.map(type => {
       // Special handling for Apps (expandable)
       if (type.isExpandable && type.id === 'apps') {
         const appsHtml = externalApps.map(app => `
-          <div class="type-item app-item" onclick="${app.action}" title="${app.name}">
+          <div class="type-item app-item" onclick="window.viewManager.show('${app.viewId}')" title="${app.name}">
             <div class="type-item-content">
               <span class="type-icon" title="${app.name}"><i data-lucide="${app.icon}" style="width: 18px; height: 18px;"></i></span>
               <span class="type-name">${app.name}</span>
@@ -81,7 +77,7 @@ export class UIComponents {
         `).join('');
 
         return `
-          <div class="type-item apps-header" onclick="toggleApps()" title="${type.name}">
+          <div class="type-item apps-header" onclick="window.viewManager.toggleSubmenu('apps')" title="${type.name}">
             <div class="type-item-content">
               <span class="type-icon" title="${type.name}"><i data-lucide="${type.icon}" style="width: 20px; height: 20px;"></i></span>
               <span class="type-name">${type.name}</span>
