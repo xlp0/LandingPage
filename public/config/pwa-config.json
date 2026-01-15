@@ -1,0 +1,131 @@
+{
+  "version": "1.0",
+  "appName": "MCard Manager",
+  "dismissDuration": 604800000,
+  "diagnosticDelay": 3000,
+  "fallbackPromptDelay": 5000,
+  "installModal": {
+    "header": {
+      "title": "Install MCard Manager",
+      "subtitle": "Get the best experience with our app",
+      "icon": "download-cloud",
+      "gradient": "linear-gradient(135deg, #007acc 0%, #005a9e 100%)"
+    },
+    "features": [
+      {
+        "icon": "zap",
+        "iconColor": "#007acc",
+        "backgroundColor": "#e3f2fd",
+        "title": "Lightning Fast",
+        "description": "Instant loading and smooth performance"
+      },
+      {
+        "icon": "wifi-off",
+        "iconColor": "#4caf50",
+        "backgroundColor": "#e8f5e9",
+        "title": "Works Offline",
+        "description": "Access your cards without internet"
+      },
+      {
+        "icon": "smartphone",
+        "iconColor": "#ff9800",
+        "backgroundColor": "#fff3e0",
+        "title": "Native Experience",
+        "description": "Feels like a native mobile app"
+      }
+    ],
+    "buttons": {
+      "install": {
+        "text": "Install Now",
+        "gradient": "linear-gradient(135deg, #007acc 0%, #005a9e 100%)"
+      },
+      "dismiss": {
+        "text": "Maybe Later"
+      }
+    },
+    "successMessage": {
+      "icon": "check-circle",
+      "title": "✅ Installation Successful!",
+      "subtitle": "MCard Manager is now on your home screen",
+      "gradient": "linear-gradient(135deg, #51cf66 0%, #37b24d 100%)",
+      "duration": 4000
+    }
+  },
+  "manualInstructions": {
+    "ios": {
+      "title": "📱 Install on iOS:",
+      "steps": [
+        "Tap the Share button (⬆️ square with arrow)",
+        "Scroll down and tap \"Add to Home Screen\"",
+        "Tap \"Add\" in the top right",
+        "The app icon will appear on your home screen!"
+      ],
+      "footer": "✨ You can then open it like any other app."
+    },
+    "android": {
+      "title": "📱 Install on Android:",
+      "steps": [
+        "Tap the menu (⋮) in the top right corner",
+        "Look for \"Add to Home screen\" or \"Install app\"",
+        "Tap it and confirm",
+        "The app icon will appear on your home screen!"
+      ],
+      "footer": "✨ You can then open it like any other app.\n\nNote: Make sure you're using Chrome or Edge browser."
+    },
+    "desktopChrome": {
+      "title": "💻 Install on Desktop (Chrome):",
+      "steps": [
+        "Click the install icon (⊕) in the address bar\n   OR",
+        "Click menu (⋮) → \"Install MCard Manager\"",
+        "Click \"Install\" in the popup",
+        "The app will open in its own window!"
+      ],
+      "footer": "✨ You can then find it in your applications."
+    },
+    "safari": {
+      "title": "💻 Install on Safari:",
+      "steps": [
+        "Safari doesn't support PWA installation on desktop.",
+        "Please use Chrome, Edge, or Firefox for the best experience.",
+        "Or visit on your iPhone/iPad to install as an app!"
+      ],
+      "footer": ""
+    },
+    "generic": {
+      "title": "💻 Install on Desktop:",
+      "steps": [
+        "Look for an install icon in your browser's address bar",
+        "Or check your browser's menu for \"Install\" option",
+        "Click it to install the app"
+      ],
+      "footer": "Supported browsers:\n✅ Chrome\n✅ Edge\n✅ Firefox\n✅ Opera\n\n✨ The app will open in its own window!"
+    }
+  },
+  "offlineIndicator": {
+    "offline": {
+      "icon": "wifi-off",
+      "text": "You're offline - Working from cache",
+      "gradient": "linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)"
+    },
+    "online": {
+      "icon": "wifi",
+      "text": "Back online!",
+      "gradient": "linear-gradient(135deg, #51cf66 0%, #37b24d 100%)",
+      "duration": 3000
+    }
+  },
+  "logging": {
+    "prefix": "[PWA]",
+    "diagnosticReasons": [
+      "App already installed",
+      "User dismissed prompt too many times (Chrome blocks it)",
+      "Manifest or service worker issue",
+      "Browser does not support PWA install",
+      "PWA criteria not met (check manifest icons)"
+    ],
+    "androidSpecificReasons": [
+      "Android-specific: May need PNG icons instead of SVG",
+      "Android-specific: Check if Chrome version supports PWA"
+    ]
+  }
+}
