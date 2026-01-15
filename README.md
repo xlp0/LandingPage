@@ -32,6 +32,13 @@ A modern, **static-first, modular web application** with **serverless P2P commun
 - **MCard Manager**: Advanced card management with IndexedDB persistence, handle support (`@welcome`), and **Duplications** detection (v11+).
 - **Modular HTML**: `index.html` logic is fully modularized into dedicated ESM-ready scripts (`public/js/pwa-init.js`, `ui-inline-handlers.js`, etc.) while preserving external interfaces.
 - **Auth-Gated CSP**: Production-ready Content Security Policy that defaults to strict rules and only enables `unsafe-eval` (required for Pyodide) after secure authentication (HttpOnly cookie).
+- **Hybrid Execution**: Configurable CLM execution strategies (`auto`, `browser`, `server`) to balance performance and security.
+
+### **⚡ Hybrid CLM Execution**
+The system supports three execution modes for Cubical Logic Models:
+1. **Auto (Default)**: Intelligently selects the best runtime. Prefers local browser execution via Pyodide/WebWorkers for privacy and offline support, falling back to server execution if resources are constrained.
+2. **Browser (Local)**: Forces client-side execution using `mcard-js` and Pyodide. Fully offline-capable but requires `unsafe-eval` (auth-gated).
+3. **Server (Remote)**: Offloads execution to the `/api/clm/execute` endpoint. Useful for low-power devices or when strict CSP blocks WASM/eval.
 
 ### **🧹 Automated Duplicate Management**
 - **Smart Detection**: Detects duplicate-type MCards (`{"type": "duplicate"}`) via `BrowserContentTypeDetector`.
