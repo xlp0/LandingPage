@@ -70,9 +70,9 @@ export class CLMRenderer {
 
       // 2. Map 'clm' subsections if they exist (New Format)
       if (parsed.clm) {
-        result.specification = parsed.clm.abstract_spec || {};
-        result.implementation = parsed.clm.concrete_impl || {};
-        result.verification = parsed.clm.balanced_exp || {};
+        result.specification = parsed.clm.abstract_spec || parsed.clm.abstract || {};
+        result.implementation = parsed.clm.concrete_impl || parsed.clm.concrete || {};
+        result.verification = parsed.clm.balanced_exp || parsed.clm.balanced || {};
       }
       // 3. Fallback to old format if 'clm' key doesn't exist
       else {
