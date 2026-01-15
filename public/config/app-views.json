@@ -1,0 +1,62 @@
+{
+  "version": "1.0",
+  "mainContentSelector": ".main-content",
+  "views": [
+    {
+      "id": "calendar",
+      "elementId": "calendarView",
+      "label": "Calendar",
+      "icon": "calendar",
+      "displayStyle": "flex",
+      "logPrefix": "[Calendar]"
+    },
+    {
+      "id": "map",
+      "elementId": "mapView",
+      "label": "Map",
+      "icon": "map",
+      "displayStyle": "flex",
+      "logPrefix": "[Map]"
+    },
+    {
+      "id": "threeD",
+      "elementId": "threeDView",
+      "label": "3D Viewer",
+      "icon": "box",
+      "displayStyle": "flex",
+      "logPrefix": "[3D Viewer]"
+    },
+    {
+      "id": "music",
+      "elementId": "musicView",
+      "label": "Music Visualizer",
+      "icon": "music",
+      "displayStyle": "flex",
+      "logPrefix": "[Music]"
+    },
+    {
+      "id": "morphismV1",
+      "elementId": "morphismV1View",
+      "label": "Morphism Cube v1",
+      "icon": "cube",
+      "displayStyle": "flex",
+      "logPrefix": "[Morphism]"
+    },
+    {
+      "id": "morphismV2",
+      "elementId": "morphismV2View",
+      "label": "Morphism Cube v2",
+      "icon": "cube",
+      "displayStyle": "flex",
+      "logPrefix": "[Morphism]"
+    }
+  ],
+  "submenus": [
+    {
+      "id": "apps",
+      "elementId": "appsSubmenu",
+      "chevronId": "appsChevron",
+      "label": "Apps"
+    }
+  ]
+}
