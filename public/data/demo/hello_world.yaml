@@ -24,28 +24,28 @@ clm:
     manifestation: "Lambda Calculus Identity"
     description: |
       Identity Function: λx.x
-      Applies the function to the input "HelloWorld".
+      Applies the function to a variable y.
     runtime: lambda
     operation: normalize
     strategy: normal
     maxSteps: 100
-    code: "(\\x.x) HelloWorld"
+    code: "(\\x.x) y"
 
   balanced:
     expectation: "The Identity function returns its argument."
     test_cases:
-      - given: "The Identity function applied to HelloWorld"
+      - given: "The Identity function applied to y"
         when:
           arguments:
-            expression: "(\\x.x) HelloWorld"
+            expression: "(\\x.x) y"
         then:
-          result_contains: "HelloWorld"
-      - given: "The Identity function applied to Bali"
+          result_contains: "y"
+      - given: "The Identity function applied to z"
         when:
           arguments:
-            expression: "(\\x.x) Bali"
+            expression: "(\\x.x) z"
         then:
-          result_contains: "Bali"
+          result_contains: "z"
 
 examples:
   - name: "Hello World"
