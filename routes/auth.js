@@ -7,6 +7,30 @@ const CLIENT_ID = process.env.ZITADEL_CLIENT_ID || '348213051452882951';
 const CLIENT_SECRET = process.env.ZITADEL_CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI || 'https://henry.pkc.pub/auth-callback-enhanced.html';
 
+const AUTH_CSP_COOKIE_NAME = 'mcard_auth';
+const isProduction = (process.env.MCARD_ENV || process.env.NODE_ENV) === 'production';
+function setAuthCookie(res) {
+  const attrs = [
+    `${AUTH_CSP_COOKIE_NAME}=1`,
+    'Path=/',
+    'HttpOnly',
+    'SameSite=Lax'
+  ];
+  if (isProduction) attrs.push('Secure');
+  res.setHeader('Set-Cookie', attrs.join('; '));
+}
+function clearAuthCookie(res) {
+  const attrs = [
+    `${AUTH_CSP_COOKIE_NAME}=`,
+    'Path=/',
+    'HttpOnly',
+    'SameSite=Lax',
+    'Max-Age=0'
+  ];
+  if (isProduction) attrs.push('Secure');
+  res.setHeader('Set-Cookie', attrs.join('; '));
+}
+
 /**
  * POST /api/auth/token
  * Exchange authorization code for access token and user info
@@ -67,6 +91,8 @@ router.post('/token', async (req, res) => {
     const { sub, name, email, picture, email_verified } = userResponse.data;
 
     console.log('[Auth] User info retrieved:', { sub, name, email });
+
+    setAuthCookie(res);
 
     // Step 3: Return user data to frontend
     res.json({
@@ -169,11 +195,15 @@ router.post('/logout', async (req, res) => {
       console.log('[Auth] Token revoked');
     }
 
+    clearAuthCookie(res);
+
     res.json({ success: true });
 
   } catch (error) {
     console.error('[Auth] Logout error:', error.message);
     // Don't fail logout if revocation fails
+
+    clearAuthCookie(res);
     res.json({ success: true });
   }
 });

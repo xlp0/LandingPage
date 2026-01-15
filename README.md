@@ -30,6 +30,8 @@ A modern, **static-first, modular web application** with **serverless P2P commun
 
 ### **🏗️ Modular Architecture**
 - **MCard Manager**: Advanced card management with IndexedDB persistence, handle support (`@welcome`), and **Duplications** detection (v11+).
+- **Modular HTML**: `index.html` logic is fully modularized into dedicated ESM-ready scripts (`public/js/pwa-init.js`, `ui-inline-handlers.js`, etc.) while preserving external interfaces.
+- **Auth-Gated CSP**: Production-ready Content Security Policy that defaults to strict rules and only enables `unsafe-eval` (required for Pyodide) after secure authentication (HttpOnly cookie).
 
 ### **🧹 Automated Duplicate Management**
 - **Smart Detection**: Detects duplicate-type MCards (`{"type": "duplicate"}`) via `BrowserContentTypeDetector`.

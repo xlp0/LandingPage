@@ -46,21 +46,55 @@ app.use((req, res, next) => {
         res.setHeader('Pragma', 'no-cache');
         res.setHeader('Expires', '0');
     }
-    
-    // ✅ Override restrictive CSP - allow everything for development
-    res.setHeader('Content-Security-Policy', 
-        "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; " +
-        "script-src * 'unsafe-inline' 'unsafe-eval' blob:; " +
-        "worker-src * blob:; " +
-        "style-src * 'unsafe-inline'; " +
-        "img-src * data: blob:; " +
-        "font-src *; " +
-        "connect-src *; " +
-        "media-src * data: blob:; " +
-        "object-src *; " +
-        "frame-src *;"
+
+    const env = process.env.MCARD_ENV || process.env.NODE_ENV;
+    const isProduction = env === 'production';
+
+    const cookieHeader = req.headers.cookie || '';
+    const cookies = Object.fromEntries(
+        cookieHeader
+            .split(';')
+            .map(v => v.trim())
+            .filter(Boolean)
+            .map(v => {
+                const idx = v.indexOf('=');
+                if (idx === -1) return [v, ''];
+                return [v.slice(0, idx), decodeURIComponent(v.slice(idx + 1))];
+            })
     );
-    
+    const isAuthenticated = cookies.mcard_auth === '1';
+
+    if (!isProduction) {
+        res.setHeader('Content-Security-Policy',
+            "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; " +
+            "script-src * 'unsafe-inline' 'unsafe-eval' blob:; " +
+            "worker-src * blob:; " +
+            "style-src * 'unsafe-inline'; " +
+            "img-src * data: blob:; " +
+            "font-src *; " +
+            "connect-src *; " +
+            "media-src * data: blob:; " +
+            "object-src *; " +
+            "frame-src *;"
+        );
+        return next();
+    }
+
+    const scriptSrc = ["'self'", "'unsafe-inline'"].concat(isAuthenticated ? ["'unsafe-eval'"] : []).join(' ');
+    const csp = [
+        "default-src 'self'",
+        `script-src ${scriptSrc}`,
+        "worker-src 'self' blob:",
+        "style-src 'self' 'unsafe-inline'",
+        "img-src 'self' data: blob:",
+        "font-src 'self' data:",
+        "connect-src 'self' https: wss: ws:",
+        "media-src 'self' data: blob:",
+        "object-src 'none'",
+        "frame-src 'self'"
+    ].join('; ');
+    res.setHeader('Content-Security-Policy', csp);
+
     next();
 });
 
