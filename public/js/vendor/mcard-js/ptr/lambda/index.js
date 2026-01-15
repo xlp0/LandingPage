@@ -22,13 +22,13 @@ storeTerm, loadTerm, termExists,
 // Pretty Printing
 prettyPrintShallow, prettyPrintDeep, 
 // Type Guards
-isVar, isAbs, isApp } from './LambdaTerm';
+isVar, isAbs, isApp } from './LambdaTerm.js';
 // Free Variables
-export { freeVariables, boundVariables, isFreeIn, isClosed, generateFresh, generateFreshFor, difference, intersection } from './FreeVariables';
+export { freeVariables, boundVariables, isFreeIn, isClosed, generateFresh, generateFreshFor, difference, intersection } from './FreeVariables.js';
 // Alpha Conversion
-export { alphaRename, alphaEquivalent, alphaNormalize } from './AlphaConversion';
-export { isRedex, findLeftmostRedex, findInnermostRedex, betaReduce, reduceStep, normalize, isNormalForm, hasNormalForm } from './BetaReduction';
+export { alphaRename, alphaEquivalent, alphaNormalize } from './AlphaConversion.js';
+export { isRedex, findLeftmostRedex, findInnermostRedex, betaReduce, reduceStep, normalize, isNormalForm, hasNormalForm } from './BetaReduction.js';
 // Eta Conversion
-export { isEtaRedex, etaReduce, etaReduceE, etaExpand, etaEquivalent, etaNormalize, findEtaRedexes } from './EtaConversion';
-export { LambdaRuntime, parseLambdaExpression } from './LambdaRuntime';
+export { isEtaRedex, etaReduce, etaReduceE, etaExpand, etaEquivalent, etaNormalize, findEtaRedexes } from './EtaConversion.js';
+export { LambdaRuntime, parseLambdaExpression } from './LambdaRuntime.js';
 //# sourceMappingURL=index.js.map

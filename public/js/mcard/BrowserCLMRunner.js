@@ -12,7 +12,7 @@
 import * as yaml from '../vendor/yaml.esm.js';
 import { SandboxWorker } from '../vendor/mcard-js/ptr/SandboxWorker.js';
 import { LambdaRuntime } from '../vendor/mcard-js/ptr/lambda/LambdaRuntime.js';
-import { MCardCollection } from '../vendor/mcard-js/MCardCollection.js';
+import { CardCollection } from '../vendor/mcard-js/model/CardCollection.js';
 
 // Operation code templates for standard CLM operations
 const OPERATION_CODE = {
@@ -168,7 +168,7 @@ export class BrowserCLMRunner {
   async executeLambda(clm, config, input, startTime) {
     try {
       // Create in-memory collection for lambda terms
-      const collection = new MCardCollection();
+      const collection = new CardCollection();
       const lambdaRuntime = new LambdaRuntime(collection);
       
       // Get the lambda expression from code or input

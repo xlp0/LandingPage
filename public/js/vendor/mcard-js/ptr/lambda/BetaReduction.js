@@ -13,9 +13,9 @@
  *
  * @module mcard-js/ptr/lambda/BetaReduction
  */
-import { loadTerm, storeTerm, mkAbs, mkApp, isAbs, isApp } from './LambdaTerm';
-import { freeVariables, generateFresh } from './FreeVariables';
-import { alphaRename } from './AlphaConversion';
+import { loadTerm, storeTerm, mkAbs, mkApp, isAbs, isApp } from './LambdaTerm.js';
+import { freeVariables, generateFresh } from './FreeVariables.js';
+import { alphaRename } from './AlphaConversion.js';
 import { IO } from '../../monads/IO';
 import { Either } from '../../monads/Either';
 import { Maybe } from '../../monads/Maybe';

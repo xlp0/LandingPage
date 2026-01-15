@@ -11,8 +11,8 @@
  *
  * @module mcard-js/ptr/lambda/EtaConversion
  */
-import { loadTerm, storeTerm, mkVar, mkAbs, mkApp, isVar, isAbs, isApp } from './LambdaTerm';
-import { freeVariables, generateFreshFor } from './FreeVariables';
+import { loadTerm, storeTerm, mkVar, mkAbs, mkApp, isVar, isAbs, isApp } from './LambdaTerm.js';
+import { freeVariables, generateFreshFor } from './FreeVariables.js';
 import { IO } from '../../monads/IO';
 import { Either } from '../../monads/Either';
 import { Maybe } from '../../monads/Maybe';

@@ -10,7 +10,7 @@
  *
  * @module mcard-js/ptr/lambda/FreeVariables
  */
-import { loadTerm } from './LambdaTerm';
+import { loadTerm } from './LambdaTerm.js';
 import { IO } from '../../monads/IO';
 import { Maybe } from '../../monads/Maybe';
 // ─────────────────────────────────────────────────────────────────────────────

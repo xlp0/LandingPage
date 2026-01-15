@@ -10,8 +10,8 @@
  *
  * @module mcard-js/ptr/lambda/AlphaConversion
  */
-import { loadTerm, storeTerm, mkVar, mkAbs, mkApp, isAbs } from './LambdaTerm';
-import { freeVariables } from './FreeVariables';
+import { loadTerm, storeTerm, mkVar, mkAbs, mkApp, isAbs } from './LambdaTerm.js';
+import { freeVariables } from './FreeVariables.js';
 import { IO } from '../../monads/IO';
 import { Either } from '../../monads/Either';
 // ─────────────────────────────────────────────────────────────────────────────
