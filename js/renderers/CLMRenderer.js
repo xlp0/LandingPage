@@ -202,7 +202,7 @@ export class CLMRenderer extends BaseRenderer {
             <label class="clm-test-label" style="font-size: 12px; margin-right: 4px;">Test Case:</label>
             <select class="clm-test-select" style="padding: 4px; border-radius: 4px; border: 1px solid #ccc;">
               <option value="">Select test case...</option>
-              ${this.renderTestCaseOptions(parsed.verification)}
+              ${this.renderTestCaseOptions(parsed.verification || parsed.balanced)}
             </select>
           </div>
           <button onclick="window.clmRenderer.executeCLM(this)" class="clm-execute-btn" data-clm-content='${this.toBase64(JSON.stringify(parsed))}' data-clm-raw='${this.toBase64(content)}'>
@@ -491,7 +491,8 @@ export class CLMRenderer extends BaseRenderer {
       // Check if a test case is selected
       if (testSelector && testSelector.value !== '') {
         testIndex = parseInt(testSelector.value);
-        const testCases = clmContent.verification?.test_cases;
+        // Support both 'verification' and 'balanced' sections
+        const testCases = clmContent.verification?.test_cases || clmContent.balanced?.test_cases;
         if (testCases && testCases[testIndex]) {
           testCase = testCases[testIndex];
           // Support both 'arguments' and 'context' fields

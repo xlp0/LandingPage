@@ -1,7 +1,6 @@
 # Simple Math - 1 + 1 = 2
 #
-# Demonstrates simple arithmetic using Church numerals and
-# the new church-to-int operation for human-readable output.
+# Demonstrates simple arithmetic using Church numerals and lambda calculus
 
 version: '1.1'
 
@@ -12,39 +11,36 @@ chapter:
   pkc_task: 'Perform Simple Addition'
 
 clm:
-  abstract_spec:
-    context: "Arithmetic is fundamental."
-    goal: "Calculate 1 + 1."
-    success_criteria: "Result equals 2."
-
-  concrete_impl:
-    runtime: lambda
-    process: church-to-int
-    io_effects:
-      enabled: true
-      console: true
-      format: minimal
+  abstract:
+    concept: "Church Numeral Addition"
     description: |
-      1 + 1 = 2
-      
-      Using Church numerals:
-      ONE = λf.λx.f x
-      PLUS = λm.λn.λf.λx.m f (n f x)
+      Calculate 1 + 1 using Church numerals in lambda calculus.
+      Church numerals: 0 = λf.λx.x, 1 = λf.λx.f x, 2 = λf.λx.f (f x)
+      Addition: PLUS = λm.λn.λf.λx.m f (n f x)
 
-  balanced_exp:
-    expectation: "1 + 1 equals 2."
+  concrete:
+    manifestation: "Lambda Calculus Runtime"
+    description: "Evaluates Church numeral expressions using beta reduction"
+    runtime: lambda
+    operation: normalize
+    strategy: normal
+    maxSteps: 1000
+    code: "(\\m.\\n.\\f.\\x.m f (n f x)) (\\f.\\x.f x) (\\f.\\x.f x)"
+
+  balanced:
+    expectation: "1 + 1 reduces to Church numeral 2"
+    description: |
+      The expression PLUS 1 1 should normalize to λf.λx.f (f x) which is Church numeral 2.
     test_cases:
-      - given: "1 + 1"
+      - given: "1 + 1 using Church numerals"
         when:
           arguments:
-            # PLUS 1 1
             expression: "(\\m.\\n.\\f.\\x.m f (n f x)) (\\f.\\x.f x) (\\f.\\x.f x)"
         then:
-          result_contains: "2 (Church:"
-
-examples:
-  - name: "1 + 1 = 2"
-    description: "Simple addition"
-    input:
-      expression: "(\\m.\\n.\\f.\\x.m f (n f x)) (\\f.\\x.f x) (\\f.\\x.f x)"
-    result_contains: "2 (Church:"
+          result_contains: "\\f.\\x.f (f x)"
+      - given: "2 + 3 using Church numerals"
+        when:
+          arguments:
+            expression: "(\\m.\\n.\\f.\\x.m f (n f x)) (\\f.\\x.f (f x)) (\\f.\\x.f (f (f x)))"
+        then:
+          result_contains: "\\f.\\x.f (f (f (f (f x))))"
