@@ -22,7 +22,8 @@ const APP_SHELL_ASSETS = [
   '/public/js/mcard/MCardManager.js',
   '/public/js/mcard/UIComponents.js',
   '/public/js/renderers/MarkdownRenderer.js',
-  '/public/js/renderers/ImageRenderer.js',
+  '/public/vendor/lucide/lucide.min.js',
+  '/public/vendor/js-yaml.min.js',
   '/public/js/performance-monitor.js'
 ];
 

@@ -27,7 +27,8 @@ const APP_SHELL_ASSETS = [
   '/js/vendor/mcard-js.bundle.js',
   '/public/js/vendor/mcard-js.bundle.js',
   '/vendor/lucide/lucide.min.js',
-  '/public/vendor/lucide/lucide.min.js'
+  '/public/vendor/lucide/lucide.min.js',
+  '/public/vendor/js-yaml.min.js',
 ];
 
 // CDN resources (cache-first, long expiry)

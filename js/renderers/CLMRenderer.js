@@ -40,57 +40,57 @@ export class CLMRenderer {
   }
 
   /**
-   * Parse YAML-like content into structured data
+   * Parse YAML content into structured data using js-yaml library
+   * ✅ Replaced custom parser with proper YAML library
    */
   parseYAML(content) {
     try {
-      const lines = content.split('\n');
-      const result = {
-        specification: {},
-        implementation: {},
-        verification: {},
-        metadata: {}
-      };
-
-      let currentSection = null;
-      let currentSubsection = null;
-      let indentLevel = 0;
-
-      for (const line of lines) {
-        const trimmed = line.trim();
-
-        // Skip comments and empty lines
-        if (trimmed.startsWith('#') || trimmed === '') continue;
-
-        // Detect main sections
-        if (trimmed.startsWith('specification:')) {
-          currentSection = 'specification';
-          continue;
-        } else if (trimmed.startsWith('implementation:')) {
-          currentSection = 'implementation';
-          continue;
-        } else if (trimmed.startsWith('verification:')) {
-          currentSection = 'verification';
-          continue;
-        } else if (trimmed.startsWith('metadata:')) {
-          currentSection = 'metadata';
-          continue;
-        }
-
-        // Parse key-value pairs
-        if (trimmed.includes(':') && currentSection) {
-          const [key, ...valueParts] = trimmed.split(':');
-          const value = valueParts.join(':').trim();
-
-          if (!result[currentSection][key]) {
-            result[currentSection][key] = value || {};
-          }
-        }
+      // Use js-yaml library (loaded globally via script tag)
+      if (typeof jsyaml === 'undefined') {
+        console.error('[CLM] js-yaml library not loaded');
+        return null;
       }
 
-      return result;
+      const parsed = jsyaml.load(content);
+
+      // Ensure CLM structure exists
+      if (!parsed || typeof parsed !== 'object') {
+        console.error('[CLM] Invalid YAML structure');
+        return null;
+      }
+
+      // Normalize structure to ensure all sections exist
+      return {
+        specification: parsed.specification || {},
+        implementation: parsed.implementation || {},
+        verification: parsed.verification || parsed.balanced || {},
+        metadata: parsed.metadata || {}
+      };
     } catch (error) {
-      console.error('[CLM] Error parsing YAML:', error);
+      console.error('[CLM] YAML parsing error:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Serialize data back to YAML format
+   * ✅ New method for editing support
+   */
+  serializeYAML(data) {
+    try {
+      if (typeof jsyaml === 'undefined') {
+        console.error('[CLM] js-yaml library not loaded');
+        return null;
+      }
+
+      return jsyaml.dump(data, {
+        indent: 2,
+        lineWidth: 80,
+        noRefs: true,
+        sortKeys: false
+      });
+    } catch (error) {
+      console.error('[CLM] YAML serialization error:', error);
       return null;
     }
   }
