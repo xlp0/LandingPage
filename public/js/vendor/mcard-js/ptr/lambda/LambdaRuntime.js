@@ -10,11 +10,11 @@
  * @module mcard-js/ptr/lambda/LambdaRuntime
  */
 // Import conversions
-import { alphaRename, alphaEquivalent, alphaNormalize } from './AlphaConversion';
-import { betaReduce, normalize, reduceStep, isNormalForm } from './BetaReduction';
-import { etaReduce, etaExpand, etaNormalize, etaEquivalent } from './EtaConversion';
-import { freeVariables, isClosed } from './FreeVariables';
-import { storeTerm, mkVar, mkAbs, mkApp, prettyPrintDeep } from './LambdaTerm';
+import { alphaRename, alphaEquivalent, alphaNormalize } from './AlphaConversion.js';
+import { betaReduce, normalize, reduceStep, isNormalForm } from './BetaReduction.js';
+import { etaReduce, etaExpand, etaNormalize, etaEquivalent } from './EtaConversion.js';
+import { freeVariables, isClosed } from './FreeVariables.js';
+import { storeTerm, mkVar, mkAbs, mkApp, prettyPrintDeep } from './LambdaTerm.js';
 // ─────────────────────────────────────────────────────────────────────────────
 // Lambda Runtime Class
 // ─────────────────────────────────────────────────────────────────────────────
