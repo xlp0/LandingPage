@@ -1,0 +1,35 @@
+/* Common renderer styles */
+.rendered-content {
+    padding: 20px;
+    background: #1e1e1e;
+    color: #cccccc;
+    overflow-y: auto;
+    height: 100%;
+}
+
+/* Scrollbar styling */
+.rendered-content::-webkit-scrollbar,
+.pdf-pages::-webkit-scrollbar,
+.text-body::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.rendered-content::-webkit-scrollbar-track,
+.pdf-pages::-webkit-scrollbar-track,
+.text-body::-webkit-scrollbar-track {
+    background: #1e1e1e;
+}
+
+.rendered-content::-webkit-scrollbar-thumb,
+.pdf-pages::-webkit-scrollbar-thumb,
+.text-body::-webkit-scrollbar-thumb {
+    background: #3e3e42;
+    border-radius: 5px;
+}
+
+.rendered-content::-webkit-scrollbar-thumb:hover,
+.pdf-pages::-webkit-scrollbar-thumb:hover,
+.text-body::-webkit-scrollbar-thumb:hover {
+    background: #4e4e52;
+}

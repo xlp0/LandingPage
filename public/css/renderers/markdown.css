@@ -1,0 +1,170 @@
+/* Markdown Content */
+.markdown-content {
+    padding: 20px;
+    line-height: 1.6;
+    font-size: 14px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Mermaid Diagrams */
+.mermaid-diagram {
+    background: #1e1e1e;
+    border: 1px solid #3e3e42;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    overflow-x: auto;
+    text-align: center;
+}
+
+.mermaid-diagram svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.markdown-content h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin: 24px 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #3e3e42;
+    color: #ffffff;
+}
+
+.markdown-content h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 20px 0 12px 0;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #3e3e42;
+    color: #ffffff;
+}
+
+.markdown-content h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 16px 0 8px 0;
+    color: #ffffff;
+}
+
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 12px 0 8px 0;
+    color: #cccccc;
+}
+
+.markdown-content p {
+    margin: 12px 0;
+    color: #cccccc;
+}
+
+.markdown-content a {
+    color: #007acc;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.markdown-content a:hover {
+    color: #4fc3f7;
+    text-decoration: underline;
+}
+
+/* MCard Handles */
+.mcard-handle {
+    color: #4fc3f7;
+    text-decoration: none;
+    padding: 2px 6px;
+    background: #2d2d30;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    transition: all 0.15s;
+    cursor: pointer;
+}
+
+.mcard-handle:hover {
+    background: #007acc;
+    color: white;
+    text-decoration: none;
+}
+
+.markdown-content code {
+    background: #2d2d30;
+    color: #4fc3f7;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}
+
+.markdown-content pre {
+    background: #2d2d30;
+    border: 1px solid #3e3e42;
+    border-radius: 6px;
+    padding: 16px;
+    overflow-x: auto;
+    margin: 16px 0;
+}
+
+.markdown-content pre code {
+    background: none;
+    padding: 0;
+    color: #cccccc;
+}
+
+.markdown-content blockquote {
+    border-left: 4px solid #007acc;
+    margin: 16px 0;
+    padding: 8px 16px;
+    background: #2d2d30;
+    color: #cccccc;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+    margin: 12px 0;
+    padding-left: 24px;
+}
+
+.markdown-content li {
+    margin: 6px 0;
+}
+
+.markdown-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+}
+
+.markdown-content th,
+.markdown-content td {
+    border: 1px solid #3e3e42;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.markdown-content th {
+    background: #2d2d30;
+    font-weight: 600;
+}
+
+.markdown-content tr:nth-child(even) {
+    background: #252526;
+}
+
+.markdown-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 16px 0;
+}
+
+.markdown-content hr {
+    border: none;
+    border-top: 1px solid #3e3e42;
+    margin: 24px 0;
+}

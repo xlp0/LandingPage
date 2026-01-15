@@ -1,0 +1,46 @@
+/* Code Syntax Highlighting (from highlight.js) */
+.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 0.5em;
+    background: #2d2d30;
+    color: #cccccc;
+}
+
+.hljs-comment,
+.hljs-quote {
+    color: #6a9955;
+    font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-type {
+    color: #569cd6;
+}
+
+.hljs-string,
+.hljs-title {
+    color: #ce9178;
+}
+
+.hljs-number {
+    color: #b5cea8;
+}
+
+.hljs-function,
+.hljs-params {
+    color: #dcdcaa;
+}
+
+.hljs-variable,
+.hljs-template-variable {
+    color: #9cdcfe;
+}
+
+.hljs-tag,
+.hljs-name,
+.hljs-attribute {
+    color: #4ec9b0;
+}
