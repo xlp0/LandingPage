@@ -130,18 +130,24 @@ export class BrowserCLMRunner {
       const clm = this.parseCLM(yamlContent);
       const config = clm.clm?.concrete || {};
       
+      console.log('[BrowserCLMRunner] Config:', config);
+      console.log('[BrowserCLMRunner] Runtime:', config.runtime);
+      
       // Handle lambda runtime
       if (config.runtime === 'lambda') {
+        console.log('[BrowserCLMRunner] Detected lambda runtime, using executeLambda');
         return await this.executeLambda(clm, config, input, startTime);
       }
       
       // Handle regular JavaScript runtime
+      console.log('[BrowserCLMRunner] Using regular JavaScript execution');
       const code = config.code || this.getOperationCode(config);
       
       if (!code) {
         throw new Error('No executable code found in CLM');
       }
       
+      console.log('[BrowserCLMRunner] Executing code:', code.substring(0, 100));
       const result = await this.executeCode(code, input);
       
       return {
@@ -151,6 +157,7 @@ export class BrowserCLMRunner {
         clm: { chapter: clm.chapter?.title || 'CLM', concept: clm.clm?.abstract?.concept || 'Unknown' }
       };
     } catch (error) {
+      console.error('[BrowserCLMRunner] Execution error:', error);
       return { success: false, error: error.message, executionTime: Date.now() - startTime };
     }
   }
