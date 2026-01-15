@@ -200,18 +200,14 @@ export class CLMRenderer extends BaseRenderer {
           </div>
           <div class="clm-test-selector" style="display: inline-block; margin-right: 10px;">
             <label class="clm-test-label" style="font-size: 12px; margin-right: 4px;">Test Case:</label>
-            <select class="clm-test-select" style="padding: 4px; border-radius: 4px; border: 1px solid #ccc;">
+            <select class="clm-test-select" onchange="window.clmRenderer.updateExecuteButton(this)" style="padding: 4px; border-radius: 4px; border: 1px solid #ccc;">
               <option value="">Select test case...</option>
               ${this.renderTestCaseOptions(parsed.verification || parsed.balanced)}
             </select>
           </div>
-          <button onclick="window.clmRenderer.executeCLM(this)" class="clm-execute-btn" data-clm-content='${this.toBase64(JSON.stringify(parsed))}' data-clm-raw='${this.toBase64(content)}'>
+          <button onclick="window.clmRenderer.executeOrTest(this)" class="clm-execute-btn" data-clm-content='${this.toBase64(JSON.stringify(parsed))}' data-clm-raw='${this.toBase64(content)}'>
             <i data-lucide="play" style="width: 16px; height: 16px;"></i>
-            Execute CLM
-          </button>
-          <button onclick="window.clmRenderer.runTests(this)" class="clm-test-btn" data-clm-content='${this.toBase64(JSON.stringify(parsed))}' data-clm-raw='${this.toBase64(content)}'>
-            <i data-lucide="check-square" style="width: 16px; height: 16px;"></i>
-            Run Tests
+            <span class="clm-execute-label">Run All Tests</span>
           </button>
         </div>
 
@@ -479,7 +475,14 @@ export class CLMRenderer extends BaseRenderer {
     try {
       // Determine runner based on mode
       const mode = executionModeManager.getMode();
-      const runnerType = await executionModeManager.resolveRunner();
+      let runnerType = await executionModeManager.resolveRunner();
+      
+      // Force browser execution for lambda runtime (server doesn't support it)
+      if (clmContent.concrete?.runtime === 'lambda') {
+        runnerType = 'browser';
+        console.log(`[CLM] Lambda runtime detected - forcing browser execution`);
+      }
+      
       const activeRunner = runnerType === 'server' ? this.serverRunner : this.runner;
       
       console.log(`[CLM] Executing in mode: ${mode} (Resolved: ${runnerType})`);
@@ -736,6 +739,46 @@ export class CLMRenderer extends BaseRenderer {
       if (window.lucide) {
         lucide.createIcons();
       }
+    }
+  }
+
+  /**
+   * Update execute button label based on test selection
+   */
+  updateExecuteButton(selectElement) {
+    const button = selectElement.closest('.clm-execution-controls').querySelector('.clm-execute-btn');
+    const label = button.querySelector('.clm-execute-label');
+    const icon = button.querySelector('i');
+    
+    if (selectElement.value === '') {
+      // No test selected - show "Run All Tests"
+      label.textContent = 'Run All Tests';
+      icon.setAttribute('data-lucide', 'check-square');
+    } else {
+      // Test selected - show "Execute Test X"
+      const testIndex = parseInt(selectElement.value) + 1;
+      label.textContent = `Execute Test ${testIndex}`;
+      icon.setAttribute('data-lucide', 'play');
+    }
+    
+    // Re-initialize Lucide icons
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  }
+
+  /**
+   * Execute single test or run all tests based on selection
+   */
+  async executeOrTest(button) {
+    const testSelector = button.closest('.clm-container').querySelector('.clm-test-select');
+    
+    if (testSelector && testSelector.value !== '') {
+      // A test is selected - execute single test
+      await this.executeCLM(button);
+    } else {
+      // No test selected - run all tests
+      await this.runTests(button);
     }
   }
 
