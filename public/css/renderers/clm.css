@@ -509,3 +509,45 @@
     margin-top: 8px;
     font-family: 'Courier New', monospace;
 }
+/* Raw YAML Toggle */
+.clm-raw-toggle {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px dashed #3e3e42;
+    display: flex;
+    flex-direction: column;
+}
+
+.clm-toggle-btn {
+    align-self: flex-start;
+    background: transparent;
+    border: 1px solid #3e3e42;
+    color: #888;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.clm-toggle-btn:hover {
+    background: #2d2d30;
+    color: #e0e0e0;
+    border-color: #555;
+}
+
+.clm-raw-yaml {
+    margin-top: 12px;
+    background: #1e1e1e;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #3e3e42;
+    color: #d4d4d4;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    white-space: pre;
+}
