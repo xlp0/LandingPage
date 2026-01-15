@@ -11,8 +11,9 @@
 
 import * as yaml from '../vendor/yaml.esm.js';
 import { SandboxWorker } from '../vendor/mcard-js/ptr/SandboxWorker.js';
-import { LambdaRuntime } from '../vendor/mcard-js/ptr/lambda/LambdaRuntime.js';
-import { CardCollection } from '../vendor/mcard-js/model/CardCollection.js';
+// Temporarily disabled to debug MCard loading issue
+// import { LambdaRuntime } from '../vendor/mcard-js/ptr/lambda/LambdaRuntime.js';
+// import { CardCollection } from '../vendor/mcard-js/model/CardCollection.js';
 
 // Operation code templates for standard CLM operations
 const OPERATION_CODE = {
@@ -135,8 +136,9 @@ export class BrowserCLMRunner {
       
       // Handle lambda runtime
       if (config.runtime === 'lambda') {
-        console.log('[BrowserCLMRunner] Detected lambda runtime, using executeLambda');
-        return await this.executeLambda(clm, config, input, startTime);
+        console.log('[BrowserCLMRunner] Lambda runtime temporarily disabled for debugging');
+        throw new Error('Lambda runtime temporarily disabled - debugging MCard loading issue');
+        // return await this.executeLambda(clm, config, input, startTime);
       }
       
       // Handle regular JavaScript runtime
