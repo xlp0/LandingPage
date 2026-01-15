@@ -188,38 +188,30 @@ The project includes a high-performance 3D visualization engine for viewing comp
 
 ```
 ├── README.md                          # This file
-├── index.html                         # Landing page with P2P demo link
+├── index.html                         # Modularized Landing Page
 ├── js/
 │   ├── pkc-core.js                    # Module loader runtime
+│   ├── execution/                     # 🆕 Execution Management
+│   │   └── ExecutionModeManager.js    # Hybrid execution toggle logic
+│   ├── renderers/
+│   │   ├── CLMRenderer.js             # CLM Visualization & Execution UI
+│   │   └── ServerCLMRunner.js         # Remote execution client
 │   └── modules/
 │       ├── markdown-renderer/         # Documentation viewer module
 │       ├── net-gateway/               # WebSocket demo module
-│       └── p2p-serverless/            # 🆕 Serverless P2P module
-│           ├── index.js              (500 lines) - Main P2P interface
-│           ├── connection.js         (400 lines) - WebRTC connection manager
-│           ├── discovery.js          (300 lines) - Peer discovery system
-│           ├── qr-code.js            (200 lines) - QR code utilities
-│           ├── example.html          (300 lines) - Full P2P test interface
-│           ├── debug-test.html       (250 lines) - Diagnostic tools
-│           └── README.md             (500 lines) - P2P API documentation
+│       └── p2p-serverless/            # Serverless P2P module
 ├── public/
-│   ├── examples/games/                # 🎮 Game examples (React/JSX)
-│   │   ├── UbudRiceTerraces.jsx      # Bali Adventure source code
-│   │   └── play_ubud.html            # Playable game wrapper
-│   ├── examples/Music/                # 🎵 Music notation visualizers
-│   │   ├── ABCMusic.html             # ABC.js notation renderer
-│   │   ├── OSMD.html                 # OpenSheetMusicDisplay player
-│   │   ├── VexMusic.html             # VexFlow renderer
-│   │   ├── SyncedMusicVisualizerV5.html # 🆕 V5 with Universal File Loader & E2E tests
-│   │   ├── SyncedMusicVisualizer.html # Synchronized sheet + waveform
-│   │   └── *.musicxml                # MusicXML score files
-│   ├── examples/WaveVisualizers/     # 🌊 Audio waveform analysis
-│   │   └── WaveFormVisualizer.html   # Waveform analyzer with library
-│   ├── examples/3DGames/              # 🎮 3D interactive visualizations
-│   │   └── MorphismCube/             # Category theory morphism cube
-│   └── js/mcard/                      # MCard Management System
-│       ├── MCardManager.js            # Core logic (via mcard-js)
-│       └── BrowserContentTypeDetector.js # Hybrid content type detection
+│   ├── js/                            # 🆕 Modular App Scripts
+│   │   ├── app-bootstrap.js           # Main application entry
+│   │   ├── pwa-init.js                # PWA, Service Worker & View Toggles
+│   │   ├── ui-inline-handlers.js      # Sidebar & Search UI Logic
+│   │   ├── env-shim.js                # Process.env polyfill
+│   │   ├── importmap-init.js          # Dynamic Import Map generator
+│   │   └── mcard/                     # MCard Core System
+│   │       ├── MCardManager.js        # Core logic (via mcard-js)
+│   │       ├── BrowserCLMRunner.js    # Local Pyodide runner
+│   │       └── ...
+│   ├── examples/                      # Interactive Demos
 ├── docs/                              # 📚 Comprehensive documentation
 │   ├── architecture-serverless-p2p.md    # P2P system architecture
 │   ├── p2p-serverless-implementation.md  # Implementation details
