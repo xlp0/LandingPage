@@ -7,12 +7,15 @@
 
 import { BaseRenderer } from './BaseRenderer.js';
 import { BrowserCLMRunner } from '/public/js/mcard/BrowserCLMRunner.js?v=2';
+import { executionModeManager } from '/js/execution/ExecutionModeManager.js';
+import { ServerCLMRunner } from './ServerCLMRunner.js';
 
 export class CLMRenderer extends BaseRenderer {
   constructor() {
     super('clm');
     this.name = 'CLM Renderer';
     this.runner = new BrowserCLMRunner();
+    this.serverRunner = new ServerCLMRunner();
   }
 
   /**
@@ -187,6 +190,14 @@ export class CLMRenderer extends BaseRenderer {
 
         <!-- Execution Controls -->
         <div class="clm-execution-controls">
+          <div class="clm-mode-selector" style="display: inline-block; margin-right: 10px;">
+            <label class="clm-mode-label" style="font-size: 12px; margin-right: 4px;">Mode:</label>
+            <select class="clm-mode-select" onchange="window.clmRenderer.changeMode(this.value)" style="padding: 4px; border-radius: 4px; border: 1px solid #ccc;">
+              <option value="auto" ${executionModeManager.getMode() === 'auto' ? 'selected' : ''}>Auto</option>
+              <option value="browser" ${executionModeManager.getMode() === 'browser' ? 'selected' : ''}>Browser (Local)</option>
+              <option value="server" ${executionModeManager.getMode() === 'server' ? 'selected' : ''}>Server (Remote)</option>
+            </select>
+          </div>
           <button onclick="window.clmRenderer.executeCLM(this)" class="clm-execute-btn" data-clm-content='${this.toBase64(JSON.stringify(parsed))}' data-clm-raw='${this.toBase64(content)}'>
             <i data-lucide="play" style="width: 16px; height: 16px;"></i>
             Execute CLM
@@ -425,7 +436,7 @@ export class CLMRenderer extends BaseRenderer {
 
   /**
    * Execute CLM with user input
-   * ✅ Uses BrowserCLMRunner (library's CLMRunner not exported)
+   * ✅ Uses BrowserCLMRunner or ServerCLMRunner based on selected mode
    */
   async executeCLM(button) {
     const rawContent = atob(button.dataset.clmRaw);
@@ -437,6 +448,13 @@ export class CLMRenderer extends BaseRenderer {
     resultsContent.innerHTML = '<div class="clm-loading">Executing...</div>';
 
     try {
+      // Determine runner based on mode
+      const mode = executionModeManager.getMode();
+      const runnerType = await executionModeManager.resolveRunner();
+      const activeRunner = runnerType === 'server' ? this.serverRunner : this.runner;
+      
+      console.log(`[CLM] Executing in mode: ${mode} (Resolved: ${runnerType})`);
+
       // Get input from user (simple prompt for now)
       const inputStr = prompt('Enter input (JSON format):', '{}');
       if (inputStr === null) {
@@ -446,25 +464,25 @@ export class CLMRenderer extends BaseRenderer {
 
       const input = JSON.parse(inputStr);
 
-      // Execute using BrowserCLMRunner
-      const result = await this.runner.execute(rawContent, input);
+      // Execute using active runner
+      const result = await activeRunner.execute(rawContent, input);
 
       if (result.success) {
         resultsContent.innerHTML = `
           <div class="clm-result-success">
             <div class="clm-result-header">
               <i data-lucide="check-circle" style="width: 20px; height: 20px; color: #4ade80;"></i>
-              <span>Execution Successful</span>
+              <span>Execution Successful (${runnerType})</span>
             </div>
             <div class="clm-result-details">
               <div class="clm-result-item">
                 <strong>Execution Time:</strong> ${result.executionTime}ms
               </div>
               <div class="clm-result-item">
-                <strong>Chapter:</strong> ${result.clm.chapter}
+                <strong>Chapter:</strong> ${result.clm?.chapter || 'N/A'}
               </div>
               <div class="clm-result-item">
-                <strong>Concept:</strong> ${result.clm.concept}
+                <strong>Concept:</strong> ${result.clm?.concept || 'N/A'}
               </div>
               <div class="clm-result-item">
                 <strong>Result:</strong>
@@ -478,7 +496,7 @@ export class CLMRenderer extends BaseRenderer {
           <div class="clm-result-error">
             <div class="clm-result-header">
               <i data-lucide="x-circle" style="width: 20px; height: 20px; color: #f87171;"></i>
-              <span>Execution Failed</span>
+              <span>Execution Failed (${runnerType})</span>
             </div>
             <div class="clm-result-details">
               <div class="clm-result-item">
@@ -683,6 +701,13 @@ export class CLMRenderer extends BaseRenderer {
     }
 
     return tests;
+  }
+
+  /**
+   * Handle mode change from UI
+   */
+  changeMode(newMode) {
+    executionModeManager.setMode(newMode);
   }
 }
 
