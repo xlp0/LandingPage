@@ -9,7 +9,7 @@ import { MarkdownRenderer } from './MarkdownRenderer.js';
 import { ImageRenderer } from './ImageRenderer.js';
 import { TextRenderer } from './TextRenderer.js';
 import { PDFRenderer } from './PDFRenderer.js';
-import { CLMRenderer } from './CLMRenderer.js?v=unicode_fix';
+import { CLMRenderer } from './CLMRenderer.js?v=2';
 import { LatexRenderer } from './LatexRenderer.js';
 import { AudioRenderer } from './AudioRenderer.js';
 import { VideoRenderer } from './VideoRenderer.js';

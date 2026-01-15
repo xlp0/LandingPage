@@ -11,7 +11,7 @@ import { ContentTypeDetector } from './BrowserContentTypeDetector.js?v=10';
 import { UIComponents } from './UIComponents.js';
 import store from '../../../js/redux/store.js';
 import { renderContent, extractHandles } from '../../../js/redux/slices/content-renderer-slice.js';
-import rendererRegistry from '../../../js/renderers/RendererRegistry.js?v=unicode_fix';
+import rendererRegistry from '../../../js/renderers/RendererRegistry.js?v=3';
 
 export class CardViewer {
   constructor() {

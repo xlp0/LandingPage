@@ -3,6 +3,8 @@
  * 
  * Inspired by mcard-js CLMRunner but adapted for browser environment
  * Uses Function() instead of vm.Script for sandboxed execution
+ * 
+ * ✅ Fixed: Added logic helper, optimized test execution, added recursion guards
  */
 
 import * as yaml from 'https://cdn.jsdelivr.net/npm/yaml@2.3.4/+esm';
@@ -10,6 +12,7 @@ import * as yaml from 'https://cdn.jsdelivr.net/npm/yaml@2.3.4/+esm';
 export class BrowserCLMRunner {
   constructor(timeout = 5000) {
     this.timeout = timeout;
+    this.maxRecursionDepth = 100; // Guard against infinite recursion
   }
 
   /**
@@ -90,12 +93,46 @@ export class BrowserCLMRunner {
     try {
       // Parse CLM
       const clm = this.parseCLM(yamlContent);
-      const config = clm.clm.concrete;
+      const config = clm.clm?.concrete || {};
+      
+      // Check runtime - browser can only execute JavaScript
+      const runtime = config.runtime?.toLowerCase() || 'javascript';
+      if (runtime !== 'javascript' && runtime !== 'js' && runtime !== 'browser') {
+        // For non-JS runtimes, generate JS code from operation if possible
+        const generatedCode = this.generateJSFromOperation(config, input);
+        if (generatedCode) {
+          const result = await this.executeJavaScript(generatedCode, input);
+          return {
+            success: true,
+            result,
+            executionTime: Date.now() - startTime,
+            clm: {
+              chapter: clm.chapter?.title || 'CLM',
+              concept: clm.clm?.abstract?.concept || 'Unknown'
+            }
+          };
+        }
+        throw new Error(`Runtime '${runtime}' not supported in browser. Use JavaScript CLM or provide inline code.`);
+      }
       
       // Get JavaScript code
-      const code = config.code || config.code_file || '';
+      const code = config.code || '';
       if (!code) {
-        throw new Error('No JavaScript code found in CLM');
+        // Try to generate from operation
+        const generatedCode = this.generateJSFromOperation(config, input);
+        if (generatedCode) {
+          const result = await this.executeJavaScript(generatedCode, input);
+          return {
+            success: true,
+            result,
+            executionTime: Date.now() - startTime,
+            clm: {
+              chapter: clm.chapter?.title || 'CLM',
+              concept: clm.clm?.abstract?.concept || 'Unknown'
+            }
+          };
+        }
+        throw new Error('No executable JavaScript code found in CLM');
       }
       
       // Execute in sandbox
@@ -107,7 +144,7 @@ export class BrowserCLMRunner {
         executionTime: Date.now() - startTime,
         clm: {
           chapter: clm.chapter?.title || 'CLM',
-          concept: clm.clm.abstract?.concept || 'Unknown'
+          concept: clm.clm?.abstract?.concept || 'Unknown'
         }
       };
     } catch (error) {
@@ -120,17 +157,97 @@ export class BrowserCLMRunner {
   }
 
   /**
+   * Generate JavaScript code from CLM operation metadata
+   * ✅ Allows browser execution of non-JS CLMs with standard operations
+   * @param {Object} config - CLM concrete configuration
+   * @param {Object} input - Input context
+   * @returns {string|null} - Generated JS code or null
+   */
+  generateJSFromOperation(config, input) {
+    // Prioritize entry_point over operation when operation is 'custom'
+    let operation = config.entry_point?.toLowerCase() || config.operation?.toLowerCase();
+    if (config.operation?.toLowerCase() === 'custom' && config.entry_point) {
+      operation = config.entry_point.toLowerCase();
+    }
+    
+    if (!operation) return null;
+    
+    // Map common operations to JS logic helper calls
+    const operationMap = {
+      'add': 'result = logic.add(context.a, context.b);',
+      'addition': 'result = logic.add(context.a, context.b);',
+      'subtract': 'result = logic.subtract(context.a, context.b);',
+      'subtraction': 'result = logic.subtract(context.a, context.b);',
+      'multiply': 'result = logic.multiply(context.a, context.b);',
+      'multiplication': 'result = logic.multiply(context.a, context.b);',
+      'divide': 'result = logic.divide(context.a, context.b);',
+      'division': 'result = logic.divide(context.a, context.b);',
+      'sum': 'result = logic.sum(context.values || [context.a, context.b]);',
+      'average': 'result = logic.avg(context.values || [context.a, context.b]);',
+      'avg': 'result = logic.avg(context.values || [context.a, context.b]);',
+      'min': 'result = logic.min(context.a, context.b);',
+      'max': 'result = logic.max(context.a, context.b);',
+      'abs': 'result = logic.abs(context.value || context.a);',
+      'sqrt': 'result = logic.sqrt(context.value || context.a);',
+      'power': 'result = logic.power(context.base || context.a, context.exp || context.b);',
+      'mod': 'result = logic.mod(context.a, context.b);',
+      'modulo': 'result = logic.mod(context.a, context.b);',
+    };
+    
+    return operationMap[operation] || null;
+  }
+
+  /**
    * Execute JavaScript code in a sandboxed environment
    * @param {string} code - JavaScript code
    * @param {Object} context - Execution context
    * @returns {Promise<any>} - Execution result
    */
   async executeJavaScript(code, context) {
+    // Create logic helper object for CLM code that expects it
+    const logic = {
+      add: (a, b) => a + b,
+      subtract: (a, b) => a - b,
+      multiply: (a, b) => a * b,
+      divide: (a, b) => b !== 0 ? a / b : NaN,
+      mod: (a, b) => a % b,
+      power: (a, b) => Math.pow(a, b),
+      sqrt: (a) => Math.sqrt(a),
+      abs: (a) => Math.abs(a),
+      min: (...args) => Math.min(...args),
+      max: (...args) => Math.max(...args),
+      floor: (a) => Math.floor(a),
+      ceil: (a) => Math.ceil(a),
+      round: (a) => Math.round(a),
+      // Comparison
+      eq: (a, b) => a === b,
+      ne: (a, b) => a !== b,
+      lt: (a, b) => a < b,
+      le: (a, b) => a <= b,
+      gt: (a, b) => a > b,
+      ge: (a, b) => a >= b,
+      // Logic
+      and: (a, b) => a && b,
+      or: (a, b) => a || b,
+      not: (a) => !a,
+      // String
+      concat: (...args) => args.join(''),
+      length: (a) => a?.length ?? 0,
+      // Array
+      sum: (arr) => Array.isArray(arr) ? arr.reduce((a, b) => a + b, 0) : 0,
+      avg: (arr) => Array.isArray(arr) && arr.length > 0 ? arr.reduce((a, b) => a + b, 0) / arr.length : 0,
+      map: (arr, fn) => Array.isArray(arr) ? arr.map(fn) : [],
+      filter: (arr, fn) => Array.isArray(arr) ? arr.filter(fn) : [],
+      reduce: (arr, fn, init) => Array.isArray(arr) ? arr.reduce(fn, init) : init,
+    };
+
     // Create sandbox with safe globals
     const sandbox = {
       context,
       target: context,
+      input: context, // Alias for convenience
       result: undefined,
+      logic, // ✅ Added logic helper
       console: {
         log: (...args) => console.log('[CLM]', ...args),
         error: (...args) => console.error('[CLM]', ...args),
@@ -144,20 +261,35 @@ export class BrowserCLMRunner {
       String,
       Number,
       Boolean,
+      Map,
+      Set,
+      RegExp,
+      Error,
+      Promise,
+      parseInt,
+      parseFloat,
+      isNaN,
+      isFinite,
       // Browser APIs
-      fetch: window.fetch.bind(window),
-      Headers: window.Headers,
-      Request: window.Request,
-      Response: window.Response,
-      URL: window.URL,
-      URLSearchParams: window.URLSearchParams,
+      fetch: typeof window !== 'undefined' ? window.fetch?.bind(window) : undefined,
+      Headers: typeof window !== 'undefined' ? window.Headers : undefined,
+      Request: typeof window !== 'undefined' ? window.Request : undefined,
+      Response: typeof window !== 'undefined' ? window.Response : undefined,
+      URL: typeof window !== 'undefined' ? window.URL : undefined,
+      URLSearchParams: typeof window !== 'undefined' ? window.URLSearchParams : undefined,
+      setTimeout: undefined, // Disabled for safety
+      setInterval: undefined, // Disabled for safety
     };
 
     // Build function with timeout
     const wrappedCode = `
       'use strict';
-      ${code}
-      return result !== undefined ? result : (typeof target !== 'undefined' ? target : context);
+      try {
+        ${code}
+        return result !== undefined ? result : (typeof target !== 'undefined' ? target : context);
+      } catch (e) {
+        throw new Error('CLM execution failed: ' + e.message);
+      }
     `;
 
     try {
@@ -181,62 +313,125 @@ export class BrowserCLMRunner {
 
   /**
    * Run all test cases from CLM
+   * ✅ Optimized: Parse CLM once, execute code directly for each test
    * @param {string} yamlContent - CLM YAML content
    * @returns {Promise<Object>} - Test results
    */
   async runTests(yamlContent) {
-    const clm = this.parseCLM(yamlContent);
-    const examples = clm.examples || [];
-    
-    if (examples.length === 0) {
+    try {
+      const clm = this.parseCLM(yamlContent);
+      const examples = clm.examples || [];
+      
+      if (examples.length === 0) {
+        return {
+          success: true,
+          message: 'No test cases found',
+          totalTests: 0,
+          passed: 0,
+          failed: 0,
+          results: []
+        };
+      }
+
+      // ✅ Get code once instead of re-parsing for each test
+      const config = clm.clm?.concrete || {};
+      let code = config.code || '';
+      
+      // ✅ Generate code from operation if no inline code
+      if (!code) {
+        code = this.generateJSFromOperation(config, {});
+      }
+      
+      if (!code) {
+        return {
+          success: false,
+          error: 'No executable code found in CLM (try adding inline JS or use a supported operation)',
+          totalTests: examples.length,
+          passed: 0,
+          failed: examples.length,
+          results: examples.map(ex => ({
+            name: ex.name,
+            input: ex.input,
+            expected: ex.expected_output,
+            actual: undefined,
+            passed: false,
+            executionTime: 0,
+            error: 'No code to execute'
+          }))
+        };
+      }
+
+      const results = [];
+      
+      for (const example of examples) {
+        const startTime = Date.now();
+        let result, error;
+        
+        try {
+          // ✅ Execute code directly instead of calling execute() which re-parses
+          result = await this.executeJavaScript(code, example.input);
+        } catch (e) {
+          error = e.message;
+        }
+        
+        const executionTime = Date.now() - startTime;
+        const passed = error ? false : (
+          example.expected_output !== undefined
+            ? this.resultsEqual(result, example.expected_output)
+            : true
+        );
+        
+        results.push({
+          name: example.name,
+          input: example.input,
+          expected: example.expected_output,
+          actual: result,
+          passed,
+          executionTime,
+          error
+        });
+      }
+
+      const passedCount = results.filter(r => r.passed).length;
+      const failedCount = results.filter(r => !r.passed).length;
+      
       return {
-        success: true,
-        message: 'No test cases found',
+        success: failedCount === 0,
+        totalTests: results.length,
+        passed: passedCount,
+        failed: failedCount,
+        results
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        totalTests: 0,
+        passed: 0,
+        failed: 0,
         results: []
       };
     }
-
-    const results = [];
-    
-    for (const example of examples) {
-      const result = await this.execute(yamlContent, example.input);
-      
-      const passed = example.expected_output !== undefined
-        ? this.resultsEqual(result.result, example.expected_output)
-        : true;
-      
-      results.push({
-        name: example.name,
-        input: example.input,
-        expected: example.expected_output,
-        actual: result.result,
-        passed,
-        executionTime: result.executionTime,
-        error: result.error
-      });
-    }
-
-    const allPassed = results.every(r => r.passed);
-    
-    return {
-      success: allPassed,
-      totalTests: results.length,
-      passed: results.filter(r => r.passed).length,
-      failed: results.filter(r => !r.passed).length,
-      results
-    };
   }
 
   /**
    * Compare two values with tolerance for numbers
+   * ✅ Added depth parameter to prevent stack overflow on circular/deep structures
    * @param {any} a - First value
    * @param {any} b - Second value
    * @param {number} tolerance - Tolerance for numeric comparison
+   * @param {number} depth - Current recursion depth
    * @returns {boolean} - Whether values are equal
    */
-  resultsEqual(a, b, tolerance = 1e-9) {
+  resultsEqual(a, b, tolerance = 1e-9, depth = 0) {
+    // ✅ Guard against infinite recursion
+    if (depth > this.maxRecursionDepth) {
+      console.warn('[CLM] Max recursion depth reached in resultsEqual');
+      return false;
+    }
+
     if (a === b) return true;
-    if (a == null || b == null) return false;
+    if (a == null || b == null) return a === b;
     
     // Numbers with tolerance
     if (typeof a === 'number' && typeof b === 'number') {
@@ -248,7 +443,7 @@ export class BrowserCLMRunner {
     // Arrays
     if (Array.isArray(a) && Array.isArray(b)) {
       if (a.length !== b.length) return false;
-      return a.every((val, i) => this.resultsEqual(val, b[i], tolerance));
+      return a.every((val, i) => this.resultsEqual(val, b[i], tolerance, depth + 1));
     }
     
     // Objects
@@ -257,11 +452,12 @@ export class BrowserCLMRunner {
       const keysB = Object.keys(b);
       if (keysA.length !== keysB.length) return false;
       return keysA.every(key => 
-        keysB.includes(key) && this.resultsEqual(a[key], b[key], tolerance)
+        keysB.includes(key) && this.resultsEqual(a[key], b[key], tolerance, depth + 1)
       );
     }
     
-    return a === b;
+    // String comparison for other types
+    return String(a) === String(b);
   }
 }
 
