@@ -494,7 +494,8 @@ export class CLMRenderer extends BaseRenderer {
         const testCases = clmContent.verification?.test_cases;
         if (testCases && testCases[testIndex]) {
           testCase = testCases[testIndex];
-          input = testCase.when?.arguments || {};
+          // Support both 'arguments' and 'context' fields
+          input = testCase.when?.arguments || testCase.when?.context || {};
           console.log(`[CLM] Running test case ${testIndex + 1}:`, testCase.given);
         }
       }
@@ -515,8 +516,9 @@ export class CLMRenderer extends BaseRenderer {
       // Verify result if test case was selected
       let verificationPassed = null;
       let expectedResult = null;
-      if (testCase && testCase.then?.result_contains !== undefined) {
-        expectedResult = testCase.then.result_contains;
+      if (testCase && (testCase.then?.result_contains !== undefined || testCase.then?.result !== undefined)) {
+        // Support both 'result_contains' and 'result' fields
+        expectedResult = testCase.then.result_contains !== undefined ? testCase.then.result_contains : testCase.then.result;
         verificationPassed = JSON.stringify(result.result) === JSON.stringify(expectedResult);
       }
 
