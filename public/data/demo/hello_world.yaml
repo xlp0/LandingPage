@@ -14,25 +14,24 @@ chapter:
   pkc_task: 'First Step into Cubical Logic'
 
 clm:
-  abstract_spec:
-    context: "The simplest possible program."
-    goal: "Return the input unchanged while observing the process."
-    success_criteria: "Input matches Output."
+  abstract:
+    concept: "Identity Function"
+    description: |
+      The simplest possible program: λx.x
+      Returns the input unchanged while observing the process.
 
-  concrete_impl:
-    runtime: lambda
-    process: normalize
-    io_effects:
-      enabled: true
-      console: true
-      on_step: true
-      format: minimal
+  concrete:
+    manifestation: "Lambda Calculus Identity"
     description: |
       Identity Function: λx.x
       Applies the function to the input "HelloWorld".
-      The IO Monad observes the reduction.
+    runtime: lambda
+    operation: normalize
+    strategy: normal
+    maxSteps: 100
+    code: "(\\x.x) HelloWorld"
 
-  balanced_exp:
+  balanced:
     expectation: "The Identity function returns its argument."
     test_cases:
       - given: "The Identity function applied to HelloWorld"
@@ -41,12 +40,12 @@ clm:
             expression: "(\\x.x) HelloWorld"
         then:
           result_contains: "HelloWorld"
-      - given: "The Identity function applied to \"Hi to Bali\""
+      - given: "The Identity function applied to Bali"
         when:
           arguments:
-            expression: "(\\x.x) \"Hi to Bali\""
+            expression: "(\\x.x) Bali"
         then:
-          result_contains: "\"Hi to Bali\""
+          result_contains: "Bali"
 
 examples:
   - name: "Hello World"
