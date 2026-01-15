@@ -1,0 +1,36 @@
+version: '1.0'
+chapter:
+  id: 101
+  title: 'Arithmetic: The Addition PCard'
+  mvp_card: The Adder
+  pkc_task: Compute Sum
+clm:
+  abstract:
+    concept: Commutative Monoid Operation
+    description: 'The Principle: a + b = b + a'
+  concrete:
+    manifestation: Python Integer Addition
+    description: The Implementation
+    runtime: python
+    operation: custom
+    code_file: logic.py
+    entry_point: add
+    input_type: mcard
+    output_type: mcard
+    process_type: custom
+  balanced:
+    expectation: Summation Correctness
+    description: 'The Evidence: Result matches Peano axioms'
+    expected_results:
+      success: true
+    test_cases:
+      - given: "10 + 20"
+        when:
+          context: { a: 10, b: 20 }
+        then:
+          result: 30
+      - given: "-1 + -1"
+        when:
+          context: { a: -1, b: -1 }
+        then:
+          result: -2

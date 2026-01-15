@@ -23,5 +23,17 @@
         "handle": "pkc-box-demo",
         "path": "assets/videos/pkc_box_glamour_shot.webp",
         "isBinary": true
+    },
+    {
+        "handle": "clm-hello-world",
+        "path": "data/demo/hello_world.yaml"
+    },
+    {
+        "handle": "clm-simple-math",
+        "path": "data/demo/simple_math.yaml"
+    },
+    {
+        "handle": "clm-addition",
+        "path": "data/demo/addition.yaml"
     }
 ]
