@@ -386,20 +386,32 @@ export class CLMRenderer {
    * Switch active tab in CLM renderer
    */
   switchTab(button, tabName) {
-    const container = button.closest('.clm-container');
+    // Debug logging
+    console.log('[CLM] Switching to tab:', tabName);
+
+    // Find the button (handle case if called from child)
+    const targetBtn = button.closest('.clm-tab-btn') || button;
+    const container = targetBtn.closest('.clm-container');
+
+    if (!container) {
+      console.error('[CLM] Container not found');
+      return;
+    }
 
     // Update tab buttons
     const buttons = container.querySelectorAll('.clm-tab-btn');
     buttons.forEach(btn => btn.classList.remove('active'));
-    button.classList.add('active');
+    targetBtn.classList.add('active');
 
     // Update tab panels
     const panels = container.querySelectorAll('.clm-tab-panel');
     panels.forEach(panel => {
       if (panel.dataset.panel === tabName) {
         panel.classList.add('active');
+        panel.style.display = 'block'; // Force show
       } else {
         panel.classList.remove('active');
+        panel.style.display = 'none'; // Force hide
       }
     });
 
