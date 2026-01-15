@@ -218,7 +218,11 @@ export class CLMRenderer {
   }
 
   /**
-   * Render a section of the CLM
+   * Render a section of the CLM with improved formatting
+   * - Keys use bold monospace font
+   * - Values use regular text
+   * - Arrays are rendered as lists
+   * - Nested objects are properly indented
    */
   renderSection(section, sectionType) {
     if (!section || typeof section !== 'object') {
@@ -228,24 +232,144 @@ export class CLMRenderer {
     let html = '<div class="clm-properties">';
 
     for (const [key, value] of Object.entries(section)) {
-      if (typeof value === 'string' && value) {
-        html += `
-          <div class="clm-property">
-            <span class="clm-property-key">${this.escapeHtml(key)}:</span>
-            <span class="clm-property-value">${this.escapeHtml(value)}</span>
-          </div>
-        `;
-      } else if (typeof value === 'object' && value !== null) {
-        html += `
-          <div class="clm-property">
-            <span class="clm-property-key">${this.escapeHtml(key)}:</span>
-            <div class="clm-nested">${this.renderSection(value, sectionType)}</div>
-          </div>
-        `;
-      }
+      html += this.renderProperty(key, value, 0);
     }
 
     html += '</div>';
+    return html;
+  }
+
+  /**
+   * Render a single property with proper formatting
+   */
+  renderProperty(key, value, depth) {
+    const formattedKey = this.formatKey(key);
+
+    // Handle null/undefined
+    if (value === null || value === undefined) {
+      return `
+        <div class="clm-property" style="margin-left: ${depth * 16}px;">
+          <span class="clm-property-key">${formattedKey}</span>
+          <span class="clm-property-value clm-value-null">null</span>
+        </div>
+      `;
+    }
+
+    // Handle arrays - render as list
+    if (Array.isArray(value)) {
+      return this.renderArrayProperty(key, value, depth);
+    }
+
+    // Handle nested objects
+    if (typeof value === 'object') {
+      return this.renderNestedObject(key, value, depth);
+    }
+
+    // Handle primitive values (string, number, boolean)
+    return `
+      <div class="clm-property" style="margin-left: ${depth * 16}px;">
+        <span class="clm-property-key">${formattedKey}</span>
+        <span class="clm-property-value">${this.formatValue(value)}</span>
+      </div>
+    `;
+  }
+
+  /**
+   * Format a key name to be more readable
+   */
+  formatKey(key) {
+    // Convert snake_case or camelCase to Title Case
+    const formatted = key
+      .replace(/_/g, ' ')
+      .replace(/([A-Z])/g, ' $1')
+      .trim()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+    return this.escapeHtml(formatted) + ':';
+  }
+
+  /**
+   * Format a value based on its type
+   */
+  formatValue(value) {
+    if (typeof value === 'boolean') {
+      return `<span class="clm-value-boolean">${value ? 'Yes' : 'No'}</span>`;
+    }
+    if (typeof value === 'number') {
+      return `<span class="clm-value-number">${value}</span>`;
+    }
+    // String - escape HTML and preserve line breaks
+    return this.escapeHtml(String(value)).replace(/\n/g, '<br>');
+  }
+
+  /**
+   * Render an array as a list
+   */
+  renderArrayProperty(key, arr, depth) {
+    const formattedKey = this.formatKey(key);
+
+    if (arr.length === 0) {
+      return `
+        <div class="clm-property" style="margin-left: ${depth * 16}px;">
+          <span class="clm-property-key">${formattedKey}</span>
+          <span class="clm-property-value clm-value-empty">(empty list)</span>
+        </div>
+      `;
+    }
+
+    let html = `
+      <div class="clm-property clm-array-property" style="margin-left: ${depth * 16}px;">
+        <span class="clm-property-key">${formattedKey}</span>
+        <span class="clm-array-count">(${arr.length} items)</span>
+        <ul class="clm-list">
+    `;
+
+    arr.forEach((item, index) => {
+      if (typeof item === 'object' && item !== null) {
+        // Complex object in array
+        html += `
+          <li class="clm-list-item clm-list-item-object">
+            <div class="clm-list-item-header">Item ${index + 1}</div>
+            <div class="clm-list-item-content">
+              ${this.renderObjectContent(item, depth + 1)}
+            </div>
+          </li>
+        `;
+      } else {
+        // Simple value in array
+        html += `<li class="clm-list-item">${this.formatValue(item)}</li>`;
+      }
+    });
+
+    html += '</ul></div>';
+    return html;
+  }
+
+  /**
+   * Render a nested object
+   */
+  renderNestedObject(key, obj, depth) {
+    const formattedKey = this.formatKey(key);
+
+    return `
+      <div class="clm-property clm-nested-property" style="margin-left: ${depth * 16}px;">
+        <span class="clm-property-key">${formattedKey}</span>
+        <div class="clm-nested-content">
+          ${this.renderObjectContent(obj, depth + 1)}
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Render the content of an object
+   */
+  renderObjectContent(obj, depth) {
+    let html = '';
+    for (const [key, value] of Object.entries(obj)) {
+      html += this.renderProperty(key, value, depth);
+    }
     return html;
   }
 
