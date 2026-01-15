@@ -198,6 +198,13 @@ export class CLMRenderer extends BaseRenderer {
               <option value="server" ${executionModeManager.getMode() === 'server' ? 'selected' : ''}>Server (Remote)</option>
             </select>
           </div>
+          <div class="clm-test-selector" style="display: inline-block; margin-right: 10px;">
+            <label class="clm-test-label" style="font-size: 12px; margin-right: 4px;">Test Case:</label>
+            <select class="clm-test-select" style="padding: 4px; border-radius: 4px; border: 1px solid #ccc;">
+              <option value="">Select test case...</option>
+              ${this.renderTestCaseOptions(parsed.verification)}
+            </select>
+          </div>
           <button onclick="window.clmRenderer.executeCLM(this)" class="clm-execute-btn" data-clm-content='${this.toBase64(JSON.stringify(parsed))}' data-clm-raw='${this.toBase64(content)}'>
             <i data-lucide="play" style="width: 16px; height: 16px;"></i>
             Execute CLM
@@ -228,6 +235,26 @@ export class CLMRenderer extends BaseRenderer {
     `;
 
     return html;
+  }
+
+  /**
+   * Render test case options for dropdown selector
+   */
+  renderTestCaseOptions(verification) {
+    if (!verification || !verification.test_cases) {
+      return '';
+    }
+
+    const testCases = verification.test_cases;
+    if (!Array.isArray(testCases) || testCases.length === 0) {
+      return '';
+    }
+
+    return testCases.map((testCase, index) => {
+      const given = testCase.given || 'N/A';
+      const label = `Test ${index + 1}: ${given}`;
+      return `<option value="${index}">${this.escapeHtml(label)}</option>`;
+    }).join('');
   }
 
   /**
@@ -435,13 +462,15 @@ export class CLMRenderer extends BaseRenderer {
   }
 
   /**
-   * Execute CLM with user input
-   * ✅ Uses BrowserCLMRunner or ServerCLMRunner based on selected mode
+   * Execute CLM with user input or selected test case
+   * ✅ Uses hybrid execution (BrowserCLMRunner or ServerCLMRunner based on mode)
    */
   async executeCLM(button) {
     const rawContent = atob(button.dataset.clmRaw);
+    const clmContent = JSON.parse(atob(button.dataset.clmContent));
     const resultsDiv = button.closest('.clm-container').querySelector('.clm-execution-results');
     const resultsContent = resultsDiv.querySelector('.clm-results-content');
+    const testSelector = button.closest('.clm-container').querySelector('.clm-test-select');
 
     // Show results panel
     resultsDiv.style.display = 'block';
@@ -455,26 +484,62 @@ export class CLMRenderer extends BaseRenderer {
       
       console.log(`[CLM] Executing in mode: ${mode} (Resolved: ${runnerType})`);
 
-      // Get input from user (simple prompt for now)
-      const inputStr = prompt('Enter input (JSON format):', '{}');
-      if (inputStr === null) {
-        resultsDiv.style.display = 'none';
-        return;
+      let input;
+      let testCase = null;
+      let testIndex = null;
+
+      // Check if a test case is selected
+      if (testSelector && testSelector.value !== '') {
+        testIndex = parseInt(testSelector.value);
+        const testCases = clmContent.verification?.test_cases;
+        if (testCases && testCases[testIndex]) {
+          testCase = testCases[testIndex];
+          input = testCase.when?.arguments || {};
+          console.log(`[CLM] Running test case ${testIndex + 1}:`, testCase.given);
+        }
       }
 
-      const input = JSON.parse(inputStr);
+      // If no test case selected, prompt for input
+      if (!testCase) {
+        const inputStr = prompt('Enter input (JSON format):', '{}');
+        if (inputStr === null) {
+          resultsDiv.style.display = 'none';
+          return;
+        }
+        input = JSON.parse(inputStr);
+      }
 
       // Execute using active runner
       const result = await activeRunner.execute(rawContent, input);
 
+      // Verify result if test case was selected
+      let verificationPassed = null;
+      let expectedResult = null;
+      if (testCase && testCase.then?.result_contains !== undefined) {
+        expectedResult = testCase.then.result_contains;
+        verificationPassed = JSON.stringify(result.result) === JSON.stringify(expectedResult);
+      }
+
       if (result.success) {
+        const isTestRun = testCase !== null;
+        const headerIcon = isTestRun ? (verificationPassed ? 'check-circle' : 'x-circle') : 'check-circle';
+        const headerColor = isTestRun ? (verificationPassed ? '#4ade80' : '#f87171') : '#4ade80';
+        const headerText = isTestRun ? 
+          (verificationPassed ? `Test ${testIndex + 1} Passed` : `Test ${testIndex + 1} Failed`) :
+          `Execution Successful (${runnerType})`;
+
         resultsContent.innerHTML = `
-          <div class="clm-result-success">
+          <div class="clm-result-${isTestRun && !verificationPassed ? 'error' : 'success'}">
             <div class="clm-result-header">
-              <i data-lucide="check-circle" style="width: 20px; height: 20px; color: #4ade80;"></i>
-              <span>Execution Successful (${runnerType})</span>
+              <i data-lucide="${headerIcon}" style="width: 20px; height: 20px; color: ${headerColor};"></i>
+              <span>${headerText}</span>
             </div>
             <div class="clm-result-details">
+              ${isTestRun ? `
+                <div class="clm-result-item">
+                  <strong>Test Case:</strong> ${this.escapeHtml(testCase.given)}
+                </div>
+              ` : ''}
               <div class="clm-result-item">
                 <strong>Execution Time:</strong> ${result.executionTime}ms
               </div>
@@ -484,10 +549,26 @@ export class CLMRenderer extends BaseRenderer {
               <div class="clm-result-item">
                 <strong>Concept:</strong> ${result.clm?.concept || 'N/A'}
               </div>
+              ${isTestRun && expectedResult !== null ? `
+                <div class="clm-result-item">
+                  <strong>Expected Result:</strong>
+                  <pre class="clm-result-output">${JSON.stringify(expectedResult, null, 2)}</pre>
+                </div>
+              ` : ''}
               <div class="clm-result-item">
-                <strong>Result:</strong>
+                <strong>${isTestRun ? 'Actual Result:' : 'Result:'}</strong>
                 <pre class="clm-result-output">${JSON.stringify(result.result, null, 2)}</pre>
               </div>
+              ${isTestRun && !verificationPassed ? `
+                <div class="clm-result-item" style="color: #f87171;">
+                  <strong>Verification:</strong> Results do not match expected output
+                </div>
+              ` : ''}
+              ${isTestRun && verificationPassed ? `
+                <div class="clm-result-item" style="color: #4ade80;">
+                  <strong>Verification:</strong> ✓ Results match expected output
+                </div>
+              ` : ''}
             </div>
           </div>
         `;
