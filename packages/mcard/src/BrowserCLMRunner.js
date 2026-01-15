@@ -1,10 +1,10 @@
 /**
  * BrowserCLMRunner - Browser-compatible CLM executor
  * 
- * ✅ REFACTORED: Now uses mcard-js SandboxWorker for isolated execution
+ * ✅ REFACTORED: Thin wrapper around mcard-js SandboxWorker
  * 
- * This module delegates code execution to mcard-js's SandboxWorker which
- * provides Web Worker-based isolation for secure code execution.
+ * Delegates execution to mcard-js SandboxWorker for Web Worker isolation.
+ * Only browser-specific adaptations are implemented here.
  * 
  * @see mcard-js/src/ptr/SandboxWorker.ts
  */
@@ -12,65 +12,43 @@
 import * as yaml from 'https://cdn.jsdelivr.net/npm/yaml@2.3.4/+esm';
 import { SandboxWorker } from '../vendor/mcard-js/ptr/SandboxWorker.js';
 
-// Logic helper module - shared operations for CLM code
-const LogicHelper = {
-  add: (a, b) => a + b,
-  subtract: (a, b) => a - b,
-  multiply: (a, b) => a * b,
-  divide: (a, b) => b !== 0 ? a / b : NaN,
-  mod: (a, b) => a % b,
-  power: (a, b) => Math.pow(a, b),
-  sqrt: (a) => Math.sqrt(a),
-  abs: (a) => Math.abs(a),
-  min: (...args) => Math.min(...args),
-  max: (...args) => Math.max(...args),
-  floor: (a) => Math.floor(a),
-  ceil: (a) => Math.ceil(a),
-  round: (a) => Math.round(a),
-  eq: (a, b) => a === b,
-  ne: (a, b) => a !== b,
-  lt: (a, b) => a < b,
-  le: (a, b) => a <= b,
-  gt: (a, b) => a > b,
-  ge: (a, b) => a >= b,
-  and: (a, b) => a && b,
-  or: (a, b) => a || b,
-  not: (a) => !a,
-  concat: (...args) => args.join(''),
-  length: (a) => a?.length ?? 0,
-  sum: (arr) => Array.isArray(arr) ? arr.reduce((a, b) => a + b, 0) : 0,
-  avg: (arr) => Array.isArray(arr) && arr.length > 0 ? arr.reduce((a, b) => a + b, 0) / arr.length : 0,
+// Operation code templates for standard CLM operations
+const OPERATION_CODE = {
+  add: 'result = input.a + input.b;',
+  subtract: 'result = input.a - input.b;',
+  multiply: 'result = input.a * input.b;',
+  divide: 'result = input.b !== 0 ? input.a / input.b : NaN;',
+  mod: 'result = input.a % input.b;',
+  power: 'result = Math.pow(input.a, input.b);',
+  sqrt: 'result = Math.sqrt(input.a);',
+  abs: 'result = Math.abs(input.a);',
+  min: 'result = Math.min(input.a, input.b);',
+  max: 'result = Math.max(input.a, input.b);',
+  sum: 'result = (input.values || [input.a, input.b]).reduce((a, b) => a + b, 0);',
+  avg: 'const arr = input.values || [input.a, input.b]; result = arr.reduce((a, b) => a + b, 0) / arr.length;',
 };
 
 export class BrowserCLMRunner {
   constructor(timeout = 5000) {
     this.timeout = timeout;
-    this.maxRecursionDepth = 100;
-    this.sandboxWorker = null;
-    this.useSandboxWorker = false; // Can be enabled for Web Worker isolation
+    this.sandbox = new SandboxWorker();
+    this.initialized = false;
   }
 
-  /**
-   * Initialize the SandboxWorker for isolated execution (optional)
-   * Call this if you want Web Worker-based isolation
-   */
-  async initSandbox() {
-    if (!this.sandboxWorker) {
-      this.sandboxWorker = new SandboxWorker();
-      await this.sandboxWorker.init();
-      this.sandboxWorker.setTimeout(this.timeout);
-      this.useSandboxWorker = true;
+  /** Ensure SandboxWorker is initialized */
+  async ensureInit() {
+    if (!this.initialized) {
+      await this.sandbox.init();
+      this.sandbox.setTimeout(this.timeout);
+      this.initialized = true;
     }
   }
 
-  /**
-   * Terminate the SandboxWorker
-   */
-  terminateSandbox() {
-    if (this.sandboxWorker) {
-      this.sandboxWorker.terminate();
-      this.sandboxWorker = null;
-      this.useSandboxWorker = false;
+  /** Terminate the SandboxWorker */
+  terminate() {
+    if (this.initialized) {
+      this.sandbox.terminate();
+      this.initialized = false;
     }
   }
 
@@ -142,233 +120,57 @@ export class BrowserCLMRunner {
 
   /**
    * Execute CLM with given input
-   * @param {string} yamlContent - CLM YAML content
-   * @param {Object} input - Input data
-   * @returns {Promise<Object>} - Execution result
    */
   async execute(yamlContent, input = {}) {
     const startTime = Date.now();
     
     try {
-      // Parse CLM
       const clm = this.parseCLM(yamlContent);
       const config = clm.clm?.concrete || {};
+      const code = config.code || this.getOperationCode(config);
       
-      // Check runtime - browser can only execute JavaScript
-      const runtime = config.runtime?.toLowerCase() || 'javascript';
-      if (runtime !== 'javascript' && runtime !== 'js' && runtime !== 'browser') {
-        // For non-JS runtimes, generate JS code from operation if possible
-        const generatedCode = this.generateJSFromOperation(config, input);
-        if (generatedCode) {
-          const result = await this.executeJavaScript(generatedCode, input);
-          return {
-            success: true,
-            result,
-            executionTime: Date.now() - startTime,
-            clm: {
-              chapter: clm.chapter?.title || 'CLM',
-              concept: clm.clm?.abstract?.concept || 'Unknown'
-            }
-          };
-        }
-        throw new Error(`Runtime '${runtime}' not supported in browser. Use JavaScript CLM or provide inline code.`);
-      }
-      
-      // Get JavaScript code
-      const code = config.code || '';
       if (!code) {
-        // Try to generate from operation
-        const generatedCode = this.generateJSFromOperation(config, input);
-        if (generatedCode) {
-          const result = await this.executeJavaScript(generatedCode, input);
-          return {
-            success: true,
-            result,
-            executionTime: Date.now() - startTime,
-            clm: {
-              chapter: clm.chapter?.title || 'CLM',
-              concept: clm.clm?.abstract?.concept || 'Unknown'
-            }
-          };
-        }
-        throw new Error('No executable JavaScript code found in CLM');
+        throw new Error('No executable code found in CLM');
       }
       
-      // Execute in sandbox
-      const result = await this.executeJavaScript(code, input);
+      const result = await this.executeCode(code, input);
       
       return {
         success: true,
         result,
         executionTime: Date.now() - startTime,
-        clm: {
-          chapter: clm.chapter?.title || 'CLM',
-          concept: clm.clm?.abstract?.concept || 'Unknown'
-        }
+        clm: { chapter: clm.chapter?.title || 'CLM', concept: clm.clm?.abstract?.concept || 'Unknown' }
       };
     } catch (error) {
-      return {
-        success: false,
-        error: error.message,
-        executionTime: Date.now() - startTime
-      };
+      return { success: false, error: error.message, executionTime: Date.now() - startTime };
     }
   }
 
   /**
-   * Generate JavaScript code from CLM operation metadata
-   * ✅ Allows browser execution of non-JS CLMs with standard operations
-   * @param {Object} config - CLM concrete configuration
+   * Get code for standard operation (uses OPERATION_CODE templates)
+   */
+  getOperationCode(config) {
+    const op = (config.entry_point || config.operation || '').toLowerCase();
+    return OPERATION_CODE[op] || OPERATION_CODE[op.replace('ition', '')] || null;
+  }
+
+  /**
+   * Execute JavaScript code via mcard-js SandboxWorker
+   * @param {string} code - JavaScript code
    * @param {Object} input - Input context
-   * @returns {string|null} - Generated JS code or null
-   */
-  generateJSFromOperation(config, input) {
-    // Prioritize entry_point over operation when operation is 'custom'
-    let operation = config.entry_point?.toLowerCase() || config.operation?.toLowerCase();
-    if (config.operation?.toLowerCase() === 'custom' && config.entry_point) {
-      operation = config.entry_point.toLowerCase();
-    }
-    
-    if (!operation) return null;
-    
-    // Map common operations to JS logic helper calls
-    const operationMap = {
-      'add': 'result = logic.add(context.a, context.b);',
-      'addition': 'result = logic.add(context.a, context.b);',
-      'subtract': 'result = logic.subtract(context.a, context.b);',
-      'subtraction': 'result = logic.subtract(context.a, context.b);',
-      'multiply': 'result = logic.multiply(context.a, context.b);',
-      'multiplication': 'result = logic.multiply(context.a, context.b);',
-      'divide': 'result = logic.divide(context.a, context.b);',
-      'division': 'result = logic.divide(context.a, context.b);',
-      'sum': 'result = logic.sum(context.values || [context.a, context.b]);',
-      'average': 'result = logic.avg(context.values || [context.a, context.b]);',
-      'avg': 'result = logic.avg(context.values || [context.a, context.b]);',
-      'min': 'result = logic.min(context.a, context.b);',
-      'max': 'result = logic.max(context.a, context.b);',
-      'abs': 'result = logic.abs(context.value || context.a);',
-      'sqrt': 'result = logic.sqrt(context.value || context.a);',
-      'power': 'result = logic.power(context.base || context.a, context.exp || context.b);',
-      'mod': 'result = logic.mod(context.a, context.b);',
-      'modulo': 'result = logic.mod(context.a, context.b);',
-    };
-    
-    return operationMap[operation] || null;
-  }
-
-  /**
-   * Execute JavaScript code in a sandboxed environment
-   * ✅ REFACTORED: Uses mcard-js SandboxWorker when available, falls back to Function()
-   * @param {string} code - JavaScript code
-   * @param {Object} context - Execution context
    * @returns {Promise<any>} - Execution result
    */
-  async executeJavaScript(code, context) {
-    // If SandboxWorker is initialized, use it for isolated execution
-    if (this.useSandboxWorker && this.sandboxWorker) {
-      return this.executeInSandboxWorker(code, context);
-    }
+  async executeCode(code, input) {
+    await this.ensureInit();
     
-    // Fall back to inline execution with Function()
-    return this.executeInline(code, context);
-  }
-
-  /**
-   * Execute code using mcard-js SandboxWorker (Web Worker isolation)
-   * @param {string} code - JavaScript code
-   * @param {Object} context - Execution context
-   * @returns {Promise<any>} - Execution result
-   */
-  async executeInSandboxWorker(code, context) {
-    // Wrap code to include logic helper and proper result handling
     const wrappedCode = `
-      const logic = ${JSON.stringify(LogicHelper)};
-      // Convert logic functions back from strings
-      Object.keys(logic).forEach(k => {
-        if (typeof logic[k] === 'string') logic[k] = eval(logic[k]);
-      });
       let result;
       ${code}
-      return result !== undefined ? result : context;
+      return result;
     `;
     
     try {
-      return await this.sandboxWorker.execute(wrappedCode, context, { logic: LogicHelper });
-    } catch (error) {
-      console.error('[CLM] SandboxWorker execution error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Execute code inline using Function() (faster but less isolated)
-   * @param {string} code - JavaScript code  
-   * @param {Object} context - Execution context
-   * @returns {Promise<any>} - Execution result
-   */
-  async executeInline(code, context) {
-    // Use shared LogicHelper
-    const logic = LogicHelper;
-
-    // Create sandbox with safe globals
-    const sandbox = {
-      context,
-      target: context,
-      input: context,
-      result: undefined,
-      logic,
-      console: {
-        log: (...args) => console.log('[CLM]', ...args),
-        error: (...args) => console.error('[CLM]', ...args),
-        warn: (...args) => console.warn('[CLM]', ...args),
-      },
-      Math,
-      JSON,
-      Date,
-      Array,
-      Object,
-      String,
-      Number,
-      Boolean,
-      Map,
-      Set,
-      RegExp,
-      Error,
-      Promise,
-      parseInt,
-      parseFloat,
-      isNaN,
-      isFinite,
-      fetch: typeof window !== 'undefined' ? window.fetch?.bind(window) : undefined,
-      Headers: typeof window !== 'undefined' ? window.Headers : undefined,
-      Request: typeof window !== 'undefined' ? window.Request : undefined,
-      Response: typeof window !== 'undefined' ? window.Response : undefined,
-      URL: typeof window !== 'undefined' ? window.URL : undefined,
-      URLSearchParams: typeof window !== 'undefined' ? window.URLSearchParams : undefined,
-      setTimeout: undefined,
-      setInterval: undefined,
-    };
-
-    const wrappedCode = `
-      'use strict';
-      try {
-        ${code}
-        return result !== undefined ? result : (typeof target !== 'undefined' ? target : context);
-      } catch (e) {
-        throw new Error('CLM execution failed: ' + e.message);
-      }
-    `;
-
-    try {
-      const fn = new Function(...Object.keys(sandbox), wrappedCode);
-      
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Execution timeout')), this.timeout);
-      });
-      
-      const executionPromise = Promise.resolve(fn(...Object.values(sandbox)));
-      const result = await Promise.race([executionPromise, timeoutPromise]);
-      return result;
+      return await this.sandbox.execute(wrappedCode, input);
     } catch (error) {
       console.error('[CLM] Execution error:', error);
       throw error;
@@ -377,9 +179,6 @@ export class BrowserCLMRunner {
 
   /**
    * Run all test cases from CLM
-   * ✅ Optimized: Parse CLM once, execute code directly for each test
-   * @param {string} yamlContent - CLM YAML content
-   * @returns {Promise<Object>} - Test results
    */
   async runTests(yamlContent) {
     try {
@@ -387,63 +186,36 @@ export class BrowserCLMRunner {
       const examples = clm.examples || [];
       
       if (examples.length === 0) {
-        return {
-          success: true,
-          message: 'No test cases found',
-          totalTests: 0,
-          passed: 0,
-          failed: 0,
-          results: []
-        };
+        return { success: true, message: 'No test cases found', totalTests: 0, passed: 0, failed: 0, results: [] };
       }
 
-      // ✅ Get code once instead of re-parsing for each test
       const config = clm.clm?.concrete || {};
-      let code = config.code || '';
-      
-      // ✅ Generate code from operation if no inline code
-      if (!code) {
-        code = this.generateJSFromOperation(config, {});
-      }
+      const code = config.code || this.getOperationCode(config);
       
       if (!code) {
         return {
           success: false,
-          error: 'No executable code found in CLM (try adding inline JS or use a supported operation)',
+          error: 'No executable code found in CLM',
           totalTests: examples.length,
           passed: 0,
           failed: examples.length,
-          results: examples.map(ex => ({
-            name: ex.name,
-            input: ex.input,
-            expected: ex.expected_output,
-            actual: undefined,
-            passed: false,
-            executionTime: 0,
-            error: 'No code to execute'
-          }))
+          results: examples.map(ex => ({ name: ex.name, passed: false, error: 'No code' }))
         };
       }
 
       const results = [];
-      
       for (const example of examples) {
         const startTime = Date.now();
         let result, error;
         
         try {
-          // ✅ Execute code directly instead of calling execute() which re-parses
-          result = await this.executeJavaScript(code, example.input);
+          result = await this.executeCode(code, example.input);
         } catch (e) {
           error = e.message;
         }
         
-        const executionTime = Date.now() - startTime;
-        const passed = error ? false : (
-          example.expected_output !== undefined
-            ? this.resultsEqual(result, example.expected_output)
-            : true
-        );
+        const passed = !error && (example.expected_output === undefined || 
+          JSON.stringify(result) === JSON.stringify(example.expected_output));
         
         results.push({
           name: example.name,
@@ -451,77 +223,22 @@ export class BrowserCLMRunner {
           expected: example.expected_output,
           actual: result,
           passed,
-          executionTime,
+          executionTime: Date.now() - startTime,
           error
         });
       }
 
       const passedCount = results.filter(r => r.passed).length;
-      const failedCount = results.filter(r => !r.passed).length;
-      
       return {
-        success: failedCount === 0,
+        success: passedCount === results.length,
         totalTests: results.length,
         passed: passedCount,
-        failed: failedCount,
+        failed: results.length - passedCount,
         results
       };
     } catch (error) {
-      return {
-        success: false,
-        error: error.message,
-        totalTests: 0,
-        passed: 0,
-        failed: 0,
-        results: []
-      };
+      return { success: false, error: error.message, totalTests: 0, passed: 0, failed: 0, results: [] };
     }
-  }
-
-  /**
-   * Compare two values with tolerance for numbers
-   * ✅ Added depth parameter to prevent stack overflow on circular/deep structures
-   * @param {any} a - First value
-   * @param {any} b - Second value
-   * @param {number} tolerance - Tolerance for numeric comparison
-   * @param {number} depth - Current recursion depth
-   * @returns {boolean} - Whether values are equal
-   */
-  resultsEqual(a, b, tolerance = 1e-9, depth = 0) {
-    // ✅ Guard against infinite recursion
-    if (depth > this.maxRecursionDepth) {
-      console.warn('[CLM] Max recursion depth reached in resultsEqual');
-      return false;
-    }
-
-    if (a === b) return true;
-    if (a == null || b == null) return a === b;
-    
-    // Numbers with tolerance
-    if (typeof a === 'number' && typeof b === 'number') {
-      if (Number.isNaN(a) && Number.isNaN(b)) return true;
-      if (!Number.isFinite(a) || !Number.isFinite(b)) return a === b;
-      return Math.abs(a - b) <= tolerance * Math.max(1, Math.abs(a), Math.abs(b));
-    }
-    
-    // Arrays
-    if (Array.isArray(a) && Array.isArray(b)) {
-      if (a.length !== b.length) return false;
-      return a.every((val, i) => this.resultsEqual(val, b[i], tolerance, depth + 1));
-    }
-    
-    // Objects
-    if (typeof a === 'object' && typeof b === 'object') {
-      const keysA = Object.keys(a);
-      const keysB = Object.keys(b);
-      if (keysA.length !== keysB.length) return false;
-      return keysA.every(key => 
-        keysB.includes(key) && this.resultsEqual(a[key], b[key], tolerance, depth + 1)
-      );
-    }
-    
-    // String comparison for other types
-    return String(a) === String(b);
   }
 }
 
