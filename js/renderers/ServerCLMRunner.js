@@ -1,49 +1,146 @@
 /**
  * Server CLM Runner
- * Executes CLM logic via the backend API (/api/clm/execute).
+ * Executes CLM logic via WebSocket connection to the backend server on port 5321.
  * Used when Execution Mode is set to 'server' or 'auto' (fallback).
  */
 export class ServerCLMRunner {
-  constructor(apiBase = '/api/clm') {
-    this.apiBase = apiBase;
+  constructor(wsUrl = null) {
+    this.wsUrl = wsUrl || this.detectWebSocketUrl();
+    this.ws = null;
+    this.connected = false;
+    this.messageHandlers = new Map();
+    this.messageId = 0;
   }
 
   /**
-   * Execute CLM on the server
+   * Detect WebSocket URL based on current location
+   */
+  detectWebSocketUrl() {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const host = window.location.hostname;
+    const port = 5321; // WebSocket server port
+    return `${protocol}//${host}:${port}`;
+  }
+
+  /**
+   * Connect to WebSocket server
+   */
+  async connect() {
+    if (this.connected && this.ws?.readyState === WebSocket.OPEN) {
+      return;
+    }
+
+    return new Promise((resolve, reject) => {
+      try {
+        console.log('[ServerRunner] Connecting to WebSocket:', this.wsUrl);
+        this.ws = new WebSocket(this.wsUrl);
+
+        this.ws.onopen = () => {
+          console.log('[ServerRunner] WebSocket connected');
+          this.connected = true;
+          resolve();
+        };
+
+        this.ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            console.log('[ServerRunner] Received message:', data);
+            
+            if (data.messageId && this.messageHandlers.has(data.messageId)) {
+              const handler = this.messageHandlers.get(data.messageId);
+              handler(data);
+              this.messageHandlers.delete(data.messageId);
+            }
+          } catch (error) {
+            console.error('[ServerRunner] Message parse error:', error);
+          }
+        };
+
+        this.ws.onerror = (error) => {
+          console.error('[ServerRunner] WebSocket error:', error);
+          this.connected = false;
+          reject(error);
+        };
+
+        this.ws.onclose = () => {
+          console.log('[ServerRunner] WebSocket disconnected');
+          this.connected = false;
+        };
+
+        // Timeout after 5 seconds
+        setTimeout(() => {
+          if (!this.connected) {
+            reject(new Error('WebSocket connection timeout'));
+          }
+        }, 5000);
+
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  /**
+   * Send message and wait for response
+   */
+  async sendMessage(type, payload) {
+    await this.connect();
+
+    return new Promise((resolve, reject) => {
+      const messageId = ++this.messageId;
+      const message = {
+        type,
+        messageId,
+        timestamp: new Date().toISOString(),
+        ...payload
+      };
+
+      // Set up response handler with timeout
+      const timeout = setTimeout(() => {
+        this.messageHandlers.delete(messageId);
+        reject(new Error('Message response timeout'));
+      }, 30000); // 30 second timeout
+
+      this.messageHandlers.set(messageId, (response) => {
+        clearTimeout(timeout);
+        if (response.error) {
+          reject(new Error(response.error));
+        } else {
+          resolve(response);
+        }
+      });
+
+      // Send message
+      console.log('[ServerRunner] Sending message:', message);
+      this.ws.send(JSON.stringify(message));
+    });
+  }
+
+  /**
+   * Execute CLM on the server via WebSocket
    * @param {string} code - The CLM code (YAML/JSON)
    * @param {object} input - Input data for execution
    * @returns {Promise<object>} Execution result
    */
   async execute(code, input) {
     try {
-      console.log('[ServerRunner] Sending execution request...');
-      const response = await fetch(`${this.apiBase}/execute`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          clm: code,
-          input: input
-        })
+      console.log('[ServerRunner] Sending CLM execution request via WebSocket...');
+      
+      const response = await this.sendMessage('clm_execute', {
+        clm: code,
+        input: input
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Server execution failed (${response.status}): ${errorText}`);
-      }
-
-      const result = await response.json();
-      console.log('[ServerRunner] Result:', result);
+      console.log('[ServerRunner] Result:', response);
       
       // Normalize result format to match BrowserCLMRunner
       return {
         success: true,
-        result: result.output, // Server should return 'output'
-        executionTime: result.duration || 0,
+        result: response.result || response.output,
+        executionTime: response.executionTime || response.duration || 0,
         clm: {
-          chapter: 'Server-Executed', // Placeholder as server might not parse metadata same way
-          concept: 'Remote'
+          chapter: response.chapter || 'Server-Executed',
+          concept: response.concept || 'Remote'
         }
       };
 
