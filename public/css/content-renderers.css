@@ -765,17 +765,18 @@
 
 /* CLM Tabs */
 .clm-tabs {
-  background: #252526;
+  background: #1e1e1e;
   border: 1px solid #3e3e42;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
   margin-bottom: 24px;
 }
 
 .clm-tab-buttons {
   display: flex;
+  width: 100%;
   background: #2d2d30;
-  border-bottom: 1px solid #3e3e42;
+  border-bottom: 2px solid #3e3e42;
 }
 
 .clm-tab-btn {
@@ -784,51 +785,85 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px;
-  background: none;
+  padding: 16px 20px;
+  background: #252526;
   border: none;
-  border-right: 1px solid #3e3e42;
   color: #888;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border-top: 4px solid transparent;
+}
+
+.clm-tab-btn:first-child {
+  border-top-left-radius: 10px;
 }
 
 .clm-tab-btn:last-child {
-  border-right: none;
+  border-top-right-radius: 10px;
 }
 
-.clm-tab-btn:hover {
-  background: #3e3e42;
-  color: #ccc;
+/* Abstract tab - Blue */
+.clm-tab-btn[data-tab="abstract"] {
+  border-top-color: #4fc3f7;
 }
 
-.clm-tab-btn.active {
-  background: #252526;
-  color: #ffffff;
-  border-bottom: 2px solid #4fc3f7;
+.clm-tab-btn[data-tab="abstract"]:hover {
+  background: rgba(79, 195, 247, 0.15);
+  color: #4fc3f7;
+}
+
+.clm-tab-btn[data-tab="abstract"].active {
+  background: rgba(79, 195, 247, 0.2);
+  color: #4fc3f7;
+  border-top-color: #4fc3f7;
+}
+
+/* Concrete tab - Orange */
+.clm-tab-btn[data-tab="concrete"] {
+  border-top-color: #ce9178;
+}
+
+.clm-tab-btn[data-tab="concrete"]:hover {
+  background: rgba(206, 145, 120, 0.15);
+  color: #ce9178;
 }
 
 .clm-tab-btn[data-tab="concrete"].active {
-  border-bottom-color: #ce9178;
+  background: rgba(206, 145, 120, 0.2);
+  color: #ce9178;
+  border-top-color: #ce9178;
+}
+
+/* Balanced tab - Green */
+.clm-tab-btn[data-tab="balanced"] {
+  border-top-color: #6a9955;
+}
+
+.clm-tab-btn[data-tab="balanced"]:hover {
+  background: rgba(106, 153, 85, 0.15);
+  color: #6a9955;
 }
 
 .clm-tab-btn[data-tab="balanced"].active {
-  border-bottom-color: #6a9955;
+  background: rgba(106, 153, 85, 0.2);
+  color: #6a9955;
+  border-top-color: #6a9955;
 }
 
 .clm-tab-content {
   padding: 24px;
   min-height: 300px;
+  background: #252526;
 }
 
 .clm-tab-panel {
-  display: none;
+  display: none !important;
 }
 
 .clm-tab-panel.active {
-  display: block;
+  display: block !important;
   animation: fadeIn 0.3s ease;
 }
 
