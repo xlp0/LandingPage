@@ -9,7 +9,7 @@
  * @see mcard-js/src/ptr/SandboxWorker.ts
  */
 
-import * as yaml from 'https://cdn.jsdelivr.net/npm/yaml@2.3.4/+esm';
+import * as yaml from '../vendor/yaml.esm.js';
 import { SandboxWorker } from '../vendor/mcard-js/ptr/SandboxWorker.js';
 
 // Operation code templates for standard CLM operations
