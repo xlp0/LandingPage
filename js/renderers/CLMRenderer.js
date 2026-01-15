@@ -59,13 +59,29 @@ export class CLMRenderer {
         return null;
       }
 
-      // Normalize structure to ensure all sections exist
-      return {
-        specification: parsed.specification || {},
-        implementation: parsed.implementation || {},
-        verification: parsed.verification || parsed.balanced || {},
+      // 1. Preserve top-level metadata
+      const result = {
+        ...parsed, // Copy all existing fields (version, chapter, examples, etc.)
+        specification: {},
+        implementation: {},
+        verification: {},
         metadata: parsed.metadata || {}
       };
+
+      // 2. Map 'clm' subsections if they exist (New Format)
+      if (parsed.clm) {
+        result.specification = parsed.clm.abstract_spec || {};
+        result.implementation = parsed.clm.concrete_impl || {};
+        result.verification = parsed.clm.balanced_exp || {};
+      }
+      // 3. Fallback to old format if 'clm' key doesn't exist
+      else {
+        result.specification = parsed.specification || {};
+        result.implementation = parsed.implementation || {};
+        result.verification = parsed.verification || {};
+      }
+
+      return result;
     } catch (error) {
       console.error('[CLM] YAML parsing error:', error);
       return null;
@@ -96,7 +112,7 @@ export class CLMRenderer {
   }
 
   /**
-   * Render CLM content as HTML
+   * Render CLM content as HTML with tabbed interface
    */
   async render(content, options = {}) {
     const parsed = this.parseYAML(content);
@@ -105,6 +121,11 @@ export class CLMRenderer {
       return `<div class="clm-error">Failed to parse CLM content</div>`;
     }
 
+    // Extract version and chapter info from parsed YAML
+    const version = parsed.version || 'N/A';
+    const chapter = parsed.chapter || {};
+    const clm = parsed.clm || {};
+
     const html = `
       <div class="clm-container">
         <div class="clm-header">
@@ -112,60 +133,55 @@ export class CLMRenderer {
             <i data-lucide="box" style="width: 20px; height: 20px;"></i>
             Cubical Logic Model
           </h2>
-          <p class="clm-subtitle">Three-Dimensional Verifiable Computation</p>
+          
+          <!-- Version and Chapter Metadata -->
+          <div class="clm-metadata-header">
+            <div class="clm-version">Version: ${this.escapeHtml(parsed.version || 'N/A')}</div>
+            ${parsed.chapter?.id ? `<div class="clm-chapter-id">Chapter: ${this.escapeHtml(parsed.chapter.id)}</div>` : ''}
+            ${parsed.chapter?.title ? `<div class="clm-chapter-title">${this.escapeHtml(parsed.chapter.title)}</div>` : ''}
+            ${parsed.chapter?.mvp_card ? `<div class="clm-mvp-card">MVP Card: ${this.escapeHtml(parsed.chapter.mvp_card)}</div>` : ''}
+            ${parsed.chapter?.pkc_task ? `<div class="clm-pkc-task">PKC Task: ${this.escapeHtml(parsed.chapter.pkc_task)}</div>` : ''}
+            ${parsed.metadata?.author ? `<div class="clm-author">Author: ${this.escapeHtml(parsed.metadata.author)}</div>` : ''}
+          </div>
         </div>
 
-        <div class="clm-dimensions">
-          <!-- Specification Dimension -->
-          <div class="clm-dimension clm-specification">
-            <div class="clm-dimension-header">
-              <div class="clm-dimension-icon">
-                <i data-lucide="file-text" style="width: 18px; height: 18px;"></i>
-              </div>
-              <h3>Specification</h3>
-              <span class="clm-dimension-label">Abstract</span>
-            </div>
-            <div class="clm-dimension-content">
+        <!-- Tabbed Interface -->
+        <div class="clm-tabs">
+          <div class="clm-tab-buttons">
+            <button class="clm-tab-btn active" data-tab="abstract" onclick="window.clmRenderer.switchTab(this, 'abstract')">
+              <i data-lucide="file-text" style="width: 16px; height: 16px;"></i>
+              Abstract
+            </button>
+            <button class="clm-tab-btn" data-tab="concrete" onclick="window.clmRenderer.switchTab(this, 'concrete')">
+              <i data-lucide="code" style="width: 16px; height: 16px;"></i>
+              Concrete
+            </button>
+            <button class="clm-tab-btn" data-tab="balanced" onclick="window.clmRenderer.switchTab(this, 'balanced')">
+              <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i>
+              Balanced
+            </button>
+          </div>
+
+          <div class="clm-tab-content">
+            <!-- Abstract Tab -->
+            <div class="clm-tab-panel active" data-panel="abstract">
+              <h3>Specification (Abstract)</h3>
               ${this.renderSection(parsed.specification, 'specification')}
             </div>
-          </div>
 
-          <!-- Implementation Dimension -->
-          <div class="clm-dimension clm-implementation">
-            <div class="clm-dimension-header">
-              <div class="clm-dimension-icon">
-                <i data-lucide="code" style="width: 18px; height: 18px;"></i>
-              </div>
-              <h3>Implementation</h3>
-              <span class="clm-dimension-label">Concrete</span>
-            </div>
-            <div class="clm-dimension-content">
+            <!-- Concrete Tab -->
+            <div class="clm-tab-panel" data-panel="concrete">
+              <h3>Implementation (Concrete)</h3>
               ${this.renderSection(parsed.implementation, 'implementation')}
             </div>
-          </div>
 
-          <!-- Verification Dimension -->
-          <div class="clm-dimension clm-verification">
-            <div class="clm-dimension-header">
-              <div class="clm-dimension-icon">
-                <i data-lucide="check-circle" style="width: 18px; height: 18px;"></i>
-              </div>
-              <h3>Verification</h3>
-              <span class="clm-dimension-label">Balanced</span>
-            </div>
-            <div class="clm-dimension-content">
+            <!-- Balanced Tab -->
+            <div class="clm-tab-panel" data-panel="balanced">
+              <h3>Verification (Balanced)</h3>
               ${this.renderSection(parsed.verification, 'verification')}
             </div>
           </div>
         </div>
-
-        <!-- Metadata Section -->
-        ${Object.keys(parsed.metadata).length > 0 ? `
-          <div class="clm-metadata">
-            <h4>Metadata</h4>
-            ${this.renderSection(parsed.metadata, 'metadata')}
-          </div>
-        ` : ''}
 
         <!-- Execution Controls -->
         <div class="clm-execution-controls">
@@ -240,6 +256,33 @@ export class CLMRenderer {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  /**
+   * Switch active tab in CLM renderer
+   */
+  switchTab(button, tabName) {
+    const container = button.closest('.clm-container');
+
+    // Update tab buttons
+    const buttons = container.querySelectorAll('.clm-tab-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+
+    // Update tab panels
+    const panels = container.querySelectorAll('.clm-tab-panel');
+    panels.forEach(panel => {
+      if (panel.dataset.panel === tabName) {
+        panel.classList.add('active');
+      } else {
+        panel.classList.remove('active');
+      }
+    });
+
+    // Re-initialize Lucide icons in the new tab if needed
+    if (window.lucide) {
+      lucide.createIcons();
+    }
   }
 
   /**
