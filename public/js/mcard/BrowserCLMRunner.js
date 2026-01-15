@@ -1,18 +1,77 @@
 /**
  * BrowserCLMRunner - Browser-compatible CLM executor
  * 
- * Inspired by mcard-js CLMRunner but adapted for browser environment
- * Uses Function() instead of vm.Script for sandboxed execution
+ * ✅ REFACTORED: Now uses mcard-js SandboxWorker for isolated execution
  * 
- * ✅ Fixed: Added logic helper, optimized test execution, added recursion guards
+ * This module delegates code execution to mcard-js's SandboxWorker which
+ * provides Web Worker-based isolation for secure code execution.
+ * 
+ * @see mcard-js/src/ptr/SandboxWorker.ts
  */
 
 import * as yaml from 'https://cdn.jsdelivr.net/npm/yaml@2.3.4/+esm';
+import { SandboxWorker } from '../vendor/mcard-js/ptr/SandboxWorker.js';
+
+// Logic helper module - shared operations for CLM code
+const LogicHelper = {
+  add: (a, b) => a + b,
+  subtract: (a, b) => a - b,
+  multiply: (a, b) => a * b,
+  divide: (a, b) => b !== 0 ? a / b : NaN,
+  mod: (a, b) => a % b,
+  power: (a, b) => Math.pow(a, b),
+  sqrt: (a) => Math.sqrt(a),
+  abs: (a) => Math.abs(a),
+  min: (...args) => Math.min(...args),
+  max: (...args) => Math.max(...args),
+  floor: (a) => Math.floor(a),
+  ceil: (a) => Math.ceil(a),
+  round: (a) => Math.round(a),
+  eq: (a, b) => a === b,
+  ne: (a, b) => a !== b,
+  lt: (a, b) => a < b,
+  le: (a, b) => a <= b,
+  gt: (a, b) => a > b,
+  ge: (a, b) => a >= b,
+  and: (a, b) => a && b,
+  or: (a, b) => a || b,
+  not: (a) => !a,
+  concat: (...args) => args.join(''),
+  length: (a) => a?.length ?? 0,
+  sum: (arr) => Array.isArray(arr) ? arr.reduce((a, b) => a + b, 0) : 0,
+  avg: (arr) => Array.isArray(arr) && arr.length > 0 ? arr.reduce((a, b) => a + b, 0) / arr.length : 0,
+};
 
 export class BrowserCLMRunner {
   constructor(timeout = 5000) {
     this.timeout = timeout;
-    this.maxRecursionDepth = 100; // Guard against infinite recursion
+    this.maxRecursionDepth = 100;
+    this.sandboxWorker = null;
+    this.useSandboxWorker = false; // Can be enabled for Web Worker isolation
+  }
+
+  /**
+   * Initialize the SandboxWorker for isolated execution (optional)
+   * Call this if you want Web Worker-based isolation
+   */
+  async initSandbox() {
+    if (!this.sandboxWorker) {
+      this.sandboxWorker = new SandboxWorker();
+      await this.sandboxWorker.init();
+      this.sandboxWorker.setTimeout(this.timeout);
+      this.useSandboxWorker = true;
+    }
+  }
+
+  /**
+   * Terminate the SandboxWorker
+   */
+  terminateSandbox() {
+    if (this.sandboxWorker) {
+      this.sandboxWorker.terminate();
+      this.sandboxWorker = null;
+      this.useSandboxWorker = false;
+    }
   }
 
   /**
@@ -199,55 +258,65 @@ export class BrowserCLMRunner {
 
   /**
    * Execute JavaScript code in a sandboxed environment
+   * ✅ REFACTORED: Uses mcard-js SandboxWorker when available, falls back to Function()
    * @param {string} code - JavaScript code
    * @param {Object} context - Execution context
    * @returns {Promise<any>} - Execution result
    */
   async executeJavaScript(code, context) {
-    // Create logic helper object for CLM code that expects it
-    const logic = {
-      add: (a, b) => a + b,
-      subtract: (a, b) => a - b,
-      multiply: (a, b) => a * b,
-      divide: (a, b) => b !== 0 ? a / b : NaN,
-      mod: (a, b) => a % b,
-      power: (a, b) => Math.pow(a, b),
-      sqrt: (a) => Math.sqrt(a),
-      abs: (a) => Math.abs(a),
-      min: (...args) => Math.min(...args),
-      max: (...args) => Math.max(...args),
-      floor: (a) => Math.floor(a),
-      ceil: (a) => Math.ceil(a),
-      round: (a) => Math.round(a),
-      // Comparison
-      eq: (a, b) => a === b,
-      ne: (a, b) => a !== b,
-      lt: (a, b) => a < b,
-      le: (a, b) => a <= b,
-      gt: (a, b) => a > b,
-      ge: (a, b) => a >= b,
-      // Logic
-      and: (a, b) => a && b,
-      or: (a, b) => a || b,
-      not: (a) => !a,
-      // String
-      concat: (...args) => args.join(''),
-      length: (a) => a?.length ?? 0,
-      // Array
-      sum: (arr) => Array.isArray(arr) ? arr.reduce((a, b) => a + b, 0) : 0,
-      avg: (arr) => Array.isArray(arr) && arr.length > 0 ? arr.reduce((a, b) => a + b, 0) / arr.length : 0,
-      map: (arr, fn) => Array.isArray(arr) ? arr.map(fn) : [],
-      filter: (arr, fn) => Array.isArray(arr) ? arr.filter(fn) : [],
-      reduce: (arr, fn, init) => Array.isArray(arr) ? arr.reduce(fn, init) : init,
-    };
+    // If SandboxWorker is initialized, use it for isolated execution
+    if (this.useSandboxWorker && this.sandboxWorker) {
+      return this.executeInSandboxWorker(code, context);
+    }
+    
+    // Fall back to inline execution with Function()
+    return this.executeInline(code, context);
+  }
+
+  /**
+   * Execute code using mcard-js SandboxWorker (Web Worker isolation)
+   * @param {string} code - JavaScript code
+   * @param {Object} context - Execution context
+   * @returns {Promise<any>} - Execution result
+   */
+  async executeInSandboxWorker(code, context) {
+    // Wrap code to include logic helper and proper result handling
+    const wrappedCode = `
+      const logic = ${JSON.stringify(LogicHelper)};
+      // Convert logic functions back from strings
+      Object.keys(logic).forEach(k => {
+        if (typeof logic[k] === 'string') logic[k] = eval(logic[k]);
+      });
+      let result;
+      ${code}
+      return result !== undefined ? result : context;
+    `;
+    
+    try {
+      return await this.sandboxWorker.execute(wrappedCode, context, { logic: LogicHelper });
+    } catch (error) {
+      console.error('[CLM] SandboxWorker execution error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Execute code inline using Function() (faster but less isolated)
+   * @param {string} code - JavaScript code  
+   * @param {Object} context - Execution context
+   * @returns {Promise<any>} - Execution result
+   */
+  async executeInline(code, context) {
+    // Use shared LogicHelper
+    const logic = LogicHelper;
 
     // Create sandbox with safe globals
     const sandbox = {
       context,
       target: context,
-      input: context, // Alias for convenience
+      input: context,
       result: undefined,
-      logic, // ✅ Added logic helper
+      logic,
       console: {
         log: (...args) => console.log('[CLM]', ...args),
         error: (...args) => console.error('[CLM]', ...args),
@@ -270,18 +339,16 @@ export class BrowserCLMRunner {
       parseFloat,
       isNaN,
       isFinite,
-      // Browser APIs
       fetch: typeof window !== 'undefined' ? window.fetch?.bind(window) : undefined,
       Headers: typeof window !== 'undefined' ? window.Headers : undefined,
       Request: typeof window !== 'undefined' ? window.Request : undefined,
       Response: typeof window !== 'undefined' ? window.Response : undefined,
       URL: typeof window !== 'undefined' ? window.URL : undefined,
       URLSearchParams: typeof window !== 'undefined' ? window.URLSearchParams : undefined,
-      setTimeout: undefined, // Disabled for safety
-      setInterval: undefined, // Disabled for safety
+      setTimeout: undefined,
+      setInterval: undefined,
     };
 
-    // Build function with timeout
     const wrappedCode = `
       'use strict';
       try {
@@ -293,16 +360,13 @@ export class BrowserCLMRunner {
     `;
 
     try {
-      // Create function from code
       const fn = new Function(...Object.keys(sandbox), wrappedCode);
       
-      // Execute with timeout
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Execution timeout')), this.timeout);
       });
       
       const executionPromise = Promise.resolve(fn(...Object.values(sandbox)));
-      
       const result = await Promise.race([executionPromise, timeoutPromise]);
       return result;
     } catch (error) {
