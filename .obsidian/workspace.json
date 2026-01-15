@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/webrtc-dashboard-architecture.md",
-                "mode": "preview",
+                "file": "daily-reports/zitadel_report.md",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "webrtc-dashboard-architecture"
+              "title": "zitadel_report"
             }
           }
         ]
@@ -185,6 +185,25 @@
   },
   "active": "bd45ebad09a1e0e6",
   "lastOpenFiles": [
+    "public/css/renderers/text.css",
+    "public/css/renderers/pdf.css",
+    "public/css/renderers/markdown.css",
+    "public/css/renderers/image.css",
+    "public/css/renderers/common.css",
+    "public/css/renderers/code.css",
+    "public/css/renderers/clm.css",
+    "public/css/renderers",
+    "daily-reports/zitadel_report_template.md",
+    "daily-reports/zitadel_report.md",
+    "daily-reports/zitadel_authentication_&_user_monitoring_20260115_105356.json",
+    "daily-reports/zitadel_simple_report.md",
+    "daily-reports/generate_zitadel_report.py",
+    "daily-reports/zitadel_simple_report_template.md",
+    "daily-reports/zitadel_report_example.md",
+    "daily-reports/generate_simple_zitadel_report.py",
+    "daily-reports/README_ZITADEL_REPORT.md",
+    "daily-reports/system_report_template.md",
+    "daily-reports/zitadel_metrics_report_template.md",
     "BACKEND_IMPLEMENTATION.md",
     "docs/PKCE_ZITADEL_CONFIG.md",
     "docs/FIND_REGENERATE_SECRET.md",
@@ -193,36 +212,17 @@
     "docs/SETUP_ZITADEL_SECRET.md",
     "docs/PKCE_IMPLEMENTATION.md",
     "docs/OAUTH_IMPLEMENTATION_COMPLETE.md",
-    "routes/auth.js",
-    "routes",
     "docs/REDUX_FIX_SUMMARY.md",
     "docs/REDUX_AUTH_TESTING.md",
     "docs/OAUTH_BACKEND_INTEGRATION.md",
     "docs/BACKEND_IMPLEMENTATION.md",
     "OAUTH_BACKEND_INTEGRATION.md",
     "REDUX_FIX_SUMMARY.md",
-    "node_modules/@mathjax/mathjax-newcm-font/def/mathjax-newcm.ts",
-    "node_modules/@mathjax/mathjax-newcm-font/def",
-    "node_modules/@mathjax/mathjax-newcm-font/tsconfig.json",
-    "node_modules/@mathjax/mathjax-newcm-font/package.json",
-    "node_modules/@mathjax/mathjax-newcm-font/tsconfig/mjs.json",
-    "node_modules/@mathjax/mathjax-newcm-font/tsconfig/def.json",
-    "node_modules/@mathjax/mathjax-newcm-font/tsconfig/common.json",
-    "node_modules/@mathjax/mathjax-newcm-font/tsconfig/cjs.json",
     "node_modules/mathjax/CONTRIBUTING.md",
     "node_modules/mathjax/README.md",
     "node_modules/core-js/web/README.md",
-    "node_modules/core-js/stage/README.md",
-    "node_modules/core-js/stable/README.md",
-    "node_modules/core-js/README.md",
-    "node_modules/core-js/modules/README.md",
-    "node_modules/core-js/internals/README.md",
-    "node_modules/core-js/full/README.md",
-    "node_modules/core-js/es/README.md",
-    "node_modules/core-js/actual/README.md",
     "node_modules/playwright-core/lib/vite/traceViewer/playwright-logo.svg",
     "node_modules/playwright-core/lib/vite/recorder/playwright-logo.svg",
-    "node_modules/playwright-core/README.md",
     "node_modules/playwright-core/lib/server/chromium/appIcon.png"
   ]
 }

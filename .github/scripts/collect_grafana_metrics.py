@@ -177,6 +177,16 @@ def collect_zitadel_metrics(session, base_url, time_range):
         "api_calls": 'rate(zitadel_api_calls_total[5m])',
         "database_connections": 'zitadel_database_connections',
         "cache_hit_rate": 'rate(zitadel_cache_hits_total[5m]) / rate(zitadel_cache_requests_total[5m])',
+        # Authentication Events (specific event types)
+        "event_oidc_session_access_token_added": 'sum(increase(zitadel_events_total{event_type="oidc_session.access_token.added"}[24h]))',
+        "event_oidc_session_added": 'sum(increase(zitadel_events_total{event_type="oidc_session.added"}[24h]))',
+        "event_user_human_externallogin_check_succeeded": 'sum(increase(zitadel_events_total{event_type="user.human.externallogin.check.succeeded"}[24h]))',
+        "event_user_human_mfa_init_skipped": 'sum(increase(zitadel_events_total{event_type="user.human.mfa.init.skipped"}[24h]))',
+        "event_user_human_mfa_otp_added": 'sum(increase(zitadel_events_total{event_type="user.human.mfa.otp.added"}[24h]))',
+        "event_user_human_password_check_succeeded": 'sum(increase(zitadel_events_total{event_type="user.human.password.check.succeeded"}[24h]))',
+        "event_user_token_v2_added": 'sum(increase(zitadel_events_total{event_type="user.token.v2.added"}[24h]))',
+        # All authentication events aggregated by event type
+        "authentication_events_by_type": 'sum by (event_type) (increase(zitadel_events_total{aggregate_type="user"}[24h]))',
     }
     
     metrics_data = {
