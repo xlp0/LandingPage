@@ -124,12 +124,15 @@ export class ServerCLMRunner {
    */
   async execute(code, input) {
     try {
-      console.log('[ServerRunner] Sending CLM execution request via WebSocket...');
+      console.log('[ServerRunner] === Starting CLM Execution ===');
+      console.log('[ServerRunner] Input data:', input);
+      console.log('[ServerRunner] Code length:', code.length);
       
       // Parse the CLM YAML to check if we need to load code_file
       let clmData;
       try {
         clmData = jsyaml.load(code);
+        console.log('[ServerRunner] Parsed CLM data:', clmData);
       } catch (e) {
         console.error('[ServerRunner] Failed to parse CLM YAML:', e);
         throw new Error('Invalid CLM YAML format');
@@ -137,8 +140,13 @@ export class ServerCLMRunner {
       
       // Check if concrete has code_file instead of code
       const concrete = clmData?.clm?.concrete;
+      console.log('[ServerRunner] Concrete section:', concrete);
+      console.log('[ServerRunner] Has code_file?', !!concrete?.code_file);
+      console.log('[ServerRunner] Has code?', !!concrete?.code);
+      
       if (concrete && concrete.code_file && !concrete.code) {
-        console.log('[ServerRunner] Loading code from code_file:', concrete.code_file);
+        console.log('[ServerRunner] *** LOADING CODE FROM FILE ***');
+        console.log('[ServerRunner] code_file:', concrete.code_file);
         
         // Extract chapter directory from the current URL or CLM structure
         const chapterId = clmData?.chapter?.id;
