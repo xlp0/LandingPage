@@ -52,11 +52,19 @@ def ensure_bucket_exists(client, bucket_name):
 def upload_file(client, bucket_name, file_path, object_name):
     """Upload file to MinIO"""
     try:
+        # Determine content type based on file extension
+        if file_path.endswith('.json'):
+            content_type = "application/json"
+        elif file_path.endswith('.md'):
+            content_type = "text/markdown"
+        else:
+            content_type = "application/octet-stream"
+        
         client.fput_object(
             bucket_name,
             object_name,
             file_path,
-            content_type="application/json"
+            content_type=content_type
         )
         print(f"  ✅ Uploaded: {object_name}")
         return True
@@ -81,14 +89,16 @@ def main():
     now = datetime.now(wita_tz)
     date_folder = now.strftime('%Y-%m-%d')
     
-    # Find all JSON files in metrics directory
+    # Find all JSON and Markdown files in metrics directory
     json_files = glob.glob(f"{metrics_dir}/*.json")
+    md_files = glob.glob(f"{metrics_dir}/*.md")
+    all_files = json_files + md_files
     
-    if not json_files:
+    if not all_files:
         print("⚠️  No metrics files found to upload")
         sys.exit(0)
     
-    print(f"\n📤 Uploading {len(json_files)} files...")
+    print(f"\n📤 Uploading {len(all_files)} files ({len(json_files)} JSON, {len(md_files)} Markdown)...")
     
     upload_results = {
         "timestamp": now.isoformat(),
@@ -97,7 +107,7 @@ def main():
         "failed_files": []
     }
     
-    for file_path in json_files:
+    for file_path in all_files:
         filename = os.path.basename(file_path)
         
         # Organize files by date (format: YYYY-MM-DD)

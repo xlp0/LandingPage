@@ -49,13 +49,16 @@ jobs:
           
           if [ -n "$ZITADEL_JSON" ]; then
             echo "📊 Generating ZITADEL report from: $ZITADEL_JSON"
-            chmod +x daily-reports/generate_zitadel_report.py
-            python3 daily-reports/generate_zitadel_report.py "$ZITADEL_JSON" daily-reports/zitadel_report.md
             
-            # Copy report to grafana-metrics directory for upload to MinIO
-            if [ -f daily-reports/zitadel_report.md ]; then
-              cp daily-reports/zitadel_report.md grafana-metrics/
-              echo "✅ ZITADEL report generated and copied to grafana-metrics/"
+            # Generate report filename with same name as JSON but .md extension
+            REPORT_MD="${ZITADEL_JSON%.json}.md"
+            
+            chmod +x daily-reports/generate_zitadel_report.py
+            python3 daily-reports/generate_zitadel_report.py "$ZITADEL_JSON" "$REPORT_MD"
+            
+            if [ -f "$REPORT_MD" ]; then
+              echo "✅ ZITADEL report generated: $REPORT_MD"
+              echo "   Report will be uploaded to MinIO alongside JSON file"
             else
               echo "⚠️  Report generation failed"
             fi
