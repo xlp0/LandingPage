@@ -8,7 +8,7 @@
 import { BaseRenderer } from './BaseRenderer.js';
 import { BrowserCLMRunner } from '/public/js/mcard/BrowserCLMRunner.js?v=2';
 import { executionModeManager } from '/js/execution/ExecutionModeManager.js';
-import { ServerCLMRunner } from './ServerCLMRunner.js?v=3';
+import { ServerCLMRunner } from './ServerCLMRunner.js?v=4';
 
 export class CLMRenderer extends BaseRenderer {
   constructor() {
