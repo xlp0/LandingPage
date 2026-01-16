@@ -1,0 +1,77 @@
+{
+  "timestamp": "2026-01-16T12:03:13.383216+08:00",
+  "bucket": "pkc",
+  "uploaded_files": [
+    {
+      "filename": "kubernetes___api_server_20260116_120215.json",
+      "object_name": "grafana-metrics/2026-01-16/kubernetes___api_server_20260116_120215.json",
+      "size": 1358
+    },
+    {
+      "filename": "kubernetes___compute_resources___namespace_(pods)_20260116_120232.json",
+      "object_name": "grafana-metrics/2026-01-16/kubernetes___compute_resources___namespace_(pods)_20260116_120232.json",
+      "size": 5245
+    },
+    {
+      "filename": "kubernetes___compute_resources___namespace_(workloads)_20260116_120237.json",
+      "object_name": "grafana-metrics/2026-01-16/kubernetes___compute_resources___namespace_(workloads)_20260116_120237.json",
+      "size": 887
+    },
+    {
+      "filename": "kubernetes___kubelet_20260116_120256.json",
+      "object_name": "grafana-metrics/2026-01-16/kubernetes___kubelet_20260116_120256.json",
+      "size": 1397
+    },
+    {
+      "filename": "kubernetes___compute_resources___pod_20260116_120250.json",
+      "object_name": "grafana-metrics/2026-01-16/kubernetes___compute_resources___pod_20260116_120250.json",
+      "size": 961
+    },
+    {
+      "filename": "kubernetes___scheduler_20260116_120308.json",
+      "object_name": "grafana-metrics/2026-01-16/kubernetes___scheduler_20260116_120308.json",
+      "size": 646
+    },
+    {
+      "filename": "kubernetes___networking___namespace_(workload)_20260116_120300.json",
+      "object_name": "grafana-metrics/2026-01-16/kubernetes___networking___namespace_(workload)_20260116_120300.json",
+      "size": 715
+    },
+    {
+      "filename": "latest_summary.json",
+      "object_name": "grafana-metrics/2026-01-16/latest_summary.json",
+      "size": 191
+    },
+    {
+      "filename": "kubernetes___compute_resources___cluster_20260116_120222.json",
+      "object_name": "grafana-metrics/2026-01-16/kubernetes___compute_resources___cluster_20260116_120222.json",
+      "size": 4853
+    },
+    {
+      "filename": "kubernetes___compute_resources___node_(pods)_20260116_120241.json",
+      "object_name": "grafana-metrics/2026-01-16/kubernetes___compute_resources___node_(pods)_20260116_120241.json",
+      "size": 622
+    },
+    {
+      "filename": "zitadel_authentication_&_user_monitoring_20260116_120312.json",
+      "object_name": "grafana-metrics/2026-01-16/zitadel_authentication_&_user_monitoring_20260116_120312.json",
+      "size": 36756
+    },
+    {
+      "filename": "kubernetes___networking___pod_20260116_120302.json",
+      "object_name": "grafana-metrics/2026-01-16/kubernetes___networking___pod_20260116_120302.json",
+      "size": 630
+    },
+    {
+      "filename": "kubernetes___persistent_volumes_20260116_120304.json",
+      "object_name": "grafana-metrics/2026-01-16/kubernetes___persistent_volumes_20260116_120304.json",
+      "size": 366
+    },
+    {
+      "filename": "zitadel_authentication_&_user_monitoring_20260116_120312.md",
+      "object_name": "grafana-metrics/2026-01-16/zitadel_authentication_&_user_monitoring_20260116_120312.md",
+      "size": 2776
+    }
+  ],
+  "failed_files": []
+}

@@ -6,7 +6,7 @@ Workflow GitHub Actions ini secara otomatis mengumpulkan metrics dari **semua Gr
 
 ## 🎯 Features
 
-- ✅ Otomatis collect metrics dari **16 Grafana dashboards** setiap jam
+- ✅ Otomatis collect metrics dari **16 Grafana dashboards** setiap hari pukul **06:00 AM Bali Time (WITA)**
 - ✅ Support manual trigger untuk testing
 - ✅ Query metrics melalui Grafana API ke Prometheus (last **24 hours**)
 - ✅ Export data dalam format JSON (satu file per dashboard)
@@ -211,14 +211,19 @@ Workflow berjalan otomatis:
 
 ### Change Collection Frequency:
 
+Current schedule: **Daily at 06:00 AM Bali Time (WITA/UTC+8)**
+
 Edit cron schedule di `.github/workflows/grafana-metrics-collector.yml`:
 
 ```yaml
 schedule:
-  # Every 6 hours
-  - cron: '0 */6 * * *'
+  # Daily at 06:00 AM Bali Time (WITA/UTC+8) = 22:00 UTC
+  - cron: '0 22 * * *'
   
-  # Every day at 2 AM
+  # Every 12 hours
+  - cron: '0 */12 * * *'
+  
+  # Every day at 2 AM UTC
   - cron: '0 2 * * *'
 ```
 

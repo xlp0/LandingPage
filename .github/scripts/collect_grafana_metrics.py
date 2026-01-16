@@ -42,7 +42,20 @@ def get_dashboard_info(session, base_url, dashboard_uid):
         print(f"❌ Failed to get dashboard info: {e}")
         return None
 
-def query_prometheus_via_grafana(session, base_url, query, time_range='1h'):
+def get_datasource_uid(session, base_url, datasource_name='prometheus'):
+    """Get datasource UID by name"""
+    url = f"{base_url}/api/datasources/name/{datasource_name}"
+    
+    try:
+        response = session.get(url)
+        response.raise_for_status()
+        data = response.json()
+        return data.get('uid')
+    except requests.exceptions.RequestException as e:
+        print(f"⚠️  Failed to get datasource UID for '{datasource_name}': {e}")
+        return None
+
+def query_prometheus_via_grafana(session, base_url, query, time_range='1h', datasource_uid=None):
     """Query Prometheus metrics via Grafana API"""
     
     # Calculate time range
@@ -57,8 +70,11 @@ def query_prometheus_via_grafana(session, base_url, query, time_range='1h'):
     else:
         start_time = now - timedelta(hours=1)
     
-    # Grafana datasource query endpoint
-    url = f"{base_url}/api/datasources/proxy/1/api/v1/query_range"
+    # Use datasource UID if provided, otherwise use name-based proxy
+    if datasource_uid:
+        url = f"{base_url}/api/datasources/uid/{datasource_uid}/resources/api/v1/query_range"
+    else:
+        url = f"{base_url}/api/datasources/proxy/uid/prometheus/api/v1/query_range"
     
     params = {
         'query': query,
@@ -105,7 +121,7 @@ def extract_queries_from_panel(panel):
     
     return queries
 
-def collect_dashboard_metrics(session, base_url, dashboard_uid, dashboard_name, time_range):
+def collect_dashboard_metrics(session, base_url, dashboard_uid, dashboard_name, time_range, datasource_uid=None):
     """Collect metrics from a dashboard"""
     
     print(f"\n📊 Collecting metrics: {dashboard_name}")
@@ -149,7 +165,7 @@ def collect_dashboard_metrics(session, base_url, dashboard_uid, dashboard_name, 
             metric_key = f"{panel_title}_{ref_id}".replace(' ', '_').replace('/', '_').lower()
             
             print(f"    Querying: {query[:80]}...")
-            result = query_prometheus_via_grafana(session, base_url, query, time_range)
+            result = query_prometheus_via_grafana(session, base_url, query, time_range, datasource_uid)
             
             if result and result.get('status') == 'success':
                 metrics_data["metrics"][metric_key] = result.get('data', {})
@@ -160,7 +176,7 @@ def collect_dashboard_metrics(session, base_url, dashboard_uid, dashboard_name, 
     
     return metrics_data
 
-def collect_zitadel_metrics(session, base_url, time_range):
+def collect_zitadel_metrics(session, base_url, time_range, datasource_uid=None):
     """Collect ZITADEL authentication and user monitoring metrics"""
     
     print(f"\n📊 Collecting ZITADEL metrics")
@@ -199,7 +215,7 @@ def collect_zitadel_metrics(session, base_url, time_range):
     
     for metric_name, query in queries.items():
         print(f"  Querying: {metric_name}...")
-        result = query_prometheus_via_grafana(session, base_url, query, time_range)
+        result = query_prometheus_via_grafana(session, base_url, query, time_range, datasource_uid)
         
         if result and result.get('status') == 'success':
             metrics_data["metrics"][metric_name] = result.get('data', {})
@@ -268,6 +284,14 @@ def main():
     # Login to Grafana
     session = get_grafana_session(grafana_url, username, password)
     
+    # Get Prometheus datasource UID
+    print(f"\n🔍 Getting Prometheus datasource UID...")
+    datasource_uid = get_datasource_uid(session, grafana_url, 'prometheus')
+    if datasource_uid:
+        print(f"   ✅ Found Prometheus datasource: {datasource_uid}")
+    else:
+        print(f"   ⚠️  Could not find Prometheus datasource, will use default proxy")
+    
     # Collect metrics from all dashboards
     collected_count = 0
     total_metrics = 0
@@ -276,10 +300,10 @@ def main():
         try:
             # Special handling for ZITADEL
             if dashboard_uid == "zitadel-auth":
-                metrics_data = collect_zitadel_metrics(session, grafana_url, time_range)
+                metrics_data = collect_zitadel_metrics(session, grafana_url, time_range, datasource_uid)
             else:
                 metrics_data = collect_dashboard_metrics(
-                    session, grafana_url, dashboard_uid, dashboard_name, time_range
+                    session, grafana_url, dashboard_uid, dashboard_name, time_range, datasource_uid
                 )
             
             if metrics_data:

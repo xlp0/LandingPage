@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-01-16T04:03:03.116248+00:00",
+  "time_range": "24h",
+  "source": "Kubernetes / Persistent Volumes",
+  "dashboard": "919b92a8e8041bd567af9edab12c840c",
+  "metrics": {
+    "volume_space_usage_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "volume_inodes_usage_a": {
+      "resultType": "matrix",
+      "result": []
+    }
+  }
+}

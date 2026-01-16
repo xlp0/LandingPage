@@ -1,0 +1,8 @@
+{
+  "collection_time": "2026-01-16T04:03:12.135204+00:00",
+  "time_range": "24h",
+  "total_dashboards": 16,
+  "collected": 12,
+  "total_metrics": 66,
+  "output_directory": "grafana-metrics"
+}

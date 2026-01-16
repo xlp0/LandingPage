@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-01-16T04:02:41.852680+00:00",
+  "time_range": "24h",
+  "source": "Kubernetes / Compute Resources / Pod",
+  "dashboard": "6581e46e4e5c7ba40a07646395ef7b23",
+  "metrics": {
+    "cpu_usage_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "cpu_throttling_a": null,
+    "cpu_quota_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "memory_usage_(wss)_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "memory_quota_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "receive_bandwidth_a": null,
+    "transmit_bandwidth_a": null,
+    "rate_of_received_packets_a": null,
+    "rate_of_transmitted_packets_a": null,
+    "rate_of_received_packets_dropped_a": null,
+    "rate_of_transmitted_packets_dropped_a": null,
+    "iops_(pod)_a": null,
+    "throughput_(pod)_a": null,
+    "iops_(containers)_a": null,
+    "throughput_(containers)_a": null,
+    "current_storage_io_a": null
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "timestamp": "2026-01-16T04:02:50.437866+00:00",
+  "time_range": "24h",
+  "source": "Kubernetes / Kubelet",
+  "dashboard": "3138fa155d5915769fbded898ac09fd9",
+  "metrics": {
+    "running_kubelets_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "running_pods_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "running_containers_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "actual_volume_count_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "desired_volume_count_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "config_error_count_a": null,
+    "operation_rate_a": null,
+    "operation_error_rate_a": null,
+    "operation_duration_99th_quantile_a": null,
+    "pod_start_rate_a": null,
+    "pod_start_duration_a": null,
+    "storage_operation_rate_a": null,
+    "storage_operation_error_rate_a": null,
+    "storage_operation_duration_99th_quantile_a": null,
+    "cgroup_manager_operation_rate_a": null,
+    "cgroup_manager_99th_quantile_a": null,
+    "pleg_relist_rate_a": null,
+    "pleg_relist_interval_a": null,
+    "pleg_relist_duration_a": null,
+    "rpc_rate_a": null,
+    "request_duration_99th_quantile_a": null,
+    "memory_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "cpu_usage_a": null,
+    "goroutines_a": {
+      "resultType": "matrix",
+      "result": []
+    }
+  }
+}
