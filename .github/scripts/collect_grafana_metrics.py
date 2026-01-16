@@ -64,7 +64,7 @@ def query_prometheus_via_grafana(session, base_url, query, time_range='1h'):
         'query': query,
         'start': int(start_time.timestamp()),
         'end': int(now.timestamp()),
-        'step': '60s'  # 1 minute resolution
+        'step': '3600s'  # 1 hour resolution
     }
     
     try:
@@ -168,15 +168,15 @@ def collect_zitadel_metrics(session, base_url, time_range):
     # Common ZITADEL metrics to collect
     queries = {
         "active_sessions": 'zitadel_active_sessions_total',
-        "failed_logins": 'rate(zitadel_failed_auth_requests_total[5m])',
-        "successful_logins": 'rate(zitadel_successful_auth_requests_total[5m])',
+        "failed_logins": 'rate(zitadel_failed_auth_requests_total[1h])',
+        "successful_logins": 'rate(zitadel_successful_auth_requests_total[1h])',
         "active_users": 'zitadel_active_users_total',
         "registered_users": 'zitadel_users_total',
-        "auth_requests": 'rate(zitadel_auth_requests_total[5m])',
-        "token_requests": 'rate(zitadel_token_requests_total[5m])',
-        "api_calls": 'rate(zitadel_api_calls_total[5m])',
+        "auth_requests": 'rate(zitadel_auth_requests_total[1h])',
+        "token_requests": 'rate(zitadel_token_requests_total[1h])',
+        "api_calls": 'rate(zitadel_api_calls_total[1h])',
         "database_connections": 'zitadel_database_connections',
-        "cache_hit_rate": 'rate(zitadel_cache_hits_total[5m]) / rate(zitadel_cache_requests_total[5m])',
+        "cache_hit_rate": 'rate(zitadel_cache_hits_total[1h]) / rate(zitadel_cache_requests_total[1h])',
         # Authentication Events (specific event types) - using correct metric name
         "event_oidc_session_access_token_added": 'zitadel_auth_events_total{event_type="oidc_session.access_token.added"}',
         "event_oidc_session_added": 'zitadel_auth_events_total{event_type="oidc_session.added"}',
