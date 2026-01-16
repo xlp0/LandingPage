@@ -43,9 +43,10 @@ def get_dashboard_info(session, base_url, dashboard_uid):
         return None
 
 def get_datasource_id(session, base_url, datasource_name='prometheus'):
-    """Get datasource ID by name"""
-    url = f"{base_url}/api/datasources/name/{datasource_name}"
+    """Get datasource ID by name - tries to find Prometheus datasource"""
     
+    # First, try exact name match
+    url = f"{base_url}/api/datasources/name/{datasource_name}"
     try:
         response = session.get(url)
         response.raise_for_status()
@@ -54,8 +55,34 @@ def get_datasource_id(session, base_url, datasource_name='prometheus'):
         datasource_uid = data.get('uid')
         print(f"   Found datasource '{datasource_name}': ID={datasource_id}, UID={datasource_uid}")
         return datasource_id
+    except requests.exceptions.RequestException:
+        pass
+    
+    # If exact match fails, list all datasources and find Prometheus
+    print(f"   Exact match failed, searching all datasources...")
+    url = f"{base_url}/api/datasources"
+    try:
+        response = session.get(url)
+        response.raise_for_status()
+        datasources = response.json()
+        
+        print(f"   Found {len(datasources)} datasources:")
+        for ds in datasources:
+            ds_name = ds.get('name', '')
+            ds_type = ds.get('type', '')
+            ds_id = ds.get('id')
+            ds_uid = ds.get('uid')
+            print(f"     - {ds_name} (type: {ds_type}, id: {ds_id}, uid: {ds_uid})")
+            
+            # Look for Prometheus datasource (case-insensitive)
+            if ds_type.lower() == 'prometheus':
+                print(f"   ✅ Found Prometheus datasource: '{ds_name}' ID={ds_id}, UID={ds_uid}")
+                return ds_id
+        
+        print(f"   ⚠️  No Prometheus datasource found")
+        return None
     except requests.exceptions.RequestException as e:
-        print(f"⚠️  Failed to get datasource ID for '{datasource_name}': {e}")
+        print(f"   ⚠️  Failed to list datasources: {e}")
         return None
 
 def query_prometheus_via_grafana(session, base_url, query, time_range='1h', datasource_id=None):
@@ -110,6 +137,52 @@ def get_dashboard_panels(session, base_url, dashboard_uid):
     except requests.exceptions.RequestException as e:
         print(f"  ❌ Failed to get dashboard: {e}")
         return []
+
+def resolve_template_variables(query, time_range='24h'):
+    """Resolve Grafana template variables in query"""
+    
+    # Common variable replacements
+    replacements = {
+        '$cluster': '',  # Empty to match all clusters
+        '${cluster}': '',
+        '$__all': '.*',  # Match all
+        '${__all}': '.*',
+        '$instance': '.*',  # Match all instances
+        '${instance}': '.*',
+        '$namespace': '.*',  # Match all namespaces
+        '${namespace}': '.*',
+        '$node': '.*',  # Match all nodes
+        '${node}': '.*',
+    }
+    
+    # Replace rate interval variables
+    if time_range.endswith('h'):
+        hours = int(time_range[:-1])
+        if hours <= 1:
+            rate_interval = '1m'
+        elif hours <= 6:
+            rate_interval = '5m'
+        else:
+            rate_interval = '1h'
+    else:
+        rate_interval = '5m'
+    
+    replacements['$__rate_interval'] = rate_interval
+    replacements['${__rate_interval}'] = rate_interval
+    replacements['$__interval'] = rate_interval
+    replacements['${__interval}'] = rate_interval
+    
+    # Apply replacements
+    resolved_query = query
+    for var, value in replacements.items():
+        resolved_query = resolved_query.replace(var, value)
+    
+    # Remove cluster filters if they're empty (cluster=~"")
+    resolved_query = resolved_query.replace('cluster=~""', 'cluster=~".*"')
+    resolved_query = resolved_query.replace('cluster=~"",', '')
+    resolved_query = resolved_query.replace(',cluster=~""', '')
+    
+    return resolved_query
 
 def extract_queries_from_panel(panel):
     """Extract Prometheus queries from a panel"""
@@ -167,11 +240,16 @@ def collect_dashboard_metrics(session, base_url, dashboard_uid, dashboard_name, 
             query = query_info['expr']
             ref_id = query_info['refId']
             
+            # Resolve template variables
+            resolved_query = resolve_template_variables(query, time_range)
+            
             # Create metric key
             metric_key = f"{panel_title}_{ref_id}".replace(' ', '_').replace('/', '_').lower()
             
             print(f"    Querying: {query[:80]}...")
-            result = query_prometheus_via_grafana(session, base_url, query, time_range, datasource_id)
+            if query != resolved_query:
+                print(f"    Resolved: {resolved_query[:80]}...")
+            result = query_prometheus_via_grafana(session, base_url, resolved_query, time_range, datasource_id)
             
             if result and result.get('status') == 'success':
                 metrics_data["metrics"][metric_key] = result.get('data', {})
