@@ -152,8 +152,10 @@ export class ServerCLMRunner {
         const chapterId = clmData?.chapter?.id;
         if (chapterId) {
           // Construct path to code file
-          const chapterNum = String(chapterId).padStart(3, '0').substring(0, 2);
+          // Chapter ID 101 -> 01, 102 -> 02, etc. (use modulo 100 to get last 2 digits)
+          const chapterNum = String(chapterId % 100).padStart(2, '0');
           const codePath = `/chapters/chapter_${chapterNum}_arithmetic/${concrete.code_file}`;
+          console.log('[ServerRunner] Constructed code path:', codePath);
           
           try {
             const codeResponse = await fetch(codePath);
