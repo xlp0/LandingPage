@@ -1,6 +1,0 @@
-name: "single_update"
-handle: "my_doc"
-versions:
-  - content: "Version 1"
-  - content: "Version 2"
-expected_history_length: 1

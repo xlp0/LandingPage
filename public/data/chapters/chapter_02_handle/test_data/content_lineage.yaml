@@ -1,8 +1,0 @@
-name: "content_lineage"
-handle: "specification"
-versions:
-  - content: "# Spec v0.1\n\nInitial draft"
-  - content: "# Spec v0.2\n\nAdded requirements"
-  - content: "# Spec v0.3\n\nAdded implementation notes"
-  - content: "# Spec v1.0\n\nApproved for release"
-expected_history_length: 3

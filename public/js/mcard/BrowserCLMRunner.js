@@ -10,7 +10,7 @@
  */
 
 import * as yaml from '../vendor/yaml.esm.js';
-import { SandboxWorker } from '../vendor/mcard-js/ptr/SandboxWorker.js';
+import { SandboxWorker } from '../vendor/mcard-js/ptr/SandboxWorker.js?v=2';
 // Temporarily disabled to debug MCard loading issue
 // import { LambdaRuntime } from '../vendor/mcard-js/ptr/lambda/LambdaRuntime.js';
 // import { CardCollection } from '../vendor/mcard-js/model/CardCollection.js';
@@ -62,7 +62,7 @@ export class BrowserCLMRunner {
    */
   parseCLM(yamlContent) {
     const parsed = yaml.parse(yamlContent);
-    
+
     // Normalize legacy format (abstract/concrete/balanced at root)
     if (parsed.abstract && !parsed.clm) {
       return {
@@ -76,12 +76,12 @@ export class BrowserCLMRunner {
         examples: this.extractExamples(parsed.balanced)
       };
     }
-    
+
     // Standard format with clm key
     if (parsed.clm?.balanced?.test_cases && !parsed.examples) {
       parsed.examples = this.extractExamples(parsed.clm.balanced);
     }
-    
+
     return parsed;
   }
 
@@ -92,14 +92,14 @@ export class BrowserCLMRunner {
    */
   extractExamples(balanced) {
     if (!balanced?.test_cases) return [];
-    
+
     return balanced.test_cases.map(tc => {
       let input = tc.given;
-      
+
       if (tc.when) {
         const params = tc.when.params || {};
         const context = tc.when.context || {};
-        
+
         if (Object.keys(params).length > 0 || Object.keys(context).length > 0) {
           input = { ...tc.when, ...context, ...params };
           if (input.__input_content__ === undefined) {
@@ -112,7 +112,7 @@ export class BrowserCLMRunner {
           }
         }
       }
-      
+
       return {
         name: `Test Case: ${tc.given}`,
         input: input,
@@ -126,32 +126,32 @@ export class BrowserCLMRunner {
    */
   async execute(yamlContent, input = {}) {
     const startTime = Date.now();
-    
+
     try {
       const clm = this.parseCLM(yamlContent);
       const config = clm.clm?.concrete || {};
-      
+
       console.log('[BrowserCLMRunner] Config:', config);
       console.log('[BrowserCLMRunner] Runtime:', config.runtime);
-      
+
       // Handle lambda runtime
       if (config.runtime === 'lambda') {
         console.log('[BrowserCLMRunner] Lambda runtime temporarily disabled for debugging');
         throw new Error('Lambda runtime temporarily disabled - debugging MCard loading issue');
         // return await this.executeLambda(clm, config, input, startTime);
       }
-      
+
       // Handle regular JavaScript runtime
       console.log('[BrowserCLMRunner] Using regular JavaScript execution');
       const code = config.code || this.getOperationCode(config);
-      
+
       if (!code) {
         throw new Error('No executable code found in CLM');
       }
-      
+
       console.log('[BrowserCLMRunner] Executing code:', code.substring(0, 100));
       const result = await this.executeCode(code, input);
-      
+
       return {
         success: true,
         result,
@@ -172,26 +172,26 @@ export class BrowserCLMRunner {
       // Create in-memory collection for lambda terms
       const collection = new CardCollection();
       const lambdaRuntime = new LambdaRuntime(collection);
-      
+
       // Get the lambda expression from code or input
       const expression = input.expression || config.code;
       if (!expression) {
         throw new Error('No lambda expression provided');
       }
-      
+
       // Execute lambda operation (normalize by default)
       const lambdaConfig = {
         operation: config.operation || 'normalize',
         strategy: config.strategy || 'normal',
         maxSteps: config.maxSteps || 1000
       };
-      
+
       const result = await lambdaRuntime.execute(expression, input, lambdaConfig);
-      
+
       if (!result.success) {
         throw new Error(result.error);
       }
-      
+
       return {
         success: true,
         result: result.prettyPrint || result.result,
@@ -199,10 +199,10 @@ export class BrowserCLMRunner {
         clm: { chapter: clm.chapter?.title || 'CLM', concept: clm.clm?.abstract?.concept || 'Unknown' }
       };
     } catch (error) {
-      return { 
-        success: false, 
-        error: error.message, 
-        executionTime: Date.now() - startTime 
+      return {
+        success: false,
+        error: error.message,
+        executionTime: Date.now() - startTime
       };
     }
   }
@@ -217,21 +217,23 @@ export class BrowserCLMRunner {
 
   /**
    * Execute JavaScript code via mcard-js SandboxWorker
-   * @param {string} code - JavaScript code
-   * @param {Object} input - Input context
+   * @param {string} code - JavaScript code  
+   * @param {Object} input - Input context (passed as both input AND context)
    * @returns {Promise<any>} - Execution result
    */
   async executeCode(code, input) {
     await this.ensureInit();
-    
+
     const wrappedCode = `
       let result;
       ${code}
       return result;
     `;
-    
+
     try {
-      return await this.sandbox.execute(wrappedCode, input);
+      // Pass input as both pcard.input and context
+      // CLM code uses context.get('key') to access values
+      return await this.sandbox.execute(wrappedCode, input, input);
     } catch (error) {
       console.error('[CLM] Execution error:', error);
       throw error;
@@ -245,14 +247,14 @@ export class BrowserCLMRunner {
     try {
       const clm = this.parseCLM(yamlContent);
       const examples = clm.examples || [];
-      
+
       if (examples.length === 0) {
         return { success: true, message: 'No test cases found', totalTests: 0, passed: 0, failed: 0, results: [] };
       }
 
       const config = clm.clm?.concrete || {};
       const code = config.code || this.getOperationCode(config);
-      
+
       if (!code) {
         return {
           success: false,
@@ -268,16 +270,16 @@ export class BrowserCLMRunner {
       for (const example of examples) {
         const startTime = Date.now();
         let result, error;
-        
+
         try {
           result = await this.executeCode(code, example.input);
         } catch (e) {
           error = e.message;
         }
-        
-        const passed = !error && (example.expected_output === undefined || 
+
+        const passed = !error && (example.expected_output === undefined ||
           JSON.stringify(result) === JSON.stringify(example.expected_output));
-        
+
         results.push({
           name: example.name,
           input: example.input,
