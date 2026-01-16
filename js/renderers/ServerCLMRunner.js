@@ -126,6 +126,49 @@ export class ServerCLMRunner {
     try {
       console.log('[ServerRunner] Sending CLM execution request via WebSocket...');
       
+      // Parse the CLM YAML to check if we need to load code_file
+      let clmData;
+      try {
+        clmData = jsyaml.load(code);
+      } catch (e) {
+        console.error('[ServerRunner] Failed to parse CLM YAML:', e);
+        throw new Error('Invalid CLM YAML format');
+      }
+      
+      // Check if concrete has code_file instead of code
+      const concrete = clmData?.clm?.concrete;
+      if (concrete && concrete.code_file && !concrete.code) {
+        console.log('[ServerRunner] Loading code from code_file:', concrete.code_file);
+        
+        // Extract chapter directory from the current URL or CLM structure
+        const chapterId = clmData?.chapter?.id;
+        if (chapterId) {
+          // Construct path to code file
+          const chapterNum = String(chapterId).padStart(3, '0').substring(0, 2);
+          const codePath = `/chapters/chapter_${chapterNum}_arithmetic/${concrete.code_file}`;
+          
+          try {
+            const codeResponse = await fetch(codePath);
+            if (codeResponse.ok) {
+              const codeContent = await codeResponse.text();
+              console.log('[ServerRunner] Loaded code content, length:', codeContent.length);
+              
+              // Replace code_file with actual code content
+              concrete.code = codeContent;
+              delete concrete.code_file;
+              delete concrete.entry_point;
+              
+              // Convert back to YAML
+              code = jsyaml.dump(clmData);
+            } else {
+              console.warn('[ServerRunner] Could not load code file:', codePath);
+            }
+          } catch (fetchError) {
+            console.error('[ServerRunner] Error loading code file:', fetchError);
+          }
+        }
+      }
+      
       const response = await this.sendMessage('clm_execute', {
         clm: code,
         input: input
