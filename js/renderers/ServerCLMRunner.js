@@ -124,60 +124,7 @@ export class ServerCLMRunner {
    */
   async execute(code, input) {
     try {
-      console.log('[ServerRunner] === Starting CLM Execution ===');
-      console.log('[ServerRunner] Input data:', input);
-      console.log('[ServerRunner] Code length:', code.length);
-      
-      // Parse the CLM YAML to check if we need to load code_file
-      let clmData;
-      try {
-        clmData = jsyaml.load(code);
-        console.log('[ServerRunner] Parsed CLM data:', clmData);
-      } catch (e) {
-        console.error('[ServerRunner] Failed to parse CLM YAML:', e);
-        throw new Error('Invalid CLM YAML format');
-      }
-      
-      // Check if concrete has code_file instead of code
-      const concrete = clmData?.clm?.concrete;
-      console.log('[ServerRunner] Concrete section:', concrete);
-      console.log('[ServerRunner] Has code_file?', !!concrete?.code_file);
-      console.log('[ServerRunner] Has code?', !!concrete?.code);
-      
-      if (concrete && concrete.code_file && !concrete.code) {
-        console.log('[ServerRunner] *** LOADING CODE FROM FILE ***');
-        console.log('[ServerRunner] code_file:', concrete.code_file);
-        
-        // Extract chapter directory from the current URL or CLM structure
-        const chapterId = clmData?.chapter?.id;
-        if (chapterId) {
-          // Construct path to code file
-          // Chapter ID 101 -> 01, 102 -> 02, etc. (use modulo 100 to get last 2 digits)
-          const chapterNum = String(chapterId % 100).padStart(2, '0');
-          const codePath = `/chapters/chapter_${chapterNum}_arithmetic/${concrete.code_file}`;
-          console.log('[ServerRunner] Constructed code path:', codePath);
-          
-          try {
-            const codeResponse = await fetch(codePath);
-            if (codeResponse.ok) {
-              const codeContent = await codeResponse.text();
-              console.log('[ServerRunner] Loaded code content, length:', codeContent.length);
-              
-              // Replace code_file with actual code content
-              concrete.code = codeContent;
-              delete concrete.code_file;
-              delete concrete.entry_point;
-              
-              // Convert back to YAML
-              code = jsyaml.dump(clmData);
-            } else {
-              console.warn('[ServerRunner] Could not load code file:', codePath);
-            }
-          } catch (fetchError) {
-            console.error('[ServerRunner] Error loading code file:', fetchError);
-          }
-        }
-      }
+      console.log('[ServerRunner] Sending CLM execution request...');
       
       const response = await this.sendMessage('clm_execute', {
         clm: code,
