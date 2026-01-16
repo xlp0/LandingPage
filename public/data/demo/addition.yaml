@@ -13,8 +13,10 @@ clm:
     description: The Implementation
     runtime: python
     operation: custom
-    code_file: logic.py
-    entry_point: add
+    code: |
+      a = context.get('a', 0)
+      b = context.get('b', 0)
+      result = a + b
     input_type: mcard
     output_type: mcard
     process_type: custom
