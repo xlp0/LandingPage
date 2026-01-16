@@ -10,6 +10,7 @@ Workflow GitHub Actions ini secara otomatis mengumpulkan metrics dari **semua Gr
 - ✅ Support manual trigger untuk testing
 - ✅ Query metrics melalui Grafana API ke Prometheus (last **24 hours**)
 - ✅ Export data dalam format JSON (satu file per dashboard)
+- ✅ **Generate ZITADEL Markdown report otomatis** dengan Mermaid.js visualizations
 - ✅ Upload otomatis ke MinIO storage (bucket: **pkc**)
 - ✅ Organize files berdasarkan tanggal (YYYY-MM-DD)
 - ✅ Artifact retention untuk backup
@@ -105,6 +106,7 @@ pkc/
 │   │   ├── kubernetes_api_server_20260114_010000.json
 │   │   ├── kubernetes_compute_resources_cluster_20260114_010000.json
 │   │   ├── zitadel_authentication_&_user_monitoring_20260114_010000.json
+│   │   ├── zitadel_report.md  # 📊 Auto-generated ZITADEL report
 │   │   ├── ... (16 dashboard files)
 │   │   ├── latest_summary.json
 │   │   └── upload_results.json
@@ -261,6 +263,44 @@ Automated: Edit `TIME_RANGE` env var di workflow file
 3. **Alerts:** Setup notifications jika workflow fails
 4. **Analysis:** Download metrics files untuk analysis dengan Pandas/Excel
 5. **Visualization:** Import JSON ke visualization tools (Grafana, Tableau, etc.)
+
+## 📊 ZITADEL Report Generation
+
+Workflow ini secara otomatis generate **Markdown report** untuk ZITADEL metrics dengan visualisasi Mermaid.js.
+
+### Features:
+- ✅ Auto-generate setelah metrics collection
+- ✅ Visualisasi dengan Mermaid.js (line charts, bar charts, pie charts)
+- ✅ 24 hourly data points (1 hour refresh interval)
+- ✅ Upload otomatis ke MinIO bersama JSON files
+
+### Report Contents:
+1. **Total Users** - Registered users dengan trend chart (24 hours)
+2. **Authentication Events** - 7 event types:
+   - `oidc_session.access_token.added`
+   - `oidc_session.added`
+   - `user.human.externallogin.check.succeeded`
+   - `user.human.mfa.init.skipped`
+   - `user.human.mfa.otp.added`
+   - `user.human.password.check.succeeded`
+   - `user.token.v2.added`
+3. **Event Distribution** - Bar chart dan pie chart
+4. **Summary** - Key metrics dan timeline
+
+### Files:
+- **Template:** `daily-reports/zitadel_report_template.md`
+- **Generator Script:** `daily-reports/generate_zitadel_report.py`
+- **Output:** `grafana-metrics/zitadel_report.md` (uploaded to MinIO)
+
+### Manual Generation:
+```bash
+python3 daily-reports/generate_zitadel_report.py \
+  grafana-metrics/zitadel_authentication_*_user_monitoring_*.json \
+  daily-reports/zitadel_report.md
+```
+
+### Access Report:
+**MinIO URL:** https://minio.pkc.pub/browser/pkc/grafana-metrics/{date}/zitadel_report.md
 
 ## 📞 Support
 

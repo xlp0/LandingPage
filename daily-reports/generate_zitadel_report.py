@@ -27,10 +27,10 @@ def get_latest_value(metric_data):
     
     return 0
 
-def calculate_hourly_samples(metric_data, sample_hours=[0, 4, 8, 12, 16, 20, 24]):
-    """Get values at specific hour marks"""
+def calculate_hourly_samples(metric_data):
+    """Extract all hourly data points (24 hours)"""
     if not metric_data.get('result'):
-        return [0] * len(sample_hours)
+        return [0] * 24
     
     all_values = []
     for result in metric_data['result']:
@@ -39,15 +39,20 @@ def calculate_hourly_samples(metric_data, sample_hours=[0, 4, 8, 12, 16, 20, 24]
             break
     
     if not all_values:
-        return [0] * len(sample_hours)
+        return [0] * 24
     
-    # Get first value as baseline
-    baseline = float(all_values[0][1])
+    # Extract all hourly values (should be 24 data points with 1-hour step)
+    hourly_values = [float(value[1]) for value in all_values]
     
-    # For constant values, return same value for all samples
-    samples = [baseline] * len(sample_hours)
+    # Ensure we have exactly 24 data points
+    if len(hourly_values) < 24:
+        # Pad with last value if we have fewer than 24 points
+        hourly_values.extend([hourly_values[-1]] * (24 - len(hourly_values)))
+    elif len(hourly_values) > 24:
+        # Take only the last 24 points if we have more
+        hourly_values = hourly_values[-24:]
     
-    return samples
+    return hourly_values
 
 def format_number(num):
     """Format number with K suffix if >= 1000"""

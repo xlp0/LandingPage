@@ -41,6 +41,28 @@ jobs:
           chmod +x .github/scripts/collect_grafana_metrics.py
           python3 .github/scripts/collect_grafana_metrics.py
       
+      - name: Generate ZITADEL Report
+        if: success()
+        run: |
+          # Find the latest ZITADEL metrics JSON file
+          ZITADEL_JSON=$(ls -t grafana-metrics/zitadel_authentication_*_user_monitoring_*.json 2>/dev/null | head -1)
+          
+          if [ -n "$ZITADEL_JSON" ]; then
+            echo "📊 Generating ZITADEL report from: $ZITADEL_JSON"
+            chmod +x daily-reports/generate_zitadel_report.py
+            python3 daily-reports/generate_zitadel_report.py "$ZITADEL_JSON" daily-reports/zitadel_report.md
+            
+            # Copy report to grafana-metrics directory for upload to MinIO
+            if [ -f daily-reports/zitadel_report.md ]; then
+              cp daily-reports/zitadel_report.md grafana-metrics/
+              echo "✅ ZITADEL report generated and copied to grafana-metrics/"
+            else
+              echo "⚠️  Report generation failed"
+            fi
+          else
+            echo "⚠️  No ZITADEL metrics JSON file found"
+          fi
+      
       - name: Upload metrics to MinIO
         if: success()
         env:

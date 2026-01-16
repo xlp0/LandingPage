@@ -21,8 +21,8 @@ graph TD
 ```mermaid
 %%{init: {'theme':'dark'}}%%
 xychart-beta
-    title "Registered Users Over Time"
-    x-axis [0h, 4h, 8h, 12h, 16h, 20h, 24h]
+    title "Registered Users Over Time (Hourly)"
+    x-axis [0h, 1h, 2h, 3h, 4h, 5h, 6h, 7h, 8h, 9h, 10h, 11h, 12h, 13h, 14h, 15h, 16h, 17h, 18h, 19h, 20h, 21h, 22h, 23h]
     y-axis "Users"
     line [{{user_trend_data}}]
 ```
