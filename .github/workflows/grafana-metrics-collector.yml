@@ -2,8 +2,8 @@ name: Grafana Metrics Collector
 
 on:
   schedule:
-    # Runs every hour at minute 0
-    - cron: '0 * * * *'
+    # Runs daily at 06:00 AM Bali Time (WITA/UTC+8) = 22:00 UTC (previous day)
+    - cron: '0 22 * * *'
   workflow_dispatch: # Allow manual trigger for testing
     inputs:
       time_range:
