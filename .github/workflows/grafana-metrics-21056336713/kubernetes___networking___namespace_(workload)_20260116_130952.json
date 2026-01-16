@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-01-16T05:09:48.336456+00:00",
+  "time_range": "24h",
+  "source": "Kubernetes / Networking / Namespace (Workload)",
+  "dashboard": "bbb2a765a623ae38130206c7d94a160f",
+  "metrics": {
+    "current_rate_of_bytes_received_a": null,
+    "current_rate_of_bytes_transmitted_a": null,
+    "current_status_a": null,
+    "receive_bandwidth_a": null,
+    "transmit_bandwidth_a": null,
+    "average_container_bandwidth_by_workload:_received_a": null,
+    "average_container_bandwidth_by_workload:_transmitted_a": null,
+    "rate_of_received_packets_a": null,
+    "rate_of_transmitted_packets_a": null,
+    "rate_of_received_packets_dropped_a": null,
+    "rate_of_transmitted_packets_dropped_a": null
+  }
+}

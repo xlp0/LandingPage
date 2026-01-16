@@ -1,0 +1,262 @@
+{
+  "timestamp": "2026-01-16T05:09:08.717514+00:00",
+  "time_range": "24h",
+  "source": "Kubernetes / Compute Resources / Namespace (Pods)",
+  "dashboard": "85a562078cdf77779eaa1add43ccec1e",
+  "metrics": {
+    "cpu_utilisation_(from_requests)_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "cpu_utilisation_(from_limits)_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "memory_utilisation_(from_requests)_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "memory_utilisation_(from_limits)_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "cpu_usage_a": {
+      "resultType": "matrix",
+      "result": [
+        {
+          "metric": {},
+          "values": [
+            [
+              1768453750,
+              "NaN"
+            ],
+            [
+              1768457350,
+              "NaN"
+            ],
+            [
+              1768460950,
+              "NaN"
+            ],
+            [
+              1768464550,
+              "NaN"
+            ],
+            [
+              1768468150,
+              "NaN"
+            ],
+            [
+              1768471750,
+              "NaN"
+            ],
+            [
+              1768475350,
+              "NaN"
+            ],
+            [
+              1768478950,
+              "NaN"
+            ],
+            [
+              1768482550,
+              "NaN"
+            ],
+            [
+              1768486150,
+              "NaN"
+            ],
+            [
+              1768489750,
+              "NaN"
+            ],
+            [
+              1768493350,
+              "NaN"
+            ],
+            [
+              1768496950,
+              "NaN"
+            ],
+            [
+              1768500550,
+              "NaN"
+            ],
+            [
+              1768504150,
+              "NaN"
+            ],
+            [
+              1768507750,
+              "NaN"
+            ],
+            [
+              1768511350,
+              "NaN"
+            ],
+            [
+              1768514950,
+              "NaN"
+            ],
+            [
+              1768518550,
+              "NaN"
+            ],
+            [
+              1768522150,
+              "NaN"
+            ],
+            [
+              1768525750,
+              "NaN"
+            ],
+            [
+              1768529350,
+              "NaN"
+            ],
+            [
+              1768532950,
+              "NaN"
+            ],
+            [
+              1768536550,
+              "NaN"
+            ],
+            [
+              1768540150,
+              "NaN"
+            ]
+          ]
+        }
+      ]
+    },
+    "cpu_quota_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "memory_usage_(w_o_cache)_a": {
+      "resultType": "matrix",
+      "result": [
+        {
+          "metric": {},
+          "values": [
+            [
+              1768453752,
+              "NaN"
+            ],
+            [
+              1768457352,
+              "NaN"
+            ],
+            [
+              1768460952,
+              "NaN"
+            ],
+            [
+              1768464552,
+              "NaN"
+            ],
+            [
+              1768468152,
+              "NaN"
+            ],
+            [
+              1768471752,
+              "NaN"
+            ],
+            [
+              1768475352,
+              "NaN"
+            ],
+            [
+              1768478952,
+              "NaN"
+            ],
+            [
+              1768482552,
+              "NaN"
+            ],
+            [
+              1768486152,
+              "NaN"
+            ],
+            [
+              1768489752,
+              "NaN"
+            ],
+            [
+              1768493352,
+              "NaN"
+            ],
+            [
+              1768496952,
+              "NaN"
+            ],
+            [
+              1768500552,
+              "NaN"
+            ],
+            [
+              1768504152,
+              "NaN"
+            ],
+            [
+              1768507752,
+              "NaN"
+            ],
+            [
+              1768511352,
+              "NaN"
+            ],
+            [
+              1768514952,
+              "NaN"
+            ],
+            [
+              1768518552,
+              "NaN"
+            ],
+            [
+              1768522152,
+              "NaN"
+            ],
+            [
+              1768525752,
+              "NaN"
+            ],
+            [
+              1768529352,
+              "NaN"
+            ],
+            [
+              1768532952,
+              "NaN"
+            ],
+            [
+              1768536552,
+              "NaN"
+            ],
+            [
+              1768540152,
+              "NaN"
+            ]
+          ]
+        }
+      ]
+    },
+    "memory_quota_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "current_network_usage_a": null,
+    "receive_bandwidth_a": null,
+    "transmit_bandwidth_a": null,
+    "rate_of_received_packets_a": null,
+    "rate_of_transmitted_packets_a": null,
+    "rate_of_received_packets_dropped_a": null,
+    "rate_of_transmitted_packets_dropped_a": null,
+    "iops(reads+writes)_a": null,
+    "throughput(read+write)_a": null,
+    "current_storage_io_a": null
+  }
+}

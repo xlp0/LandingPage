@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-01-16T05:09:19.423290+00:00",
+  "time_range": "24h",
+  "source": "Kubernetes / Compute Resources / Namespace (Workloads)",
+  "dashboard": "a164a7f0339f99e89cea5cb47e9be617",
+  "metrics": {
+    "cpu_usage_a": null,
+    "cpu_quota_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "memory_usage_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "memory_quota_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "current_network_usage_a": null,
+    "receive_bandwidth_a": null,
+    "transmit_bandwidth_a": null,
+    "average_container_bandwidth_by_pod:_received_a": null,
+    "average_container_bandwidth_by_pod:_transmitted_a": null,
+    "rate_of_received_packets_a": null,
+    "rate_of_transmitted_packets_a": null,
+    "rate_of_received_packets_dropped_a": null,
+    "rate_of_transmitted_packets_dropped_a": null
+  }
+}

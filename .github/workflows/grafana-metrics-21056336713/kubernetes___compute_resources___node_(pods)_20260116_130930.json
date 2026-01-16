@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-01-16T05:09:25.999401+00:00",
+  "time_range": "24h",
+  "source": "Kubernetes / Compute Resources / Node (Pods)",
+  "dashboard": "200ac8fdbfbb74b39aff88118e4d1c2c",
+  "metrics": {
+    "cpu_usage_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "cpu_quota_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "memory_usage_(w_cache)_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "memory_usage_(w_o_cache)_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "memory_quota_a": {
+      "resultType": "matrix",
+      "result": []
+    }
+  }
+}

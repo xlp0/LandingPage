@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-01-16T05:09:57.570799+00:00",
+  "time_range": "24h",
+  "source": "Kubernetes / Scheduler",
+  "dashboard": "2e6b6a3b4bddf1427b3a55aa1311c656",
+  "metrics": {
+    "up_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "scheduling_rate_a": null,
+    "scheduling_latency_99th_quantile_a": null,
+    "kube_api_request_rate_a": null,
+    "post_request_latency_99th_quantile_a": null,
+    "get_request_latency_99th_quantile_a": null,
+    "memory_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "cpu_usage_a": null,
+    "goroutines_a": {
+      "resultType": "matrix",
+      "result": []
+    }
+  }
+}

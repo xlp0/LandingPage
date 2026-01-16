@@ -1,0 +1,60 @@
+{
+  "timestamp": "2026-01-16T05:08:56.025962+00:00",
+  "time_range": "24h",
+  "source": "Kubernetes / API server",
+  "dashboard": "09ec8aa1e996d6ffcd6817bbaff4db1b",
+  "metrics": {
+    "availability_(30d)_>_99.000%_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "errorbudget_(30d)_>_99.000%_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "read_availability_(30d)_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "read_sli_-_requests_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "read_sli_-_errors_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "read_sli_-_duration_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "write_availability_(30d)_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "write_sli_-_requests_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "write_sli_-_errors_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "write_sli_-_duration_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "work_queue_add_rate_a": null,
+    "work_queue_depth_a": null,
+    "work_queue_latency_a": null,
+    "memory_a": {
+      "resultType": "matrix",
+      "result": []
+    },
+    "cpu_usage_a": null,
+    "goroutines_a": {
+      "resultType": "matrix",
+      "result": []
+    }
+  }
+}
