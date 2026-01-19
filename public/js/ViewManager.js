@@ -288,8 +288,9 @@ class ViewManager {
   }
 }
 
-// Create singleton instance
+// Create singleton instance and expose to window for onclick handlers
 const viewManager = new ViewManager();
+window.viewManager = viewManager;
 
 // Auto-initialize on DOM ready
 if (document.readyState === 'loading') {

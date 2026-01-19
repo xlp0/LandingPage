@@ -648,6 +648,13 @@ This project is provided as-is for exploring PKC design concepts and serverless 
 
 ---
 
+## 🐛 **Recent Bug Fixes**
+
+### **January 2026**
+- **Fixed Apps dropdown in CardTypes sidebar** - The Apps category dropdown was not responding to clicks. Root cause: `viewManager` singleton was created but not exposed to `window`, causing `window.viewManager.toggleSubmenu('apps')` to fail silently. Fix: Added `window.viewManager = viewManager;` in `public/js/ViewManager.js`.
+
+---
+
 **Built with ❤️ for decentralized communication and personal knowledge management**
 
 **PKC Landing Page** - Where static meets dynamic, and centralized meets decentralized.
