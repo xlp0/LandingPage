@@ -43,7 +43,7 @@
         "esbuild": "^0.27.1"
     },
     "dependencies": {
-        "mcard-js": "^2.1.23"
+        "mcard-js": "^2.1.25"
     },
     "peerDependencies": {}
 }

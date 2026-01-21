@@ -314,7 +314,7 @@ Documents are organized into these primary categories:
 | 2025-12-19 | `3d-theater-component.md` | Data-driven 3D objects, satellite Earth textures, local vendor libraries |
 | 2024-12-19 | `Theater_Example.html` | Modularized 3D Theater & Tone.js Audio Engine integration |
 | 2024-12-11 | `STATUS.md` | Project status report |
-| 2024-12-11 | `MCARD-JS-SETUP.md` | mcard-js v2.1.11 update |
+| 2024-12-11 | `MCARD-JS-SETUP.md` | mcard-js v2.1.25 update |
 | 2024-12-11 | `SELF-HOSTED-CDN.md` | CDN architecture |
 | 2024-12-10 | Redux slices | State management docs |
 

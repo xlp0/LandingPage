@@ -4,7 +4,7 @@
 
 ## Overview
 
-This directory contains a **lightweight browser implementation** of the MCard system that follows the API patterns and architecture of the full **mcard-js v2.1.2** library.
+This directory contains a **lightweight browser implementation** of the MCard system that follows the API patterns and architecture of the full **mcard-js v2.1.25** library.
 
 ### Why Not Use mcard-js Directly?
 
@@ -118,7 +118,7 @@ const categories = ContentTypeDetector.categorize(cards);
 If you need advanced features (RAG, Lambda Calculus, multi-language PTR), migrate to the full library:
 
 ```bash
-npm install mcard-js@2.1.2
+npm install mcard-js@2.1.25
 ```
 
 ```javascript
