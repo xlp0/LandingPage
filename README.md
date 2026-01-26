@@ -28,6 +28,11 @@ A modern, **static-first, modular web application** with **serverless P2P commun
 - **Music Visualizer V5**: Interactive music notation with 3D frequency visualization, Web Workers, and FileLoader caching (`public/examples/Music/SyncedMusicVisualizerV5.html`)
 - **Morphism Cube**: Category theory recursion schemes visualized in 3D (`public/examples/3DGames/MorphismCube/`)
 
+### **🤖 AI Chatbot Panel**
+- **Integrated AI Assistance**: Access external AI tools like ChatGPT, Claude, and Gemini directly within the interface.
+- **Microphone Support**: Enabled `microphone` permission for iframe integrations, allowing voice interaction with supported chatbots.
+- **Smart Fallback**: Automatically provides a direct link button for services that block iframe embedding (e.g., ChatGPT, Claude), ensuring users can always access their tools.
+
 ### **🏗️ Modular Architecture**
 - **MCard Manager**: Advanced card management with IndexedDB persistence, handle support (`@welcome`), and **Duplications** detection (v11+).
 - **Modular HTML**: `index.html` logic is fully modularized into dedicated ESM-ready scripts (`public/js/pwa-init.js`, `ui-inline-handlers.js`, etc.) while preserving external interfaces.
@@ -57,8 +62,8 @@ The entire project is **served and run through mcard-js**, providing:
 
 | Server | Port | Purpose |
 |--------|------|---------|
-| **Node WebSocket Server** | 3000 | HTTP + WebSocket + API endpoints |
-| **Express Static Server** | 3000 | Serves all static files and CLM components |
+| **Node WebSocket Server** | 3001 | HTTP + WebSocket + API endpoints (Configurable via .env) |
+| **Express Static Server** | 3001 | Serves all static files and CLM components |
 | **MCard Dev Server** | 4000 | Configurable dev server via `mcard-js` |
 
 ```bash
@@ -652,6 +657,8 @@ This project is provided as-is for exploring PKC design concepts and serverless 
 
 ### **January 2026**
 - **Fixed Apps dropdown in CardTypes sidebar** - The Apps category dropdown was not responding to clicks. Root cause: `viewManager` singleton was created but not exposed to `window`, causing `window.viewManager.toggleSubmenu('apps')` to fail silently. Fix: Added `window.viewManager = viewManager;` in `public/js/ViewManager.js`.
+- **Removed Hardcoded WebSocket Port** - Replaced legacy hardcoded port `5321` in `ServerCLMRunner.js` with dynamic port detection (`window.location.port`), defaulting to `3000`. This ensures the client correctly connects to the actual server port (e.g., `3001` in dev) instead of failing to connect to a non-existent service.
+
 
 ---
 

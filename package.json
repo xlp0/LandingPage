@@ -35,6 +35,7 @@
     "install-browsers": "playwright install",
     "report": "playwright show-report",
     "ws-server": "node ws-server.js",
+    "dev": "node ws-server.js",
     "build:mcard": "esbuild scripts/build-mcard-bundle.js --bundle --format=esm --outfile=public/js/vendor/mcard-js.bundle.js --platform=browser",
     "build": "npm run build --workspaces",
     "publish:all": "npm publish --workspaces",
@@ -71,7 +72,7 @@
     "js-yaml": "^4.1.0",
     "katex": "^0.16.25",
     "mathjax": "^4.0.0",
-    "mcard-js": "^2.1.25",
+    "mcard-js": "^2.1.30",
     "redux": "^5.0.1",
     "serve-index": "^1.9.1",
     "ws": "^8.18.3"

@@ -68,7 +68,7 @@ Fast validation tests that should pass in ~15 seconds.
 - Main content container is visible
 
 ### CLM Dashboard (`tests/smoke/clm-dashboard.spec.cjs`)
-> **Note:** Requires WebSocket server on port 3000
+> **Note:** Requires WebSocket server on port 3001
 
 - Dashboard loads successfully
 - Component registry populates sidebar
@@ -164,7 +164,7 @@ npm run test:smoke -- --grep "Landing Page"
 ## Prerequisites
 
 1. **Python** - For static file server (Playwright auto-starts on port 8000)
-2. **Node.js** - For WebSocket server (port 3000, required for CLM tests)
+2. **Node.js** - For WebSocket server (port 3001, required for CLM tests)
 
 ```bash
 # Install Playwright browsers

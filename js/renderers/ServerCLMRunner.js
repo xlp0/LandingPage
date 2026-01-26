@@ -18,8 +18,8 @@ export class ServerCLMRunner {
   detectWebSocketUrl() {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const host = window.location.hostname;
-    const port = 5321; // WebSocket server port
-    return `${protocol}//${host}:${port}`;
+    const port = window.location.port || 3000; // Use current port or default to 3000
+    return `${protocol}//${host}:${port}/ws/`;
   }
 
   /**
@@ -45,7 +45,7 @@ export class ServerCLMRunner {
           try {
             const data = JSON.parse(event.data);
             console.log('[ServerRunner] Received message:', data);
-            
+
             if (data.messageId && this.messageHandlers.has(data.messageId)) {
               const handler = this.messageHandlers.get(data.messageId);
               handler(data);
@@ -125,14 +125,14 @@ export class ServerCLMRunner {
   async execute(code, input) {
     try {
       console.log('[ServerRunner] Sending CLM execution request...');
-      
+
       const response = await this.sendMessage('clm_execute', {
         clm: code,
         input: input
       });
 
       console.log('[ServerRunner] Result:', response);
-      
+
       // Normalize result format to match BrowserCLMRunner
       return {
         success: true,
