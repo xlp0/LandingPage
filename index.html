@@ -178,6 +178,26 @@
       </div>
     </div>
 
+    <!-- Full-Width Dashboard -->
+    <div class="calendar-view" id="dashboardView" style="display: none;">
+      <div class="calendar-header">
+        <button class="header-btn" onclick="window.viewManager.hide('dashboard')">
+          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+          Close Dashboard
+        </button>
+        <h2 style="margin: 0; flex: 1; text-align: center;">
+          <i data-lucide="bar-chart-3" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
+          Dashboard
+        </h2>
+        <div style="width: 120px;"></div> <!-- Spacer for centering -->
+      </div>
+      <div class="calendar-container" id="dashboardContainer">
+        <iframe id="dashboardFrame" src="https://grafana.pkc.pub/d/k8s-nodes-health/kubernetes-nodes-health-monitoring?orgId=1&from=now-1h&to=now&timezone=browser&refresh=30s"
+          style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="yes">
+        </iframe>
+      </div>
+    </div>
+
     <!-- Full-Width Morphism Cube v1 -->
     <div class="calendar-view" id="morphismV1View" style="display: none;">
       <div class="calendar-header">
@@ -326,7 +346,10 @@
           Back to Cards
         </div>
         <div class="viewer-header">
-          <h3 id="viewerTitle">Select an MCard</h3>
+          <h3 id="viewerTitle">
+            <i data-lucide="bar-chart-3" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
+            Dashboard
+          </h3>
           <div class="viewer-actions" id="viewerActions" style="display: none;">
             <button class="btn"
               style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;"
@@ -343,31 +366,9 @@
           </div>
         </div>
         <div class="viewer-content" id="viewerContent">
-          <div class="upload-section" id="uploadSection">
-            <div class="upload-icon">
-              <i data-lucide="upload-cloud" style="width: 64px; height: 64px; color: #667eea;"></i>
-            </div>
-            <h2>Upload Files</h2>
-            <p>Drag & drop files here or click Upload button</p>
-            <div style="margin-top: 20px;">
-              <p style="font-size: 14px; color: #666; margin-bottom: 12px;"><strong>Supported Types:</strong></p>
-              <div
-                style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; text-align: left; max-width: 400px; margin: 0 auto;">
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="file-text"
-                    style="width: 16px; height: 16px;"></i> Text</div>
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="image"
-                    style="width: 16px; height: 16px;"></i> Images</div>
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="video"
-                    style="width: 16px; height: 16px;"></i> Videos</div>
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="music"
-                    style="width: 16px; height: 16px;"></i> Audio</div>
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="file"
-                    style="width: 16px; height: 16px;"></i> Documents</div>
-                <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="archive"
-                    style="width: 16px; height: 16px;"></i> Archives</div>
-              </div>
-            </div>
-          </div>
+          <iframe id="defaultDashboardFrame" src="https://grafana.pkc.pub/d/k8s-nodes-health/kubernetes-nodes-health-monitoring?orgId=1&from=now-1h&to=now&timezone=browser&refresh=30s"
+            style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="yes">
+          </iframe>
         </div>
       </div>
 

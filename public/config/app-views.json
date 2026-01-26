@@ -35,6 +35,14 @@
       "logPrefix": "[Music]"
     },
     {
+      "id": "dashboard",
+      "elementId": "dashboardView",
+      "label": "Dashboard",
+      "icon": "bar-chart-3",
+      "displayStyle": "flex",
+      "logPrefix": "[Dashboard]"
+    },
+    {
       "id": "morphismV1",
       "elementId": "morphismV1View",
       "label": "Morphism Cube v1",
