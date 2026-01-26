@@ -206,7 +206,9 @@
     
     <script>
         // Configuration
-        const WS_URL = `ws://${window.location.hostname}:${window.location.port}/ws/`;
+        const WS_PROTOCOL = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const WS_PORT = window.location.port || (window.location.protocol === 'https:' ? '443' : '80');
+        const WS_URL = `${WS_PROTOCOL}//${window.location.hostname}:${WS_PORT}/ws/`;
         const LOCATION_CHANNEL = 'location-sharing';
         const UPDATE_INTERVAL = 5000; // Update location every 5 seconds
         
