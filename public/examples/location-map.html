@@ -327,12 +327,25 @@
             ws = new WebSocket(WS_URL);
             
             ws.onopen = () => {
-                console.log('WebSocket connected');
+                console.log('✅ WebSocket connected to:', WS_URL);
                 // Subscribe to location channel
                 ws.send(JSON.stringify({
                     type: 'subscribe',
                     channel: LOCATION_CHANNEL
                 }));
+                
+                // Request all existing users to send their locations
+                setTimeout(() => {
+                    console.log('📡 Requesting existing user locations...');
+                    ws.send(JSON.stringify({
+                        type: 'request-locations',
+                        channel: LOCATION_CHANNEL,
+                        deviceId: deviceId
+                    }));
+                }, 500);
+                
+                // Start heartbeat to keep connection alive
+                startHeartbeat();
             };
             
             ws.onmessage = (event) => {
@@ -359,10 +372,49 @@
         function handleWebSocketMessage(data) {
             if (data.channel !== LOCATION_CHANNEL) return;
             
+            console.log('📨 Received message:', data.type, 'from:', data.deviceId);
+            
             if (data.type === 'location-update') {
                 updateUserLocation(data);
             } else if (data.type === 'user-disconnected') {
                 removeUser(data.deviceId);
+            } else if (data.type === 'request-locations') {
+                // Another user is requesting locations, send ours
+                if (data.deviceId !== deviceId && myLocation) {
+                    console.log('📤 Sending location to new user:', data.deviceId);
+                    broadcastMyLocation();
+                }
+            }
+        }
+        
+        // Heartbeat to keep connection alive
+        let heartbeatInterval;
+        function startHeartbeat() {
+            if (heartbeatInterval) clearInterval(heartbeatInterval);
+            heartbeatInterval = setInterval(() => {
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({
+                        type: 'ping',
+                        channel: LOCATION_CHANNEL
+                    }));
+                }
+            }, 30000); // Every 30 seconds
+        }
+        
+        // Broadcast my location
+        function broadcastMyLocation() {
+            if (ws && ws.readyState === WebSocket.OPEN && myLocation) {
+                ws.send(JSON.stringify({
+                    type: 'location-update',
+                    channel: LOCATION_CHANNEL,
+                    deviceId: myLocation.deviceId,
+                    deviceName: myLocation.deviceName,
+                    latitude: myLocation.latitude,
+                    longitude: myLocation.longitude,
+                    accuracy: myLocation.accuracy,
+                    timestamp: Date.now()
+                }));
+                console.log('📤 Broadcasted location:', myLocation.latitude.toFixed(4), myLocation.longitude.toFixed(4));
             }
         }
         
@@ -433,24 +485,15 @@
             }
             
             // Broadcast to other users
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({
-                    type: 'location-update',
-                    channel: LOCATION_CHANNEL,
-                    deviceId,
-                    deviceName,
-                    latitude,
-                    longitude,
-                    accuracy,
-                    timestamp: Date.now()
-                }));
-            }
+            broadcastMyLocation();
         }
         
         // Update other user's location
         function updateUserLocation(data) {
             // Don't show our own location from broadcast
             if (data.deviceId === deviceId) return;
+            
+            console.log('📍 Updating user location:', data.deviceName, 'at', data.latitude.toFixed(4), data.longitude.toFixed(4));
             
             const { latitude, longitude, deviceName, accuracy } = data;
             
@@ -591,6 +634,10 @@
         window.addEventListener('beforeunload', () => {
             if (watchId) {
                 navigator.geolocation.clearWatch(watchId);
+            }
+            
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
             }
             
             if (ws && ws.readyState === WebSocket.OPEN) {
