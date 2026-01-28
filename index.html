@@ -112,7 +112,7 @@
       </div>
       <div class="calendar-container" id="calendarContainer">
         <iframe id="calendarFrame"
-          src="https://calendar.google.com/calendar/embed?src=83eaf0af7e929d74dc166a19beb26b471f351697c5b0ba8d92e3a9a30540ca8d%40group.calendar.google.com&ctz=Asia%2FMakassar"
+          data-src="https://calendar.google.com/calendar/embed?src=83eaf0af7e929d74dc166a19beb26b471f351697c5b0ba8d92e3a9a30540ca8d%40group.calendar.google.com&ctz=Asia%2FMakassar"
           style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="no">
         </iframe>
       </div>
@@ -132,7 +132,7 @@
         <div style="width: 120px;"></div> <!-- Spacer for centering -->
       </div>
       <div class="calendar-container" id="mapContainer">
-        <iframe id="mapFrame" src="/public/examples/location-map.html" style="border: 0; width: 100%; height: 100%;"
+        <iframe id="mapFrame" data-src="/public/examples/location-map.html" style="border: 0; width: 100%; height: 100%;"
           frameborder="0" scrolling="no">
         </iframe>
       </div>
@@ -152,7 +152,7 @@
         <div style="width: 120px;"></div> <!-- Spacer for centering -->
       </div>
       <div class="calendar-container" id="threeDContainer">
-        <iframe id="threeDFrame" src="/public/examples/THREEJS_ANIMEJS/Theater_Example.html"
+        <iframe id="threeDFrame" data-src="/public/examples/THREEJS_ANIMEJS/Theater_Example.html"
           style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="no">
         </iframe>
       </div>
@@ -172,7 +172,7 @@
         <div style="width: 120px;"></div> <!-- Spacer for centering -->
       </div>
       <div class="calendar-container" id="musicContainer">
-        <iframe id="musicFrame" src="/public/examples/Music/SyncedMusicVisualizerV5.html"
+        <iframe id="musicFrame" data-src="/public/examples/Music/SyncedMusicVisualizerV5.html"
           style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="no">
         </iframe>
       </div>
@@ -192,7 +192,7 @@
         <div style="width: 120px;"></div> <!-- Spacer for centering -->
       </div>
       <div class="calendar-container" id="dashboardContainer">
-        <iframe id="dashboardFrame" src="https://grafana.pkc.pub/d/k8s-nodes-health/kubernetes-nodes-health-monitoring?orgId=1&from=now-1h&to=now&timezone=browser&refresh=30s"
+        <iframe id="dashboardFrame" data-src="https://grafana.pkc.pub/d/k8s-nodes-health/kubernetes-nodes-health-monitoring?orgId=1&from=now-1h&to=now&timezone=browser&refresh=30s"
           style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="yes">
         </iframe>
       </div>
@@ -212,7 +212,7 @@
         <div style="width: 120px;"></div> <!-- Spacer for centering -->
       </div>
       <div class="calendar-container" id="morphismV1Container">
-        <iframe id="morphismV1Frame" src="/public/examples/3DGames/MorphismCube/Morphism_FirstTry.html"
+        <iframe id="morphismV1Frame" data-src="/public/examples/3DGames/MorphismCube/Morphism_FirstTry.html"
           style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="no">
         </iframe>
       </div>
@@ -232,7 +232,7 @@
         <div style="width: 120px;"></div> <!-- Spacer for centering -->
       </div>
       <div class="calendar-container" id="morphismV2Container">
-        <iframe id="morphismV2Frame" src="/public/examples/3DGames/MorphismCube/Morphism_SecondTry.html"
+        <iframe id="morphismV2Frame" data-src="/public/examples/3DGames/MorphismCube/Morphism_SecondTry.html"
           style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="no">
         </iframe>
       </div>
@@ -363,7 +363,7 @@
           </div>
         </div>
         <div class="viewer-content" id="viewerContent">
-          <iframe id="defaultDashboardFrame" src="https://grafana.pkc.pub/d/k8s-nodes-health/kubernetes-nodes-health-monitoring?orgId=1&from=now-1h&to=now&timezone=browser&refresh=30s"
+          <iframe id="defaultDashboardFrame" data-src="https://grafana.pkc.pub/d/k8s-nodes-health/kubernetes-nodes-health-monitoring?orgId=1&from=now-1h&to=now&timezone=browser&refresh=30s"
             style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="yes">
           </iframe>
         </div>
@@ -477,6 +477,9 @@
 
   <!-- Performance Monitoring -->
   <script src="/public/js/performance-monitor.js"></script>
+
+  <!-- Lazy Iframe Loader (loads default dashboard after page load) -->
+  <script src="/public/js/lazy-iframe-loader.js"></script>
 
   <!-- MCard Manager JavaScript (Application Bootstrap) -->
   <script type="module" src="/public/js/app-bootstrap.js?v=18"></script>

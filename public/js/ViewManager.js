@@ -10,6 +10,7 @@ class ViewManager {
     this.submenus = new Map();
     this.mainContentSelector = '.main-content';
     this.initialized = false;
+    this.loadedIframes = new Set();
   }
 
   /**
@@ -75,6 +76,9 @@ class ViewManager {
     }
 
     console.log(`${view.logPrefix} Opening ${view.label}`);
+
+    // Lazy load iframe if it hasn't been loaded yet
+    this._lazyLoadIframe(viewElement);
 
     // Hide main content
     if (mainContent) {
@@ -273,6 +277,31 @@ class ViewManager {
             this.hide(viewId);
           }
         }
+      }
+    });
+  }
+
+  /**
+   * Lazy load iframe content when view is first opened
+   * @param {HTMLElement} viewElement - The view container element
+   * @private
+   */
+  _lazyLoadIframe(viewElement) {
+    const iframes = viewElement.querySelectorAll('iframe[data-src]');
+    
+    iframes.forEach(iframe => {
+      const iframeId = iframe.id;
+      
+      // Skip if already loaded
+      if (this.loadedIframes.has(iframeId)) {
+        return;
+      }
+      
+      const dataSrc = iframe.getAttribute('data-src');
+      if (dataSrc) {
+        console.log(`[ViewManager] Lazy loading iframe: ${iframeId}`);
+        iframe.src = dataSrc;
+        this.loadedIframes.add(iframeId);
       }
     });
   }
