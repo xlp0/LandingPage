@@ -27,6 +27,7 @@ A modern, **static-first, modular web application** with **serverless P2P commun
 - **3D Theater**: High-fidelity 3D visualization engine for viewing complex data structures
 - **Music Visualizer V5**: Interactive music notation with 3D frequency visualization, Web Workers, and FileLoader caching (`public/examples/Music/SyncedMusicVisualizerV5.html`)
 - **Morphism Cube**: Category theory recursion schemes visualized in 3D (`public/examples/3DGames/MorphismCube/`)
+- **3D Object Viewer**: A dedicated 3D model viewer (Git Submodule) located at `public/examples/3DGames/3DObjectViewer`. Ensure submodules are initialized to use this feature.
 
 ### **🤖 AI Chatbot Panel**
 - **Integrated AI Assistance**: Access external AI tools like ChatGPT, Claude, and Gemini directly within the interface.
@@ -234,15 +235,22 @@ The project includes a high-performance 3D visualization engine for viewing comp
 └── ...
 ```
 
+### **Git Submodules**
+This project uses Git submodules to manage large external components.
+- **3DObjectViewer**: Located at `public/examples/3DGames/3DObjectViewer`. This is a standalone project maintained at `github.com/xlp0/3DObjectViewer` and included here to provide advanced 3D model viewing capabilities without bloating the main repository history.
+
 ---
 
 ## 🛠️ **Quick Start**
 
 ### **1. Basic Setup**
 ```bash
-# Clone repository
-git clone https://github.com/xlp0/LandingPage.git
+# Clone repository with submodules (recommended)
+git clone --recursive https://github.com/xlp0/LandingPage.git
 cd LandingPage
+
+# If you already cloned without --recursive:
+# git submodule update --init --recursive
 
 # Start MCard HTTP server with mcard-js integration (recommended)
 ./start-mcard-server.sh
