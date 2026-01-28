@@ -1,0 +1,3 @@
+[submodule "public/examples/3DGames/3DObjectViewer"]
+	path = public/examples/3DGames/3DObjectViewer
+	url = git@github.com:xlp0/3DObjectViewer.git
