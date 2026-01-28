@@ -28,7 +28,7 @@ class PWAManager {
       this._setupOnlineOfflineDetection();
       this._detectPWAMode();
       this._handleShareTarget();
-      
+
       this.initialized = true;
       console.log('[PWAManager] Initialized successfully');
     } catch (error) {
@@ -131,7 +131,8 @@ class PWAManager {
           console.log(`${prefix} 📱 Android device detected - will show native Add to Home Screen`);
         }
         this.installPromptShown = true;
-        this._showInstallPromotion();
+        // ENABLE_PWA_PROMPT: Disabled for now per user request
+        // this._showInstallPromotion();
       } else {
         console.log(`${prefix} ℹ️  Install prompt not shown (already shown or app installed)`);
       }
@@ -146,7 +147,8 @@ class PWAManager {
         console.log(`${prefix} ⚠️  Native prompt not available after ${this.config.fallbackPromptDelay}ms, showing manual instructions`);
         console.log(`${prefix} deferredPrompt status:`, !!this.deferredPrompt);
         this.installPromptShown = true;
-        this._showInstallPromotion();
+        // ENABLE_PWA_PROMPT: Disabled for now per user request
+        // this._showInstallPromotion();
       } else if (this._isInstalled()) {
         console.log(`${prefix} ✅ Already installed, skipping modal`);
       }
@@ -167,7 +169,7 @@ class PWAManager {
 
     // Create modal instance
     this.installModal = new PWAInstallModal(this.config);
-    
+
     // Show modal with callbacks
     this.installModal.show(
       () => this._handleInstallClick(),
@@ -181,7 +183,7 @@ class PWAManager {
    */
   async _handleInstallClick() {
     const prefix = this.config.logging.prefix;
-    
+
     console.log(`${prefix} 🎯 Install button clicked!`);
     console.log(`${prefix} deferredPrompt available:`, !!this.deferredPrompt);
     console.log(`${prefix} deferredPrompt object:`, this.deferredPrompt);
@@ -222,7 +224,7 @@ class PWAManager {
       }
     } else {
       console.log(`${prefix} ⚠️  Native prompt not available, showing manual instructions`);
-      
+
       if (this._isInstalled()) {
         this.installModal.close();
         alert(`✅ ${this.config.appName} is already installed on your device!`);
@@ -275,7 +277,7 @@ class PWAManager {
       indicator.innerHTML = `<i data-lucide="${online.icon}" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 8px;"></i>${online.text}`;
       indicator.style.display = 'block';
       if (window.lucide) window.lucide.createIcons();
-      
+
       setTimeout(() => {
         indicator.style.display = 'none';
         indicator.style.background = offline.gradient;
@@ -339,7 +341,7 @@ class PWAManager {
       this.config.logging.diagnosticReasons.forEach((reason, i) => {
         console.log(`  ${i + 1}. ${reason}`);
       });
-      
+
       if (isAndroid) {
         this.config.logging.androidSpecificReasons.forEach((reason, i) => {
           console.log(`  ${this.config.logging.diagnosticReasons.length + i + 1}. ${reason}`);
