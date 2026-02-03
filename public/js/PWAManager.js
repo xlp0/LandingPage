@@ -12,10 +12,17 @@ class PWAManager {
     this.initialized = false;
   }
 
+  const ENABLE_PWA_SYSTEM = false; // Set to true to enable PWA features
+
   /**
    * Initialize PWA Manager
    */
   async init() {
+    if (!ENABLE_PWA_SYSTEM) {
+      console.log('[PWAManager] PWA System is explicitly disabled via ENABLE_PWA_SYSTEM flag.');
+      return;
+    }
+
     if (this.initialized) {
       console.log('[PWAManager] Already initialized');
       return;

@@ -4,494 +4,209 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MCard Manager</title>
+  <title>GovTech Platform | Mission Control</title>
+  <meta name="description" content="GovTech Operating System - Computational Trinitarianism">
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-color: #3b82f6;
+      --accent-hover: #2563eb;
+      --card-bg: #1e293b;
+      --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
 
-  <!-- PWA Meta Tags -->
-  <meta name="description" content="Content-addressable card management system with local-first storage">
-  <meta name="theme-color" content="#007acc">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="MCard Manager">
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="/public/manifest.json">
-  <link rel="icon" type="image/svg+xml" href="/public/icon.svg">
-  <link rel="apple-touch-icon" href="/public/icon.svg">
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-color);
+      color: var(--text-primary);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: radial-gradient(circle at top right, #1e293b 0%, #0f172a 100%);
+    }
 
-  <!-- Performance Optimization: Resource Hints -->
-  <!-- Preconnect to CDN origins for faster loading -->
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    .container {
+      text-align: center;
+      padding: 2rem;
+      max-width: 800px;
+      width: 100%;
+      animation: fadeIn 0.8s ease-out;
+    }
 
-  <!-- Preload critical CSS -->
-  <link rel="preload" href="/public/css/mcard-manager.css" as="style">
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+    }
 
-  <!-- Preload critical JavaScript -->
-  <link rel="preload" href="/public/js/app-bootstrap.js" as="script" crossorigin>
+    p.subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      margin-bottom: 3rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+    }
 
-  <!-- Define process.env for browser compatibility -->
-  <script src="/public/js/env-shim.js"></script>
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      margin-top: 2rem;
+    }
 
-  <!-- Auto-generate Import Map based on current URL -->
-  <script src="/public/js/importmap-init.js"></script>
+    .card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 2rem;
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
 
-  <!-- Lucide Icons - Self-Hosted -->
-  <script src="/public/vendor/lucide/lucide.min.js"></script>
-  <!-- js-yaml Library for CLM Parsing -->
-  <script src="/public/vendor/js-yaml.min.js"></script>
-  <!-- MCard Manager CSS -->
-  <link rel="stylesheet" href="/public/css/mcard-manager.css">
-  <!-- Content Renderers CSS -->
-  <link rel="stylesheet" href="/public/css/content-renderers.css">
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+      border-color: rgba(59, 130, 246, 0.3);
+      background: #253346;
+    }
+
+    .card h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+
+    .card p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .icon {
+      margin-bottom: 1rem;
+      width: 48px;
+      height: 48px;
+      color: var(--accent-color);
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 2rem;
+      font-size: 0.875rem;
+      color: rgba(148, 163, 184, 0.5);
+    }
+
+    a.primary-action {
+      background: var(--accent-color);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s;
+      display: inline-block;
+      margin-top: 2rem;
+      box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+    }
+
+    a.primary-action:hover {
+      background: var(--accent-hover);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 640px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 1.5rem;
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <!-- Offline Indicator -->
-  <div id="offline-indicator" style="
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-    color: white;
-    padding: 12px 20px;
-    text-align: center;
-    z-index: 10001;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    animation: slideDown 0.3s ease-out;
-  ">
-    <i data-lucide="wifi-off" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 8px;"></i>
-    You're offline - Working from cache
-  </div>
 
   <div class="container">
-    <div class="header">
-      <div class="header-left">
-        <button class="header-btn" onclick="window.location.href='/'" style="margin-right: 12px;"
-          title="Back to Landing Page">
-          <i data-lucide="home" style="width: 16px; height: 16px;"></i>
-          Home
-        </button>
-        <i data-lucide="package" style="width: 20px; height: 20px;"></i>
-        <h1>MCard Manager</h1>
-      </div>
-      <div class="header-right">
-        <button class="header-btn" onclick="document.getElementById('fileInput').click()">
-          <i data-lucide="upload" style="width: 16px; height: 16px;"></i>
-          Upload
-        </button>
-        <button class="header-btn" onclick="createTextCard()">
-          <i data-lucide="file-text" style="width: 16px; height: 16px;"></i>
-          New Text
-        </button>
-        <button class="header-btn" onclick="toggleChat()">
-          <i data-lucide="message-square" style="width: 16px; height: 16px;"></i>
-          Chat
-        </button>
-      </div>
-      <input type="file" id="fileInput" multiple style="display: none;">
+    <h1>GovTech OS</h1>
+    <p class="subtitle">Computational Trinitarianism</p>
+
+    <div class="card-grid">
+      <!-- Mission Control Card -->
+      <a href="app.html" class="card">
+        <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg>
+        <h2>Mission Control</h2>
+        <p>Launch the full Operating System environment.</p>
+      </a>
+
+      <!-- File Viewer Card (Link to App with potential query param, or just app for now) -->
+      <a href="app.html?view=files" class="card">
+        <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+        </svg>
+        <h2>File Viewing</h2>
+        <p>Access and manage your persistent files.</p>
+      </a>
     </div>
 
-    <!-- Full-Width Calendar View -->
-    <div class="calendar-view" id="calendarView" style="display: none;">
-      <div class="calendar-header">
-        <button class="header-btn" onclick="window.viewManager.hide('calendar')">
-          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close Calendar
-        </button>
-        <h2 style="margin: 0; flex: 1; text-align: center;">
-          <i data-lucide="calendar" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
-          Public Calendar
-        </h2>
-        <div style="width: 120px;"></div> <!-- Spacer for centering -->
-      </div>
-      <div class="calendar-container" id="calendarContainer">
-        <iframe id="calendarFrame"
-          data-src="https://calendar.google.com/calendar/embed?src=83eaf0af7e929d74dc166a19beb26b471f351697c5b0ba8d92e3a9a30540ca8d%40group.calendar.google.com&ctz=Asia%2FMakassar"
-          style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="no">
-        </iframe>
-      </div>
-    </div>
-
-    <!-- Full-Width Map View -->
-    <div class="calendar-view" id="mapView" style="display: none;">
-      <div class="calendar-header">
-        <button class="header-btn" onclick="window.viewManager.hide('map')">
-          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close Map
-        </button>
-        <h2 style="margin: 0; flex: 1; text-align: center;">
-          <i data-lucide="map-pin" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
-          Map
-        </h2>
-        <div style="width: 120px;"></div> <!-- Spacer for centering -->
-      </div>
-      <div class="calendar-container" id="mapContainer">
-        <iframe id="mapFrame" data-src="/public/examples/location-map.html" style="border: 0; width: 100%; height: 100%;"
-          frameborder="0" scrolling="no">
-        </iframe>
-      </div>
-    </div>
-
-    <!-- Full-Width 3D Viewer -->
-    <div class="calendar-view" id="threeDView" style="display: none;">
-      <div class="calendar-header">
-        <button class="header-btn" onclick="window.viewManager.hide('threeD')">
-          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close Viewer
-        </button>
-        <h2 style="margin: 0; flex: 1; text-align: center;">
-          <i data-lucide="box" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
-          3D Theater
-        </h2>
-        <div style="width: 120px;"></div> <!-- Spacer for centering -->
-      </div>
-      <div class="calendar-container" id="threeDContainer">
-        <iframe id="threeDFrame" data-src="/public/examples/THREEJS_ANIMEJS/Theater_Example.html"
-          style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="no">
-        </iframe>
-      </div>
-    </div>
-
-    <!-- Full-Width Music Visualizer -->
-    <div class="calendar-view" id="musicView" style="display: none;">
-      <div class="calendar-header">
-        <button class="header-btn" onclick="window.viewManager.hide('music')">
-          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close Music
-        </button>
-        <h2 style="margin: 0; flex: 1; text-align: center;">
-          <i data-lucide="music" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
-          Music Visualizer V5
-        </h2>
-        <div style="width: 120px;"></div> <!-- Spacer for centering -->
-      </div>
-      <div class="calendar-container" id="musicContainer">
-        <iframe id="musicFrame" data-src="/public/examples/Music/SyncedMusicVisualizerV5.html"
-          style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="no">
-        </iframe>
-      </div>
-    </div>
-
-    <!-- Full-Width Dashboard -->
-    <div class="calendar-view" id="dashboardView" style="display: none;">
-      <div class="calendar-header">
-        <button class="header-btn" onclick="window.viewManager.hide('dashboard')">
-          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close Dashboard
-        </button>
-        <h2 style="margin: 0; flex: 1; text-align: center;">
-          <i data-lucide="bar-chart-3" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
-          Dashboard
-        </h2>
-        <div style="width: 120px;"></div> <!-- Spacer for centering -->
-      </div>
-      <div class="calendar-container" id="dashboardContainer">
-        <iframe id="dashboardFrame" data-src="https://grafana.pkc.pub/d/k8s-nodes-health/kubernetes-nodes-health-monitoring?orgId=1&from=now-1h&to=now&timezone=browser&refresh=30s"
-          style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="yes">
-        </iframe>
-      </div>
-    </div>
-
-    <!-- Full-Width Morphism Cube v1 -->
-    <div class="calendar-view" id="morphismV1View" style="display: none;">
-      <div class="calendar-header">
-        <button class="header-btn" onclick="window.viewManager.hide('morphismV1')">
-          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close Morphism
-        </button>
-        <h2 style="margin: 0; flex: 1; text-align: center;">
-          <i data-lucide="cube" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
-          Morphism Cube v1
-        </h2>
-        <div style="width: 120px;"></div> <!-- Spacer for centering -->
-      </div>
-      <div class="calendar-container" id="morphismV1Container">
-        <iframe id="morphismV1Frame" data-src="/public/examples/3DGames/MorphismCube/Morphism_FirstTry.html"
-          style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="no">
-        </iframe>
-      </div>
-    </div>
-
-    <!-- Full-Width Morphism Cube v2 -->
-    <div class="calendar-view" id="morphismV2View" style="display: none;">
-      <div class="calendar-header">
-        <button class="header-btn" onclick="window.viewManager.hide('morphismV2')">
-          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close Morphism
-        </button>
-        <h2 style="margin: 0; flex: 1; text-align: center;">
-          <i data-lucide="box" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
-          Morphism Cube v2
-        </h2>
-        <div style="width: 120px;"></div> <!-- Spacer for centering -->
-      </div>
-      <div class="calendar-container" id="morphismV2Container">
-        <iframe id="morphismV2Frame" data-src="/public/examples/3DGames/MorphismCube/Morphism_SecondTry.html"
-          style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="no">
-        </iframe>
-      </div>
-    </div>
-
-    <div class="main-content">
-      <!-- Left Sidebar: File Types -->
-      <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-          <div style="display: flex; align-items: center; justify-content: space-between;">
-            <h3>Card Types</h3>
-            <button class="collapse-btn" id="collapseBtn" onclick="toggleSidebar()" title="Collapse sidebar">
-              <i data-lucide="chevrons-left" style="width: 16px; height: 16px;"></i>
-            </button>
-          </div>
-        </div>
-        <div class="type-list" id="typeList">
-          <!-- Card types will be populated here -->
-        </div>
-      </div>
-
-      <!-- Middle Column: MCard List -->
-      <div class="middle-column">
-        <div class="mobile-back-btn" onclick="navigateBack()">
-          <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
-          Back to Types
-        </div>
-        <div class="column-header">
-          <div style="display: flex; align-items: center; justify-content: space-between;">
-            <h3 id="columnTitle">All MCards</h3>
-            <button type="button" id="batchRemoveBtn" class="btn btn-secondary"
-              style="display: none; background: #e74c3c; color: white; border: none; font-size: 11px; padding: 4px 10px; border-radius: 4px; align-items: center; gap: 4px;"
-              onclick="batchRemoveDuplications(event)">
-              <i data-lucide="trash-2" style="width: 12px; height: 12px;"></i>
-              Remove All
-            </button>
-          </div>
-          <div style="position: relative; margin-top: 8px;">
-            <i data-lucide="search"
-              style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #999;"></i>
-            <input type="text" class="search-box" placeholder="Search files or @handle..." id="searchBox"
-              style="width: 100%; padding-left: 40px; padding-right: 40px;">
-            <button class="filter-toggle-btn" id="filterToggleBtn" onclick="toggleSearchFilters()"
-              title="Search filters">
-              <i data-lucide="filter" style="width: 16px; height: 16px;"></i>
-            </button>
-          </div>
-          <!-- Search Filters Dropdown -->
-          <div class="search-filters" id="searchFilters" style="display: none;">
-            <div class="filter-section">
-              <label class="filter-label">Filter by:</label>
-              <div class="filter-options">
-                <label class="filter-option">
-                  <input type="checkbox" id="filterWithHandles" onchange="applySearchFilters()">
-                  <span>With Handles Only</span>
-                </label>
-                <label class="filter-option">
-                  <input type="checkbox" id="filterCapital" onchange="applySearchFilters()">
-                  <span>Capital Letters Only</span>
-                </label>
-                <label class="filter-option">
-                  <input type="checkbox" id="filterMarkdown" onchange="applySearchFilters()">
-                  <span>Markdown Files</span>
-                </label>
-                <label class="filter-option">
-                  <input type="checkbox" id="filterImages" onchange="applySearchFilters()">
-                  <span>Images Only</span>
-                </label>
-                <label class="filter-option">
-                  <input type="checkbox" id="filterVideos" onchange="applySearchFilters()">
-                  <span>Videos Only</span>
-                </label>
-              </div>
-            </div>
-            <div class="filter-section">
-              <label class="filter-label">Sort by:</label>
-              <div class="filter-options">
-                <label class="filter-option">
-                  <input type="radio" name="sortBy" value="newest" checked onchange="applySearchFilters()">
-                  <span>Newest First</span>
-                </label>
-                <label class="filter-option">
-                  <input type="radio" name="sortBy" value="oldest" onchange="applySearchFilters()">
-                  <span>Oldest First</span>
-                </label>
-                <label class="filter-option">
-                  <input type="radio" name="sortBy" value="name" onchange="applySearchFilters()">
-                  <span>Name (A-Z)</span>
-                </label>
-              </div>
-            </div>
-            <div class="filter-actions">
-              <button class="filter-clear-btn" onclick="clearSearchFilters()">Clear All</button>
-            </div>
-          </div>
-        </div>
-        <div class="mcard-list" id="mcardList">
-          <div class="empty-state">
-            <div class="empty-state-icon">
-              <i data-lucide="package" style="width: 64px; height: 64px; color: #ccc;"></i>
-            </div>
-            <p>No MCards yet. Upload some files to get started!</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Column: Viewer -->
-      <div class="viewer-column">
-        <div class="mobile-back-btn" onclick="navigateBack()">
-          <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
-          Back to Cards
-        </div>
-        <div class="viewer-header">
-          <h3 id="viewerTitle">Select an MCard</h3>
-          <div class="viewer-actions" id="viewerActions" style="display: none;">
-            <button class="btn"
-              style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;"
-              onclick="downloadCurrentCard()">
-              <i data-lucide="download" style="width: 16px; height: 16px;"></i>
-              Download
-            </button>
-            <button class="btn btn-secondary"
-              style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;"
-              onclick="deleteCurrentCard()">
-              <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
-              Delete
-            </button>
-          </div>
-        </div>
-        <div class="viewer-content" id="viewerContent">
-          <iframe id="defaultDashboardFrame" data-src="https://grafana.pkc.pub/d/k8s-nodes-health/kubernetes-nodes-health-monitoring?orgId=1&from=now-1h&to=now&timezone=browser&refresh=30s"
-            style="border: 0; width: 100%; height: 100%;" frameborder="0" scrolling="yes">
-          </iframe>
-        </div>
-      </div>
-
-      <!-- Chat Panel -->
-      <div class="chat-panel hidden" id="chatPanel">
-        <div class="chat-header">
-          <h3>
-            <i data-lucide="message-square"
-              style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
-            Chat Assistant
-          </h3>
-          <button class="chat-close-btn" onclick="toggleChat()">
-            <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          </button>
-        </div>
-        <div class="chat-messages" id="chatMessages">
-          <div class="chat-message assistant">
-            <div class="chat-message-bubble">
-              👋 Hello! I'm your MCard assistant. I can help you manage your files, answer questions about
-              content-addressable storage, or just chat!
-            </div>
-            <div class="chat-message-time">Just now</div>
-          </div>
-        </div>
-        <div class="chat-input-container">
-          <textarea class="chat-input" id="chatInput" placeholder="Type your message here..." rows="3"></textarea>
-          <button class="chat-send-btn" onclick="sendChatMessage()">
-            <i data-lucide="send" style="width: 14px; height: 14px;"></i>
-            Send Message
-          </button>
-        </div>
-      </div>
-
-      <!-- Edit Panel -->
-      <div class="chat-panel hidden" id="editPanel">
-        <div class="chat-header">
-          <h3 id="editPanelTitle">
-            <i data-lucide="edit-3"
-              style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
-            <span id="editPanelTitleText">New Text Card</span>
-          </h3>
-          <button class="chat-close-btn" onclick="closeEditPanel()">
-            <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          </button>
-        </div>
-        <div class="chat-messages" style="padding: 16px;">
-          <!-- Handle Name Input -->
-          <div style="margin-bottom: 16px;">
-            <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px;">
-              <i data-lucide="tag"
-                style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
-              Handle Name
-            </label>
-            <input type="text" id="editHandleName" class="search-box" placeholder="e.g., my-document, readme, notes"
-              style="width: 100%; padding: 10px 12px;" />
-            <p style="font-size: 12px; color: #666; margin-top: 4px;">
-              Optional: Give this card a friendly name for easy reference
-            </p>
-          </div>
-
-          <!-- Content Editor -->
-          <div style="margin-bottom: 16px;">
-            <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px;">
-              <i data-lucide="file-text"
-                style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
-              Content
-            </label>
-            <textarea id="editContentArea" class="chat-input" placeholder="Enter your content here..."
-              style="width: 100%; min-height: 300px; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 13px; line-height: 1.6; resize: vertical;"></textarea>
-          </div>
-
-          <!-- Action Buttons -->
-          <div style="display: flex; gap: 8px; justify-content: flex-end;">
-            <button class="btn btn-secondary" onclick="closeEditPanel()" style="font-size: 14px; padding: 10px 20px;">
-              <i data-lucide="x" style="width: 14px; height: 14px;"></i>
-              Cancel
-            </button>
-            <button class="btn" onclick="saveEditedCard()" style="font-size: 14px; padding: 10px 20px;">
-              <i data-lucide="save" style="width: 14px; height: 14px;"></i>
-              <span id="editSaveButtonText">Save</span>
-            </button>
-          </div>
-        </div>
-      </div>
+    <div style="margin-top: 2rem; opacity: 0.7;">
+      <p style="font-size: 0.9rem; color: #64748b;">Status: <span style="color: #4ade80;">● Online</span> | Ver:
+        0.1.0-alpha</p>
     </div>
   </div>
 
-  <!-- Modal for viewing card details -->
-  <div class="modal" id="cardModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>MCard Details</h2>
-        <button class="close-btn" onclick="closeModal()">×</button>
-      </div>
-      <div class="modal-body" id="modalBody">
-        <!-- Content will be populated here -->
-      </div>
-    </div>
+  <div class="footer">
+    &copy; 2026 GovTech Research Group
   </div>
 
-  <!-- Toast notification -->
-  <div class="toast" id="toast">
-    <span id="toastIcon">✓</span>
-    <span id="toastMessage">Success!</span>
-  </div>
-
-  <!-- Sidebar collapse functionality -->
-  <script src="/public/js/ui-inline-handlers.js"></script>
-
-  <!-- Performance Monitoring -->
-  <script src="/public/js/performance-monitor.js"></script>
-
-  <!-- Lazy Iframe Loader (loads default dashboard after page load) -->
-  <script src="/public/js/lazy-iframe-loader.js"></script>
-
-  <!-- MCard Manager JavaScript (Application Bootstrap) -->
-  <script type="module" src="/public/js/app-bootstrap.js?v=18"></script>
-
-  <!-- Data-driven View Manager (must load before pwa-init.js) -->
-  <script src="/public/js/ViewManager.js"></script>
-
-  <!-- PWA Install Modal UI Generator -->
-  <script src="/public/js/PWAInstallModal.js"></script>
-
-  <!-- PWA Manager (orchestrates PWA functionality, auto-initializes) -->
-  <script src="/public/js/PWAManager.js"></script>
 </body>
 
 </html>
