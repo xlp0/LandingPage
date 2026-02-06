@@ -66,6 +66,17 @@ jobs:
             echo "⚠️  No ZITADEL metrics JSON file found"
           fi
       
+      - name: Convert All Metrics to Markdown
+        if: success()
+        run: |
+          echo "📄 Converting all Kubernetes metrics to Markdown reports"
+          chmod +x .github/scripts/convert_metrics_to_markdown.py
+          python3 .github/scripts/convert_metrics_to_markdown.py grafana-metrics
+          
+          # Count generated markdown files
+          MD_COUNT=$(ls -1 grafana-metrics/*.md 2>/dev/null | wc -l)
+          echo "✅ Generated $MD_COUNT Markdown reports"
+      
       - name: Upload metrics to MinIO
         if: success()
         env:
