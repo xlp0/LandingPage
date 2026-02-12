@@ -35,5 +35,9 @@
     {
         "handle": "clm-addition",
         "path": "data/demo/addition.yaml"
+    },
+    {
+        "handle": "pkc-presentation",
+        "path": "data/demo/google-slides-presentation.json"
     }
 ]

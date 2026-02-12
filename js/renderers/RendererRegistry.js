@@ -13,6 +13,7 @@ import { CLMRenderer } from './CLMRenderer.js?v=2';
 import { LatexRenderer } from './LatexRenderer.js';
 import { AudioRenderer } from './AudioRenderer.js';
 import { VideoRenderer } from './VideoRenderer.js';
+import { EmbedRenderer } from './EmbedRenderer.js';
 
 export class RendererRegistry {
   constructor() {
@@ -36,6 +37,7 @@ export class RendererRegistry {
       this.register(new PDFRenderer());
       this.register(new AudioRenderer());
       this.register(new VideoRenderer());
+      this.register(new EmbedRenderer());
 
       this.initialized = true;
       console.log('[RendererRegistry] Initialized with renderers:', Array.from(this.renderers.keys()));

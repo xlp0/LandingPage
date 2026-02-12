@@ -174,7 +174,8 @@ export class UIComponents {
         'pdf': 'PDF',
         'clm': 'CLM',
         'video': 'Video',
-        'audio': 'Audio'
+        'audio': 'Audio',
+        'embed': 'Embed'
       };
       const displayName = displayNames[type] || type.toUpperCase();
 
@@ -256,6 +257,7 @@ export class UIComponents {
     if (type === 'image') return '<i data-lucide="image" style="width: 24px; height: 24px;"></i>';
     if (type === 'pdf') return '<i data-lucide="file-text" style="width: 24px; height: 24px;"></i>';
     if (type === 'text' || type === 'markdown' || type === 'json') return '<i data-lucide="file-text" style="width: 24px; height: 24px;"></i>';
+    if (type === 'embed') return '<i data-lucide="presentation" style="width: 24px; height: 24px;"></i>';
     if (type === 'binary') return '<i data-lucide="file" style="width: 24px; height: 24px;"></i>';
     return '<i data-lucide="file" style="width: 24px; height: 24px;"></i>';
   }
@@ -391,7 +393,8 @@ export class UIComponents {
       'json': '<span style="background: #ce9178; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">JSON</span>',
       'pdf': '<span style="background: #f48771; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">PDF</span>',
       'clm': '<span style="background: #4fc3f7; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">CLM</span>',
-      'duplicate': '<span style="background: #ffb74d; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">DUPE</span>'
+      'duplicate': '<span style="background: #ffb74d; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">DUPE</span>',
+      'embed': '<span style="background: #9c27b0; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;">EMBED</span>'
     };
     return badges[type] || '';
   }

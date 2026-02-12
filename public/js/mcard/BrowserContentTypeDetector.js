@@ -24,7 +24,7 @@ export class ContentTypeDetector {
   static yamlDetector = new YAMLDetector();
 
   // Cache version - increment this to invalidate all cached detections
-  static CACHE_VERSION = 11; // v11: Added 'duplicate' event detection
+  static CACHE_VERSION = 12; // v12: Added 'embed' type detection
 
   /**
    * Cache and return result
@@ -195,6 +195,23 @@ export class ContentTypeDetector {
         const data = JSON.parse(text);
         if (data.type === 'duplicate') {
           return { type: 'duplicate', displayName: 'Duplicate Event' };
+        }
+      }
+    } catch (e) {
+      // Not JSON or parse error, ignore
+    }
+
+    return null;
+  }
+
+  static detectEmbed(text) {
+    if (!text) return null;
+
+    try {
+      if (text.trim().startsWith('{') && text.includes('"type"') && text.includes('"embed"')) {
+        const data = JSON.parse(text);
+        if (data.type === 'embed' && data.url) {
+          return { type: 'embed', displayName: 'Embed' };
         }
       }
     } catch (e) {
@@ -381,6 +398,10 @@ export class ContentTypeDetector {
         const duplicate = this.detectDuplicateEvent(textSample);
         if (duplicate)
           return this.cacheResult(cacheKey, duplicate);
+
+        const embed = this.detectEmbed(textSample);
+        if (embed)
+          return this.cacheResult(cacheKey, embed);
 
         const lines = textSample.split('\n').slice(0, 20);
         const firstLine = lines[0] || '';
