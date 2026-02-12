@@ -193,47 +193,34 @@ The project includes a high-performance 3D visualization engine for viewing comp
 📁 **Project Structure**
 
 ```
-├── README.md                          # This file
-├── index.html                         # Modularized Landing Page
-├── js/
-│   ├── pkc-core.js                    # Module loader runtime
-│   ├── execution/                     # 🆕 Execution Management
-│   │   └── ExecutionModeManager.js    # Hybrid execution toggle logic
-│   ├── renderers/
-│   │   ├── CLMRenderer.js             # CLM Visualization & Execution UI
-│   │   └── ServerCLMRunner.js         # Remote execution client
-│   └── modules/
-│       ├── markdown-renderer/         # Documentation viewer module
-│       ├── net-gateway/               # WebSocket demo module
-│       └── p2p-serverless/            # Serverless P2P module
-├── public/
-│   ├── js/                            # 🆕 Modular App Scripts
-│   │   ├── app-bootstrap.js           # Main application entry
-│   │   ├── pwa-init.js                # PWA, Service Worker & View Toggles
-│   │   ├── ui-inline-handlers.js      # Sidebar & Search UI Logic
-│   │   ├── env-shim.js                # Process.env polyfill
-│   │   ├── importmap-init.js          # Dynamic Import Map generator
-│   │   └── mcard/                     # MCard Core System
-│   │       ├── MCardManager.js        # Core logic (via mcard-js)
-│   │       ├── BrowserCLMRunner.js    # Local Pyodide runner
-│   │       └── ...
-│   ├── examples/                      # Interactive Demos
-├── docs/                              # 📚 Comprehensive documentation
-│   ├── architecture-serverless-p2p.md    # P2P system architecture
-│   ├── p2p-serverless-implementation.md  # Implementation details
-│   ├── p2p-testing-guide.md              # Testing instructions
-│   ├── p2p-bug-fix-peer-id.md           # Bug fix documentation
-│   ├── cleanup-libp2p-migration.md      # Migration guide
-│   └── archive/                          # Historical implementations
-├── modules.json                        # Module configuration
-├── MODULES.md                          # Module system documentation
-├── nginx-pkc.conf                      # Nginx server configuration
-├── pkc-docs/                           # Documentation files
-├── examples/                           # Interactive demos
-│   └── THREEJS_ANIMEJS/
-│       └── Theater_Example.html         # 🎭 3D Theater Example
-└── ...
+LandingPage/
+├── index.html                         # Entry point (modularized)
+├── ws-server.js                       # Unified WebSocket + Static Backend
+├── js/                                # Core Application Logic
+│   ├── pkc-core.js                    # Module Loader
+│   ├── execution/                     # Execution Mode Managers
+│   ├── renderers/                     # CLM & UI Renderers
+│   └── modules/                       # Feature Modules (Markdown, P2P)
+├── public/                            # Static Assets & Runtime Scripts
+│   ├── js/                            # Modular App Scripts (ESM)
+│   │   ├── app-bootstrap.js           # App Init
+│   │   ├── mcard/                     # MCard Logical Layer
+│   │   └── ViewManager.js             # View Routing Logic
+│   ├── examples/                      # Interactive Demos (Games, Vis)
+│   └── data/                          # Data artifacts
+├── bmad/                              # BMAD Architecture components
+├── components/                        # HTML implementation of CLMs
+├── routes/                            # Server-side routes (if strictly needed)
+├── docs/                              # Project Documentation
+└── tests/                             # Playwright E2E Tests
 ```
+
+### Organization Logic
+The structure follows a **"Static Core, Dynamic Modules"** philosophy:
+- **`js/`**: Contains the "System Code" - the unchanging logic that powers the container.
+- **`public/js/`**: Contains "Application Code" - the logic that defines specific behaviors and UI interactions.
+- **`public/examples/` & `data/`**: Content that is rendered by the system.
+- **`components/`**: Concrete HTML/JS implementations of Abstract CLM goals.
 
 ### **Git Submodules**
 This project uses Git submodules to manage large external components.
