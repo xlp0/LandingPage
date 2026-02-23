@@ -64,22 +64,11 @@ graph TD
     P3 -.->|Evolves into| Future
 ```
 
-### Phase 1: Identity & Real-Time Communications
-- **Zitadel & WebSocket Integration**: Establish functional, secured WebSocket connections authenticated via Zitadel. This is the critical prerequisite foundation for real-time collaboration and secure data exchange.
-
-### Phase 2: Operationalizing the MVP Card
-- **Shareable MVP Cards**: Transition the MVP (MCard, PCard, VCard) framework from an isolated local store to a networked, shareable asset among users. This enables users to seamlessly exchange self-contained data, logic, and verification rules.
-
-### Phase 3: Industrial IoT & Telemetry Integration
-- **Duwi IoT Sensor Integration**: Interface the PKC platform with IoT hardware from Duwi to actively ingest and manage sensor data streams.
-- **Mining Data Collection & Monitoring**: Configure the PKC to reliably collect operational data for mining company use cases. This includes deploying a robust **monitoring data system** to manage and visualize the industrial telemetry in real-time.
-
-### Phase 4: Unified Configuration (The "Configurable Trinity")
-- **Implementation of `govtech.config.yaml`**: Transition toward a single source of truth at the project root that automatically generates necessary `.env` and `.json` artifacts for all submodules.
-
-### Phase 5: Refined Execution & 3D Capabilities
-- **PTR Optimization & PCard Modularity**: Optimize the CLM execution pathway and encapsulate apps (Maps, Calendar) into swappable PCards that dynamically fetch remote assets from MinIO.
-- **Enhanced 3D & Media**: Expand the 3D Theater using Three.js and Anime.js for high-fidelity object transitions.
-
-### Phase 6: Observability & Self-Healing Governance
-- **Self-Governance Loop & Component Healing**: Utilize Grafana Faro for RUM telemetry and connect Redux heartbeat monitoring to automatically isolate and restart hanging PCards on the client without a full app refresh.
+| Phase | Title | Key Objectives |
+| :--- | :--- | :--- |
+| **Phase 1** | Identity & Real-Time Communications | **Zitadel & WebSocket Integration**: Establish functional, secured WebSocket connections authenticated via Zitadel. |
+| **Phase 2** | Operationalizing the MVP Card | **Shareable MVP Cards**: Transition the MVP (MCard, PCard, VCard) framework from an isolated local store to a networked, shareable asset among users. |
+| **Phase 3** | Industrial IoT & Telemetry Integration | **Duwi IoT Sensor Integration**: Interface the PKC platform with IoT hardware from Duwi to actively ingest and manage sensor data streams.<br><br>**Mining Data Collection & Monitoring**: Configure the PKC to reliably collect operational data for mining company use cases. This includes deploying a robust **monitoring data system** to manage and visualize the industrial telemetry in real-time. |
+| **Phase 4** | Unified Configuration (The "Configurable Trinity") | **Implementation of `govtech.config.yaml`**: Transition toward a single source of truth at the project root that automatically generates necessary `.env` and `.json` artifacts for all submodules. |
+| **Phase 5** | Refined Execution & 3D Capabilities | **PTR Optimization & PCard Modularity**: Optimize the CLM execution pathway and encapsulate apps (Maps, Calendar) into swappable PCards that dynamically fetch remote assets from MinIO.<br><br>**Enhanced 3D & Media**: Expand the 3D Theater using Three.js and Anime.js for high-fidelity object transitions. |
+| **Phase 6** | Observability & Self-Healing Governance | **Self-Governance Loop & Component Healing**: Utilize Grafana Faro for RUM telemetry and connect Redux heartbeat monitoring to automatically isolate and restart hanging PCards on the client without a full app refresh. |
