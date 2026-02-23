@@ -30,38 +30,26 @@ The bundle strategy ensures extreme speed by hydrating a database snapshot insta
 The future development of the PKC platform builds toward a fully autonomous, scalable, and connected ecosystem, prioritizing shareable assets and real-time industrial integrations.
 
 ```mermaid
-graph TD
-    %% Phase 1
-    subgraph P1[Phase 1: Identity & Real-Time]
-        direction TB
-        Zitadel[Zitadel OIDC] -->|Authenticates| WS[WebSocket Server]
-    end
+gantt
+    title PKC Development Roadmap
+    dateFormat  YYYY-MM-DD
+    axisFormat  %b %Y
 
-    %% Phase 2
-    subgraph P2[Phase 2: MVP Card Operations]
-        direction TB
-        WS -->|Enables| Sync[Real-Time Sync]
-        Sync --> MVP[Shareable MVP Cards<br/>MCard/PCard/VCard]
-    end
+    section Phase 1: Identity & Real-Time
+    Zitadel & WebSocket Integration :active, p1, 2026-03-01, 30d
 
-    %% Phase 3
-    subgraph P3[Phase 3: Industrial IoT]
-        direction TB
-        Duwi[Duwi IoT Sensors] -->|Ingests Data| MVP
-        MVP -->|Feeds| Mining[Mining Data<br/>Monitoring System]
-    end
+    section Phase 2: MVP Card Operations
+    Shareable MVP Cards           :p2, after p1, 45d
 
-    %% Future Phases
-    subgraph Future[Phases 4-6: Scaling & Healing]
-        direction LR
-        Config[Unified Config<br/>govtech.config.yaml]
-        3D[Enhanced 3D/Media]
-        Heal[Self-Healing<br/>Faro + Redux]
-    end
+    section Phase 3: Industrial IoT
+    Duwi IoT Sensor Integration   :p3_1, after p2, 60d
+    Mining Data Collection & Monitoring :p3_2, after p3_1, 60d
 
-    P1 -->|Unlocks| P2
-    P2 -->|Powers| P3
-    P3 -.->|Evolves into| Future
+    section Phases 4-6: Scaling & Healing
+    Unified Configuration (govtech.config.yaml) :after p3_2, 30d
+    PTR Optimization & PCard Modularity         :after p3_2, 45d
+    Enhanced 3D & Media                         :after p3_2, 45d
+    Self-Governance Loop & Component Healing    :after p3_2, 60d
 ```
 
 | Phase | Title | Key Objectives |
