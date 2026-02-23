@@ -35,28 +35,32 @@ gantt
     dateFormat  YYYY-MM-DD
     axisFormat  %b %Y
 
-    section Phase 1: Identity & Real-Time
-    Zitadel & WebSocket Integration :active, p1, 2026-03-01, 30d
+    section Phase 1: Speed Optimization
+    Overall Website Speed Optimization :active, p1, 2026-03-01, 20d
 
-    section Phase 2: MVP Card Operations
-    Shareable MVP Cards           :p2, after p1, 45d
+    section Phase 2: Identity & Real-Time
+    Zitadel & WebSocket Integration :p2, after p1, 30d
 
-    section Phase 3: Industrial IoT
-    Duwi IoT Sensor Integration   :p3_1, after p2, 60d
-    Mining Data Collection & Monitoring :p3_2, after p3_1, 60d
+    section Phase 3: MVP Card Operations
+    Shareable MVP Cards           :p3, after p2, 45d
 
-    section Phases 4-6: Scaling & Healing
-    Unified Configuration (govtech.config.yaml) :after p3_2, 30d
-    PTR Optimization & PCard Modularity         :after p3_2, 45d
-    Enhanced 3D & Media                         :after p3_2, 45d
-    Self-Governance Loop & Component Healing    :after p3_2, 60d
+    section Phase 4: Industrial IoT
+    Duwi IoT Sensor Integration   :p4_1, after p3, 60d
+    Mining Data Collection & Monitoring :p4_2, after p4_1, 60d
+
+    section Phases 5-7: Scaling & Healing
+    Unified Configuration (govtech.config.yaml) :after p4_2, 30d
+    PTR Optimization & PCard Modularity         :after p4_2, 45d
+    Enhanced 3D & Media                         :after p4_2, 45d
+    Self-Governance Loop & Component Healing    :after p4_2, 60d
 ```
 
 | Phase | Title | Key Objectives |
 | :--- | :--- | :--- |
-| **Phase 1** | Identity & Real-Time Communications | **Zitadel & WebSocket Integration**: Establish functional, secured WebSocket connections authenticated via Zitadel. |
-| **Phase 2** | Operationalizing the MVP Card | **Shareable MVP Cards**: Transition the MVP (MCard, PCard, VCard) framework from an isolated local store to a networked, shareable asset among users. |
-| **Phase 3** | Industrial IoT & Telemetry Integration | **Duwi IoT Sensor Integration**: Interface the PKC platform with IoT hardware from Duwi to actively ingest and manage sensor data streams.<br><br>**Mining Data Collection & Monitoring**: Configure the PKC to reliably collect operational data for mining company use cases. This includes deploying a robust **monitoring data system** to manage and visualize the industrial telemetry in real-time. |
-| **Phase 4** | Unified Configuration (The "Configurable Trinity") | **Implementation of `govtech.config.yaml`**: Transition toward a single source of truth at the project root that automatically generates necessary `.env` and `.json` artifacts for all submodules. |
-| **Phase 5** | Refined Execution & 3D Capabilities | **PTR Optimization & PCard Modularity**: Optimize the CLM execution pathway and encapsulate apps (Maps, Calendar) into swappable PCards that dynamically fetch remote assets from MinIO.<br><br>**Enhanced 3D & Media**: Expand the 3D Theater using Three.js and Anime.js for high-fidelity object transitions. |
-| **Phase 6** | Observability & Self-Healing Governance | **Self-Governance Loop & Component Healing**: Utilize Grafana Faro for RUM telemetry and connect Redux heartbeat monitoring to automatically isolate and restart hanging PCards on the client without a full app refresh. |
+| **Phase 1** | Overall Website Speed Optimization | **Performance Optimization**: Audit and optimize the overall speed and initial load times of the website to ensure the $<200$ms Time-To-Interactive threshold remains strictly enforced before adding heavier real-time integrations. |
+| **Phase 2** | Identity & Real-Time Communications | **Zitadel & WebSocket Integration**: Establish functional, secured WebSocket connections authenticated via Zitadel. |
+| **Phase 3** | Operationalizing the MVP Card | **Shareable MVP Cards**: Transition the MVP (MCard, PCard, VCard) framework from an isolated local store to a networked, shareable asset among users. |
+| **Phase 4** | Industrial IoT & Telemetry Integration | **Duwi IoT Sensor Integration**: Interface the PKC platform with IoT hardware from Duwi to actively ingest and manage sensor data streams.<br><br>**Mining Data Collection & Monitoring**: Configure the PKC to reliably collect operational data for mining company use cases. This includes deploying a robust **monitoring data system** to manage and visualize the industrial telemetry in real-time. |
+| **Phase 5** | Unified Configuration (The "Configurable Trinity") | **Implementation of `govtech.config.yaml`**: Transition toward a single source of truth at the project root that automatically generates necessary `.env` and `.json` artifacts for all submodules. |
+| **Phase 6** | Refined Execution & 3D Capabilities | **PTR Optimization & PCard Modularity**: Optimize the CLM execution pathway and encapsulate apps (Maps, Calendar) into swappable PCards that dynamically fetch remote assets from MinIO.<br><br>**Enhanced 3D & Media**: Expand the 3D Theater using Three.js and Anime.js for high-fidelity object transitions. |
+| **Phase 7** | Observability & Self-Healing Governance | **Self-Governance Loop & Component Healing**: Utilize Grafana Faro for RUM telemetry and connect Redux heartbeat monitoring to automatically isolate and restart hanging PCards on the client without a full app refresh. |
