@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: landingpage
+  namespace: argocd
+spec:
+  description: Landing Page Project
+  
+  # Allow all sources
+  sourceRepos:
+    - 'https://github.com/xlp0/LandingPage'
+    - 'https://github.com/xlp0/LandingPage.git'
+  
+  # Allow deployment to specific namespaces
+  destinations:
+    - namespace: '*'
+      server: https://kubernetes.default.svc
+  
+  # Cluster resource whitelist - allow all resources
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  
+  # Namespace resource whitelist - allow all resources
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'

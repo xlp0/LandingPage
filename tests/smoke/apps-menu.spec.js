@@ -93,4 +93,23 @@ test.describe('Apps Menu - Smoke Tests', () => {
         await expect(viewerView).toBeHidden();
     });
 
+    test('Monopoly view can be opened and closed', async ({ page }) => {
+        const appsHeader = page.locator('.apps-header');
+        await appsHeader.click();
+
+        const appsSubmenu = page.locator('#appsSubmenu');
+        await expect(appsSubmenu).toBeVisible();
+
+        const monopolyItem = page.locator('.app-item[title="Monopoly"]');
+        await expect(monopolyItem).toBeVisible();
+        await monopolyItem.click();
+
+        const monopolyView = page.locator('#monopolyView');
+        await expect(monopolyView).toBeVisible();
+
+        const closeBtn = monopolyView.locator('button.header-btn', { hasText: 'Close' });
+        await closeBtn.click();
+        await expect(monopolyView).toBeHidden();
+    });
+
 });

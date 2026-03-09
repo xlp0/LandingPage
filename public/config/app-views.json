@@ -57,6 +57,14 @@
       "icon": "cube",
       "displayStyle": "flex",
       "logPrefix": "[Morphism]"
+    },
+    {
+      "id": "monopoly-auth",
+      "elementId": "monopolyAuthView",
+      "label": "Monopoly (Auth)",
+      "icon": "shield",
+      "displayStyle": "flex",
+      "logPrefix": "[Monopoly Auth]"
     }
   ],
   "submenus": [

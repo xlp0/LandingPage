@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monopoly — PKC Edition (Authenticated)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        /* Login Screen Styles */
+        #loginScreen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        #loginScreen.active {
+            display: flex;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 48px 40px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .login-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #f6d365, #fda085);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .login-subtitle {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px 48px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.6);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-info {
+            margin-top: 24px;
+            padding: 16px;
+            background: rgba(79, 195, 247, 0.1);
+            border: 1px solid rgba(79, 195, 247, 0.3);
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: #4fc3f7;
+        }
+
+        /* Loading Screen */
+        #loadingScreen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #loadingScreen.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* User Profile Header */
+        .user-header {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+
+        .user-header.active {
+            display: flex;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #667eea;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .user-email {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 0.6);
+        }
+
+        /* Game Container */
+        #gameContainer {
+            display: none;
+            width: 100%;
+        }
+
+        #gameContainer.active {
+            display: block;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="active">
+        <div class="login-card">
+            <div class="login-icon">🎲</div>
+            <h1 class="login-title">Monopoly PKC Edition</h1>
+            <p class="login-subtitle">
+                Welcome to the authenticated multiplayer board game.<br>
+                Please log in with your ZITADEL account to continue.
+            </p>
+            <button class="login-btn" onclick="handleLogin()">
+                🔐 Login with ZITADEL
+            </button>
+            <div class="login-info">
+                <strong>🔒 Secure Authentication</strong><br>
+                Powered by ZITADEL at zit.pkc.pub
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+        <div class="spinner"></div>
+        <p>Authenticating...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div id="errorMessage" style="display: none;" class="error-message"></div>
+
+    <!-- User Profile Header -->
+    <div id="userHeader" class="user-header">
+        <img id="userAvatar" class="user-avatar" src="" alt="User Avatar">
+        <div class="user-info">
+            <div class="user-name" id="userName"></div>
+            <div class="user-email" id="userEmail"></div>
+        </div>
+        <button class="logout-btn" onclick="handleLogout()">Logout</button>
+    </div>
+
+    <!-- Game Container (will load monopoly.html content) -->
+    <div id="gameContainer">
+        <iframe 
+            id="gameFrame" 
+            src="monopoly.html" 
+            style="width: 100%; height: calc(100vh - 65px); border: none;"
+            allow="fullscreen"
+        ></iframe>
+    </div>
+
+    <!-- Load ZITADEL Auth Library -->
+    <script src="../../js/auth/zitadel-auth.js"></script>
+    <script src="../../config/zitadel-config.js"></script>
+
+    <script>
+        let auth = null;
+
+        // Initialize authentication
+        async function initAuth() {
+            try {
+                // Create auth instance
+                auth = new ZitadelAuth(ZITADEL_CONFIG);
+
+                // Check if this is a callback from ZITADEL
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('code')) {
+                    showLoading();
+                    await auth.handleCallback();
+                }
+
+                // Check if user is authenticated
+                if (auth.isAuthenticated()) {
+                    showGame();
+                } else {
+                    showLogin();
+                }
+            } catch (error) {
+                console.error('Authentication error:', error);
+                showError('Authentication failed: ' + error.message);
+            }
+        }
+
+        function showLogin() {
+            document.getElementById('loginScreen').classList.add('active');
+            document.getElementById('loadingScreen').classList.remove('active');
+            document.getElementById('gameContainer').classList.remove('active');
+            document.getElementById('userHeader').classList.remove('active');
+        }
+
+        function showLoading() {
+            document.getElementById('loginScreen').classList.remove('active');
+            document.getElementById('loadingScreen').classList.add('active');
+            document.getElementById('gameContainer').classList.remove('active');
+            document.getElementById('userHeader').classList.remove('active');
+        }
+
+        function showGame() {
+            const profile = auth.getUserProfile();
+            
+            // Update user header
+            document.getElementById('userName').textContent = profile.name;
+            document.getElementById('userEmail').textContent = profile.email || profile.username;
+            
+            if (profile.picture) {
+                document.getElementById('userAvatar').src = profile.picture;
+            } else {
+                // Use default avatar
+                document.getElementById('userAvatar').src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23667eea"><circle cx="12" cy="8" r="4"/><path d="M12 14c-6 0-8 3-8 6h16c0-3-2-6-8-6z"/></svg>';
+            }
+
+            // Show game
+            document.getElementById('loginScreen').classList.remove('active');
+            document.getElementById('loadingScreen').classList.remove('active');
+            document.getElementById('gameContainer').classList.add('active');
+            document.getElementById('userHeader').classList.add('active');
+
+            // Pass user data to game iframe
+            const gameFrame = document.getElementById('gameFrame');
+            gameFrame.addEventListener('load', () => {
+                gameFrame.contentWindow.postMessage({
+                    type: 'USER_AUTHENTICATED',
+                    user: profile,
+                    token: auth.getAccessToken()
+                }, '*');
+            });
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            
+            document.getElementById('loginScreen').classList.add('active');
+            document.getElementById('loadingScreen').classList.remove('active');
+        }
+
+        async function handleLogin() {
+            try {
+                await auth.login();
+            } catch (error) {
+                showError('Login failed: ' + error.message);
+            }
+        }
+
+        async function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                await auth.logout();
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', initAuth);
+    </script>
+</body>
+
+</html>
