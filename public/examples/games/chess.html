@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Game - PKC Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            color: white;
+        }
+
+        .player-info {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .current-turn {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        #chessboard {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 0;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 20px;
+            border: 4px solid #2c3e50;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .square {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .square.light {
+            background-color: #f0d9b5;
+        }
+
+        .square.dark {
+            background-color: #b58863;
+        }
+
+        .square.selected {
+            background-color: #7fc97f !important;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .square.valid-move {
+            background-color: #ffd700 !important;
+        }
+
+        .square.last-move {
+            background-color: #90ee90 !important;
+        }
+
+        .square:hover {
+            opacity: 0.8;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .btn-new-game {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .btn-new-game:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .game-log {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .game-log h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .log-entry {
+            padding: 5px 0;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+
+        .status-message {
+            text-align: center;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .status-check {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffc107;
+        }
+
+        .status-checkmate {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
+        .status-stalemate {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>♔ Chess Game ♚</h1>
+        
+        <div class="game-info">
+            <div class="player-info">White: Player 1</div>
+            <div class="current-turn" id="currentTurn">Turn: White</div>
+            <div class="player-info">Black: Player 2</div>
+        </div>
+
+        <div id="chessboard"></div>
+
+        <div class="controls">
+            <button class="btn-new-game" onclick="newGame()">New Game</button>
+        </div>
+
+        <div id="statusMessage"></div>
+
+        <div class="game-log">
+            <h3>Move History</h3>
+            <div id="moveLog"></div>
+        </div>
+    </div>
+
+    <script>
+        const PIECES = {
+            WHITE_KING: '♔',
+            WHITE_QUEEN: '♕',
+            WHITE_ROOK: '♖',
+            WHITE_BISHOP: '♗',
+            WHITE_KNIGHT: '♘',
+            WHITE_PAWN: '♙',
+            BLACK_KING: '♚',
+            BLACK_QUEEN: '♛',
+            BLACK_ROOK: '♜',
+            BLACK_BISHOP: '♝',
+            BLACK_KNIGHT: '♞',
+            BLACK_PAWN: '♟'
+        };
+
+        let board = [];
+        let currentPlayer = 'white';
+        let selectedSquare = null;
+        let validMoves = [];
+        let moveHistory = [];
+        let lastMove = null;
+
+        function initBoard() {
+            board = [
+                ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
+                ['♟', '♟', '♟', '♟', '♟', '♟', '♟', '♟'],
+                ['', '', '', '', '', '', '', ''],
+                ['', '', '', '', '', '', '', ''],
+                ['', '', '', '', '', '', '', ''],
+                ['', '', '', '', '', '', '', ''],
+                ['♙', '♙', '♙', '♙', '♙', '♙', '♙', '♙'],
+                ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']
+            ];
+            currentPlayer = 'white';
+            selectedSquare = null;
+            validMoves = [];
+            moveHistory = [];
+            lastMove = null;
+            updateStatus();
+        }
+
+        function renderBoard() {
+            const boardElement = document.getElementById('chessboard');
+            boardElement.innerHTML = '';
+
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const square = document.createElement('div');
+                    square.className = 'square';
+                    square.className += (row + col) % 2 === 0 ? ' light' : ' dark';
+                    square.textContent = board[row][col];
+                    square.dataset.row = row;
+                    square.dataset.col = col;
+                    
+                    if (selectedSquare && selectedSquare.row === row && selectedSquare.col === col) {
+                        square.classList.add('selected');
+                    }
+                    
+                    if (validMoves.some(m => m.row === row && m.col === col)) {
+                        square.classList.add('valid-move');
+                    }
+
+                    if (lastMove && 
+                        ((lastMove.from.row === row && lastMove.from.col === col) ||
+                         (lastMove.to.row === row && lastMove.to.col === col))) {
+                        square.classList.add('last-move');
+                    }
+                    
+                    square.addEventListener('click', () => handleSquareClick(row, col));
+                    boardElement.appendChild(square);
+                }
+            }
+        }
+
+        function handleSquareClick(row, col) {
+            const piece = board[row][col];
+            
+            if (selectedSquare) {
+                const isValidMove = validMoves.some(m => m.row === row && m.col === col);
+                
+                if (isValidMove) {
+                    movePiece(selectedSquare.row, selectedSquare.col, row, col);
+                    selectedSquare = null;
+                    validMoves = [];
+                    currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+                    updateStatus();
+                } else if (piece && isPlayerPiece(piece, currentPlayer)) {
+                    selectedSquare = { row, col };
+                    validMoves = getValidMoves(row, col);
+                } else {
+                    selectedSquare = null;
+                    validMoves = [];
+                }
+            } else if (piece && isPlayerPiece(piece, currentPlayer)) {
+                selectedSquare = { row, col };
+                validMoves = getValidMoves(row, col);
+            }
+            
+            renderBoard();
+        }
+
+        function isPlayerPiece(piece, player) {
+            const whitePieces = ['♔', '♕', '♖', '♗', '♘', '♙'];
+            const blackPieces = ['♚', '♛', '♜', '♝', '♞', '♟'];
+            
+            if (player === 'white') {
+                return whitePieces.includes(piece);
+            } else {
+                return blackPieces.includes(piece);
+            }
+        }
+
+        function getValidMoves(row, col) {
+            const piece = board[row][col];
+            const moves = [];
+            
+            if (piece === '♙' || piece === '♟') {
+                const direction = piece === '♙' ? -1 : 1;
+                const startRow = piece === '♙' ? 6 : 1;
+                
+                if (row + direction >= 0 && row + direction < 8 && !board[row + direction][col]) {
+                    moves.push({ row: row + direction, col });
+                    
+                    if (row === startRow && !board[row + 2 * direction][col]) {
+                        moves.push({ row: row + 2 * direction, col });
+                    }
+                }
+                
+                if (col > 0 && board[row + direction][col - 1] && 
+                    !isPlayerPiece(board[row + direction][col - 1], currentPlayer)) {
+                    moves.push({ row: row + direction, col: col - 1 });
+                }
+                if (col < 7 && board[row + direction][col + 1] && 
+                    !isPlayerPiece(board[row + direction][col + 1], currentPlayer)) {
+                    moves.push({ row: row + direction, col: col + 1 });
+                }
+            } else if (piece === '♖' || piece === '♜') {
+                addLineMoves(row, col, moves, [[0, 1], [0, -1], [1, 0], [-1, 0]]);
+            } else if (piece === '♗' || piece === '♝') {
+                addLineMoves(row, col, moves, [[1, 1], [1, -1], [-1, 1], [-1, -1]]);
+            } else if (piece === '♕' || piece === '♛') {
+                addLineMoves(row, col, moves, [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]]);
+            } else if (piece === '♘' || piece === '♞') {
+                const knightMoves = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, 2], [1, -2], [-1, 2], [-1, -2]];
+                knightMoves.forEach(([dr, dc]) => {
+                    const newRow = row + dr;
+                    const newCol = col + dc;
+                    if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+                        if (!board[newRow][newCol] || !isPlayerPiece(board[newRow][newCol], currentPlayer)) {
+                            moves.push({ row: newRow, col: newCol });
+                        }
+                    }
+                });
+            } else if (piece === '♔' || piece === '♚') {
+                const kingMoves = [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]];
+                kingMoves.forEach(([dr, dc]) => {
+                    const newRow = row + dr;
+                    const newCol = col + dc;
+                    if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+                        if (!board[newRow][newCol] || !isPlayerPiece(board[newRow][newCol], currentPlayer)) {
+                            moves.push({ row: newRow, col: newCol });
+                        }
+                    }
+                });
+            }
+            
+            return moves;
+        }
+
+        function addLineMoves(row, col, moves, directions) {
+            directions.forEach(([dr, dc]) => {
+                let newRow = row + dr;
+                let newCol = col + dc;
+                
+                while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+                    if (!board[newRow][newCol]) {
+                        moves.push({ row: newRow, col: newCol });
+                    } else {
+                        if (!isPlayerPiece(board[newRow][newCol], currentPlayer)) {
+                            moves.push({ row: newRow, col: newCol });
+                        }
+                        break;
+                    }
+                    newRow += dr;
+                    newCol += dc;
+                }
+            });
+        }
+
+        function movePiece(fromRow, fromCol, toRow, toCol) {
+            const piece = board[fromRow][fromCol];
+            const captured = board[toRow][toCol];
+            
+            board[toRow][toCol] = piece;
+            board[fromRow][fromCol] = '';
+            
+            lastMove = {
+                from: { row: fromRow, col: fromCol },
+                to: { row: toRow, col: toCol },
+                piece,
+                captured
+            };
+            
+            const moveNotation = `${piece} ${String.fromCharCode(97 + fromCol)}${8 - fromRow} → ${String.fromCharCode(97 + toCol)}${8 - toRow}${captured ? ' (captured ' + captured + ')' : ''}`;
+            moveHistory.push(moveNotation);
+            updateMoveLog();
+        }
+
+        function updateMoveLog() {
+            const logElement = document.getElementById('moveLog');
+            logElement.innerHTML = moveHistory.map((move, index) => 
+                `<div class="log-entry">${index + 1}. ${move}</div>`
+            ).reverse().join('');
+        }
+
+        function updateStatus() {
+            const turnElement = document.getElementById('currentTurn');
+            turnElement.textContent = `Turn: ${currentPlayer.charAt(0).toUpperCase() + currentPlayer.slice(1)}`;
+            
+            document.getElementById('statusMessage').innerHTML = '';
+        }
+
+        function newGame() {
+            if (moveHistory.length > 0) {
+                if (!confirm('Start a new game? Current progress will be lost.')) {
+                    return;
+                }
+            }
+            initBoard();
+            renderBoard();
+            document.getElementById('moveLog').innerHTML = '';
+        }
+
+        initBoard();
+        renderBoard();
+    </script>
+</body>
+</html>

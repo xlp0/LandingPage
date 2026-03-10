@@ -61,10 +61,26 @@
     {
       "id": "monopoly-auth",
       "elementId": "monopolyAuthView",
-      "label": "Monopoly (Auth)",
+      "label": "Monopoly",
       "icon": "shield",
       "displayStyle": "flex",
       "logPrefix": "[Monopoly Auth]"
+    },
+    {
+      "id": "chess-auth",
+      "elementId": "chessAuthView",
+      "label": "Chess",
+      "icon": "shield",
+      "displayStyle": "flex",
+      "logPrefix": "[Chess Auth]"
+    },
+    {
+      "id": "go-auth",
+      "elementId": "goAuthView",
+      "label": "Go",
+      "icon": "shield",
+      "displayStyle": "flex",
+      "logPrefix": "[Go Auth]"
     }
   ],
   "submenus": [

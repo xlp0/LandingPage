@@ -271,7 +271,7 @@
           <i data-lucide="shield" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
           Monopoly (Authenticated)
         </h2>
-        <div style="width: 120px;"></div> <!-- Spacer for centering -->
+        <div style="width: 120px;"></div>
       </div>
       <div class="calendar-container" id="monopolyAuthContainer" style="display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px; padding: 40px;">
         <div style="text-align: center; max-width: 600px;">
@@ -282,6 +282,70 @@
           </p>
           <button onclick="window.open('/public/examples/games/monopoly-auth.html', '_blank', 'width=1400,height=900')" 
                   style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; padding: 16px 48px; font-size: 1.1rem; font-weight: 700; cursor: pointer; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4); transition: all 0.3s ease;">
+            🚀 Open Authenticated Game
+          </button>
+          <div style="margin-top: 24px; padding: 16px; background: rgba(79, 195, 247, 0.1); border: 1px solid rgba(79, 195, 247, 0.3); border-radius: 12px; font-size: 0.85rem; color: #4fc3f7;">
+            <strong>ℹ️ Why a new window?</strong><br>
+            ZITADEL's security policies prevent login pages from being displayed in iframes. Opening in a new window ensures a secure authentication flow.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full-Width Authenticated Chess Game -->
+    <div class="calendar-view" id="chessAuthView" style="display: none;">
+      <div class="calendar-header">
+        <button class="header-btn" onclick="window.viewManager.hide('chess-auth')">
+          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+          Close
+        </button>
+        <h2 style="margin: 0; flex: 1; text-align: center;">
+          <i data-lucide="shield" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
+          Chess (Authenticated)
+        </h2>
+        <div style="width: 120px;"></div>
+      </div>
+      <div class="calendar-container" id="chessAuthContainer" style="display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px; padding: 40px;">
+        <div style="text-align: center; max-width: 600px;">
+          <div style="font-size: 4rem; margin-bottom: 20px;">♔🔐</div>
+          <h3 style="font-size: 1.5rem; margin-bottom: 16px; color: #e0e0e0;">Authenticated Chess Game</h3>
+          <p style="color: #94a3b8; margin-bottom: 32px; line-height: 1.6;">
+            This game requires ZITADEL authentication. Click the button below to open the game in a new window where you can securely log in.
+          </p>
+          <button onclick="window.open('/public/examples/games/chess-auth.html', '_blank', 'width=1400,height=900')" 
+                  style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; padding: 16px 48px; font-size: 1.1rem; font-weight: 700; cursor: pointer; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4); transition: all 0.3s ease;">
+            🚀 Open Authenticated Game
+          </button>
+          <div style="margin-top: 24px; padding: 16px; background: rgba(79, 195, 247, 0.1); border: 1px solid rgba(79, 195, 247, 0.3); border-radius: 12px; font-size: 0.85rem; color: #4fc3f7;">
+            <strong>ℹ️ Why a new window?</strong><br>
+            ZITADEL's security policies prevent login pages from being displayed in iframes. Opening in a new window ensures a secure authentication flow.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full-Width Authenticated Go Game -->
+    <div class="calendar-view" id="goAuthView" style="display: none;">
+      <div class="calendar-header">
+        <button class="header-btn" onclick="window.viewManager.hide('go-auth')">
+          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+          Close
+        </button>
+        <h2 style="margin: 0; flex: 1; text-align: center;">
+          <i data-lucide="shield" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
+          Go (Authenticated)
+        </h2>
+        <div style="width: 120px;"></div>
+      </div>
+      <div class="calendar-container" id="goAuthContainer" style="display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px; padding: 40px;">
+        <div style="text-align: center; max-width: 600px;">
+          <div style="font-size: 4rem; margin-bottom: 20px;">⚫⚪🔐</div>
+          <h3 style="font-size: 1.5rem; margin-bottom: 16px; color: #e0e0e0;">Authenticated Go Game</h3>
+          <p style="color: #94a3b8; margin-bottom: 32px; line-height: 1.6;">
+            This game requires ZITADEL authentication. Click the button below to open the game in a new window where you can securely log in.
+          </p>
+          <button onclick="window.open('/public/examples/games/go-auth.html', '_blank', 'width=1400,height=900')" 
+                  style="background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%); color: white; border: none; border-radius: 12px; padding: 16px 48px; font-size: 1.1rem; font-weight: 700; cursor: pointer; box-shadow: 0 8px 24px rgba(86, 171, 47, 0.4); transition: all 0.3s ease;">
             🚀 Open Authenticated Game
           </button>
           <div style="margin-top: 24px; padding: 16px; background: rgba(79, 195, 247, 0.1); border: 1px solid rgba(79, 195, 247, 0.3); border-radius: 12px; font-size: 0.85rem; color: #4fc3f7;">
