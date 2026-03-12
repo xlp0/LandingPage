@@ -17,9 +17,12 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -186,13 +189,23 @@
         }
 
         /* Game Container */
-        #gameContainer {
+        .game-container {
+            flex: 1;
             display: none;
-            width: 100%;
+            overflow: hidden;
+            position: relative;
         }
 
-        #gameContainer.active {
-            display: block;
+        .game-container.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #gameFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            flex: 1;
         }
 
         .error-message {
