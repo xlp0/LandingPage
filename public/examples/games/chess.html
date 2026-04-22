@@ -3,58 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess Game - PKC Edition</title>
+    <title>Chess Game - PKC Edition - P2P</title>
+    <!-- PeerJS for WebRTC -->
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            color: #ffffff;
+            overflow-x: hidden;
         }
 
-        .game-container {
-            background: rgba(255, 255, 255, 0.95);
+        /* Glassmorphism Styles */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 800px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            transition: all 0.4s ease;
+        }
+
+        /* ------------------ LOBBY ------------------ */
+        #lobbyContainer {
+            max-width: 600px;
+            padding: 40px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        #lobbyContainer h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: -webkit-linear-gradient(#4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            font-size: 0.9rem;
+            color: #b0bec5;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4facfe;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
             width: 100%;
         }
 
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            font-size: 2rem;
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.6);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .room-list {
+            margin-top: 20px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .room-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: background 0.2s;
+        }
+
+        .room-item:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .room-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .room-info p {
+            font-size: 0.85rem;
+            color: #b0bec5;
+        }
+
+        .btn-join {
+            width: auto;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            background: transparent;
+            border: 1px solid #4facfe;
+            color: #4facfe;
+            box-shadow: none;
+        }
+        
+        .btn-join:hover {
+            background: rgba(79, 172, 254, 0.1);
+        }
+
+        /* ------------------ GAME AREA ------------------ */
+        #gameArea {
+            display: none;
+            max-width: 900px;
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .p2p-dashboard {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .p2p-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .p2p-stat .label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #b0bec5;
+        }
+
+        .p2p-stat .value {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .p2p-stat .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff9800; /* waiting */
+            margin-right: 6px;
+            box-shadow: 0 0 10px #ff9800;
+            animation: pulse 1.5s infinite;
+        }
+
+        .p2p-stat .status-dot.connected {
+            background: #4caf50;
+            box-shadow: 0 0 10px #4caf50;
+            animation: none;
+        }
+
+        .game-layout {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .board-section {
+            flex: 1;
+            min-width: 320px;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .side-section {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            gap: 20px;
         }
 
         .game-info {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
             padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             color: white;
-        }
-
-        .player-info {
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-
-        .current-turn {
-            font-size: 1.1rem;
-            font-weight: 700;
+            width: 100%;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         #chessboard {
@@ -62,16 +257,14 @@
             grid-template-columns: repeat(8, 1fr);
             gap: 0;
             width: 100%;
-            max-width: 600px;
-            margin: 0 auto 20px;
-            border: 4px solid #2c3e50;
+            aspect-ratio: 1;
+            border: 6px solid #1a2a33;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
         }
 
         .square {
-            aspect-ratio: 1;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -81,144 +274,154 @@
             user-select: none;
         }
 
-        .square.light {
-            background-color: #f0d9b5;
-        }
-
-        .square.dark {
-            background-color: #b58863;
-        }
+        .square.light { background-color: #f0d9b5; color: #000; }
+        .square.dark { background-color: #b58863; color: #000; }
 
         .square.selected {
             background-color: #7fc97f !important;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4);
         }
 
         .square.valid-move {
-            background-color: #ffd700 !important;
+            position: relative;
+        }
+        .square.valid-move::after {
+            content: '';
+            position: absolute;
+            width: 20%;
+            height: 20%;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
         }
 
         .square.last-move {
-            background-color: #90ee90 !important;
+            background-color: #ffd454 !important;
         }
 
         .square:hover {
-            opacity: 0.8;
-        }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        button {
-            padding: 12px 30px;
-            font-size: 1rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: white;
-        }
-
-        .btn-new-game {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .btn-new-game:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            opacity: 0.9;
         }
 
         .game-log {
-            margin-top: 20px;
             padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            max-height: 200px;
-            overflow-y: auto;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .game-log h3 {
-            color: #2c3e50;
             margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: #4facfe;
+        }
+
+        #moveLog {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 250px;
         }
 
         .log-entry {
-            padding: 5px 0;
-            color: #495057;
+            padding: 6px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
             font-size: 0.9rem;
+            color: #cfd8dc;
         }
 
-        .status-message {
-            text-align: center;
-            padding: 15px;
-            margin-top: 15px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1.1rem;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .status-check {
-            background: #fff3cd;
-            color: #856404;
-            border: 2px solid #ffc107;
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 152, 0, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
         }
 
-        .status-checkmate {
-            background: #f8d7da;
-            color: #721c24;
-            border: 2px solid #dc3545;
-        }
-
-        .status-stalemate {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 2px solid #17a2b8;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .game-layout {
+                flex-direction: column;
+            }
+            .square { font-size: 2rem; }
+            .side-section { width: 100%; }
+            #lobbyContainer, #gameArea { padding: 20px; }
         }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <h1>♔ Chess Game ♚</h1>
+
+    <!-- LOBBY SCREEN -->
+    <div id="lobbyContainer" class="glass-panel">
+        <h1>♔ Chess P2P ♚</h1>
+        <p style="color: #b0bec5; margin-bottom: 30px;">Play chess over a completely decentralized WebRTC connection.</p>
         
-        <div class="game-info">
-            <div class="player-info">White: Player 1</div>
-            <div class="current-turn" id="currentTurn">Turn: White</div>
-            <div class="player-info">Black: Player 2</div>
+        <div class="input-group">
+            <label>Player Name</label>
+            <input type="text" id="playerNameInput" placeholder="Enter your name" />
+        </div>
+        
+        <button id="btnCreateRoom" class="btn" onclick="createRoom()" disabled>Create Room (Initializing...)</button>
+        
+        <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+            <h3 style="text-align: left; color: #4facfe; margin-bottom: 15px;">Available Rooms</h3>
+            <div id="roomList" class="room-list">
+                <p style="color: #b0bec5; font-size: 0.9rem;">No rooms available. Create one to get started!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME AREA -->
+    <div id="gameArea" class="glass-panel">
+        <div class="p2p-dashboard">
+            <div class="p2p-stat">
+                <span class="label">Room Owner</span>
+                <span class="value" id="uiRoomOwner">-</span>
+            </div>
+            <div class="p2p-stat">
+                <span class="label">Status</span>
+                <span class="value">
+                    <i id="uiStatusDot" class="status-dot"></i>
+                    <span id="uiStatusText">Connecting...</span>
+                </span>
+            </div>
+            <div class="p2p-stat">
+                <span class="label">Peers Connected</span>
+                <span class="value" id="uiPeerCount">0 / 1</span>
+            </div>
         </div>
 
-        <div id="chessboard"></div>
+        <div class="game-layout">
+            <div class="board-section">
+                <div class="game-info">
+                    <div class="player-info" id="whitePlayerLabel">White</div>
+                    <div class="current-turn" id="currentTurn">Turn: White</div>
+                    <div class="player-info" id="blackPlayerLabel">Black</div>
+                </div>
 
-        <div class="controls">
-            <button class="btn-new-game" onclick="newGame()">New Game</button>
-        </div>
+                <div id="chessboard"></div>
+            </div>
 
-        <div id="statusMessage"></div>
-
-        <div class="game-log">
-            <h3>Move History</h3>
-            <div id="moveLog"></div>
+            <div class="side-section">
+                <div class="game-log">
+                    <h3>Move History</h3>
+                    <div id="moveLog"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
+        // ==========================================
+        // CONSTANTS & GAME STATE
+        // ==========================================
         const PIECES = {
-            WHITE_KING: '♔',
-            WHITE_QUEEN: '♕',
-            WHITE_ROOK: '♖',
-            WHITE_BISHOP: '♗',
-            WHITE_KNIGHT: '♘',
-            WHITE_PAWN: '♙',
-            BLACK_KING: '♚',
-            BLACK_QUEEN: '♛',
-            BLACK_ROOK: '♜',
-            BLACK_BISHOP: '♝',
-            BLACK_KNIGHT: '♞',
-            BLACK_PAWN: '♟'
+            WHITE_KING: '♔', WHITE_QUEEN: '♕', WHITE_ROOK: '♖', WHITE_BISHOP: '♗', WHITE_KNIGHT: '♘', WHITE_PAWN: '♙',
+            BLACK_KING: '♚', BLACK_QUEEN: '♛', BLACK_ROOK: '♜', BLACK_BISHOP: '♝', BLACK_KNIGHT: '♞', BLACK_PAWN: '♟'
         };
 
         let board = [];
@@ -228,7 +431,233 @@
         let moveHistory = [];
         let lastMove = null;
 
-        function initBoard() {
+        // ==========================================
+        // NETWORKING STATE
+        // ==========================================
+        let myName = 'Anonymous Player';
+        let myRole = null; // 'white' | 'black'
+        let ws = null;
+        let peer = null;
+        let localPeerId = null;
+        let p2pConnection = null;
+        let connectedPeersCount = 0;
+        let roomOwner = '';
+
+        // Initialize App
+        function initApp() {
+            initGame();
+            initWebRTC();
+            // Default name fill
+            if (document.getElementById('playerNameInput').value === '') {
+                document.getElementById('playerNameInput').value = "Player_" + Math.floor(Math.random()*1000);
+            }
+        }
+
+        // ==========================================
+        // NETWORKING (WebSocket + PeerJS)
+        // ==========================================
+        function initWebRTC() {
+            // 1. WebSocket for signaling rooms
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws/`;
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                ws.send(JSON.stringify({ type: 'subscribe', channel: 'webrtc-dashboard-rooms' }));
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'server-room-list') {
+                    renderRoomList(data.rooms);
+                }
+            };
+            ws.onclose = () => console.log('WebSocket discovery server disconnected');
+
+            // 2. PeerJS for P2P connection
+            // We use the default free PeerJS cloud server for robust NAT traversal
+            peer = new Peer({ debug: 1 });
+
+            peer.on('open', (id) => {
+                localPeerId = id;
+                console.log('My PeerJS ID is: ' + id);
+                const btn = document.getElementById('btnCreateRoom');
+                btn.textContent = 'Create Room';
+                btn.disabled = false;
+            });
+
+            peer.on('connection', (conn) => {
+                // Incoming connection
+                if (p2pConnection) {
+                    console.log('Already in a game, rejecting connection.');
+                    conn.close();
+                    return;
+                }
+                setupP2PConnection(conn, false);
+            });
+
+            peer.on('error', (err) => {
+                console.error('PeerJS error:', err);
+                alert("PeerJS Networking Error: " + err.type);
+            });
+        }
+
+        function createRoom() {
+            const nameInput = document.getElementById('playerNameInput').value.trim();
+            if (nameInput) myName = nameInput;
+
+            if (!localPeerId) return alert('Networking is still initializing. Please wait...');
+
+            // Notify WebSocket to list our room
+            ws.send(JSON.stringify({
+                type: 'create-room',
+                roomId: localPeerId, // PeerJS ID acts as the Room Route
+                roomName: myName + "'s Match",
+                hostId: localPeerId,
+                hostName: myName,
+                maxParticipants: 2
+            }));
+
+            myRole = 'white'; // Host is always white locally
+            roomOwner = myName;
+
+            showGameArea();
+            updateP2PDashboard('Waiting...', false);
+        }
+
+        function joinRoom(hostPeerId, hostName) {
+            const nameInput = document.getElementById('playerNameInput').value.trim();
+            if (nameInput) myName = nameInput;
+
+            myRole = 'black'; // Joiner is always black locally
+            roomOwner = hostName;
+
+            showGameArea();
+            updateP2PDashboard(`Connecting...`, false);
+
+            const conn = peer.connect(hostPeerId, {
+                reliable: true,
+                metadata: { clientName: myName }
+            });
+            setupP2PConnection(conn, true);
+        }
+
+        function setupP2PConnection(conn, isInitiator) {
+            conn.on('open', () => {
+                p2pConnection = conn;
+                connectedPeersCount = 1;
+                updateP2PDashboard('Connected to Opponent', true);
+                
+                // Introduce ourselves
+                conn.send({ type: 'handshake', name: myName });
+
+                // Reset board for standard game start
+                initGame();
+                
+                // If I am white, swap board orientation maybe? Standard logic stays same for now
+                // Optional: Flip board visually if black, handled in render loop.
+                renderBoard();
+            });
+
+            conn.on('data', (data) => {
+                if (data.type === 'move') {
+                    // Apply opponent's move
+                    applyRemoteMove(data);
+                } else if (data.type === 'handshake') {
+                    // We received their name
+                    const oppName = data.name;
+                    if (myRole === 'white') {
+                        document.getElementById('blackPlayerLabel').textContent = `${oppName} (Black)`;
+                        document.getElementById('whitePlayerLabel').textContent = `${myName} (White) [You]`;
+                    } else {
+                        document.getElementById('whitePlayerLabel').textContent = `${oppName} (White)`;
+                        document.getElementById('blackPlayerLabel').textContent = `${myName} (Black) [You]`;
+                    }
+                }
+            });
+
+            conn.on('close', () => {
+                p2pConnection = null;
+                connectedPeersCount = 0;
+                updateP2PDashboard('Opponent Disconnected', false);
+                alert("The connection to your opponent was lost.");
+            });
+        }
+
+        // ==========================================
+        // UI HELPERS
+        // ==========================================
+        function renderRoomList(rooms) {
+            const container = document.getElementById('roomList');
+            if (!rooms || rooms.length === 0) {
+                container.innerHTML = '<p style="color: #b0bec5; font-size: 0.9rem;">No rooms available. Create one to get started!</p>';
+                return;
+            }
+
+            // Filter out our own room if it exists 
+            const filtered = rooms.filter(r => r.id !== localPeerId);
+            
+            if (filtered.length === 0) {
+                 container.innerHTML = '<p style="color: #b0bec5; font-size: 0.9rem;">Searching for opponents...</p>';
+                 return;
+            }
+
+            container.innerHTML = filtered.map(r => `
+                <div class="room-item">
+                    <div class="room-info">
+                        <h4>${r.name}</h4>
+                        <p>Owner: ${r.host} | Peers: ${r.participantCount}/${r.maxParticipants || 2}</p>
+                    </div>
+                    <button class="btn btn-join" onclick="joinRoom('${r.id}', '${r.host}')">Join</button>
+                </div>
+            `).join('');
+        }
+
+        function showGameArea() {
+            document.getElementById('lobbyContainer').style.display = 'none';
+            document.getElementById('gameArea').style.display = 'block';
+            
+            document.getElementById('uiRoomOwner').textContent = roomOwner;
+            if (myRole === 'white') {
+                document.getElementById('whitePlayerLabel').textContent = `${myName} (White) [You]`;
+                document.getElementById('blackPlayerLabel').textContent = `Waiting... (Black)`;
+            } else {
+                document.getElementById('blackPlayerLabel').textContent = `${myName} (Black) [You]`;
+                document.getElementById('whitePlayerLabel').textContent = `${roomOwner} (White)`;
+            }
+        }
+
+        function updateP2PDashboard(statusText, isConnected) {
+            document.getElementById('uiStatusText').textContent = statusText;
+            document.getElementById('uiPeerCount').textContent = connectedPeersCount + " / 1";
+            
+            const dot = document.getElementById('uiStatusDot');
+            if (isConnected) {
+                dot.classList.add('connected');
+            } else {
+                dot.classList.remove('connected');
+            }
+        }
+
+        function updateMoveLog() {
+            const logElement = document.getElementById('moveLog');
+            logElement.innerHTML = moveHistory.map((move, index) => 
+                `<div class="log-entry"><b>${index + 1}.</b> ${move}</div>`
+            ).reverse().join('');
+        }
+
+        function updateStatus() {
+            const turnElement = document.getElementById('currentTurn');
+            turnElement.textContent = `Turn: ${currentPlayer.charAt(0).toUpperCase() + currentPlayer.slice(1)}`;
+            if (myRole && currentPlayer === myRole && p2pConnection) {
+                 turnElement.textContent += " (Your Turn)";
+            }
+        }
+
+        // ==========================================
+        // CHESS ENGINE LOGIC
+        // ==========================================
+        function initGame() {
             board = [
                 ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
                 ['♟', '♟', '♟', '♟', '♟', '♟', '♟', '♟'],
@@ -245,20 +674,28 @@
             moveHistory = [];
             lastMove = null;
             updateStatus();
+            document.getElementById('moveLog').innerHTML = '';
+            renderBoard();
         }
 
         function renderBoard() {
             const boardElement = document.getElementById('chessboard');
             boardElement.innerHTML = '';
 
-            for (let row = 0; row < 8; row++) {
-                for (let col = 0; col < 8; col++) {
+            // Visual flip if playing black
+            const rows = myRole === 'black' ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
+            const cols = myRole === 'black' ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
+
+            for (let visualRow = 0; visualRow < 8; visualRow++) {
+                for (let visualCol = 0; visualCol < 8; visualCol++) {
+                    const row = rows[visualRow];
+                    const col = cols[visualCol];
+
                     const square = document.createElement('div');
                     square.className = 'square';
+                    // Alternate colors
                     square.className += (row + col) % 2 === 0 ? ' light' : ' dark';
                     square.textContent = board[row][col];
-                    square.dataset.row = row;
-                    square.dataset.col = col;
                     
                     if (selectedSquare && selectedSquare.row === row && selectedSquare.col === col) {
                         square.classList.add('selected');
@@ -281,13 +718,36 @@
         }
 
         function handleSquareClick(row, col) {
+            // P2P Rule Check
+            if (p2pConnection) { // If playing online
+                if (currentPlayer !== myRole) {
+                    console.log("It's not your turn!");
+                    return; // Block move
+                }
+            } else {
+                // If offline, wait. 
+                // We enforce that P2P must be connected to play in this version
+                if (myRole !== null) {
+                    return; 
+                }
+            }
+
             const piece = board[row][col];
             
             if (selectedSquare) {
                 const isValidMove = validMoves.some(m => m.row === row && m.col === col);
                 
                 if (isValidMove) {
-                    movePiece(selectedSquare.row, selectedSquare.col, row, col);
+                    const fromRow = selectedSquare.row;
+                    const fromCol = selectedSquare.col;
+
+                    movePiece(fromRow, fromCol, row, col);
+                    
+                    // Transmit over P2P Data Channel
+                    if (p2pConnection) {
+                        p2pConnection.send({ type: 'move', fromRow, fromCol, toRow: row, toCol: col });
+                    }
+
                     selectedSquare = null;
                     validMoves = [];
                     currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
@@ -307,40 +767,44 @@
             renderBoard();
         }
 
+        function applyRemoteMove(data) {
+            const { fromRow, fromCol, toRow, toCol } = data;
+            movePiece(fromRow, fromCol, toRow, toCol);
+            
+            currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+            selectedSquare = null;
+            validMoves = [];
+            updateStatus();
+            renderBoard();
+        }
+
         function isPlayerPiece(piece, player) {
             const whitePieces = ['♔', '♕', '♖', '♗', '♘', '♙'];
             const blackPieces = ['♚', '♛', '♜', '♝', '♞', '♟'];
-            
-            if (player === 'white') {
-                return whitePieces.includes(piece);
-            } else {
-                return blackPieces.includes(piece);
-            }
+            return player === 'white' ? whitePieces.includes(piece) : blackPieces.includes(piece);
         }
 
         function getValidMoves(row, col) {
             const piece = board[row][col];
             const moves = [];
             
+            // Pawn
             if (piece === '♙' || piece === '♟') {
-                const direction = piece === '♙' ? -1 : 1;
+                const dir = piece === '♙' ? -1 : 1;
                 const startRow = piece === '♙' ? 6 : 1;
                 
-                if (row + direction >= 0 && row + direction < 8 && !board[row + direction][col]) {
-                    moves.push({ row: row + direction, col });
-                    
-                    if (row === startRow && !board[row + 2 * direction][col]) {
-                        moves.push({ row: row + 2 * direction, col });
+                if (row + dir >= 0 && row + dir < 8 && !board[row + dir][col]) {
+                    moves.push({ row: row + dir, col });
+                    if (row === startRow && !board[row + 2 * dir][col]) {
+                        moves.push({ row: row + 2 * dir, col });
                     }
                 }
                 
-                if (col > 0 && board[row + direction][col - 1] && 
-                    !isPlayerPiece(board[row + direction][col - 1], currentPlayer)) {
-                    moves.push({ row: row + direction, col: col - 1 });
+                if (col > 0 && board[row + dir][col - 1] && !isPlayerPiece(board[row + dir][col - 1], currentPlayer)) {
+                    if (board[row + dir][col - 1]) moves.push({ row: row + dir, col: col - 1 });
                 }
-                if (col < 7 && board[row + direction][col + 1] && 
-                    !isPlayerPiece(board[row + direction][col + 1], currentPlayer)) {
-                    moves.push({ row: row + direction, col: col + 1 });
+                if (col < 7 && board[row + dir][col + 1] && !isPlayerPiece(board[row + dir][col + 1], currentPlayer)) {
+                    if (board[row + dir][col + 1]) moves.push({ row: row + dir, col: col + 1 });
                 }
             } else if (piece === '♖' || piece === '♜') {
                 addLineMoves(row, col, moves, [[0, 1], [0, -1], [1, 0], [-1, 0]]);
@@ -349,48 +813,36 @@
             } else if (piece === '♕' || piece === '♛') {
                 addLineMoves(row, col, moves, [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]]);
             } else if (piece === '♘' || piece === '♞') {
-                const knightMoves = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, 2], [1, -2], [-1, 2], [-1, -2]];
-                knightMoves.forEach(([dr, dc]) => {
-                    const newRow = row + dr;
-                    const newCol = col + dc;
-                    if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
-                        if (!board[newRow][newCol] || !isPlayerPiece(board[newRow][newCol], currentPlayer)) {
-                            moves.push({ row: newRow, col: newCol });
-                        }
+                const km = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, 2], [1, -2], [-1, 2], [-1, -2]];
+                km.forEach(([dr, dc]) => {
+                    const nr = row + dr; const nc = col + dc;
+                    if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
+                        if (!board[nr][nc] || !isPlayerPiece(board[nr][nc], currentPlayer)) moves.push({ row: nr, col: nc });
                     }
                 });
             } else if (piece === '♔' || piece === '♚') {
-                const kingMoves = [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]];
-                kingMoves.forEach(([dr, dc]) => {
-                    const newRow = row + dr;
-                    const newCol = col + dc;
-                    if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
-                        if (!board[newRow][newCol] || !isPlayerPiece(board[newRow][newCol], currentPlayer)) {
-                            moves.push({ row: newRow, col: newCol });
-                        }
+                const km = [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]];
+                km.forEach(([dr, dc]) => {
+                    const nr = row + dr; const nc = col + dc;
+                    if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
+                        if (!board[nr][nc] || !isPlayerPiece(board[nr][nc], currentPlayer)) moves.push({ row: nr, col: nc });
                     }
                 });
             }
-            
             return moves;
         }
 
         function addLineMoves(row, col, moves, directions) {
             directions.forEach(([dr, dc]) => {
-                let newRow = row + dr;
-                let newCol = col + dc;
-                
-                while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
-                    if (!board[newRow][newCol]) {
-                        moves.push({ row: newRow, col: newCol });
+                let r = row + dr; let c = col + dc;
+                while (r >= 0 && r < 8 && c >= 0 && c < 8) {
+                    if (!board[r][c]) {
+                        moves.push({ row: r, col: c });
                     } else {
-                        if (!isPlayerPiece(board[newRow][newCol], currentPlayer)) {
-                            moves.push({ row: newRow, col: newCol });
-                        }
+                        if (!isPlayerPiece(board[r][c], currentPlayer)) moves.push({ row: r, col: c });
                         break;
                     }
-                    newRow += dr;
-                    newCol += dc;
+                    r += dr; c += dc;
                 }
             });
         }
@@ -405,42 +857,17 @@
             lastMove = {
                 from: { row: fromRow, col: fromCol },
                 to: { row: toRow, col: toCol },
-                piece,
-                captured
+                piece, captured
             };
             
-            const moveNotation = `${piece} ${String.fromCharCode(97 + fromCol)}${8 - fromRow} → ${String.fromCharCode(97 + toCol)}${8 - toRow}${captured ? ' (captured ' + captured + ')' : ''}`;
+            const cols = ['a','b','c','d','e','f','g','h'];
+            const moveNotation = `${piece} ${cols[fromCol]}${8 - fromRow} → ${cols[toCol]}${8 - toRow}${captured ? ' (x ' + captured + ')' : ''}`;
             moveHistory.push(moveNotation);
             updateMoveLog();
         }
 
-        function updateMoveLog() {
-            const logElement = document.getElementById('moveLog');
-            logElement.innerHTML = moveHistory.map((move, index) => 
-                `<div class="log-entry">${index + 1}. ${move}</div>`
-            ).reverse().join('');
-        }
-
-        function updateStatus() {
-            const turnElement = document.getElementById('currentTurn');
-            turnElement.textContent = `Turn: ${currentPlayer.charAt(0).toUpperCase() + currentPlayer.slice(1)}`;
-            
-            document.getElementById('statusMessage').innerHTML = '';
-        }
-
-        function newGame() {
-            if (moveHistory.length > 0) {
-                if (!confirm('Start a new game? Current progress will be lost.')) {
-                    return;
-                }
-            }
-            initBoard();
-            renderBoard();
-            document.getElementById('moveLog').innerHTML = '';
-        }
-
-        initBoard();
-        renderBoard();
+        // Start initialization
+        initApp();
     </script>
 </body>
 </html>
