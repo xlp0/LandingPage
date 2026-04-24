@@ -30,7 +30,14 @@ const app = express();
 
 // Enable CORS for all routes
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://henry.pkc.pub', 'https://dev.pkc.pub'],
+    origin: [
+        'http://localhost:3000',
+        'http://localhost:8765',
+        'https://pkc.pub',
+        'https://test.pkc.pub',
+        'https://dev.pkc.pub',
+        'https://henry.pkc.pub'
+    ],
     credentials: true
 }));
 
