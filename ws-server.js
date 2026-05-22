@@ -307,6 +307,7 @@ app.get('/api/env', (req, res) => {
     res.json({
         WEBSOCKET_URL: process.env.WEBSOCKET_URL || '',
         STUN_SERVERS: process.env.STUN_SERVERS || '',
+        MCARD_STUDIO_URL: process.env.MCARD_STUDIO_URL || 'https://mcardstudio.pkc.pub/',
         // ... other envs
         NODE_ENV: process.env.NODE_ENV || 'development'
     });
@@ -319,6 +320,7 @@ app.get('/api/config', (req, res) => {
     }
     const config = {
         WEBSOCKET_URL: process.env.WEBSOCKET_URL || null,
+        MCARD_STUDIO_URL: process.env.MCARD_STUDIO_URL || 'https://mcardstudio.pkc.pub/',
         NODE_ENV: process.env.NODE_ENV || 'development',
         PORT: process.env.PORT || 3000,
         STUN_SERVERS: stunServers.length > 0 ? stunServers : null

@@ -414,6 +414,7 @@ app.get('/api/env', (req, res) => {
             REDIRECT_URI: process.env.REDIRECT_URI || '',
             PKC_Title_Text: process.env.PKC_Title_Text || 'PKC Landing Page',
             BASE_URL: process.env.BASE_URL || '', // Empty string triggers client-side fallback to window.location.origin
+            MCARD_STUDIO_URL: process.env.MCARD_STUDIO_URL || 'https://mcardstudio.pkc.pub/',
             NODE_ENV: process.env.NODE_ENV || 'development'
         };
         res.json(envObj);
@@ -436,6 +437,7 @@ app.get('/api/config', (req, res) => {
     
     const config = {
         WEBSOCKET_URL: process.env.WEBSOCKET_URL || null,
+        MCARD_STUDIO_URL: process.env.MCARD_STUDIO_URL || 'https://mcardstudio.pkc.pub/',
         NODE_ENV: process.env.NODE_ENV || 'development',
         PORT: process.env.PORT || 3000,
         STUN_SERVERS: stunServers.length > 0 ? stunServers : null
