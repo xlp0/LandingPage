@@ -73,7 +73,7 @@ export async function streamReadNormalizedText(filePath, options) {
     };
 }
 // Constants
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+const MAX_FILE_SIZE = (typeof window !== 'undefined' && window.MCARD_CONFIG?.MAX_SIZE_BYTES) || 150 * 1024 * 1024; // 150MB
 const READ_TIMEOUT_MS = 5000;
 /**
  * Check if a file is likely to cause processing issues.

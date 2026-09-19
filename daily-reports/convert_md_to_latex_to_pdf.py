@@ -1,23 +1,24 @@
+import os
 import re
 import subprocess
-import os
-from pathlib import Path
 from datetime import datetime
-import shutil
+from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
-env_path = Path(__file__).parent / '.env'
+env_path = Path(__file__).parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
 # Get paths from environment variables
-MARKDOWN_DIR = Path(os.getenv('MARKDOWN_DIR'))
-LATEX_DIR = Path(os.getenv('LATEX_DIR'))
-PDF_DIR = Path(os.getenv('PDF_DIR'))
+MARKDOWN_DIR = Path(os.getenv("MARKDOWN_DIR"))
+LATEX_DIR = Path(os.getenv("LATEX_DIR"))
+PDF_DIR = Path(os.getenv("PDF_DIR"))
 
 # Buat folder output jika belum ada
 LATEX_DIR.mkdir(parents=True, exist_ok=True)
 PDF_DIR.mkdir(parents=True, exist_ok=True)
+
 
 # Cari file Markdown terbaru berdasarkan format "YYYY-MM-DD.md"
 def get_latest_markdown_file(directory):
@@ -35,10 +36,13 @@ def get_latest_markdown_file(directory):
 
     return latest_file
 
+
 MARKDOWN_FILE = get_latest_markdown_file(MARKDOWN_DIR)
 
 if not MARKDOWN_FILE:
-    raise FileNotFoundError("Tidak ada file Markdown dengan format YYYY-MM-DD.md ditemukan di folder.")
+    raise FileNotFoundError(
+        "Tidak ada file Markdown dengan format YYYY-MM-DD.md ditemukan di folder."
+    )
 
 print(f"Using Markdown file: {MARKDOWN_FILE}")
 
@@ -48,8 +52,9 @@ OUTPUT_TEX = LATEX_DIR / f"{file_stem}.tex"
 OUTPUT_PDF = PDF_DIR / f"{file_stem}.pdf"
 
 # Baca konten markdown
-with open(MARKDOWN_FILE, "r", encoding="utf-8") as f:
+with open(MARKDOWN_FILE, encoding="utf-8") as f:
     md_content = f.read()
+
 
 # --- Fungsi untuk konversi Markdown ke LaTeX ---
 def markdown_to_latex(text: str) -> str:
@@ -64,6 +69,7 @@ def markdown_to_latex(text: str) -> str:
 
     return text
 
+
 # Ekstrak Title, Author, Date
 title_match = re.search(r"#\s*(Daily Report\s*-\s*[\d\-]+)", md_content)
 title = title_match.group(1) if title_match else "Daily Report"
@@ -73,6 +79,7 @@ author = author_match.group(1).strip() if author_match else "Unknown Author"
 
 date_match = re.search(r"\*\*Date:\*\*\s*([\d\-]+)", md_content)
 date = date_match.group(1).strip() if date_match else "Unknown Date"
+
 
 # Ekstrak Section with nested list support
 def extract_section(section_name, is_list=True):
@@ -87,43 +94,45 @@ def extract_section(section_name, is_list=True):
             return markdown_to_latex(content)
     return ""
 
+
 def process_nested_list(content: str) -> str:
     """Process markdown list with nested items into LaTeX format"""
-    lines = content.split('\n')
+    lines = content.split("\n")
     latex_lines = []
     in_sublist = False
-    
+
     for line in lines:
         # Check for main list item (starts with "- " with no leading spaces)
-        main_item_match = re.match(r'^-\s+(.+)$', line)
+        main_item_match = re.match(r"^-\s+(.+)$", line)
         # Check for sublist item (starts with "  - " with 2 or more leading spaces)
-        sub_item_match = re.match(r'^(\s{2,})-\s+(.+)$', line)
-        
+        sub_item_match = re.match(r"^(\s{2,})-\s+(.+)$", line)
+
         if main_item_match:
             # Close previous sublist if open
             if in_sublist:
                 latex_lines.append("  \\end{itemize}")
                 in_sublist = False
-            
+
             # Add main list item
             item_text = markdown_to_latex(main_item_match.group(1))
             latex_lines.append(f"  \\item {item_text}")
-            
+
         elif sub_item_match:
             # Open sublist if not already open
             if not in_sublist:
                 latex_lines.append("  \\begin{itemize}")
                 in_sublist = True
-            
+
             # Add sublist item
             item_text = markdown_to_latex(sub_item_match.group(2))
             latex_lines.append(f"    \\item {item_text}")
-    
+
     # Close sublist if still open at the end
     if in_sublist:
         latex_lines.append("  \\end{itemize}")
-    
+
     return "\n".join(latex_lines)
+
 
 summary_items = extract_section("Summary")
 suggestions_items = extract_section("Suggestions")
@@ -207,13 +216,22 @@ with open(OUTPUT_TEX, "w", encoding="utf-8") as f:
 print(f"LaTeX file generated: {OUTPUT_TEX}")
 
 # Compile ke PDF menggunakan pdflatex
-subprocess.run(["pdflatex", "-interaction=nonstopmode", "-output-directory", str(PDF_DIR), str(OUTPUT_TEX)], check=True)
+subprocess.run(
+    [
+        "pdflatex",
+        "-interaction=nonstopmode",
+        "-output-directory",
+        str(PDF_DIR),
+        str(OUTPUT_TEX),
+    ],
+    check=True,
+)
 
 # Clean up auxiliary files (.aux, .log, .out)
 aux_files = [
     PDF_DIR / f"{file_stem}.aux",
-    PDF_DIR / f"{file_stem}.log", 
-    PDF_DIR / f"{file_stem}.out"
+    PDF_DIR / f"{file_stem}.log",
+    PDF_DIR / f"{file_stem}.out",
 ]
 
 for aux_file in aux_files:

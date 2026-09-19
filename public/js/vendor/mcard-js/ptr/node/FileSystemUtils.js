@@ -43,8 +43,9 @@ export function listFiles(dirPath, recursive) {
 export function isProblematicFile(filePath) {
     try {
         const stats = fs.statSync(filePath);
-        // Skip files larger than 50MB
-        if (stats.size > 50 * 1024 * 1024)
+        // Skip files larger than 150MB (configurable via global)
+        const maxSizeBytes = (typeof window !== 'undefined' && window.MCARD_CONFIG?.MAX_SIZE_BYTES) || 150 * 1024 * 1024;
+        if (stats.size > maxSizeBytes)
             return true;
         // Check for unstructured binary by sampling
         if (stats.size > 1024) {

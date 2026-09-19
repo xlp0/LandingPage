@@ -181,7 +181,7 @@ This perspective offers immediate benefits: it massively improves comprehension 
 
 **Network-Centric Operational Model**
 
-By shifting focus from microservice implementation to the network of cards, a fundamental operational simplification emerges: as long as the data represented in the cards maintains connectivity, individual network participants can independently turn services on and off. The connectivity will transcend the operational status. This data orientation removes the burden of service maintenance from individual networks and creates an open participation model where any functional service at any quality levels can all join the network of data. The only constraint is conformance to the [[MVP Cards Design Rationale]].
+By shifting focus from microservice implementation to the network of cards, a fundamental operational simplification emerges: as long as the data represented in the cards maintains connectivity, individual network participants can independently turn services on and off. The connectivity will transcend the operational status. This data orientation removes the burden of service maintenance from individual networks and creates an open participation model where any functional service at any quality levels can all join the network of data. The only constraint is conformance to the [[MVP Cards — Design Thesis for Sovereign Knowledge Networks|MVP Cards Design Thesis]].
 
 **Universal Display Substrate**
 
@@ -597,7 +597,7 @@ Building on IT Del's successful arrow-network implementation, the following oper
 6. **Cognitive Foundations for Personalized Knowledge**: Establish personalized knowledge management architecture grounded in empirically validated cognitive science. See [[Cognitive Foundations for Personalized Knowledge Management in PKC]] for design principles derived from [[Subitizing - The Innate Number Sense|subitizing]] (immediate-yet-verifiable knowledge) and [[Permanent/Projects/AI Toba/GASing Arithmetic|GASing Arithmetic]] (counting as universal computational primitive). GASing's pattern-based, content-addressable arithmetic provides the empirical foundation: just as all computation reduces to counting operations, PKC's Card operations reduce to verifiable, pattern-indexed transformations. This ensures PKC's networked data collection and social validation processes embody epistemologically sound principles: content-addressable instant access (like GASing's strategic lookups), bounded complexity (3 Card types, not arbitrary abstractions), distributed consensus through verifiable operations (not private mysticism), and complete historical traceability (content-addressed provenance).
 
 **For Technical Teams & Implementers**
-1. Review [[MVP Cards Design Rationale]] for detailed architectural specifications
+1. Review [[MVP Cards — Design Thesis for Sovereign Knowledge Networks|MVP Cards Design Thesis]] for detailed architectural specifications
 2. Study [[MCard]], [[VCard]], and [[PCard]] documentation for card-type implementations
 3. Explore [[Cubical Logic Model]] for formal verification foundations
 4. Join technical working groups for hands-on deployment support
@@ -638,7 +638,7 @@ This document introduces specialized terminology from Category Theory, functiona
 - [[Monadology]] - Leibniz's philosophical foundation for encapsulated computation
 
 **PKC Architecture**
-- [[MVP Cards Design Rationale]] - Design principles for MCard/VCard/PCard
+- [[MVP Cards — Design Thesis for Sovereign Knowledge Networks|MVP Cards Design Thesis]] — Design principles for MCard/VCard/PCard
 - [[MCard]] - Content-addressable, immutable data carriers (hash-indexed)
 - [[VCard]] - Credential and value injection mechanisms
 - [[PCard]] - Process specifications via Polynomial Functors
