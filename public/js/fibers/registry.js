@@ -94,6 +94,8 @@ export class FiberRegistry {
     this.ctx = options.ctx ?? null;
     this.mounted = new Map(); // kind -> FiberLifecycle
     this.scopes = new Map();  // kind -> scoped effect handle
+    this.exercised = new Set(); // kinds that have rendered at least once
+    this.mountCounts = new Map(); // kind -> mounts observed
   }
 
   /** The declared fiber for a kind, or undefined. Pure data lookup. */
@@ -161,6 +163,8 @@ export class FiberRegistry {
 
     this.mounted.set(kind, lifecycle);
     this.scopes.set(kind, scope);
+    this.exercised.add(kind);
+    this.mountCounts.set(kind, (this.mountCounts.get(kind) ?? 0) + 1);
     return { lifecycle, adapter, trace, fallback, scope };
   }
 
@@ -172,6 +176,37 @@ export class FiberRegistry {
     this.mounted.delete(kind);
     this.scopes.delete(kind);
     return lifecycle.state;
+  }
+
+  /**
+   * The fiber inspector's data (DV-11-06).
+   *
+   * Everything here is read from the registry and the runtime's own records —
+   * there is no second list of fibers to drift out of step. A fiber that has
+   * never rendered is marked `exercised: false` rather than shown as healthy,
+   * because "declared" and "working" are different claims.
+   */
+  inspectorReport() {
+    const exercised = this.exercised;
+    return {
+      fibers: this.fibers.map((f) => ({
+        kind: f.kind,
+        payload_shape: f.payload_shape,
+        renderer: f.renderer,
+        isolation: f.isolation,
+        budget: f.budget,
+        exercised: exercised.has(f.kind),
+        mountCount: this.mountCounts.get(f.kind) ?? 0,
+        coeffectsSatisfied: !(COEFFECT_SERVICES[f.kind] ?? []).length || Boolean(this.ctx),
+        currentlyMounted: this.mounted.has(f.kind),
+      })),
+      totals: {
+        declared: this.fibers.length,
+        exercised: exercised.size,
+        neverExercised: this.fibers.filter((f) => !exercised.has(f.kind)).map((f) => f.kind),
+        unresolvedCoeffects: this.unresolvedKinds(),
+      },
+    };
   }
 
   /** Observation of the whole fiber set: used for observational equivalence. */
