@@ -327,6 +327,9 @@ export class FiberRegistry {
     const m = this.marking();
     const enabled = [];
     const push = (id, on, guard) => enabled.push({ transition: id, enabled: on, guard });
+    // t_resolve is the colour refinement: enabled while a pending token's kind is
+    // still unresolved, so it fires exactly once per token rather than forever
+    push('t_resolve', m.places.p_pending.length > 0, 'kind_unresolved');
     push('t_load', m.places.p_pending.length > 0 && this.unresolvedKinds().length === 0,
          'coeffects_satisfiable');
     push('t_activate', m.places.p_loading.length > 0, 'adapter_mounted_and_inverse_registered');

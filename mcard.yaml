@@ -143,6 +143,69 @@ navigation:
     - "index.html"
     - "js/nav.js"
 
+# Correctness is the C-layer runtime facet: what the unit's transitions *do*,
+# distinct from the A-layer consistency of its specification (see `invariants`).
+#
+# These triples are not invented here. Each is the type of a transition declared in
+# `clm/tests/petri_nets/fiber_lifecycle.yaml`, so the table is the *typing of the
+# fiber net* rather than a parallel description of it:
+#
+#   {P} C {Q}   is the meet   T_admissible = M_input ⊓ V_pre
+#
+# and where that meet is ⊥ the transition does not fire at all. INV-CDO-26: a triple
+# naming only one VCard boundary is `unwitnessed`, never silently admitted.
+correctness:
+  note: "the triples are the transition types of the fiber lifecycle CPN"
+  hoare_triples:
+    - id: ht_dispatch_covers_by_subsumption
+      transition: t_resolve
+      vcard_pre: "vcard:kind_declared_or_subsumed"
+      vcard_post: "vcard:covered_by_most_specific_fiber"
+      status: total
+      budget: { archetype: wearable, max_bytes: 2097152 }
+      note: "colour refinement: t_resolve changes the token from mcard:unclassified to the kind of the covering fiber. A kind that is not declared but is subsumed resolves through that fiber; exact matching would return ⊥ here"
+
+    - id: ht_load_requires_satisfiable_coeffects
+      transition: t_load
+      vcard_pre: "vcard:coeffects_satisfiable"
+      vcard_post: "vcard:token_in_p_loading"
+      status: partial
+      budget: { archetype: mobile, max_bytes: 10485760 }
+      note: "partial, not total: a fiber whose declared services are unsatisfiable has no enabled binding, so the transition is not defined on all inputs"
+
+    - id: ht_activate_registers_the_inverse
+      transition: t_activate
+      vcard_pre: "vcard:token_in_p_loading"
+      vcard_post: "vcard:token_in_p_active_and_inverse_registered"
+      status: total
+      budget: { archetype: mobile, max_bytes: 10485760 }
+      note: "the postcondition names the inverse, because a token reaching p_active without one is the leak the disposal invariant catches"
+
+    - id: ht_dispose_reaches_the_sink
+      transition: t_dispose
+      vcard_pre: "vcard:token_in_p_unloading"
+      vcard_post: "vcard:token_in_p_disposed_and_disposables_empty"
+      status: total
+      budget: { archetype: wearable, max_bytes: 2097152 }
+      note: "conservation: the token arrives in the sink and the disposable list is empty"
+
+    - id: ht_bottom_halts_with_zero_side_effects
+      transition: t_load
+      vcard_pre: "vcard:no_covering_fiber_and_no_fallback"
+      vcard_post: "vcard:halted_before_guard_created"
+      status: total
+      budget: { archetype: wearable, max_bytes: 2097152 }
+      note: "the ⊥ case: the meet is empty, so no transition is enabled. The halt happens before the guard exists, which is what makes zero side-effects structural rather than a promise"
+
+    - id: ht_reap_accounts_for_a_failed_token
+      transition: t_reap
+      vcard_pre: "vcard:token_in_p_error"
+      vcard_post: "vcard:token_in_p_disposed"
+      status: total
+      budget: { archetype: wearable, max_bytes: 2097152 }
+      note: "reaping, not resurrection: the failed token reaches the sink and never returns to a working place. This is the arc that makes the net sound"
+
+
 liveness:
   # Safety and liveness are declared separately on purpose (INV-CDO-25/26/27):
   # `invariants[]` above is Safety; this block carries Liveness goals. When the
