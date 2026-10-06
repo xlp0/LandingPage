@@ -61,9 +61,78 @@ function basis() {
   for (const d of l.display_modes) {
     out.push({ ...defaults, id: `display:${d.id}`, display_mode: d.id });
   }
-  for (const p of l.power_modes) {
-    out.push({ ...defaults, id: `power:${p.id}`, power_mode: p.id });
+  for (const pm of l.power_modes) {
+    out.push({ ...defaults, id: `power:${pm.id}`, power_mode: pm.id });
   }
+
+  /*
+   * The remaining three axes are only partly simulable in a browser, and each
+   * coordinate records which it is rather than implying uniform coverage:
+   *
+   *   simulated    the browser genuinely reproduces the condition
+   *   proxied      no web API exists, so the nearest observable consequence is
+   *                measured instead
+   *   unsupported  it cannot be reproduced in a browser at all, and the
+   *                coordinate is recorded uncovered rather than assumed
+   *
+   * Sources: Playwright's emulation docs (devices, isMobile, hasTouch, screen),
+   * and microsoft/playwright#26853, where `display-mode: standalone` emulation is
+   * requested and confirmed unavailable — `page.emulateMedia({ display-mode })`
+   * is not valid and the `--app` flag is ignored. Tauri is a native runtime, so
+   * nothing about it is reproducible in a browser.
+   */
+  const PLATFORMS = {
+    desktop_web: { status: 'simulated', note: 'default desktop context' },
+    mobile_hybrid: {
+      status: 'simulated',
+      note: 'isMobile + hasTouch + mobile user agent',
+      contextOptions: {
+        isMobile: true, hasTouch: true, deviceScaleFactor: 3,
+        userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
+      },
+    },
+    pwa: {
+      status: 'proxied',
+      note: 'display-mode: standalone is not emulable (playwright#26853); measured as a touch-enabled viewport instead',
+      contextOptions: { hasTouch: true },
+    },
+    tauri: {
+      status: 'unsupported',
+      note: 'native multi-webview runtime; nothing about it is reproducible in a browser',
+    },
+  };
+  for (const [id, spec] of Object.entries(PLATFORMS)) {
+    out.push({ ...defaults, id: `platform:${id}`, platform: id, ...spec });
+  }
+
+  // Orientation: the device screen is emulated so window.screen agrees with the
+  // viewport, which is what a portrait/landscape check actually reads.
+  for (const o of l.responsiveness.orientations) {
+    const w = o === 'portrait' ? 390 : 844;
+    const h = o === 'portrait' ? 844 : 390;
+    out.push({
+      ...defaults, id: `orientation:${o}`, orientation: o, width: w, height: h,
+      status: 'simulated', note: `viewport and screen at ${w}x${h}`,
+      contextOptions: { screen: { width: w, height: h }, viewport: { width: w, height: h } },
+    });
+  }
+
+  /*
+   * Window mode. The web has no API for maximise, split or floating, so those are
+   * proxied by the viewport they produce — the observable consequence a layout
+   * actually responds to. Fullscreen is the one case with a real API, and it is
+   * exercised through that API rather than approximated.
+   */
+  const WINDOW_MODES = {
+    fullscreen: { status: 'simulated', note: 'Fullscreen API via a real user gesture', fullscreen: true },
+    maximized: { status: 'proxied', note: 'no web API; measured as the full desktop viewport', width: 1920, height: 1080 },
+    split_50: { status: 'proxied', note: 'no web API; measured as a 50%-width viewport', width: 960, height: 900 },
+    floating: { status: 'proxied', note: 'no web API; measured as a reduced floating-window viewport', width: 640, height: 480 },
+  };
+  for (const [id, spec] of Object.entries(WINDOW_MODES)) {
+    out.push({ ...defaults, id: `window:${id}`, window_mode: id, ...spec });
+  }
+
   return out;
 }
 
@@ -205,8 +274,27 @@ test.describe('Fiber conformance — rendered properties', () => {
 
   for (const fiber of FIBERS) {
     for (const coord of COORDS) {
-      test(`${fiber} @ ${coord.id}`, async ({ page }) => {
-        await page.setViewportSize({ width: coord.width, height: 900 });
+      // A coordinate the browser cannot reproduce is recorded as uncovered. It is
+      // not run, and it is not reported as a pass — the alternative would be a
+      // green tick for a condition never exercised.
+      if (coord.status === 'unsupported') {
+        test.skip(`${fiber} @ ${coord.id} [unsupported: ${coord.note}]`, async () => {});
+        continue;
+      }
+
+      test(`${fiber} @ ${coord.id}`, async ({ page, browser }) => {
+        // Coordinates that need device emulation get their own context; the
+        // default page cannot express isMobile, hasTouch or an emulated screen.
+        let ctx = page.context();
+        let ownContext = null;
+        if (coord.contextOptions) {
+          ownContext = await browser.newContext(coord.contextOptions);
+          ctx = ownContext;
+          page = await ctx.newPage();
+        }
+
+        try {
+          await page.setViewportSize({ width: coord.width, height: coord.height ?? 900 });
         const url = `/fiber-conformance.html?kind=${encodeURIComponent(fiber)}` +
           `&locale=${coord.locale}&dir=${coord.dir}` +
           `&display_mode=${coord.display_mode}&power_mode=${coord.power_mode}`;
@@ -217,30 +305,48 @@ test.describe('Fiber conformance — rendered properties', () => {
         expect(harness.status, `harness did not mount: ${JSON.stringify(harness)}`).toBe('mounted');
         expect(harness.kind).toBe(fiber);
 
-        const m = await page.evaluate(measure);
+          // Fullscreen is the one window mode with a real API, so it is entered
+          // through that API from a real gesture rather than approximated.
+          if (coord.fullscreen) {
+            await page.evaluate(() => {
+              const b = document.createElement('button');
+              b.id = 'fs-probe';
+              b.textContent = 'fs';
+              b.style.cssText = 'position:fixed;top:0;left:0;z-index:9';
+              b.addEventListener('click', () => document.documentElement.requestFullscreen());
+              document.body.appendChild(b);
+            });
+            await page.click('#fs-probe');
+            await page.waitForFunction(() => document.fullscreenElement !== null, { timeout: 5000 });
+          }
 
-        // 1 + 2: no horizontal overflow, page-level or unclipped element-level
-        expect(m.pageOverflow,
-          `page overflow: scrollWidth ${m.docScrollWidth} > viewport ${m.viewportWidth}`).toBe(false);
-        expect(m.offenders,
-          `unclipped elements past the right edge: ${JSON.stringify(m.offenders)}`).toEqual([]);
+          const m = await page.evaluate(measure);
 
-        // 3: no clipped text
-        expect(m.clipped, `clipped content: ${JSON.stringify(m.clipped)}`).toEqual([]);
+          // 1 + 2: no horizontal overflow, page-level or unclipped element-level
+          expect(m.pageOverflow,
+            `page overflow: scrollWidth ${m.docScrollWidth} > viewport ${m.viewportWidth}`).toBe(false);
+          expect(m.offenders,
+            `unclipped elements past the right edge: ${JSON.stringify(m.offenders)}`).toEqual([]);
 
-        // RTL: direction propagates and is not hardcoded to left
-        if (coord.dir === 'rtl') {
-          expect(m.direction).toBe('rtl');
-          expect(m.fiberDirection).toBe('rtl');
-          expect(m.textAlign).not.toBe('left');
+          // 3: no clipped text
+          expect(m.clipped, `clipped content: ${JSON.stringify(m.clipped)}`).toEqual([]);
+
+          // RTL: direction propagates and is not hardcoded to left
+          if (coord.dir === 'rtl') {
+            expect(m.direction).toBe('rtl');
+            expect(m.fiberDirection).toBe('rtl');
+            expect(m.textAlign).not.toBe('left');
+          }
+
+          // 4: contrast meets WCAG AA
+          expect(m.contrast).not.toBeNull();
+          const floor = m.contrast.isLarge ? MIN_CONTRAST_LARGE : MIN_CONTRAST_NORMAL;
+          expect(m.contrast.ratio,
+            `contrast ${m.contrast.ratio}:1 (fg ${m.contrast.fg} on ${m.contrast.bg}) below ${floor}:1`)
+            .toBeGreaterThanOrEqual(floor);
+        } finally {
+          if (ownContext) await ownContext.close();
         }
-
-        // 4: contrast meets WCAG AA
-        expect(m.contrast).not.toBeNull();
-        const floor = m.contrast.isLarge ? MIN_CONTRAST_LARGE : MIN_CONTRAST_NORMAL;
-        expect(m.contrast.ratio,
-          `contrast ${m.contrast.ratio}:1 (fg ${m.contrast.fg} on ${m.contrast.bg}) below ${floor}:1`)
-          .toBeGreaterThanOrEqual(floor);
       });
     }
   }
