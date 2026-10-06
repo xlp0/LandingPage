@@ -489,3 +489,230 @@ sidecar:
     auto_reload: true
     max_retries: 3
     backoff_ms: 1000
+
+islands:
+- url: /app.html
+  kind: page
+  hydration: client:idle
+  isolation: top-level
+  budget:
+    max_bytes: 262144
+    observed_bytes: 29705
+  metrics_endpoint: /metrics/app
+  island_mcard: mcard:island:app.html
+- url: /index.html
+  kind: page
+  hydration: client:idle
+  isolation: top-level
+  budget:
+    max_bytes: 262144
+    observed_bytes: 20469
+  metrics_endpoint: /metrics/index
+  island_mcard: mcard:island:index.html
+- url: /pkc-docs-index.html
+  kind: page
+  hydration: client:idle
+  isolation: top-level
+  budget:
+    max_bytes: 262144
+    observed_bytes: 5983
+  metrics_endpoint: /metrics/pkc-docs-index
+  island_mcard: mcard:island:pkc-docs-index.html
+- url: /responsive-lab.html
+  kind: page
+  hydration: client:idle
+  isolation: top-level
+  budget:
+    max_bytes: 262144
+    observed_bytes: 32621
+  metrics_endpoint: /metrics/responsive-lab
+  island_mcard: mcard:island:responsive-lab.html
+- url: /components/auth-status.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 2884
+  metrics_endpoint: /metrics/components-auth-status
+  island_mcard: mcard:island:components/auth-status.html
+- url: /components/crash-test-external.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 1713
+  metrics_endpoint: /metrics/components-crash-test-external
+  island_mcard: mcard:island:components/crash-test-external.html
+- url: /components/crash-test.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 1754
+  metrics_endpoint: /metrics/components-crash-test
+  island_mcard: mcard:island:components/crash-test.html
+- url: /components/google-calendar.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 22600
+  metrics_endpoint: /metrics/components-google-calendar
+  island_mcard: mcard:island:components/google-calendar.html
+- url: /components/grafana-dashboard.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 16485
+  metrics_endpoint: /metrics/components-grafana-dashboard
+  island_mcard: mcard:island:components/grafana-dashboard.html
+- url: /components/grafana-faro.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 20382
+  metrics_endpoint: /metrics/components-grafana-faro
+  island_mcard: mcard:island:components/grafana-faro.html
+- url: /components/hero.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 2361
+  metrics_endpoint: /metrics/components-hero
+  island_mcard: mcard:island:components/hero.html
+- url: /components/p2p-status.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 2357
+  metrics_endpoint: /metrics/components-p2p-status
+  island_mcard: mcard:island:components/p2p-status.html
+- url: /components/pkc-viewer.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 45295
+  metrics_endpoint: /metrics/components-pkc-viewer
+  island_mcard: mcard:island:components/pkc-viewer.html
+- url: /components/redux-state-viewer.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 6860
+  metrics_endpoint: /metrics/components-redux-state-viewer
+  island_mcard: mcard:island:components/redux-state-viewer.html
+- url: /components/user-detail.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 6619
+  metrics_endpoint: /metrics/components-user-detail
+  island_mcard: mcard:island:components/user-detail.html
+- url: /components/user-list.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 5920
+  metrics_endpoint: /metrics/components-user-list
+  island_mcard: mcard:island:components/user-list.html
+- url: /components/welcome.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 1341
+  metrics_endpoint: /metrics/components-welcome
+  island_mcard: mcard:island:components/welcome.html
+- url: /components/wikipedia-search.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 11388
+  metrics_endpoint: /metrics/components-wikipedia-search
+  island_mcard: mcard:island:components/wikipedia-search.html
+- url: /components/wikipedia-viewer.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 7846
+  metrics_endpoint: /metrics/components-wikipedia-viewer
+  island_mcard: mcard:island:components/wikipedia-viewer.html
+- url: /components/youtube-clip.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 15458
+  metrics_endpoint: /metrics/components-youtube-clip
+  island_mcard: mcard:island:components/youtube-clip.html
+- url: /components/youtube-viewer.html
+  kind: component
+  hydration: client:visible
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 65536
+    observed_bytes: 23022
+  metrics_endpoint: /metrics/components-youtube-viewer
+  island_mcard: mcard:island:components/youtube-viewer.html
+- url: /js/modules/p2p-serverless/debug-test.html
+  kind: module
+  hydration: client:only
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 131072
+    observed_bytes: 12833
+  metrics_endpoint: /metrics/js-modules-p2p-serverless-debug-test
+  island_mcard: mcard:island:js/modules/p2p-serverless/debug-test.html
+- url: /js/modules/p2p-serverless/example.html
+  kind: module
+  hydration: client:only
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 131072
+    observed_bytes: 7795
+  metrics_endpoint: /metrics/js-modules-p2p-serverless-example
+  island_mcard: mcard:island:js/modules/p2p-serverless/example.html
+- url: /js/modules/video-meeting/index.html
+  kind: module
+  hydration: client:only
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 131072
+    observed_bytes: 9578
+  metrics_endpoint: /metrics/js-modules-video-meeting-index
+  island_mcard: mcard:island:js/modules/video-meeting/index.html
+- url: /js/modules/webrtc-dashboard/index.html
+  kind: module
+  hydration: client:only
+  isolation: iframe-sandbox
+  budget:
+    max_bytes: 131072
+    observed_bytes: 19434
+  metrics_endpoint: /metrics/js-modules-webrtc-dashboard-index
+  island_mcard: mcard:island:js/modules/webrtc-dashboard/index.html
