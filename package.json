@@ -26,6 +26,8 @@
   ],
   "scripts": {
     "test": "playwright test",
+    "test:presentation": "npx playwright test tests/features/presentation-lattice.spec.js --project=presentation-lattice",
+    "test:headed:slowmo": "SLOWMO=1000 npx playwright test tests/features/presentation-lattice.spec.js --project=presentation-lattice --headed",
     "test:smoke": "playwright test --project=smoke",
     "test:components": "playwright test --project=components",
     "test:features": "playwright test --project=features",
@@ -36,7 +38,7 @@
     "report": "playwright show-report",
     "ws-server": "node ws-server.js",
     "dev": "node ws-server.js",
-    "build:mcard": "esbuild scripts/build-mcard-bundle.js --bundle --format=esm --outfile=public/js/vendor/mcard-js.bundle.js --platform=browser",
+    "build:mcard": "node scripts/build-mcard-bundle.js",
     "build": "npm run build --workspaces",
     "publish:all": "npm publish --workspaces",
     "version:major": "npm version major --workspaces",
@@ -72,10 +74,10 @@
     "js-yaml": "^4.1.0",
     "katex": "^0.16.25",
     "mathjax": "^4.0.0",
-    "mcard-js": "^2.1.30",
     "redux": "^5.0.1",
     "serve-index": "^1.9.1",
     "three": "^0.182.0",
-    "ws": "^8.18.3"
+    "ws": "^8.18.3",
+    "clm-kernel": "^0.0.1"
   }
 }

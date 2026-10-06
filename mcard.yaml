@@ -1,0 +1,174 @@
+name: LandingPage
+version: 1.0.0
+description: Meta-Portal Page for designing, examining, and governing the web and multi-device deployment process (Web, Desktop, Mobile, Wearables, AR/VR) packaged as a Growth-only Set SQLite db file.
+mcard_morphology: directory
+role: meta-portal-deployment-unit
+archetype: meta_portal_surface
+
+packaging:
+  standard: mcard_gset_sqlite
+  schema_version: "3.0.3"
+  artifact_pattern: "*.mcard.db"
+  invariants:
+    - "INV-REF-03: G-Set Immortality (Monotonic append-only CAS, zero DELETE statements)"
+    - "INV-CDO-07: Deterministic inventory capture and Merkle root calculation"
+    - "INV-CDO-09: Strict secret (.env) exclusion before CAS insertion"
+    - "INV-CDO-10: Unit identity is the triple (directory_handle, submodule_commit, root_merkle_hash)"
+  device_archetype_budgets:
+    wearable:
+      label: "Wearable Devices (watchOS / WearOS)"
+      max_bytes: 2097152 # 2 MB
+      max_fps: 30
+      viewport: "160x160 - 454x454"
+      constraints: ["battery_critical", "zero_motion", "high_contrast"]
+    mobile:
+      label: "Mobile Devices (iOS / Android PWA/Hybrid)"
+      max_bytes: 10485760 # 10 MB
+      max_fps: 60
+      viewport: "375x667 - 430x932"
+      constraints: ["touch_safe_area", "cellular_adaptive", "offline_cache"]
+    web:
+      label: "Web Surface (SPA / PWA / SSR)"
+      max_bytes: 15728640 # 15 MB
+      max_fps: 60
+      viewport: "320px - 2560px fluid"
+      constraints: ["service_worker", "faro_telemetry", "semantic_tokens"]
+    desktop:
+      label: "Desktop (Tauri / Electron / macOS / Win / Linux)"
+      max_bytes: 47185920 # 45 MB
+      max_fps: 120
+      viewport: "Multi-window / ultrawide desktop"
+      constraints: ["native_fs", "gpu_accelerated", "extended_memory"]
+    arvr:
+      label: "AR / VR Spatial (WebXR / VisionPro / MetaQuest)"
+      max_bytes: 157286400 # 150 MB
+      max_fps: 120
+      viewport: "Dual 4K stereoscopic spatial canvas"
+      constraints: ["gltf_models", "spatial_audio", "wasm_shaders"]
+
+interfaces:
+  - HTTP meta-portal surface (index.html / app.html)
+  - Deployment Unit Inspector & Size/Organization Auditor (inspector modal)
+  - CLM component registry (clm-registry.yaml v2.0.0)
+  - MCard browser entry (mcard-browser-entry.js)
+  - Grafana Faro observability receiver (js/telemetry/faro-collector.js)
+  - "G-Set SQLite Packager CLI (canonical copy at ../scripts/package-deployment-unit.mjs in the repository root, consumed via the published clm-kernel; INV-CDO-33)"
+
+invariants:
+  - INV-CDO-09: secrets (.env) are never captured into CAS
+  - INV-CDO-10: unit identity is the triple (directory handle, submodule commit, root hash)
+  - INV-CDO-14: visual diffs exceeding tolerance require explicit human witness re-pinning
+  - INV-CDO-15: implementation-neutral test manifests evaluate univalently across distinct runner adapters
+  - INV-CDO-16: admitted units verify parameterized test cases across the declared Type Lattice basis
+  - INV-CDO-17: observability and performance signals are emitted via Grafana Faro across lattice variations
+  - INV-REF-03: G-Set Immortality (monotonic append-only storage; no card deletions)
+
+type_lattice:
+  platforms:
+    - { id: "pwa", engine: "browser", features: ["service_worker", "offline_cache", "web_manifest"] }
+    - { id: "tauri", engine: "tauri_native", targets: ["macos", "windows", "linux"], window: "native" }
+    - { id: "desktop_web", engine: "browser", features: ["full_dom", "high_dpi"] }
+    - { id: "mobile_hybrid", engine: "capacitor", targets: ["ios", "android"], safe_area: true }
+  form_factors:
+    - { id: "compact_mobile", width: 375, height: 667, dpi: 2.0, touch: true }
+    - { id: "large_mobile", width: 430, height: 932, dpi: 3.0, touch: true }
+    - { id: "tablet", width: 768, height: 1024, dpi: 2.0, touch: true }
+    - { id: "desktop_standard", width: 1440, height: 900, dpi: 1.0, touch: false }
+    - { id: "ultrawide", width: 2560, height: 1080, dpi: 1.0, touch: false }
+  responsiveness:
+    orientations: ["portrait", "landscape"]
+    window_modes: ["fullscreen", "maximized", "split_50", "floating"]
+  locales:
+    - { code: "en-US", direction: "ltr", expansion_ratio: 1.0, fallback_fonts: ["Inter", "sans-serif"] }
+    - { code: "ar-EG", direction: "rtl", expansion_ratio: 1.15, fallback_fonts: ["Amiri", "Noto Sans Arabic"] }
+    - { code: "de-DE", direction: "ltr", expansion_ratio: 1.35, fallback_fonts: ["Inter", "sans-serif"] }
+    - { code: "zh-Hans", direction: "ltr", expansion_ratio: 0.85, fallback_fonts: ["Noto Sans SC", "PingFang SC"] }
+  display_modes:
+    - { id: "dark", media_query: "(prefers-color-scheme: dark)", contrast: "standard", background: "#0f172a" }
+    - { id: "light", media_query: "(prefers-color-scheme: light)", contrast: "standard", background: "#f8fafc" }
+    - { id: "high_contrast", media_query: "(prefers-contrast: more)", contrast: "high", background: "#000000" }
+  power_modes:
+    - { id: "performance", max_fps: 120, allow_animations: true, deferred_hydration: false }
+    - { id: "balanced", max_fps: 60, allow_animations: true, deferred_hydration: false }
+    - { id: "energy_saving", max_fps: 30, allow_animations: false, deferred_hydration: true, reduce_motion: true }
+  framework_adapters:
+    styling:
+      default: "semantic_tokens_css"
+      adapters:
+        - { id: "semantic_tokens_css", path: "public/css/semantic-tokens.css", runtime_overhead: "0kb" }
+        - { id: "unocss", path: "public/vendor/unocss-runtime.js", runtime_overhead: "18kb" }
+        - { id: "tailwind", path: "public/vendor/tailwind-cdn.js", runtime_overhead: "75kb" }
+    animation:
+      default: "waapi"
+      adapters:
+        - { id: "waapi", engine: "native_web_animations", runtime_overhead: "0kb" }
+        - { id: "animejs", engine: "animejs_v3", path: "public/vendor/anime.min.js", runtime_overhead: "17kb" }
+        - { id: "css_transitions", engine: "declarative_css", runtime_overhead: "0kb" }
+    rendering:
+      default: "dom"
+      adapters:
+        - { id: "dom", engine: "html5_dom" }
+        - { id: "canvas2d", engine: "html5_canvas" }
+        - { id: "wasm", engine: "webassembly_core" }
+
+observability:
+  faro:
+    app_name: "landing-page-deployment-unit"
+    app_version: "1.0.0"
+    app_environment: "production"
+    collector_url: "${FARO_COLLECTOR_URL:-http://localhost:12347/collect}"
+    sample_rate: 1.0
+    instrumentations:
+      - console_errors
+      - web_vitals
+      - session_tracking
+      - lattice_measurement
+    grafana_dashboard_ref: "docs/sprints/_active/observability/grafana_faro_deployment_unit_dashboard.json"
+
+deployment:
+  surfaces:
+    - { kind: container, path: Dockerfile }
+    - { kind: compose, path: docker-compose.yml }
+    - { kind: kubernetes, path: k8s/ }
+    - { kind: argocd, path: argocd-application.yaml }
+  argo_source: { repo: "xlp0/LandingPage.git", path: k8s, revision: HEAD }
+
+navigation:
+  authoring_surface: penpot
+  penpot_file: "design/landing-navigation.penpot"
+  penpot_instance: "http://localhost:3449"
+  flows:
+    - { name: "main-nav", starting_frame: "<frame-uuid>" }
+  render_targets:
+    - "index.html"
+    - "js/nav.js"
+
+liveness:
+  # Safety and liveness are declared separately on purpose (INV-CDO-25/26/27):
+  # `invariants[]` above is Safety; this block carries Liveness goals. When the
+  # goals list is empty the unit descriptor is emitted with safety_only: true.
+  goals: []
+  note: "No liveness goal is declared for the landing surface yet; CDO-14 renders the safety-only flag."
+
+self_refinement:
+  # DV-CDO-09-13: the unit refines itself. Closure is one certified turn, not a
+  # shipped feature (INV-CDO-32). The subject of the loop is this unit.
+  subject: "mcard:deployment-unit:LandingPage"
+  turn_id: null
+  stages:
+    - { stage: capture,     artifact: "temporary .mcard.db working set (CDO-08)" }
+    - { stage: assess,      artifact: "assessment.json (CDO-08 DV-03)" }
+    - { stage: decide,      artifact: "deployment verdict + plan token (CDO-08 DV-04)" }
+    - { stage: edit,        artifact: "candidate diff (CDO-03)" }
+    - { stage: island_bench, artifact: "per-island metrics (CDO-10 DV-08)" }
+    - { stage: witness,     artifact: "lifecycle MCards (CDO-05)" }
+  certified_turns: []
+
+capture:
+  exclude:
+    - ".env"
+    - ".env.*"
+    - "node_modules/**"
+    - "playwright-report/**"
+    - "test-results/**"
+    - ".git/**"

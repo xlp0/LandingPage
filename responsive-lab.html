@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GovTech OS - Responsive UI Lab (Full-Window Viewport Workbench)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/public/css/semantic-tokens.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--color-bg, #0b0f19);
+      color: var(--color-text-primary, #f8fafc);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Top Navigation Bar */
+    .lab-navbar {
+      height: 60px;
+      background: var(--color-surface, rgba(15, 23, 42, 0.9));
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      z-index: 50;
+      flex-shrink: 0;
+    }
+
+    .lab-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-home-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--color-text-primary, #f8fafc);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .back-home-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: #3b82f6;
+      color: #60a5fa;
+    }
+
+    .lab-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .lab-title-group h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .lab-badge {
+      font-size: 0.68rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 9999px;
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      font-weight: 600;
+    }
+
+    .lab-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .nav-action-link {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .nav-action-link.secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+    }
+
+    .nav-action-link.secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .nav-action-link.primary {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border: 1px solid #3b82f6;
+      color: #fff;
+    }
+
+    .nav-action-link.primary:hover {
+      background: linear-gradient(135deg, #1d4ed8, #1e40af);
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Real-Estate Notice Banner */
+    .real-estate-banner {
+      background: linear-gradient(90deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.45rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--color-text-secondary, #94a3b8);
+      flex-shrink: 0;
+    }
+
+    .real-estate-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.72rem;
+    }
+
+    /* Workbench Controls Strip */
+    .workbench-toolbar {
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-shrink: 0;
+      z-index: 40;
+    }
+
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .group-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-text-secondary, #94a3b8);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Presets and orientation buttons */
+    .toolbar-btn {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--color-text-secondary, #94a3b8);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .toolbar-btn:hover {
+      background: rgba(59, 130, 246, 0.2);
+      color: #fff;
+      border-color: #3b82f6;
+    }
+
+    .toolbar-btn.active {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: #10b981;
+      color: #34d399;
+      font-weight: 600;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+    }
+
+    .orientation-btn-primary.active {
+      background: rgba(59, 130, 246, 0.25);
+      border-color: #3b82f6;
+      color: #60a5fa;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.25);
+    }
+
+    /* Custom dimensions form */
+    .custom-dim-form {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dim-input {
+      width: 58px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.35rem;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    /* URL selection strip */
+    .url-selector-strip {
+      background: rgba(10, 15, 28, 0.9);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.5rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .target-url-select {
+      flex: 1;
+      max-width: 480px;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-size: 0.8rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    /* Full-Window Stage & Workspace Layouts */
+    .lab-workspace-container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 60px - 34px - 38px);
+    }
+
+    /* Stacked (Vertical) Layout Arrangement */
+    .lab-workspace-container.arrangement-vertical {
+      flex-direction: column;
+    }
+
+    .lab-workspace-container.arrangement-vertical .workbench-controls-dock {
+      width: 100%;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Side-by-Side (Horizontal) Layout Arrangement */
+    .lab-workspace-container.arrangement-horizontal {
+      flex-direction: row;
+    }
+
+    .lab-workspace-container.arrangement-horizontal .workbench-controls-dock {
+      width: 330px;
+      flex-shrink: 0;
+      height: 100%;
+      border-right: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
+      background: var(--color-surface, rgba(15, 23, 42, 0.95));
+      backdrop-filter: blur(12px);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      padding: 1.25rem 1rem;
+      gap: 1.25rem;
+    }
+
+    .lab-workspace-container.arrangement-horizontal .workbench-toolbar {
+      flex-direction: column;
+      align-items: stretch;
+      background: transparent;
+      border-bottom: none;
+      padding: 0;
+      gap: 1rem;
+    }
+
+    .lab-workspace-container.arrangement-horizontal .toolbar-group {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.5rem;
+    }
+
+    .lab-workspace-container.arrangement-horizontal .toolbar-group-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .lab-workspace-container.arrangement-horizontal .url-selector-strip {
+      flex-direction: column;
+      align-items: stretch;
+      background: transparent;
+      border-bottom: none;
+      padding: 0;
+      gap: 0.5rem;
+    }
+
+    .lab-workspace-container.arrangement-horizontal .target-url-select {
+      max-width: 100%;
+      width: 100%;
+    }
+
+    .lab-workspace-container.arrangement-horizontal .lab-stage-container {
+      flex: 1;
+      height: 100%;
+      padding: 1.5rem;
+    }
+
+    /* Full-Window Stage Area */
+    .lab-stage-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+      background: radial-gradient(circle at center, rgba(30, 41, 59, 0.25) 0%, rgba(11, 15, 25, 0.95) 100%);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Controlled Viewport Frame */
+    .viewport-frame {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      background: #020617;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), height 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s ease;
+    }
+
+    .viewport-frame.orientation-vertical {
+      min-height: 480px;
+      border-color: rgba(16, 185, 129, 0.4);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 20px rgba(16, 185, 129, 0.15);
+    }
+
+    .viewport-frame.orientation-horizontal {
+      min-height: 340px;
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 25px rgba(59, 130, 246, 0.15);
+    }
+
+    .viewport-frame-bar {
+      height: 36px;
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      font-size: 0.75rem;
+      color: var(--color-text-secondary, #94a3b8);
+      user-select: none;
+    }
+
+    .frame-controls-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .frame-dimension-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .viewport-iframe-wrapper {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: #0b0f19;
+    }
+
+    .viewport-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* Sandbox Alert */
+    .cors-alert-toast {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      margin-bottom: 0.75rem;
+      color: #fca5a5;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    /* Footer Status Bar */
+    .lab-footer {
+      height: 38px;
+      background: rgba(11, 15, 25, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      font-size: 0.75rem;
+      color: var(--color-text-secondary, #94a3b8);
+      flex-shrink: 0;
+    }
+
+    .footer-status-pill {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #34d399;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Top Navigation Bar -->
+  <header class="lab-navbar">
+    <div class="lab-nav-left">
+      <a href="/" class="back-home-btn" id="btn-back-home" title="Return to GovTech OS Portal">
+        <span>← GovTech OS</span>
+      </a>
+      <div class="lab-title-group">
+        <h1 id="lab-main-heading">
+          <span>📐 Responsive UI Lab</span>
+        </h1>
+        <span class="lab-badge">Sprint CDO-12 • Full-Window Workbench</span>
+      </div>
+    </div>
+
+    <div class="lab-nav-right">
+      <!-- Layout Arrangement Switcher in Navbar -->
+      <div class="arrangement-toggle-group" style="display: flex; gap: 0.25rem; background: rgba(0, 0, 0, 0.35); padding: 0.2rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
+        <span style="font-size: 0.72rem; color: #94a3b8; align-self: center; margin: 0 0.35rem; font-weight: 500;">Arrangement:</span>
+        <button id="btn-arrange-horizontal" class="toolbar-btn arrangement-btn active" data-arrangement="horizontal" title="Horizontal arrangement (Controls in left sidebar, canvas beside)">
+          <span>☲ Horizontal</span>
+        </button>
+        <button id="btn-arrange-vertical" class="toolbar-btn arrangement-btn" data-arrangement="vertical" title="Vertical arrangement (Controls stacked at top, canvas below)">
+          <span>☰ Vertical</span>
+        </button>
+      </div>
+
+      <a href="app.html" target="_blank" class="nav-action-link secondary" id="btn-nav-mission-control" title="Open Mission Control Observability Cockpit">
+        <span>🎛️ Mission Control</span>
+      </a>
+      <a href="app.html" target="_blank" class="nav-action-link primary" id="mission-control-popout-btn" title="Open Target in External Tab">
+        <span>⧉ Pop Out Tab</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Real-Estate Maximizer Banner -->
+  <aside class="real-estate-banner" id="cors-notice-banner">
+    <div>
+      <span class="real-estate-tag">🖥️ Full-Window Real-Estate</span>
+      <strong style="color: #fff; margin-left: 0.35rem;">Sprint CDO-12: Full-Window Workbench (Horizontal &amp; Vertical Arrangements)</strong>
+      <span style="margin-left: 0.5rem;">Cramped sliding panels have been eliminated. Supports both Side-by-Side (Horizontal) and Stacked (Vertical) arrangements for testing live layout reflow across Vertical (Portrait) and Horizontal (Landscape) orientations.</span>
+    </div>
+    <div style="font-size: 0.72rem; opacity: 0.8;">
+      Desktop App (Tauri) Multi-Webview Architecture Reserved for Native Packaging
+    </div>
+  </aside>
+
+  <!-- Dual-Arrangement Workspace Container -->
+  <div class="lab-workspace-container arrangement-horizontal" id="lab-workspace-container">
+    <!-- Workbench Controls Dock (Sidebar in Horizontal arrangement, Topbar in Vertical arrangement) -->
+    <aside class="workbench-controls-dock" id="workbench-controls-dock">
+      <!-- Interactive Workbench Controls Toolbar -->
+      <div class="workbench-toolbar" id="controlled-size-controller">
+        <!-- Arrangement Controls in Dock -->
+        <div class="toolbar-group">
+          <span class="group-label">Workbench Arrangement:</span>
+          <div class="toolbar-group-row">
+            <button id="btn-arrange-horizontal-dock" class="toolbar-btn arrangement-btn active" data-arrangement="horizontal" title="Horizontal arrangement (Left Sidebar + Canvas)">
+              <span>☲ Horizontal (Side-by-Side)</span>
+            </button>
+            <button id="btn-arrange-vertical-dock" class="toolbar-btn arrangement-btn" data-arrangement="vertical" title="Vertical arrangement (Stacked Topbar + Canvas)">
+              <span>☰ Vertical (Stacked)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Viewport Orientation Controls -->
+        <div class="toolbar-group">
+          <span class="group-label">Viewport Orientation:</span>
+          <div class="toolbar-group-row">
+            <button id="btn-orient-vertical" class="toolbar-btn orientation-btn-primary active" data-orientation="vertical" title="Switch to Vertical (Portrait) layout">
+              <span>↕ Vertical (Portrait)</span>
+            </button>
+            <button id="btn-orient-horizontal" class="toolbar-btn orientation-btn-primary" data-orientation="horizontal" title="Switch to Horizontal (Landscape) layout">
+              <span>↔ Horizontal (Landscape)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dimension Presets -->
+        <div class="toolbar-group">
+          <span class="group-label">Dimension Presets:</span>
+          <div class="toolbar-group-row">
+            <button id="btn-size-mobile" class="toolbar-btn size-preset-btn" data-width="390" title="Test Mobile viewport width (390px)">
+              <span>📱 Mobile (390px)</span>
+            </button>
+            <button id="btn-size-tablet" class="toolbar-btn size-preset-btn" data-width="768" title="Test Tablet viewport width (768px)">
+              <span>📟 Tablet (768px)</span>
+            </button>
+            <button id="btn-size-split" class="toolbar-btn size-preset-btn" data-width="50%" title="Test 50% split width">
+              <span>🪟 Split (50%)</span>
+            </button>
+            <button id="btn-size-desktop" class="toolbar-btn size-preset-btn" data-width="1024" title="Test Desktop viewport width (1024px)">
+              <span>🖥️ Desktop (1024px)</span>
+            </button>
+            <button id="btn-size-full" class="toolbar-btn size-preset-btn active" data-width="100%" title="Reset to Full container width (100%)">
+              <span>↔ Full (100%)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Custom Dimension Form -->
+        <div class="toolbar-group">
+          <span class="group-label">Custom Geometry:</span>
+          <div class="custom-dim-form">
+            <label for="controlled-width-input" style="font-size: 0.72rem; color: #94a3b8;">W:</label>
+            <input id="controlled-width-input" type="number" class="dim-input" value="768" min="320" max="3840" aria-label="Custom width in pixels" />
+            <span style="font-size: 0.72rem; color: #94a3b8;">px</span>
+            <button id="btn-apply-custom-width" class="toolbar-btn" style="padding: 0.2rem 0.5rem; margin-left: 0.25rem;">Apply</button>
+            <button id="btn-rotate-viewport" class="toolbar-btn" style="padding: 0.2rem 0.5rem;" title="Swap Width and Height (90° Rotation)">🔄 Rotate</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Target URL & Sandbox Diagnostics Strip -->
+      <div class="url-selector-strip" id="pane-url-bar">
+        <span class="group-label" style="font-size: 0.75rem;">Test Target:</span>
+        <select id="public-site-selector" class="target-url-select" aria-label="Select target website to test iframe compatibility">
+          <option value="app.html" data-status="allowed" data-desc="Local Responsive UI Target (Iframe Compatible)">Local UI Target (app.html) - Iframe Compatible</option>
+          <option value="index.html" data-status="allowed" data-desc="GovTech OS Portal Page (Iframe Compatible)">GovTech OS Portal (index.html) - Iframe Compatible</option>
+          <option value="https://github.com" data-status="blocked" data-reason="X-Frame-Options: DENY" data-desc="GitHub blocks embedded iframe rendering via X-Frame-Options: DENY">GitHub (https://github.com) - Blocked (X-Frame-Options: DENY)</option>
+          <option value="https://www.google.com" data-status="blocked" data-reason="X-Frame-Options: SAMEORIGIN" data-desc="Google blocks third-party iframe embedding via X-Frame-Options: SAMEORIGIN">Google (https://www.google.com) - Blocked (SAMEORIGIN)</option>
+          <option value="https://developer.mozilla.org" data-status="blocked" data-reason="CSP frame-ancestors: 'none'" data-desc="MDN Web Docs blocks iframing via Content-Security-Policy: frame-ancestors 'none'">MDN Web Docs - Blocked (CSP frame-ancestors: 'none')</option>
+        </select>
+        <button id="btn-load-in-iframe" class="toolbar-btn" style="background: #2563eb; color: #fff; border-color: #3b82f6;">Load Target</button>
+        <span id="cors-status-pill" class="footer-status-pill" style="margin-top: 0.25rem;">● Controlled Viewport Active (Iframe Compatible)</span>
+      </div>
+    </aside>
+
+    <!-- Full-Window Stage Area -->
+    <main class="lab-stage-container" id="lab-stage-container">
+      <!-- Sandbox Boundary Warning (dynamic) -->
+      <div class="cors-alert-toast" id="cors-block-alert" style="display: none;">
+        <span style="font-size: 1.1rem; line-height: 1;">⚠️</span>
+        <div id="cors-block-alert-content">
+          <strong>Browser Sandbox Boundary:</strong> <span id="cors-block-target-name">GitHub</span> enforces <code id="cors-block-reason">X-Frame-Options: DENY</code>. 
+          Standard web applications cannot embed this site or trigger native browser tab splitting. In Desktop mode (Tauri), native multi-webview isolation bypasses this restriction.
+        </div>
+      </div>
+
+      <!-- Viewport Frame Stage -->
+      <div class="viewport-frame orientation-horizontal" id="controlled-panel-frame">
+        <div class="viewport-frame-bar">
+          <div class="frame-controls-dots">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
+            <span style="font-weight: 600; color: #e2e8f0; margin-left: 0.5rem;">Responsive Iframe Surface</span>
+          </div>
+          <span class="frame-dimension-pill" id="controlled-frame-dim">100% • ↔ Horizontal (Landscape)</span>
+        </div>
+        <div class="viewport-iframe-wrapper">
+          <iframe id="mission-control-iframe" src="app.html" title="Responsive UI Lab Test Frame" loading="lazy" class="viewport-iframe"></iframe>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Bottom Status Bar -->
+  <footer class="lab-footer">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <span id="controlled-panel-status">● Viewport: Full (100%) • ↔ Horizontal (Landscape) • [☲ Side-by-Side Arrangement]</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <span>GovTech OS • Responsive Layout Lab</span>
+      <span style="color: #64748b;">|</span>
+      <span>INV-CDO-20 &amp; INV-CDO-21 Certified</span>
+    </div>
+  </footer>
+
+  <script>
+    // ══════════════════════════════════════════════════════════════════════
+    // Sprint CDO-12: Full-Window Responsive UI Lab Workbench Logic
+    // ══════════════════════════════════════════════════════════════════════
+    const workspaceContainer = document.getElementById('lab-workspace-container');
+    const controlledFrame = document.getElementById('controlled-panel-frame');
+    const controlledFrameDim = document.getElementById('controlled-frame-dim');
+    const controlledStatus = document.getElementById('controlled-panel-status');
+    const customWidthInput = document.getElementById('controlled-width-input');
+    const applyCustomWidthBtn = document.getElementById('btn-apply-custom-width');
+    const rotateBtn = document.getElementById('btn-rotate-viewport');
+    const btnOrientVertical = document.getElementById('btn-orient-vertical');
+    const btnOrientHorizontal = document.getElementById('btn-orient-horizontal');
+    const btnArrangeVertical = document.getElementById('btn-arrange-vertical');
+    const btnArrangeHorizontal = document.getElementById('btn-arrange-horizontal');
+    const btnArrangeVerticalDock = document.getElementById('btn-arrange-vertical-dock');
+    const btnArrangeHorizontalDock = document.getElementById('btn-arrange-horizontal-dock');
+    const sizePresetBtns = document.querySelectorAll('.size-preset-btn[data-width]');
+    const siteSelector = document.getElementById('public-site-selector');
+    const loadIframeBtn = document.getElementById('btn-load-in-iframe');
+    const popoutBtn = document.getElementById('mission-control-popout-btn');
+    const corsBlockAlert = document.getElementById('cors-block-alert');
+    const corsBlockReason = document.getElementById('cors-block-reason');
+    const corsBlockTargetName = document.getElementById('cors-block-target-name');
+    const corsStatusPill = document.getElementById('cors-status-pill');
+    const iframe = document.getElementById('mission-control-iframe');
+
+    let currentArrangement = 'horizontal';
+    let currentOrientation = 'horizontal';
+    let currentWidthSetting = '100%';
+    let currentLabel = 'Full (100%)';
+
+    function setArrangement(arrangement) {
+      if (!workspaceContainer) return;
+      currentArrangement = arrangement === 'vertical' ? 'vertical' : 'horizontal';
+      if (currentArrangement === 'horizontal') {
+        workspaceContainer.classList.remove('arrangement-vertical');
+        workspaceContainer.classList.add('arrangement-horizontal');
+        btnArrangeHorizontal?.classList.add('active');
+        btnArrangeVertical?.classList.remove('active');
+        btnArrangeHorizontalDock?.classList.add('active');
+        btnArrangeVerticalDock?.classList.remove('active');
+      } else {
+        workspaceContainer.classList.remove('arrangement-horizontal');
+        workspaceContainer.classList.add('arrangement-vertical');
+        btnArrangeVertical?.classList.add('active');
+        btnArrangeHorizontal?.classList.remove('active');
+        btnArrangeVerticalDock?.classList.add('active');
+        btnArrangeHorizontalDock?.classList.remove('active');
+      }
+      updateDimensionLabels();
+      console.log(`[Responsive UI Lab] Workspace arrangement set to: ${currentArrangement}`);
+    }
+
+    function setOrientation(orientation) {
+      if (!controlledFrame) return;
+      currentOrientation = orientation === 'horizontal' ? 'horizontal' : 'vertical';
+      if (currentOrientation === 'horizontal') {
+        controlledFrame.classList.remove('orientation-vertical');
+        controlledFrame.classList.add('orientation-horizontal');
+        btnOrientHorizontal?.classList.add('active');
+        btnOrientVertical?.classList.remove('active');
+      } else {
+        controlledFrame.classList.remove('orientation-horizontal');
+        controlledFrame.classList.add('orientation-vertical');
+        btnOrientVertical?.classList.add('active');
+        btnOrientHorizontal?.classList.remove('active');
+      }
+
+      updateDimensionLabels();
+      console.log(`[Responsive UI Lab] Orientation set to: ${currentOrientation}`);
+    }
+
+    function updateDimensionLabels() {
+      const orientIcon = currentOrientation === 'vertical' ? '↕ Vertical (Portrait)' : '↔ Horizontal (Landscape)';
+      const arrangeIcon = currentArrangement === 'horizontal' ? '☲ Side-by-Side Dock' : '☰ Stacked Topbar';
+      if (controlledFrameDim) {
+        controlledFrameDim.textContent = `${currentWidthSetting} • ${orientIcon}`;
+      }
+      if (controlledStatus) {
+        controlledStatus.textContent = `● Viewport: ${currentLabel || currentWidthSetting} • ${orientIcon} • [${arrangeIcon}]`;
+      }
+    }
+    updateDimensionLabels();
+
+    function setControlledPanelWidth(widthVal, label = '') {
+      if (!controlledFrame) return;
+      const formattedWidth = String(widthVal).endsWith('%') ? String(widthVal) : `${parseInt(widthVal, 10)}px`;
+      currentWidthSetting = formattedWidth;
+      currentLabel = label || formattedWidth;
+
+      if (String(widthVal).endsWith('%')) {
+        controlledFrame.style.width = String(widthVal);
+        if (customWidthInput) {
+          const parentWidth = controlledFrame.parentElement?.clientWidth || 1000;
+          const px = Math.round((parseInt(widthVal, 10) / 100) * parentWidth);
+          customWidthInput.value = px;
+        }
+      } else {
+        const px = parseInt(widthVal, 10);
+        controlledFrame.style.width = `${px}px`;
+        if (customWidthInput) customWidthInput.value = px;
+      }
+
+      updateDimensionLabels();
+
+      sizePresetBtns.forEach(btn => {
+        const btnVal = btn.getAttribute('data-width');
+        const numVal = String(parseInt(widthVal, 10));
+        if (btnVal === widthVal || btnVal === numVal || `${btnVal}px` === widthVal) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      console.log(`[Responsive UI Lab] Controlled panel size set to: ${formattedWidth} (${currentLabel})`);
+    }
+
+    btnArrangeVertical?.addEventListener('click', () => setArrangement('vertical'));
+    btnArrangeHorizontal?.addEventListener('click', () => setArrangement('horizontal'));
+    btnArrangeVerticalDock?.addEventListener('click', () => setArrangement('vertical'));
+    btnArrangeHorizontalDock?.addEventListener('click', () => setArrangement('horizontal'));
+
+    btnOrientVertical?.addEventListener('click', () => setOrientation('vertical'));
+    btnOrientHorizontal?.addEventListener('click', () => setOrientation('horizontal'));
+
+    sizePresetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const widthVal = btn.getAttribute('data-width');
+        const label = btn.textContent.trim();
+        setControlledPanelWidth(widthVal, label);
+      });
+    });
+
+    applyCustomWidthBtn?.addEventListener('click', () => {
+      const val = parseInt(customWidthInput?.value || '768', 10);
+      setControlledPanelWidth(`${val}px`, `Custom (${val}px)`);
+    });
+
+    rotateBtn?.addEventListener('click', () => {
+      const nextOrient = currentOrientation === 'vertical' ? 'horizontal' : 'vertical';
+      setOrientation(nextOrient);
+    });
+
+    function updateSiteSelection() {
+      if (!siteSelector) return;
+      const selectedOption = siteSelector.options[siteSelector.selectedIndex];
+      const url = selectedOption ? selectedOption.value : 'app.html';
+      const status = selectedOption?.getAttribute('data-status');
+      const reason = selectedOption?.getAttribute('data-reason') || '';
+      const name = selectedOption?.text.split(' - ')[0] || url;
+
+      if (status === 'blocked') {
+        if (corsBlockAlert) corsBlockAlert.style.display = 'flex';
+        if (corsBlockReason) corsBlockReason.textContent = reason;
+        if (corsBlockTargetName) corsBlockTargetName.textContent = name;
+        if (corsStatusPill) {
+          corsStatusPill.textContent = '⚠️ Iframe Blocked (' + reason + ')';
+          corsStatusPill.style.color = '#f87171';
+        }
+      } else {
+        if (corsBlockAlert) corsBlockAlert.style.display = 'none';
+        if (corsStatusPill) {
+          corsStatusPill.textContent = '● Controlled Viewport Active (Iframe Compatible)';
+          corsStatusPill.style.color = '#34d399';
+        }
+      }
+    }
+
+    siteSelector?.addEventListener('change', updateSiteSelection);
+    updateSiteSelection();
+
+    loadIframeBtn?.addEventListener('click', () => {
+      if (!siteSelector) return;
+      const selectedOption = siteSelector.options[siteSelector.selectedIndex];
+      const url = selectedOption.value;
+      if (iframe) {
+        iframe.src = url;
+      }
+      updateSiteSelection();
+      console.log('[Responsive UI Lab] Loaded target into viewport:', url);
+    });
+
+    popoutBtn?.addEventListener('click', () => {
+      const url = siteSelector?.value || 'app.html';
+      window.open(url, '_blank');
+    });
+
+    window.__set_controlled_panel_width = setControlledPanelWidth;
+    window.__get_controlled_panel_width = () => controlledFrame?.style.width || '100%';
+    window.__set_controlled_orientation = setOrientation;
+    window.__get_controlled_orientation = () => currentOrientation;
+  </script>
+</body>
+
+</html>

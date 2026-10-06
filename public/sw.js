@@ -34,7 +34,8 @@ const CDN_ASSETS = [
   'https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js',
   'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js',
   'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css',
-  'https://unpkg.com/mcard-js@latest/dist/mcard.min.js'
+  // clm-kernel is served from this origin, not a CDN (INV-CDO-33)
+  '/public/js/vendor/clm-kernel.bundle.js'
 ];
 
 // Combine all for initial precache

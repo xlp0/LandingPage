@@ -6,17 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GovTech Platform | Mission Control</title>
   <meta name="description" content="GovTech Operating System - Computational Trinitarianism">
+  <link rel="stylesheet" href="./public/css/semantic-tokens.css">
   <style>
-    :root {
-      --bg-color: #0f172a;
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --accent-color: #3b82f6;
-      --accent-hover: #2563eb;
-      --card-bg: #1e293b;
-      --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-
     * {
       margin: 0;
       padding: 0;
@@ -24,16 +15,68 @@
     }
 
     body {
-      font-family: var(--font-main);
-      background-color: var(--bg-color);
-      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--color-bg, #0f172a);
+      color: var(--color-text-primary, #f8fafc);
       height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      background: radial-gradient(circle at top right, #1e293b 0%, #0f172a 100%);
+      background-image: radial-gradient(circle at top right, var(--color-bg-subtle, #1e293b) 0%, var(--color-bg, #0f172a) 100%);
+      transition: background-color var(--motion-duration-normal, 250ms) ease, color var(--motion-duration-normal, 250ms) ease;
+    }
+
+    .top-controls {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 50;
+    }
+
+    .control-btn {
+      background: var(--color-surface, rgba(30, 41, 59, 0.7));
+      border: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
+      color: var(--color-text-primary, #fff);
+      padding: 0.4rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      backdrop-filter: blur(var(--blur-surface, 12px));
+      transition: all var(--motion-duration-fast, 150ms) ease;
+    }
+
+    .control-btn:hover {
+      background: var(--color-surface-hover, rgba(37, 51, 70, 0.9));
+      border-color: var(--color-border-hover, #3b82f6);
+    }
+
+    .faro-badge {
+      font-size: 0.75rem;
+      padding: 0.3rem 0.65rem;
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .faro-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 6px #10b981;
     }
 
     .container {
@@ -41,7 +84,7 @@
       padding: 2rem;
       max-width: 800px;
       width: 100%;
-      animation: fadeIn 0.8s ease-out;
+      animation: fadeIn var(--motion-duration-slow, 0.8s) ease-out;
     }
 
     h1 {
@@ -72,40 +115,40 @@
     }
 
     .card {
-      background: var(--card-bg);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: var(--color-surface, rgba(30, 41, 59, 0.7));
+      border: 1px solid var(--color-border, rgba(255, 255, 255, 0.05));
       border-radius: 16px;
       padding: 2rem;
       text-decoration: none;
-      color: var(--text-primary);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      color: var(--color-text-primary, #f8fafc);
+      transition: all var(--motion-duration-normal, 0.3s) var(--motion-ease, cubic-bezier(0.4, 0, 0.2, 1));
       position: relative;
       overflow: hidden;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(var(--blur-surface, 10px));
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 200px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      box-shadow: var(--shadow-md);
     }
 
     .card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
-      border-color: rgba(59, 130, 246, 0.3);
-      background: #253346;
+      box-shadow: var(--shadow-hover);
+      border-color: var(--color-border-hover, rgba(59, 130, 246, 0.3));
+      background: var(--color-surface-hover, #253346);
     }
 
     .card h2 {
       font-size: 1.5rem;
       font-weight: 600;
       margin-bottom: 0.5rem;
-      color: #fff;
+      color: var(--color-text-primary, #fff);
     }
 
     .card p {
-      color: var(--text-secondary);
+      color: var(--color-text-secondary, #94a3b8);
       font-size: 0.95rem;
       line-height: 1.5;
     }
@@ -114,31 +157,31 @@
       margin-bottom: 1rem;
       width: 48px;
       height: 48px;
-      color: var(--accent-color);
+      color: var(--color-primary, #3b82f6);
     }
 
     .footer {
       position: absolute;
       bottom: 2rem;
       font-size: 0.875rem;
-      color: rgba(148, 163, 184, 0.5);
+      color: var(--color-text-muted, rgba(148, 163, 184, 0.5));
     }
 
     a.primary-action {
-      background: var(--accent-color);
+      background: var(--color-primary, #3b82f6);
       color: white;
       padding: 1rem 2rem;
       border-radius: 9999px;
       font-weight: 600;
       text-decoration: none;
-      transition: background 0.2s;
+      transition: background var(--motion-duration-fast, 0.2s);
       display: inline-block;
       margin-top: 2rem;
-      box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+      box-shadow: var(--shadow-md);
     }
 
     a.primary-action:hover {
-      background: var(--accent-hover);
+      background: var(--color-primary-hover, #2563eb);
     }
 
     @keyframes fadeIn {
@@ -171,20 +214,102 @@
 
 <body>
 
+  <div class="top-controls">
+    <div class="faro-badge" id="faro-status-badge" title="Grafana Faro Observability Connected">
+      <span class="faro-pulse"></span>
+      <span>Faro RUM</span>
+    </div>
+    <!-- Sprint CDO-11: Mission Control Observability Cockpit -->
+    <button class="control-btn" id="mission-control-btn" title="Launch Mission Control (Backend Observable Data & Grafana Cockpit)">
+      <span id="split-icon">🎛️</span>
+      <span id="split-label">Mission Control</span>
+    </button>
+    <button class="control-btn" id="mission-control-split-btn" style="display: none;" aria-hidden="true" title="Mission Control Split Alias"></button>
+    
+    <!-- Sprint CDO-12: Responsive UI Lab Full-Window Viewport Workbench -->
+    <a class="control-btn" id="responsive-ui-lab-btn" href="responsive-lab.html" title="Open Responsive UI Lab (Full-Window Viewport & Orientation Workbench)">
+      <span id="sidepane-icon">📐</span>
+      <span id="sidepane-label">Responsive UI Lab</span>
+    </a>
+    <button class="control-btn" id="mission-control-sidepane-btn" style="display: none;" aria-hidden="true" title="Side Pane Alias"></button>
+
+    <button class="control-btn" id="least-action-btn" title="Open Least Action & Directionality Navigator (Software Lagrangian ℒ = S_T - H_T)">
+      <span id="least-action-icon">🧭</span>
+      <span id="least-action-label">Least Action (ℒ)</span>
+    </button>
+    <button class="control-btn" id="deployment-inspector-btn" title="Open Meta-Portal Deployment Unit Inspector">
+      <span id="inspector-icon">📦</span>
+      <span id="inspector-label">Deployment Units</span>
+    </button>
+    <button class="control-btn" id="theme-toggle-btn" title="Toggle Display Theme (Dark / Light / High-Contrast)">
+      <span id="theme-icon">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+    <button class="control-btn" id="power-toggle-btn" title="Toggle Energy Saving Mode">
+      <span id="power-icon">⚡</span>
+      <span id="power-label">Normal</span>
+    </button>
+  </div>
+
   <div class="container">
     <h1>GovTech OS</h1>
     <p class="subtitle">Computational Trinitarianism</p>
 
     <div class="card-grid">
-      <!-- Mission Control Card -->
-      <a id="mission-control-link" href="app.html" class="card">
+      <!-- Sprint CDO-11: Mission Control Observability Gateway Card -->
+      <div id="mission-control-card" class="card" style="cursor: pointer;">
         <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
         </svg>
         <h2>Mission Control</h2>
-        <p>Launch the full Operating System environment.</p>
-      </a>
+        <p>Operational cockpit for backend observable data, Grafana Faro Web SDK RUM telemetry, and deployment metrics.</p>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.75rem;">
+          <a id="mission-control-link" href="app.html" target="_blank" class="split-launch-btn" title="Launch Mission Control in split pane / separate tab">
+            <span>⧉ Open Observability Cockpit</span>
+          </a>
+        </div>
+        <div class="cors-safe-badge" title="Safe from iframe X-Frame-Options and CSP frame-ancestors restrictions via Google Split-View (Cmd+Option+N)">
+          <span>✓ Grafana Faro Telemetry • CORS &amp; Frame-Isolation Safe</span>
+        </div>
+      </div>
+
+      <!-- Sprint CDO-12: Responsive UI Lab Full-Window Workbench Card -->
+      <div id="responsive-ui-lab-card" class="card" style="cursor: pointer;">
+        <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 6h16M4 12h16m-7 6h7M7 17l-3-3 3-3" />
+        </svg>
+        <h2>Responsive UI Lab</h2>
+        <p>Dedicated full-window workbench maximizing screen real-estate to test various sized windows in vertical (portrait) or horizontal (landscape) orientations with live iframe layout reflow.</p>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.75rem;">
+          <a id="responsive-ui-lab-fullpage-link" href="responsive-lab.html" class="split-launch-btn" title="Open Responsive UI Lab in dedicated full-window workbench">
+            <span>⧉ Open Full-Window Lab</span>
+          </a>
+          <button id="responsive-ui-lab-sidepane-trigger" style="display: none;" aria-hidden="true"></button>
+          <button id="mission-control-sidepane-trigger" style="display: none;" aria-hidden="true"></button>
+        </div>
+        <div style="display: flex; gap: 0.35rem; margin-top: 0.75rem; flex-wrap: wrap; justify-content: center;">
+          <span style="font-size: 0.7rem; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 0.2rem 0.5rem; border-radius: 9999px;">↕ Vertical (Portrait)</span>
+          <span style="font-size: 0.7rem; background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 0.2rem 0.5rem; border-radius: 9999px;">↔ Horizontal (Landscape)</span>
+          <span style="font-size: 0.7rem; background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 0.2rem 0.5rem; border-radius: 9999px;">🖥️ Full-Window Real-Estate</span>
+        </div>
+      </div>
+
+      <!-- Least Action & Directionality Navigator Card -->
+      <div id="least-action-card" class="card" style="cursor: pointer;">
+        <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        <h2>Least Action (ℒ)</h2>
+        <p>Software Lagrangian (ℒ = S_T - H_T) &amp; Geodesic Sprints along Directionality (道) to SSOT.</p>
+        <div style="display: flex; gap: 0.35rem; margin-top: 0.75rem; flex-wrap: wrap; justify-content: center;">
+          <span style="font-size: 0.7rem; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 0.2rem 0.5rem; border-radius: 9999px;">δS = 0 Stationary</span>
+          <span style="font-size: 0.7rem; background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 0.2rem 0.5rem; border-radius: 9999px;">Epiplexity S_T</span>
+          <span style="font-size: 0.7rem; background: rgba(239, 68, 68, 0.2); color: #f87171; padding: 0.2rem 0.5rem; border-radius: 9999px;">Entropy H_T</span>
+        </div>
+      </div>
 
       <!-- MCard Studio Card -->
       <a id="mcard-studio-link" href="https://mcardstudio.pkc.pub/" class="card">
@@ -195,10 +320,27 @@
         <h2>MCard Studio</h2>
         <p>Access and manage your persistent files.</p>
       </a>
+
+      <!-- Meta-Portal Deployment Unit Inspector Card -->
+      <div id="deployment-inspector-card" class="card" style="cursor: pointer;">
+        <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+        <h2>Deployment Units</h2>
+        <p>Examine Web, Desktop, Mobile, Wearable, and AR/VR units packaged in Growth-only SQLite db.</p>
+        <div style="display: flex; gap: 0.35rem; margin-top: 0.75rem; flex-wrap: wrap; justify-content: center;">
+          <span style="font-size: 0.7rem; background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 0.2rem 0.5rem; border-radius: 9999px;">Web</span>
+          <span style="font-size: 0.7rem; background: rgba(239, 68, 68, 0.2); color: #f87171; padding: 0.2rem 0.5rem; border-radius: 9999px;">Desktop</span>
+          <span style="font-size: 0.7rem; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 0.2rem 0.5rem; border-radius: 9999px;">Mobile</span>
+          <span style="font-size: 0.7rem; background: rgba(245, 158, 11, 0.2); color: #fbbf24; padding: 0.2rem 0.5rem; border-radius: 9999px;">Wearables</span>
+          <span style="font-size: 0.7rem; background: rgba(168, 85, 247, 0.2); color: #c084fc; padding: 0.2rem 0.5rem; border-radius: 9999px;">AR/VR</span>
+        </div>
+      </div>
     </div>
 
     <div style="margin-top: 2rem; opacity: 0.7;">
-      <p style="font-size: 0.9rem; color: #64748b;">Status: <span style="color: #4ade80;">● Online</span> | Ver:
+      <p style="font-size: 0.9rem; color: var(--color-text-muted, #64748b);">Status: <span style="color: #4ade80;">● Online</span> | Ver:
         0.1.0-alpha</p>
     </div>
   </div>
@@ -227,6 +369,149 @@
       }
     }
     document.addEventListener('DOMContentLoaded', loadConfig);
+  </script>
+
+  <script type="module">
+    import { PresentationController } from './js/runtime/presentation-controller.js';
+    import { FaroDeploymentUnitCollector } from './js/telemetry/faro-collector.js';
+    import { DeploymentUnitInspector } from './js/runtime/deployment-inspector.js';
+    import { LeastActionNavigator } from './js/runtime/least-action-navigator.js';
+
+    let faro;
+    const presentation = new PresentationController({
+      onStateChange: (state) => {
+        updateControlUI(state);
+        if (faro) faro.setLatticeCoordinate(state);
+      }
+    });
+
+    faro = new FaroDeploymentUnitCollector({
+      appName: 'landing-page-deployment-unit',
+      appVersion: '1.0.0'
+    });
+    faro.setLatticeCoordinate({
+      theme: presentation.currentTheme,
+      powerMode: presentation.currentPowerMode
+    });
+
+    const inspector = new DeploymentUnitInspector();
+    const leastActionNavigator = new LeastActionNavigator();
+    leastActionNavigator.mount();
+
+    window.__faro_collector = faro;
+    window.__presentation_controller = presentation;
+    window.__deployment_inspector = inspector;
+    window.__least_action_navigator = leastActionNavigator;
+
+    function openMissionControlSplit(e) {
+      if (e) e.preventDefault();
+      const targetUrl = 'app.html';
+      const win = window.open(targetUrl, 'GovTechMissionControl', 'noopener,noreferrer');
+      if (win) {
+        win.focus();
+        if (window.BroadcastChannel) {
+          const channel = new BroadcastChannel('govtech-mission-control-sync');
+          channel.postMessage({
+            type: 'SPLIT_TAB_LAUNCHED',
+            source: 'MetaPortal',
+            targetUrl: targetUrl,
+            crossOriginSafe: true,
+            timestamp: Date.now()
+          });
+        }
+        console.log('[Mission Control] Multi-tab split pane launched (CORS & frame-ancestors safe)');
+      }
+    }
+    window.__open_mission_control_split = openMissionControlSplit;
+
+    function updateControlUI(state) {
+      const themeLabel = document.getElementById('theme-label');
+      const themeIcon = document.getElementById('theme-icon');
+      const powerLabel = document.getElementById('power-label');
+      const powerIcon = document.getElementById('power-icon');
+
+      if (themeLabel && themeIcon) {
+        if (state.theme === 'light') {
+          themeLabel.textContent = 'Light';
+          themeIcon.textContent = '☀️';
+        } else if (state.theme === 'high-contrast') {
+          themeLabel.textContent = 'Contrast';
+          themeIcon.textContent = '👁️';
+        } else {
+          themeLabel.textContent = 'Dark';
+          themeIcon.textContent = '🌙';
+        }
+      }
+
+      if (powerLabel && powerIcon) {
+        if (state.powerMode === 'energy-saving') {
+          powerLabel.textContent = 'Eco';
+          powerIcon.textContent = '🔋';
+        } else {
+          powerLabel.textContent = 'Normal';
+          powerIcon.textContent = '⚡';
+        }
+      }
+    }
+
+    document.getElementById('theme-toggle-btn')?.addEventListener('click', () => {
+      presentation.toggleTheme();
+    });
+
+    document.getElementById('power-toggle-btn')?.addEventListener('click', () => {
+      presentation.toggleEnergySaving();
+    });
+
+    document.getElementById('deployment-inspector-btn')?.addEventListener('click', () => {
+      inspector.open();
+    });
+
+    document.getElementById('deployment-inspector-card')?.addEventListener('click', () => {
+      inspector.open();
+    });
+
+    document.getElementById('least-action-btn')?.addEventListener('click', () => {
+      leastActionNavigator.open();
+    });
+
+    document.getElementById('least-action-card')?.addEventListener('click', () => {
+      leastActionNavigator.open();
+    });
+
+    // Responsive UI Lab Navigation (Sprint CDO-12: Full-Window Workbench)
+    function openResponsiveUILab() {
+      window.location.href = 'responsive-lab.html';
+    }
+
+    window.__open_responsive_ui_lab = openResponsiveUILab;
+    window.__open_mission_side_pane = openResponsiveUILab;
+
+    document.getElementById('mission-control-sidepane-btn')?.addEventListener('click', openResponsiveUILab);
+    document.getElementById('responsive-ui-lab-sidepane-trigger')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openResponsiveUILab();
+    });
+    document.getElementById('mission-control-sidepane-trigger')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openResponsiveUILab();
+    });
+
+    // Sprint CDO-11: Mission Control Observability Cockpit
+    document.getElementById('mission-control-btn')?.addEventListener('click', openMissionControlSplit);
+    document.getElementById('mission-control-split-btn')?.addEventListener('click', openMissionControlSplit);
+    document.getElementById('mission-control-link')?.addEventListener('click', openMissionControlSplit);
+    document.getElementById('mission-control-card')?.addEventListener('click', (e) => {
+      if (e.target.closest('#mission-control-link')) return;
+      openMissionControlSplit();
+    });
+
+    // Sprint CDO-12: Responsive UI Lab Card
+    document.getElementById('responsive-ui-lab-card')?.addEventListener('click', (e) => {
+      if (e.target.closest('#responsive-ui-lab-fullpage-link')) return;
+      openResponsiveUILab();
+    });
+
+    updateControlUI({ theme: presentation.currentTheme, powerMode: presentation.currentPowerMode });
   </script>
 </body>
 

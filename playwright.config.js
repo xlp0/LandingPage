@@ -15,6 +15,10 @@ import { defineConfig, devices } from '@playwright/test';
  * 
  * @see https://playwright.dev/docs/test-configuration
  */
+const PORT = process.env.PORT || 3001;
+const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+const SLOW_MO = process.env.SLOWMO ? parseInt(process.env.SLOWMO, 10) : (process.env.HEADED || process.argv.includes('--headed') ? 800 : 0);
+
 export default defineConfig({
   testDir: './tests',
 
@@ -31,12 +35,17 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: 'list',
 
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL - WebSocket server on port 3000 */
-    baseURL: 'http://localhost:3000',
+    /* Base URL - WebSocket server on port 3001 (or process.env.PORT) */
+    baseURL: BASE_URL,
+
+    /* Launch options including slow motion for headed visual observation */
+    launchOptions: {
+      slowMo: SLOW_MO,
+    },
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -83,6 +92,16 @@ export default defineConfig({
       },
     },
 
+    {
+      name: 'presentation-lattice',
+      testDir: './tests/features',
+      testMatch: 'presentation-lattice.spec.js',
+      timeout: 60000,
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
+
     // ═══════════════════════════════════════════════════════════════
     // DEFAULT - Chromium browser (all tests)
     // ═══════════════════════════════════════════════════════════════
@@ -90,23 +109,13 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-
-    // Uncomment for cross-browser testing
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
   ],
 
   /* Run Node WebSocket server before starting tests */
   webServer: {
-    command: 'node ws-server.js',
-    port: 3000,
-    reuseExistingServer: false,  // Always start fresh to avoid stale server issues
+    command: `PORT=${PORT} node ws-server.js`,
+    port: Number(PORT),
+    reuseExistingServer: true,
     timeout: 30000,
   },
 });

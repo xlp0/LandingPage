@@ -150,7 +150,7 @@ export class EnvDetector {
         'immer': `${vendorPath}/redux/immer.esm.js`,
         'reselect': `${vendorPath}/redux/reselect.esm.js`,
         '@reduxjs/toolkit': `${vendorPath}/redux/toolkit.esm.js`,
-        'mcard-js': '/public/js/vendor/mcard-js.bundle.js'
+        'clm-kernel': '/public/js/vendor/clm-kernel.bundle.js'
       }
     };
   }

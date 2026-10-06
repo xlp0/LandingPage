@@ -1,25 +1,45 @@
+#!/usr/bin/env node
 /**
- * Browser-only bundle entry point for mcard-js
- * Excludes Node.js-specific modules
+ * Builds the browser bundle for the published clm-kernel (INV-CDO-33).
+ *
+ * The kernel's ESM entry imports Node built-ins unconditionally (`crypto`, `fs`,
+ * `module`, `path`, `events`, `http`, `dgram`), so it cannot be bundled for the
+ * browser as shipped. This script uses esbuild's JS API with a resolve plugin
+ * that maps each built-in to a browser shim under
+ * public/js/mcard-kernel/node-shims/. `--alias` cannot express this because it
+ * maps package names, not file paths.
+ *
+ * Shims are functional where the work is pure string/hash handling (path,
+ * events, crypto.sha256) and throw loudly where the API is genuinely Node-only
+ * (fs, http, dgram, module.createRequire), so a mistaken browser call fails
+ * visibly rather than silently.
  */
+import { build } from 'esbuild';
+import { fileURLToPath } from 'node:url';
+import { dirname, join, resolve } from 'node:path';
 
-// Core models (browser-safe)
-export { MCard } from './node_modules/mcard-js/dist/model/MCard.js';
-export { CardCollection } from './node_modules/mcard-js/dist/model/CardCollection.js';
-export { ContentHandle, validateHandle, HandleValidationError } from './node_modules/mcard-js/dist/model/Handle.js';
-export { GTime } from './node_modules/mcard-js/dist/model/GTime.js';
-export { ContentTypeInterpreter } from './node_modules/mcard-js/dist/model/detectors/ContentTypeInterpreter.js';
+const here = dirname(fileURLToPath(import.meta.url));
+const root = resolve(here, '..');
+const shimDir = join(root, 'public', 'js', 'mcard-kernel', 'node-shims');
 
-// Browser storage (IndexedDB only)
-export { IndexedDBEngine } from './node_modules/mcard-js/dist/storage/IndexedDBEngine.js';
+const NODE_BUILTINS = ['crypto', 'fs', 'module', 'path', 'events', 'http', 'dgram'];
 
-// Hash utilities
-export { HashValidator } from './node_modules/mcard-js/dist/hash/HashValidator.js';
+const shimPlugin = {
+  name: 'node-builtin-shims',
+  setup(b) {
+    const filter = new RegExp(`^(${NODE_BUILTINS.join('|')})(/.*)?$`);
+    b.onResolve({ filter }, (args) => ({
+      path: join(shimDir, `${args.path.split('/')[0]}.js`),
+    }));
+  },
+};
 
-// Monads (browser-safe)
-export { Maybe } from './node_modules/mcard-js/dist/monads/Maybe.js';
-export { Either } from './node_modules/mcard-js/dist/monads/Either.js';
-export { IO } from './node_modules/mcard-js/dist/monads/IO.js';
-export { Reader } from './node_modules/mcard-js/dist/monads/Reader.js';
-export { Writer } from './node_modules/mcard-js/dist/monads/Writer.js';
-export { State } from './node_modules/mcard-js/dist/monads/State.js';
+await build({
+  entryPoints: [join(root, 'public', 'js', 'mcard-kernel', 'bundle-entry.js')],
+  bundle: true,
+  format: 'esm',
+  platform: 'browser',
+  outfile: join(root, 'public', 'js', 'vendor', 'clm-kernel.bundle.js'),
+  plugins: [shimPlugin],
+  logLevel: 'info',
+});

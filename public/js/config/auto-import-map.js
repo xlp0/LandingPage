@@ -26,7 +26,7 @@
       'immer': `${vendorPath}/redux/immer-esm.js`,
       'reselect': `${vendorPath}/redux/reselect-esm.js`,
       '@reduxjs/toolkit': `${vendorPath}/redux/toolkit.esm.js`,
-      'mcard-js': `${baseUrl}/js/vendor/mcard-js.bundle.js`
+      'clm-kernel': `${baseUrl}/js/vendor/clm-kernel.bundle.js`
     }
   };
 

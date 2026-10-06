@@ -10,7 +10,7 @@
  * - Application lifecycle (DOMContentLoaded, resize events)
  */
 
-import { MCardManager } from './mcard/MCardManager.js?v=19';
+import { MCardManager } from './mcard-kernel/MCardManager.js?v=1';
 
 // Create global manager instance
 const manager = new MCardManager();
@@ -146,7 +146,7 @@ window.saveEditedCard = async () => {
   try {
     if (mode === 'create') {
       // Create new card
-      const { MCard } = await import('mcard-js');
+      const { MCard } = await import('clm-kernel');
       const card = await MCard.create(content);
       await manager.collection.add(card);
 
@@ -160,12 +160,12 @@ window.saveEditedCard = async () => {
       window.closeEditPanel();
 
       const message = newHandle ? `Created card with handle @${newHandle}` : 'Card created';
-      const { UIComponents } = await import('./mcard/UIComponents.js');
+      const { UIComponents } = await import('./mcard-kernel/UIComponents.js');
       UIComponents.showToast(message, 'success');
 
     } else if (mode === 'edit') {
       // Update existing card - use updateHandle API
-      const { MCard } = await import('mcard-js');
+      const { MCard } = await import('clm-kernel');
       const newCard = await MCard.create(content);
       await manager.collection.add(newCard);
 
@@ -178,7 +178,7 @@ window.saveEditedCard = async () => {
       await manager.viewCard(newCard.hash);
       window.closeEditPanel();
 
-      const { UIComponents } = await import('./mcard/UIComponents.js');
+      const { UIComponents } = await import('./mcard-kernel/UIComponents.js');
       UIComponents.showToast(`Saved @${newHandle}`, 'success');
     }
   } catch (error) {
