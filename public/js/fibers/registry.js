@@ -104,6 +104,8 @@ export class FiberRegistry {
     this.exercised = new Set(); // kinds that have rendered at least once
     this.mountCounts = new Map(); // kind -> mounts observed
     this.subsumedBy = new Map(); // kind -> the fiber that subsumed it
+    this.disposed = new Set();   // kinds whose token reached p_disposed
+    this.errored = new Map();    // kind -> why its token reached p_error
   }
 
   /** The declared fiber for a kind, or undefined. Pure data lookup. */
@@ -225,6 +227,7 @@ export class FiberRegistry {
     if (position === 'bottom') {
       // Uninhabited: halt before the guard is even created, so there is nothing to
       // roll back. Zero side-effects is the contract for bottom.
+      this.errored.set(kind, 'uninhabited (bottom): no covering fiber and no fallback');
       throw new Error(
         `fiber: no fiber covers '${kind}' and no fallback is declared — ` +
         `this card is uninhabited (bottom), not merely unclassified`,
@@ -279,7 +282,64 @@ export class FiberRegistry {
     await lifecycle.unload();
     this.mounted.delete(kind);
     this.scopes.delete(kind);
+    // the token moves to the sink, which is what conservation counts
+    this.disposed.add(kind);
     return lifecycle.state;
+  }
+
+  /**
+   * The Petri Net marking: which place holds which tokens (DV-11-06).
+   *
+   * The inspector is a view over the *marking*, not over a list of fibers. Places
+   * are the lifecycle states declared in `clm/tests/petri_nets/fiber_lifecycle.yaml`;
+   * a token is one card being displayed by one fiber.
+   *
+   * The marking is derived from the runtime's own records rather than tracked
+   * separately, so it cannot drift from what actually happened.
+   */
+  marking() {
+    const places = {
+      p_pending: [], p_loading: [], p_active: [], p_suspended: [],
+      p_unloading: [], p_disposed: [], p_error: [],
+    };
+    // A mounted fiber is a token in p_active. Everything else is in the terminal
+    // places, counted from the runtime's own tallies.
+    for (const kind of this.mounted.keys()) places.p_active.push(kind);
+    for (const kind of this.disposed) places.p_disposed.push(kind);
+    for (const [kind, detail] of this.errored) places.p_error.push({ kind, detail });
+    return {
+      places,
+      total: Object.values(places).reduce((n, t) => n + t.length, 0),
+      nonEmpty: Object.entries(places).filter(([, t]) => t.length).map(([p]) => p),
+    };
+  }
+
+  /**
+   * Which transitions are enabled under the current marking, and why.
+   *
+   * A transition is enabled when its input place holds a token *and* its guard
+   * holds. The guard for `t_load` is the coeffect specification, which is why an
+   * unsatisfiable coeffect shows up here as a disabled transition rather than as a
+   * failure — the net simply has no enabled move, which is what the empty type
+   * means.
+   */
+  enabledTransitions() {
+    const m = this.marking();
+    const enabled = [];
+    const push = (id, on, guard) => enabled.push({ transition: id, enabled: on, guard });
+    push('t_load', m.places.p_pending.length > 0 && this.unresolvedKinds().length === 0,
+         'coeffects_satisfiable');
+    push('t_activate', m.places.p_loading.length > 0, 'adapter_mounted_and_inverse_registered');
+    push('t_suspend', m.places.p_active.length > 0, null);
+    push('t_resume', m.places.p_suspended.length > 0, null);
+    push('t_unload', m.places.p_active.length + m.places.p_suspended.length > 0,
+         'inverse_available_to_unwind');
+    push('t_dispose', m.places.p_unloading.length > 0, null);
+    push('t_fail', m.places.p_loading.length + m.places.p_active.length > 0, null);
+    // t_reap is what makes the net sound: error tokens are accounted for, not
+    // stranded. Without it the sink is unreachable from p_error.
+    push('t_reap', m.places.p_error.length > 0, 'reaping_policy_applied');
+    return enabled;
   }
 
   /**
@@ -310,6 +370,9 @@ export class FiberRegistry {
         neverExercised: this.fibers.filter((f) => !exercised.has(f.kind)).map((f) => f.kind),
         unresolvedCoeffects: this.unresolvedKinds(),
       },
+      // the CPN view: the inspector shows a marking, not a list
+      marking: this.marking(),
+      enabledTransitions: this.enabledTransitions(),
     };
   }
 
