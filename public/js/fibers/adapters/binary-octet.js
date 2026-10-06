@@ -6,9 +6,12 @@
  * as data and registers a **revertible effect** with the fiber, so the runtime
  * holds the inverse rather than trusting the adapter to remember.
  *
- * Cleanup MUST be registered on `fiber.disposables` during the active phase.
- * The `load` callback's `guard.disposables` is the savepoint rollback list and
- * is not unwound by a successful unload.
+ * The adapter is handed a **scoped effect handle**, never a disposable list.
+ * `FiberLifecycle` exposes two lists — `fiber.disposables` (unwound by unload)
+ * and a load-time `guard.disposables` (the savepoint rollback list, not unwound
+ * by a successful unload) — and registering in the wrong one used to leak
+ * silently. The adapter now declares inverses through `scope.onDispose` and the
+ * runtime registers them, so a leak is impossible rather than merely detected.
  */
 import { toDescriptor, applyDescriptor } from './_descriptor.js';
 
@@ -18,11 +21,12 @@ export const coeffects = {
   requiredCapabilities: [],
 };
 
-export function mount(card, host, fiber, ctx = {}) {
+export function mount(card, host, scope, ctx = {}) {
   const d = toDescriptor(kind, card, ctx);
   const el = applyDescriptor(d, host);
-  // the inverse the runtime will hold
-  fiber.disposables.add(() => {
+  // The inverse is declared to the runtime, which holds it. The adapter is never
+  // given a disposable list, so it cannot register in the wrong one.
+  scope.onDispose(() => {
     if (el && el.remove) el.remove();
     ctx.onDispose?.();
   });

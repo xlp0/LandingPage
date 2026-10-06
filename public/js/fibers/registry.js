@@ -47,6 +47,35 @@ export function adapterLoaderFor(kind) {
   return ADAPTERS[kind] ?? null;
 }
 
+/**
+ * The scoped effect handle handed to an adapter.
+ *
+ * This is the fix for the two-disposable-list hazard. `FiberLifecycle` exposes
+ * `fiber.disposables` (unwound by `unload`) and a `load`-time `guard.disposables`
+ * (the savepoint rollback list, *not* unwound by a successful unload). Registering
+ * in the wrong one leaked silently — no error, the cleanup simply never ran.
+ *
+ * Rather than document a convention, the adapter is no longer given either list.
+ * It declares inverses through `onDispose`, and the runtime registers them on the
+ * correct list itself. An adapter *cannot* leak, because there is only one place
+ * to register and the runtime owns it.
+ */
+export function makeEffectScope(kind, meta, inverses) {
+  return Object.freeze({
+    kind,
+    fallback: meta.fallback,
+    /** Read-only view of the fiber. The lifecycle itself is not exposed. */
+    fiber: Object.freeze({ id: `fiber:${kind}`, kind }),
+    /** Declare an inverse. The runtime will hold it and run it on unload. */
+    onDispose(fn) {
+      if (typeof fn !== 'function') throw new TypeError('onDispose expects a function');
+      inverses.push(fn);
+    },
+    /** How many inverses have been declared so far. */
+    get inverseCount() { return inverses.length; },
+  });
+}
+
 export class FiberRegistry {
   /**
    * @param {object} registry the parsed `clm-registry.yaml`
@@ -64,6 +93,7 @@ export class FiberRegistry {
     this.islands = registry.islands ?? [];
     this.ctx = options.ctx ?? null;
     this.mounted = new Map(); // kind -> FiberLifecycle
+    this.scopes = new Map();  // kind -> scoped effect handle
   }
 
   /** The declared fiber for a kind, or undefined. Pure data lookup. */
@@ -112,12 +142,26 @@ export class FiberRegistry {
     // Coeffects are resolved against the Cordis Context here. With no context,
     // only zero-coeffect fibers can activate — the kernel enforces this.
     await lifecycle.load(async () => {}, this.ctx ? { ctx: this.ctx } : undefined);
+    // The runtime holds the inverse, per the paper: the adapter is given a
+    // scoped handle that records inverses, never a disposable list. It is
+    // therefore *impossible* for an adapter to register in the wrong place —
+    // there is only one place, and the runtime owns it.
+    const inverses = [];
+    const scope = makeEffectScope(kind, { fallback, fiber }, inverses);
+
     await lifecycle.activate(async () => {
-      adapter.mount(card, host, lifecycle, { fallback, fiber });
+      adapter.mount(card, host, scope, { fallback, fiber });
+      // registered inside the active phase, so unload() unwinds it
+      lifecycle.disposables.add(() => {
+        for (const fn of inverses.splice(0).reverse()) {
+          try { fn(); } catch (e) { /* one failing inverse must not strand the rest */ }
+        }
+      });
     });
 
     this.mounted.set(kind, lifecycle);
-    return { lifecycle, adapter, trace, fallback };
+    this.scopes.set(kind, scope);
+    return { lifecycle, adapter, trace, fallback, scope };
   }
 
   /** Unloads a fiber; the runtime unwinds whatever the adapter registered. */
@@ -126,6 +170,7 @@ export class FiberRegistry {
     if (!lifecycle) return null;
     await lifecycle.unload();
     this.mounted.delete(kind);
+    this.scopes.delete(kind);
     return lifecycle.state;
   }
 
@@ -135,6 +180,9 @@ export class FiberRegistry {
       mounted: [...this.mounted.keys()].sort(),
       disposables: Object.fromEntries(
         [...this.mounted.entries()].map(([k, f]) => [k, f.disposables?.size ?? 0]),
+      ),
+      declaredInverses: Object.fromEntries(
+        [...this.scopes.entries()].map(([k, s]) => [k, s.inverseCount]),
       ),
     };
   }
