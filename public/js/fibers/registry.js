@@ -92,15 +92,83 @@ export class FiberRegistry {
     this.fibers = registry.fibers ?? [];
     this.islands = registry.islands ?? [];
     this.ctx = options.ctx ?? null;
+    // The ordering for *every* node, not only the declared fibers. A kind whose
+    // own fiber was removed still has to be resolvable by subsumption, and the
+    // per-fiber `supertypes` cannot supply that: the entry that carried them is
+    // gone. So the full order travels separately.
+    this.ordering = new Map(Object.entries(options.ordering ?? {}));
+    // Null means no fallback is declared, which is what makes `bottom` reachable.
+    this.fallback = options.fallback === undefined ? FALLBACK_FIBER : options.fallback;
     this.mounted = new Map(); // kind -> FiberLifecycle
     this.scopes = new Map();  // kind -> scoped effect handle
     this.exercised = new Set(); // kinds that have rendered at least once
     this.mountCounts = new Map(); // kind -> mounts observed
+    this.subsumedBy = new Map(); // kind -> the fiber that subsumed it
   }
 
   /** The declared fiber for a kind, or undefined. Pure data lookup. */
   fiberFor(kind) {
     return this.fibers.find((f) => f.kind === kind);
+  }
+
+  /**
+   * The supertypes of a kind, transitively — the lattice ordering read off the
+   * declared fibers. Each fiber carries its own supertypes, so the order travels
+   * with the data rather than living in a second table here.
+   */
+  supertypeClosure(kind) {
+    const edges = new Map([
+      ...this.fibers.map((f) => [f.kind, f.supertypes ?? []]),
+      ...this.ordering,
+    ]);
+    const seen = new Set();
+    const queue = [...(edges.get(kind) ?? [])];
+    while (queue.length) {
+      const next = queue.shift();
+      if (seen.has(next)) continue;
+      seen.add(next);
+      queue.push(...(edges.get(next) ?? []));
+    }
+    return seen;
+  }
+
+  /**
+   * The most specific declared fiber that covers `kind`, or null.
+   *
+   * Subtyping is a partial order, so a fiber declared for a supertype covers its
+   * subtypes: a `text` fiber displays `text/plain`, `text/markup` and every other
+   * leaf under it. Resolution therefore walks *up* the order and takes the first
+   * declared fiber it meets — nearest ancestor first, so the most specific wins.
+   *
+   * Exact matching would only display kinds that were individually declared, which
+   * is the weaker claim: "any kind someone remembered to declare".
+   */
+  coveringFiber(kind) {
+    if (this.fiberFor(kind)) return { fiber: this.fiberFor(kind), subsumed: false };
+    const seen = new Set();
+    const queue = [...this.edgesFrom(kind)];
+    while (queue.length) {
+      const candidate = queue.shift();
+      if (seen.has(candidate)) continue;
+      seen.add(candidate);
+      const declared = this.fiberFor(candidate);
+      if (declared) return { fiber: declared, subsumed: true, subsumedBy: candidate };
+      queue.push(...this.edgesFrom(candidate));
+    }
+    return null;
+  }
+
+  /**
+   * Immediate supertypes of a node, whether or not it is a declared kind.
+   *
+   * The full ordering is consulted first, because a node may have no declared
+   * fiber of its own while still being a leaf in the order.
+   */
+  edgesFrom(node) {
+    const fromOrder = this.ordering.get(node);
+    if (fromOrder) return fromOrder;
+    const f = this.fibers.find((x) => x.kind === node);
+    return f?.supertypes ?? [];
   }
 
   /** Resolves a card's kind to a fiber, falling back when undeclared. */
@@ -116,10 +184,35 @@ export class FiberRegistry {
     return out;
   }
 
+  /**
+   * Resolves a kind to the fiber that will render it, distinguishing three cases
+   * the earlier design collapsed into two:
+   *
+   *   covered    a declared fiber covers the kind, possibly by subsumption
+   *   top        nothing covers it: maximum ambiguity. The fallback renders it,
+   *              labelled unclassified, because an unclassifiable card is still a
+   *              card and displaying it honestly is better than displaying nothing
+   *   bottom     no fiber covers it *and* no fallback is available: the empty
+   *              type, uninhabited. The correct behaviour is a halt with zero
+   *              side-effects, never a blank surface — presenting impossibility as
+   *              mere unclassifiedness would be a lie about what happened
+   */
   resolve(cardKind) {
-    const declared = this.fiberFor(cardKind);
-    if (declared) return { fiber: declared, fallback: false };
-    return { fiber: this.fiberFor('unknown') ?? FALLBACK_FIBER, fallback: true };
+    const covered = this.coveringFiber(cardKind);
+    if (covered) {
+      return {
+        fiber: covered.fiber,
+        fallback: false,
+        subsumed: covered.subsumed,
+        subsumedBy: covered.subsumedBy ?? null,
+        position: 'covered',
+      };
+    }
+    const fallback = this.fiberFor('unknown') ?? this.fallback;
+    if (!fallback) {
+      return { fiber: null, fallback: false, position: 'bottom' };
+    }
+    return { fiber: fallback, fallback: true, subsumed: false, position: 'top' };
   }
 
   /**
@@ -128,7 +221,15 @@ export class FiberRegistry {
    * `fiber.disposables` so `unmount` is guaranteed to unwind it.
    */
   async mountCard(card, host, kind) {
-    const { fiber, fallback } = this.resolve(kind);
+    const { fiber, fallback, subsumed, subsumedBy, position } = this.resolve(kind);
+    if (position === 'bottom') {
+      // Uninhabited: halt before the guard is even created, so there is nothing to
+      // roll back. Zero side-effects is the contract for bottom.
+      throw new Error(
+        `fiber: no fiber covers '${kind}' and no fallback is declared — ` +
+        `this card is uninhabited (bottom), not merely unclassified`,
+      );
+    }
     const loader = fallback ? null : adapterLoaderFor(kind);
     // the module namespace *is* the adapter: it exports kind, coeffects and mount
     const adapter = loader ? await loader() : fallbackAdapter;
@@ -165,7 +266,10 @@ export class FiberRegistry {
     this.scopes.set(kind, scope);
     this.exercised.add(kind);
     this.mountCounts.set(kind, (this.mountCounts.get(kind) ?? 0) + 1);
-    return { lifecycle, adapter, trace, fallback, scope };
+    if (subsumed) {
+      this.subsumedBy.set(kind, subsumedBy);
+    }
+    return { lifecycle, adapter, trace, fallback, scope, subsumed, subsumedBy, position };
   }
 
   /** Unloads a fiber; the runtime unwinds whatever the adapter registered. */

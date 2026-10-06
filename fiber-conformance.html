@@ -169,7 +169,9 @@ async function main() {
   }
   await new Promise((r) => setTimeout(r, 50));
 
-  const registry = new FiberRegistry(data.registry, { ctx: root });
+  // the ordering travels separately from the fibers: a kind whose own fiber is
+  // absent must still be resolvable by subsumption
+  const registry = new FiberRegistry(data.registry, { ctx: root, ordering: data.ordering });
   const host = document.getElementById('harness');
   const { adapter, fallback, scope } = await registry.mountCard(card, host, kind);
   const descriptor = adapter.mount(card, host, scope, { fallback });

@@ -598,6 +598,18 @@
         "island_mcard": "mcard:island:app.html"
       },
       {
+        "url": "/fiber-conformance.html",
+        "kind": "page",
+        "hydration": "client:idle",
+        "isolation": "top-level",
+        "budget": {
+          "max_bytes": 262144,
+          "observed_bytes": 7698
+        },
+        "metrics_endpoint": "/metrics/fiber-conformance",
+        "island_mcard": "mcard:island:fiber-conformance.html"
+      },
+      {
         "url": "/index.html",
         "kind": "page",
         "hydration": "client:idle",
@@ -891,6 +903,9 @@
         "kind": "scalar/value",
         "payload_shape": "scalar",
         "content_class": "value",
+        "supertypes": [
+          "scalar"
+        ],
         "renderer": "fibers/adapters/scalar-value.js",
         "isolation": "inline",
         "budget": {
@@ -899,6 +914,7 @@
         },
         "mount_points": [
           "/app.html",
+          "/fiber-conformance.html",
           "/index.html",
           "/pkc-docs-index.html",
           "/responsive-lab.html",
@@ -930,6 +946,9 @@
         "kind": "text/plain",
         "payload_shape": "text",
         "content_class": "plain",
+        "supertypes": [
+          "text"
+        ],
         "renderer": "fibers/adapters/text-plain.js",
         "isolation": "inline",
         "budget": {
@@ -938,6 +957,7 @@
         },
         "mount_points": [
           "/app.html",
+          "/fiber-conformance.html",
           "/index.html",
           "/pkc-docs-index.html",
           "/responsive-lab.html",
@@ -969,6 +989,9 @@
         "kind": "text/markup",
         "payload_shape": "text",
         "content_class": "markup",
+        "supertypes": [
+          "text"
+        ],
         "renderer": "fibers/adapters/text-markup.js",
         "isolation": "inline",
         "budget": {
@@ -977,6 +1000,7 @@
         },
         "mount_points": [
           "/app.html",
+          "/fiber-conformance.html",
           "/index.html",
           "/pkc-docs-index.html",
           "/responsive-lab.html",
@@ -1008,6 +1032,9 @@
         "kind": "text/markdown",
         "payload_shape": "text",
         "content_class": "markdown",
+        "supertypes": [
+          "text"
+        ],
         "renderer": "fibers/adapters/text-markdown.js",
         "isolation": "inline",
         "budget": {
@@ -1016,6 +1043,7 @@
         },
         "mount_points": [
           "/app.html",
+          "/fiber-conformance.html",
           "/index.html",
           "/pkc-docs-index.html",
           "/responsive-lab.html",
@@ -1047,6 +1075,9 @@
         "kind": "text/script",
         "payload_shape": "text",
         "content_class": "script",
+        "supertypes": [
+          "text"
+        ],
         "renderer": "fibers/adapters/text-script.js",
         "isolation": "inline",
         "budget": {
@@ -1055,6 +1086,7 @@
         },
         "mount_points": [
           "/app.html",
+          "/fiber-conformance.html",
           "/index.html",
           "/pkc-docs-index.html",
           "/responsive-lab.html",
@@ -1086,6 +1118,9 @@
         "kind": "text/style",
         "payload_shape": "text",
         "content_class": "style",
+        "supertypes": [
+          "text"
+        ],
         "renderer": "fibers/adapters/text-style.js",
         "isolation": "inline",
         "budget": {
@@ -1094,6 +1129,7 @@
         },
         "mount_points": [
           "/app.html",
+          "/fiber-conformance.html",
           "/index.html",
           "/pkc-docs-index.html",
           "/responsive-lab.html",
@@ -1125,6 +1161,9 @@
         "kind": "text/data",
         "payload_shape": "text",
         "content_class": "data",
+        "supertypes": [
+          "text"
+        ],
         "renderer": "fibers/adapters/text-data.js",
         "isolation": "inline",
         "budget": {
@@ -1133,6 +1172,7 @@
         },
         "mount_points": [
           "/app.html",
+          "/fiber-conformance.html",
           "/index.html",
           "/pkc-docs-index.html",
           "/responsive-lab.html",
@@ -1164,6 +1204,9 @@
         "kind": "structured/data",
         "payload_shape": "structured",
         "content_class": "data",
+        "supertypes": [
+          "structured"
+        ],
         "renderer": "fibers/adapters/structured-data.js",
         "isolation": "inline",
         "budget": {
@@ -1172,6 +1215,7 @@
         },
         "mount_points": [
           "/app.html",
+          "/fiber-conformance.html",
           "/index.html",
           "/pkc-docs-index.html",
           "/responsive-lab.html",
@@ -1203,6 +1247,9 @@
         "kind": "structured/triad",
         "payload_shape": "structured",
         "content_class": "triad",
+        "supertypes": [
+          "structured"
+        ],
         "renderer": "fibers/adapters/structured-triad.js",
         "isolation": "inline",
         "budget": {
@@ -1211,6 +1258,7 @@
         },
         "mount_points": [
           "/app.html",
+          "/fiber-conformance.html",
           "/index.html",
           "/pkc-docs-index.html",
           "/responsive-lab.html",
@@ -1242,6 +1290,9 @@
         "kind": "binary/image",
         "payload_shape": "binary",
         "content_class": "image",
+        "supertypes": [
+          "binary"
+        ],
         "renderer": "fibers/adapters/binary-image.js",
         "isolation": "sandboxed",
         "budget": {
@@ -1250,6 +1301,7 @@
         },
         "mount_points": [
           "/app.html",
+          "/fiber-conformance.html",
           "/index.html",
           "/pkc-docs-index.html",
           "/responsive-lab.html",
@@ -1281,6 +1333,9 @@
         "kind": "binary/audio",
         "payload_shape": "binary",
         "content_class": "audio",
+        "supertypes": [
+          "binary"
+        ],
         "renderer": "fibers/adapters/binary-audio.js",
         "isolation": "sandboxed",
         "budget": {
@@ -1289,6 +1344,7 @@
         },
         "mount_points": [
           "/app.html",
+          "/fiber-conformance.html",
           "/index.html",
           "/pkc-docs-index.html",
           "/responsive-lab.html",
@@ -1320,6 +1376,9 @@
         "kind": "binary/3d",
         "payload_shape": "binary",
         "content_class": "3d",
+        "supertypes": [
+          "binary"
+        ],
         "renderer": "fibers/adapters/binary-3d.js",
         "isolation": "sandboxed",
         "budget": {
@@ -1328,6 +1387,7 @@
         },
         "mount_points": [
           "/app.html",
+          "/fiber-conformance.html",
           "/index.html",
           "/pkc-docs-index.html",
           "/responsive-lab.html",
@@ -1359,6 +1419,9 @@
         "kind": "binary/octet",
         "payload_shape": "binary",
         "content_class": "octet",
+        "supertypes": [
+          "binary"
+        ],
         "renderer": "fibers/adapters/binary-octet.js",
         "isolation": "sandboxed",
         "budget": {
@@ -1367,6 +1430,7 @@
         },
         "mount_points": [
           "/app.html",
+          "/fiber-conformance.html",
           "/index.html",
           "/pkc-docs-index.html",
           "/responsive-lab.html",
@@ -1398,6 +1462,9 @@
         "kind": "satori/message",
         "payload_shape": "satori",
         "content_class": "message",
+        "supertypes": [
+          "satori"
+        ],
         "renderer": "fibers/adapters/satori-message.js",
         "isolation": "inline",
         "budget": {
@@ -1406,6 +1473,7 @@
         },
         "mount_points": [
           "/app.html",
+          "/fiber-conformance.html",
           "/index.html",
           "/pkc-docs-index.html",
           "/responsive-lab.html",
@@ -1437,6 +1505,9 @@
         "kind": "executable/pcard",
         "payload_shape": "executable",
         "content_class": "pcard",
+        "supertypes": [
+          "executable"
+        ],
         "renderer": "fibers/adapters/executable-pcard.js",
         "isolation": "sandboxed",
         "budget": {
@@ -1445,6 +1516,7 @@
         },
         "mount_points": [
           "/app.html",
+          "/fiber-conformance.html",
           "/index.html",
           "/pkc-docs-index.html",
           "/responsive-lab.html",
@@ -1489,6 +1561,130 @@
       "structured",
       "executable"
     ],
+    "ordering": {
+      "note": "each kind refines its payload shape; the shapes are the intermediate nodes",
+      "edges": [
+        {
+          "kind": "scalar/value",
+          "supertypes": [
+            "scalar"
+          ]
+        },
+        {
+          "kind": "text/plain",
+          "supertypes": [
+            "text"
+          ]
+        },
+        {
+          "kind": "text/markup",
+          "supertypes": [
+            "text"
+          ]
+        },
+        {
+          "kind": "text/markdown",
+          "supertypes": [
+            "text"
+          ]
+        },
+        {
+          "kind": "text/script",
+          "supertypes": [
+            "text"
+          ]
+        },
+        {
+          "kind": "text/style",
+          "supertypes": [
+            "text"
+          ]
+        },
+        {
+          "kind": "text/data",
+          "supertypes": [
+            "text"
+          ]
+        },
+        {
+          "kind": "structured/data",
+          "supertypes": [
+            "structured"
+          ]
+        },
+        {
+          "kind": "structured/triad",
+          "supertypes": [
+            "structured"
+          ]
+        },
+        {
+          "kind": "binary/image",
+          "supertypes": [
+            "binary"
+          ]
+        },
+        {
+          "kind": "binary/audio",
+          "supertypes": [
+            "binary"
+          ]
+        },
+        {
+          "kind": "binary/3d",
+          "supertypes": [
+            "binary"
+          ]
+        },
+        {
+          "kind": "binary/octet",
+          "supertypes": [
+            "binary"
+          ]
+        },
+        {
+          "kind": "satori/message",
+          "supertypes": [
+            "satori"
+          ]
+        },
+        {
+          "kind": "executable/pcard",
+          "supertypes": [
+            "executable"
+          ]
+        }
+      ],
+      "downward_closure_of_shapes": {
+        "scalar": [
+          "scalar/value"
+        ],
+        "text": [
+          "text/data",
+          "text/markdown",
+          "text/markup",
+          "text/plain",
+          "text/script",
+          "text/style"
+        ],
+        "satori": [
+          "satori/message"
+        ],
+        "binary": [
+          "binary/3d",
+          "binary/audio",
+          "binary/image",
+          "binary/octet"
+        ],
+        "structured": [
+          "structured/data",
+          "structured/triad"
+        ],
+        "executable": [
+          "executable/pcard"
+        ]
+      }
+    },
     "reachability": {
       "via_create": [
         "scalar/value",
@@ -1516,6 +1712,9 @@
         "kind": "scalar/value",
         "payload_shape": "scalar",
         "content_class": "value",
+        "supertypes": [
+          "scalar"
+        ],
         "reachable_via": "create",
         "example": "examples/scalar-value.mcard.json",
         "example_hash": "92cc1999dab8c24a63d3d8c2940dd3b8be48f769479aa12dd610fca3c34d2592",
@@ -1526,6 +1725,9 @@
         "kind": "text/plain",
         "payload_shape": "text",
         "content_class": "plain",
+        "supertypes": [
+          "text"
+        ],
         "reachable_via": "create",
         "example": "examples/text-plain.mcard.json",
         "example_hash": "2bcd8c156b03e8930fef2226801bfce566a8608deca85138e5487ca31e6f357b",
@@ -1536,6 +1738,9 @@
         "kind": "text/markup",
         "payload_shape": "text",
         "content_class": "markup",
+        "supertypes": [
+          "text"
+        ],
         "reachable_via": "create",
         "example": "examples/text-markup.mcard.json",
         "example_hash": "acea4eeabd18c97cd34dc2838cc0d0d61f5b983ce54c21eb4e15d1fada4bdc71",
@@ -1546,6 +1751,9 @@
         "kind": "text/markdown",
         "payload_shape": "text",
         "content_class": "markdown",
+        "supertypes": [
+          "text"
+        ],
         "reachable_via": "create",
         "example": "examples/text-markdown.mcard.json",
         "example_hash": "081dcda1bc496f9180f68db29208a41567f40e6d034274f6ec2f5b2f5a5c26ae",
@@ -1556,6 +1764,9 @@
         "kind": "text/script",
         "payload_shape": "text",
         "content_class": "script",
+        "supertypes": [
+          "text"
+        ],
         "reachable_via": "create",
         "example": "examples/text-script.mcard.json",
         "example_hash": "8a2988271c26a526fe5875c8d58edc3eedbf41b8a621b397bc2480eb971cffd5",
@@ -1566,6 +1777,9 @@
         "kind": "text/style",
         "payload_shape": "text",
         "content_class": "style",
+        "supertypes": [
+          "text"
+        ],
         "reachable_via": "create",
         "example": "examples/text-style.mcard.json",
         "example_hash": "c8a999874c8e860b36b6ac6be5176b780832af11d9ed57040fa9d2c580e918b6",
@@ -1576,6 +1790,9 @@
         "kind": "text/data",
         "payload_shape": "text",
         "content_class": "data",
+        "supertypes": [
+          "text"
+        ],
         "reachable_via": "create",
         "example": "examples/text-data.mcard.json",
         "example_hash": "7f6d20af8a72ec3b7468e0b3fcfcde370ab860d052676402a5a196b631bb3276",
@@ -1586,6 +1803,9 @@
         "kind": "structured/data",
         "payload_shape": "structured",
         "content_class": "data",
+        "supertypes": [
+          "structured"
+        ],
         "reachable_via": "create",
         "example": "examples/structured-data.mcard.json",
         "example_hash": "865406b220e335db3f419ed132a49d10cb9fa0dcdd359e2959c04bb7f523ce95",
@@ -1596,6 +1816,9 @@
         "kind": "structured/triad",
         "payload_shape": "structured",
         "content_class": "triad",
+        "supertypes": [
+          "structured"
+        ],
         "reachable_via": "create",
         "example": "examples/structured-triad.mcard.json",
         "example_hash": "3897c729e5b6d5c50ad044c259fcb34d0af45c72b5fb3b88d7e040c2a031c2ab",
@@ -1606,6 +1829,9 @@
         "kind": "binary/image",
         "payload_shape": "binary",
         "content_class": "image",
+        "supertypes": [
+          "binary"
+        ],
         "reachable_via": "create",
         "example": "examples/binary-image.mcard.json",
         "example_hash": "d4dbab01756dd3968fcab5dbecf1c0e4ffa3b5097ff8b3b7903dea971b35df54",
@@ -1616,6 +1842,9 @@
         "kind": "binary/audio",
         "payload_shape": "binary",
         "content_class": "audio",
+        "supertypes": [
+          "binary"
+        ],
         "reachable_via": "create",
         "example": "examples/binary-audio.mcard.json",
         "example_hash": "e1e3acaf7dc785b94f1f7fed9ac17868036643fc6b4506e92e8c5fd9e591d17e",
@@ -1626,6 +1855,9 @@
         "kind": "binary/3d",
         "payload_shape": "binary",
         "content_class": "3d",
+        "supertypes": [
+          "binary"
+        ],
         "reachable_via": "create",
         "example": "examples/binary-3d.mcard.json",
         "example_hash": "1d14e5b6798abe3d00144f1ceec0df046902a171d4c70b9f133dd48655709a6f",
@@ -1636,6 +1868,9 @@
         "kind": "binary/octet",
         "payload_shape": "binary",
         "content_class": "octet",
+        "supertypes": [
+          "binary"
+        ],
         "reachable_via": "create",
         "example": "examples/binary-octet.mcard.json",
         "example_hash": "9e14ca6f93126061c03a40cb2a8ecdbd928097251011946431463c8255cd703f",
@@ -1646,6 +1881,9 @@
         "kind": "satori/message",
         "payload_shape": "satori",
         "content_class": "message",
+        "supertypes": [
+          "satori"
+        ],
         "reachable_via": "fromJSON",
         "example": "examples/satori-message.mcard.json",
         "example_hash": "7554b6e3a4a2c637799b631435aa663c7ad8a26189ecbe10fe3dcbd2f9ef9307",
@@ -1656,12 +1894,62 @@
         "kind": "executable/pcard",
         "payload_shape": "executable",
         "content_class": "pcard",
+        "supertypes": [
+          "executable"
+        ],
         "reachable_via": "fromJSON",
         "example": "examples/executable-pcard.mcard.json",
         "example_hash": "04dea03620c4a6ac5f567d7aa0424005bb3e192b7dfa79448b2c9624006f9b39",
         "observed_payload_kind": "executable",
         "observed_mime": "text/plain"
       }
+    ]
+  },
+  "ordering": {
+    "scalar/value": [
+      "scalar"
+    ],
+    "text/plain": [
+      "text"
+    ],
+    "text/markup": [
+      "text"
+    ],
+    "text/markdown": [
+      "text"
+    ],
+    "text/script": [
+      "text"
+    ],
+    "text/style": [
+      "text"
+    ],
+    "text/data": [
+      "text"
+    ],
+    "structured/data": [
+      "structured"
+    ],
+    "structured/triad": [
+      "structured"
+    ],
+    "binary/image": [
+      "binary"
+    ],
+    "binary/audio": [
+      "binary"
+    ],
+    "binary/3d": [
+      "binary"
+    ],
+    "binary/octet": [
+      "binary"
+    ],
+    "satori/message": [
+      "satori"
+    ],
+    "executable/pcard": [
+      "executable"
     ]
   },
   "manifest": {
