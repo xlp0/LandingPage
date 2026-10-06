@@ -9,7 +9,9 @@
 
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'http://localhost:3000/index.html';
+// Relative so Playwright's configured baseURL (and PORT) applies; the
+// previous hardcoded localhost:3000 pointed at a port nothing serves.
+const BASE_URL = '/app.html';
 
 test.describe('New Text Card - Feature Tests', () => {
 
@@ -36,20 +38,20 @@ test.describe('New Text Card - Feature Tests', () => {
         await expect(viewerTitle).toContainText('Create New Card');
 
         // Verify input fields are present
-        await expect(page.locator('#newCardHandle')).toBeVisible();
-        await expect(page.locator('#newCardContent')).toBeVisible();
+        await expect(page.locator('#editHandleName')).toBeVisible();
+        await expect(page.locator('#editContentArea')).toBeVisible();
     });
 
     test('New Text Card panel allows text input', async ({ page }) => {
         await page.getByText('New Text', { exact: true }).click();
 
         // Type in the handle field
-        const handleInput = page.locator('#newCardHandle');
+        const handleInput = page.locator('#editHandleName');
         await handleInput.fill('my-test-card');
         await expect(handleInput).toHaveValue('my-test-card');
 
         // Type in the content field
-        const contentInput = page.locator('#newCardContent');
+        const contentInput = page.locator('#editContentArea');
         await contentInput.fill('This is test content for the card.');
         await expect(contentInput).toHaveValue('This is test content for the card.');
     });

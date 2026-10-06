@@ -10,7 +10,9 @@
 
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'http://localhost:3000/index.html';
+// Relative so Playwright's configured baseURL (and PORT) applies; the
+// previous hardcoded localhost:3000 pointed at a port nothing serves.
+const BASE_URL = '/app.html';
 
 test.describe('Chat Panel - Feature Tests', () => {
 

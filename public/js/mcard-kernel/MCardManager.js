@@ -37,16 +37,19 @@ export class MCardManager {
     return this;
   }
 
+  /**
+   * Binds the controls app.html actually declares.
+   *
+   * The panel's buttons are wired with inline `onclick` handlers in app.html
+   * (closeEditPanel / saveEditedCard, both defined in app-bootstrap.js), so only
+   * the search box needs a listener here. Earlier bindings referenced ids that
+   * do not exist in the markup.
+   */
   _bindUI() {
-    $('saveBtn')?.addEventListener('click', () => this._onSave());
-    $('cancelBtn')?.addEventListener('click', () => $('inPlaceEditor')?.classList.remove('active'));
-    $('editBtn')?.addEventListener('click', () => this._onEdit());
-    $('batchRemoveBtn')?.addEventListener('click', () => this.batchRemoveDuplications());
     $('searchBox')?.addEventListener('input', (e) => {
       this.searchQuery = e.target.value ?? '';
       this.applyFiltersAndSearch();
     });
-    $('fileInput')?.addEventListener('change', (e) => this._onFileSelected(e));
   }
 
   async loadCards() {
@@ -126,7 +129,39 @@ export class MCardManager {
     return card;
   }
 
-  createTextCard(content, handle = '') {
+  /**
+   * Opens the edit panel in create mode.
+   *
+   * app.html wires the "New Text" button to `createTextCard()` with no
+   * arguments, so this is a UI action: it reveals #editPanel and marks the mode.
+   * The save path is `saveEditedCard()` in app-bootstrap.js, which reads
+   * #editHandleName and #editContentArea and calls back into this manager.
+   */
+  createTextCard() {
+    const panel = $('editPanel');
+    if (panel) {
+      panel.dataset.mode = 'create';
+      delete panel.dataset.hash;
+      delete panel.dataset.handle;
+      panel.classList.remove('hidden');
+    }
+    const title = $('editPanelTitleText');
+    if (title) title.textContent = 'New Text Card';
+    // The viewer heading doubles as the panel's mode indicator, which is what
+    // the create flow is asserted against.
+    const viewerTitle = $('viewerTitle');
+    if (viewerTitle) viewerTitle.textContent = 'Create New Card';
+    const saveText = $('editSaveButtonText');
+    if (saveText) saveText.textContent = 'Save';
+    const handleInput = $('editHandleName');
+    const contentArea = $('editContentArea');
+    if (handleInput) handleInput.value = '';
+    if (contentArea) contentArea.value = '';
+    return panel;
+  }
+
+  /** Creates a card from explicit values. Used by tests and programmatic callers. */
+  createCardFromValues(content, handle = '') {
     const card = MCard.create(content, { metadata: { kind: 'text' } });
     if (handle) {
       validateHandle(handle);
@@ -173,14 +208,14 @@ export class MCardManager {
   }
 
   async _onSave() {
-    const content = $('newCardContent')?.value ?? '';
-    const handle = $('newCardHandle')?.value ?? '';
+    const content = $('editContentArea')?.value ?? '';
+    const handle = $('editHandleName')?.value ?? '';
     if (!content.trim()) {
       UIComponents.showToast('Content cannot be empty', 'error');
       return;
     }
     try {
-      const card = this.createTextCard(content, handle.trim());
+      const card = this.createCardFromValues(content, handle.trim());
       await this.loadCards();
       await this.viewCard(card.hash.asHex());
       UIComponents.showToast(handle ? `Created card @${handle}` : 'Card created', 'success');
@@ -191,9 +226,16 @@ export class MCardManager {
 
   _onEdit() {
     if (!this.currentCard) return;
-    const content = $('newCardContent');
+    const panel = $('editPanel');
+    if (panel) {
+      panel.dataset.mode = 'edit';
+      panel.dataset.hash = this.currentCard.hash.asHex();
+      panel.classList.remove('hidden');
+    }
+    const content = $('editContentArea');
     if (content) content.value = this.currentCard.getContentAsText();
-    $('inPlaceEditor')?.classList.add('active');
+    const title = $('editPanelTitleText');
+    if (title) title.textContent = 'Edit Card';
   }
 
   async _onFileSelected(event) {
@@ -201,7 +243,7 @@ export class MCardManager {
     if (!file) return;
     const text = await file.text();
     try {
-      const card = this.createTextCard(text, file.name);
+      const card = this.createCardFromValues(text, file.name);
       await this.loadCards();
       await this.viewCard(card.hash.asHex());
       UIComponents.showToast(`Imported ${file.name}`, 'success');
