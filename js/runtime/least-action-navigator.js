@@ -515,3 +515,78 @@ export class LeastActionNavigator {
     }
   }
 }
+
+/**
+ * The fiber bundle map, driven by the registry (CDO-13 DV-03).
+ *
+ * The bundle is pi: E -> B, where B is the kind lattice CDO-10 declares. Earlier
+ * versions of this navigator plotted fibers without their *lattice height*, which
+ * meant there was no potential-energy term to plot at all: Type Lattice states that
+ * "the Software Lagrangian L_soft = T_kin - V_pot uses height on the Type Lattice as
+ * its potential energy metric V_pot".
+ *
+ * Height is therefore not decoration. A fiber declared at *shape* level (a `text`
+ * fiber covering six leaf kinds) sits high on the lattice: it is abstract, it covers
+ * much, and its potential is large. A leaf fiber (`text/plain`) sits at the bottom:
+ * specific, covering one kind, low potential. The geodesic from ambiguity to a
+ * verified type is the path that resolves the most ambiguity for the least work.
+ *
+ * Read from `fibers[]` and the ordering rather than from a hardcoded list, so a fiber
+ * added by data alone appears in the map.
+ *
+ * @param {Array} fibers   the registry's `fibers[]`
+ * @param {object} ordering kind -> supertypes, the full lattice order
+ */
+export function fiberBundleMap(fibers = [], ordering = {}) {
+  const edges = new Map(Object.entries(ordering));
+  for (const f of fibers) if (f.supertypes) edges.set(f.kind, f.supertypes);
+
+  /**
+   * Depth from the top: how many refinements separate a node from its maximal
+   * ancestor. A node with no supertypes is maximal — nearest top, maximum ambiguity.
+   *
+   * Note this is *depth*, not height, and the distinction is not cosmetic: potential
+   * energy is high near the top and low near the bottom, so V_pot is the complement
+   * of depth. Getting this backwards would put the most abstract fiber at zero
+   * potential and the most specific at maximum, which inverts the geodesic.
+   */
+  const depthFromTop = (node, seen = new Set()) => {
+    if (seen.has(node)) return 0; // a cycle cannot raise height; the gate forbids them
+    const supers = edges.get(node) ?? [];
+    if (!supers.length) return 0; // maximal in its branch: nearest the top
+    return 1 + Math.max(...supers.map((s) => depthFromTop(s, new Set([...seen, node]))));
+  };
+
+  const declared = new Set(fibers.map((f) => f.kind));
+  const nodes = new Set([...edges.keys(), ...[...edges.values()].flat()]);
+  const maxDepth = Math.max(0, ...[...nodes].map((n) => depthFromTop(n)));
+
+  const entries = fibers.map((f) => {
+    const depth = depthFromTop(f.kind);
+    // Subsumed kinds: the leaves this fiber covers that have no fiber of their own.
+    const covers = [...nodes].filter(
+      (n) => n !== f.kind && depthFromTop(n) > depth && (edges.get(n) ?? []).includes(f.kind),
+    );
+    return {
+      kind: f.kind,
+      depthFromTop: depth,
+      // V_pot is high near the top (maximum ambiguity) and low near the bottom (a
+      // verified, specific type), so it is the *complement* of depth.
+      V_pot: maxDepth === 0 ? 0 : 1 - depth / maxDepth,
+      covers,
+      // a fiber that covers more resolves more ambiguity per mount, so its geodesic
+      // contribution is larger
+      coverage: 1 + covers.length,
+      exercised: Boolean(f.exercised),
+    };
+  });
+
+  return {
+    base: [...nodes].filter((n) => !declared.has(n)), // the shapes: intermediate nodes
+    fibers: entries,
+    maxDepthFromTop: maxDepth,
+    // the geodesic is the minimum-action path: highest potential first
+    geodesic: [...entries].sort((a, b) => b.V_pot - a.V_pot).map((e) => e.kind),
+    note: 'V_pot is normalised lattice height; the geodesic orders by potential descending',
+  };
+}

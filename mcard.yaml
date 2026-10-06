@@ -156,6 +156,17 @@ navigation:
 # naming only one VCard boundary is `unwitnessed`, never silently admitted.
 correctness:
   note: "the triples are the transition types of the fiber lifecycle CPN"
+  # INV-CDO-27: trust rests on the *verifier*, never on the generator's cleverness.
+  # The verifier here is deliberately small — a guard comparison against the declared
+  # coeffect specification — so it can be read and believed rather than audited.
+  verifier:
+    name: "coeffect-guard-check"
+    kind: "guard comparison"
+    inputs: ["declared coeffects", "resolved Cordis context"]
+    verdict: "the transition is enabled iff every required service resolves"
+    checked_by: "fiber_conformance.mjs :: coeffects_enforced_without_context"
+    simplicity: "a membership test per declared service; no adapter logic is consulted"
+    note: "an adapter's own mount logic is never trusted to decide its own admissibility"
   hoare_triples:
     - id: ht_dispatch_covers_by_subsumption
       transition: t_resolve
