@@ -1,0 +1,846 @@
+{
+  "witness": "cdo-16.fiber-certification",
+  "subject": "mcard:deployment-unit:LandingPage",
+  "emitted_from": {
+    "net": "clm/tests/petri_nets/fiber_lifecycle.yaml",
+    "harness": "scripts/cdo/fiber_conformance.mjs",
+    "unit_lint": "scripts/package-deployment-unit.mjs unit lint"
+  },
+  "certification": {
+    "every_meet_inhabited": {
+      "holds": true,
+      "detail": "15 tokens activated, 15 disposed, 0 leaked"
+    },
+    "no_transition_excluded": {
+      "holds": true,
+      "detail": "no firing on the certified path (15 declared kinds) reached bottom"
+    },
+    "trajectory_inhabited": {
+      "holds": true,
+      "detail": "every token left the working region through a declared transition"
+    }
+  },
+  "conservation": {
+    "activated": 15,
+    "disposed": 15,
+    "leaked": [],
+    "holds": true
+  },
+  "negative_control": {
+    "binding": "totally/unknown-kind",
+    "expected": "no_enabled_transition",
+    "observed": "no_enabled_transition",
+    "holds": true,
+    "note": "an uninhabited kind must halt; this is a control, not a certification failure"
+  },
+  "baldwin_census": {
+    "counted": {
+      "Splitting": 15,
+      "Augmenting": 30,
+      "Excluding": 30
+    },
+    "structural": {
+      "Inverting": "the dispatch ordering itself — an adjunction generates the lattice, it does not fire",
+      "Porting": "the platform axis of the lattice basis; transports the net, it does not fire"
+    },
+    "gated_something": true,
+    "pruned_something": true,
+    "note": "a traversal of zero Splitting moves verified nothing; one of zero Excluding moves pruned nothing"
+  },
+  "correctness": {
+    "triples": 6,
+    "unwitnessed": 0,
+    "verifier": {
+      "name": "coeffect-guard-check",
+      "kind": "guard comparison",
+      "inputs": [
+        "declared coeffects",
+        "resolved Cordis context"
+      ],
+      "verdict": "the transition is enabled iff every required service resolves",
+      "checked_by": "fiber_conformance.mjs :: coeffects_enforced_without_context",
+      "simplicity": "a membership test per declared service; no adapter logic is consulted",
+      "note": "an adapter's own mount logic is never trusted to decide its own admissibility"
+    }
+  },
+  "net": {
+    "places": [
+      "p_pending",
+      "p_loading",
+      "p_active",
+      "p_suspended",
+      "p_unloading",
+      "p_disposed",
+      "p_error"
+    ],
+    "transitions": [
+      "t_resolve",
+      "t_load",
+      "t_activate",
+      "t_suspend",
+      "t_resume",
+      "t_unload",
+      "t_dispose",
+      "t_fail",
+      "t_reap"
+    ],
+    "invariants": [
+      "INV-FIBER-01",
+      "INV-FIBER-02",
+      "INV-FIBER-03",
+      "INV-FIBER-04",
+      "INV-FIBER-05",
+      "INV-FIBER-07",
+      "INV-FIBER-08",
+      "INV-FIBER-09",
+      "INV-FIBER-06"
+    ]
+  },
+  "firings": [
+    {
+      "transition": "t_resolve",
+      "binding": "scalar/value",
+      "pre_marking": "p_pending",
+      "post_marking": "p_pending",
+      "guard": "kind_unresolved",
+      "verdict": "fired",
+      "detail": "exact match"
+    },
+    {
+      "transition": "t_load",
+      "binding": "scalar/value",
+      "pre_marking": "p_pending",
+      "post_marking": "p_loading",
+      "guard": "coeffects_satisfiable",
+      "verdict": "fired",
+      "detail": "context provided"
+    },
+    {
+      "transition": "t_activate",
+      "binding": "scalar/value",
+      "pre_marking": "p_loading",
+      "post_marking": "p_active",
+      "guard": "adapter_mounted_and_inverse_registered",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_resolve",
+      "binding": "text/plain",
+      "pre_marking": "p_pending",
+      "post_marking": "p_pending",
+      "guard": "kind_unresolved",
+      "verdict": "fired",
+      "detail": "exact match"
+    },
+    {
+      "transition": "t_load",
+      "binding": "text/plain",
+      "pre_marking": "p_pending",
+      "post_marking": "p_loading",
+      "guard": "coeffects_satisfiable",
+      "verdict": "fired",
+      "detail": "context provided"
+    },
+    {
+      "transition": "t_activate",
+      "binding": "text/plain",
+      "pre_marking": "p_loading",
+      "post_marking": "p_active",
+      "guard": "adapter_mounted_and_inverse_registered",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_resolve",
+      "binding": "text/markup",
+      "pre_marking": "p_pending",
+      "post_marking": "p_pending",
+      "guard": "kind_unresolved",
+      "verdict": "fired",
+      "detail": "exact match"
+    },
+    {
+      "transition": "t_load",
+      "binding": "text/markup",
+      "pre_marking": "p_pending",
+      "post_marking": "p_loading",
+      "guard": "coeffects_satisfiable",
+      "verdict": "fired",
+      "detail": "context provided"
+    },
+    {
+      "transition": "t_activate",
+      "binding": "text/markup",
+      "pre_marking": "p_loading",
+      "post_marking": "p_active",
+      "guard": "adapter_mounted_and_inverse_registered",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_resolve",
+      "binding": "text/markdown",
+      "pre_marking": "p_pending",
+      "post_marking": "p_pending",
+      "guard": "kind_unresolved",
+      "verdict": "fired",
+      "detail": "exact match"
+    },
+    {
+      "transition": "t_load",
+      "binding": "text/markdown",
+      "pre_marking": "p_pending",
+      "post_marking": "p_loading",
+      "guard": "coeffects_satisfiable",
+      "verdict": "fired",
+      "detail": "context provided"
+    },
+    {
+      "transition": "t_activate",
+      "binding": "text/markdown",
+      "pre_marking": "p_loading",
+      "post_marking": "p_active",
+      "guard": "adapter_mounted_and_inverse_registered",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_resolve",
+      "binding": "text/script",
+      "pre_marking": "p_pending",
+      "post_marking": "p_pending",
+      "guard": "kind_unresolved",
+      "verdict": "fired",
+      "detail": "exact match"
+    },
+    {
+      "transition": "t_load",
+      "binding": "text/script",
+      "pre_marking": "p_pending",
+      "post_marking": "p_loading",
+      "guard": "coeffects_satisfiable",
+      "verdict": "fired",
+      "detail": "context provided"
+    },
+    {
+      "transition": "t_activate",
+      "binding": "text/script",
+      "pre_marking": "p_loading",
+      "post_marking": "p_active",
+      "guard": "adapter_mounted_and_inverse_registered",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_resolve",
+      "binding": "text/style",
+      "pre_marking": "p_pending",
+      "post_marking": "p_pending",
+      "guard": "kind_unresolved",
+      "verdict": "fired",
+      "detail": "exact match"
+    },
+    {
+      "transition": "t_load",
+      "binding": "text/style",
+      "pre_marking": "p_pending",
+      "post_marking": "p_loading",
+      "guard": "coeffects_satisfiable",
+      "verdict": "fired",
+      "detail": "context provided"
+    },
+    {
+      "transition": "t_activate",
+      "binding": "text/style",
+      "pre_marking": "p_loading",
+      "post_marking": "p_active",
+      "guard": "adapter_mounted_and_inverse_registered",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_resolve",
+      "binding": "text/data",
+      "pre_marking": "p_pending",
+      "post_marking": "p_pending",
+      "guard": "kind_unresolved",
+      "verdict": "fired",
+      "detail": "exact match"
+    },
+    {
+      "transition": "t_load",
+      "binding": "text/data",
+      "pre_marking": "p_pending",
+      "post_marking": "p_loading",
+      "guard": "coeffects_satisfiable",
+      "verdict": "fired",
+      "detail": "context provided"
+    },
+    {
+      "transition": "t_activate",
+      "binding": "text/data",
+      "pre_marking": "p_loading",
+      "post_marking": "p_active",
+      "guard": "adapter_mounted_and_inverse_registered",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_resolve",
+      "binding": "structured/data",
+      "pre_marking": "p_pending",
+      "post_marking": "p_pending",
+      "guard": "kind_unresolved",
+      "verdict": "fired",
+      "detail": "exact match"
+    },
+    {
+      "transition": "t_load",
+      "binding": "structured/data",
+      "pre_marking": "p_pending",
+      "post_marking": "p_loading",
+      "guard": "coeffects_satisfiable",
+      "verdict": "fired",
+      "detail": "context provided"
+    },
+    {
+      "transition": "t_activate",
+      "binding": "structured/data",
+      "pre_marking": "p_loading",
+      "post_marking": "p_active",
+      "guard": "adapter_mounted_and_inverse_registered",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_resolve",
+      "binding": "structured/triad",
+      "pre_marking": "p_pending",
+      "post_marking": "p_pending",
+      "guard": "kind_unresolved",
+      "verdict": "fired",
+      "detail": "exact match"
+    },
+    {
+      "transition": "t_load",
+      "binding": "structured/triad",
+      "pre_marking": "p_pending",
+      "post_marking": "p_loading",
+      "guard": "coeffects_satisfiable",
+      "verdict": "fired",
+      "detail": "context provided"
+    },
+    {
+      "transition": "t_activate",
+      "binding": "structured/triad",
+      "pre_marking": "p_loading",
+      "post_marking": "p_active",
+      "guard": "adapter_mounted_and_inverse_registered",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_resolve",
+      "binding": "binary/image",
+      "pre_marking": "p_pending",
+      "post_marking": "p_pending",
+      "guard": "kind_unresolved",
+      "verdict": "fired",
+      "detail": "exact match"
+    },
+    {
+      "transition": "t_load",
+      "binding": "binary/image",
+      "pre_marking": "p_pending",
+      "post_marking": "p_loading",
+      "guard": "coeffects_satisfiable",
+      "verdict": "fired",
+      "detail": "context provided"
+    },
+    {
+      "transition": "t_activate",
+      "binding": "binary/image",
+      "pre_marking": "p_loading",
+      "post_marking": "p_active",
+      "guard": "adapter_mounted_and_inverse_registered",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_resolve",
+      "binding": "binary/audio",
+      "pre_marking": "p_pending",
+      "post_marking": "p_pending",
+      "guard": "kind_unresolved",
+      "verdict": "fired",
+      "detail": "exact match"
+    },
+    {
+      "transition": "t_load",
+      "binding": "binary/audio",
+      "pre_marking": "p_pending",
+      "post_marking": "p_loading",
+      "guard": "coeffects_satisfiable",
+      "verdict": "fired",
+      "detail": "context provided"
+    },
+    {
+      "transition": "t_activate",
+      "binding": "binary/audio",
+      "pre_marking": "p_loading",
+      "post_marking": "p_active",
+      "guard": "adapter_mounted_and_inverse_registered",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_resolve",
+      "binding": "binary/3d",
+      "pre_marking": "p_pending",
+      "post_marking": "p_pending",
+      "guard": "kind_unresolved",
+      "verdict": "fired",
+      "detail": "exact match"
+    },
+    {
+      "transition": "t_load",
+      "binding": "binary/3d",
+      "pre_marking": "p_pending",
+      "post_marking": "p_loading",
+      "guard": "coeffects_satisfiable",
+      "verdict": "fired",
+      "detail": "context provided"
+    },
+    {
+      "transition": "t_activate",
+      "binding": "binary/3d",
+      "pre_marking": "p_loading",
+      "post_marking": "p_active",
+      "guard": "adapter_mounted_and_inverse_registered",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_resolve",
+      "binding": "binary/octet",
+      "pre_marking": "p_pending",
+      "post_marking": "p_pending",
+      "guard": "kind_unresolved",
+      "verdict": "fired",
+      "detail": "exact match"
+    },
+    {
+      "transition": "t_load",
+      "binding": "binary/octet",
+      "pre_marking": "p_pending",
+      "post_marking": "p_loading",
+      "guard": "coeffects_satisfiable",
+      "verdict": "fired",
+      "detail": "context provided"
+    },
+    {
+      "transition": "t_activate",
+      "binding": "binary/octet",
+      "pre_marking": "p_loading",
+      "post_marking": "p_active",
+      "guard": "adapter_mounted_and_inverse_registered",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_resolve",
+      "binding": "satori/message",
+      "pre_marking": "p_pending",
+      "post_marking": "p_pending",
+      "guard": "kind_unresolved",
+      "verdict": "fired",
+      "detail": "exact match"
+    },
+    {
+      "transition": "t_load",
+      "binding": "satori/message",
+      "pre_marking": "p_pending",
+      "post_marking": "p_loading",
+      "guard": "coeffects_satisfiable",
+      "verdict": "fired",
+      "detail": "context provided"
+    },
+    {
+      "transition": "t_activate",
+      "binding": "satori/message",
+      "pre_marking": "p_loading",
+      "post_marking": "p_active",
+      "guard": "adapter_mounted_and_inverse_registered",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_resolve",
+      "binding": "executable/pcard",
+      "pre_marking": "p_pending",
+      "post_marking": "p_pending",
+      "guard": "kind_unresolved",
+      "verdict": "fired",
+      "detail": "exact match"
+    },
+    {
+      "transition": "t_load",
+      "binding": "executable/pcard",
+      "pre_marking": "p_pending",
+      "post_marking": "p_loading",
+      "guard": "coeffects_satisfiable",
+      "verdict": "fired",
+      "detail": "context provided"
+    },
+    {
+      "transition": "t_activate",
+      "binding": "executable/pcard",
+      "pre_marking": "p_loading",
+      "post_marking": "p_active",
+      "guard": "adapter_mounted_and_inverse_registered",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_unload",
+      "binding": "scalar/value",
+      "pre_marking": "p_active",
+      "post_marking": "p_unloading",
+      "guard": "inverse_available_to_unwind",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_dispose",
+      "binding": "scalar/value",
+      "pre_marking": "p_unloading",
+      "post_marking": "p_disposed",
+      "guard": null,
+      "verdict": "fired",
+      "detail": "disposables 0 -> 0"
+    },
+    {
+      "transition": "t_unload",
+      "binding": "text/plain",
+      "pre_marking": "p_active",
+      "post_marking": "p_unloading",
+      "guard": "inverse_available_to_unwind",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_dispose",
+      "binding": "text/plain",
+      "pre_marking": "p_unloading",
+      "post_marking": "p_disposed",
+      "guard": null,
+      "verdict": "fired",
+      "detail": "disposables 0 -> 0"
+    },
+    {
+      "transition": "t_unload",
+      "binding": "text/markup",
+      "pre_marking": "p_active",
+      "post_marking": "p_unloading",
+      "guard": "inverse_available_to_unwind",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_dispose",
+      "binding": "text/markup",
+      "pre_marking": "p_unloading",
+      "post_marking": "p_disposed",
+      "guard": null,
+      "verdict": "fired",
+      "detail": "disposables 0 -> 0"
+    },
+    {
+      "transition": "t_unload",
+      "binding": "text/markdown",
+      "pre_marking": "p_active",
+      "post_marking": "p_unloading",
+      "guard": "inverse_available_to_unwind",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_dispose",
+      "binding": "text/markdown",
+      "pre_marking": "p_unloading",
+      "post_marking": "p_disposed",
+      "guard": null,
+      "verdict": "fired",
+      "detail": "disposables 0 -> 0"
+    },
+    {
+      "transition": "t_unload",
+      "binding": "text/script",
+      "pre_marking": "p_active",
+      "post_marking": "p_unloading",
+      "guard": "inverse_available_to_unwind",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_dispose",
+      "binding": "text/script",
+      "pre_marking": "p_unloading",
+      "post_marking": "p_disposed",
+      "guard": null,
+      "verdict": "fired",
+      "detail": "disposables 0 -> 0"
+    },
+    {
+      "transition": "t_unload",
+      "binding": "text/style",
+      "pre_marking": "p_active",
+      "post_marking": "p_unloading",
+      "guard": "inverse_available_to_unwind",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_dispose",
+      "binding": "text/style",
+      "pre_marking": "p_unloading",
+      "post_marking": "p_disposed",
+      "guard": null,
+      "verdict": "fired",
+      "detail": "disposables 0 -> 0"
+    },
+    {
+      "transition": "t_unload",
+      "binding": "text/data",
+      "pre_marking": "p_active",
+      "post_marking": "p_unloading",
+      "guard": "inverse_available_to_unwind",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_dispose",
+      "binding": "text/data",
+      "pre_marking": "p_unloading",
+      "post_marking": "p_disposed",
+      "guard": null,
+      "verdict": "fired",
+      "detail": "disposables 0 -> 0"
+    },
+    {
+      "transition": "t_unload",
+      "binding": "structured/data",
+      "pre_marking": "p_active",
+      "post_marking": "p_unloading",
+      "guard": "inverse_available_to_unwind",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_dispose",
+      "binding": "structured/data",
+      "pre_marking": "p_unloading",
+      "post_marking": "p_disposed",
+      "guard": null,
+      "verdict": "fired",
+      "detail": "disposables 0 -> 0"
+    },
+    {
+      "transition": "t_unload",
+      "binding": "structured/triad",
+      "pre_marking": "p_active",
+      "post_marking": "p_unloading",
+      "guard": "inverse_available_to_unwind",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_dispose",
+      "binding": "structured/triad",
+      "pre_marking": "p_unloading",
+      "post_marking": "p_disposed",
+      "guard": null,
+      "verdict": "fired",
+      "detail": "disposables 0 -> 0"
+    },
+    {
+      "transition": "t_unload",
+      "binding": "binary/image",
+      "pre_marking": "p_active",
+      "post_marking": "p_unloading",
+      "guard": "inverse_available_to_unwind",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_dispose",
+      "binding": "binary/image",
+      "pre_marking": "p_unloading",
+      "post_marking": "p_disposed",
+      "guard": null,
+      "verdict": "fired",
+      "detail": "disposables 0 -> 0"
+    },
+    {
+      "transition": "t_unload",
+      "binding": "binary/audio",
+      "pre_marking": "p_active",
+      "post_marking": "p_unloading",
+      "guard": "inverse_available_to_unwind",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_dispose",
+      "binding": "binary/audio",
+      "pre_marking": "p_unloading",
+      "post_marking": "p_disposed",
+      "guard": null,
+      "verdict": "fired",
+      "detail": "disposables 0 -> 0"
+    },
+    {
+      "transition": "t_unload",
+      "binding": "binary/3d",
+      "pre_marking": "p_active",
+      "post_marking": "p_unloading",
+      "guard": "inverse_available_to_unwind",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_dispose",
+      "binding": "binary/3d",
+      "pre_marking": "p_unloading",
+      "post_marking": "p_disposed",
+      "guard": null,
+      "verdict": "fired",
+      "detail": "disposables 0 -> 0"
+    },
+    {
+      "transition": "t_unload",
+      "binding": "binary/octet",
+      "pre_marking": "p_active",
+      "post_marking": "p_unloading",
+      "guard": "inverse_available_to_unwind",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_dispose",
+      "binding": "binary/octet",
+      "pre_marking": "p_unloading",
+      "post_marking": "p_disposed",
+      "guard": null,
+      "verdict": "fired",
+      "detail": "disposables 0 -> 0"
+    },
+    {
+      "transition": "t_unload",
+      "binding": "satori/message",
+      "pre_marking": "p_active",
+      "post_marking": "p_unloading",
+      "guard": "inverse_available_to_unwind",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_dispose",
+      "binding": "satori/message",
+      "pre_marking": "p_unloading",
+      "post_marking": "p_disposed",
+      "guard": null,
+      "verdict": "fired",
+      "detail": "disposables 0 -> 0"
+    },
+    {
+      "transition": "t_unload",
+      "binding": "executable/pcard",
+      "pre_marking": "p_active",
+      "post_marking": "p_unloading",
+      "guard": "inverse_available_to_unwind",
+      "verdict": "fired",
+      "detail": null
+    },
+    {
+      "transition": "t_dispose",
+      "binding": "executable/pcard",
+      "pre_marking": "p_unloading",
+      "post_marking": "p_disposed",
+      "guard": null,
+      "verdict": "fired",
+      "detail": "disposables 0 -> 0"
+    }
+  ],
+  "control_firings": [
+    {
+      "transition": "t_load",
+      "binding": "totally/unknown-kind",
+      "pre_marking": "p_pending",
+      "post_marking": null,
+      "guard": "coeffects_satisfiable",
+      "verdict": "no_enabled_transition",
+      "detail": "uninhabited: no covering fiber and no fallback"
+    }
+  ],
+  "checks": [
+    {
+      "name": "every_kind_activates_with_context",
+      "passed": true
+    },
+    {
+      "name": "coeffects_enforced_without_context",
+      "passed": true
+    },
+    {
+      "name": "adapter_cannot_reach_a_disposable_list",
+      "passed": true
+    },
+    {
+      "name": "inverse_survives_a_failing_mount",
+      "passed": true
+    },
+    {
+      "name": "no_kind_branch_in_dispatcher",
+      "passed": true
+    },
+    {
+      "name": "disposal_is_guaranteed",
+      "passed": true
+    },
+    {
+      "name": "observational_equivalence",
+      "passed": true
+    },
+    {
+      "name": "inspector_equals_registry",
+      "passed": true
+    },
+    {
+      "name": "subsumption_covers_undeclared_subtypes",
+      "passed": true
+    },
+    {
+      "name": "bottom_is_a_halt_not_a_blank",
+      "passed": true
+    },
+    {
+      "name": "marking_tracks_tokens_between_places",
+      "passed": true
+    },
+    {
+      "name": "error_token_enables_reap",
+      "passed": true
+    },
+    {
+      "name": "fallback_labels_unclassified",
+      "passed": true
+    }
+  ],
+  "excluded": [
+    "tauri: a native multi-webview runtime, reproducible nowhere in a browser (CDO-12)",
+    "reflow/RTL/containment: rendered properties, measured by the browser suite not by this witness"
+  ],
+  "certified": true
+}

@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fiber Inspector — the correctness panel</title>
+<style>
+  :root { --fg: #111; --bg: #fff; --line: #767676; --muted: #555; --warn: #8a4b00; }
+  html[data-theme="dark"] { --fg: #f2f2f2; --bg: #101014; --line: #9a9aa2; --muted: #b9b9c0; --warn: #ffb454; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font: 15px/1.5 system-ui, sans-serif; }
+  main { padding: 16px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  h2 { font-size: 15px; margin: 24px 0 8px; border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+  .note { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); }
+  .unwitnessed { color: var(--warn); font-weight: 600; }
+  .place { display: inline-block; border: 1px solid var(--line); border-radius: 4px;
+           padding: 2px 6px; margin: 2px 4px 2px 0; font-family: ui-monospace, monospace; font-size: 12px; }
+  .place[data-empty="true"] { opacity: 0.45; }
+  .enabled { color: #0a7d2e; font-weight: 600; }
+  .disabled { color: var(--muted); }
+  code { font-family: ui-monospace, monospace; font-size: 12px; }
+</style>
+</head>
+<body>
+<main id="inspector" role="main">
+  <h1>Fiber Inspector</h1>
+  <p class="note">
+    A view over the <strong>marking</strong>, not over a list. Places are the lifecycle
+    states declared in <code>fiber_lifecycle.yaml</code>; a token is one card being
+    displayed by one fiber. A fiber that has never rendered is marked
+    <span class="unwitnessed">unwitnessed</span>, never as healthy.
+  </p>
+  <div id="panel-status" data-ready="false"></div>
+</main>
+
+<script>
+  // Bare specifiers must resolve before the module below is evaluated.
+  const { protocol, hostname, port } = window.location;
+  const base = `${protocol}//${hostname}${port && port !== '80' && port !== '443' ? ':' + port : ''}`;
+  const map = document.createElement('script');
+  map.type = 'importmap';
+  map.textContent = JSON.stringify({
+    imports: { 'clm-kernel': `${base}/public/js/vendor/clm-kernel.bundle.js` },
+  });
+  document.currentScript.parentNode.insertBefore(map, document.currentScript.nextSibling);
+</script>
+
+<script type="module">
+/**
+ * The CDO-14 correctness panel.
+ *
+ * Its grounding says the panel is the *typing of the fiber set* and must therefore
+ * read the registry, the mount witnesses and the conformance verdicts rather than
+ * keep its own list. So every section below is derived from one of three sources,
+ * and none of them is a list maintained here:
+ *
+ *   inspectorReport()   the marking, the enabled transitions, the exercised state
+ *   unit lint           the six Hoare triples with their partial/total status, and the verifier
+ *   the witness         the Baldwin census, conservation, and what the run excluded
+ */
+import { FiberRegistry } from './public/js/fibers/registry.js';
+import { MCard } from 'clm-kernel';
+import { Context, Service } from 'clm-kernel';
+
+const q = new URLSearchParams(location.search);
+document.documentElement.dataset.theme = q.get('display_mode') ?? 'light';
+
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function section(title, body, note) {
+  return `<h2>${esc(title)}</h2>${note ? `<p class="note">${note}</p>` : ''}${body}`;
+}
+
+async function main() {
+  const [data, lint, witness] = await Promise.all([
+    fetch('./public/conformance/harness-data.json').then((r) => r.json()),
+    fetch('./public/conformance/unit-lint.json').then((r) => r.json()),
+    fetch('./public/conformance/witness.json').then((r) => r.json()),
+  ]);
+
+  const root = new Context();
+  for (const name of ['highlighter', 'media', 'renderer']) {
+    class Svc extends Service { constructor(ctx) { super(ctx, name); } }
+    root.plugin(Svc);
+  }
+  await new Promise((r) => setTimeout(r, 50));
+
+  const registry = new FiberRegistry(data.registry, { ctx: root, ordering: data.ordering });
+  // Exercise the declared kinds so the panel shows a real marking rather than an
+  // empty one. A panel over nothing proves nothing.
+  for (const f of data.registry.fibers) {
+    const entry = data.taxonomy.kinds.find((k) => k.kind === f.kind);
+    if (!entry) continue;
+    const card = MCard.fromJSON(data.cards[f.kind]);
+    try {
+      const { lifecycle, adapter, fallback, scope } = await registry.mountCard(card, null, f.kind);
+      adapter.mount(card, null, scope, { fallback });
+      void lifecycle;
+      await registry.unmountCard(f.kind);
+    } catch { /* a fiber that refuses is reported by the marking, not hidden */ }
+  }
+
+  const report = registry.inspectorReport();
+  const marking = report.marking;
+
+  // ── the marking ────────────────────────────────────────────────────────────
+  const placeChips = Object.entries(marking.places).map(([place, tokens]) =>
+    `<span class="place" data-empty="${tokens.length === 0}" data-place="${esc(place)}">` +
+    `${esc(place)} · ${tokens.length}</span>`).join('');
+
+  // ── enabled transitions ────────────────────────────────────────────────────
+  const enabledRows = report.enabledTransitions.map((t) =>
+    `<tr data-transition="${esc(t.transition)}"><td><code>${esc(t.transition)}</code></td>` +
+    `<td class="${t.enabled ? 'enabled' : 'disabled'}">${t.enabled ? 'enabled' : 'disabled'}</td>` +
+    `<td><code>${esc(t.guard ?? '—')}</code></td></tr>`).join('');
+
+  // ── the typing: the triples ────────────────────────────────────────────────
+  const tripleRows = lint.hoare_triples.map((t) =>
+    `<tr data-triple="${esc(t.id)}"><td><code>${esc(t.id)}</code></td>` +
+    `<td><code>${esc(t.transition)}</code></td>` +
+    `<td>${esc(t.status)}</td>` +
+    `<td>${esc(t.vcard_pre)}</td><td>${esc(t.vcard_post)}</td></tr>`).join('');
+
+  const verifier = lint.verifier;
+  const verifierBlock = verifier
+    ? `<table><tbody>
+         <tr><th>name</th><td><code>${esc(verifier.name)}</code></td></tr>
+         <tr><th>kind</th><td>${esc(verifier.kind)}</td></tr>
+         <tr><th>verdict</th><td>${esc(verifier.verdict)}</td></tr>
+         <tr><th>simplicity</th><td>${esc(verifier.simplicity)}</td></tr>
+       </tbody></table>`
+    : '<p class="note">no verifier declared — trust has nowhere to rest (INV-CDO-27)</p>';
+
+  // ── the fiber set, with never-exercised marked ─────────────────────────────
+  const fiberRows = report.fibers.map((f) =>
+    `<tr data-kind="${esc(f.kind)}"><td><code>${esc(f.kind)}</code></td>` +
+    `<td>${esc(f.payload_shape)}</td>` +
+    `<td>${f.exercised ? 'exercised' : '<span class="unwitnessed">unwitnessed</span>'}</td>` +
+    `<td>${f.mountCount}</td>` +
+    `<td>${f.coeffectsSatisfied ? 'satisfied' : '<span class="unwitnessed">unresolved</span>'}</td>` +
+    `<td>${esc(f.budget?.archetype ?? '—')}</td></tr>`).join('');
+
+  const census = witness.baldwin_census?.counted ?? {};
+  const censusRows = Object.entries(census).map(([op, n]) =>
+    `<tr><td>${esc(op)}</td><td>${n}</td></tr>`).join('');
+
+  const excluded = (witness.excluded ?? []).map((e) => `<li>${esc(e)}</li>`).join('');
+
+  document.getElementById('inspector').insertAdjacentHTML('beforeend', [
+    section('Marking', `<div>${placeChips}</div>`,
+      `total tokens: ${marking.total} · non-empty: ${marking.nonEmpty.join(', ') || 'none'}`),
+    section('Enabled transitions', `<table><thead><tr><th>transition</th><th>state</th><th>guard</th></tr></thead><tbody>${enabledRows}</tbody></table>`,
+      'a guard that fails shows as a <em>disabled</em> transition, not as a failure — the net simply has no enabled move'),
+    section('The typing — Hoare triples', `<table><thead><tr><th>triple</th><th>transition</th><th>status</th><th>V<sub>pre</sub></th><th>V<sub>post</sub></th></tr></thead><tbody>${tripleRows}</tbody></table>`,
+      `${lint.hoare_triples.length} triples · ${lint.unwitnessed_triples} unwitnessed · each is the type of a transition in the fiber net`),
+    section('Verifier', verifierBlock, 'trust rests here, never on the adapter\u2019s own logic'),
+    section('Fiber set', `<table><thead><tr><th>kind</th><th>shape</th><th>state</th><th>mounts</th><th>coeffects</th><th>budget</th></tr></thead><tbody>${fiberRows}</tbody></table>`,
+      'never-exercised is marked, because "declared" and "working" are different claims'),
+    section('Baldwin move census', `<table><thead><tr><th>operator</th><th>count</th></tr></thead><tbody>${censusRows}</tbody></table>`,
+      `gated something: ${witness.baldwin_census?.gated_something} · pruned something: ${witness.baldwin_census?.pruned_something}`),
+    section('Certification', `<p>certified: <strong>${witness.certified}</strong></p><ul>${excluded}</ul>`,
+      'what the run does <em>not</em> cover, named rather than implied'),
+  ].join(''));
+
+  const status = document.getElementById('panel-status');
+  status.dataset.ready = 'true';
+  status.dataset.fibers = String(report.fibers.length);
+  status.dataset.neverExercised = String(report.totals.neverExercised.length);
+  window.__FIBER_PANEL__ = {
+    marking, enabled: report.enabledTransitions, totals: report.totals,
+    triples: lint.hoare_triples.length, unwitnessed: lint.unwitnessed_triples,
+    verifier: verifier?.name ?? null, census, certified: witness.certified,
+  };
+}
+
+main().catch((e) => {
+  const status = document.getElementById('panel-status');
+  status.dataset.ready = 'error';
+  status.textContent = String(e.message ?? e);
+});
+</script>
+</body>
+</html>

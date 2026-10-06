@@ -1,0 +1,141 @@
+{
+  "status": "success",
+  "command": "unit lint",
+  "unit": "LandingPage",
+  "role": "meta-portal-deployment-unit",
+  "archetype": "meta_portal_surface",
+  "safety": {
+    "invariants": [
+      {
+        "INV-CDO-09": "secrets (.env) are never captured into CAS"
+      },
+      {
+        "INV-CDO-10": "unit identity is the triple (directory handle, submodule commit, root hash)"
+      },
+      {
+        "INV-CDO-14": "visual diffs exceeding tolerance require explicit human witness re-pinning"
+      },
+      {
+        "INV-CDO-15": "implementation-neutral test manifests evaluate univalently across distinct runner adapters"
+      },
+      {
+        "INV-CDO-16": "admitted units verify parameterized test cases across the declared Type Lattice basis"
+      },
+      {
+        "INV-CDO-17": "observability and performance signals are emitted via Grafana Faro across lattice variations"
+      },
+      {
+        "INV-REF-03": "G-Set Immortality (monotonic append-only storage; no card deletions)"
+      }
+    ],
+    "count": 7
+  },
+  "liveness": {
+    "goals": [],
+    "count": 0
+  },
+  "safety_only": true,
+  "verifier": {
+    "name": "coeffect-guard-check",
+    "kind": "guard comparison",
+    "inputs": [
+      "declared coeffects",
+      "resolved Cordis context"
+    ],
+    "verdict": "the transition is enabled iff every required service resolves",
+    "checked_by": "fiber_conformance.mjs :: coeffects_enforced_without_context",
+    "simplicity": "a membership test per declared service; no adapter logic is consulted",
+    "note": "an adapter's own mount logic is never trusted to decide its own admissibility"
+  },
+  "hoare_triples": [
+    {
+      "id": "ht_dispatch_covers_by_subsumption",
+      "transition": "t_resolve",
+      "vcard_pre": "vcard:kind_declared_or_subsumed",
+      "vcard_post": "vcard:covered_by_most_specific_fiber",
+      "status": "total",
+      "budget": {
+        "archetype": "wearable",
+        "max_bytes": 2097152
+      },
+      "note": "colour refinement: t_resolve changes the token from mcard:unclassified to the kind of the covering fiber. A kind that is not declared but is subsumed resolves through that fiber; exact matching would return ⊥ here"
+    },
+    {
+      "id": "ht_load_requires_satisfiable_coeffects",
+      "transition": "t_load",
+      "vcard_pre": "vcard:coeffects_satisfiable",
+      "vcard_post": "vcard:token_in_p_loading",
+      "status": "partial",
+      "budget": {
+        "archetype": "mobile",
+        "max_bytes": 10485760
+      },
+      "note": "partial, not total: a fiber whose declared services are unsatisfiable has no enabled binding, so the transition is not defined on all inputs"
+    },
+    {
+      "id": "ht_activate_registers_the_inverse",
+      "transition": "t_activate",
+      "vcard_pre": "vcard:token_in_p_loading",
+      "vcard_post": "vcard:token_in_p_active_and_inverse_registered",
+      "status": "total",
+      "budget": {
+        "archetype": "mobile",
+        "max_bytes": 10485760
+      },
+      "note": "the postcondition names the inverse, because a token reaching p_active without one is the leak the disposal invariant catches"
+    },
+    {
+      "id": "ht_dispose_reaches_the_sink",
+      "transition": "t_dispose",
+      "vcard_pre": "vcard:token_in_p_unloading",
+      "vcard_post": "vcard:token_in_p_disposed_and_disposables_empty",
+      "status": "total",
+      "budget": {
+        "archetype": "wearable",
+        "max_bytes": 2097152
+      },
+      "note": "conservation: the token arrives in the sink and the disposable list is empty"
+    },
+    {
+      "id": "ht_bottom_halts_with_zero_side_effects",
+      "transition": "t_load",
+      "vcard_pre": "vcard:no_covering_fiber_and_no_fallback",
+      "vcard_post": "vcard:halted_before_guard_created",
+      "status": "total",
+      "budget": {
+        "archetype": "wearable",
+        "max_bytes": 2097152
+      },
+      "note": "the ⊥ case: the meet is empty, so no transition is enabled. The halt happens before the guard exists, which is what makes zero side-effects structural rather than a promise"
+    },
+    {
+      "id": "ht_reap_accounts_for_a_failed_token",
+      "transition": "t_reap",
+      "vcard_pre": "vcard:token_in_p_error",
+      "vcard_post": "vcard:token_in_p_disposed",
+      "status": "total",
+      "budget": {
+        "archetype": "wearable",
+        "max_bytes": 2097152
+      },
+      "note": "reaping, not resurrection: the failed token reaches the sink and never returns to a working place. This is the arc that makes the net sound"
+    }
+  ],
+  "unwitnessed_triples": 0,
+  "self_refinement": {
+    "subject": "mcard:deployment-unit:LandingPage",
+    "stages": [
+      "capture",
+      "assess",
+      "decide",
+      "edit",
+      "island_bench",
+      "witness"
+    ],
+    "certified_turns": [],
+    "current_turn": null,
+    "note": "closure is one certified turn, not a shipped feature (INV-CDO-32)"
+  },
+  "correctness_note": "correctness is the C-layer runtime facet, distinct from the A-layer consistency of its specification",
+  "subject_check": "turn subject must be 'mcard:deployment-unit:LandingPage'"
+}
