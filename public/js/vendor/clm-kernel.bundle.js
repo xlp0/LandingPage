@@ -37,6 +37,57 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
+// public/js/mcard-kernel/node-shims/buffer.js
+var BufferShim;
+var init_buffer = __esm({
+  "public/js/mcard-kernel/node-shims/buffer.js"() {
+    "use strict";
+    BufferShim = class _BufferShim extends Uint8Array {
+      static from(input, encoding) {
+        if (typeof input === "string") {
+          if (encoding === "base64") {
+            const bin = atob(input);
+            const out = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+            return new _BufferShim(out.buffer);
+          }
+          if (encoding === "hex") {
+            const out = new Uint8Array(input.length / 2);
+            for (let i = 0; i < out.length; i++) out[i] = parseInt(input.substr(i * 2, 2), 16);
+            return new _BufferShim(out.buffer);
+          }
+          return new _BufferShim(new TextEncoder().encode(input).buffer);
+        }
+        if (input instanceof ArrayBuffer) return new _BufferShim(input);
+        if (ArrayBuffer.isView(input)) {
+          return new _BufferShim(input.buffer.slice(input.byteOffset, input.byteOffset + input.byteLength));
+        }
+        if (Array.isArray(input)) return new _BufferShim(new Uint8Array(input).buffer);
+        throw new TypeError("Buffer shim: unsupported input");
+      }
+      static isBuffer(v) {
+        return v instanceof _BufferShim || v instanceof Uint8Array;
+      }
+      static alloc(n) {
+        return new _BufferShim(new Uint8Array(n).buffer);
+      }
+      toString(encoding = "utf8") {
+        const bytes = this;
+        if (encoding === "base64") {
+          let s = "";
+          for (const b of bytes) s += String.fromCharCode(b);
+          return btoa(s);
+        }
+        if (encoding === "hex") {
+          return [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("");
+        }
+        if (encoding === "utf8" || encoding === "utf-8") return new TextDecoder().decode(bytes);
+        throw new Error(`Buffer shim: unsupported encoding '${encoding}'`);
+      }
+    };
+  }
+});
+
 // public/js/mcard-kernel/node-shims/crypto.js
 function rotr(x, n) {
   return x >>> n | x << 32 - n;
@@ -121,6 +172,7 @@ function randomBytes(n) {
 var K, Hash;
 var init_crypto = __esm({
   "public/js/mcard-kernel/node-shims/crypto.js"() {
+    init_buffer();
     K = [
       1116352408,
       1899447441,
@@ -229,6 +281,7 @@ __export(fs_exports, {
 var unavailable, readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync, rmSync, promises, fs_default;
 var init_fs = __esm({
   "public/js/mcard-kernel/node-shims/fs.js"() {
+    init_buffer();
     unavailable = (name) => () => {
       throw new Error(`fs shim: '${name}' is a Node-only API and is unavailable in the browser`);
     };
@@ -309,6 +362,7 @@ function isAbsolute(p) {
 var sep, posix, path_default;
 var init_path = __esm({
   "public/js/mcard-kernel/node-shims/path.js"() {
+    init_buffer();
     sep = "/";
     posix = { sep };
     path_default = { sep, posix, join, normalize, dirname, basename, extname, resolve, relative, isAbsolute };
@@ -319,6 +373,7 @@ var init_path = __esm({
 var require_browser = __commonJS({
   "node_modules/ws/browser.js"(exports, module) {
     "use strict";
+    init_buffer();
     module.exports = function() {
       throw new Error(
         "ws does not work in the browser. Browser clients must use the native WebSocket object"
@@ -327,7 +382,23 @@ var require_browser = __commonJS({
   }
 });
 
+// public/js/mcard-kernel/bundle-entry.js
+init_buffer();
+
+// public/js/mcard-kernel/compat.js
+init_buffer();
+
+// node_modules/clm-kernel/dist/index.js
+init_buffer();
+
+// node_modules/clm-kernel/dist/chunk-AOSZNTDH.js
+init_buffer();
+
+// node_modules/clm-kernel/dist/chunk-EXLRJ3FR.js
+init_buffer();
+
 // node_modules/clm-kernel/dist/chunk-R5U7XKVJ.js
+init_buffer();
 var __defProp2 = Object.defineProperty;
 var __require2 = /* @__PURE__ */ ((x) => typeof __require !== "undefined" ? __require : typeof Proxy !== "undefined" ? new Proxy(x, {
   get: (a, b) => (typeof __require !== "undefined" ? __require : a)[b]
@@ -498,17 +569,156 @@ var X25519_SPKI_PREFIX = new Uint8Array([
   0
 ]);
 function toBuffer(arr) {
-  if (typeof Buffer !== "undefined" && typeof Buffer.from === "function") {
-    return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength);
+  if (typeof BufferShim !== "undefined" && typeof BufferShim.from === "function") {
+    return BufferShim.from(arr.buffer, arr.byteOffset, arr.byteLength);
   }
   return arr;
 }
+
+// node_modules/clm-kernel/dist/chunk-RPWRJJO2.js
+init_buffer();
+var DisposableList = class {
+  #disposers = [];
+  #disposed = false;
+  /** Register a disposer function. Returns the list for chaining. */
+  add(disposer) {
+    if (this.#disposed) {
+      throw new Error("DisposableList: cannot add to an already-disposed list");
+    }
+    this.#disposers.push(disposer);
+    return this;
+  }
+  /** Number of registered disposers. */
+  get length() {
+    return this.#disposers.length;
+  }
+  /** Whether this list has been disposed. */
+  get disposed() {
+    return this.#disposed;
+  }
+  /**
+   * Unwind all disposers in LIFO (reverse) order.
+   * Collects all errors and throws an aggregate if any failed.
+   */
+  async dispose() {
+    if (this.#disposed) return;
+    this.#disposed = true;
+    const errors = [];
+    for (let i = this.#disposers.length - 1; i >= 0; i--) {
+      try {
+        await this.#disposers[i]();
+      } catch (err) {
+        errors.push(err instanceof Error ? err : new Error(String(err)));
+      }
+    }
+    this.#disposers.length = 0;
+    if (errors.length > 0) {
+      const msg = `DisposableList: ${errors.length} disposer(s) failed:
+${errors.map((e) => e.message).join("\n")}`;
+      throw new Error(msg);
+    }
+  }
+  /**
+   * Dispose synchronously. Only safe if all disposers are synchronous.
+   * For mixed async/sync disposers, use `dispose()` instead.
+   */
+  disposeSync() {
+    if (this.#disposed) return;
+    this.#disposed = true;
+    const errors = [];
+    for (let i = this.#disposers.length - 1; i >= 0; i--) {
+      try {
+        const result = this.#disposers[i]();
+        if (result && typeof result.then === "function") {
+          errors.push(new Error("DisposableList.disposeSync: encountered async disposer"));
+        }
+      } catch (err) {
+        errors.push(err instanceof Error ? err : new Error(String(err)));
+      }
+    }
+    this.#disposers.length = 0;
+    if (errors.length > 0) {
+      throw new Error(`DisposableList: ${errors.length} disposer(s) failed`);
+    }
+  }
+};
+var SavepointGuard = class {
+  #state = "idle";
+  #snapshot;
+  #disposables = new DisposableList();
+  #onRollback;
+  /**
+   * @param onRollback - Optional callback invoked with the snapshot during rollback
+   */
+  constructor(onRollback) {
+    this.#onRollback = onRollback;
+  }
+  /** Current guard state. */
+  get state() {
+    return this.#state;
+  }
+  /** The DisposableList for registering cleanup actions. */
+  get disposables() {
+    return this.#disposables;
+  }
+  /**
+   * Begin a savepoint, capturing the given snapshot.
+   * Transitions: idle → active.
+   */
+  begin(snapshot) {
+    if (this.#state !== "idle") {
+      throw new Error(`SavepointGuard: cannot begin from state "${this.#state}"`);
+    }
+    this.#snapshot = snapshot;
+    this.#state = "active";
+  }
+  /**
+   * Commit the savepoint — finalizes the transaction.
+   * Transitions: active → committed.
+   * Does NOT run disposers (they are cleanup for rollback scenarios).
+   */
+  commit() {
+    if (this.#state !== "active") {
+      throw new Error(`SavepointGuard: cannot commit from state "${this.#state}"`);
+    }
+    this.#state = "committed";
+    this.#snapshot = void 0;
+  }
+  /**
+   * Rollback to the snapshot — restores state and runs disposers.
+   * Transitions: active → rolled-back.
+   */
+  async rollback() {
+    if (this.#state !== "active") {
+      throw new Error(`SavepointGuard: cannot rollback from state "${this.#state}"`);
+    }
+    this.#state = "rolled-back";
+    if (this.#onRollback && this.#snapshot !== void 0) {
+      await this.#onRollback(this.#snapshot);
+    }
+    await this.#disposables.dispose();
+    this.#snapshot = void 0;
+  }
+};
 
 // node_modules/clm-kernel/dist/chunk-AOSZNTDH.js
 init_crypto();
 var ED25519_SPKI_PREFIX2 = toBuffer(ED25519_SPKI_PREFIX);
 
+// node_modules/clm-kernel/dist/chunk-FGQYYOHK.js
+init_buffer();
+
+// node_modules/clm-kernel/dist/chunk-OUDH6PYT.js
+init_buffer();
+
+// node_modules/clm-kernel/dist/chunk-Q5CHOHIL.js
+init_buffer();
+
+// node_modules/clm-kernel/dist/chunk-XI7IK44B.js
+init_buffer();
+
 // node_modules/clm-kernel/dist/chunk-4G2UCRE5.js
+init_buffer();
 var BLAKE3_HASH_PREFIX = "blake3:";
 var SHA256_HASH_PREFIX = "sha256:";
 var B3_IV = [
@@ -881,6 +1091,39 @@ var Handle = class _Handle {
 };
 
 // node_modules/clm-kernel/dist/chunk-Q5CHOHIL.js
+async function resolveCoeffects(coeffects, ctx, timeoutMs) {
+  const required = coeffects.requiredServices ?? [];
+  if (required.length === 0) {
+    return ctx;
+  }
+  const isAvailable = (s) => {
+    return ctx[s] !== void 0 || typeof ctx.get === "function" && ctx.get(s) !== void 0;
+  };
+  const missing = required.filter((s) => !isAvailable(s));
+  if (missing.length === 0) {
+    return ctx;
+  }
+  if (typeof ctx.inject !== "function") {
+    throw new Error(`Missing required Cordis services: ${missing.join(", ")}`);
+  }
+  return new Promise((resolve2, reject) => {
+    let timer;
+    if (timeoutMs !== void 0 && timeoutMs > 0) {
+      timer = setTimeout(() => {
+        reject(new Error(`Timed out waiting for Cordis services: ${missing.join(", ")}`));
+      }, timeoutMs);
+    }
+    try {
+      ctx.inject(required, (injectedCtx) => {
+        if (timer) clearTimeout(timer);
+        resolve2(injectedCtx);
+      });
+    } catch (err) {
+      if (timer) clearTimeout(timer);
+      reject(err);
+    }
+  });
+}
 var PrimitivePCard = class {
   type = "primitive";
   pcardType = "primitive";
@@ -1089,6 +1332,7 @@ function deserializePayload(raw) {
 }
 
 // public/js/mcard-kernel/node-shims/module.js
+init_buffer();
 function createRequire() {
   return () => {
     throw new Error("module shim: createRequire() is unavailable in the browser");
@@ -1172,7 +1416,7 @@ function loadCanonicalMCardSchema(customRoot) {
     }
   } catch {
   }
-  return Buffer.from(CANONICAL_MCARD_SCHEMA_B64, "base64").toString("utf-8");
+  return BufferShim.from(CANONICAL_MCARD_SCHEMA_B64, "base64").toString("utf-8");
 }
 var CANONICAL_MCARD_SCHEMA_SQL = loadCanonicalMCardSchema();
 function loadNodeSqlite() {
@@ -1211,7 +1455,7 @@ var NodeSqliteBackend = class {
     const existing = checkStmt.get(key);
     if (existing) return false;
     const json = JSON.stringify(mcard.toJSON());
-    const bytes = Buffer.from(json, "utf-8");
+    const bytes = BufferShim.from(json, "utf-8");
     const now = (/* @__PURE__ */ new Date()).toISOString();
     const insertStmt = this.#db.prepare("INSERT INTO card (hash, content, g_time) VALUES (?, ?, ?)");
     insertStmt.run(key, bytes, now);
@@ -1221,7 +1465,7 @@ var NodeSqliteBackend = class {
     const stmt = this.#db.prepare("SELECT content FROM card WHERE hash = ?");
     const row = stmt.get(hash.asHex());
     if (!row) return void 0;
-    const json = typeof row.content === "string" ? row.content : Buffer.from(row.content).toString("utf-8");
+    const json = typeof row.content === "string" ? row.content : BufferShim.from(row.content).toString("utf-8");
     return MCard.fromJSON(JSON.parse(json));
   }
   has(hash) {
@@ -1232,7 +1476,7 @@ var NodeSqliteBackend = class {
     const stmt = this.#db.prepare("SELECT content FROM card");
     const rows = stmt.all();
     return rows.map((r) => {
-      const json = typeof r.content === "string" ? r.content : Buffer.from(r.content).toString("utf-8");
+      const json = typeof r.content === "string" ? r.content : BufferShim.from(r.content).toString("utf-8");
       return MCard.fromJSON(JSON.parse(json));
     });
   }
@@ -1245,7 +1489,7 @@ var NodeSqliteBackend = class {
     const checkStmt = this.#db.prepare("SELECT hash FROM card WHERE hash = ?");
     const existing = checkStmt.get(hash);
     if (existing) return false;
-    const bytes = typeof content === "string" ? Buffer.from(content, "utf-8") : content;
+    const bytes = typeof content === "string" ? BufferShim.from(content, "utf-8") : content;
     const now = gTime ?? (/* @__PURE__ */ new Date()).toISOString();
     const insertStmt = this.#db.prepare("INSERT INTO card (hash, content, g_time) VALUES (?, ?, ?)");
     insertStmt.run(hash, bytes, now);
@@ -1255,7 +1499,7 @@ var NodeSqliteBackend = class {
     const stmt = this.#db.prepare("SELECT content, g_time FROM card WHERE hash = ?");
     const row = stmt.get(hash);
     if (!row) return void 0;
-    const content = typeof row.content === "string" ? row.content : Buffer.from(row.content).toString("utf-8");
+    const content = typeof row.content === "string" ? row.content : BufferShim.from(row.content).toString("utf-8");
     return { content, g_time: row.g_time };
   }
   registerHandle(handle, hash) {
@@ -1476,6 +1720,7 @@ var SqlJsBackend = class {
 };
 
 // node_modules/clm-kernel/dist/chunk-6Q6G7HQX.js
+init_buffer();
 function parseYamlOrJson(text) {
   const trimmed = text.trim();
   if (!trimmed) return {};
@@ -1782,7 +2027,14 @@ function classifyClm(data) {
   return "Number";
 }
 
+// node_modules/clm-kernel/dist/chunk-HGOFBNYK.js
+init_buffer();
+
+// node_modules/clm-kernel/dist/chunk-5PM2X6RO.js
+init_buffer();
+
 // node_modules/clm-kernel/dist/chunk-MY7DUMYC.js
+init_buffer();
 var MCardCollection = class _MCardCollection {
   #backend;
   constructor(backend) {
@@ -1862,6 +2114,7 @@ var MCardCollection = class _MCardCollection {
 };
 
 // node_modules/clm-kernel/dist/chunk-F6Q5OORP.js
+init_buffer();
 init_crypto();
 var NOISE_BLOCKLEN = 64;
 var NOISE_HASHLEN = 32;
@@ -1917,12 +2170,12 @@ function diffieHellmanX25519(privateKey, publicKey) {
   if (privateKey.length !== 32) throw new Error(`X25519 private key must be 32 bytes, got ${privateKey.length}`);
   if (publicKey.length !== 32) throw new Error(`X25519 public key must be 32 bytes, got ${publicKey.length}`);
   const privObj = (void 0)({
-    key: Buffer.concat([toBuffer(X25519_PKCS8_PREFIX), Buffer.from(privateKey)]),
+    key: BufferShim.concat([toBuffer(X25519_PKCS8_PREFIX), BufferShim.from(privateKey)]),
     format: "der",
     type: "pkcs8"
   });
   const pubObj = (void 0)({
-    key: Buffer.concat([toBuffer(X25519_SPKI_PREFIX), Buffer.from(publicKey)]),
+    key: BufferShim.concat([toBuffer(X25519_SPKI_PREFIX), BufferShim.from(publicKey)]),
     format: "der",
     type: "spki"
   });
@@ -1931,7 +2184,7 @@ function diffieHellmanX25519(privateKey, publicKey) {
 function generateEphemeralX25519(seed) {
   const privBytes = seed ? new Uint8Array(seed) : new Uint8Array(randomBytes(32));
   const privObj = (void 0)({
-    key: Buffer.concat([toBuffer(X25519_PKCS8_PREFIX), Buffer.from(privBytes)]),
+    key: BufferShim.concat([toBuffer(X25519_PKCS8_PREFIX), BufferShim.from(privBytes)]),
     format: "der",
     type: "pkcs8"
   });
@@ -1940,19 +2193,27 @@ function generateEphemeralX25519(seed) {
   return { privateKey: privBytes, publicKey: new Uint8Array(pub) };
 }
 
+// node_modules/clm-kernel/dist/chunk-LP6KEZAL.js
+init_buffer();
+
 // node_modules/clm-kernel/dist/chunk-HGOFBNYK.js
 init_crypto();
 
 // public/js/mcard-kernel/node-shims/dgram.js
+init_buffer();
 var unavailable2 = (name) => () => {
   throw new Error(`dgram shim: '${name}' is a Node-only API and is unavailable in the browser`);
 };
 var createSocket = unavailable2("createSocket");
 
+// public/js/mcard-kernel/node-shims/events.js
+init_buffer();
+
 // node_modules/clm-kernel/dist/chunk-HGOFBNYK.js
 init_crypto();
 
 // public/js/mcard-kernel/node-shims/http.js
+init_buffer();
 var unavailable3 = (name) => () => {
   throw new Error(`http shim: '${name}' is a Node-only API and is unavailable in the browser`);
 };
@@ -1963,6 +2224,1686 @@ var get = unavailable3("get");
 // node_modules/clm-kernel/dist/chunk-HGOFBNYK.js
 var import_ws = __toESM(require_browser(), 1);
 var import_ws2 = __toESM(require_browser(), 1);
+
+// node_modules/cordis/lib/index.js
+init_buffer();
+
+// node_modules/cosmokit/lib/index.mjs
+init_buffer();
+function isNullable(value) {
+  return value === null || value === void 0;
+}
+function defineProperty(object, key, value) {
+  return Object.defineProperty(object, key, { writable: true, value, enumerable: false });
+}
+function is(type, value) {
+  if (arguments.length === 1) return (value2) => is(type, value2);
+  return type in globalThis && value instanceof globalThis[type] || Object.prototype.toString.call(value).slice(8, -1) === type;
+}
+function isArrayBufferLike(value) {
+  return is("ArrayBuffer", value) || is("SharedArrayBuffer", value);
+}
+function isArrayBufferSource(value) {
+  return isArrayBufferLike(value) || ArrayBuffer.isView(value);
+}
+var Binary;
+((Binary2) => {
+  Binary2.is = isArrayBufferLike;
+  Binary2.isSource = isArrayBufferSource;
+  function fromSource(source) {
+    if (ArrayBuffer.isView(source)) {
+      return source.buffer.slice(source.byteOffset, source.byteOffset + source.byteLength);
+    } else {
+      return source;
+    }
+  }
+  Binary2.fromSource = fromSource;
+  function toBase64(source) {
+    source = fromSource(source);
+    if (typeof BufferShim !== "undefined") {
+      return BufferShim.from(source).toString("base64");
+    }
+    let binary = "";
+    const bytes = new Uint8Array(source);
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }
+  Binary2.toBase64 = toBase64;
+  function fromBase64(source) {
+    if (typeof BufferShim !== "undefined") return fromSource(BufferShim.from(source, "base64"));
+    return Uint8Array.from(atob(source), (c) => c.charCodeAt(0));
+  }
+  Binary2.fromBase64 = fromBase64;
+  function toHex2(source) {
+    source = fromSource(source);
+    if (typeof BufferShim !== "undefined") return BufferShim.from(source).toString("hex");
+    return Array.from(new Uint8Array(source), (byte) => byte.toString(16).padStart(2, "0")).join("");
+  }
+  Binary2.toHex = toHex2;
+  function fromHex(source) {
+    if (typeof BufferShim !== "undefined") return fromSource(BufferShim.from(source, "hex"));
+    const hex = source.length % 2 === 0 ? source : source.slice(0, source.length - 1);
+    const buffer = [];
+    for (let i = 0; i < hex.length; i += 2) {
+      buffer.push(parseInt(`${hex[i]}${hex[i + 1]}`, 16));
+    }
+    return Uint8Array.from(buffer).buffer;
+  }
+  Binary2.fromHex = fromHex;
+})(Binary || (Binary = {}));
+var base64ToArrayBuffer = Binary.fromBase64;
+var arrayBufferToBase64 = Binary.toBase64;
+var hexToArrayBuffer = Binary.fromHex;
+var arrayBufferToHex = Binary.toHex;
+function tokenize(source, delimiters, delimiter) {
+  const output = [];
+  let state = 0;
+  for (let i = 0; i < source.length; i++) {
+    const code = source.charCodeAt(i);
+    if (code >= 65 && code <= 90) {
+      if (state === 1) {
+        const next = source.charCodeAt(i + 1);
+        if (next >= 97 && next <= 122) {
+          output.push(delimiter);
+        }
+        output.push(code + 32);
+      } else {
+        if (state !== 0) {
+          output.push(delimiter);
+        }
+        output.push(code + 32);
+      }
+      state = 1;
+    } else if (code >= 97 && code <= 122) {
+      output.push(code);
+      state = 2;
+    } else if (delimiters.includes(code)) {
+      if (state !== 0) {
+        output.push(delimiter);
+      }
+      state = 0;
+    } else {
+      output.push(code);
+    }
+  }
+  return String.fromCharCode(...output);
+}
+function paramCase(source) {
+  return tokenize(source, [45, 95], 45);
+}
+var hyphenate = paramCase;
+var Time;
+((Time2) => {
+  Time2.millisecond = 1;
+  Time2.second = 1e3;
+  Time2.minute = Time2.second * 60;
+  Time2.hour = Time2.minute * 60;
+  Time2.day = Time2.hour * 24;
+  Time2.week = Time2.day * 7;
+  let timezoneOffset = (/* @__PURE__ */ new Date()).getTimezoneOffset();
+  function setTimezoneOffset(offset) {
+    timezoneOffset = offset;
+  }
+  Time2.setTimezoneOffset = setTimezoneOffset;
+  function getTimezoneOffset() {
+    return timezoneOffset;
+  }
+  Time2.getTimezoneOffset = getTimezoneOffset;
+  function getDateNumber(date = /* @__PURE__ */ new Date(), offset) {
+    if (typeof date === "number") date = new Date(date);
+    if (offset === void 0) offset = timezoneOffset;
+    return Math.floor((date.valueOf() / Time2.minute - offset) / 1440);
+  }
+  Time2.getDateNumber = getDateNumber;
+  function fromDateNumber(value, offset) {
+    const date = new Date(value * Time2.day);
+    if (offset === void 0) offset = timezoneOffset;
+    return new Date(+date + offset * Time2.minute);
+  }
+  Time2.fromDateNumber = fromDateNumber;
+  const numeric = /\d+(?:\.\d+)?/.source;
+  const timeRegExp = new RegExp(`^${[
+    "w(?:eek(?:s)?)?",
+    "d(?:ay(?:s)?)?",
+    "h(?:our(?:s)?)?",
+    "m(?:in(?:ute)?(?:s)?)?",
+    "s(?:ec(?:ond)?(?:s)?)?"
+  ].map((unit) => `(${numeric}${unit})?`).join("")}$`);
+  function parseTime(source) {
+    const capture = timeRegExp.exec(source);
+    if (!capture) return 0;
+    return (parseFloat(capture[1]) * Time2.week || 0) + (parseFloat(capture[2]) * Time2.day || 0) + (parseFloat(capture[3]) * Time2.hour || 0) + (parseFloat(capture[4]) * Time2.minute || 0) + (parseFloat(capture[5]) * Time2.second || 0);
+  }
+  Time2.parseTime = parseTime;
+  function parseDate(date) {
+    const parsed = parseTime(date);
+    if (parsed) {
+      date = Date.now() + parsed;
+    } else if (/^\d{1,2}(:\d{1,2}){1,2}$/.test(date)) {
+      date = `${(/* @__PURE__ */ new Date()).toLocaleDateString()}-${date}`;
+    } else if (/^\d{1,2}-\d{1,2}-\d{1,2}(:\d{1,2}){1,2}$/.test(date)) {
+      date = `${(/* @__PURE__ */ new Date()).getFullYear()}-${date}`;
+    }
+    return date ? new Date(date) : /* @__PURE__ */ new Date();
+  }
+  Time2.parseDate = parseDate;
+  function format(ms) {
+    const abs = Math.abs(ms);
+    if (abs >= Time2.day - Time2.hour / 2) {
+      return Math.round(ms / Time2.day) + "d";
+    } else if (abs >= Time2.hour - Time2.minute / 2) {
+      return Math.round(ms / Time2.hour) + "h";
+    } else if (abs >= Time2.minute - Time2.second / 2) {
+      return Math.round(ms / Time2.minute) + "m";
+    } else if (abs >= Time2.second) {
+      return Math.round(ms / Time2.second) + "s";
+    }
+    return ms + "ms";
+  }
+  Time2.format = format;
+  function toDigits(source, length = 2) {
+    return source.toString().padStart(length, "0");
+  }
+  Time2.toDigits = toDigits;
+  function template(template2, time = /* @__PURE__ */ new Date()) {
+    return template2.replace("yyyy", time.getFullYear().toString()).replace("yy", time.getFullYear().toString().slice(2)).replace("MM", toDigits(time.getMonth() + 1)).replace("dd", toDigits(time.getDate())).replace("hh", toDigits(time.getHours())).replace("mm", toDigits(time.getMinutes())).replace("ss", toDigits(time.getSeconds())).replace("SSS", toDigits(time.getMilliseconds(), 3));
+  }
+  Time2.template = template;
+})(Time || (Time = {}));
+
+// node_modules/cordis/lib/index.js
+var __defProp3 = Object.defineProperty;
+var __name = (target, value) => __defProp3(target, "name", { value, configurable: true });
+var DisposableList2 = class {
+  static {
+    __name(this, "DisposableList");
+  }
+  sn = 0;
+  map = /* @__PURE__ */ new Map();
+  weak = /* @__PURE__ */ new WeakMap();
+  get length() {
+    return this.map.size;
+  }
+  push(value) {
+    const sn = ++this.sn;
+    this.map.set(sn, value);
+    this.weak.set(value, sn);
+    return () => this.map.delete(sn);
+  }
+  delete(value) {
+    const sn = this.weak.get(value);
+    if (!sn) return false;
+    return this.map.delete(sn);
+  }
+  clear() {
+    const values = [...this.map.values()];
+    this.map.clear();
+    return values.reverse();
+  }
+  [Symbol.iterator]() {
+    return this.map.values();
+  }
+  [/* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom")]() {
+    return [...this];
+  }
+};
+var symbols = {
+  // internal symbols
+  shadow: /* @__PURE__ */ Symbol.for("cordis.shadow"),
+  caller: /* @__PURE__ */ Symbol.for("cordis.caller"),
+  receiver: /* @__PURE__ */ Symbol.for("cordis.receiver"),
+  original: /* @__PURE__ */ Symbol.for("cordis.original"),
+  metadata: /* @__PURE__ */ Symbol.for("cordis.metadata"),
+  initHooks: /* @__PURE__ */ Symbol.for("cordis.initHooks"),
+  checkProto: /* @__PURE__ */ Symbol.for("cordis.checkProto"),
+  // context symbols
+  effect: /* @__PURE__ */ Symbol.for("cordis.effect"),
+  filter: /* @__PURE__ */ Symbol.for("cordis.filter"),
+  isolate: /* @__PURE__ */ Symbol.for("cordis.isolate"),
+  intercept: /* @__PURE__ */ Symbol.for("cordis.intercept"),
+  // service symbols
+  init: /* @__PURE__ */ Symbol.for("cordis.init"),
+  check: /* @__PURE__ */ Symbol.for("cordis.check"),
+  config: /* @__PURE__ */ Symbol.for("cordis.config"),
+  invoke: /* @__PURE__ */ Symbol.for("cordis.invoke"),
+  extend: /* @__PURE__ */ Symbol.for("cordis.extend"),
+  tracker: /* @__PURE__ */ Symbol.for("cordis.tracker"),
+  resolveConfig: /* @__PURE__ */ Symbol.for("cordis.resolveConfig")
+};
+var GeneratorFunction = function* () {
+}.constructor;
+var AsyncGeneratorFunction = async function* () {
+}.constructor;
+function isConstructor(func) {
+  if (!func.prototype) return false;
+  if (func instanceof GeneratorFunction) return false;
+  if (AsyncGeneratorFunction !== Function && func instanceof AsyncGeneratorFunction) return false;
+  return true;
+}
+__name(isConstructor, "isConstructor");
+function joinPrototype(proto1, proto2) {
+  if (proto1 === Object.prototype) return proto2;
+  const result = Object.create(joinPrototype(Object.getPrototypeOf(proto1), proto2));
+  for (const key of Reflect.ownKeys(proto1)) {
+    Object.defineProperty(result, key, Object.getOwnPropertyDescriptor(proto1, key));
+  }
+  return result;
+}
+__name(joinPrototype, "joinPrototype");
+function isObject(value) {
+  return value && (typeof value === "object" || typeof value === "function");
+}
+__name(isObject, "isObject");
+function getPropertyDescriptor(target, prop) {
+  let proto = target;
+  while (proto) {
+    const desc = Reflect.getOwnPropertyDescriptor(proto, prop);
+    if (desc) return desc;
+    proto = Object.getPrototypeOf(proto);
+  }
+}
+__name(getPropertyDescriptor, "getPropertyDescriptor");
+function getTraceable(ctx, value) {
+  if (!isObject(value)) return value;
+  if (Object.hasOwn(value, symbols.shadow)) {
+    return Object.getPrototypeOf(value);
+  }
+  const tracker = value[symbols.tracker];
+  if (!tracker) return value;
+  return createTraceable(ctx, value, tracker);
+}
+__name(getTraceable, "getTraceable");
+function withProps(target, props) {
+  if (!props) return target;
+  return new Proxy(target, {
+    get: /* @__PURE__ */ __name((target2, prop, receiver) => {
+      if (prop in props && prop !== "constructor") return Reflect.get(props, prop, receiver);
+      return Reflect.get(target2, prop, receiver);
+    }, "get"),
+    set: /* @__PURE__ */ __name((target2, prop, value, receiver) => {
+      if (prop in props && prop !== "constructor") return Reflect.set(props, prop, value, receiver);
+      return Reflect.set(target2, prop, value, receiver);
+    }, "set")
+  });
+}
+__name(withProps, "withProps");
+function withProp(target, prop, value) {
+  return withProps(target, Object.defineProperty(/* @__PURE__ */ Object.create(null), prop, {
+    value,
+    writable: false
+  }));
+}
+__name(withProp, "withProp");
+function createShadow(useSite, target, property, receiver) {
+  if (!property) return receiver;
+  const value = getPropertyDescriptor(target, property)?.value;
+  if (!value) return receiver;
+  const defSite = value[symbols.shadow] ?? value;
+  return withProp(receiver, property, useSite.extend({ [symbols.shadow]: defSite }));
+}
+__name(createShadow, "createShadow");
+function createShadowMethod(ctx, value, outer, shadow) {
+  return new Proxy(value, {
+    apply: /* @__PURE__ */ __name((target, thisArg, args) => {
+      if (thisArg === outer) thisArg = shadow;
+      return getTraceable(ctx, Reflect.apply(target, thisArg, args));
+    }, "apply")
+  });
+}
+__name(createShadowMethod, "createShadowMethod");
+function createTraceable(ctx, value, tracker) {
+  const defSite = ctx[symbols.shadow] ?? ctx;
+  const useSite = ctx[symbols.shadow] ? Object.getPrototypeOf(ctx) : ctx;
+  const proxy = new Proxy(value, {
+    get: /* @__PURE__ */ __name((target, prop, receiver) => {
+      if (prop === symbols.original) return target;
+      if (prop === symbols.caller) return defSite;
+      if (prop === tracker.property) return useSite;
+      if (typeof prop === "symbol") {
+        return Reflect.get(target, prop, receiver);
+      }
+      if (tracker.associate && useSite.reflect.props[`${tracker.associate}.${prop}`]) {
+        return Reflect.get(ctx, `${tracker.associate}.${prop}`, withProp(ctx, symbols.receiver, receiver));
+      }
+      let shadow, innerValue;
+      const desc = getPropertyDescriptor(target, prop);
+      if (desc && "value" in desc) {
+        innerValue = desc.value;
+      } else {
+        shadow = createShadow(useSite, target, tracker.property, receiver);
+        innerValue = Reflect.get(target, prop, shadow);
+      }
+      const innerTracker = innerValue?.[symbols.tracker];
+      if (innerTracker) {
+        return createTraceable(useSite, innerValue, innerTracker);
+      } else if (!tracker.noShadow && typeof innerValue === "function") {
+        shadow ??= createShadow(useSite, target, tracker.property, receiver);
+        return createShadowMethod(useSite, innerValue, receiver, shadow);
+      } else {
+        return innerValue;
+      }
+    }, "get"),
+    set: /* @__PURE__ */ __name((target, prop, value2, receiver) => {
+      if (prop === symbols.original) return false;
+      if (prop === symbols.caller) return false;
+      if (prop === tracker.property) return false;
+      if (typeof prop === "symbol") {
+        return Reflect.set(target, prop, value2, receiver);
+      }
+      if (tracker.associate && useSite.reflect.props[`${tracker.associate}.${prop}`]) {
+        return Reflect.set(ctx, `${tracker.associate}.${prop}`, value2, withProp(ctx, symbols.receiver, receiver));
+      }
+      const shadow = createShadow(useSite, target, tracker.property, receiver);
+      return Reflect.set(target, prop, value2, shadow);
+    }, "set"),
+    apply: /* @__PURE__ */ __name((target, thisArg, args) => {
+      const receiver = tracker.noShadow ? proxy : createShadow(useSite, target, tracker.property, proxy);
+      return applyTraceable(receiver, target, thisArg, args);
+    }, "apply")
+  });
+  return proxy;
+}
+__name(createTraceable, "createTraceable");
+function applyTraceable(proxy, value, thisArg, args) {
+  if (!value[symbols.invoke]) return Reflect.apply(value, thisArg, args);
+  return value[symbols.invoke].apply(proxy, args);
+}
+__name(applyTraceable, "applyTraceable");
+function createCallable(name, proto, tracker) {
+  const self = /* @__PURE__ */ __name(function(...args) {
+    const proxy = createTraceable(self["ctx"], self, tracker);
+    return Reflect.apply(proxy, this, args);
+  }, "self");
+  defineProperty(self, "name", name);
+  return Object.setPrototypeOf(self, proto);
+}
+__name(createCallable, "createCallable");
+function handleError(info, reason, getOuterStack) {
+  const innerLines = info.error.stack.split("\n");
+  if (typeof reason?.stack !== "string") {
+    const outerError = new Error(reason);
+    const lines2 = outerError.stack.split("\n");
+    lines2.splice(1, Infinity, ...getOuterStack());
+    outerError.stack = lines2.join("\n");
+    throw outerError;
+  }
+  const lines = reason.stack.split("\n");
+  let index = lines.indexOf(innerLines[2]);
+  if (index === -1) throw reason;
+  index -= info.offset;
+  while (index > 0) {
+    if (!lines[index - 1].endsWith(" (<anonymous>)")) break;
+    index -= 1;
+  }
+  lines.splice(index, Infinity, ...getOuterStack());
+  reason.stack = lines.join("\n");
+  throw reason;
+}
+__name(handleError, "handleError");
+function composeError(callback, getOuterStack = buildOuterStack()) {
+  const info = { offset: 1, error: new Error() };
+  try {
+    const result = callback(info);
+    if (isObject(result) && "then" in result) {
+      return result.then(void 0, (reason) => handleError(info, reason, getOuterStack));
+    } else {
+      return result;
+    }
+  } catch (reason) {
+    handleError(info, reason, getOuterStack);
+  }
+}
+__name(composeError, "composeError");
+function buildOuterStack(offset = 0) {
+  const outerError = new Error();
+  return () => outerError.stack.split("\n").slice(3 + offset);
+}
+__name(buildOuterStack, "buildOuterStack");
+function isBailed(value) {
+  return value !== null && value !== false && value !== void 0;
+}
+__name(isBailed, "isBailed");
+var EventsService = class {
+  constructor(ctx) {
+    this.ctx = ctx;
+    defineProperty(this, symbols.tracker, {
+      property: "ctx",
+      noShadow: true
+    });
+    this.on("internal/listener", function(name, listener, options) {
+      if (name === "internal/update" && !options.global) {
+        const hooks = this.fiber._hooks["internal/update"] ??= new DisposableList2();
+        const method = options.prepend ? "unshift" : "push";
+        return hooks[method](listener);
+      }
+    });
+    this.on("internal/update", function(config, noSave, next) {
+      const cbs = [...this._hooks["internal/update"] || []];
+      const _next = /* @__PURE__ */ __name(() => {
+        const cb = cbs.shift() ?? next;
+        return cb.call(this, config, noSave, _next);
+      }, "_next");
+      return _next();
+    }, { global: true, prepend: true });
+  }
+  ctx;
+  static {
+    __name(this, "EventsService");
+  }
+  _hooks = /* @__PURE__ */ Object.create(null);
+  _resolve(type, args) {
+    const thisArg = typeof args[0] === "object" || typeof args[0] === "function" ? args.shift() : null;
+    const name = args.shift();
+    if ((typeof name !== "string" || !name.startsWith("internal/")) && this._hooks["internal/dispatch"]?.length) {
+      this.emit("internal/dispatch", type, name, args, thisArg);
+    }
+    const filter = thisArg?.[Context.filter];
+    return [thisArg, (this._hooks[name] || []).filter((hook) => hook.global || !filter || filter.call(thisArg, hook.ctx)).map((hook) => hook.callback)];
+  }
+  /** @deprecated */
+  dispatch(type, args) {
+    const [thisArg, callbacks] = this._resolve(type, args);
+    return callbacks.map((callback) => callback.bind(thisArg));
+  }
+  async parallel(...args) {
+    const [thisArg, callbacks] = this._resolve("emit", args);
+    const results = await Promise.allSettled(callbacks.map(async (callback) => Reflect.apply(callback, thisArg, args)));
+    const errors = results.filter((result) => result.status === "rejected");
+    if (errors.length) throw new AggregateError(errors.map((error) => error.reason));
+  }
+  emit(...args) {
+    const [thisArg, callbacks] = this._resolve("emit", args);
+    for (const callback of callbacks) Reflect.apply(callback, thisArg, args);
+  }
+  async serial(...args) {
+    const [thisArg, callbacks] = this._resolve("serial", args);
+    for (const callback of callbacks) {
+      const result = await Reflect.apply(callback, thisArg, args);
+      if (isBailed(result)) return result;
+    }
+  }
+  bail(...args) {
+    const [thisArg, callbacks] = this._resolve("bail", args);
+    for (const callback of callbacks) {
+      const result = Reflect.apply(callback, thisArg, args);
+      if (isBailed(result)) return result;
+    }
+  }
+  waterfall(...args) {
+    const [thisArg, callbacks] = this._resolve("waterfall", args);
+    const inner = args.pop();
+    const dispatch = /* @__PURE__ */ __name(() => {
+      const callback = callbacks.shift();
+      if (!callback) return inner();
+      let called = false;
+      const next = /* @__PURE__ */ __name(() => {
+        if (called) throw new Error("next() called multiple times");
+        called = true;
+        return dispatch();
+      }, "next");
+      return Reflect.apply(callback, thisArg, [...args, next]);
+    }, "dispatch");
+    return dispatch();
+  }
+  register(label, name, callback, options) {
+    const method = options.prepend ? "unshift" : "push";
+    return this.ctx.fiber.effect(() => {
+      const hooks = this._hooks[name] ??= [];
+      hooks[method]({ ctx: this.ctx, callback, ...options });
+      return () => this.unregister(name, callback);
+    }, label);
+  }
+  unregister(name, callback) {
+    const hooks = this._hooks[name];
+    if (!hooks) return;
+    const index = hooks.findIndex((hook) => hook.callback === callback);
+    if (index >= 0) {
+      hooks.splice(index, 1);
+      if (!hooks.length) delete this._hooks[name];
+      return true;
+    }
+  }
+  on(name, listener, options) {
+    if (typeof options !== "object") {
+      options = { prepend: options };
+    }
+    this.ctx.fiber.assertActive();
+    listener = this.ctx.reflect.bind(listener);
+    const result = this.bail(this.ctx, "internal/listener", name, listener, options);
+    if (result) return result;
+    const label = `ctx.on(${typeof name === "string" ? JSON.stringify(name) : name.toString()})`;
+    return this.register(label, name, listener, options);
+  }
+  once(name, listener, options) {
+    const dispose = this.on(name, function(...args) {
+      dispose();
+      return listener.apply(this, args);
+    }, options);
+    return dispose;
+  }
+};
+var defaultFormatters = {
+  s: /* @__PURE__ */ __name((value) => String(value), "s"),
+  d: /* @__PURE__ */ __name((value) => Math.trunc(Number(value)), "d"),
+  i: /* @__PURE__ */ __name((value) => Math.trunc(Number(value)), "i"),
+  f: /* @__PURE__ */ __name((value) => Number(value), "f"),
+  o: /* @__PURE__ */ __name((value) => JSON.stringify(value), "o"),
+  O: /* @__PURE__ */ __name((value) => JSON.stringify(value), "O"),
+  c: /* @__PURE__ */ __name(() => "", "c"),
+  C: /* @__PURE__ */ __name((value, exporter, message) => {
+    return Logger.color(exporter, Logger.code(message.name, exporter.colors), value);
+  }, "C")
+};
+function isAggregateError(error) {
+  return error instanceof Error && Array.isArray(error["errors"]);
+}
+__name(isAggregateError, "isAggregateError");
+var Logger = class {
+  constructor(options, service) {
+    this.service = service;
+    Object.assign(this, options);
+    this.error = this._method(
+      "error",
+      0
+      /* ERROR */
+    );
+    this.info = this._method(
+      "info",
+      2
+      /* INFO */
+    );
+    this.warn = this._method(
+      "warn",
+      1
+      /* WARN */
+    );
+    this.debug = this._method(
+      "debug",
+      3
+      /* DEBUG */
+    );
+  }
+  service;
+  static {
+    __name(this, "Logger");
+  }
+  static color(exporter, code, value, decoration = "") {
+    if (!exporter.colors) return "" + value;
+    return `\x1B[3${code < 8 ? code : "8;5;" + code}${exporter.colors >= 2 ? decoration : ""}m${value}\x1B[0m`;
+  }
+  static code(name, level) {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = (hash << 3) - hash + name.charCodeAt(i) + 13;
+      hash |= 0;
+    }
+    const colors = !level ? [] : level >= 2 ? c256 : c16;
+    return colors[Math.abs(hash) % colors.length];
+  }
+  static format(exporter, message) {
+    const args = message.args.slice();
+    if (args[0] instanceof Error) {
+      args[0] = args[0].stack || args[0].message;
+      args.unshift("%s");
+    } else if (typeof args[0] !== "string") {
+      args.unshift("%o");
+    }
+    let format = args.shift();
+    format = format.replace(/%([a-zA-Z%])/g, (match, char) => {
+      if (match === "%%") return "%";
+      const formatter = exporter.formatters?.[char] ?? defaultFormatters[char];
+      if (typeof formatter === "function") {
+        const value = args.shift();
+        return formatter(value, exporter, message);
+      }
+      return match;
+    });
+    const oFormatter = exporter.formatters?.o ?? defaultFormatters.o;
+    for (let arg of args) {
+      if (typeof arg === "object" && arg) {
+        arg = oFormatter(arg, exporter, message);
+      }
+      format += " " + arg;
+    }
+    const { maxLength = 10240 } = exporter;
+    return format.split(/\r?\n/g).map((line) => {
+      return line.slice(0, maxLength) + (line.length > maxLength ? "..." : "");
+    }).join("\n");
+  }
+  _method(type, level) {
+    return (...args) => {
+      if (args.length === 1 && args[0] instanceof Error) {
+        if (args[0].cause) {
+          this[type](args[0].cause);
+        } else if (isAggregateError(args[0])) {
+          args[0].errors.forEach((error) => this[type](error));
+          return;
+        }
+      }
+      const sn = ++this.service._snMessage;
+      const ts = Date.now();
+      for (const exporter of this.service.exporters.values()) {
+        const targetLevel = exporter.levels?.[this.name] ?? exporter.levels?.default ?? this.level ?? 2;
+        if (targetLevel < level) continue;
+        const message = { sn, ts, type, level, name: this.name, ...this.meta, args };
+        exporter.export(message);
+      }
+    };
+  }
+};
+var c16 = [6, 2, 3, 4, 5, 1];
+var c256 = [
+  20,
+  21,
+  26,
+  27,
+  32,
+  33,
+  38,
+  39,
+  40,
+  41,
+  42,
+  43,
+  44,
+  45,
+  56,
+  57,
+  62,
+  63,
+  68,
+  69,
+  74,
+  75,
+  76,
+  77,
+  78,
+  79,
+  80,
+  81,
+  92,
+  93,
+  98,
+  99,
+  112,
+  113,
+  129,
+  134,
+  135,
+  148,
+  149,
+  160,
+  161,
+  162,
+  163,
+  164,
+  165,
+  166,
+  167,
+  168,
+  169,
+  170,
+  171,
+  172,
+  173,
+  178,
+  179,
+  184,
+  185,
+  196,
+  197,
+  198,
+  199,
+  200,
+  201,
+  202,
+  203,
+  204,
+  205,
+  206,
+  207,
+  208,
+  209,
+  214,
+  215,
+  220,
+  221
+];
+var LoggerService = class _LoggerService {
+  static {
+    __name(this, "LoggerService");
+  }
+  bufferSize = 1e3;
+  buffer = [];
+  ctx;
+  _snMessage = 0;
+  _snExporter = 0;
+  exporters = /* @__PURE__ */ new Map();
+  constructor(ctx) {
+    const tracker = {
+      property: "ctx",
+      noShadow: true
+    };
+    const self = createCallable("logger", joinPrototype(Object.getPrototypeOf(this), Function.prototype), tracker);
+    Object.assign(self, this);
+    self.ctx = ctx;
+    defineProperty(self, symbols.tracker, tracker);
+    self.exporter({
+      colors: 3,
+      export: /* @__PURE__ */ __name((message) => {
+        self.buffer.push(message);
+        const overflow = self.buffer.length - self.bufferSize;
+        if (overflow === 1) {
+          self.buffer.shift();
+        } else if (overflow > 1) {
+          self.buffer.splice(0, overflow);
+        }
+      }, "export")
+    });
+    return self;
+  }
+  exporter(exporter) {
+    return this.ctx.effect(() => {
+      const id = ++this._snExporter;
+      this.exporters.set(id, exporter);
+      return () => this.exporters.delete(id);
+    }, "ctx.logger.exporter()");
+  }
+  _resolveConfig() {
+    let intercept = this.ctx[symbols.intercept];
+    const configs = [];
+    while ("logger" in intercept) {
+      if (Object.hasOwn(intercept, "logger")) {
+        configs.unshift(intercept["logger"]);
+      }
+      intercept = Object.getPrototypeOf(intercept);
+    }
+    return Object.assign({}, ...configs);
+  }
+  [symbols.invoke](name) {
+    const config = this._resolveConfig();
+    const caller = this[symbols.caller];
+    const fiber = (caller ?? this.ctx).fiber;
+    name ??= config.name;
+    name ??= hyphenate(fiber.name);
+    return new Logger({
+      name,
+      level: config.level,
+      meta: { fiber: new WeakRef(fiber) }
+    }, this);
+  }
+  static {
+    for (const type of ["error", "info", "warn", "debug"]) {
+      ;
+      _LoggerService.prototype[type] = function(...args) {
+        return this()[type](...args);
+      };
+    }
+  }
+};
+var kValidationError = /* @__PURE__ */ Symbol.for("ValidationError");
+var ValidationError = class extends TypeError {
+  static {
+    __name(this, "ValidationError");
+  }
+  name = "ValidationError";
+  constructor(issues) {
+    super(`invalid config:
+` + issues.map((issue) => {
+      if (issue.path) {
+        return `  - ${issue.message} (at ${issue.path.join(".")})`;
+      } else {
+        return `  - ${issue.message}`;
+      }
+    }).join("\n"));
+  }
+};
+Object.defineProperty(ValidationError.prototype, kValidationError, {
+  value: true
+});
+function resolveConfig(runtime, config) {
+  if (!runtime.Config) return config;
+  const result = runtime.Config["~standard"].validate(config);
+  if ("then" in result) {
+    throw new TypeError("Async config validation is not supported");
+  }
+  if (result.issues) {
+    throw new ValidationError(result.issues);
+  } else {
+    return result.value;
+  }
+}
+__name(resolveConfig, "resolveConfig");
+var CordisError = class _CordisError extends Error {
+  constructor(code, message) {
+    super(message ?? _CordisError.Code[code]);
+    this.code = code;
+  }
+  code;
+  static {
+    __name(this, "CordisError");
+  }
+};
+((CordisError2) => {
+  CordisError2.Code = {
+    INACTIVE_EFFECT: "cannot create effect on inactive context"
+  };
+})(CordisError || (CordisError = {}));
+var INACTIVE = "__INACTIVE__";
+var Fiber = class {
+  constructor(parent, config, inject, runtime, getOuterStack) {
+    this.parent = parent;
+    this.inject = inject;
+    this.runtime = runtime;
+    const collect = /* @__PURE__ */ __name((dispose) => {
+      this._disposables.push(dispose);
+    }, "collect");
+    if (runtime) {
+      this.uid = parent.registry.counter;
+      this.ctx = this.context = parent.extend({ fiber: this });
+      const injectEntries = Object.entries(this.inject);
+      if (injectEntries.length) {
+        this.ctx[Context.intercept] = Object.create(parent[Context.intercept]);
+        for (const [name, config2] of injectEntries) {
+          if (isNullable(config2)) continue;
+          this.ctx[Context.intercept][name] = config2;
+        }
+      }
+      this._runner = {
+        epoch: INACTIVE,
+        getOuterStack,
+        execute: /* @__PURE__ */ __name(function() {
+          if (isConstructor(runtime.callback)) {
+            const instance = new runtime.callback(this.ctx, this.config);
+            for (const hook of instance?.[symbols.initHooks] ?? []) {
+              hook();
+            }
+            return instance?.[symbols.init]?.();
+          } else {
+            return runtime.callback(this.ctx, this.config);
+          }
+        }, "execute"),
+        collect
+      };
+      this.context.emit("internal/plugin", this);
+      for (const name of Object.keys(this.inject)) {
+        this._checkImpl(name);
+      }
+      this.dispose = parent.fiber.effect(() => {
+        const remove = runtime.fibers.push(this);
+        try {
+          this.config = resolveConfig(runtime, config);
+          this._refresh();
+        } catch (error) {
+          this.ctx.logger.error(error);
+          this._error = error;
+        }
+        return async () => {
+          this.uid = null;
+          this.context.emit("internal/plugin", this);
+          if (this.ctx.registry.has(runtime.callback)) {
+            remove();
+            if (!runtime.fibers.length) {
+              this.ctx.registry.delete(runtime.callback);
+            }
+          }
+          this._setEpoch(INACTIVE);
+          while (this.inertia) {
+            await this.inertia;
+          }
+        };
+      }, "ctx.plugin()");
+    } else {
+      this.uid = 0;
+      this.ctx = this.context = parent;
+      this.state = 2;
+      this.store = /* @__PURE__ */ Object.create(null);
+      this._runner = {
+        epoch: "",
+        getOuterStack,
+        execute: /* @__PURE__ */ __name(() => {
+        }, "execute"),
+        collect
+      };
+      this.dispose = () => this.restart();
+    }
+  }
+  parent;
+  inject;
+  runtime;
+  static {
+    __name(this, "Fiber");
+  }
+  uid;
+  ctx;
+  config;
+  state = 0;
+  dispose;
+  store;
+  inertia;
+  _hooks = /* @__PURE__ */ Object.create(null);
+  _disposables = new DisposableList2();
+  // Same as `this.ctx`, but with a more specific type.
+  context;
+  _error;
+  _runner;
+  _store = /* @__PURE__ */ Object.create(null);
+  get name() {
+    let fiber = this;
+    do {
+      if (fiber.runtime?.name) return fiber.runtime.name;
+      fiber = fiber.parent.fiber;
+    } while (fiber !== fiber.parent.fiber);
+    return "root";
+  }
+  assertActive() {
+    if (this.uid !== null) return;
+    throw new CordisError("INACTIVE_EFFECT");
+  }
+  _execute(runner) {
+    const oldEpoch = runner.epoch;
+    return composeError((info) => {
+      const safeCollect = /* @__PURE__ */ __name((dispose) => {
+        if (typeof dispose === "function") {
+          runner.collect(dispose);
+        } else if (!isNullable(dispose)) {
+          throw new TypeError("Invalid effect");
+        }
+      }, "safeCollect");
+      const effect = runner.execute.call(this);
+      if (typeof effect === "function") {
+        return runner.collect(effect);
+      } else if (isNullable(effect)) {
+      } else if (!isObject(effect)) {
+        throw new TypeError("Invalid effect");
+      } else if ("then" in effect) {
+        return effect.then(safeCollect);
+      } else if (Symbol.iterator in effect) {
+        info.error = new Error();
+        const iter = effect[Symbol.iterator]();
+        while (true) {
+          const result = iter.next();
+          safeCollect(result.value);
+          if (result.done) return;
+        }
+      } else if (Symbol.asyncIterator in effect) {
+        const iter = effect[Symbol.asyncIterator]();
+        return (async () => {
+          await Promise.resolve();
+          info.error = new Error();
+          while (true) {
+            if (runner.epoch !== oldEpoch) return;
+            const result = await iter.next();
+            safeCollect(result.value);
+            if (result.done) return;
+          }
+        })();
+      } else {
+        throw new TypeError("Invalid effect");
+      }
+    }, runner.getOuterStack);
+  }
+  effect(execute, label = "anonymous") {
+    this.assertActive();
+    const disposables = [];
+    const dispose = /* @__PURE__ */ __name(() => {
+      let task2;
+      for (const dispose2 of disposables.splice(0).reverse()) {
+        if (task2) {
+          task2 = task2.then(dispose2);
+        } else {
+          const result = dispose2();
+          if (isObject(result) && "then" in result) {
+            task2 = result;
+          }
+        }
+      }
+      return task2;
+    }, "dispose");
+    const meta = { label, children: [] };
+    const runner = {
+      execute,
+      epoch: true,
+      collect: /* @__PURE__ */ __name((dispose2) => {
+        disposables.push(dispose2);
+        this._disposables.delete(dispose2);
+        if (dispose2[symbols.effect]) {
+          meta.children.push(dispose2[symbols.effect]);
+        }
+      }, "collect"),
+      getOuterStack: buildOuterStack()
+    };
+    let task;
+    try {
+      task = this._execute(runner);
+    } catch (reason) {
+      dispose();
+      throw reason;
+    }
+    task?.catch(dispose).catch((error) => this.ctx.logger.error(error));
+    const wrapper = defineProperty(() => {
+      if (!runner.epoch) return;
+      runner.epoch = false;
+      return task ? task.then(dispose) : dispose();
+    }, symbols.effect, meta);
+    const disposeAsync = /* @__PURE__ */ __name(() => {
+      if (!runner.epoch) return;
+      runner.epoch = false;
+      return dispose();
+    }, "disposeAsync");
+    wrapper.then = async (onFulfilled, onRejected) => {
+      return Promise.resolve(task).then(() => disposeAsync).then(onFulfilled, onRejected);
+    };
+    disposables.push(this._disposables.push(wrapper));
+    return wrapper;
+  }
+  getEffects() {
+    return [...this._disposables].map((dispose) => dispose[symbols.effect]).filter(Boolean);
+  }
+  _getState() {
+    if (this.uid === null) return 4;
+    if (this._error) return 3;
+    if (this._runner.epoch !== INACTIVE) return 2;
+    return 0;
+  }
+  _updateState(callback) {
+    const oldState = this.state;
+    this.state = callback() ?? this._getState();
+    if (oldState === this.state) return;
+    this.context.emit("internal/status", this, oldState);
+    if (oldState !== 2 && this.state !== 2) return;
+    for (const key of Reflect.ownKeys(this.ctx.reflect.store)) {
+      const impl = this.ctx.reflect.store[key];
+      if (impl.fiber !== this) continue;
+      this.ctx.reflect.notify([impl.name]);
+    }
+  }
+  _checkImpl(name) {
+    const impl = this.ctx.reflect._getImpl(name, true);
+    if (!impl) return delete this._store[name];
+    try {
+      if (impl.check && !impl.check.call(getTraceable(this.ctx, impl.value))) {
+        return delete this._store[name];
+      }
+    } catch (error) {
+      impl.fiber.ctx.logger.error(error);
+      return delete this._store[name];
+    }
+    this._store[name] = impl;
+  }
+  _refresh() {
+    let epoch = false;
+    epoch = "";
+    for (const name of Object.keys(this.inject)) {
+      const impl = this._store[name];
+      if (!impl) {
+        epoch = INACTIVE;
+        break;
+      }
+      epoch += ":" + impl.fiber.uid;
+    }
+    this._setEpoch(epoch);
+  }
+  _setEpoch(epoch) {
+    const oldEpoch = this._runner.epoch;
+    if (epoch === oldEpoch) return;
+    if (this._error) return;
+    this._runner.epoch = epoch;
+    if (this.inertia) return;
+    this._updateState(() => {
+      if (epoch !== INACTIVE && oldEpoch === INACTIVE) {
+        this.inertia = this._reload();
+        return 1;
+      } else {
+        this.inertia = this._unload();
+        return 5;
+      }
+    });
+  }
+  async _reload() {
+    this.store = { ...this._store };
+    const oldEpoch = this._runner.epoch;
+    try {
+      await Promise.resolve();
+      await this._execute(this._runner);
+    } catch (reason) {
+      this.ctx.logger.error(reason);
+      this._error = reason;
+      this._runner.epoch = INACTIVE;
+    }
+    this._updateState(() => {
+      if (this._runner.epoch === oldEpoch) {
+        this.inertia = void 0;
+      } else {
+        this.inertia = this._unload();
+        return 5;
+      }
+    });
+  }
+  async _unload() {
+    await Promise.all(this._disposables.clear().map(async (dispose) => {
+      try {
+        await composeError(async (info) => {
+          await Promise.resolve();
+          info.error = new Error();
+          await dispose();
+        }, this._runner.getOuterStack);
+      } catch (reason) {
+        this.ctx.logger.error(reason);
+      }
+    }));
+    this.store = void 0;
+    this._updateState(() => {
+      if (this._runner.epoch === INACTIVE) {
+        this.inertia = void 0;
+      } else {
+        this.inertia = this._reload();
+        return 1;
+      }
+    });
+  }
+  async await() {
+    while (this.inertia) {
+      await this.inertia;
+    }
+    if (this._error) throw this._error;
+    return this;
+  }
+  async restart() {
+    const fiber = this.ctx.fiber;
+    fiber.assertActive();
+    fiber._setEpoch(INACTIVE);
+    fiber._refresh();
+    await fiber.await();
+  }
+  update(config, noSave = false) {
+    const fiber = this.ctx.fiber;
+    fiber.assertActive();
+    config = resolveConfig(fiber.runtime, config);
+    const result = fiber.context.waterfall(fiber, "internal/update", config, noSave, () => {
+      fiber.config = config;
+      fiber._error = void 0;
+      return fiber.restart();
+    });
+    if (result === void 0) return;
+    const task = Promise.resolve(result);
+    task.catch(() => {
+    });
+    return task;
+  }
+};
+function enhanceError(error) {
+  const lines = error.stack.split("\n");
+  lines.splice(0, 2, `Error: ${error.message}`);
+  error.stack = lines.join("\n");
+  return error;
+}
+__name(enhanceError, "enhanceError");
+var RESERVED_WORDS = ["prototype", "then"];
+function isSpecialProperty(prop) {
+  return typeof prop === "symbol" || RESERVED_WORDS.includes(prop) || parseInt(prop).toString() === prop || prop.startsWith("_");
+}
+__name(isSpecialProperty, "isSpecialProperty");
+var ReflectService = class {
+  constructor(ctx) {
+    this.ctx = ctx;
+    defineProperty(this, symbols.tracker, {
+      property: "ctx",
+      noShadow: true
+    });
+    this.mixin("reflect", ["get", "set", "provide", "accessor", "mixin"]);
+    this.mixin("fiber", ["runtime", "effect"]);
+    this.mixin("registry", ["inject", "plugin"]);
+    this.mixin("events", ["on", "once", "parallel", "emit", "serial", "bail", "waterfall"]);
+  }
+  ctx;
+  static {
+    __name(this, "ReflectService");
+  }
+  static handler = {
+    get: /* @__PURE__ */ __name((target, prop, ctx) => {
+      if (isSpecialProperty(prop)) {
+        return Reflect.get(target, prop, ctx);
+      }
+      if (Reflect.has(target, prop)) {
+        return getTraceable(ctx, Reflect.get(target, prop, ctx));
+      }
+      const error = new Error(`cannot get property "${prop}" without inject`);
+      try {
+        const def = target.reflect.props[prop];
+        if (def?.type === "accessor") {
+          return def.get.call(ctx, ctx[symbols.receiver], error);
+        }
+        const defSite = ctx[symbols.shadow] ?? ctx;
+        if (!defSite.fiber.runtime) return ctx.reflect.get(prop, false);
+        return ctx.events.waterfall("internal/get", ctx, prop, error, () => {
+          const key = target[symbols.isolate][prop];
+          let fiber = defSite.fiber;
+          while (true) {
+            const impl = fiber.store?.[prop];
+            if (impl) return getTraceable(ctx, impl.value);
+            if (prop in fiber.inject) {
+              error.message = `cannot get required service "${prop}" in inactive context`;
+              throw error;
+            }
+            if (!fiber.runtime) throw error;
+            if (fiber.parent[symbols.isolate][prop] !== key) throw error;
+            fiber = fiber.parent.fiber;
+          }
+        });
+      } catch (e) {
+        throw e === error ? enhanceError(e) : e;
+      }
+    }, "get"),
+    set: /* @__PURE__ */ __name((target, prop, value, ctx) => {
+      if (isSpecialProperty(prop)) {
+        return Reflect.set(target, prop, value, ctx);
+      }
+      const error = new Error(`cannot set property "${prop}" without provide`);
+      const def = target.reflect.props[prop];
+      if (!def) {
+        if (!ctx.fiber.runtime) return Reflect.set(target, prop, value, ctx);
+        throw enhanceError(error);
+      }
+      try {
+        if (def.type === "accessor") {
+          if (!def.set) return false;
+          return def.set.call(ctx, value, ctx[symbols.receiver], error);
+        }
+        return ctx.events.waterfall("internal/set", ctx, prop, value, error, () => {
+          return ctx.reflect.set(prop, value, error);
+        });
+      } catch (e) {
+        throw e === error ? enhanceError(e) : e;
+      }
+    }, "set"),
+    has: /* @__PURE__ */ __name((target, prop) => {
+      if (isSpecialProperty(prop)) {
+        return Reflect.has(target, prop);
+      }
+      if (Reflect.has(target, prop)) return true;
+      return !!target.reflect.props[prop];
+    }, "has")
+  };
+  store = /* @__PURE__ */ Object.create(null);
+  props = /* @__PURE__ */ Object.create(null);
+  get(name, strict = true) {
+    return getTraceable(this.ctx, this._getImpl(name, strict)?.value);
+  }
+  _getImpl(name, strict = true) {
+    const key = this.ctx[symbols.isolate][name];
+    const impl = key && this.store[key];
+    if (!impl) return;
+    if (strict && impl.fiber.state !== 2) return;
+    return impl;
+  }
+  set(name, value, error) {
+    const key = this.ctx[symbols.isolate][name];
+    const impl = this.store[key];
+    if (!impl) {
+      throw new Error(`cannot set property "${name}" without provide`);
+    }
+    if (impl.fiber !== this.ctx.fiber) {
+      throw new Error(`cannot set property "${name}" in multiple fibers`);
+    }
+    impl.value = value;
+    return true;
+  }
+  provide(name, value, check) {
+    return this.ctx.fiber.effect(() => {
+      if (!this.props[name]) {
+        this.props[name] ??= { type: "service" };
+      } else if (this.props[name].type !== "service") {
+        throw new Error(`property "${name}" is already declared as ${this.props[name].type}`);
+      }
+      this.props[name] = { type: "service" };
+      this.ctx.root[symbols.isolate][name] ??= Symbol(name);
+      const key = this.ctx[symbols.isolate][name];
+      const impl = { name, value, fiber: this.ctx.fiber, check };
+      if (this.store[key]) {
+        throw new Error(`service "${name}" has been registered at <${this.store[key].fiber.name}>`);
+      }
+      this.store[key] = impl;
+      this.ctx.fiber.store[name] = impl;
+      if (this.ctx.fiber.state === 2) {
+        this.notify([name]);
+      }
+      return async () => {
+        delete this.store[key];
+        const fibers = this.notify([name]);
+        await Promise.allSettled(fibers.map((fiber) => fiber.await()));
+        delete this.ctx.fiber.store[name];
+      };
+    }, `ctx.provide(${JSON.stringify(name)})`);
+  }
+  notify(names, filter = (ctx, name) => ctx[symbols.isolate][name] === this.ctx[symbols.isolate][name]) {
+    const fibers = [];
+    for (const runtime of this.ctx.registry.values()) {
+      for (const fiber of runtime.fibers) {
+        let hasUpdate = false;
+        for (const name of names) {
+          if (!(name in fiber.inject)) continue;
+          if (!filter(fiber.ctx, name)) continue;
+          hasUpdate = true;
+          fiber._checkImpl(name);
+        }
+        if (!hasUpdate) continue;
+        fiber._refresh();
+        fibers.push(fiber);
+      }
+    }
+    for (const name of names) {
+      const self = Object.create(this.ctx);
+      self[symbols.filter] = (target) => filter(target, name);
+      this.ctx.events.emit(self, "internal/service", name, this._getImpl(name, false)?.value);
+    }
+    return fibers;
+  }
+  accessor(name, options) {
+    return this.ctx.fiber.effect(() => {
+      if (name in this.props) {
+        throw new Error(`property "${name}" is already declared as ${this.props[name].type}`);
+      }
+      this.props[name] = { type: "accessor", ...options };
+      return () => delete this.props[name];
+    }, `ctx.accessor(${JSON.stringify(name)})`);
+  }
+  mixin(source, mixins) {
+    const self = this;
+    return this.ctx.fiber.effect(function* () {
+      const entries = Array.isArray(mixins) ? mixins.map((key) => [key, key]) : Object.entries(mixins);
+      const getTarget = /* @__PURE__ */ __name((ctx, error) => {
+        return ctx[source];
+      }, "getTarget");
+      for (const [key, value] of entries) {
+        yield self.accessor(value, {
+          get(receiver, error) {
+            const service = getTarget(this, error);
+            if (isNullable(service)) return service;
+            const mixin = receiver ? withProps(receiver, service) : service;
+            const value2 = Reflect.get(service, key, mixin);
+            if (typeof value2 !== "function") return value2;
+            return value2.bind(mixin ?? service);
+          },
+          set(value2, receiver, error) {
+            const service = getTarget(this, error);
+            const mixin = receiver ? withProps(receiver, service) : service;
+            return Reflect.set(service, key, value2, mixin);
+          }
+        });
+      }
+    }, `ctx.mixin(${JSON.stringify(source)})`);
+  }
+  trace(value) {
+    return getTraceable(this.ctx, value);
+  }
+  bind(callback) {
+    return new Proxy(callback, {
+      apply: /* @__PURE__ */ __name((target, thisArg, args) => {
+        return Reflect.apply(target, this.trace(thisArg), args.map((arg) => this.trace(arg)));
+      }, "apply"),
+      construct: /* @__PURE__ */ __name((target, args, newTarget) => {
+        return Reflect.construct(target, args.map((arg) => this.trace(arg)), newTarget);
+      }, "construct")
+    });
+  }
+};
+function isApplicable(object) {
+  return object && typeof object === "object" && typeof object.apply === "function";
+}
+__name(isApplicable, "isApplicable");
+function Inject(name, config) {
+  return function(value, decorator) {
+    if (decorator.kind === "class") {
+      if (!Object.hasOwn(value, "inject")) {
+        defineProperty(value, "inject", Object.create(Object.getPrototypeOf(value).inject ?? null));
+        defineProperty(value.inject, symbols.checkProto, true);
+      }
+      value.inject[name] = config;
+    } else if (decorator.kind === "method") {
+      const inject = (value[symbols.metadata] ??= {}).inject ??= /* @__PURE__ */ Object.create(null);
+      inject[name] = config;
+      decorator.addInitializer(function() {
+        const property = this[symbols.tracker]?.property;
+        (this[symbols.initHooks] ??= []).push(() => {
+          this.ctx.inject(inject, (ctx) => {
+            return value.call(property ? withProps(this, { [property]: ctx }) : this);
+          });
+        });
+      });
+    } else {
+      throw new Error("@Inject() can only be used on class or class methods");
+    }
+  };
+}
+__name(Inject, "Inject");
+((Inject2) => {
+  function resolve2(inject, result = /* @__PURE__ */ Object.create(null)) {
+    if (!inject) return result;
+    if (Array.isArray(inject)) {
+      for (const name of inject) {
+        result[name] = null;
+      }
+    } else if (Reflect.has(inject, symbols.checkProto)) {
+      Object.assign(result, resolve2(Object.getPrototypeOf(inject)));
+      for (const name of Object.keys(inject)) {
+        result[name] = inject[name] ?? null;
+      }
+    } else {
+      for (const name of Object.keys(inject)) {
+        result[name] = inject[name] ?? null;
+      }
+    }
+    return result;
+  }
+  Inject2.resolve = resolve2;
+  __name(resolve2, "resolve");
+})(Inject || (Inject = {}));
+var RegistryService = class {
+  constructor(ctx) {
+    this.ctx = ctx;
+    defineProperty(this, symbols.tracker, {
+      property: "ctx",
+      noShadow: true
+    });
+  }
+  ctx;
+  static {
+    __name(this, "RegistryService");
+  }
+  _counter = 0;
+  _internal = /* @__PURE__ */ new Map();
+  get counter() {
+    return ++this._counter;
+  }
+  get size() {
+    return this._internal.size;
+  }
+  resolve(plugin) {
+    try {
+      if (typeof plugin === "function") return plugin;
+      if (isApplicable(plugin)) return plugin.apply;
+    } catch {
+    }
+  }
+  get(plugin) {
+    const key = this.resolve(plugin);
+    return key && this._internal.get(key);
+  }
+  has(plugin) {
+    const key = this.resolve(plugin);
+    return !!key && this._internal.has(key);
+  }
+  delete(plugin) {
+    const key = this.resolve(plugin);
+    const runtime = key && this._internal.get(key);
+    if (!runtime) return;
+    this._internal.delete(key);
+    for (const fiber of runtime.fibers) {
+      fiber.dispose();
+    }
+    return runtime;
+  }
+  keys() {
+    return this._internal.keys();
+  }
+  values() {
+    return this._internal.values();
+  }
+  entries() {
+    return this._internal.entries();
+  }
+  forEach(callback) {
+    return this._internal.forEach(callback);
+  }
+  inject(inject, callback) {
+    return this.plugin({ inject, apply: callback, name: callback.name });
+  }
+  plugin(plugin, config, getOuterStack = buildOuterStack()) {
+    const callback = this.resolve(plugin);
+    if (!callback) throw new Error('invalid plugin, expect function or object with an "apply" method, received ' + typeof plugin);
+    this.ctx.fiber.assertActive();
+    let runtime = this._internal.get(callback);
+    if (!runtime) {
+      let name = plugin.name;
+      if (name === "apply") name = void 0;
+      runtime = { name, callback, fibers: new DisposableList2(), Config: plugin.Config };
+      this._internal.set(callback, runtime);
+    }
+    const fiber = new Fiber(this.ctx, config, Inject.resolve(plugin.inject), runtime, getOuterStack);
+    const wrapped = Object.create(fiber);
+    wrapped.then = (onFulfilled, onRejected) => {
+      return fiber.await().then(onFulfilled, onRejected);
+    };
+    return wrapped;
+  }
+};
+var Context = class _Context {
+  static {
+    __name(this, "Context");
+  }
+  static effect = symbols.effect;
+  static filter = symbols.filter;
+  static isolate = symbols.isolate;
+  static intercept = symbols.intercept;
+  static is(value) {
+    return !!value?.[_Context.is];
+  }
+  static {
+    _Context.is[Symbol.toPrimitive] = () => /* @__PURE__ */ Symbol.for("cordis.is");
+    _Context.prototype[_Context.is] = true;
+  }
+  constructor() {
+    this[symbols.isolate] = /* @__PURE__ */ Object.create(null);
+    this[symbols.intercept] = /* @__PURE__ */ Object.create(null);
+    const self = new Proxy(this, ReflectService.handler);
+    this.root = self;
+    this.baseUrl = void 0;
+    this.fiber = new Fiber(self, {}, /* @__PURE__ */ Object.create(null), null, () => []);
+    this.reflect = new ReflectService(self);
+    this.registry = new RegistryService(self);
+    this.events = new EventsService(self);
+    this.logger = new LoggerService(self);
+    this.fiber._disposables.clear();
+    return self;
+  }
+  [/* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom")]() {
+    return `Context <${this.fiber.name}>`;
+  }
+  extend(meta = {}) {
+    const shadow = Reflect.getOwnPropertyDescriptor(this, symbols.shadow)?.value;
+    const self = Object.create(getTraceable(this, this));
+    for (const prop of Reflect.ownKeys(meta)) {
+      Object.defineProperty(self, prop, Reflect.getOwnPropertyDescriptor(meta, prop));
+    }
+    if (!shadow) return self;
+    return Object.assign(Object.create(self), { [symbols.shadow]: shadow });
+  }
+  isolate(name, label) {
+    const shadow = Object.create(this[symbols.isolate]);
+    shadow[name] = label ?? Symbol(name);
+    return this.extend({ [symbols.isolate]: shadow });
+  }
+  intercept(name, config) {
+    const intercept = Object.create(this[symbols.intercept]);
+    intercept[name] = config;
+    return this.extend({ [symbols.intercept]: intercept });
+  }
+};
+var Service = class _Service {
+  constructor(ctx, name) {
+    this.ctx = ctx;
+    name ??= this.constructor["provide"];
+    let self = this;
+    const tracker = {
+      associate: name,
+      property: "ctx"
+    };
+    if (self[symbols.invoke]) {
+      self = createCallable(name, joinPrototype(Object.getPrototypeOf(this), Function.prototype), tracker);
+    }
+    self.ctx = ctx;
+    self.name = name;
+    defineProperty(self, symbols.tracker, tracker);
+    self.ctx.reflect.provide(name, self, this[symbols.check]);
+    return self;
+  }
+  ctx;
+  static {
+    __name(this, "Service");
+  }
+  static init = symbols.init;
+  static check = symbols.check;
+  static config = symbols.config;
+  static invoke = symbols.invoke;
+  static extend = symbols.extend;
+  static tracker = symbols.tracker;
+  static resolveConfig = symbols.resolveConfig;
+  name;
+  [symbols.filter](ctx) {
+    return ctx[symbols.isolate][this.name] === this.ctx[symbols.isolate][this.name];
+  }
+  [symbols.extend](props) {
+    let self;
+    if (this[_Service.invoke]) {
+      self = createCallable(this.name, this, this[symbols.tracker]);
+    } else {
+      self = Object.create(this);
+    }
+    return Object.assign(self, props);
+  }
+  [symbols.resolveConfig](base, head) {
+    let intercept = this.ctx[Context.intercept];
+    const configs = [];
+    while (this.name in intercept) {
+      if (Object.hasOwn(intercept, this.name)) {
+        configs.unshift(intercept[this.name]);
+      }
+      intercept = Object.getPrototypeOf(intercept);
+    }
+    if (base) configs.unshift(base);
+    if (head) configs.push(head);
+    if (this["Config"]?.merge) {
+      return this["Config"].merge(...configs);
+    } else {
+      return Object.assign({}, ...configs);
+    }
+  }
+  static [Symbol.hasInstance](instance) {
+    if (!instance) return false;
+    let constructor = instance.constructor;
+    while (constructor) {
+      constructor = constructor.prototype?.constructor;
+      if (constructor === this) return true;
+      constructor &&= Object.getPrototypeOf(constructor);
+    }
+    return false;
+  }
+};
+
+// node_modules/clm-kernel/dist/chunk-HGOFBNYK.js
 var import_ws3 = __toESM(require_browser(), 1);
 init_crypto();
 init_crypto();
@@ -2082,8 +4023,8 @@ function extractPayloadString(payload) {
   if (payload.kind === "scalar") return String(payload.value ?? "");
   if (payload.kind === "structured") return JSON.stringify(payload.value);
   if (payload.kind === "binary") {
-    if (typeof Buffer !== "undefined") {
-      return Buffer.from(payload.data).toString("utf8");
+    if (typeof BufferShim !== "undefined") {
+      return BufferShim.from(payload.data).toString("utf8");
     }
     return new TextDecoder().decode(payload.data);
   }
@@ -2096,6 +4037,193 @@ defaultMediumRegistry.register(new HttpMediaPlugin("http"));
 defaultMediumRegistry.register(new HttpMediaPlugin("https"));
 defaultMediumRegistry.register(new IpfsMediaPlugin());
 defaultMediumRegistry.register(new IndexedDbMediaPlugin());
+var VALID_TRANSITIONS = {
+  "pending": ["loading", "error"],
+  "loading": ["active", "error"],
+  "active": ["suspended", "unloading", "error"],
+  "suspended": ["active", "unloading", "error"],
+  "unloading": ["disposed", "error"],
+  "disposed": [],
+  "error": ["disposed"]
+};
+var FiberLifecycle = class {
+  id;
+  coeffects;
+  #state = "pending";
+  #listeners = [];
+  #disposables = new DisposableList();
+  #guard;
+  constructor(id, coeffects) {
+    this.id = id;
+    this.coeffects = coeffects;
+  }
+  /** Current fiber state. */
+  get state() {
+    return this.#state;
+  }
+  /** The DisposableList for registering cleanup actions during Active phase. */
+  get disposables() {
+    return this.#disposables;
+  }
+  /** The SavepointGuard (only available during active transaction). */
+  get guard() {
+    return this.#guard;
+  }
+  /** Register a transition event listener. */
+  onTransition(listener) {
+    this.#listeners.push(listener);
+    return () => {
+      const idx = this.#listeners.indexOf(listener);
+      if (idx >= 0) this.#listeners.splice(idx, 1);
+    };
+  }
+  /**
+   * Transition: Pending → Loading → Active.
+   * Creates a SavepointGuard, resolves any declared coeffects, and executes the loading function.
+   * On failure: transitions to Error state, rolls back the guard, and unwinds disposables.
+   */
+  async load(fn, optionsOrSnapshot) {
+    this.#transition("loading");
+    let snapshot;
+    let ctx;
+    let timeoutMs;
+    if (optionsOrSnapshot !== null && typeof optionsOrSnapshot === "object" && ("ctx" in optionsOrSnapshot || "snapshot" in optionsOrSnapshot || "timeoutMs" in optionsOrSnapshot)) {
+      const opts = optionsOrSnapshot;
+      snapshot = opts.snapshot;
+      ctx = opts.ctx;
+      timeoutMs = opts.timeoutMs;
+    } else {
+      snapshot = optionsOrSnapshot;
+    }
+    const guard = new SavepointGuard();
+    this.#guard = guard;
+    guard.begin(snapshot ?? {});
+    try {
+      if (this.coeffects && this.coeffects.requiredServices && this.coeffects.requiredServices.length > 0) {
+        if (!ctx) {
+          throw new Error(
+            `FiberLifecycle [${this.id}]: Cordis Context required to resolve coeffects: ${this.coeffects.requiredServices.join(", ")}`
+          );
+        }
+        await resolveCoeffects(this.coeffects, ctx, timeoutMs);
+      }
+      await fn(guard);
+      this.#transition("active");
+    } catch (err) {
+      this.#transitionToError(err instanceof Error ? err : new Error(String(err)));
+      if (guard.state === "active") {
+        await guard.rollback();
+      }
+      await this.#disposables.dispose();
+      throw err;
+    }
+  }
+  /**
+   * Execute work in the Active state.
+   * On failure: transitions to Error, rolls back the guard, and unwinds disposables.
+   */
+  async activate(fn) {
+    if (this.#state !== "active") {
+      throw new Error(`FiberLifecycle: expected state "active", got "${this.#state}"`);
+    }
+    try {
+      await fn();
+    } catch (err) {
+      this.#transitionToError(err instanceof Error ? err : new Error(String(err)));
+      if (this.#guard?.state === "active") {
+        await this.#guard.rollback();
+      }
+      await this.#disposables.dispose();
+      throw err;
+    }
+  }
+  /**
+   * Transition: Active → Suspended (Delimited Continuation parking).
+   */
+  suspend() {
+    if (this.#state !== "active") {
+      throw new Error(`FiberLifecycle: expected state "active" to suspend, got "${this.#state}"`);
+    }
+    this.#transition("suspended");
+  }
+  /**
+   * Transition: Suspended → Active (Resuming from continuation).
+   */
+  resume() {
+    if (this.#state !== "suspended") {
+      throw new Error(`FiberLifecycle: expected state "suspended" to resume, got "${this.#state}"`);
+    }
+    this.#transition("active");
+  }
+  /**
+   * Transition: Active → Unloading → Disposed.
+   * Commits the SavepointGuard, unwinds registered disposables, and transitions to Disposed.
+   */
+  async unload(fn) {
+    if (this.#state !== "active") {
+      throw new Error(`FiberLifecycle: expected state "active", got "${this.#state}"`);
+    }
+    this.#transition("unloading");
+    try {
+      if (fn) await fn();
+      if (this.#guard?.state === "active") {
+        this.#guard.commit();
+      }
+      await this.#disposables.dispose();
+      this.#transition("disposed");
+    } catch (err) {
+      this.#transitionToError(err instanceof Error ? err : new Error(String(err)));
+      if (this.#guard?.state === "active") {
+        await this.#guard.rollback();
+      }
+      await this.#disposables.dispose();
+      throw err;
+    }
+  }
+  /** Force-dispose from any state (cleanup). */
+  async forceDispose() {
+    if (this.#state === "disposed") return;
+    const from = this.#state;
+    if (this.#guard?.state === "active") {
+      await this.#guard.rollback();
+    }
+    if (!this.#disposables.disposed) {
+      await this.#disposables.dispose();
+    }
+    this.#state = "disposed";
+    this.#emitEvent(from, "disposed");
+  }
+  // ── Private ───────────────────────────────────────────────────────────
+  #transition(to) {
+    const from = this.#state;
+    const allowed = VALID_TRANSITIONS[from];
+    if (!allowed?.includes(to)) {
+      throw new Error(`FiberLifecycle: invalid transition "${from}" \u2192 "${to}"`);
+    }
+    this.#state = to;
+    this.#emitEvent(from, to);
+  }
+  #transitionToError(error) {
+    const from = this.#state;
+    this.#state = "error";
+    this.#emitEvent(from, "error", error);
+  }
+  #emitEvent(from, to, error) {
+    const event = {
+      fiberId: this.id,
+      from,
+      to,
+      timestamp: Date.now(),
+      error
+    };
+    for (const listener of this.#listeners) {
+      try {
+        listener(event);
+      } catch {
+      }
+    }
+  }
+};
 var SATORI_OPCODES = {
   text: 1,
   at: 2,
@@ -2118,9 +4246,10 @@ var ED25519_PKCS8_PREFIX2 = toBuffer(ED25519_PKCS8_PREFIX);
 var ED25519_SPKI_PREFIX22 = toBuffer(ED25519_SPKI_PREFIX);
 var X25519_PKCS8_PREFIX2 = toBuffer(X25519_PKCS8_PREFIX);
 var X25519_SPKI_PREFIX2 = toBuffer(X25519_SPKI_PREFIX);
-var X25519_SPKI_HEADER = Buffer.from("302a300506032b656e032100", "hex");
+var X25519_SPKI_HEADER = BufferShim.from("302a300506032b656e032100", "hex");
 
 // node_modules/clm-kernel/dist/chunk-TJBHIBS5.js
+init_buffer();
 init_crypto();
 init_crypto();
 function computeDeltaE(baselineScore, candidateScore) {
@@ -2449,11 +4578,21 @@ function getAsyncEventBatcher() {
 }
 
 // node_modules/clm-kernel/dist/chunk-UEE3EGVQ.js
+init_buffer();
+
+// node_modules/clm-kernel/dist/chunk-KQ4I5C33.js
+init_buffer();
+
+// node_modules/clm-kernel/dist/chunk-SXY3UQYM.js
+init_buffer();
+
+// node_modules/clm-kernel/dist/chunk-UEE3EGVQ.js
 init_fs();
 init_fs();
 init_path();
 
 // node_modules/clm-kernel/dist/chunk-CSOLQ77U.js
+init_buffer();
 var shared_exports = {};
 __export2(shared_exports, {
   ED25519_PKCS8_PREFIX: () => ED25519_PKCS8_PREFIX,
@@ -2503,7 +4642,7 @@ function normalizeToUint8Array(input) {
   if (typeof input === "string") {
     return new TextEncoder().encode(input);
   }
-  if (input && typeof Buffer !== "undefined" && Buffer.isBuffer(input)) {
+  if (input && typeof BufferShim !== "undefined" && BufferShim.isBuffer(input)) {
     return new Uint8Array(input.buffer, input.byteOffset, input.byteLength);
   }
   if (input instanceof ArrayBuffer) {
@@ -2523,7 +4662,14 @@ function constantTimeEqual(a, b) {
   return diff === 0;
 }
 
+// node_modules/clm-kernel/dist/chunk-35YKTZUZ.js
+init_buffer();
+
+// node_modules/clm-kernel/dist/chunk-T7KCRONF.js
+init_buffer();
+
 // node_modules/clm-kernel/dist/chunk-RB7KYILQ.js
+init_buffer();
 var blake3Provider = new Blake3Provider();
 var sha256Provider = new Sha256Provider();
 
@@ -2538,6 +4684,7 @@ for (let i = 0; i < B58_ALPHABET.length; i++) {
 init_crypto();
 
 // public/js/mcard-kernel/indexeddb-backend.js
+init_buffer();
 var DB_NAME_DEFAULT = "mcard-storage";
 var DB_VERSION = 1;
 var STORE_CARDS = "cards";
@@ -2942,11 +5089,14 @@ export {
   CardCollection,
   ContentHash,
   ContentTypeInterpreter,
+  Context,
+  FiberLifecycle,
   GTime,
   HandleValidationError,
   IndexedDBBackend as IndexedDBEngine,
   MCard2 as MCard,
   MCardCollection,
+  Service,
   classifyClm,
   detectMime,
   validateHandle

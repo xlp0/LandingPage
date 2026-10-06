@@ -27,3 +27,21 @@ export {
 } from './compat.js';
 
 export { IndexedDBBackend as IndexedDBEngine } from './indexeddb-backend.js';
+
+/**
+ * The context paradigm's runtime, re-exported so the browser can resolve it.
+ *
+ * `clm-kernel`'s FiberLifecycle takes a Cordis `Context` to resolve declared
+ * coeffects, so a browser surface that mounts fibers needs the same Context type
+ * the kernel expects. Bundling it here keeps the import map to a single entry
+ * rather than requiring `cordis` and its own transitive bare specifiers to be
+ * mapped individually.
+ */
+export { Context, Service } from 'cordis';
+
+/**
+ * The kernel's fiber lifecycle, re-exported for the same reason: the browser
+ * dispatcher mounts every fiber through it, so the bundle must carry the exact
+ * class the kernel uses rather than a second copy.
+ */
+export { FiberLifecycle } from 'clm-kernel';

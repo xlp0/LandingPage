@@ -41,5 +41,8 @@ await build({
   platform: 'browser',
   outfile: join(root, 'public', 'js', 'vendor', 'clm-kernel.bundle.js'),
   plugins: [shimPlugin],
+  // `Buffer` is a Node *global*, not an import, so a resolve plugin cannot catch
+  // it. esbuild's inject replaces the free reference instead.
+  inject: [join(shimDir, 'buffer.js')],
   logLevel: 'info',
 });

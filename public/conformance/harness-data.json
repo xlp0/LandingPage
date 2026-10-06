@@ -1,0 +1,2139 @@
+{
+  "generated_from": "LandingPage/clm-registry.yaml + docs/sprints/_active/fibers/",
+  "registry": {
+    "version": "2.0.0",
+    "registry_url": "https://henry.pkc.pub/clm",
+    "components": [
+      {
+        "hash": "welcome",
+        "name": "Welcome Component",
+        "abstract": {
+          "context": "Entry point for user interaction",
+          "goal": "Greet user and set narrative tone"
+        },
+        "concrete": {
+          "implementation": "components/welcome.html",
+          "sandbox": "allow-scripts"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/welcome",
+          "health_check": "/health/welcome",
+          "expected_load_time_ms": 500
+        }
+      },
+      {
+        "hash": "hero-content",
+        "name": "Hero Content",
+        "abstract": {
+          "context": "Main content presentation",
+          "goal": "Display primary message with animation"
+        },
+        "concrete": {
+          "implementation": "components/hero.html",
+          "sandbox": "allow-scripts"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/hero",
+          "health_check": "/health/hero",
+          "expected_load_time_ms": 800
+        }
+      },
+      {
+        "hash": "p2p-status",
+        "name": "P2P Status Panel",
+        "abstract": {
+          "context": "WebRTC peer connection monitoring",
+          "goal": "Show active peers and connection health"
+        },
+        "concrete": {
+          "implementation": "components/p2p-status.html",
+          "sandbox": "allow-scripts"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/p2p",
+          "health_check": "/health/p2p",
+          "expected_load_time_ms": 400
+        }
+      },
+      {
+        "hash": "crash-test",
+        "name": "Intentional Failure Component",
+        "abstract": {
+          "context": "Testing failure isolation",
+          "goal": "Demonstrate that component failure doesn't crash main page"
+        },
+        "concrete": {
+          "implementation": "components/crash-test.html",
+          "sandbox": "allow-scripts"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/crash-test",
+          "health_check": "/health/crash-test",
+          "expected_load_time_ms": 100,
+          "expected_failure": true
+        }
+      },
+      {
+        "hash": "wikipedia-viewer",
+        "name": "Wikipedia Knowledge Base",
+        "abstract": {
+          "context": "External content integration",
+          "goal": "Display Wikipedia articles in iframe for knowledge reference"
+        },
+        "concrete": {
+          "implementation": "components/wikipedia-viewer.html",
+          "sandbox": "allow-scripts"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/wikipedia",
+          "health_check": "/health/wikipedia",
+          "expected_load_time_ms": 1500,
+          "expected_failure": false
+        }
+      },
+      {
+        "hash": "user-list",
+        "name": "User Account List",
+        "abstract": {
+          "context": "Account management dashboard",
+          "goal": "Display list of user accounts with status"
+        },
+        "concrete": {
+          "implementation": "components/user-list.html",
+          "sandbox": "allow-scripts",
+          "redux_slice": "users"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/user-list",
+          "health_check": "/health/user-list",
+          "expected_load_time_ms": 400
+        }
+      },
+      {
+        "hash": "user-detail",
+        "name": "User Account Detail",
+        "abstract": {
+          "context": "Account detail view",
+          "goal": "Show detailed user information and actions"
+        },
+        "concrete": {
+          "implementation": "components/user-detail.html",
+          "sandbox": "allow-scripts",
+          "redux_slice": "users"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/user-detail",
+          "health_check": "/health/user-detail",
+          "expected_load_time_ms": 300
+        }
+      },
+      {
+        "hash": "redux-state-viewer",
+        "name": "Redux Store Monitor",
+        "abstract": {
+          "context": "Redux state visualization",
+          "goal": "Monitor Redux store and CLM module connections"
+        },
+        "concrete": {
+          "implementation": "components/redux-state-viewer.html",
+          "sandbox": "allow-scripts",
+          "redux_slice": "all"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/redux-viewer",
+          "health_check": "/health/redux-viewer",
+          "expected_load_time_ms": 200
+        }
+      },
+      {
+        "hash": "wikipedia-search",
+        "name": "Wikipedia Search",
+        "abstract": {
+          "context": "Knowledge base search and article viewer",
+          "goal": "Search Wikipedia and display article summaries"
+        },
+        "concrete": {
+          "implementation": "components/wikipedia-search.html",
+          "sandbox": "allow-scripts"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/wikipedia-search",
+          "health_check": "/health/wikipedia-search",
+          "expected_load_time_ms": 400,
+          "expected_failure": false
+        }
+      },
+      {
+        "hash": "external-site-demo",
+        "name": "External Website Demo",
+        "abstract": {
+          "context": "Third-party website integration",
+          "goal": "Demonstrate CLM can embed external websites that allow iframe"
+        },
+        "concrete": {
+          "implementation": "https://example.com",
+          "sandbox": "allow-scripts allow-same-origin"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/external-site",
+          "health_check": "/health/external-site",
+          "expected_load_time_ms": 2000,
+          "expected_failure": false
+        }
+      },
+      {
+        "hash": "google-maps",
+        "name": "Google Maps",
+        "abstract": {
+          "context": "Location and mapping service integration",
+          "goal": "Embed Google Maps to show geographic data visualization"
+        },
+        "concrete": {
+          "implementation": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127641.04923321933!2d103.70415!3d1.3521!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31da11238a8b9375%3A0x887869cf52abf5c4!2sSingapore!5e0!3m2!1sen!2ssg!4v1234567890",
+          "sandbox": "allow-scripts allow-same-origin"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/google-maps",
+          "health_check": "/health/google-maps",
+          "expected_load_time_ms": 1500,
+          "expected_failure": false
+        }
+      },
+      {
+        "hash": "pkc-viewer",
+        "name": "PKC Document Viewer",
+        "abstract": {
+          "context": "Document rendering and visualization",
+          "goal": "Render Markdown and LaTeX documents with math, diagrams, and syntax highlighting"
+        },
+        "concrete": {
+          "implementation": "components/pkc-viewer.html?v=5"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/pkc-viewer",
+          "health_check": "/health/pkc-viewer",
+          "expected_load_time_ms": 800,
+          "expected_failure": false
+        }
+      },
+      {
+        "hash": "grafana-faro",
+        "name": "Grafana Faro - Real User Monitoring",
+        "abstract": {
+          "context": "Frontend observability and real user monitoring",
+          "goal": "Track user interactions, component visits, errors, and performance metrics"
+        },
+        "concrete": {
+          "implementation": "components/grafana-faro.html",
+          "sandbox": "allow-scripts allow-same-origin"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/grafana-faro",
+          "health_check": "/health/grafana-faro",
+          "expected_load_time_ms": 600,
+          "observability": {
+            "tracks": [
+              "Component visits and navigation",
+              "User journey and session replay",
+              "JavaScript errors and exceptions",
+              "Web vitals (LCP, FID, CLS)",
+              "API calls and performance"
+            ],
+            "integration": "Grafana Cloud Faro",
+            "endpoint": "https://faro-collector-prod-us-central-0.grafana.net/collect"
+          }
+        }
+      },
+      {
+        "hash": "youtube-viewer",
+        "name": "YouTube Video Viewer",
+        "abstract": {
+          "context": "Video content integration and playback",
+          "goal": "Embed and play YouTube videos with custom controls and video switching"
+        },
+        "concrete": {
+          "implementation": "components/youtube-viewer.html",
+          "sandbox": "allow-scripts allow-same-origin"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/youtube-viewer",
+          "health_check": "/health/youtube-viewer",
+          "expected_load_time_ms": 800,
+          "expected_failure": false,
+          "features": [
+            "YouTube embed player",
+            "Video ID extraction from URLs",
+            "Dynamic video loading",
+            "Responsive 16:9 aspect ratio"
+          ]
+        }
+      },
+      {
+        "hash": "youtube-external",
+        "name": "YouTube Direct Embed",
+        "abstract": {
+          "context": "Direct YouTube video embedding",
+          "goal": "Embed specific YouTube video directly via external URL"
+        },
+        "concrete": {
+          "implementation": "https://www.youtube.com/embed/qxIzZMNsd84?enablejsapi=1",
+          "sandbox": "allow-scripts allow-same-origin"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/youtube-external",
+          "health_check": "/health/youtube-external",
+          "expected_load_time_ms": 1200,
+          "expected_failure": false,
+          "features": [
+            "Direct YouTube embed",
+            "No custom wrapper",
+            "Native YouTube controls",
+            "External component example"
+          ]
+        }
+      },
+      {
+        "hash": "grafana-k8s-networking",
+        "name": "Grafana Kubernetes Networking Dashboard",
+        "abstract": {
+          "context": "Kubernetes cluster monitoring and observability",
+          "goal": "Display real-time Kubernetes pod networking metrics with fallback access methods"
+        },
+        "concrete": {
+          "implementation": "components/grafana-dashboard.html",
+          "sandbox": "allow-scripts allow-same-origin"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/grafana-k8s",
+          "health_check": "/health/grafana-k8s",
+          "expected_load_time_ms": 1000,
+          "expected_failure": false,
+          "features": [
+            "Grafana dashboard viewer with iframe attempt",
+            "Alternative access methods (new tab, copy URL)",
+            "X-Frame-Options detection and handling",
+            "Dashboard configuration display",
+            "Real-time Kubernetes pod networking metrics",
+            "Auto-refresh every 10 seconds",
+            "Multi-cluster support",
+            "Namespace and pod filtering"
+          ],
+          "observability": {
+            "dashboard_type": "Kubernetes Networking",
+            "dashboard_url": "https://grafana.pkc.pub/d/7a18067ce943a40ae25454675c19ff5c/kubernetes-networking-pod",
+            "refresh_interval": "10s",
+            "time_range": "1h",
+            "variables": [
+              "datasource: default",
+              "cluster: $__all",
+              "namespace: $__all",
+              "pod: $__all"
+            ],
+            "access_methods": [
+              "iframe (may be blocked)",
+              "new tab",
+              "copy URL"
+            ]
+          }
+        }
+      },
+      {
+        "hash": "repuls-io-game",
+        "name": "Repuls.io - Multiplayer FPS Browser Game",
+        "abstract": {
+          "context": "Interactive Unity.io browser game demonstration",
+          "goal": "Showcase Unity WebGL multiplayer FPS game capabilities in browser"
+        },
+        "concrete": {
+          "implementation": "https://repuls.io/",
+          "sandbox": "allow-scripts allow-same-origin allow-pointer-lock allow-popups"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/repuls-io",
+          "health_check": "/health/repuls-io",
+          "expected_load_time_ms": 5000,
+          "expected_failure": false,
+          "features": [
+            "Free multiplayer FPS browser game",
+            "Unity WebGL powered",
+            "No download required",
+            "Vehicle combat and warfare",
+            "Team-based gameplay",
+            "Weapon customization and skins",
+            "RPG progression system",
+            "Grappling hook mechanics",
+            "Large open world maps",
+            "Real-time multiplayer action"
+          ],
+          "game_details": {
+            "genre": "FPS (First Person Shooter)",
+            "platform": "Unity WebGL",
+            "multiplayer": true,
+            "controls": [
+              "WASD: Move",
+              "Mouse: Aim and shoot",
+              "1: Change weapons",
+              "2: Use grenades",
+              "R: Reload",
+              "Q: Melee strike",
+              "E: Use/Pick up items",
+              "Spacebar: Jump",
+              "Right Mouse: Aim rifles"
+            ],
+            "features": [
+              "Squad-based combat",
+              "Vehicle warfare",
+              "Weapon skins and charms",
+              "Clan system",
+              "Hardcore mode",
+              "Aircraft combat"
+            ]
+          }
+        }
+      },
+      {
+        "hash": "krunker-io-game",
+        "name": "Krunker.io - Fast-Paced FPS Browser Game",
+        "abstract": {
+          "context": "High-speed competitive FPS browser game",
+          "goal": "Demonstrate fast-paced multiplayer FPS gaming in browser"
+        },
+        "concrete": {
+          "implementation": "https://krunker.io/",
+          "sandbox": "allow-scripts allow-same-origin allow-pointer-lock allow-popups"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/krunker-io",
+          "health_check": "/health/krunker-io",
+          "expected_load_time_ms": 3000,
+          "expected_failure": false,
+          "features": [
+            "Fast-paced competitive FPS",
+            "Browser-based 3D graphics",
+            "No download required",
+            "Multiple game modes",
+            "Custom maps and mods",
+            "Weapon skins and customization",
+            "Ranked competitive play",
+            "Quick matchmaking",
+            "Low-poly art style",
+            "High frame rate gameplay"
+          ],
+          "game_details": {
+            "genre": "FPS (First Person Shooter)",
+            "platform": "WebGL",
+            "multiplayer": true,
+            "controls": [
+              "WASD: Move",
+              "Mouse: Aim and shoot",
+              "Spacebar: Jump",
+              "Shift: Sprint",
+              "C: Crouch",
+              "R: Reload",
+              "Q: Switch weapon",
+              "E: Interact",
+              "1-9: Select weapon"
+            ],
+            "features": [
+              "Multiple classes",
+              "Custom lobbies",
+              "Map editor",
+              "Mod support",
+              "Competitive ranked",
+              "Clan wars"
+            ]
+          }
+        }
+      },
+      {
+        "hash": "sacred-octagon-game",
+        "name": "Sacred Octagon - Rhythm Action Game",
+        "abstract": {
+          "context": "Rhythm-based action browser game",
+          "goal": "Showcase rhythm and reflex-based gaming in browser"
+        },
+        "concrete": {
+          "implementation": "https://play.sacredoctagon.id/",
+          "sandbox": "allow-scripts allow-same-origin allow-pointer-lock allow-popups"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/sacred-octagon",
+          "health_check": "/health/sacred-octagon",
+          "expected_load_time_ms": 2000,
+          "expected_failure": false,
+          "features": [
+            "Rhythm-based gameplay",
+            "Fast reflexes required",
+            "Browser-based WebGL",
+            "No download required",
+            "Progressive difficulty",
+            "Score tracking",
+            "Minimalist design",
+            "Addictive gameplay",
+            "Quick sessions",
+            "High score challenges"
+          ],
+          "game_details": {
+            "genre": "Rhythm Action",
+            "platform": "WebGL",
+            "multiplayer": false,
+            "controls": [
+              "Arrow Keys: Navigate/Dodge",
+              "Mouse: Click to start",
+              "Spacebar: Action"
+            ],
+            "features": [
+              "Rhythm-based mechanics",
+              "Progressive difficulty",
+              "Score leaderboards",
+              "Minimalist aesthetics",
+              "Quick gameplay sessions",
+              "Reflex training"
+            ]
+          }
+        }
+      },
+      {
+        "hash": "youtube-argocd-gitops-tutorial",
+        "name": "ArgoCD GitOps Tutorial - Kubernetes Deployment",
+        "abstract": {
+          "context": "GitOps and ArgoCD deployment tutorial",
+          "goal": "Learn ArgoCD GitOps workflow and Kubernetes deployment automation"
+        },
+        "concrete": {
+          "implementation": "https://www.youtube.com/embed/MeU5_k9ssrs?start=1955",
+          "sandbox": "allow-scripts allow-same-origin allow-presentation"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/youtube-argocd",
+          "health_check": "/health/youtube-argocd",
+          "expected_load_time_ms": 1500,
+          "expected_failure": false
+        }
+      },
+      {
+        "hash": "youtube-clip-5sec",
+        "name": "YouTube Clip - 5 Second Segment",
+        "abstract": {
+          "context": "Precise 5-second YouTube video clip viewer",
+          "goal": "Demonstrate precise video segment playback with automatic start/stop"
+        },
+        "concrete": {
+          "implementation": "components/youtube-clip.html",
+          "sandbox": "allow-scripts allow-same-origin allow-presentation"
+        },
+        "balanced": {
+          "metrics_endpoint": "/metrics/youtube-clip",
+          "health_check": "/health/youtube-clip",
+          "expected_load_time_ms": 1500,
+          "expected_failure": false,
+          "features": [
+            "Precise time control (71s-76s)",
+            "5-second clip playback",
+            "Auto-stop at end time",
+            "Replay functionality",
+            "Real-time progress timer",
+            "Play/pause controls",
+            "YouTube IFrame API integration",
+            "Automatic time monitoring",
+            "Visual status indicators",
+            "Responsive design"
+          ],
+          "video_details": {
+            "video_id": "zsjvFFKOm3c",
+            "start_time": 60,
+            "end_time": 65,
+            "duration": 5,
+            "format": "Embedded YouTube Player",
+            "controls": "Custom overlay controls",
+            "features": [
+              "Automatic start at 60 seconds (1:00)",
+              "Automatic stop at 65 seconds (1:05)",
+              "Replay button for clip",
+              "Progress timer (0.0s / 5.0s)",
+              "Play/pause toggle",
+              "Status indicator"
+            ]
+          }
+        }
+      }
+    ],
+    "observability": {
+      "prometheus": {
+        "endpoint": "/metrics",
+        "scrape_interval": "15s"
+      },
+      "loki": {
+        "endpoint": "/loki/api/v1/push",
+        "labels": {
+          "app": "pkc-landing",
+          "environment": "production"
+        }
+      },
+      "grafana": {
+        "dashboard_url": "https://henry.pkc.pub/grafana/d/clm-overview"
+      }
+    },
+    "sidecar": {
+      "enabled": true,
+      "telemetry_collector": "https://henry.pkc.pub/telemetry",
+      "health_check_interval_ms": 5000,
+      "failure_recovery": {
+        "auto_reload": true,
+        "max_retries": 3,
+        "backoff_ms": 1000
+      }
+    },
+    "islands": [
+      {
+        "url": "/app.html",
+        "kind": "page",
+        "hydration": "client:idle",
+        "isolation": "top-level",
+        "budget": {
+          "max_bytes": 262144,
+          "observed_bytes": 29705
+        },
+        "metrics_endpoint": "/metrics/app",
+        "island_mcard": "mcard:island:app.html"
+      },
+      {
+        "url": "/index.html",
+        "kind": "page",
+        "hydration": "client:idle",
+        "isolation": "top-level",
+        "budget": {
+          "max_bytes": 262144,
+          "observed_bytes": 20469
+        },
+        "metrics_endpoint": "/metrics/index",
+        "island_mcard": "mcard:island:index.html"
+      },
+      {
+        "url": "/pkc-docs-index.html",
+        "kind": "page",
+        "hydration": "client:idle",
+        "isolation": "top-level",
+        "budget": {
+          "max_bytes": 262144,
+          "observed_bytes": 5983
+        },
+        "metrics_endpoint": "/metrics/pkc-docs-index",
+        "island_mcard": "mcard:island:pkc-docs-index.html"
+      },
+      {
+        "url": "/responsive-lab.html",
+        "kind": "page",
+        "hydration": "client:idle",
+        "isolation": "top-level",
+        "budget": {
+          "max_bytes": 262144,
+          "observed_bytes": 32621
+        },
+        "metrics_endpoint": "/metrics/responsive-lab",
+        "island_mcard": "mcard:island:responsive-lab.html"
+      },
+      {
+        "url": "/components/auth-status.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 2884
+        },
+        "metrics_endpoint": "/metrics/components-auth-status",
+        "island_mcard": "mcard:island:components/auth-status.html"
+      },
+      {
+        "url": "/components/crash-test-external.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 1713
+        },
+        "metrics_endpoint": "/metrics/components-crash-test-external",
+        "island_mcard": "mcard:island:components/crash-test-external.html"
+      },
+      {
+        "url": "/components/crash-test.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 1754
+        },
+        "metrics_endpoint": "/metrics/components-crash-test",
+        "island_mcard": "mcard:island:components/crash-test.html"
+      },
+      {
+        "url": "/components/google-calendar.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 22600
+        },
+        "metrics_endpoint": "/metrics/components-google-calendar",
+        "island_mcard": "mcard:island:components/google-calendar.html"
+      },
+      {
+        "url": "/components/grafana-dashboard.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 16485
+        },
+        "metrics_endpoint": "/metrics/components-grafana-dashboard",
+        "island_mcard": "mcard:island:components/grafana-dashboard.html"
+      },
+      {
+        "url": "/components/grafana-faro.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 20382
+        },
+        "metrics_endpoint": "/metrics/components-grafana-faro",
+        "island_mcard": "mcard:island:components/grafana-faro.html"
+      },
+      {
+        "url": "/components/hero.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 2361
+        },
+        "metrics_endpoint": "/metrics/components-hero",
+        "island_mcard": "mcard:island:components/hero.html"
+      },
+      {
+        "url": "/components/p2p-status.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 2357
+        },
+        "metrics_endpoint": "/metrics/components-p2p-status",
+        "island_mcard": "mcard:island:components/p2p-status.html"
+      },
+      {
+        "url": "/components/pkc-viewer.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 45295
+        },
+        "metrics_endpoint": "/metrics/components-pkc-viewer",
+        "island_mcard": "mcard:island:components/pkc-viewer.html"
+      },
+      {
+        "url": "/components/redux-state-viewer.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 6860
+        },
+        "metrics_endpoint": "/metrics/components-redux-state-viewer",
+        "island_mcard": "mcard:island:components/redux-state-viewer.html"
+      },
+      {
+        "url": "/components/user-detail.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 6619
+        },
+        "metrics_endpoint": "/metrics/components-user-detail",
+        "island_mcard": "mcard:island:components/user-detail.html"
+      },
+      {
+        "url": "/components/user-list.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 5920
+        },
+        "metrics_endpoint": "/metrics/components-user-list",
+        "island_mcard": "mcard:island:components/user-list.html"
+      },
+      {
+        "url": "/components/welcome.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 1341
+        },
+        "metrics_endpoint": "/metrics/components-welcome",
+        "island_mcard": "mcard:island:components/welcome.html"
+      },
+      {
+        "url": "/components/wikipedia-search.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 11388
+        },
+        "metrics_endpoint": "/metrics/components-wikipedia-search",
+        "island_mcard": "mcard:island:components/wikipedia-search.html"
+      },
+      {
+        "url": "/components/wikipedia-viewer.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 7846
+        },
+        "metrics_endpoint": "/metrics/components-wikipedia-viewer",
+        "island_mcard": "mcard:island:components/wikipedia-viewer.html"
+      },
+      {
+        "url": "/components/youtube-clip.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 15458
+        },
+        "metrics_endpoint": "/metrics/components-youtube-clip",
+        "island_mcard": "mcard:island:components/youtube-clip.html"
+      },
+      {
+        "url": "/components/youtube-viewer.html",
+        "kind": "component",
+        "hydration": "client:visible",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 65536,
+          "observed_bytes": 23022
+        },
+        "metrics_endpoint": "/metrics/components-youtube-viewer",
+        "island_mcard": "mcard:island:components/youtube-viewer.html"
+      },
+      {
+        "url": "/js/modules/p2p-serverless/debug-test.html",
+        "kind": "module",
+        "hydration": "client:only",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 131072,
+          "observed_bytes": 12833
+        },
+        "metrics_endpoint": "/metrics/js-modules-p2p-serverless-debug-test",
+        "island_mcard": "mcard:island:js/modules/p2p-serverless/debug-test.html"
+      },
+      {
+        "url": "/js/modules/p2p-serverless/example.html",
+        "kind": "module",
+        "hydration": "client:only",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 131072,
+          "observed_bytes": 7795
+        },
+        "metrics_endpoint": "/metrics/js-modules-p2p-serverless-example",
+        "island_mcard": "mcard:island:js/modules/p2p-serverless/example.html"
+      },
+      {
+        "url": "/js/modules/video-meeting/index.html",
+        "kind": "module",
+        "hydration": "client:only",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 131072,
+          "observed_bytes": 9578
+        },
+        "metrics_endpoint": "/metrics/js-modules-video-meeting-index",
+        "island_mcard": "mcard:island:js/modules/video-meeting/index.html"
+      },
+      {
+        "url": "/js/modules/webrtc-dashboard/index.html",
+        "kind": "module",
+        "hydration": "client:only",
+        "isolation": "iframe-sandbox",
+        "budget": {
+          "max_bytes": 131072,
+          "observed_bytes": 19434
+        },
+        "metrics_endpoint": "/metrics/js-modules-webrtc-dashboard-index",
+        "island_mcard": "mcard:island:js/modules/webrtc-dashboard/index.html"
+      }
+    ],
+    "fibers": [
+      {
+        "kind": "scalar/value",
+        "payload_shape": "scalar",
+        "content_class": "value",
+        "renderer": "fibers/adapters/scalar-value.js",
+        "isolation": "inline",
+        "budget": {
+          "archetype": "wearable",
+          "max_bytes": 2097152
+        },
+        "mount_points": [
+          "/app.html",
+          "/index.html",
+          "/pkc-docs-index.html",
+          "/responsive-lab.html",
+          "/components/auth-status.html",
+          "/components/crash-test-external.html",
+          "/components/crash-test.html",
+          "/components/google-calendar.html",
+          "/components/grafana-dashboard.html",
+          "/components/grafana-faro.html",
+          "/components/hero.html",
+          "/components/p2p-status.html",
+          "/components/pkc-viewer.html",
+          "/components/redux-state-viewer.html",
+          "/components/user-detail.html",
+          "/components/user-list.html",
+          "/components/welcome.html",
+          "/components/wikipedia-search.html",
+          "/components/wikipedia-viewer.html",
+          "/components/youtube-clip.html",
+          "/components/youtube-viewer.html",
+          "/js/modules/p2p-serverless/debug-test.html",
+          "/js/modules/p2p-serverless/example.html",
+          "/js/modules/video-meeting/index.html",
+          "/js/modules/webrtc-dashboard/index.html"
+        ],
+        "example": "examples/scalar-value.mcard.json"
+      },
+      {
+        "kind": "text/plain",
+        "payload_shape": "text",
+        "content_class": "plain",
+        "renderer": "fibers/adapters/text-plain.js",
+        "isolation": "inline",
+        "budget": {
+          "archetype": "wearable",
+          "max_bytes": 2097152
+        },
+        "mount_points": [
+          "/app.html",
+          "/index.html",
+          "/pkc-docs-index.html",
+          "/responsive-lab.html",
+          "/components/auth-status.html",
+          "/components/crash-test-external.html",
+          "/components/crash-test.html",
+          "/components/google-calendar.html",
+          "/components/grafana-dashboard.html",
+          "/components/grafana-faro.html",
+          "/components/hero.html",
+          "/components/p2p-status.html",
+          "/components/pkc-viewer.html",
+          "/components/redux-state-viewer.html",
+          "/components/user-detail.html",
+          "/components/user-list.html",
+          "/components/welcome.html",
+          "/components/wikipedia-search.html",
+          "/components/wikipedia-viewer.html",
+          "/components/youtube-clip.html",
+          "/components/youtube-viewer.html",
+          "/js/modules/p2p-serverless/debug-test.html",
+          "/js/modules/p2p-serverless/example.html",
+          "/js/modules/video-meeting/index.html",
+          "/js/modules/webrtc-dashboard/index.html"
+        ],
+        "example": "examples/text-plain.mcard.json"
+      },
+      {
+        "kind": "text/markup",
+        "payload_shape": "text",
+        "content_class": "markup",
+        "renderer": "fibers/adapters/text-markup.js",
+        "isolation": "inline",
+        "budget": {
+          "archetype": "wearable",
+          "max_bytes": 2097152
+        },
+        "mount_points": [
+          "/app.html",
+          "/index.html",
+          "/pkc-docs-index.html",
+          "/responsive-lab.html",
+          "/components/auth-status.html",
+          "/components/crash-test-external.html",
+          "/components/crash-test.html",
+          "/components/google-calendar.html",
+          "/components/grafana-dashboard.html",
+          "/components/grafana-faro.html",
+          "/components/hero.html",
+          "/components/p2p-status.html",
+          "/components/pkc-viewer.html",
+          "/components/redux-state-viewer.html",
+          "/components/user-detail.html",
+          "/components/user-list.html",
+          "/components/welcome.html",
+          "/components/wikipedia-search.html",
+          "/components/wikipedia-viewer.html",
+          "/components/youtube-clip.html",
+          "/components/youtube-viewer.html",
+          "/js/modules/p2p-serverless/debug-test.html",
+          "/js/modules/p2p-serverless/example.html",
+          "/js/modules/video-meeting/index.html",
+          "/js/modules/webrtc-dashboard/index.html"
+        ],
+        "example": "examples/text-markup.mcard.json"
+      },
+      {
+        "kind": "text/markdown",
+        "payload_shape": "text",
+        "content_class": "markdown",
+        "renderer": "fibers/adapters/text-markdown.js",
+        "isolation": "inline",
+        "budget": {
+          "archetype": "wearable",
+          "max_bytes": 2097152
+        },
+        "mount_points": [
+          "/app.html",
+          "/index.html",
+          "/pkc-docs-index.html",
+          "/responsive-lab.html",
+          "/components/auth-status.html",
+          "/components/crash-test-external.html",
+          "/components/crash-test.html",
+          "/components/google-calendar.html",
+          "/components/grafana-dashboard.html",
+          "/components/grafana-faro.html",
+          "/components/hero.html",
+          "/components/p2p-status.html",
+          "/components/pkc-viewer.html",
+          "/components/redux-state-viewer.html",
+          "/components/user-detail.html",
+          "/components/user-list.html",
+          "/components/welcome.html",
+          "/components/wikipedia-search.html",
+          "/components/wikipedia-viewer.html",
+          "/components/youtube-clip.html",
+          "/components/youtube-viewer.html",
+          "/js/modules/p2p-serverless/debug-test.html",
+          "/js/modules/p2p-serverless/example.html",
+          "/js/modules/video-meeting/index.html",
+          "/js/modules/webrtc-dashboard/index.html"
+        ],
+        "example": "examples/text-markdown.mcard.json"
+      },
+      {
+        "kind": "text/script",
+        "payload_shape": "text",
+        "content_class": "script",
+        "renderer": "fibers/adapters/text-script.js",
+        "isolation": "inline",
+        "budget": {
+          "archetype": "wearable",
+          "max_bytes": 2097152
+        },
+        "mount_points": [
+          "/app.html",
+          "/index.html",
+          "/pkc-docs-index.html",
+          "/responsive-lab.html",
+          "/components/auth-status.html",
+          "/components/crash-test-external.html",
+          "/components/crash-test.html",
+          "/components/google-calendar.html",
+          "/components/grafana-dashboard.html",
+          "/components/grafana-faro.html",
+          "/components/hero.html",
+          "/components/p2p-status.html",
+          "/components/pkc-viewer.html",
+          "/components/redux-state-viewer.html",
+          "/components/user-detail.html",
+          "/components/user-list.html",
+          "/components/welcome.html",
+          "/components/wikipedia-search.html",
+          "/components/wikipedia-viewer.html",
+          "/components/youtube-clip.html",
+          "/components/youtube-viewer.html",
+          "/js/modules/p2p-serverless/debug-test.html",
+          "/js/modules/p2p-serverless/example.html",
+          "/js/modules/video-meeting/index.html",
+          "/js/modules/webrtc-dashboard/index.html"
+        ],
+        "example": "examples/text-script.mcard.json"
+      },
+      {
+        "kind": "text/style",
+        "payload_shape": "text",
+        "content_class": "style",
+        "renderer": "fibers/adapters/text-style.js",
+        "isolation": "inline",
+        "budget": {
+          "archetype": "wearable",
+          "max_bytes": 2097152
+        },
+        "mount_points": [
+          "/app.html",
+          "/index.html",
+          "/pkc-docs-index.html",
+          "/responsive-lab.html",
+          "/components/auth-status.html",
+          "/components/crash-test-external.html",
+          "/components/crash-test.html",
+          "/components/google-calendar.html",
+          "/components/grafana-dashboard.html",
+          "/components/grafana-faro.html",
+          "/components/hero.html",
+          "/components/p2p-status.html",
+          "/components/pkc-viewer.html",
+          "/components/redux-state-viewer.html",
+          "/components/user-detail.html",
+          "/components/user-list.html",
+          "/components/welcome.html",
+          "/components/wikipedia-search.html",
+          "/components/wikipedia-viewer.html",
+          "/components/youtube-clip.html",
+          "/components/youtube-viewer.html",
+          "/js/modules/p2p-serverless/debug-test.html",
+          "/js/modules/p2p-serverless/example.html",
+          "/js/modules/video-meeting/index.html",
+          "/js/modules/webrtc-dashboard/index.html"
+        ],
+        "example": "examples/text-style.mcard.json"
+      },
+      {
+        "kind": "text/data",
+        "payload_shape": "text",
+        "content_class": "data",
+        "renderer": "fibers/adapters/text-data.js",
+        "isolation": "inline",
+        "budget": {
+          "archetype": "wearable",
+          "max_bytes": 2097152
+        },
+        "mount_points": [
+          "/app.html",
+          "/index.html",
+          "/pkc-docs-index.html",
+          "/responsive-lab.html",
+          "/components/auth-status.html",
+          "/components/crash-test-external.html",
+          "/components/crash-test.html",
+          "/components/google-calendar.html",
+          "/components/grafana-dashboard.html",
+          "/components/grafana-faro.html",
+          "/components/hero.html",
+          "/components/p2p-status.html",
+          "/components/pkc-viewer.html",
+          "/components/redux-state-viewer.html",
+          "/components/user-detail.html",
+          "/components/user-list.html",
+          "/components/welcome.html",
+          "/components/wikipedia-search.html",
+          "/components/wikipedia-viewer.html",
+          "/components/youtube-clip.html",
+          "/components/youtube-viewer.html",
+          "/js/modules/p2p-serverless/debug-test.html",
+          "/js/modules/p2p-serverless/example.html",
+          "/js/modules/video-meeting/index.html",
+          "/js/modules/webrtc-dashboard/index.html"
+        ],
+        "example": "examples/text-data.mcard.json"
+      },
+      {
+        "kind": "structured/data",
+        "payload_shape": "structured",
+        "content_class": "data",
+        "renderer": "fibers/adapters/structured-data.js",
+        "isolation": "inline",
+        "budget": {
+          "archetype": "mobile",
+          "max_bytes": 10485760
+        },
+        "mount_points": [
+          "/app.html",
+          "/index.html",
+          "/pkc-docs-index.html",
+          "/responsive-lab.html",
+          "/components/auth-status.html",
+          "/components/crash-test-external.html",
+          "/components/crash-test.html",
+          "/components/google-calendar.html",
+          "/components/grafana-dashboard.html",
+          "/components/grafana-faro.html",
+          "/components/hero.html",
+          "/components/p2p-status.html",
+          "/components/pkc-viewer.html",
+          "/components/redux-state-viewer.html",
+          "/components/user-detail.html",
+          "/components/user-list.html",
+          "/components/welcome.html",
+          "/components/wikipedia-search.html",
+          "/components/wikipedia-viewer.html",
+          "/components/youtube-clip.html",
+          "/components/youtube-viewer.html",
+          "/js/modules/p2p-serverless/debug-test.html",
+          "/js/modules/p2p-serverless/example.html",
+          "/js/modules/video-meeting/index.html",
+          "/js/modules/webrtc-dashboard/index.html"
+        ],
+        "example": "examples/structured-data.mcard.json"
+      },
+      {
+        "kind": "structured/triad",
+        "payload_shape": "structured",
+        "content_class": "triad",
+        "renderer": "fibers/adapters/structured-triad.js",
+        "isolation": "inline",
+        "budget": {
+          "archetype": "mobile",
+          "max_bytes": 10485760
+        },
+        "mount_points": [
+          "/app.html",
+          "/index.html",
+          "/pkc-docs-index.html",
+          "/responsive-lab.html",
+          "/components/auth-status.html",
+          "/components/crash-test-external.html",
+          "/components/crash-test.html",
+          "/components/google-calendar.html",
+          "/components/grafana-dashboard.html",
+          "/components/grafana-faro.html",
+          "/components/hero.html",
+          "/components/p2p-status.html",
+          "/components/pkc-viewer.html",
+          "/components/redux-state-viewer.html",
+          "/components/user-detail.html",
+          "/components/user-list.html",
+          "/components/welcome.html",
+          "/components/wikipedia-search.html",
+          "/components/wikipedia-viewer.html",
+          "/components/youtube-clip.html",
+          "/components/youtube-viewer.html",
+          "/js/modules/p2p-serverless/debug-test.html",
+          "/js/modules/p2p-serverless/example.html",
+          "/js/modules/video-meeting/index.html",
+          "/js/modules/webrtc-dashboard/index.html"
+        ],
+        "example": "examples/structured-triad.mcard.json"
+      },
+      {
+        "kind": "binary/image",
+        "payload_shape": "binary",
+        "content_class": "image",
+        "renderer": "fibers/adapters/binary-image.js",
+        "isolation": "sandboxed",
+        "budget": {
+          "archetype": "desktop",
+          "max_bytes": 47185920
+        },
+        "mount_points": [
+          "/app.html",
+          "/index.html",
+          "/pkc-docs-index.html",
+          "/responsive-lab.html",
+          "/components/auth-status.html",
+          "/components/crash-test-external.html",
+          "/components/crash-test.html",
+          "/components/google-calendar.html",
+          "/components/grafana-dashboard.html",
+          "/components/grafana-faro.html",
+          "/components/hero.html",
+          "/components/p2p-status.html",
+          "/components/pkc-viewer.html",
+          "/components/redux-state-viewer.html",
+          "/components/user-detail.html",
+          "/components/user-list.html",
+          "/components/welcome.html",
+          "/components/wikipedia-search.html",
+          "/components/wikipedia-viewer.html",
+          "/components/youtube-clip.html",
+          "/components/youtube-viewer.html",
+          "/js/modules/p2p-serverless/debug-test.html",
+          "/js/modules/p2p-serverless/example.html",
+          "/js/modules/video-meeting/index.html",
+          "/js/modules/webrtc-dashboard/index.html"
+        ],
+        "example": "examples/binary-image.mcard.json"
+      },
+      {
+        "kind": "binary/audio",
+        "payload_shape": "binary",
+        "content_class": "audio",
+        "renderer": "fibers/adapters/binary-audio.js",
+        "isolation": "sandboxed",
+        "budget": {
+          "archetype": "desktop",
+          "max_bytes": 47185920
+        },
+        "mount_points": [
+          "/app.html",
+          "/index.html",
+          "/pkc-docs-index.html",
+          "/responsive-lab.html",
+          "/components/auth-status.html",
+          "/components/crash-test-external.html",
+          "/components/crash-test.html",
+          "/components/google-calendar.html",
+          "/components/grafana-dashboard.html",
+          "/components/grafana-faro.html",
+          "/components/hero.html",
+          "/components/p2p-status.html",
+          "/components/pkc-viewer.html",
+          "/components/redux-state-viewer.html",
+          "/components/user-detail.html",
+          "/components/user-list.html",
+          "/components/welcome.html",
+          "/components/wikipedia-search.html",
+          "/components/wikipedia-viewer.html",
+          "/components/youtube-clip.html",
+          "/components/youtube-viewer.html",
+          "/js/modules/p2p-serverless/debug-test.html",
+          "/js/modules/p2p-serverless/example.html",
+          "/js/modules/video-meeting/index.html",
+          "/js/modules/webrtc-dashboard/index.html"
+        ],
+        "example": "examples/binary-audio.mcard.json"
+      },
+      {
+        "kind": "binary/3d",
+        "payload_shape": "binary",
+        "content_class": "3d",
+        "renderer": "fibers/adapters/binary-3d.js",
+        "isolation": "sandboxed",
+        "budget": {
+          "archetype": "desktop",
+          "max_bytes": 47185920
+        },
+        "mount_points": [
+          "/app.html",
+          "/index.html",
+          "/pkc-docs-index.html",
+          "/responsive-lab.html",
+          "/components/auth-status.html",
+          "/components/crash-test-external.html",
+          "/components/crash-test.html",
+          "/components/google-calendar.html",
+          "/components/grafana-dashboard.html",
+          "/components/grafana-faro.html",
+          "/components/hero.html",
+          "/components/p2p-status.html",
+          "/components/pkc-viewer.html",
+          "/components/redux-state-viewer.html",
+          "/components/user-detail.html",
+          "/components/user-list.html",
+          "/components/welcome.html",
+          "/components/wikipedia-search.html",
+          "/components/wikipedia-viewer.html",
+          "/components/youtube-clip.html",
+          "/components/youtube-viewer.html",
+          "/js/modules/p2p-serverless/debug-test.html",
+          "/js/modules/p2p-serverless/example.html",
+          "/js/modules/video-meeting/index.html",
+          "/js/modules/webrtc-dashboard/index.html"
+        ],
+        "example": "examples/binary-3d.mcard.json"
+      },
+      {
+        "kind": "binary/octet",
+        "payload_shape": "binary",
+        "content_class": "octet",
+        "renderer": "fibers/adapters/binary-octet.js",
+        "isolation": "sandboxed",
+        "budget": {
+          "archetype": "desktop",
+          "max_bytes": 47185920
+        },
+        "mount_points": [
+          "/app.html",
+          "/index.html",
+          "/pkc-docs-index.html",
+          "/responsive-lab.html",
+          "/components/auth-status.html",
+          "/components/crash-test-external.html",
+          "/components/crash-test.html",
+          "/components/google-calendar.html",
+          "/components/grafana-dashboard.html",
+          "/components/grafana-faro.html",
+          "/components/hero.html",
+          "/components/p2p-status.html",
+          "/components/pkc-viewer.html",
+          "/components/redux-state-viewer.html",
+          "/components/user-detail.html",
+          "/components/user-list.html",
+          "/components/welcome.html",
+          "/components/wikipedia-search.html",
+          "/components/wikipedia-viewer.html",
+          "/components/youtube-clip.html",
+          "/components/youtube-viewer.html",
+          "/js/modules/p2p-serverless/debug-test.html",
+          "/js/modules/p2p-serverless/example.html",
+          "/js/modules/video-meeting/index.html",
+          "/js/modules/webrtc-dashboard/index.html"
+        ],
+        "example": "examples/binary-octet.mcard.json"
+      },
+      {
+        "kind": "satori/message",
+        "payload_shape": "satori",
+        "content_class": "message",
+        "renderer": "fibers/adapters/satori-message.js",
+        "isolation": "inline",
+        "budget": {
+          "archetype": "wearable",
+          "max_bytes": 2097152
+        },
+        "mount_points": [
+          "/app.html",
+          "/index.html",
+          "/pkc-docs-index.html",
+          "/responsive-lab.html",
+          "/components/auth-status.html",
+          "/components/crash-test-external.html",
+          "/components/crash-test.html",
+          "/components/google-calendar.html",
+          "/components/grafana-dashboard.html",
+          "/components/grafana-faro.html",
+          "/components/hero.html",
+          "/components/p2p-status.html",
+          "/components/pkc-viewer.html",
+          "/components/redux-state-viewer.html",
+          "/components/user-detail.html",
+          "/components/user-list.html",
+          "/components/welcome.html",
+          "/components/wikipedia-search.html",
+          "/components/wikipedia-viewer.html",
+          "/components/youtube-clip.html",
+          "/components/youtube-viewer.html",
+          "/js/modules/p2p-serverless/debug-test.html",
+          "/js/modules/p2p-serverless/example.html",
+          "/js/modules/video-meeting/index.html",
+          "/js/modules/webrtc-dashboard/index.html"
+        ],
+        "example": "examples/satori-message.mcard.json"
+      },
+      {
+        "kind": "executable/pcard",
+        "payload_shape": "executable",
+        "content_class": "pcard",
+        "renderer": "fibers/adapters/executable-pcard.js",
+        "isolation": "sandboxed",
+        "budget": {
+          "archetype": "mobile",
+          "max_bytes": 10485760
+        },
+        "mount_points": [
+          "/app.html",
+          "/index.html",
+          "/pkc-docs-index.html",
+          "/responsive-lab.html",
+          "/components/auth-status.html",
+          "/components/crash-test-external.html",
+          "/components/crash-test.html",
+          "/components/google-calendar.html",
+          "/components/grafana-dashboard.html",
+          "/components/grafana-faro.html",
+          "/components/hero.html",
+          "/components/p2p-status.html",
+          "/components/pkc-viewer.html",
+          "/components/redux-state-viewer.html",
+          "/components/user-detail.html",
+          "/components/user-list.html",
+          "/components/welcome.html",
+          "/components/wikipedia-search.html",
+          "/components/wikipedia-viewer.html",
+          "/components/youtube-clip.html",
+          "/components/youtube-viewer.html",
+          "/js/modules/p2p-serverless/debug-test.html",
+          "/js/modules/p2p-serverless/example.html",
+          "/js/modules/video-meeting/index.html",
+          "/js/modules/webrtc-dashboard/index.html"
+        ],
+        "example": "examples/executable-pcard.mcard.json"
+      }
+    ]
+  },
+  "taxonomy": {
+    "version": "1.0.0",
+    "source": {
+      "package": "clm-kernel",
+      "version": "0.0.1",
+      "note": "payload shapes read from the published MCardPayload union; classes from detectMime/classifyClm"
+    },
+    "payload_shapes": [
+      "scalar",
+      "text",
+      "satori",
+      "binary",
+      "structured",
+      "executable"
+    ],
+    "reachability": {
+      "via_create": [
+        "scalar/value",
+        "text/plain",
+        "text/markup",
+        "text/markdown",
+        "text/script",
+        "text/style",
+        "text/data",
+        "structured/data",
+        "structured/triad",
+        "binary/image",
+        "binary/audio",
+        "binary/3d",
+        "binary/octet"
+      ],
+      "via_fromJSON": [
+        "satori/message",
+        "executable/pcard"
+      ],
+      "note": "satori and executable normalise to structured on the create path; they are reachable only through an explicit payload"
+    },
+    "kinds": [
+      {
+        "kind": "scalar/value",
+        "payload_shape": "scalar",
+        "content_class": "value",
+        "reachable_via": "create",
+        "example": "examples/scalar-value.mcard.json",
+        "example_hash": "92cc1999dab8c24a63d3d8c2940dd3b8be48f769479aa12dd610fca3c34d2592",
+        "observed_payload_kind": "scalar",
+        "observed_mime": "text/plain"
+      },
+      {
+        "kind": "text/plain",
+        "payload_shape": "text",
+        "content_class": "plain",
+        "reachable_via": "create",
+        "example": "examples/text-plain.mcard.json",
+        "example_hash": "2bcd8c156b03e8930fef2226801bfce566a8608deca85138e5487ca31e6f357b",
+        "observed_payload_kind": "text",
+        "observed_mime": "text/plain"
+      },
+      {
+        "kind": "text/markup",
+        "payload_shape": "text",
+        "content_class": "markup",
+        "reachable_via": "create",
+        "example": "examples/text-markup.mcard.json",
+        "example_hash": "acea4eeabd18c97cd34dc2838cc0d0d61f5b983ce54c21eb4e15d1fada4bdc71",
+        "observed_payload_kind": "text",
+        "observed_mime": "text/plain"
+      },
+      {
+        "kind": "text/markdown",
+        "payload_shape": "text",
+        "content_class": "markdown",
+        "reachable_via": "create",
+        "example": "examples/text-markdown.mcard.json",
+        "example_hash": "081dcda1bc496f9180f68db29208a41567f40e6d034274f6ec2f5b2f5a5c26ae",
+        "observed_payload_kind": "text",
+        "observed_mime": "text/plain"
+      },
+      {
+        "kind": "text/script",
+        "payload_shape": "text",
+        "content_class": "script",
+        "reachable_via": "create",
+        "example": "examples/text-script.mcard.json",
+        "example_hash": "8a2988271c26a526fe5875c8d58edc3eedbf41b8a621b397bc2480eb971cffd5",
+        "observed_payload_kind": "text",
+        "observed_mime": "text/plain"
+      },
+      {
+        "kind": "text/style",
+        "payload_shape": "text",
+        "content_class": "style",
+        "reachable_via": "create",
+        "example": "examples/text-style.mcard.json",
+        "example_hash": "c8a999874c8e860b36b6ac6be5176b780832af11d9ed57040fa9d2c580e918b6",
+        "observed_payload_kind": "text",
+        "observed_mime": "text/plain"
+      },
+      {
+        "kind": "text/data",
+        "payload_shape": "text",
+        "content_class": "data",
+        "reachable_via": "create",
+        "example": "examples/text-data.mcard.json",
+        "example_hash": "7f6d20af8a72ec3b7468e0b3fcfcde370ab860d052676402a5a196b631bb3276",
+        "observed_payload_kind": "text",
+        "observed_mime": "text/plain"
+      },
+      {
+        "kind": "structured/data",
+        "payload_shape": "structured",
+        "content_class": "data",
+        "reachable_via": "create",
+        "example": "examples/structured-data.mcard.json",
+        "example_hash": "865406b220e335db3f419ed132a49d10cb9fa0dcdd359e2959c04bb7f523ce95",
+        "observed_payload_kind": "structured",
+        "observed_mime": "text/plain"
+      },
+      {
+        "kind": "structured/triad",
+        "payload_shape": "structured",
+        "content_class": "triad",
+        "reachable_via": "create",
+        "example": "examples/structured-triad.mcard.json",
+        "example_hash": "3897c729e5b6d5c50ad044c259fcb34d0af45c72b5fb3b88d7e040c2a031c2ab",
+        "observed_payload_kind": "structured",
+        "observed_mime": "text/plain"
+      },
+      {
+        "kind": "binary/image",
+        "payload_shape": "binary",
+        "content_class": "image",
+        "reachable_via": "create",
+        "example": "examples/binary-image.mcard.json",
+        "example_hash": "d4dbab01756dd3968fcab5dbecf1c0e4ffa3b5097ff8b3b7903dea971b35df54",
+        "observed_payload_kind": "binary",
+        "observed_mime": "text/plain"
+      },
+      {
+        "kind": "binary/audio",
+        "payload_shape": "binary",
+        "content_class": "audio",
+        "reachable_via": "create",
+        "example": "examples/binary-audio.mcard.json",
+        "example_hash": "e1e3acaf7dc785b94f1f7fed9ac17868036643fc6b4506e92e8c5fd9e591d17e",
+        "observed_payload_kind": "binary",
+        "observed_mime": "text/plain"
+      },
+      {
+        "kind": "binary/3d",
+        "payload_shape": "binary",
+        "content_class": "3d",
+        "reachable_via": "create",
+        "example": "examples/binary-3d.mcard.json",
+        "example_hash": "1d14e5b6798abe3d00144f1ceec0df046902a171d4c70b9f133dd48655709a6f",
+        "observed_payload_kind": "binary",
+        "observed_mime": "text/plain"
+      },
+      {
+        "kind": "binary/octet",
+        "payload_shape": "binary",
+        "content_class": "octet",
+        "reachable_via": "create",
+        "example": "examples/binary-octet.mcard.json",
+        "example_hash": "9e14ca6f93126061c03a40cb2a8ecdbd928097251011946431463c8255cd703f",
+        "observed_payload_kind": "binary",
+        "observed_mime": "text/plain"
+      },
+      {
+        "kind": "satori/message",
+        "payload_shape": "satori",
+        "content_class": "message",
+        "reachable_via": "fromJSON",
+        "example": "examples/satori-message.mcard.json",
+        "example_hash": "7554b6e3a4a2c637799b631435aa663c7ad8a26189ecbe10fe3dcbd2f9ef9307",
+        "observed_payload_kind": "satori",
+        "observed_mime": "text/plain"
+      },
+      {
+        "kind": "executable/pcard",
+        "payload_shape": "executable",
+        "content_class": "pcard",
+        "reachable_via": "fromJSON",
+        "example": "examples/executable-pcard.mcard.json",
+        "example_hash": "04dea03620c4a6ac5f567d7aa0424005bb3e192b7dfa79448b2c9624006f9b39",
+        "observed_payload_kind": "executable",
+        "observed_mime": "text/plain"
+      }
+    ]
+  },
+  "manifest": {
+    "type_lattice": {
+      "platforms": [
+        {
+          "id": "pwa",
+          "engine": "browser",
+          "features": [
+            "service_worker",
+            "offline_cache",
+            "web_manifest"
+          ]
+        },
+        {
+          "id": "tauri",
+          "engine": "tauri_native",
+          "targets": [
+            "macos",
+            "windows",
+            "linux"
+          ],
+          "window": "native"
+        },
+        {
+          "id": "desktop_web",
+          "engine": "browser",
+          "features": [
+            "full_dom",
+            "high_dpi"
+          ]
+        },
+        {
+          "id": "mobile_hybrid",
+          "engine": "capacitor",
+          "targets": [
+            "ios",
+            "android"
+          ],
+          "safe_area": true
+        }
+      ],
+      "form_factors": [
+        {
+          "id": "compact_mobile",
+          "width": 375,
+          "height": 667,
+          "dpi": 2,
+          "touch": true
+        },
+        {
+          "id": "large_mobile",
+          "width": 430,
+          "height": 932,
+          "dpi": 3,
+          "touch": true
+        },
+        {
+          "id": "tablet",
+          "width": 768,
+          "height": 1024,
+          "dpi": 2,
+          "touch": true
+        },
+        {
+          "id": "desktop_standard",
+          "width": 1440,
+          "height": 900,
+          "dpi": 1,
+          "touch": false
+        },
+        {
+          "id": "ultrawide",
+          "width": 2560,
+          "height": 1080,
+          "dpi": 1,
+          "touch": false
+        }
+      ],
+      "responsiveness": {
+        "orientations": [
+          "portrait",
+          "landscape"
+        ],
+        "window_modes": [
+          "fullscreen",
+          "maximized",
+          "split_50",
+          "floating"
+        ]
+      },
+      "locales": [
+        {
+          "code": "en-US",
+          "direction": "ltr",
+          "expansion_ratio": 1,
+          "fallback_fonts": [
+            "Inter",
+            "sans-serif"
+          ]
+        },
+        {
+          "code": "ar-EG",
+          "direction": "rtl",
+          "expansion_ratio": 1.15,
+          "fallback_fonts": [
+            "Amiri",
+            "Noto Sans Arabic"
+          ]
+        },
+        {
+          "code": "de-DE",
+          "direction": "ltr",
+          "expansion_ratio": 1.35,
+          "fallback_fonts": [
+            "Inter",
+            "sans-serif"
+          ]
+        },
+        {
+          "code": "zh-Hans",
+          "direction": "ltr",
+          "expansion_ratio": 0.85,
+          "fallback_fonts": [
+            "Noto Sans SC",
+            "PingFang SC"
+          ]
+        }
+      ],
+      "display_modes": [
+        {
+          "id": "dark",
+          "media_query": "(prefers-color-scheme: dark)",
+          "contrast": "standard",
+          "background": "#0f172a"
+        },
+        {
+          "id": "light",
+          "media_query": "(prefers-color-scheme: light)",
+          "contrast": "standard",
+          "background": "#f8fafc"
+        },
+        {
+          "id": "high_contrast",
+          "media_query": "(prefers-contrast: more)",
+          "contrast": "high",
+          "background": "#000000"
+        }
+      ],
+      "power_modes": [
+        {
+          "id": "performance",
+          "max_fps": 120,
+          "allow_animations": true,
+          "deferred_hydration": false
+        },
+        {
+          "id": "balanced",
+          "max_fps": 60,
+          "allow_animations": true,
+          "deferred_hydration": false
+        },
+        {
+          "id": "energy_saving",
+          "max_fps": 30,
+          "allow_animations": false,
+          "deferred_hydration": true,
+          "reduce_motion": true
+        }
+      ],
+      "framework_adapters": {
+        "styling": {
+          "default": "semantic_tokens_css",
+          "adapters": [
+            {
+              "id": "semantic_tokens_css",
+              "path": "public/css/semantic-tokens.css",
+              "runtime_overhead": "0kb"
+            },
+            {
+              "id": "unocss",
+              "path": "public/vendor/unocss-runtime.js",
+              "runtime_overhead": "18kb"
+            },
+            {
+              "id": "tailwind",
+              "path": "public/vendor/tailwind-cdn.js",
+              "runtime_overhead": "75kb"
+            }
+          ]
+        },
+        "animation": {
+          "default": "waapi",
+          "adapters": [
+            {
+              "id": "waapi",
+              "engine": "native_web_animations",
+              "runtime_overhead": "0kb"
+            },
+            {
+              "id": "animejs",
+              "engine": "animejs_v3",
+              "path": "public/vendor/anime.min.js",
+              "runtime_overhead": "17kb"
+            },
+            {
+              "id": "css_transitions",
+              "engine": "declarative_css",
+              "runtime_overhead": "0kb"
+            }
+          ]
+        },
+        "rendering": {
+          "default": "dom",
+          "adapters": [
+            {
+              "id": "dom",
+              "engine": "html5_dom"
+            },
+            {
+              "id": "canvas2d",
+              "engine": "html5_canvas"
+            },
+            {
+              "id": "wasm",
+              "engine": "webassembly_core"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "cards": {
+    "scalar/value": {
+      "uri": "mcard:fiber-example:scalar-value",
+      "hash": "92cc1999dab8c24a63d3d8c2940dd3b8be48f769479aa12dd610fca3c34d2592",
+      "payload": {
+        "kind": "scalar",
+        "value": 42
+      },
+      "metadata": {},
+      "author": "did:clm:fiber-taxonomy",
+      "sequence": 0
+    },
+    "text/plain": {
+      "uri": "mcard:fiber-example:text-plain",
+      "hash": "2bcd8c156b03e8930fef2226801bfce566a8608deca85138e5487ca31e6f357b",
+      "payload": {
+        "kind": "text",
+        "value": "A plain paragraph with no markup at all."
+      },
+      "metadata": {},
+      "author": "did:clm:fiber-taxonomy",
+      "sequence": 0
+    },
+    "text/markup": {
+      "uri": "mcard:fiber-example:text-markup",
+      "hash": "acea4eeabd18c97cd34dc2838cc0d0d61f5b983ce54c21eb4e15d1fada4bdc71",
+      "payload": {
+        "kind": "text",
+        "value": "<!doctype html><html><body>hi</body></html>"
+      },
+      "metadata": {},
+      "author": "did:clm:fiber-taxonomy",
+      "sequence": 0
+    },
+    "text/markdown": {
+      "uri": "mcard:fiber-example:text-markdown",
+      "hash": "081dcda1bc496f9180f68db29208a41567f40e6d034274f6ec2f5b2f5a5c26ae",
+      "payload": {
+        "kind": "text",
+        "value": "# Heading\n\nSome *emphasis*.\n"
+      },
+      "metadata": {},
+      "author": "did:clm:fiber-taxonomy",
+      "sequence": 0
+    },
+    "text/script": {
+      "uri": "mcard:fiber-example:text-script",
+      "hash": "8a2988271c26a526fe5875c8d58edc3eedbf41b8a621b397bc2480eb971cffd5",
+      "payload": {
+        "kind": "text",
+        "value": "export const answer = 42;\n"
+      },
+      "metadata": {},
+      "author": "did:clm:fiber-taxonomy",
+      "sequence": 0
+    },
+    "text/style": {
+      "uri": "mcard:fiber-example:text-style",
+      "hash": "c8a999874c8e860b36b6ac6be5176b780832af11d9ed57040fa9d2c580e918b6",
+      "payload": {
+        "kind": "text",
+        "value": ":root { --tone: #333; }\n"
+      },
+      "metadata": {},
+      "author": "did:clm:fiber-taxonomy",
+      "sequence": 0
+    },
+    "text/data": {
+      "uri": "mcard:fiber-example:text-data",
+      "hash": "7f6d20af8a72ec3b7468e0b3fcfcde370ab860d052676402a5a196b631bb3276",
+      "payload": {
+        "kind": "text",
+        "value": "name,bytes\nalpha,12\nbeta,34\n"
+      },
+      "metadata": {},
+      "author": "did:clm:fiber-taxonomy",
+      "sequence": 0
+    },
+    "structured/data": {
+      "uri": "mcard:fiber-example:structured-data",
+      "hash": "865406b220e335db3f419ed132a49d10cb9fa0dcdd359e2959c04bb7f523ce95",
+      "payload": {
+        "kind": "structured",
+        "value": {
+          "name": "alpha",
+          "bytes": 12
+        }
+      },
+      "metadata": {},
+      "author": "did:clm:fiber-taxonomy",
+      "sequence": 0
+    },
+    "structured/triad": {
+      "uri": "mcard:fiber-example:structured-triad",
+      "hash": "3897c729e5b6d5c50ad044c259fcb34d0af45c72b5fb3b88d7e040c2a031c2ab",
+      "payload": {
+        "kind": "structured",
+        "value": {
+          "abstract": {
+            "context": "c"
+          },
+          "concrete": {
+            "goal": "g"
+          },
+          "balanced": {
+            "success": "s"
+          }
+        }
+      },
+      "metadata": {},
+      "author": "did:clm:fiber-taxonomy",
+      "sequence": 0
+    },
+    "binary/image": {
+      "uri": "mcard:fiber-example:binary-image",
+      "hash": "d4dbab01756dd3968fcab5dbecf1c0e4ffa3b5097ff8b3b7903dea971b35df54",
+      "payload": {
+        "kind": "binary",
+        "mime_type": "application/octet-stream",
+        "data": [
+          137,
+          80,
+          78,
+          71,
+          13,
+          10,
+          26,
+          10,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "metadata": {},
+      "author": "did:clm:fiber-taxonomy",
+      "sequence": 0
+    },
+    "binary/audio": {
+      "uri": "mcard:fiber-example:binary-audio",
+      "hash": "e1e3acaf7dc785b94f1f7fed9ac17868036643fc6b4506e92e8c5fd9e591d17e",
+      "payload": {
+        "kind": "binary",
+        "mime_type": "application/octet-stream",
+        "data": [
+          73,
+          68,
+          51,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "metadata": {},
+      "author": "did:clm:fiber-taxonomy",
+      "sequence": 0
+    },
+    "binary/3d": {
+      "uri": "mcard:fiber-example:binary-3d",
+      "hash": "1d14e5b6798abe3d00144f1ceec0df046902a171d4c70b9f133dd48655709a6f",
+      "payload": {
+        "kind": "binary",
+        "mime_type": "application/octet-stream",
+        "data": [
+          103,
+          108,
+          84,
+          70,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "metadata": {},
+      "author": "did:clm:fiber-taxonomy",
+      "sequence": 0
+    },
+    "binary/octet": {
+      "uri": "mcard:fiber-example:binary-octet",
+      "hash": "9e14ca6f93126061c03a40cb2a8ecdbd928097251011946431463c8255cd703f",
+      "payload": {
+        "kind": "binary",
+        "mime_type": "application/octet-stream",
+        "data": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      "metadata": {},
+      "author": "did:clm:fiber-taxonomy",
+      "sequence": 0
+    },
+    "satori/message": {
+      "uri": "mcard:fiber-example:satori-message",
+      "hash": "7554b6e3a4a2c637799b631435aa663c7ad8a26189ecbe10fe3dcbd2f9ef9307",
+      "payload": {
+        "kind": "satori",
+        "value": {
+          "id": "m-1",
+          "content": "hello mesh",
+          "channel": "c-1",
+          "user": "u-1",
+          "timestamp": 1
+        }
+      },
+      "metadata": {},
+      "author": "did:clm:fiber-taxonomy",
+      "sequence": 0
+    },
+    "executable/pcard": {
+      "uri": "mcard:fiber-example:executable-pcard",
+      "hash": "04dea03620c4a6ac5f567d7aa0424005bb3e192b7dfa79448b2c9624006f9b39",
+      "payload": {
+        "kind": "executable",
+        "value": {
+          "name": "noop",
+          "arity": 1,
+          "body": "return 1;"
+        }
+      },
+      "metadata": {},
+      "author": "did:clm:fiber-taxonomy",
+      "sequence": 0
+    }
+  }
+}
