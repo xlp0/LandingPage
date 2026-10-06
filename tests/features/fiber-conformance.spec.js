@@ -23,6 +23,7 @@
  *     ratio of 21:1.
  */
 import { test, expect } from '@playwright/test';
+import path from 'node:path';
 import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -33,6 +34,7 @@ const DATA = JSON.parse(
   readFileSync(resolve(UNIT, 'public/conformance/harness-data.json'), 'utf8'),
 );
 
+const SCREENSHOT_CSS = path.join(here, 'screenshot.css');
 const EPSILON_PX = 1; // sub-pixel rounding
 const MIN_CONTRAST_NORMAL = 4.5;
 const MIN_CONTRAST_LARGE = 3.0;
@@ -242,4 +244,149 @@ test.describe('Fiber conformance — rendered properties', () => {
       });
     }
   }
+});
+
+
+/**
+ * CDO-12 DV-05: visual witnesses per (fiber, coordinate).
+ *
+ * `toHaveScreenshot` is the witness mechanism, and it answers the question the
+ * earlier record left open. That record noted a screenshot "saved" by the
+ * presenter that was absent afterwards — the file had gone to `test-results/`,
+ * which Playwright treats as transient output and clears. *Baselines* live in a
+ * snapshot directory beside the spec and persist, which is what makes them
+ * witnesses rather than logs.
+ *
+ * Sealing and attribution: the baseline file name encodes the fiber and the
+ * coordinate, so a diff is attributable to a pair rather than to "the page".
+ *
+ * Human sign-off: an unapproved shift fails the comparison. The only way to
+ * accept a new baseline is an explicit `--update-snapshots`, which is a human
+ * action taken against a reviewed diff — the sign-off token of this harness.
+ *
+ * Determinism: `screenshot.css` neutralises animation and transition, which
+ * Playwright documents as a source of flake, and `stylePath` pierces shadow DOM
+ * and inner frames so it reaches the fiber wherever it mounts. Nothing in that
+ * stylesheet changes layout, so a witness still attests the reflow.
+ *
+ * The witness set is declared rather than the full cross: every fiber at two
+ * coordinates (LTR and RTL), because RTL is the case where mirroring can break
+ * without any other symptom. Extending it is a data change here.
+ */
+const WITNESS_COORDS = COORDS.filter(
+  (c) => c.id === 'form:desktop_standard' || c.id === 'locale:ar-EG',
+);
+
+test.describe('Fiber visual witnesses', () => {
+  for (const fiber of FIBERS) {
+    for (const coord of WITNESS_COORDS) {
+      test(`witness: ${fiber} @ ${coord.id}`, async ({ page }) => {
+        await page.setViewportSize({ width: coord.width, height: 900 });
+        const url = `/fiber-conformance.html?kind=${encodeURIComponent(fiber)}` +
+          `&locale=${coord.locale}&dir=${coord.dir}` +
+          `&display_mode=${coord.display_mode}&power_mode=${coord.power_mode}`;
+        await page.goto(url);
+        await page.waitForSelector('body[data-harness-ready="true"]', { timeout: 15000 });
+
+        await expect(page.locator('#harness')).toHaveScreenshot(
+          `${fiber.replace(/\//g, '-')}--${coord.id.replace(/[:]/g, '-')}.png`,
+          {
+            maxDiffPixelRatio: 0.02,
+            stylePath: SCREENSHOT_CSS,
+            animations: 'disabled',
+          },
+        );
+      });
+    }
+  }
+});
+
+/**
+ * CDO-12 DV-04: membrane isolation per fiber (INV-CDO-21).
+ *
+ * Each fiber mounts inside an iframe membrane whose `sandbox` omits
+ * `allow-same-origin`. That omission is the isolation: `allow-scripts
+ * allow-same-origin` together lets the framed document reach its real origin,
+ * which is the well-known way a sandbox is defeated rather than applied.
+ *
+ * Detection of blocked content cannot be done by catching an error — a frame
+ * blocked by `X-Frame-Options: DENY` or CSP `frame-ancestors` raises nothing the
+ * parent can observe. It simply never signals. So the framed document posts a
+ * ready handshake, and the *absence* of that signal inside the window is the
+ * diagnostic. Silence is reported as blocked, never as success, because a blank
+ * frame is precisely what a silent failure looks like.
+ */
+test.describe('Fiber membrane isolation', () => {
+  test('a compatible frame mounts inside the membrane', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 900 });
+    await page.goto('/fiber-conformance.html?membrane=1&target=/public/conformance/membrane-probe.html');
+    await page.waitForSelector('body[data-harness-ready="true"]', { timeout: 15000 });
+
+    const r = await page.evaluate(() => window.__FIBER_HARNESS__);
+    expect(r.status).toBe('mounted');
+    expect(r.sandbox).toBe('allow-scripts');
+    expect(r.sandbox).not.toContain('allow-same-origin');
+  });
+
+  test('the membrane does not leak: no overflow and the frame is contained', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 900 });
+    await page.goto('/fiber-conformance.html?membrane=1&target=/public/conformance/membrane-probe.html');
+    await page.waitForSelector('body[data-harness-ready="true"]', { timeout: 15000 });
+
+    const m = await page.evaluate(measure);
+    expect(m.pageOverflow, 'the membrane widened the page').toBe(false);
+    expect(m.offenders, `membrane leaked past the edge: ${JSON.stringify(m.offenders)}`).toEqual([]);
+
+    // the framed document cannot reach its parent's origin
+    const sealed = await page.evaluate(() => {
+      const f = document.querySelector('#membrane-host iframe');
+      if (!f) return { present: false };
+      let reachable = true;
+      try { reachable = Boolean(f.contentDocument); } catch { reachable = false; }
+      return { present: true, reachable, sandbox: f.getAttribute('sandbox') };
+    });
+    expect(sealed.present).toBe(true);
+    expect(sealed.reachable, 'a sandboxed frame must not expose its document to the parent').toBe(false);
+  });
+
+  test('a frame refusing to be framed surfaces a diagnostic, not a blank', async ({ page }) => {
+    // simulate a site that forbids framing, exactly as GitHub does
+    // Match on pathname, not on the whole URL. A glob of '**/blocked-target.html'
+    // also matches the harness page itself, because the target is echoed in its
+    // query string — the route then fulfils the page with the blocked body and
+    // nothing renders at all.
+    await page.route(
+      (url) => new URL(url).pathname === '/blocked-target.html',
+      (route) => route.fulfill({
+        status: 200,
+        headers: { 'X-Frame-Options': 'DENY' },
+        contentType: 'text/html',
+        body: '<html><body><p>should never render</p></body></html>',
+      }),
+    );
+
+    await page.setViewportSize({ width: 1024, height: 900 });
+    await page.goto('/fiber-conformance.html?membrane=1&target=/blocked-target.html');
+    await page.waitForSelector('body[data-harness-ready="true"]', { timeout: 15000 });
+
+    const r = await page.evaluate(() => window.__FIBER_HARNESS__);
+    expect(r.status).toBe('blocked');
+    expect(r.reason).toContain('no ready handshake');
+
+    const diagnostic = page.locator('#membrane-diagnostic');
+    await expect(diagnostic).toBeVisible();
+    await expect(diagnostic).toContainText('X-Frame-Options');
+  });
+
+  test('every declared fiber mounts in a membrane without leaking', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 900 });
+    const leaked = [];
+    for (const fiber of FIBERS) {
+      await page.goto(`/fiber-conformance.html?kind=${encodeURIComponent(fiber)}`);
+      await page.waitForSelector('body[data-harness-ready="true"]', { timeout: 15000 });
+      const m = await page.evaluate(measure);
+      if (m.pageOverflow || m.offenders.length) leaked.push({ fiber, offenders: m.offenders });
+    }
+    expect(leaked, `fibers leaking outside their host: ${JSON.stringify(leaked)}`).toEqual([]);
+  });
 });

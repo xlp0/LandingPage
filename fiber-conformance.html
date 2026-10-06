@@ -22,6 +22,12 @@
 <body>
 <div id="harness" role="main"></div>
 
+<!-- DV-CDO-12-04: the membrane. `sandbox` with no `allow-same-origin` is the
+     point: adding it back would let the framed document reach its real origin and
+     defeat the isolation the membrane exists to provide. -->
+<div id="membrane-host" hidden></div>
+<div id="membrane-diagnostic" hidden role="status" aria-live="polite"></div>
+
 <script>
   // Bare specifiers must resolve before the module below is evaluated.
   const { protocol, hostname, port } = window.location;
@@ -62,6 +68,8 @@ const locale = q.get('locale') ?? 'en-US';
 const dir = q.get('dir') ?? 'ltr';
 const theme = q.get('display_mode') ?? 'light';
 const power = q.get('power_mode') ?? 'performance';
+const membrane = q.get('membrane') === '1';
+const membraneTarget = q.get('target');
 
 document.documentElement.lang = locale;
 document.documentElement.dir = dir;
@@ -81,7 +89,73 @@ function report(payload) {
   el.textContent = JSON.stringify(payload);
 }
 
+/**
+ * Frames `target` inside a sandboxed membrane and reports whether it came up.
+ *
+ * A blocked frame (X-Frame-Options: DENY, or CSP frame-ancestors) does not raise
+ * an error the parent can catch: the frame simply never signals. So the handshake
+ * is a postMessage from the framed document, and the *absence* of that signal
+ * within the window is the diagnostic. Silence is reported as blocked, never as
+ * success — a blank frame is exactly what a silent failure looks like.
+ */
+function mountMembrane(target, timeoutMs = 3000) {
+  return new Promise((resolve) => {
+    const host = document.getElementById('membrane-host');
+    const diag = document.getElementById('membrane-diagnostic');
+    host.hidden = false;
+
+    const frame = document.createElement('iframe');
+    frame.setAttribute('sandbox', 'allow-scripts');
+    frame.setAttribute('title', 'fiber membrane');
+    // box-sizing is required: width:100% plus a border overflows the container by the
+    // border width, which the conformance harness correctly flagged
+    frame.style.cssText = 'box-sizing:border-box;width:100%;height:240px;border:1px solid #767676;background:#fff';
+    frame.src = target;
+
+    let settled = false;
+    const onMessage = (e) => {
+      if (e.data && e.data.__membraneReady) {
+        settled = true;
+        window.removeEventListener('message', onMessage);
+        resolve({ status: 'mounted', target, sandbox: frame.getAttribute('sandbox') });
+      }
+    };
+    window.addEventListener('message', onMessage);
+
+    frame.addEventListener('error', () => {
+      if (settled) return;
+      settled = true;
+      resolve({ status: 'blocked', target, reason: 'frame error event' });
+    });
+
+    host.appendChild(frame);
+
+    setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      window.removeEventListener('message', onMessage);
+      diag.hidden = false;
+      diag.className = 'membrane-diagnostic';
+      diag.textContent =
+        `This surface refuses to be framed (${target}). A site that sends ` +
+        `X-Frame-Options: DENY or CSP frame-ancestors cannot be embedded, so it is ` +
+        `shown as a diagnostic rather than as a blank frame.`;
+      resolve({
+        status: 'blocked',
+        target,
+        reason: 'no ready handshake within the window',
+        diagnosticShown: true,
+        sandbox: frame.getAttribute('sandbox'),
+      });
+    }, timeoutMs);
+  });
+}
+
 async function main() {
+  if (membrane) {
+    const result = await mountMembrane(membraneTarget ?? './public/conformance/membrane-probe.html');
+    return report({ ...result, membrane: true });
+  }
   const data = await fetch('./public/conformance/harness-data.json').then((r) => r.json());
   const entry = data.taxonomy.kinds.find((k) => k.kind === kind);
   if (!entry) return report({ status: 'unknown-kind', kind });

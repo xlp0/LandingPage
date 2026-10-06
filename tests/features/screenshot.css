@@ -1,0 +1,20 @@
+/*
+ * Determinism stylesheet for fiber visual witnesses.
+ *
+ * Playwright documents that rendering varies by host OS, browser version,
+ * hardware and even power source, and that a screenshot must be repeatable before
+ * it can be a witness. `stylePath` is applied while the screenshot is taken and
+ * pierces the Shadow DOM and inner frames, so this reaches the fiber wherever it
+ * mounts.
+ *
+ * Only non-deterministic inputs are neutralised. Nothing here changes layout, so
+ * a witness still reflects the reflow it is meant to attest.
+ */
+*, *::before, *::after {
+  animation: none !important;
+  transition: none !important;
+  caret-color: transparent !important;
+}
+html { scroll-behavior: auto !important; }
+/* hide anything inherently volatile rather than letting it fail the comparison */
+[data-volatile="true"] { visibility: hidden !important; }

@@ -1,0 +1,10 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>membrane probe</title></head>
+<body>
+<p id="probe">membrane probe</p>
+<script>
+  // Signals readiness so the parent can distinguish "mounted" from "blocked".
+  // A blocked frame never executes this, which is the whole detection mechanism.
+  parent.postMessage({ __membraneReady: true }, '*');
+</script>
+</body></html>
