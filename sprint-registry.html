@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CLM Sprint Registry — SSoT Display Projection</title>
+  <link rel="stylesheet" href="/public/css/tokens.css" />
+  <link rel="stylesheet" href="/public/css/semantic-tokens.css" />
+  <style>
+    :root {
+      --reg-bg: var(--color-background-primary, #0f172a);
+      --reg-card-bg: var(--color-surface, #1e293b);
+      --reg-text: var(--color-text-primary, #f8fafc);
+      --reg-muted: var(--color-text-secondary, #94a3b8);
+      --reg-border: var(--color-border, #334155);
+      --badge-sealed-bg: var(--color-badge-valid-bg, #065f46);
+      --badge-sealed-fg: var(--color-badge-valid-text, #34d399);
+      --badge-spec-bg: var(--color-badge-draft-bg, #78350f);
+      --badge-spec-fg: var(--color-badge-draft-text, #fbbf24);
+    }
+    body {
+      margin: 0;
+      padding: 24px;
+      background: var(--reg-bg);
+      color: var(--reg-text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+    }
+    header {
+      max-width: 1200px;
+      margin: 0 auto 24px;
+      border-bottom: 1px solid var(--reg-border);
+      padding-bottom: 16px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      font-weight: 700;
+    }
+    p.subtitle {
+      margin: 0;
+      color: var(--reg-muted);
+      font-size: 14px;
+    }
+    #registry-status {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 12px;
+      font-family: ui-monospace, monospace;
+      color: var(--reg-muted);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .sprint-card {
+      background: var(--reg-card-bg);
+      border: 1px solid var(--reg-border);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: border-color 0.2s ease;
+    }
+    .sprint-card[data-state="sealed"] {
+      border-left: 4px solid var(--badge-sealed-fg);
+    }
+    .sprint-card[data-state="specification"] {
+      border-left: 4px solid var(--badge-spec-fg);
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sprint-code {
+      font-family: ui-monospace, monospace;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .state-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .badge-sealed {
+      background: var(--badge-sealed-bg);
+      color: var(--badge-sealed-fg);
+    }
+    .badge-specification {
+      background: var(--badge-spec-bg);
+      color: var(--badge-spec-fg);
+    }
+    .sprint-title {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+    .sprint-handle {
+      font-family: ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--reg-muted);
+      word-break: break-all;
+    }
+    .card-footer {
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px solid var(--reg-border);
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--reg-muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>CLM Sprint Registry</h1>
+    <p class="subtitle">Live browser projection of SSoT sprint manifests and DoD sealing contracts.</p>
+    <div id="registry-status" data-ready="false" data-count="0">Loading registry...</div>
+  </header>
+
+  <main>
+    <div id="sprint-grid" class="grid"></div>
+  </main>
+
+  <script type="module">
+    async function loadRegistry() {
+      const statusEl = document.getElementById('registry-status');
+      const gridEl = document.getElementById('sprint-grid');
+      try {
+        const res = await fetch('/api/clm/registry');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const sprints = data.registry?.sprints || [];
+
+        gridEl.innerHTML = '';
+        for (const s of sprints) {
+          const card = document.createElement('article');
+          const state = s.dod?.state || 'specification';
+          card.className = `sprint-card state-${state}`;
+          card.setAttribute('data-state', state);
+          card.setAttribute('data-code', s.code || '');
+
+          card.innerHTML = `
+            <div class="card-top">
+              <span class="sprint-code">${s.code || 'UNKNOWN'}</span>
+              <span class="state-badge badge-${state}">${state.toUpperCase()}</span>
+            </div>
+            <h3 class="sprint-title">${s.title || ''}</h3>
+            <div class="sprint-handle">${s.handle || ''}</div>
+            <div class="card-footer">
+              <span>DoD: ${s.dod?.total ?? 0} conditions</span>
+              <span>Type: ${s.card_type || 'pcard'}</span>
+            </div>
+          `;
+          gridEl.appendChild(card);
+        }
+
+        statusEl.setAttribute('data-ready', 'true');
+        statusEl.setAttribute('data-count', sprints.length.toString());
+        statusEl.textContent = `Loaded ${sprints.length} sprints from /api/clm/registry`;
+      } catch (err) {
+        statusEl.textContent = `Error: ${err.message}`;
+        statusEl.setAttribute('data-ready', 'error');
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadRegistry);
+  </script>
+</body>
+</html>

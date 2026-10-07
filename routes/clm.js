@@ -140,7 +140,7 @@ router.post('/telemetry', express.json(), (req, res) => {
  * (program / subdir / file) and every component is validated before use.
  */
 const PROGRAMS_ROOT = path.join(__dirname, '..', '..', 'docs', 'sprints', 'programs');
-const ALLOWED_SUBDIRS = new Set(['observability', 'inventory', 'parity', 'conformance']);
+const ALLOWED_SUBDIRS = new Set(['observability', 'inventory', 'parity', 'conformance', 'witness']);
 const SAFE_SEGMENT = /^[A-Za-z0-9][A-Za-z0-9_.-]*$/;
 
 router.get('/program-artifact', (req, res) => {
