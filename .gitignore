@@ -78,3 +78,4 @@ bin/
 /data/*.db
 /data/*.db-shm
 /data/*.db-wal
+style-audit/
