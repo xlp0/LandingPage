@@ -82,6 +82,9 @@ export function extractNavigationGraph(penpotFilePath) {
         if (!isFrame) continue;
 
         const frameId = String(shapeData.id || path.basename(shapeFilePath, '.json'));
+        if (frameId === '00000000-0000-0000-0000-000000000000' || shapeData.name === 'Root Frame') {
+          continue;
+        }
         const frameName = shapeData.name || 'Untitled Frame';
 
         // Extract pluginData (CLM handle and hash)

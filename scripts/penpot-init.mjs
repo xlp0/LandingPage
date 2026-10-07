@@ -9,6 +9,13 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { sha256, writeZip } from './penpot-zip.mjs';
+import {
+  createRectShape,
+  createTextShape,
+  buildIndexHtmlShapes,
+  buildAppHtmlShapes,
+  buildResponsiveLabShapes,
+} from './penpot-screens.mjs';
 
 // Deterministic UUIDs for stable round-trips (INV-CDO-13)
 export const PENPOT_FILE_ID = 'd7570000-0000-8000-8000-000000000001';
@@ -108,17 +115,43 @@ export function generatePenpotArchive(unitDir, options = {}) {
         name: 'LandingPage Navigation',
         features: [
           'fdata/path-data',
+          'design-tokens/v1',
+          'variants/v1',
           'layout/grid',
           'components/v2',
+          'fdata/shape-data-type',
         ],
       },
     ],
   };
 
-  // 2. files/<fileId>.json
+  // 2. files/<fileId>.json (Malli schema:file strictly requires version and features)
   entries[`files/${PENPOT_FILE_ID}.json`] = {
     id: PENPOT_FILE_ID,
     name: 'LandingPage Navigation',
+    features: [
+      'fdata/path-data',
+      'design-tokens/v1',
+      'variants/v1',
+      'layout/grid',
+      'components/v2',
+      'fdata/shape-data-type',
+    ],
+    version: 67,
+    revn: 1,
+    vern: 0,
+    'created-at': '2026-10-07T00:00:00.000Z',
+    'modified-at': '2026-10-07T00:00:00.000Z',
+    'is-shared': true,
+    'has-media-trimmed': false,
+    options: {
+      componentsV2: true,
+      baseFontSize: '16px',
+    },
+    metadata: {
+      referer: 'penpot',
+      generatedBy: 'clm-kernel/0.0.1',
+    },
   };
 
   // 3. files/<fileId>/pages/<pageId>.json
@@ -131,11 +164,55 @@ export function generatePenpotArchive(unitDir, options = {}) {
         id: PENPOT_FLOW_ID,
         name: 'main-nav',
         'starting-frame': startingFrameId,
+        startingFrame: startingFrameId,
       },
     },
   };
 
-  // 4. Frames and shapes: files/<fileId>/pages/<pageId>/<shapeId>.json
+  // 4. Root Canvas Frame: files/<fileId>/pages/<pageId>/00000000-0000-0000-0000-000000000000.json
+  const PENPOT_ROOT_FRAME_ID = '00000000-0000-0000-0000-000000000000';
+  entries[`files/${PENPOT_FILE_ID}/pages/${PENPOT_PAGE_ID}/${PENPOT_ROOT_FRAME_ID}.json`] = {
+    id: PENPOT_ROOT_FRAME_ID,
+    name: 'Root Frame',
+    type: 'frame',
+    x: 0,
+    y: 0,
+    width: 0.01,
+    height: 0.01,
+    rotation: 0,
+    selrect: {
+      x: 0,
+      y: 0,
+      width: 0.01,
+      height: 0.01,
+      x1: 0,
+      y1: 0,
+      x2: 0.01,
+      y2: 0.01,
+    },
+    points: [
+      { x: 0, y: 0 },
+      { x: 0.01, y: 0 },
+      { x: 0.01, y: 0.01 },
+      { x: 0, y: 0.01 },
+    ],
+    transform: { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 },
+    'transform-inverse': { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 },
+    'parent-id': PENPOT_ROOT_FRAME_ID,
+    'frame-id': PENPOT_ROOT_FRAME_ID,
+    'page-id': PENPOT_PAGE_ID,
+    'hide-fill-on-export': false,
+    strokes: [],
+    fills: [
+      {
+        'fill-color': '#FFFFFF',
+        'fill-opacity': 1,
+      },
+    ],
+    shapes: routeEntries.map(r => r.frameId),
+  };
+
+  // 5. Route Frames and shapes: files/<fileId>/pages/<pageId>/<shapeId>.json
   let xOffset = 100;
   for (const r of routeEntries) {
     const interactions = (r.destinations || []).map((destId, idx) => ({
@@ -143,23 +220,80 @@ export function generatePenpotArchive(unitDir, options = {}) {
       'action-type': 'navigate',
       'event-type': 'click',
       destination: destId,
+      'preserve-scroll': false,
       animation: {
         'animation-type': 'slide',
         duration: 250,
         easing: 'ease-in-out',
         direction: destId === startingFrameId ? 'left' : 'right',
+        way: 'in',
+        'offset-effect': false,
       },
     }));
+
+    const frameWidth = 1200;
+    const frameHeight = 800;
+
+    let childShapes = [];
+    if (r.path === 'index.html') {
+      childShapes = buildIndexHtmlShapes(r, xOffset, PENPOT_PAGE_ID);
+    } else if (r.path === 'app.html') {
+      childShapes = buildAppHtmlShapes(r, xOffset, PENPOT_PAGE_ID);
+    } else if (r.path === 'responsive-lab.html') {
+      childShapes = buildResponsiveLabShapes(r, xOffset, PENPOT_PAGE_ID);
+    }
 
     const frameShape = {
       id: r.frameId,
       name: r.name,
       type: 'frame',
-      pageId: PENPOT_PAGE_ID,
+      'page-id': PENPOT_PAGE_ID,
       x: xOffset,
       y: 100,
-      width: 800,
-      height: 600,
+      width: frameWidth,
+      height: frameHeight,
+      rotation: 0,
+      selrect: {
+        x: xOffset,
+        y: 100,
+        width: frameWidth,
+        height: frameHeight,
+        x1: xOffset,
+        y1: 100,
+        x2: xOffset + frameWidth,
+        y2: 100 + frameHeight,
+      },
+      points: [
+        { x: xOffset, y: 100 },
+        { x: xOffset + frameWidth, y: 100 },
+        { x: xOffset + frameWidth, y: 100 + frameHeight },
+        { x: xOffset, y: 100 + frameHeight },
+      ],
+      transform: { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 },
+      'transform-inverse': { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 },
+      'parent-id': PENPOT_ROOT_FRAME_ID,
+      'frame-id': PENPOT_ROOT_FRAME_ID,
+      'hide-fill-on-export': false,
+      strokes: [
+        {
+          'stroke-color': '#334155',
+          'stroke-width': 1,
+          'stroke-opacity': 1,
+          'stroke-style': 'solid',
+          'stroke-alignment': 'inner',
+        },
+      ],
+      r1: 8,
+      r2: 8,
+      r3: 8,
+      r4: 8,
+      fills: [
+        {
+          'fill-color': '#0F172A',
+          'fill-opacity': 1,
+        },
+      ],
+      shapes: childShapes.map(s => s.id),
       'plugin-data': {
         clm: {
           handle: r.handle,
@@ -170,7 +304,11 @@ export function generatePenpotArchive(unitDir, options = {}) {
     };
 
     entries[`files/${PENPOT_FILE_ID}/pages/${PENPOT_PAGE_ID}/${r.frameId}.json`] = frameShape;
-    xOffset += 900;
+    for (const child of childShapes) {
+      entries[`files/${PENPOT_FILE_ID}/pages/${PENPOT_PAGE_ID}/${child.id}.json`] = child;
+    }
+
+    xOffset += 1350;
   }
 
   // Create ZIP buffer

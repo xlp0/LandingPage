@@ -207,7 +207,11 @@ if (process.argv[1] && process.argv[1].endsWith('penpot-render.mjs')) {
     if (args[i] === '--unit' && i + 1 < args.length) {
       unitDir = args[++i];
     } else if (!args[i].startsWith('-')) {
-      penpotFile = args[i];
+      if (fs.existsSync(args[i]) && fs.statSync(args[i]).isDirectory()) {
+        unitDir = args[i];
+      } else {
+        penpotFile = args[i];
+      }
     }
   }
 
