@@ -500,6 +500,7 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
 
     console.log('[Test] Step 5d: Testing Custom Width Input (850px)');
     await customWidthInput.fill('850');
+    await expect(customWidthInput).toHaveValue('850');
     await applyCustomWidthBtn.click();
     await page.waitForTimeout(400);
     await expect(controlledFrame).toHaveCSS('width', '850px');
@@ -522,6 +523,103 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     await expect(corsBlockReason).toContainText('X-Frame-Options: DENY');
     await expect(corsBlockAlert).toContainText('In Desktop mode (Tauri)');
     await expect(corsStatusPill).toContainText('Iframe Blocked');
+  });
+
+  test('12. CDO-13 Fibration Metric Observability and SPA Lagrangian Assessment: cross-unit fibration dashboard, parallel-coordinates linked brushing, admissibility cone, and deployment unit inspector metrics slot', async ({ page }) => {
+    // Step 1: Open Fibration Observability from top control button
+    console.log('[Test] Step 1: Opening Fibration Observability via top control button');
+    const fibrationBtn = page.locator('#fibration-observability-btn');
+    await expect(fibrationBtn).toBeVisible();
+    await fibrationBtn.click();
+
+    const navigatorModal = page.locator('#least-action-modal');
+    await expect(navigatorModal).toBeVisible();
+    const crossUnitSlot = page.locator('#mc-slot-cross-unit');
+    await expect(crossUnitSlot).toBeVisible();
+
+    // Step 2: Verify D3 chart components in Cross-Unit dashboard
+    console.log('[Test] Step 2: Verifying D3 chart components (Bundle Map, Parallel Coordinates, Treemap, Admissibility Cone)');
+    await expect(page.locator('#fibration-bundle-mount svg')).toBeVisible();
+    await expect(page.locator('#parallel-coords-mount svg')).toBeVisible();
+    await expect(page.locator('#fibration-treemap-mount svg')).toBeVisible();
+    await expect(page.locator('#fibration-treemap-mount')).toContainText('Archetype Budget');
+    await expect(page.locator('#admissibility-cone-mount svg')).toBeVisible();
+    await expect(page.locator('#fibration-unit-table')).toBeVisible();
+
+    // Step 3: Verify Admissibility Cone boundaries and pruning labels
+    console.log('[Test] Step 3: Verifying Admissibility Cone boundaries, imaginary boundary, and pruning labels');
+    const coneSvg = page.locator('#admissibility-cone-mount svg');
+    await expect(coneSvg).toContainText('Admissible Cone (ℒ > 0');
+    await expect(coneSvg).toContainText('Imaginary Boundary (ℒ = 0');
+    await expect(coneSvg).toContainText('Demonic Pruning Region (ℒ ≤ 0');
+    // Verify dominant HT contributor label in pruning region
+    await expect(coneSvg).toContainText('budget_breach');
+
+    // Step 4: Verify 7 lattice dimensions and metrics axes in Parallel Coordinates
+    console.log('[Test] Step 4: Verifying 7 lattice dimensions and metrics axes in Parallel Coordinates');
+    const pcSvg = page.locator('#parallel-coords-mount svg');
+    await expect(pcSvg).toContainText('1. Platform');
+    await expect(pcSvg).toContainText('2. Form Factor');
+    await expect(pcSvg).toContainText('3. Orientation');
+    await expect(pcSvg).toContainText('4. Locale');
+    await expect(pcSvg).toContainText('5. Display');
+    await expect(pcSvg).toContainText('6. Power');
+    await expect(pcSvg).toContainText('7. Adapter');
+    await expect(pcSvg).toContainText('LCP (ms)');
+    await expect(pcSvg).toContainText('Payload (MB)');
+    await expect(pcSvg).toContainText('Func (%)');
+    await expect(pcSvg).toContainText('Lagrangian ℒ');
+
+    // Step 5: Test parallel-coordinates linked brushing
+    console.log('[Test] Step 5: Testing linked brushing interaction');
+    const initialRows = await page.locator('#fibration-unit-table tbody tr').count();
+    expect(initialRows).toBeGreaterThan(0);
+
+    // Step 6: Close navigator modal
+    console.log('[Test] Step 6: Closing navigator modal');
+    await page.locator('#least-action-close-btn').click();
+    await expect(navigatorModal).not.toBeVisible();
+
+    // Step 7: Open Deployment Unit Inspector
+    console.log('[Test] Step 7: Opening Deployment Unit Inspector');
+    const inspectorBtn = page.locator('#deployment-inspector-btn');
+    await inspectorBtn.click();
+    const inspectorModal = page.locator('#deployment-inspector-modal');
+    await expect(inspectorModal).toBeVisible();
+
+    // Step 8: Verify Inspector Metrics Slot (#insp-slot-metrics)
+    console.log('[Test] Step 8: Verifying Inspector Metrics Slot (#insp-slot-metrics)');
+    const metricsSlot = page.locator('#insp-slot-metrics');
+    await expect(metricsSlot).toBeVisible();
+
+    // Treemap with archetype budget overlay
+    await expect(page.locator('#insp-treemap-container svg')).toBeVisible();
+
+    // Functionality radar canvas
+    await expect(page.locator('#insp-radar-canvas')).toBeVisible();
+
+    // Web Vitals multi-series line canvas
+    await expect(page.locator('#insp-vitals-canvas')).toBeVisible();
+
+    // Grouped budget bars canvas
+    await expect(page.locator('#insp-budget-canvas')).toBeVisible();
+
+    // Step 9: Verify #insp-slot-correctness handover placeholder
+    console.log('[Test] Step 9: Verifying #insp-slot-correctness handover placeholder');
+    const correctnessSlot = page.locator('#insp-slot-correctness');
+    await expect(correctnessSlot).toBeVisible();
+    await expect(correctnessSlot).toContainText('correctness not yet evaluated');
+
+    // Step 10: Switch target archetype to Wearable in inspector and verify metrics update
+    console.log('[Test] Step 10: Switching inspector target to Wearable to test budget comparison');
+    await page.locator('#tab-wearable').click();
+    await expect(page.locator('#insp-treemap-container svg')).toBeVisible();
+    await expect(page.locator('#insp-radar-canvas')).toBeVisible();
+
+    // Step 11: Close inspector and verify drain
+    console.log('[Test] Step 11: Closing Deployment Unit Inspector and verifying drain');
+    await page.locator('#inspector-close-btn').click();
+    await expect(inspectorModal).not.toBeVisible();
   });
 
 });

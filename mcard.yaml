@@ -238,6 +238,21 @@ self_refinement:
     - { stage: witness,     artifact: "lifecycle MCards (CDO-05)" }
   certified_turns: []
 
+assessment:
+  lagrangian_weights:
+    epiplexity:
+      w1_invariant_coverage: 0.25
+      w2_lattice_pass_rate: 0.25
+      w3_adapter_coverage: 0.20
+      w4_witness_count: 0.15
+      w5_evidence_level: 0.15
+    entropy:
+      v1_budget_breach_ratio: 0.30
+      v2_residual_entropy: 0.30
+      v3_uncovered_lattice_fraction: 0.15
+      v4_visual_drift_ratio: 0.15
+      v5_adapter_overhead: 0.10
+
 capture:
   exclude:
     - ".env"

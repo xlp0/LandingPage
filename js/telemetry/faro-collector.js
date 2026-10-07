@@ -80,33 +80,59 @@ export class FaroDeploymentUnitCollector {
     return { ...this.latticeCoordinate };
   }
 
-  pushMeasurement(name, value) {
+  setFiberCoordinate(coord = {}) {
+    this.fiberCoordinate = {
+      kind: coord.kind || null,
+      shape: coord.shape || null,
+      position: coord.position || 'covered',
+      fallback: Boolean(coord.fallback),
+      subsumed: Boolean(coord.subsumed),
+      mount_point: coord.mount_point || null,
+    };
+    this.pushEvent('fiber_coordinate_synchronized', { fiber: this.fiberCoordinate });
+  }
+
+  getFiberCoordinate() {
+    return this.fiberCoordinate ? { ...this.fiberCoordinate } : null;
+  }
+
+  pushMeasurement(name, value, fiber = null) {
+    const fiberCoord = fiber || this.fiberCoordinate || null;
     const payload = {
       type: 'measurement',
       name,
       value,
       lattice: this.latticeCoordinate,
+      fiber: fiberCoord,
       timestamp: new Date().toISOString()
     };
     this._dispatch(payload);
   }
 
-  pushEvent(eventName, attributes = {}) {
+  pushEvent(eventName, attributes = {}, fiber = null) {
+    const fiberCoord = fiber || attributes.fiber || this.fiberCoordinate || null;
     const payload = {
       type: 'event',
       name: eventName,
-      attributes: { ...this.latticeCoordinate, ...attributes },
+      attributes: {
+        ...this.latticeCoordinate,
+        ...(fiberCoord ? { fiber_kind: fiberCoord.kind, fiber_position: fiberCoord.position } : {}),
+        ...attributes
+      },
+      fiber: fiberCoord,
       timestamp: new Date().toISOString()
     };
     this._dispatch(payload);
   }
 
-  pushError(error) {
+  pushError(error, fiber = null) {
+    const fiberCoord = fiber || this.fiberCoordinate || null;
     const payload = {
       type: 'exception',
       value: error.message,
       stacktrace: error.stack,
       lattice: this.latticeCoordinate,
+      fiber: fiberCoord,
       timestamp: new Date().toISOString()
     };
     this._dispatch(payload);

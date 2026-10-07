@@ -598,8 +598,8 @@
             <label for="controlled-width-input" style="font-size: 0.72rem; color: #94a3b8;">W:</label>
             <input id="controlled-width-input" type="number" class="dim-input" value="768" min="320" max="3840" aria-label="Custom width in pixels" />
             <span style="font-size: 0.72rem; color: #94a3b8;">px</span>
-            <button id="btn-apply-custom-width" class="toolbar-btn" style="padding: 0.2rem 0.5rem; margin-left: 0.25rem;">Apply</button>
-            <button id="btn-rotate-viewport" class="toolbar-btn" style="padding: 0.2rem 0.5rem;" title="Swap Width and Height (90° Rotation)">🔄 Rotate</button>
+            <button id="btn-apply-custom-width" type="button" class="toolbar-btn" style="padding: 0.2rem 0.5rem; margin-left: 0.25rem;">Apply</button>
+            <button id="btn-rotate-viewport" type="button" class="toolbar-btn" style="padding: 0.2rem 0.5rem;" title="Swap Width and Height (90° Rotation)">🔄 Rotate</button>
           </div>
         </div>
       </div>
@@ -794,9 +794,18 @@
       });
     });
 
-    applyCustomWidthBtn?.addEventListener('click', () => {
-      const val = parseInt(customWidthInput?.value || '768', 10);
+    function applyCustomWidth() {
+      const parsed = parseInt(customWidthInput?.value || '768', 10);
+      const val = (!isNaN(parsed) && parsed >= 100) ? parsed : 768;
       setControlledPanelWidth(`${val}px`, `Custom (${val}px)`);
+    }
+
+    applyCustomWidthBtn?.addEventListener('click', applyCustomWidth);
+    customWidthInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        applyCustomWidth();
+      }
     });
 
     rotateBtn?.addEventListener('click', () => {

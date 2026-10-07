@@ -237,6 +237,10 @@
       <span id="least-action-icon">🧭</span>
       <span id="least-action-label">Least Action (ℒ)</span>
     </button>
+    <button class="control-btn" id="fibration-observability-btn" title="Open Cross-Unit Fibration Observability & Lagrangian Dashboard">
+      <span id="fibration-icon">📊</span>
+      <span id="fibration-label">Fibration</span>
+    </button>
     <button class="control-btn" id="deployment-inspector-btn" title="Open Meta-Portal Deployment Unit Inspector">
       <span id="inspector-icon">📦</span>
       <span id="inspector-label">Deployment Units</span>
@@ -472,6 +476,10 @@
 
     document.getElementById('least-action-btn')?.addEventListener('click', () => {
       leastActionNavigator.open();
+    });
+
+    document.getElementById('fibration-observability-btn')?.addEventListener('click', () => {
+      leastActionNavigator.open(null, 'fibration');
     });
 
     document.getElementById('least-action-card')?.addEventListener('click', () => {

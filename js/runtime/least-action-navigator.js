@@ -137,6 +137,8 @@ export class LeastActionNavigator {
     this.currentDirection = 'cdo-11';
     this.container = null;
     this.isOpen = false;
+    this.activeView = 'geodesic';
+    this.fibrationDashboard = null;
   }
 
   mount(rootElement) {
@@ -160,6 +162,15 @@ export class LeastActionNavigator {
           <button class="close-btn" id="least-action-close-btn" title="Close Navigator">✕</button>
         </div>
 
+        <div class="navigator-mode-selector" id="navigator-mode-selector" style="display: flex; gap: 8px; margin: 0 20px 12px; padding: 4px; background: rgba(30, 41, 59, 0.6); border-radius: 6px; border: 1px solid #334155;">
+          <button id="nav-mode-geodesic-btn" class="nav-mode-btn active" style="flex: 1; padding: 8px 12px; background: #1e293b; border: 1px solid #38bdf8; color: #f8fafc; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;">
+            🧭 Stationary Action Geodesic (CDO-11)
+          </button>
+          <button id="nav-mode-fibration-btn" class="nav-mode-btn" style="flex: 1; padding: 8px 12px; background: transparent; border: 1px solid transparent; color: #94a3b8; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;">
+            📊 Fibration Metric Observability (CDO-13)
+          </button>
+        </div>
+
         <div class="direction-tabs" id="direction-tabs-bar">
           ${Object.values(CANDIDATE_SPRINT_DIRECTIONS).map(dir => `
             <button class="direction-tab ${dir.id === this.currentDirection ? 'active' : ''} ${dir.isRealAction ? 'real-geodesic' : 'pruned-path'}" 
@@ -173,6 +184,11 @@ export class LeastActionNavigator {
 
         <div class="least-action-body" id="least-action-content">
           <!-- Dynamic rendering -->
+        </div>
+
+        <!-- Sprint CDO-13: Mission Control Cross-Unit Observability Slot -->
+        <div class="mc-slot-cross-unit-container" id="mc-slot-cross-unit" style="display: none; padding: 0 20px 20px; overflow-y: auto; max-height: 70vh;">
+          <!-- Fiber bundle map, parallel coords, admissibility cone, and unit table rendered here -->
         </div>
 
         <div class="least-action-footer">
@@ -197,6 +213,9 @@ export class LeastActionNavigator {
       if (e.target === modal) this.close();
     });
 
+    modal.querySelector('#nav-mode-geodesic-btn')?.addEventListener('click', () => this.setViewMode('geodesic'));
+    modal.querySelector('#nav-mode-fibration-btn')?.addEventListener('click', () => this.setViewMode('fibration'));
+
     const tabs = modal.querySelectorAll('.direction-tab');
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
@@ -210,6 +229,53 @@ export class LeastActionNavigator {
     });
 
     this.render();
+  }
+
+  setViewMode(mode) {
+    this.activeView = mode;
+    const geodesicBtn = this.container?.querySelector('#nav-mode-geodesic-btn');
+    const fibrationBtn = this.container?.querySelector('#nav-mode-fibration-btn');
+    const tabsBar = this.container?.querySelector('#direction-tabs-bar');
+    const content = this.container?.querySelector('#least-action-content');
+    const footer = this.container?.querySelector('.least-action-footer');
+    const mcSlot = this.container?.querySelector('#mc-slot-cross-unit');
+
+    if (mode === 'fibration') {
+      geodesicBtn?.classList.remove('active');
+      geodesicBtn?.setAttribute('style', 'flex: 1; padding: 8px 12px; background: transparent; border: 1px solid transparent; color: #94a3b8; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;');
+      fibrationBtn?.classList.add('active');
+      fibrationBtn?.setAttribute('style', 'flex: 1; padding: 8px 12px; background: #1e293b; border: 1px solid #38bdf8; color: #f8fafc; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;');
+      if (tabsBar) tabsBar.style.display = 'none';
+      if (content) content.style.display = 'none';
+      if (footer) footer.style.display = 'none';
+      if (mcSlot) {
+        mcSlot.style.display = 'block';
+        this.renderFibrationView(mcSlot);
+      }
+    } else {
+      fibrationBtn?.classList.remove('active');
+      fibrationBtn?.setAttribute('style', 'flex: 1; padding: 8px 12px; background: transparent; border: 1px solid transparent; color: #94a3b8; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;');
+      geodesicBtn?.classList.add('active');
+      geodesicBtn?.setAttribute('style', 'flex: 1; padding: 8px 12px; background: #1e293b; border: 1px solid #38bdf8; color: #f8fafc; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;');
+      if (tabsBar) tabsBar.style.display = 'flex';
+      if (content) content.style.display = 'block';
+      if (footer) footer.style.display = 'flex';
+      if (mcSlot) mcSlot.style.display = 'none';
+    }
+  }
+
+  async renderFibrationView(mcSlot) {
+    if (!mcSlot) return;
+    try {
+      const { FibrationDashboard } = await import('../observability/fibration-dashboard.js');
+      if (!this.fibrationDashboard) {
+        this.fibrationDashboard = new FibrationDashboard();
+        await this.fibrationDashboard.loadAssessmentData();
+      }
+      await this.fibrationDashboard.mountCrossUnitSlot(mcSlot);
+    } catch (e) {
+      console.warn('[LeastActionNavigator] Failed to mount cross-unit fibration dashboard:', e);
+    }
   }
 
   setDirection(directionId) {
@@ -500,8 +566,9 @@ export class LeastActionNavigator {
     }
   }
 
-  open(directionId) {
+  open(directionId, mode = 'geodesic') {
     if (directionId) this.setDirection(directionId);
+    if (mode) this.setViewMode(mode);
     if (this.container) {
       this.container.style.display = 'flex';
       this.isOpen = true;

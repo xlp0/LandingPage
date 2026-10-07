@@ -152,12 +152,16 @@ export class DeploymentUnitInspector {
     this.currentTarget = options.initialTarget || 'web';
     this.container = null;
     this.isOpen = false;
-    this.mount();
+    this.mountedViews = new Map();
+    this.slotFactories = new Map();
+    this.fibrationDashboard = null;
+    this.mountModal();
   }
 
-  mount() {
-    if (document.getElementById('deployment-inspector-modal')) {
-      this.container = document.getElementById('deployment-inspector-modal');
+  mountModal() {
+    const existing = document.getElementById('deployment-inspector-modal');
+    if (existing) {
+      this.container = existing;
       return;
     }
 
@@ -335,7 +339,115 @@ export class DeploymentUnitInspector {
           `).join('')}
         </ul>
       </div>
+
+      <!-- DV-CDO-13-10: Inspector Metrics Slot -->
+      <div class="inspector-metrics-slot-container" style="margin-top: 20px;">
+        <div id="insp-slot-metrics" class="inspector-slot-metrics">
+          <!-- Dynamic per-unit views mounted here: Treemap, Radar, Web Vitals, Budget Bars -->
+        </div>
+      </div>
+
+      <!-- DV-CDO-13-10: Inspector Correctness Handover Slot (for CDO-14) -->
+      <div id="insp-slot-correctness" class="inspector-slot-correctness" style="margin-top: 16px; padding: 12px 16px; border: 1px dashed #64748b; border-radius: 8px; background: rgba(30, 41, 59, 0.4);">
+        <div style="font-size: 12px; font-weight: bold; color: #94a3b8; display: flex; align-items: center; justify-content: space-between;">
+          <span>🔍 Correctness Observability &amp; Hoare Triples (CDO-14 Handover Slot)</span>
+          <span class="correctness-status-tag" style="background: rgba(148, 163, 184, 0.2); color: #cbd5e1; padding: 2px 6px; border-radius: 4px; font-size: 11px;">
+            Handover Slot
+          </span>
+        </div>
+        <p class="correctness-placeholder-text" style="font-size: 12px; color: #94a3b8; margin: 8px 0 0;">
+          correctness not yet evaluated
+        </p>
+      </div>
     `;
+
+    this.hydrateMetricsSlot(target);
+  }
+
+  async hydrateMetricsSlot(target) {
+    const slotEl = document.getElementById('insp-slot-metrics');
+    if (!slotEl) return;
+
+    this.drain();
+
+    // Re-mount custom registered factories
+    for (const [id, factory] of this.slotFactories.entries()) {
+      try {
+        const el = factory(this);
+        if (el) {
+          this.mountedViews.set(id, el);
+          slotEl.appendChild(el);
+        }
+      } catch (e) {
+        console.warn(`[Inspector] Failed to mount slot factory ${id}:`, e);
+      }
+    }
+
+    // Lazy load CDO-13 fibration dashboard per-unit views
+    try {
+      const { FibrationDashboard } = await import('../observability/fibration-dashboard.js');
+      if (!this.fibrationDashboard) {
+        this.fibrationDashboard = new FibrationDashboard();
+        await this.fibrationDashboard.loadAssessmentData();
+      }
+
+      const unitName = target.id === 'desktop' ? 'mcard-studio' : 'LandingPage';
+      const unitData = this.fibrationDashboard.units.find(u => u.unit === unitName) || this.fibrationDashboard.units[0];
+      await this.fibrationDashboard.mountInspectorMetrics(slotEl, unitData, target);
+    } catch (err) {
+      console.warn('[Inspector] Lazy loading FibrationDashboard failed:', err);
+    }
+  }
+
+  mount(id, factory) {
+    if (!id && !factory) {
+      return this.mountModal();
+    }
+    this.unmount(id);
+    this.slotFactories.set(id, factory);
+    const metricsSlot = document.getElementById('insp-slot-metrics');
+    if (metricsSlot) {
+      try {
+        const el = factory(this);
+        if (el) {
+          this.mountedViews.set(id, el);
+          metricsSlot.appendChild(el);
+        }
+      } catch (err) {
+        console.warn(`[Inspector] mount failed for ${id}:`, err);
+      }
+    }
+  }
+
+  unmount(id) {
+    if (this.mountedViews.has(id)) {
+      const el = this.mountedViews.get(id);
+      if (el) {
+        if (el.__cleanup) el.__cleanup();
+        el.remove();
+      }
+      this.mountedViews.delete(id);
+    }
+    this.slotFactories.delete(id);
+  }
+
+  drain() {
+    for (const [id] of this.mountedViews) {
+      const el = this.mountedViews.get(id);
+      if (el) {
+        if (el.__cleanup) el.__cleanup();
+        el.remove();
+      }
+    }
+    this.mountedViews.clear();
+    const metricsSlot = document.getElementById('insp-slot-metrics');
+    if (metricsSlot) {
+      if (metricsSlot.__cleanup) {
+        metricsSlot.__cleanup();
+        delete metricsSlot.__cleanup;
+      }
+      metricsSlot.innerHTML = '';
+    }
   }
 
   open(targetId) {
@@ -347,6 +459,7 @@ export class DeploymentUnitInspector {
   }
 
   close() {
+    this.drain();
     if (this.container) {
       this.container.style.display = 'none';
       this.isOpen = false;

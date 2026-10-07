@@ -39,6 +39,7 @@
     "ws-server": "node ws-server.js",
     "dev": "node ws-server.js",
     "build:mcard": "node scripts/build-mcard-bundle.js",
+    "build:charts": "node scripts/build-chart-bundles.js",
     "build": "npm run build --workspaces",
     "publish:all": "npm publish --workspaces",
     "version:major": "npm version major --workspaces",
