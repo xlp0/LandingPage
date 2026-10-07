@@ -604,10 +604,22 @@
         "isolation": "top-level",
         "budget": {
           "max_bytes": 262144,
-          "observed_bytes": 7698
+          "observed_bytes": 7855
         },
         "metrics_endpoint": "/metrics/fiber-conformance",
         "island_mcard": "mcard:island:fiber-conformance.html"
+      },
+      {
+        "url": "/fiber-inspector.html",
+        "kind": "page",
+        "hydration": "client:idle",
+        "isolation": "top-level",
+        "budget": {
+          "max_bytes": 262144,
+          "observed_bytes": 10054
+        },
+        "metrics_endpoint": "/metrics/fiber-inspector",
+        "island_mcard": "mcard:island:fiber-inspector.html"
       },
       {
         "url": "/index.html",
