@@ -7,7 +7,7 @@ archetype: meta_portal_surface
 
 packaging:
   standard: mcard_gset_sqlite
-  schema_version: "3.0.3"
+  schema_version: "3.1.0"
   artifact_pattern: "*.mcard.db"
   invariants:
     - "INV-REF-03: G-Set Immortality (Monotonic append-only CAS, zero DELETE statements)"
