@@ -21,7 +21,6 @@
   --color-action: #007acc;
   --color-on-action: #ffffff;
   --color-scrim: rgba(0, 0, 0, 0.35);
-  --color-accent: #a78bfa;
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
@@ -66,6 +65,52 @@
   --gradient-primary-deep: linear-gradient(135deg, #4f46e5 0%, #6d28d9 100%);
   --gradient-text-brand: linear-gradient(to right, #60a5fa, #a78bfa);
   --shadow-text-hero: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-drawer: -15px 0 35px -5px rgba(0, 0, 0, 0.5);
+  --shadow-panel: 0 4px 20px rgba(0, 0, 0, 0.4);
+
+  /* Component surface scale (theme-invariant).
+     The deployment inspector, the least-action modal and the manager chrome
+     are dark-surface components: their panels must stay dark in every theme,
+     because the text painted on them is light. Declared once here so every
+     painted value is a token, and collapsed to a three-step scale — the
+     first-generation component layer carried 5–6 ad-hoc alphas of a single
+     base colour (STY-04). */
+  --panel-soft: rgba(30, 41, 59, 0.5);
+  --panel: rgba(30, 41, 59, 0.7);
+  --panel-strong: rgba(30, 41, 59, 0.9);
+  --panel-deep-soft: rgba(15, 23, 42, 0.65);
+  --panel-deep: rgba(15, 23, 42, 0.78);
+  --panel-deep-strong: rgba(15, 23, 42, 0.9);
+  --panel-abyss: #020617;
+
+  --overlay-faint: rgba(255, 255, 255, 0.03);
+  --overlay-subtle: rgba(255, 255, 255, 0.06);
+  --overlay-soft: rgba(255, 255, 255, 0.1);
+
+  --scrim-soft: rgba(0, 0, 0, 0.25);
+  --scrim-medium: rgba(0, 0, 0, 0.32);
+  --scrim-strong: rgba(0, 0, 0, 0.5);
+  --scrim-opaque: rgba(0, 0, 0, 0.75);
+
+  --border-faint: rgba(255, 255, 255, 0.06);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  --border-emphasis: rgba(255, 255, 255, 0.2);
+
+  /* Text painted directly on those dark panels must be theme-invariant too —
+     a theme-aware text token would go dark in the light theme and vanish.
+     Self-contained badges (own background) use the --badge-* pairs instead,
+     which are safe in every theme because the light pair is a solid tint. */
+  --panel-text: #f8fafc;
+  --panel-text-muted: #94a3b8;
+  --panel-warning-surface: rgba(245, 158, 11, 0.1);
+  --panel-warning-text: #fde047;
+  --panel-danger-text: #fca5a5;
+  --panel-accent-text: #a78bfa;
+  /* Toast paints: saturated enough to carry white text; kept exact. */
+  --toast-success-bg: #28a745;
+  --toast-error-bg: #dc3545;
 
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -100,7 +145,6 @@
   --color-action: #007acc;
   --color-on-action: #ffffff;
   --color-scrim: rgba(0, 0, 0, 0.35);
-  --color-accent: #7c3aed;
   --color-info: #0284c7;
   --color-info-surface: rgba(2, 132, 199, 0.1);
   --color-info-border: rgba(2, 132, 199, 0.3);
@@ -149,7 +193,6 @@
   --color-action: #00ffff;
   --color-on-action: #000000;
   --color-scrim: rgba(0, 0, 0, 0.6);
-  --color-accent: #ffff00;
   --color-info: #00ffff;
   --color-info-surface: rgba(0, 255, 255, 0.15);
   --color-info-border: #00ffff;
@@ -235,7 +278,6 @@
     --color-action: #007acc;
     --color-on-action: #ffffff;
     --color-scrim: rgba(0, 0, 0, 0.35);
-    --color-accent: #7c3aed;
     --color-info: #0284c7;
     --color-info-surface: rgba(2, 132, 199, 0.1);
     --color-info-border: rgba(2, 132, 199, 0.3);

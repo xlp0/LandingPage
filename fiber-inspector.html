@@ -5,8 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Fiber Inspector — the correctness panel</title>
 <style>
-  :root { --fg: #111; --bg: #fff; --line: #767676; --muted: #555; --warn: #7a4200; }
-  html[data-theme="dark"] { --fg: #f2f2f2; --bg: #101014; --line: #9a9aa2; --muted: #b9b9c0; --warn: #ffb454; }
+  :root { --fg: #111; --bg: #fff; --line: #767676; --muted: #555; --warn: #7a4200; --ok: #0a7d2e; }
+  html[data-theme="dark"] { --fg: #f2f2f2; --bg: #101014; --line: #9a9aa2; --muted: #b9b9c0; --warn: #ffb454; --ok: #6ee7b7; }
+  html[data-theme="high-contrast"] { --fg: #000; --bg: #fff; --line: #000; --muted: #000;
+                                       --warn: #000; --ok: #000; }
   body { margin: 0; background: var(--bg); color: var(--fg);
          font: 15px/1.5 system-ui, sans-serif; }
   main { padding: 16px; }
@@ -19,7 +21,7 @@
   .place { display: inline-block; border: 1px solid var(--line); border-radius: 4px;
            padding: 2px 6px; margin: 2px 4px 2px 0; font-family: ui-monospace, monospace; font-size: 12px; }
   .place[data-empty="true"] { opacity: 0.45; }
-  .enabled { color: #0a7d2e; font-weight: 600; }
+  .enabled { color: var(--ok); font-weight: 600; }
   .disabled { color: var(--muted); }
   code { font-family: ui-monospace, monospace; font-size: 12px; }
 </style>

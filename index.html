@@ -16,16 +16,16 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--color-bg, #0f172a);
-      color: var(--color-text-primary, #f8fafc);
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
       height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      background-image: radial-gradient(circle at top right, var(--color-bg-subtle, #1e293b) 0%, var(--color-bg, #0f172a) 100%);
-      transition: background-color var(--motion-duration-normal, 250ms) ease, color var(--motion-duration-normal, 250ms) ease;
+      background-image: radial-gradient(circle at top right, var(--color-bg-subtle) 0%, var(--color-bg) 100%);
+      transition: background-color var(--motion-duration-normal) ease, color var(--motion-duration-normal) ease;
     }
 
     .top-controls {
@@ -39,9 +39,9 @@
     }
 
     .control-btn {
-      background: var(--color-surface, rgba(30, 41, 59, 0.7));
-      border: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
-      color: var(--color-text-primary, #fff);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-primary);
       padding: 0.4rem 0.85rem;
       border-radius: 9999px;
       font-size: 0.85rem;
@@ -50,13 +50,13 @@
       display: flex;
       align-items: center;
       gap: 0.4rem;
-      backdrop-filter: blur(var(--blur-surface, 12px));
-      transition: all var(--motion-duration-fast, 150ms) ease;
+      backdrop-filter: blur(var(--blur-surface));
+      transition: all var(--motion-duration-fast) ease;
     }
 
     .control-btn:hover {
-      background: var(--color-surface-hover, rgba(37, 51, 70, 0.9));
-      border-color: var(--color-border-hover, #3b82f6);
+      background: var(--color-surface-hover);
+      border-color: var(--color-border-hover);
     }
 
     .faro-badge {
@@ -75,8 +75,8 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 6px #10b981;
+      background: var(--color-success);
+      box-shadow: 0 0 6px var(--color-success);
     }
 
     .container {
@@ -84,7 +84,7 @@
       padding: 2rem;
       max-width: 800px;
       width: 100%;
-      animation: fadeIn var(--motion-duration-slow, 0.8s) ease-out;
+      animation: fadeIn var(--motion-duration-slow) ease-out;
     }
 
     h1 {
@@ -115,16 +115,16 @@
     }
 
     .card {
-      background: var(--color-surface, rgba(30, 41, 59, 0.7));
-      border: 1px solid var(--color-border, rgba(255, 255, 255, 0.05));
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
       border-radius: 16px;
       padding: 2rem;
       text-decoration: none;
-      color: var(--color-text-primary, #f8fafc);
-      transition: all var(--motion-duration-normal, 0.3s) var(--motion-ease, cubic-bezier(0.4, 0, 0.2, 1));
+      color: var(--color-text-primary);
+      transition: all var(--motion-duration-normal) var(--motion-ease);
       position: relative;
       overflow: hidden;
-      backdrop-filter: blur(var(--blur-surface, 10px));
+      backdrop-filter: blur(var(--blur-surface));
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -136,19 +136,19 @@
     .card:hover {
       transform: translateY(-4px);
       box-shadow: var(--shadow-hover);
-      border-color: var(--color-border-hover, var(--badge-info-border));
-      background: var(--color-surface-hover, #253346);
+      border-color: var(--color-border-hover);
+      background: var(--color-surface-hover);
     }
 
     .card h2 {
       font-size: 1.5rem;
       font-weight: 600;
       margin-bottom: 0.5rem;
-      color: var(--color-text-primary, #fff);
+      color: var(--color-text-primary);
     }
 
     .card p {
-      color: var(--color-text-secondary, #94a3b8);
+      color: var(--color-text-secondary);
       font-size: 0.95rem;
       line-height: 1.5;
     }
@@ -157,7 +157,7 @@
       margin-bottom: 1rem;
       width: 48px;
       height: 48px;
-      color: var(--color-primary, #3b82f6);
+      color: var(--color-primary);
     }
 
     .footer {
@@ -168,20 +168,20 @@
     }
 
     a.primary-action {
-      background: var(--color-primary, #3b82f6);
+      background: var(--color-primary);
       color: white;
       padding: 1rem 2rem;
       border-radius: 9999px;
       font-weight: 600;
       text-decoration: none;
-      transition: background var(--motion-duration-fast, 0.2s);
+      transition: background var(--motion-duration-fast);
       display: inline-block;
       margin-top: 2rem;
       box-shadow: var(--shadow-md);
     }
 
     a.primary-action:hover {
-      background: var(--color-primary-hover, #2563eb);
+      background: var(--color-primary-hover);
     }
 
     @keyframes fadeIn {
@@ -220,15 +220,15 @@
       gap: 1rem;
       padding: 0.35rem 0.85rem;
       border-radius: 9999px;
-      background: var(--color-surface, rgba(30, 41, 59, 0.7));
-      border: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
-      backdrop-filter: blur(var(--blur-surface, 12px));
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      backdrop-filter: blur(var(--blur-surface));
       z-index: 60;
       font-size: 0.85rem;
     }
     .penpot-nav-title {
       font-weight: 600;
-      color: var(--color-text-secondary, #94a3b8);
+      color: var(--color-text-secondary);
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -239,14 +239,14 @@
       gap: 0.5rem;
     }
     .penpot-nav-link {
-      color: var(--color-text-primary, #f8fafc);
+      color: var(--color-text-primary);
       text-decoration: none;
       padding: 0.2rem 0.5rem;
       border-radius: 6px;
       transition: background 150ms ease, color 150ms ease;
     }
     .penpot-nav-link:hover {
-      background: var(--color-surface-hover, rgba(255, 255, 255, 0.1));
+      background: var(--color-surface-hover);
       color: var(--color-info);
     }
     .penpot-nav-link-active {

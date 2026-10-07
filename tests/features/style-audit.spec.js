@@ -39,15 +39,15 @@ const audit = (mode) => {
     if (!rules) continue;
     const walk = (list) => {
       for (const rule of list) {
+        // Read the rule's cssText, not its enumerated properties: a declaration
+        // whose value contains var() is held as a pending-substitution value and
+        // is NOT yielded by `for (const p of rule.style)`. Enumerating therefore
+        // reported var()-only tokens as unused — a false "declared but unused"
+        // census. cssText sees every declaration verbatim.
         if (rule.style) {
-          for (const prop of rule.style) {
-            if (prop.startsWith('--')) declared.add(prop);
-          }
-          // a var() reference anywhere in a declaration
-          for (const prop of rule.style) {
-            const v = rule.style.getPropertyValue(prop);
-            for (const m of String(v).matchAll(/var\(\s*(--[\w-]+)/g)) used.add(m[1]);
-          }
+          const text = rule.style.cssText ?? '';
+          for (const m of text.matchAll(/(^|;)\s*(--[\w-]+)\s*:/g)) declared.add(m[2]);
+          for (const m of text.matchAll(/var\(\s*(--[\w-]+)/g)) used.add(m[1]);
         }
         if (rule.cssRules) walk(rule.cssRules);
         // @import: the referenced sheet hangs off .styleSheet, not .cssRules
@@ -57,6 +57,15 @@ const audit = (mode) => {
       }
     };
     walk(rules);
+  }
+
+  // Inline style attributes are paint too: a token read only from an element's
+  // style="" is *used*. Without this the census calls such tokens unused, which
+  // would send STY-03's "adopt or retire" work in the wrong direction.
+  // (<style> blocks need no special case — they are in document.styleSheets.)
+  for (const el of document.querySelectorAll('[style]')) {
+    const s = el.getAttribute('style') ?? '';
+    for (const m of s.matchAll(/var\(\s*(--[\w-]+)/g)) used.add(m[1]);
   }
 
   // ── what is actually painted ──
