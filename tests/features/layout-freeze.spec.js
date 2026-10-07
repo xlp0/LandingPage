@@ -7,7 +7,7 @@
  * style program and forbids nothing it needs.
  *
  * Modes:
- *   STY_FREEZE=capture   write docs/sprints/_active/style/layout-baseline.json
+ *   STY_FREEZE=capture   write docs/sprints/epic-sty/style/layout-baseline.json
  *   (default)          re-capture and diff against the baseline — the freeze
  *   STY_MUTATE=…       inject a change, then diff (mutation controls)
  */
@@ -17,7 +17,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const OUT = resolve(here, '..', '..', '..', 'docs', 'sprints', '_active', 'style', 'layout-baseline.json');
+const OUT = resolve(here, '..', '..', '..', 'docs', 'sprints', 'epic-sty', 'style', 'layout-baseline.json');
 
 const PAGES = [
   { path: '/app.html', name: 'app' },
