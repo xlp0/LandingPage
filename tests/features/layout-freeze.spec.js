@@ -76,7 +76,7 @@ async function run(page, p, vpName, vp, mutate) {
   if (mutate === 'padding-1px') {
     await page.evaluate(() => {
       const el = document.querySelector('.card') ?? document.body.children[0];
-      el.style.paddingTop = '1px';
+      if (el) el.style.paddingTop = '1px';
     });
   } else if (mutate === 'colour-only') {
     await page.evaluate(() => {
@@ -87,13 +87,46 @@ async function run(page, p, vpName, vp, mutate) {
     });
   } else if (mutate === 'display') {
     await page.evaluate(() => {
-      const el = document.querySelector('.card svg') ?? document.body.children[1];
-      el.style.display = 'none';
+      const el = document.querySelector('.card svg') ?? document.body.children[1] ?? document.body.children[0];
+      if (el) el.style.display = 'none';
     });
   }
   if (mutate) await page.waitForTimeout(300);
   return page.evaluate(capture, VOLATILE[p.name] ?? []);
 }
+
+// The committed baseline is stored compact: interned tag/class vocabularies
+// plus flat box arrays. It is 8x smaller and, more importantly, was converted
+// from the original measurement rather than re-taken — the freeze is only
+// meaningful if the baseline predates the style changes it polices.
+const encode = (els, tagVocab, clsVocab) => {
+  const tagI = new Map(tagVocab.map((t, i) => [t, i]));
+  const clsI = new Map(clsVocab.map((c, i) => [c, i]));
+  const tags = [], cls = [], boxes = [], masked = [];
+  for (const e of els) {
+    if (!tagI.has(e.tag)) { tagI.set(e.tag, tagVocab.length); tagVocab.push(e.tag); }
+    if (!clsI.has(e.cls)) { clsI.set(e.cls, clsVocab.length); clsVocab.push(e.cls); }
+    tags.push(tagI.get(e.tag));
+    cls.push(clsI.get(e.cls));
+    boxes.push(...e.box);
+    if (e.masked) masked.push(e.i);
+  }
+  return { n: els.length, tags, cls, boxes, masked };
+};
+
+const decode = (c, tagVocab, clsVocab) => {
+  const els = [];
+  for (let k = 0; k < c.n; k++) {
+    els.push({
+      i: k,
+      tag: tagVocab[c.tags[k]],
+      cls: clsVocab[c.cls[k]],
+      masked: c.masked.includes(k),
+      box: c.boxes.slice(k * 4, k * 4 + 4),
+    });
+  }
+  return els;
+};
 
 function diffBoxes(before, after) {
   const moved = [];
@@ -119,24 +152,31 @@ test.describe('Layout freeze', () => {
     test.setTimeout(300000);
     test.skip(mode !== 'capture', 'capture mode only');
     mkdirSync(dirname(OUT), { recursive: true });
-    const baseline = { captured: '2026-10-07', viewports: Object.keys(VIEWPORTS), pages: {} };
+    const tagVocab = [], clsVocab = [];
+    const baseline = {
+      captured: '2026-10-07', viewports: Object.keys(VIEWPORTS), format: 'compact-v1',
+      tag_vocab: tagVocab, cls_vocab: clsVocab, pages: {},
+    };
     for (const p of PAGES) {
       baseline.pages[p.name] = { masked_regions: VOLATILE[p.name], viewports: {} };
       for (const [vn, vp] of Object.entries(VIEWPORTS)) {
-        baseline.pages[p.name].viewports[vn] = await run(page, p, vn, vp, null);
+        const els = await run(page, p, vn, vp, null);
+        baseline.pages[p.name].viewports[vn] = encode(els, tagVocab, clsVocab);
       }
-      console.log(`CAPTURE ${p.name}: ${Object.values(baseline.pages[p.name].viewports)[0].length} elements x ${Object.keys(VIEWPORTS).length} viewports`);
+      console.log(`CAPTURE ${p.name}: ${baseline.pages[p.name].viewports.wearable.n} elements x ${Object.keys(VIEWPORTS).length} viewports`);
     }
-    writeFileSync(OUT, JSON.stringify(baseline, null, 1) + '\n');
+    writeFileSync(OUT, JSON.stringify(baseline) + '\n');
   });
 
   for (const p of PAGES) {
     for (const [vn, vp] of Object.entries(VIEWPORTS)) {
       test(`freeze ${p.name} @${vn}${mutate ? ` [${mutate}]` : ''}`, async ({ page }) => {
         test.skip(mode === 'capture', 'baseline capture mode');
-        test.skip(!!mutate && p.name !== 'index' && vn !== 'web', 'mutation controls run on index@web only');
+        // the mutation controls are deterministic only on one known page/viewport
+        test.skip(!!mutate && (p.name !== 'index' || vn !== 'web'), 'mutation controls run on index@web only');
         const baseline = JSON.parse(readFileSync(OUT, 'utf8'));
-        const before = baseline.pages[p.name].viewports[vn];
+        const before = decode(baseline.pages[p.name].viewports[vn],
+                              baseline.tag_vocab, baseline.cls_vocab);
         const after = await run(page, p, vn, vp, mutate);
         const moved = diffBoxes(before, after);
         if (moved.length) {
