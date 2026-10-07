@@ -1948,6 +1948,15 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
+  - handle: urn:clm:handle:docs:sprints:_active:00-program-charter-epic-orc-iii
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-ORC-III
+    title: "Program Charter: EPIC-ORC-III \u2014 The Mesh: Knowledge Topology for a PKC Platform"
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
   - handle: urn:clm:handle:docs:sprints:_active:00-program-charter-epic-orc
     card_type: mcard
     archetype: specification_mcard
@@ -2184,6 +2193,107 @@ sprints:
         - vcard:orc-15:the_fixture_tree_is_faithful_the_fixture_s_schema_and_registry_a
         - vcard:orc-15:the_claim_is_unconditional_the_certification_s_wording_is_amende
         - vcard:orc-15:no_regression_make_orc_gate_still_passes_7_7_stages_and_7_7_cont
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-16-one-knowledge-namespace
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-16
+    title: 'Sprint ORC-16: One Knowledge Namespace, Not Five'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:orc-16:every_root_is_declared_with_a_reason_no_root_is_inferred_each_en
+        - vcard:orc-16:ingested_with_handles_every_file_in_a_declared_root_has_a_handle
+        - vcard:orc-16:one_handle_per_content_a_file_present_in_two_trees_is_one_card_w
+        - vcard:orc-16:retired_surface_excluded_no_path_under_the_six_retired_roots_app
+        - vcard:orc-16:exclusion_is_load_bearing_adding_a_retired_root_back_to_the_name
+        - vcard:orc-16:ingestion_is_idempotent_re_running_adds_no_card_and_no_new_handl
+        - vcard:orc-16:nothing_was_rewritten_the_sha_256_of_every_file_under_every_decl
+        - vcard:orc-16:no_regression_make_orc_gate_still_passes_and_the_layer3_suite_st
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-17-hub-is-a-node
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-17
+    title: "Sprint ORC-17: The Hub Is a Node \u2014 a Manifest and One Config"
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:orc-17:the_hub_describes_itself_root_mcard_yaml_declares_role_archetype
+        - vcard:orc-17:the_submodule_handles_resolve_each_declared_handle_names_a_real_
+        - vcard:orc-17:one_topology_exactly_one_declaration_of_the_tape_paths_or_two_wi
+        - vcard:orc-17:every_declared_path_exists_the_checker_opens_each_declared_tape_
+        - vcard:orc-17:placeholders_are_reported_a_placeholder_host_or_contact_in_a_ser
+        - vcard:orc-17:the_manifest_agrees_with_the_gate_the_invariants_the_hub_claims_
+        - vcard:orc-17:no_regression_make_check_paths_make_orc_gate_and_the_layer3_suit
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-18-fourth-tape-and-node-identity
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-18
+    title: 'Sprint ORC-18: The Fourth Tape and the Node Identity'
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:orc-18:the_fourth_tape_exists_clm_db_routing_mesh_db_carries_the_canoni
+        - vcard:orc-18:the_profile_records_four_registry_tape_profile_json_names_a_rout
+        - vcard:orc-18:the_node_has_a_did_a_did_key_identity_is_registered_with_its_pub
+        - vcard:orc-18:learning_event_has_a_producer_sealing_a_transition_writes_exactl
+        - vcard:orc-18:the_clock_is_a_clock_vector_clock_increments_per_node_and_merges
+        - vcard:orc-18:the_kernel_can_read_what_the_platform_wrote_load_learning_events
+        - vcard:orc-18:no_regression_make_orc_schema_make_orc_chain_and_the_layer3_suit
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-19-mesh-proven-at-platform-scale
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-19
+    title: 'Sprint ORC-19: The Mesh Proven at Platform Scale'
+    dod:
+      total: 9
+      vcard_refs:
+        - vcard:orc-19:two_nodes_exist_each_has_its_own_four_tapes_materialised_from_th
+        - vcard:orc-19:they_start_divergent_the_check_asserts_non_convergence_before_th
+        - vcard:orc-19:content_unions_after_the_exchange_each_node_s_card_set_equals_th
+        - vcard:orc-19:clocks_agree_the_vector_clocks_are_equal_after_the_exchange_and_
+        - vcard:orc-19:causality_holds_across_nodes_happened_before_and_is_concurrent_w
+        - vcard:orc-19:a_partition_heals_nodes_diverged_while_apart_converge_on_reconne
+        - vcard:orc-19:the_exchange_is_recorded_the_routing_tape_holds_rows_naming_both
+        - vcard:orc-19:the_check_has_teeth_a_node_that_does_not_sync_fails_verified_by_
+        - vcard:orc-19:no_regression_make_orc_gate_passes_with_the_new_stage_and_the_la
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-20-knowledge-contracts
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-20
+    title: 'Sprint ORC-20: Knowledge Contracts Between Submodules'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:orc-20:all_three_declare_knowledge_each_manifest_carries_a_knowledge_se
+        - vcard:orc-20:no_wildcards_a_contract_entry_naming_any_or_an_empty_list_fails_
+        - vcard:orc-20:declared_matches_actual_every_declared_consumption_is_observed_i
+        - vcard:orc-20:undeclared_reads_are_caught_reading_a_root_no_contract_declares_
+        - vcard:orc-20:stale_declarations_are_caught_a_declared_root_the_code_never_rea
+        - vcard:orc-20:totality_carries_across_every_card_type_the_kernel_produces_is_c
+        - vcard:orc-20:three_sandwiches_three_witnesses_each_submodule_s_contract_chang
+        - vcard:orc-20:no_regression_make_orc_gate_passes_and_each_submodule_s_own_suit
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-21-personal-vault-as-source
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-21
+    title: 'Sprint ORC-21: The Personal Vault as a First-Class Source'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:orc-21:the_vault_is_declared_registry_knowledge_roots_yaml_carries_a
+        - vcard:orc-21:ingested_with_handles_every_file_in_the_vault_has_a_card_and_a_h
+        - vcard:orc-21:provenance_is_recorded_each_vault_card_names_its_source_path_con
+        - vcard:orc-21:the_env_override_wins_setting_knowledge_vault_to_a_different_dir
+        - vcard:orc-21:absence_is_reported_a_missing_unreadable_or_empty_vault_is_print
+        - vcard:orc-21:it_is_not_repo_bound_a_vault_outside_the_repository_is_ingested_
+        - vcard:orc-21:re_ingestion_is_revision_tracking_changing_one_vault_file_adds_e
+        - vcard:orc-21:no_regression_make_orc_gate_passes_and_orc_16_s_repository_inges
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-01-development-lifecycle-cpn-specification
     card_type: pcard
