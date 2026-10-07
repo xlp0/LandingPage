@@ -1315,11 +1315,11 @@ sprints:
     dod:
       total: 5
       vcard_refs:
-        - vcard:sprint-378:x_all_dv_378_deliverables_completed_and_verified
-        - vcard:sprint-378:x_schema_mcard_proof_json_published_and_valid
-        - vcard:sprint-378:x_scripts_leancubed_py_emits_valid_proofmcard_from_live_executio
-        - vcard:sprint-378:x_make_formal_check_passes_cleanly_in_ci
-        - vcard:sprint-378:x_joint_sign_off_by_winston_and_amelia
+        - vcard:sprint-378:all_dv_378_deliverables_completed_and_verified
+        - vcard:sprint-378:schema_mcard_proof_json_published_and_valid
+        - vcard:sprint-378:scripts_leancubed_py_emits_valid_proofmcard_from_live_execution_
+        - vcard:sprint-378:make_formal_check_passes_cleanly_in_ci
+        - vcard:sprint-378:joint_sign_off_by_winston_and_amelia
       state: sealed
   - handle: urn:clm:handle:docs:sprints:02_polyglot-package-registries-and-release:sprint-371-polyglot-package-registry-reservation-and-governance
     card_type: pcard
@@ -1329,15 +1329,15 @@ sprints:
     dod:
       total: 9
       vcard_refs:
-        - vcard:sprint-371:x_clm_python_distribution_build_verified_with_uv_build_and_clean
-        - vcard:sprint-371:x_clm_core_npm_package_pack_verified_npm_pack_dry_run_produces_c
-        - vcard:sprint-371:x_clm_rust_crate_packaging_verified_cargo_package_allow_dirty_no
-        - vcard:sprint-371:x_legacy_alias_packages_mcard_mcard_js_mcard_rs_configured_with_
-        - vcard:sprint-371:x_backward_compatible_re_export_shims_validated_zero_broken_impo
-        - vcard:sprint-371:x_multi_registry_release_workflow_github_workflows_release_regis
-        - vcard:sprint-371:x_registry_smoke_test_script_scripts_ci_test_registry_install_sh
-        - vcard:sprint-371:x_test_suites_verified_python_model_engine_191_passed_js_kernel_
-        - vcard:sprint-371:x_status_completed_sprint_371_implementation_complete_live_regis
+        - vcard:sprint-371:clm_python_distribution_build_verified_with_uv_build_and_clean_i
+        - vcard:sprint-371:clm_core_npm_package_pack_verified_npm_pack_dry_run_produces_cle
+        - vcard:sprint-371:clm_rust_crate_packaging_verified_cargo_package_allow_dirty_no_v
+        - vcard:sprint-371:legacy_alias_packages_mcard_mcard_js_mcard_rs_configured_with_cl
+        - vcard:sprint-371:backward_compatible_re_export_shims_validated_zero_broken_import
+        - vcard:sprint-371:multi_registry_release_workflow_github_workflows_release_registr
+        - vcard:sprint-371:registry_smoke_test_script_scripts_ci_test_registry_install_sh_p
+        - vcard:sprint-371:test_suites_verified_python_model_engine_191_passed_js_kernel_55
+        - vcard:sprint-371:status_completed_sprint_371_implementation_complete_live_registr
       state: sealed
   - handle: urn:clm:handle:docs:sprints:02_polyglot-package-registries-and-release:sprint-397-clm-py-core-standardization
     card_type: mcard
@@ -1356,22 +1356,22 @@ sprints:
     dod:
       total: 16
       vcard_refs:
-        - vcard:sprint-398:x_move_entire_mcard_package_tree_to_clm_kernel_clm_py_core_mcard
-        - vcard:sprint-398:x_ensure_all_90_python_files_and_package_directory_hierarchies_a
-        - vcard:sprint-398:x_clean_temporary_files_non_source_artifacts_pyc_log_new_during_
-        - vcard:sprint-398:x_verify_directory_structure_ls_la_clm_kernel_clm_py_core_mcard_
-        - vcard:sprint-398:x_verify_root_mcard_directory_has_0_py_files
-        - vcard:sprint-398:x_remove_empty_root_mcard_directory_or_add_strict_ignore_entry
-        - vcard:sprint-398:x_run_invariant_verification_find_mcard_name_py_returns_0_result
-        - vcard:sprint-398:x_update_venv_lib_python3_13_site_packages_editable_mcard_1_0_0_
-        - vcard:sprint-398:x_verify_python_import_resolution_in_isolated_subshell
-        - vcard:sprint-398:x_verify_specific_shim_resolution
-        - vcard:sprint-398:x_update_pyproject_toml_in_mcard_tdd_to_discover_packages_under_
-        - vcard:sprint-398:x_verify_uv_run_python_c_import_mcard_clm_print_dual_import_ok_s
-        - vcard:sprint-398:x_run_uv_run_pytest_tests_model_test_dots_py_to_pass
-        - vcard:sprint-398:x_run_uv_run_pytest_tests_model_test_card_py_to_pass
-        - vcard:sprint-398:x_run_uv_run_pytest_tests_parity_test_tripartite_parity_py_to_pa
-        - vcard:sprint-398:x_run_full_regression_suite_make_test_uv_run_pytest_tests_to_ge_
+        - vcard:sprint-398:move_entire_mcard_package_tree_to_clm_kernel_clm_py_core_mcard
+        - vcard:sprint-398:ensure_all_90_python_files_and_package_directory_hierarchies_are
+        - vcard:sprint-398:clean_temporary_files_non_source_artifacts_pyc_log_new_during_re
+        - vcard:sprint-398:verify_directory_structure_ls_la_clm_kernel_clm_py_core_mcard_in
+        - vcard:sprint-398:verify_root_mcard_directory_has_0_py_files
+        - vcard:sprint-398:remove_empty_root_mcard_directory_or_add_strict_ignore_entry
+        - vcard:sprint-398:run_invariant_verification_find_mcard_name_py_returns_0_results
+        - vcard:sprint-398:update_venv_lib_python3_13_site_packages_editable_mcard_1_0_0_pt
+        - vcard:sprint-398:verify_python_import_resolution_in_isolated_subshell_bash_python
+        - vcard:sprint-398:verify_specific_shim_resolution_bash_python3_c_from_mcard_model_
+        - vcard:sprint-398:update_pyproject_toml_in_mcard_tdd_to_discover_packages_under_cl
+        - vcard:sprint-398:verify_uv_run_python_c_import_mcard_clm_print_dual_import_ok_suc
+        - vcard:sprint-398:run_uv_run_pytest_tests_model_test_dots_py_to_pass
+        - vcard:sprint-398:run_uv_run_pytest_tests_model_test_card_py_to_pass
+        - vcard:sprint-398:run_uv_run_pytest_tests_parity_test_tripartite_parity_py_to_pass
+        - vcard:sprint-398:run_full_regression_suite_make_test_uv_run_pytest_tests_to_ge_86
       state: sealed
   - handle: urn:clm:handle:docs:sprints:03_storage-crdt-and-kenotic-cas:sprint-372-data-model-tri-database-unification
     card_type: pcard
@@ -1381,13 +1381,13 @@ sprints:
     dod:
       total: 7
       vcard_refs:
-        - vcard:sprint-372:x_all_dv_372_acceptance_criteria_satisfied
-        - vcard:sprint-372:x_cross_runtime_preimage_test_passes_with_100_100_matching_diges
-        - vcard:sprint-372:x_mcard_universal_schema_validation_harness_green_across_all_run
-        - vcard:sprint-372:x_chapters_chapter_00_prologue_and_chapter_02_handle_playbooks_p
-        - vcard:sprint-372:x_g_set_immortality_test_verifies_that_tombstoned_handles_leave_
-        - vcard:sprint-372:x_legacy_sqlite_schema_and_query_compatibility_layer_verified_ze
-        - vcard:sprint-372:x_zero_regressions_in_unit_test_suites_uv_run_pytest_tests_model
+        - vcard:sprint-372:all_dv_372_acceptance_criteria_satisfied
+        - vcard:sprint-372:cross_runtime_preimage_test_passes_with_100_100_matching_digests
+        - vcard:sprint-372:mcard_universal_schema_validation_harness_green_across_all_runti
+        - vcard:sprint-372:chapters_chapter_00_prologue_and_chapter_02_handle_playbooks_pas
+        - vcard:sprint-372:g_set_immortality_test_verifies_that_tombstoned_handles_leave_ca
+        - vcard:sprint-372:legacy_sqlite_schema_and_query_compatibility_layer_verified_zero
+        - vcard:sprint-372:zero_regressions_in_unit_test_suites_uv_run_pytest_tests_model_t
       state: sealed
   - handle: urn:clm:handle:docs:sprints:03_storage-crdt-and-kenotic-cas:sprint-386-layer2-cas-merkle-tridb-and-vfs
     card_type: mcard
@@ -1415,14 +1415,14 @@ sprints:
     dod:
       total: 8
       vcard_refs:
-        - vcard:sprint-373:x_all_dv_373_acceptance_criteria_met
-        - vcard:sprint-373:x_chapters_chapter_01_arithmetic_passes_identically_under_both_i
-        - vcard:sprint-373:x_chapters_chapter_03_llm_successfully_executes_via_llmruntimead
-        - vcard:sprint-373:x_zero_state_leakage_fault_injection_test_passes_100_100_rollbac
-        - vcard:sprint-373:x_tla_model_checking_confirms_absence_of_deadlocks_and_cpn_liven
-        - vcard:sprint-373:x_lean_formal_proofs_verify_token_conservation_x_top_d_0
-        - vcard:sprint-373:x_legacy_ptr_test_suite_regression_shield_validated_all_18_test_
-        - vcard:sprint-373:x_full_test_suite_green_uv_run_pytest_tests_ptr_make_js_test_mak
+        - vcard:sprint-373:all_dv_373_acceptance_criteria_met
+        - vcard:sprint-373:chapters_chapter_01_arithmetic_passes_identically_under_both_imp
+        - vcard:sprint-373:chapters_chapter_03_llm_successfully_executes_via_llmruntimeadap
+        - vcard:sprint-373:zero_state_leakage_fault_injection_test_passes_100_100_rollbacks
+        - vcard:sprint-373:tla_model_checking_confirms_absence_of_deadlocks_and_cpn_livenes
+        - vcard:sprint-373:lean_formal_proofs_verify_token_conservation_x_top_d_0
+        - vcard:sprint-373:legacy_ptr_test_suite_regression_shield_validated_all_18_test_fi
+        - vcard:sprint-373:full_test_suite_green_uv_run_pytest_tests_ptr_make_js_test_make_
       state: sealed
   - handle: urn:clm:handle:docs:sprints:04_petri-net-vm-and-execution-runtime:sprint-377-triadic-coordinating-framework-architecture
     card_type: pcard
@@ -1432,13 +1432,13 @@ sprints:
     dod:
       total: 7
       vcard_refs:
-        - vcard:sprint-377:x_all_dv_377_deliverables_authored_and_implemented
-        - vcard:sprint-377:x_schema_mcard_morphology_json_published_and_valid
-        - vcard:sprint-377:x_docs_architecture_code_migration_to_clm_md_blueprint_published
-        - vcard:sprint-377:x_mcard_yaml_manifests_in_clm_mcard_studio_and_configured_conten
-        - vcard:sprint-377:x_scan_triadic_boundaries_py_passes_with_zero_violations
-        - vcard:sprint-377:x_unit_tests_for_mcardcollection_pass_uv_run_pytest_tests_ontolo
-        - vcard:sprint-377:x_approved_by_winston_architect
+        - vcard:sprint-377:all_dv_377_deliverables_authored_and_implemented
+        - vcard:sprint-377:schema_mcard_morphology_json_published_and_valid
+        - vcard:sprint-377:docs_architecture_code_migration_to_clm_md_blueprint_published
+        - vcard:sprint-377:mcard_yaml_manifests_in_clm_mcard_studio_and_configured_content_
+        - vcard:sprint-377:scan_triadic_boundaries_py_passes_with_zero_violations
+        - vcard:sprint-377:unit_tests_for_mcardcollection_pass_uv_run_pytest_tests_ontology
+        - vcard:sprint-377:approved_by_winston_architect
       state: sealed
   - handle: urn:clm:handle:docs:sprints:04_petri-net-vm-and-execution-runtime:sprint-384-layer1-cpn-vm-and-execution-engine
     card_type: mcard
@@ -1475,21 +1475,21 @@ sprints:
     dod:
       total: 15
       vcard_refs:
-        - vcard:sprint-399:x_refactor_clm_kernel_clm_py_core_clm_layer1_engine_py_remove_im
-        - vcard:sprint-399:x_refactor_clm_kernel_clm_py_core_clm_layer1_operations_loader_p
-        - vcard:sprint-399:x_verify_clm_layer1_unit_tests_pass_without_resolving_mcard
-        - vcard:sprint-399:x_refactor_clm_tools_debugging_test_text_handling_py_and_its_mir
+        - vcard:sprint-399:refactor_clm_kernel_clm_py_core_clm_layer1_engine_py_remove_impo
+        - vcard:sprint-399:refactor_clm_kernel_clm_py_core_clm_layer1_operations_loader_py_
+        - vcard:sprint-399:verify_clm_layer1_unit_tests_pass_without_resolving_mcard_bash_u
+        - vcard:sprint-399:refactor_clm_tools_debugging_test_text_handling_py_and_its_mirro
         - vcard:sprint-399:replace_from_mcard_file_utility_import_fileutility_with_from_clm
-        - vcard:sprint-399:x_refactor_clm_tools_demos_demo_rag_py_and_its_mirror_in_clm_py_
+        - vcard:sprint-399:refactor_clm_tools_demos_demo_rag_py_and_its_mirror_in_clm_py_co
         - vcard:sprint-399:replace_from_mcard_import_default_collection_with_from_clm_layer
-        - vcard:sprint-399:x_refactor_clm_tools_ops_migrate_logging_py_to_target_clm_cross_
-        - vcard:sprint-399:x_add_static_ast_import_scanner_to_clm_tools_ci_test_clm_soverei
+        - vcard:sprint-399:refactor_clm_tools_ops_migrate_logging_py_to_target_clm_cross_cu
+        - vcard:sprint-399:add_static_ast_import_scanner_to_clm_tools_ci_test_clm_sovereign
         - vcard:sprint-399:check_all_py_files_under_clm_kernel_clm_py_core_clm_for_mcard_im
         - vcard:sprint-399:fail_ci_if_any_match_is_found
-        - vcard:sprint-399:x_execute_canary_gate
-        - vcard:sprint-399:x_run_uv_run_pytest_tests_canary_v_to_pass
-        - vcard:sprint-399:x_run_uv_run_pytest_tests_test_rag_py_tests_test_graphrag_py_to_
-        - vcard:sprint-399:x_run_full_regression_suite_make_test_to_ge_864_passed_le_33_ski
+        - vcard:sprint-399:execute_canary_gate_bash_uv_run_python_clm_tools_ci_test_clm_sov
+        - vcard:sprint-399:run_uv_run_pytest_tests_canary_v_to_pass
+        - vcard:sprint-399:run_uv_run_pytest_tests_test_rag_py_tests_test_graphrag_py_to_pa
+        - vcard:sprint-399:run_full_regression_suite_make_test_to_ge_864_passed_le_33_skipp
       state: sealed
   - handle: urn:clm:handle:docs:sprints:05_linguistic-eval-and-gateway:sprint-374-clm-interpretation-gateway-unification
     card_type: pcard
@@ -1499,14 +1499,14 @@ sprints:
     dod:
       total: 8
       vcard_refs:
-        - vcard:sprint-374:x_all_dv_374_acceptance_criteria_met
-        - vcard:sprint-374:x_all_12_chapter_playbooks_chapters_chapter_00_prologue_through_
-        - vcard:sprint-374:x_cel_50_expression_parity_test_passes_across_python_typescript_
-        - vcard:sprint-374:x_polyglot_behavioral_equivalence_harness_green_across_java_juli
-        - vcard:sprint-374:x_chapters_chapter_09_dsl_meta_circular_evaluator_combinators_va
-        - vcard:sprint-374:x_clm_kernel_clm_js_core_vitest_suite_631_tests_and_clm_tests_py
-        - vcard:sprint-374:x_grep_rn_clmroot_mcard_returns_zero_hits
-        - vcard:sprint-374:x_regression_test_clean_uv_run_pytest_clm_tests_make_test_make_j
+        - vcard:sprint-374:all_dv_374_acceptance_criteria_met
+        - vcard:sprint-374:all_12_chapter_playbooks_chapters_chapter_00_prologue_through_ch
+        - vcard:sprint-374:cel_50_expression_parity_test_passes_across_python_typescript_an
+        - vcard:sprint-374:polyglot_behavioral_equivalence_harness_green_across_java_julia_
+        - vcard:sprint-374:chapters_chapter_09_dsl_meta_circular_evaluator_combinators_vali
+        - vcard:sprint-374:clm_kernel_clm_js_core_vitest_suite_631_tests_and_clm_tests_pyth
+        - vcard:sprint-374:grep_rn_clmroot_mcard_returns_zero_hits
+        - vcard:sprint-374:regression_test_clean_uv_run_pytest_clm_tests_make_test_make_js_
       state: sealed
   - handle: urn:clm:handle:docs:sprints:05_linguistic-eval-and-gateway:sprint-383-layer0-kenotic-core-and-parser-unification
     card_type: mcard
@@ -1534,14 +1534,14 @@ sprints:
     dod:
       total: 8
       vcard_refs:
-        - vcard:sprint-375:x_all_dv_375_acceptance_criteria_satisfied
-        - vcard:sprint-375:x_studio_builds_and_launches_cleanly_using_live_clm_core_workspa
-        - vcard:sprint-375:x_studio_successfully_retrieves_renders_and_creates_mcards_via_t
-        - vcard:sprint-375:x_chapters_chapter_10_service_websocket_service_communication_pa
-        - vcard:sprint-375:x_gateway_round_trip_latency_benchmark_30ms_for_card_get_over_lo
-        - vcard:sprint-375:x_mcard_tdd_compliance_scanner_confirms_zero_embedded_db_access_
-        - vcard:sprint-375:x_studio_test_suite_passes_make_studio_test_make_studio_check
-        - vcard:sprint-375:x_studio_playwright_e2e_suite_passes_cleanly_npm_prefix_mcard_st
+        - vcard:sprint-375:all_dv_375_acceptance_criteria_satisfied
+        - vcard:sprint-375:studio_builds_and_launches_cleanly_using_live_clm_core_workspace
+        - vcard:sprint-375:studio_successfully_retrieves_renders_and_creates_mcards_via_the
+        - vcard:sprint-375:chapters_chapter_10_service_websocket_service_communication_pass
+        - vcard:sprint-375:gateway_round_trip_latency_benchmark_30ms_for_card_get_over_loca
+        - vcard:sprint-375:mcard_tdd_compliance_scanner_confirms_zero_embedded_db_access_an
+        - vcard:sprint-375:studio_test_suite_passes_make_studio_test_make_studio_check
+        - vcard:sprint-375:studio_playwright_e2e_suite_passes_cleanly_npm_prefix_mcard_stud
       state: sealed
   - handle: urn:clm:handle:docs:sprints:06_membrane-and-human-interface:sprint-381-runtime-to-ui-functional-equivalence-comparator
     card_type: pcard
@@ -1551,12 +1551,12 @@ sprints:
     dod:
       total: 6
       vcard_refs:
-        - vcard:sprint-381:x_all_dv_381_deliverables_implemented_and_passing
-        - vcard:sprint-381:x_python_scripts_ci_compare_runtime_ui_py_all_passes_across_all_
-        - vcard:sprint-381:x_state_meet_validator_passes_fault_injection_tests
-        - vcard:sprint-381:x_latency_benchmark_confirms_p_95_le_100_text_ms
-        - vcard:sprint-381:x_makefile_target_make_compare_runtime_ui_integrated_into_vault_
-        - vcard:sprint-381:x_approved_by_amelia_and_winston
+        - vcard:sprint-381:all_dv_381_deliverables_implemented_and_passing
+        - vcard:sprint-381:python_scripts_ci_compare_runtime_ui_py_all_passes_across_all_sc
+        - vcard:sprint-381:state_meet_validator_passes_fault_injection_tests
+        - vcard:sprint-381:latency_benchmark_confirms_p_95_le_100_text_ms
+        - vcard:sprint-381:makefile_target_make_compare_runtime_ui_integrated_into_vault_ch
+        - vcard:sprint-381:approved_by_amelia_and_winston
       state: sealed
   - handle: urn:clm:handle:docs:sprints:06_membrane-and-human-interface:sprint-388-layer4-membrane-gateway-and-purification
     card_type: mcard
@@ -1611,12 +1611,12 @@ sprints:
     dod:
       total: 6
       vcard_refs:
-        - vcard:sprint-382:x_all_dv_382_deliverables_completed_and_published
-        - vcard:sprint-382:x_parameterized_content_knowledge_source_integration_verified_vi
-        - vcard:sprint-382:x_docs_guides_developer_migration_guide_md_live
-        - vcard:sprint-382:x_docs_architecture_atlas_md_live_with_4_complete_mermaid_diagra
-        - vcard:sprint-382:x_scripts_ci_validate_documentation_py_passes_with_0_broken_link
-        - vcard:sprint-382:x_triadic_review_approved_by_winston_amelia_and_paige
+        - vcard:sprint-382:all_dv_382_deliverables_completed_and_published
+        - vcard:sprint-382:parameterized_content_knowledge_source_integration_verified_via_
+        - vcard:sprint-382:docs_guides_developer_migration_guide_md_live
+        - vcard:sprint-382:docs_architecture_atlas_md_live_with_4_complete_mermaid_diagrams
+        - vcard:sprint-382:scripts_ci_validate_documentation_py_passes_with_0_broken_links
+        - vcard:sprint-382:triadic_review_approved_by_winston_amelia_and_paige
       state: sealed
   - handle: urn:clm:handle:docs:sprints:10_security-audit-and-compliance:sprint-402-deprecation-enforcement-and-certification
     card_type: pcard
@@ -1626,27 +1626,27 @@ sprints:
     dod:
       total: 21
       vcard_refs:
-        - vcard:sprint-402:x_update_clm_kernel_clm_py_core_mcard_init_py_to_emit
-        - vcard:sprint-402:x_ensure_warnings_can_be_suppressed_in_legacy_testing_harnesses_
-        - vcard:sprint-402:x_author_clm_tools_ci_test_mcard_sovereign_evacuation_canary_py_
-        - vcard:sprint-402:x_assert_inv_mcard_01_verify_zero_py_files_exist_in_root_mcard
-        - vcard:sprint-402:x_assert_inv_scripts_01_verify_zero_py_files_exist_in_root_scrip
-        - vcard:sprint-402:x_assert_inv_extract_01_verify_zero_imports_of_mcard_exist_in_cl
-        - vcard:sprint-402:x_wire_canary_into_makefile_target_test_canary_and_vault_check
-        - vcard:sprint-402:x_run_make_test_uv_run_pytest_tests
+        - vcard:sprint-402:update_clm_kernel_clm_py_core_mcard_init_py_to_emit_python_impor
+        - vcard:sprint-402:ensure_warnings_can_be_suppressed_in_legacy_testing_harnesses_vi
+        - vcard:sprint-402:author_clm_tools_ci_test_mcard_sovereign_evacuation_canary_py_an
+        - vcard:sprint-402:assert_inv_mcard_01_verify_zero_py_files_exist_in_root_mcard
+        - vcard:sprint-402:assert_inv_scripts_01_verify_zero_py_files_exist_in_root_scripts
+        - vcard:sprint-402:assert_inv_extract_01_verify_zero_imports_of_mcard_exist_in_clm_
+        - vcard:sprint-402:wire_canary_into_makefile_target_test_canary_and_vault_check
+        - vcard:sprint-402:run_make_test_uv_run_pytest_tests
         - vcard:sprint-402:must_pass_ge_864_tests_with_le_33_skipped_and_0_failed_864_passe
-        - vcard:sprint-402:x_run_make_formal_check
+        - vcard:sprint-402:run_make_formal_check
         - vcard:sprint-402:tlc_model_checker_on_cpn_vm_tla_4_formal_trace_verifier_proofs_p
-        - vcard:sprint-402:x_run_make_polyglot_oracles
+        - vcard:sprint-402:run_make_polyglot_oracles
         - vcard:sprint-402:9_9_cross_runtime_differential_tests_pass_python_typescript_rust
-        - vcard:sprint-402:x_run_make_compare_runtime_ui
+        - vcard:sprint-402:run_make_compare_runtime_ui
         - vcard:sprint-402:5_5_runtime_to_ui_functional_equivalence_tests_pass_100ms_percep
-        - vcard:sprint-402:x_run_make_vault_check
+        - vcard:sprint-402:run_make_vault_check
         - vcard:sprint-402:all_7_master_vault_test_suites_pass_including_suite_7_sovereign_
-        - vcard:sprint-402:x_update_docs_architecture_code_migration_to_clm_md_to_record_th
-        - vcard:sprint-402:x_update_docs_spec_consensus_audit_report_md
-        - vcard:sprint-402:x_graduate_sprints_398_402_into_the_12_aspect_deployment_archite
-        - vcard:sprint-402:x_update_changelog_md_with_phase_9_milestone_release_notes
+        - vcard:sprint-402:update_docs_architecture_code_migration_to_clm_md_to_record_the_
+        - vcard:sprint-402:update_docs_spec_consensus_audit_report_md
+        - vcard:sprint-402:graduate_sprints_398_402_into_the_12_aspect_deployment_architect
+        - vcard:sprint-402:update_changelog_md_with_phase_9_milestone_release_notes
       state: sealed
   - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-376-monorepo-polyglot-sdk-consolidation
     card_type: pcard
@@ -1656,14 +1656,14 @@ sprints:
     dod:
       total: 8
       vcard_refs:
-        - vcard:sprint-376:x_all_dv_376_acceptance_criteria_fulfilled
-        - vcard:sprint-376:x_full_ci_pipeline_make_ci_produces_an_unbroken_mcard_audit_trac
-        - vcard:sprint-376:x_clmeval_lifecycle_summary_prints_formatted_audit_verified_spri
-        - vcard:sprint-376:x_all_12_chapter_playbooks_run_green_with_unified_clm_package_im
-        - vcard:sprint-376:x_all_12_chapters_certified_across_the_polyglot_verification_fle
-        - vcard:sprint-376:x_integration_canaries_pass_on_linux_macos_and_windows
-        - vcard:sprint-376:x_vault_master_quality_gate_make_vault_check_passes_cleanly_acro
-        - vcard:sprint-376:x_complete_ecosystem_test_suite_clean_make_project_check
+        - vcard:sprint-376:all_dv_376_acceptance_criteria_fulfilled
+        - vcard:sprint-376:full_ci_pipeline_make_ci_produces_an_unbroken_mcard_audit_trace_
+        - vcard:sprint-376:clmeval_lifecycle_summary_prints_formatted_audit_verified_sprint
+        - vcard:sprint-376:all_12_chapter_playbooks_run_green_with_unified_clm_package_impo
+        - vcard:sprint-376:all_12_chapters_certified_across_the_polyglot_verification_fleet
+        - vcard:sprint-376:integration_canaries_pass_on_linux_macos_and_windows
+        - vcard:sprint-376:vault_master_quality_gate_make_vault_check_passes_cleanly_across
+        - vcard:sprint-376:complete_ecosystem_test_suite_clean_make_project_check
       state: sealed
   - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-379-polyglot-comparative-runtime-fleet-harness
     card_type: pcard
@@ -1673,12 +1673,12 @@ sprints:
     dod:
       total: 6
       vcard_refs:
-        - vcard:sprint-379:x_all_dv_379_deliverables_completed_and_tested
-        - vcard:sprint-379:x_schema_mcard_library_json_published
-        - vcard:sprint-379:x_scripts_polyglot_oracle_runner_py_operational_with_librarymcar
-        - vcard:sprint-379:x_50_expression_cel_test_passes_across_all_runtimes
-        - vcard:sprint-379:x_make_polyglot_oracles_passes_cleanly_in_ci
-        - vcard:sprint-379:x_verified_and_signed_off_by_amelia
+        - vcard:sprint-379:all_dv_379_deliverables_completed_and_tested
+        - vcard:sprint-379:schema_mcard_library_json_published
+        - vcard:sprint-379:scripts_polyglot_oracle_runner_py_operational_with_librarymcard_
+        - vcard:sprint-379:50_expression_cel_test_passes_across_all_runtimes
+        - vcard:sprint-379:make_polyglot_oracles_passes_cleanly_in_ci
+        - vcard:sprint-379:verified_and_signed_off_by_amelia
       state: sealed
   - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-380-unified-test-dataset-and-fuzz-corpora-management
     card_type: pcard
@@ -1688,12 +1688,12 @@ sprints:
     dod:
       total: 6
       vcard_refs:
-        - vcard:sprint-380:x_all_dv_380_deliverables_implemented_and_tested
-        - vcard:sprint-380:x_schema_mcard_dataset_json_and_schema_mcard_image_json_publishe
-        - vcard:sprint-380:x_mcard_testing_datasets_operational_with_checksum_verification
-        - vcard:sprint-380:x_scripts_generate_fuzz_tree_py_emits_valid_datasetmcard_package
-        - vcard:sprint-380:x_scripts_ci_run_container_mcard_py_verified_with_live_docker_ru
-        - vcard:sprint-380:x_approved_by_amelia_and_paige
+        - vcard:sprint-380:all_dv_380_deliverables_implemented_and_tested
+        - vcard:sprint-380:schema_mcard_dataset_json_and_schema_mcard_image_json_published
+        - vcard:sprint-380:mcard_testing_datasets_operational_with_checksum_verification
+        - vcard:sprint-380:scripts_generate_fuzz_tree_py_emits_valid_datasetmcard_packages
+        - vcard:sprint-380:scripts_ci_run_container_mcard_py_verified_with_live_docker_runn
+        - vcard:sprint-380:approved_by_amelia_and_paige
       state: sealed
   - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-389-rust-kernel-layered-parity
     card_type: mcard
@@ -1730,23 +1730,23 @@ sprints:
     dod:
       total: 17
       vcard_refs:
-        - vcard:sprint-400:x_rewire_tests_model_test_card_py_to_import_from_clm_layer0_mode
-        - vcard:sprint-400:x_rewire_tests_model_test_pcard_py_and_test_pcard_smc_py_to_clm_
-        - vcard:sprint-400:x_rewire_tests_model_test_vcard_py_to_clm_layer0_model_vcard
-        - vcard:sprint-400:x_rewire_tests_model_test_dots_py_to_clm_layer0_model_dots
-        - vcard:sprint-400:x_rewire_tests_model_test_handle_py_to_clm_layer0_model_handle
-        - vcard:sprint-400:x_rewire_tests_test_gtime_py_to_clm_layer0_model_g_time
-        - vcard:sprint-400:x_verify_uv_run_pytest_tests_model_passes_with_100_green_status
-        - vcard:sprint-400:x_rewire_tests_engine_test_sqlite_persistence_py_to_clm_layer2_e
-        - vcard:sprint-400:x_rewire_tests_engine_test_gset_tombstone_py_to_clm_layer2_card_
-        - vcard:sprint-400:x_rewire_tests_engine_test_card_collection_py_and_tests_model_te
-        - vcard:sprint-400:x_rewire_tests_engine_test_hash_verification_py_and_test_cross_r
-        - vcard:sprint-400:x_verify_uv_run_pytest_tests_engine_passes_with_100_green_status
-        - vcard:sprint-400:x_rewire_tests_content_test_text_file_handling_py_to_clm_layer4_
-        - vcard:sprint-400:x_rewire_configuration_references_to_clm_cross_cutting_config_se
-        - vcard:sprint-400:x_verify_uv_run_pytest_tests_content_passes_with_100_green_statu
-        - vcard:sprint-400:x_run_composite_suite_uv_run_pytest_tests_model_tests_engine_tes
-        - vcard:sprint-400:x_verify_zero_regressions_on_master_baseline_make_test_to_ge_864
+        - vcard:sprint-400:rewire_tests_model_test_card_py_to_import_from_clm_layer0_model_
+        - vcard:sprint-400:rewire_tests_model_test_pcard_py_and_test_pcard_smc_py_to_clm_la
+        - vcard:sprint-400:rewire_tests_model_test_vcard_py_to_clm_layer0_model_vcard
+        - vcard:sprint-400:rewire_tests_model_test_dots_py_to_clm_layer0_model_dots
+        - vcard:sprint-400:rewire_tests_model_test_handle_py_to_clm_layer0_model_handle
+        - vcard:sprint-400:rewire_tests_test_gtime_py_to_clm_layer0_model_g_time
+        - vcard:sprint-400:verify_uv_run_pytest_tests_model_passes_with_100_green_status
+        - vcard:sprint-400:rewire_tests_engine_test_sqlite_persistence_py_to_clm_layer2_eng
+        - vcard:sprint-400:rewire_tests_engine_test_gset_tombstone_py_to_clm_layer2_card_co
+        - vcard:sprint-400:rewire_tests_engine_test_card_collection_py_and_tests_model_test
+        - vcard:sprint-400:rewire_tests_engine_test_hash_verification_py_and_test_cross_run
+        - vcard:sprint-400:verify_uv_run_pytest_tests_engine_passes_with_100_green_status
+        - vcard:sprint-400:rewire_tests_content_test_text_file_handling_py_to_clm_layer4_lo
+        - vcard:sprint-400:rewire_configuration_references_to_clm_cross_cutting_config_sett
+        - vcard:sprint-400:verify_uv_run_pytest_tests_content_passes_with_100_green_status
+        - vcard:sprint-400:run_composite_suite_uv_run_pytest_tests_model_tests_engine_tests
+        - vcard:sprint-400:verify_zero_regressions_on_master_baseline_make_test_to_ge_864_p
       state: sealed
   - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-401-test-suite-rewiring-layer3-layer4
     card_type: pcard
@@ -1756,21 +1756,21 @@ sprints:
     dod:
       total: 15
       vcard_refs:
-        - vcard:sprint-401:x_rewire_tests_rag_test_handle_vector_store_py_to_clm_layer3_rag
-        - vcard:sprint-401:x_rewire_tests_test_rag_py_and_tests_test_graphrag_py_to_clm_lay
-        - vcard:sprint-401:x_rewire_tests_test_vision_embedding_py_and_tests_test_dual_retr
-        - vcard:sprint-401:x_rewire_tests_test_llm_runtime_py_to_clm_layer3_agency
-        - vcard:sprint-401:x_verify_uv_run_pytest_tests_rag_tests_test_rag_py_tests_test_gr
-        - vcard:sprint-401:x_rewire_all_10_tests_bootstrap_test_t_py_and_test_phase_py_file
-        - vcard:sprint-401:x_rewire_tests_api_test_api_py_and_tests_api_test_gatekeeper_py_
-        - vcard:sprint-401:x_verify_uv_run_pytest_tests_bootstrap_tests_api_to_pass
-        - vcard:sprint-401:x_rewire_tests_ptr_test_ptr_engine_py_test_runtime_py_test_agent
-        - vcard:sprint-401:x_rewire_tests_canary_test_integration_canaries_py_to_sovereign_
-        - vcard:sprint-401:x_verify_uv_run_pytest_tests_ptr_tests_canary_to_pass
-        - vcard:sprint-401:x_update_all_19_scripts_in_examples_to_use_clm_imports
-        - vcard:sprint-401:x_smoke_test_key_examples_python3_examples_load_assets_example_p
-        - vcard:sprint-401:x_run_full_regression_suite_make_test_to_ge_864_passed_le_33_ski
-        - vcard:sprint-401:x_run_make_vault_check_to_6_6_suites_passed
+        - vcard:sprint-401:rewire_tests_rag_test_handle_vector_store_py_to_clm_layer3_rag_v
+        - vcard:sprint-401:rewire_tests_test_rag_py_and_tests_test_graphrag_py_to_clm_layer
+        - vcard:sprint-401:rewire_tests_test_vision_embedding_py_and_tests_test_dual_retrie
+        - vcard:sprint-401:rewire_tests_test_llm_runtime_py_to_clm_layer3_agency
+        - vcard:sprint-401:verify_uv_run_pytest_tests_rag_tests_test_rag_py_tests_test_grap
+        - vcard:sprint-401:rewire_all_10_tests_bootstrap_test_t_py_and_test_phase_py_files_
+        - vcard:sprint-401:rewire_tests_api_test_api_py_and_tests_api_test_gatekeeper_py_to
+        - vcard:sprint-401:verify_uv_run_pytest_tests_bootstrap_tests_api_to_pass
+        - vcard:sprint-401:rewire_tests_ptr_test_ptr_engine_py_test_runtime_py_test_agent_i
+        - vcard:sprint-401:rewire_tests_canary_test_integration_canaries_py_to_sovereign_cl
+        - vcard:sprint-401:verify_uv_run_pytest_tests_ptr_tests_canary_to_pass
+        - vcard:sprint-401:update_all_19_scripts_in_examples_to_use_clm_imports
+        - vcard:sprint-401:smoke_test_key_examples_python3_examples_load_assets_example_py
+        - vcard:sprint-401:run_full_regression_suite_make_test_to_ge_864_passed_le_33_skipp
+        - vcard:sprint-401:run_make_vault_check_to_6_6_suites_passed
       state: sealed
   - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-403-clm-test-infra-harmonization
     card_type: pcard
@@ -1780,7 +1780,7 @@ sprints:
     dod:
       total: 35
       vcard_refs:
-        - vcard:sprint-403:x_add_required_test_and_core_runtime_dependencies_to_clm_pyproje
+        - vcard:sprint-403:add_required_test_and_core_runtime_dependencies_to_clm_pyproject
         - vcard:sprint-403:python_dotenv_1_1_0
         - vcard:sprint-403:jsonschema_4_26_0
         - vcard:sprint-403:fastapi_0_100_0
@@ -1792,29 +1792,29 @@ sprints:
         - vcard:sprint-403:aiosqlite_0_17_0
         - vcard:sprint-403:aiohttp_3_9_0
         - vcard:sprint-403:base58_2_1_1
-        - vcard:sprint-403:x_update_pythonpath_under_tool_pytest_ini_options_in_clm_pyproje
-        - vcard:sprint-403:x_sync_dependencies_in_clm_environment_cd_clm_uv_sync_all_extras
-        - vcard:sprint-403:x_port_shared_pytest_fixtures_from_mcard_tdd_tests_conftest_py_i
+        - vcard:sprint-403:update_pythonpath_under_tool_pytest_ini_options_in_clm_pyproject
+        - vcard:sprint-403:sync_dependencies_in_clm_environment_cd_clm_uv_sync_all_extras_d
+        - vcard:sprint-403:port_shared_pytest_fixtures_from_mcard_tdd_tests_conftest_py_int
         - vcard:sprint-403:temp_db_path_isolated_temporary_sqlite_file_fixture
         - vcard:sprint-403:isolated_db_pre_initialized_database_fixture
         - vcard:sprint-403:sample_card_standard_test_card_fixture
         - vcard:sprint-403:discover_all_clms_get_chapters_dir_resilient_clm_chapter_workflo
         - vcard:sprint-403:test_data_dir_dynamic_fixture_resolving_canonical_clm_tests_test
-        - vcard:sprint-403:x_ensure_sys_path_in_clm_tests_conftest_py_includes_kernel_clm_p
-        - vcard:sprint-403:x_migrate_tests_test_data_to_clm_tests_test_data
+        - vcard:sprint-403:ensure_sys_path_in_clm_tests_conftest_py_includes_kernel_clm_py_
+        - vcard:sprint-403:migrate_tests_test_data_to_clm_tests_test_data
         - vcard:sprint-403:verify_all_34_assets_sample_csv_sample_pdf_assets_single_massive
         - vcard:sprint-403:keep_clm_tests_test_data_strictly_separate_from_clm_tests_test_f
-        - vcard:sprint-403:x_migrate_tests_data_to_clm_tests_data_including_test_mcard_db
-        - vcard:sprint-403:x_establish_relative_symlink_bridges_for_sub_suite_dual_anchor_r
+        - vcard:sprint-403:migrate_tests_data_to_clm_tests_data_including_test_mcard_db
+        - vcard:sprint-403:establish_relative_symlink_bridges_for_sub_suite_dual_anchor_res
         - vcard:sprint-403:clm_tests_python_test_data_test_data
         - vcard:sprint-403:clm_tests_python_data_data
-        - vcard:sprint-403:x_migrate_execution_bootstrap_datasets
+        - vcard:sprint-403:migrate_execution_bootstrap_datasets
         - vcard:sprint-403:copy_data_execution_data_logs_landauer_telemetry_json_to_clm_dat
         - vcard:sprint-403:copy_data_bootstrap_to_clm_data_bootstrap
         - vcard:sprint-403:create_bridges_clm_tests_data_execution_data_data_execution_data
-        - vcard:sprint-403:x_assert_inv_data_01_inv_depth_01_verify_both_cwd_relative_path_
-        - vcard:sprint-403:x_fix_test_zero_file_sys_stderr_in_kernel_in_clm_tests_python_ut
-        - vcard:sprint-403:x_verify_cd_clm_uv_run_pytest_tests_python_to_438_passed_0_faile
+        - vcard:sprint-403:assert_inv_data_01_inv_depth_01_verify_both_cwd_relative_path_te
+        - vcard:sprint-403:fix_test_zero_file_sys_stderr_in_kernel_in_clm_tests_python_util
+        - vcard:sprint-403:verify_cd_clm_uv_run_pytest_tests_python_to_438_passed_0_failed
       state: sealed
   - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-404-layer0-layer2-test-suite-migration
     card_type: pcard
@@ -1824,28 +1824,28 @@ sprints:
     dod:
       total: 22
       vcard_refs:
-        - vcard:sprint-404:x_copy_tests_chapters_all_220_files_and_directories_to_clm_tests
-        - vcard:sprint-404:x_create_symlink_bridge_cd_clm_tests_python_ln_sf_chapters_chapt
-        - vcard:sprint-404:x_assert_get_chapters_dir_in_clm_tests_conftest_py_discovers_clm
-        - vcard:sprint-404:x_verify_from_chapters_chapter_02_handle_handle_logic_import_han
-        - vcard:sprint-404:x_copy_all_12_test_suites_from_tests_model_into_clm_tests_python
-        - vcard:sprint-404:x_copy_tests_ontology_test_collection_resolver_py_into_clm_tests
-        - vcard:sprint-404:x_verify_imports_resolve_against_clm_layer0_and_clm_layer2
-        - vcard:sprint-404:x_add_dynamic_chapter_02_locator_resolve_chapter02_in_test_handl
-        - vcard:sprint-404:x_verify_test_handle_clm_py_passes_with_chapter_02_resolution
-        - vcard:sprint-404:x_verify_test_handle_registry_py_passes_using_test_data_dir
-        - vcard:sprint-404:x_copy_all_8_test_suites_from_tests_engine_into_clm_tests_python
-        - vcard:sprint-404:x_copy_schema_to_clm_schema_and_symlink_clm_tests_schema_schema
-        - vcard:sprint-404:x_fix_adapt_statement_for_duckdb_in_duckdb_engine_py_to_skip_sta
-        - vcard:sprint-404:x_add_dynamic_repo_locator_in_test_duckdb_engine_py_and_test_cel
-        - vcard:sprint-404:x_ensure_sqlite_and_duckdb_temporary_databases_resolve_correctly
-        - vcard:sprint-404:x_verify_test_sqlite_persistence_py_successfully_resolves_test_d
-        - vcard:sprint-404:x_verify_test_hash_verification_py_validates_hashes_against_clm_
-        - vcard:sprint-404:x_run_cd_clm_uv_run_pytest_tests_python_model_q_to_pass_12_suite
-        - vcard:sprint-404:x_run_cd_clm_uv_run_pytest_tests_python_engine_q_to_pass_8_suite
-        - vcard:sprint-404:x_run_cd_clm_uv_run_pytest_tests_python_ontology_q_to_pass_1_sui
-        - vcard:sprint-404:x_total_for_migrated_l0_l2_309_passed_2_skipped_0_failures
-        - vcard:sprint-404:x_full_battery_verification_cd_clm_uv_run_pytest_tests_python_q_
+        - vcard:sprint-404:copy_tests_chapters_all_220_files_and_directories_to_clm_tests_c
+        - vcard:sprint-404:create_symlink_bridge_cd_clm_tests_python_ln_sf_chapters_chapter
+        - vcard:sprint-404:assert_get_chapters_dir_in_clm_tests_conftest_py_discovers_clm_t
+        - vcard:sprint-404:verify_from_chapters_chapter_02_handle_handle_logic_import_handl
+        - vcard:sprint-404:copy_all_12_test_suites_from_tests_model_into_clm_tests_python_m
+        - vcard:sprint-404:copy_tests_ontology_test_collection_resolver_py_into_clm_tests_p
+        - vcard:sprint-404:verify_imports_resolve_against_clm_layer0_and_clm_layer2
+        - vcard:sprint-404:add_dynamic_chapter_02_locator_resolve_chapter02_in_test_handle_
+        - vcard:sprint-404:verify_test_handle_clm_py_passes_with_chapter_02_resolution
+        - vcard:sprint-404:verify_test_handle_registry_py_passes_using_test_data_dir
+        - vcard:sprint-404:copy_all_8_test_suites_from_tests_engine_into_clm_tests_python_e
+        - vcard:sprint-404:copy_schema_to_clm_schema_and_symlink_clm_tests_schema_schema
+        - vcard:sprint-404:fix_adapt_statement_for_duckdb_in_duckdb_engine_py_to_skip_stand
+        - vcard:sprint-404:add_dynamic_repo_locator_in_test_duckdb_engine_py_and_test_cel_p
+        - vcard:sprint-404:ensure_sqlite_and_duckdb_temporary_databases_resolve_correctly
+        - vcard:sprint-404:verify_test_sqlite_persistence_py_successfully_resolves_test_dat
+        - vcard:sprint-404:verify_test_hash_verification_py_validates_hashes_against_clm_te
+        - vcard:sprint-404:run_cd_clm_uv_run_pytest_tests_python_model_q_to_pass_12_suites_
+        - vcard:sprint-404:run_cd_clm_uv_run_pytest_tests_python_engine_q_to_pass_8_suites_
+        - vcard:sprint-404:run_cd_clm_uv_run_pytest_tests_python_ontology_q_to_pass_1_suite
+        - vcard:sprint-404:total_for_migrated_l0_l2_309_passed_2_skipped_0_failures
+        - vcard:sprint-404:full_battery_verification_cd_clm_uv_run_pytest_tests_python_q_to
       state: sealed
   - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-405-layer1-layer3-test-suite-migration
     card_type: pcard
@@ -1855,25 +1855,25 @@ sprints:
     dod:
       total: 19
       vcard_refs:
-        - vcard:sprint-405:x_create_clm_tests_python_ptr_and_clm_tests_python_ptr_governanc
-        - vcard:sprint-405:x_copy_all_32_test_suites_from_tests_ptr_into_clm_tests_python_p
-        - vcard:sprint-405:x_add_clm_tests_init_py_and_clm_tests_python_init_py_for_package
-        - vcard:sprint-405:x_dynamically_resolve_clm_js_core_and_sample_pcards_in_test_clm_
-        - vcard:sprint-405:x_update_wasm_execution_assertion_in_test_runtime_py_to_handle_b
-        - vcard:sprint-405:x_ensure_execution_fibers_sandbox_tests_and_savepoint_leakage_te
-        - vcard:sprint-405:x_verify_tests_ptr_test_landauer_telemetry_py_resolves_telemetry
-        - vcard:sprint-405:x_verify_test_clm_loader_py_and_test_clm_py_find_all_chapter_man
-        - vcard:sprint-405:x_create_clm_tests_python_rag_and_clm_tests_python_agency_direct
-        - vcard:sprint-405:x_copy_tests_rag_into_clm_tests_python_rag
-        - vcard:sprint-405:x_copy_10_cognitive_agency_root_tests_into_clm_tests_python_agen
-        - vcard:sprint-405:x_verify_test_vision_embedding_py_correctly_resolves_clm_tests_t
-        - vcard:sprint-405:x_update_test_dual_retrieval_py_with_find_chapter02_dir_to_execu
-        - vcard:sprint-405:x_copy_mcardeval_sh_and_mcardeval_ps1_to_clm_scripts_to_unblock_
-        - vcard:sprint-405:x_verify_vector_store_satori_network_transport_and_graphrag_test
-        - vcard:sprint-405:x_run_cd_clm_uv_run_pytest_tests_python_ptr_q_to_pass_272_passed
-        - vcard:sprint-405:x_run_cd_clm_uv_run_pytest_tests_python_rag_tests_python_agency_
-        - vcard:sprint-405:x_run_cumulative_battery_cd_clm_uv_run_pytest_tests_python_model
-        - vcard:sprint-405:x_full_clm_battery_cd_clm_uv_run_pytest_tests_python_q_to_pass_1
+        - vcard:sprint-405:create_clm_tests_python_ptr_and_clm_tests_python_ptr_governance_
+        - vcard:sprint-405:copy_all_32_test_suites_from_tests_ptr_into_clm_tests_python_ptr
+        - vcard:sprint-405:add_clm_tests_init_py_and_clm_tests_python_init_py_for_package_l
+        - vcard:sprint-405:dynamically_resolve_clm_js_core_and_sample_pcards_in_test_clm_as
+        - vcard:sprint-405:update_wasm_execution_assertion_in_test_runtime_py_to_handle_bot
+        - vcard:sprint-405:ensure_execution_fibers_sandbox_tests_and_savepoint_leakage_test
+        - vcard:sprint-405:verify_tests_ptr_test_landauer_telemetry_py_resolves_telemetry_j
+        - vcard:sprint-405:verify_test_clm_loader_py_and_test_clm_py_find_all_chapter_manif
+        - vcard:sprint-405:create_clm_tests_python_rag_and_clm_tests_python_agency_director
+        - vcard:sprint-405:copy_tests_rag_into_clm_tests_python_rag
+        - vcard:sprint-405:copy_10_cognitive_agency_root_tests_into_clm_tests_python_agency
+        - vcard:sprint-405:verify_test_vision_embedding_py_correctly_resolves_clm_tests_tes
+        - vcard:sprint-405:update_test_dual_retrieval_py_with_find_chapter02_dir_to_execute
+        - vcard:sprint-405:copy_mcardeval_sh_and_mcardeval_ps1_to_clm_scripts_to_unblock_te
+        - vcard:sprint-405:verify_vector_store_satori_network_transport_and_graphrag_tests_
+        - vcard:sprint-405:run_cd_clm_uv_run_pytest_tests_python_ptr_q_to_pass_272_passed_1
+        - vcard:sprint-405:run_cd_clm_uv_run_pytest_tests_python_rag_tests_python_agency_q_
+        - vcard:sprint-405:run_cumulative_battery_cd_clm_uv_run_pytest_tests_python_model_t
+        - vcard:sprint-405:full_clm_battery_cd_clm_uv_run_pytest_tests_python_q_to_pass_1_1
       state: sealed
   - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-406-layer4-support-test-suite-migration
     card_type: pcard
@@ -1883,20 +1883,20 @@ sprints:
     dod:
       total: 14
       vcard_refs:
-        - vcard:sprint-406:x_copy_tests_api_to_clm_tests_python_api
-        - vcard:sprint-406:x_copy_tests_bootstrap_to_clm_tests_python_bootstrap
-        - vcard:sprint-406:x_verify_bootstrap_test_dir_writes_to_and_cleans_up_clm_tests_te
-        - vcard:sprint-406:x_add_tests_test_data_bootstrap_output_to_clm_gitignore
-        - vcard:sprint-406:x_verify_test_environment_bootstrap_py_loads_system_bootstrap_cl
-        - vcard:sprint-406:x_copy_tests_content_to_clm_tests_python_content
-        - vcard:sprint-406:x_fix_test_problematic_files_py_test_data_dir_resolution_to_use_
-        - vcard:sprint-406:x_verify_test_content_type_detection_py_resolves_format_assets_s
-        - vcard:sprint-406:x_copy_tests_config_to_clm_tests_python_config
-        - vcard:sprint-406:x_copy_tests_formal_tests_canary_tests_comparator_tests_parity_t
-        - vcard:sprint-406:x_copy_root_support_tests_test_gtime_py_test_sha256_py_test_load
-        - vcard:sprint-406:x_verify_test_integration_canaries_py_validates_manifests_across
-        - vcard:sprint-406:x_run_full_test_battery_in_clm_cd_clm_uv_run_pytest_tests_python
-        - vcard:sprint-406:x_assert_ge_1_300_tests_pass_with_0_failures_across_all_stratifi
+        - vcard:sprint-406:copy_tests_api_to_clm_tests_python_api
+        - vcard:sprint-406:copy_tests_bootstrap_to_clm_tests_python_bootstrap
+        - vcard:sprint-406:verify_bootstrap_test_dir_writes_to_and_cleans_up_clm_tests_test
+        - vcard:sprint-406:add_tests_test_data_bootstrap_output_to_clm_gitignore
+        - vcard:sprint-406:verify_test_environment_bootstrap_py_loads_system_bootstrap_clm_
+        - vcard:sprint-406:copy_tests_content_to_clm_tests_python_content
+        - vcard:sprint-406:fix_test_problematic_files_py_test_data_dir_resolution_to_use_pa
+        - vcard:sprint-406:verify_test_content_type_detection_py_resolves_format_assets_sam
+        - vcard:sprint-406:copy_tests_config_to_clm_tests_python_config
+        - vcard:sprint-406:copy_tests_formal_tests_canary_tests_comparator_tests_parity_to_
+        - vcard:sprint-406:copy_root_support_tests_test_gtime_py_test_sha256_py_test_loader
+        - vcard:sprint-406:verify_test_integration_canaries_py_validates_manifests_across_a
+        - vcard:sprint-406:run_full_test_battery_in_clm_cd_clm_uv_run_pytest_tests_python_q
+        - vcard:sprint-406:assert_ge_1_300_tests_pass_with_0_failures_across_all_stratified
       state: sealed
   - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-407-mcard-tdd-purge-and-makefile-rewiring
     card_type: pcard
@@ -1906,38 +1906,38 @@ sprints:
     dod:
       total: 32
       vcard_refs:
-        - vcard:sprint-407:x_remove_all_relocated_test_suites_and_test_datasets_from_mcard_
+        - vcard:sprint-407:remove_all_relocated_test_suites_and_test_datasets_from_mcard_td
         - vcard:sprint-407:tests_model_tests_engine_tests_ontology
         - vcard:sprint-407:tests_ptr_tests_rag
         - vcard:sprint-407:tests_api_tests_bootstrap_tests_content_tests_config_tests_chapt
         - vcard:sprint-407:tests_formal_tests_canary_tests_comparator_tests_parity
         - vcard:sprint-407:tests_test_data_tests_data_tests_test_cases_yaml_and_all_root_te
-        - vcard:sprint-407:x_assert_inv_coord_01_verify_zero_redundant_test_suites_or_test_
-        - vcard:sprint-407:x_assert_inv_safety_01_verify_root_runtime_state_databases_data_
-        - vcard:sprint-407:x_update_mcard_tdd_makefile_to_define
-        - vcard:sprint-407:x_update_formal_check_to_reference_clm_tests_python_formal_test_
-        - vcard:sprint-407:x_update_polyglot_oracles_to_reference_clm_tests_python_ptr_test
-        - vcard:sprint-407:x_update_compare_runtime_ui_to_reference_clm_tests_python_compar
-        - vcard:sprint-407:x_update_clm_tools_ci_vault_check_py_suites
+        - vcard:sprint-407:assert_inv_coord_01_verify_zero_redundant_test_suites_or_test_da
+        - vcard:sprint-407:assert_inv_safety_01_verify_root_runtime_state_databases_data_ag
+        - vcard:sprint-407:update_mcard_tdd_makefile_to_define_makefile_test_clm_py_echo_ru
+        - vcard:sprint-407:update_formal_check_to_reference_clm_tests_python_formal_test_tr
+        - vcard:sprint-407:update_polyglot_oracles_to_reference_clm_tests_python_ptr_test_p
+        - vcard:sprint-407:update_compare_runtime_ui_to_reference_clm_tests_python_comparat
+        - vcard:sprint-407:update_clm_tools_ci_vault_check_py_suites
         - vcard:sprint-407:suite_1_clm_tests_python_model_test_mcard_archetype_schemas_py
         - vcard:sprint-407:suite_2_clm_tests_python_test_lifecycle_ci_service_py
         - vcard:sprint-407:suite_3_clm_tests_python_canary_test_integration_canaries_py
-        - vcard:sprint-407:x_mirror_changes_into_clm_kernel_clm_py_core_clm_tools_ci_vault_
-        - vcard:sprint-407:x_run_make_test_clm_py
+        - vcard:sprint-407:mirror_changes_into_clm_kernel_clm_py_core_clm_tools_ci_vault_ch
+        - vcard:sprint-407:run_make_test_clm_py
         - vcard:sprint-407:asserts_ge_1_300_tests_pass_in_clm_tests_python_with_0_failures_
-        - vcard:sprint-407:x_run_make_test_canary
+        - vcard:sprint-407:run_make_test_canary
         - vcard:sprint-407:asserts_all_sovereign_evacuation_and_extraction_boundaries_pass
-        - vcard:sprint-407:x_run_make_vault_check
+        - vcard:sprint-407:run_make_vault_check
         - vcard:sprint-407:all_7_master_vault_quality_gates_pass
-        - vcard:sprint-407:x_run_make_formal_check
+        - vcard:sprint-407:run_make_formal_check
         - vcard:sprint-407:tla_model_checks_formal_trace_verification_pass
-        - vcard:sprint-407:x_run_make_polyglot_oracles
+        - vcard:sprint-407:run_make_polyglot_oracles
         - vcard:sprint-407:differential_behavioral_univalence_passes
-        - vcard:sprint-407:x_run_make_compare_runtime_ui
+        - vcard:sprint-407:run_make_compare_runtime_ui
         - vcard:sprint-407:runtime_to_ui_equivalence_comparator_passes
-        - vcard:sprint-407:x_update_changelog_md_with_phase_10_release_notes
-        - vcard:sprint-407:x_update_docs_architecture_code_migration_to_clm_md
-        - vcard:sprint-407:x_graduate_sprints_403_407_into_the_12_aspect_deployment_archite
+        - vcard:sprint-407:update_changelog_md_with_phase_10_release_notes
+        - vcard:sprint-407:update_docs_architecture_code_migration_to_clm_md
+        - vcard:sprint-407:graduate_sprints_403_407_into_the_12_aspect_deployment_architect
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:00-program-charter-epic-orc-ii
     card_type: mcard
@@ -2073,7 +2073,7 @@ sprints:
     dod:
       total: 7
       vcard_refs:
-        - vcard:orc-08:every_invariant_is_a_stage_and_the_stage_names_it_in_its_output
+        - vcard:orc-08:every_invariant_is_a_stage_and_the_stage_names_it_in_its_output_
         - vcard:orc-08:every_stage_has_a_control_that_fails_7_injected_defects_7_detect
         - vcard:orc-08:the_incident_regression_exists_two_uncoordinated_writers_over_on
         - vcard:orc-08:the_loop_is_proven_end_to_end_a_real_sprint_runs_make_orchestrat
@@ -2123,7 +2123,7 @@ sprints:
       vcard_refs:
         - vcard:orc-11:the_database_refuses_inserting_card_type_bogus_into_each_deploye
         - vcard:orc-11:lossless_row_count_and_content_digest_are_identical_before_and_a
-        - vcard:orc-11:indexes_and_triggers_survive_the_idx_handle_current_hash_and
+        - vcard:orc-11:indexes_and_triggers_survive_the_idx_handle_current_hash_and_idx
         - vcard:orc-11:idempotent_re_running_the_rebuild_detects_the_constraint_is_alre
         - vcard:orc-11:atomic_an_induced_failure_mid_rebuild_leaves_the_original_card_t
         - vcard:orc-11:foreign_keys_hold_pragma_foreign_key_check_is_clean_on_every_tap
@@ -2246,7 +2246,7 @@ sprints:
         - vcard:orc-18:learning_event_has_a_producer_sealing_a_transition_writes_exactl
         - vcard:orc-18:the_clock_is_a_clock_vector_clock_increments_per_node_and_merges
         - vcard:orc-18:the_kernel_can_read_what_the_platform_wrote_load_learning_events
-        - vcard:orc-18:the_clock_is_the_published_one_vectorclock_is_imported_from
+        - vcard:orc-18:the_clock_is_the_published_one_vectorclock_is_imported_from_clm_
         - vcard:orc-18:no_regression_make_orc_schema_make_orc_chain_and_the_layer3_suit
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-19-mesh-proven-at-platform-scale
@@ -2292,7 +2292,7 @@ sprints:
     dod:
       total: 8
       vcard_refs:
-        - vcard:orc-21:the_vault_is_declared_registry_knowledge_roots_yaml_carries_a
+        - vcard:orc-21:the_vault_is_declared_registry_knowledge_roots_yaml_carries_a_pe
         - vcard:orc-21:ingested_with_handles_every_file_in_the_vault_has_a_card_and_a_h
         - vcard:orc-21:provenance_is_recorded_each_vault_card_names_its_source_path_con
         - vcard:orc-21:the_env_override_wins_setting_knowledge_vault_to_a_different_dir
@@ -2325,10 +2325,10 @@ sprints:
     dod:
       total: 4
       vcard_refs:
-        - vcard:cdo-01:x_normative_spec_committed_in_docs_specifications_technical
-        - vcard:cdo-01:x_manifest_executes_via_petri_run_net_happy_bail_paths_under_pub
-        - vcard:cdo-01:x_x_top_d_0_and_misu_assertions_pass_with_mutation_tests_15_15
-        - vcard:cdo-01:x_triad_card_clm_clm_cdo_01_lifecycle_cpn_yaml_clm_clm_cdo_01_li
+        - vcard:cdo-01:normative_spec_committed_in_docs_specifications_technical
+        - vcard:cdo-01:manifest_executes_via_petri_run_net_happy_bail_paths_under_publi
+        - vcard:cdo-01:x_top_d_0_and_misu_assertions_pass_with_mutation_tests_15_15
+        - vcard:cdo-01:triad_card_clm_clm_cdo_01_lifecycle_cpn_yaml_clm_clm_cdo_01_life
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-02-conversational-turn-protocol
     card_type: pcard
@@ -2338,10 +2338,10 @@ sprints:
     dod:
       total: 4
       vcard_refs:
-        - vcard:cdo-02:x_clm_turn_v1_schema_exemplar_committed_and_validated
-        - vcard:cdo-02:x_speech_act_binding_table_committed_transitions_resolve_against
-        - vcard:cdo-02:x_adapter_contract_with_cordis_scope_disposal_documented
-        - vcard:cdo-02:x_triad_card_clm_clm_cdo_02_turn_protocol_yaml_clm_clm_cdo_02_tu
+        - vcard:cdo-02:clm_turn_v1_schema_exemplar_committed_and_validated
+        - vcard:cdo-02:speech_act_binding_table_committed_transitions_resolve_against_t
+        - vcard:cdo-02:adapter_contract_with_cordis_scope_disposal_documented
+        - vcard:cdo-02:triad_card_clm_clm_cdo_02_turn_protocol_yaml_clm_clm_cdo_02_turn
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-03-development-action-library
     card_type: pcard
@@ -2351,11 +2351,11 @@ sprints:
     dod:
       total: 5
       vcard_refs:
-        - vcard:cdo-03:x_all_action_manifests_validate
-        - vcard:cdo-03:x_at_least_three_actions_executed_with_recorded_e_2_evidence
-        - vcard:cdo-03:x_at_least_one_mutation_check_negative_control_recorded
-        - vcard:cdo-03:x_action_library_index_committed
-        - vcard:cdo-03:x_triad_card_clm_clm_cdo_03_action_library_yaml_clm_clm_cdo_03_a
+        - vcard:cdo-03:all_action_manifests_validate
+        - vcard:cdo-03:at_least_three_actions_executed_with_recorded_e_2_evidence
+        - vcard:cdo-03:at_least_one_mutation_check_negative_control_recorded
+        - vcard:cdo-03:action_library_index_committed
+        - vcard:cdo-03:triad_card_clm_clm_cdo_03_action_library_yaml_clm_clm_cdo_03_act
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-04-development-workflow-dags-and-makefile
     card_type: pcard
@@ -2365,11 +2365,11 @@ sprints:
     dod:
       total: 5
       vcard_refs:
-        - vcard:cdo-04:x_three_workflow_dags_committed_and_validating
-        - vcard:cdo-04:x_negative_control_cyclic_dag_rejected_recorded
-        - vcard:cdo-04:x_makefile_targets_added_make_workflow_validate_green
-        - vcard:cdo-04:x_dag_net_correspondence_test_passes_with_mutation_check
-        - vcard:cdo-04:x_triad_card_clm_clm_cdo_04_workflow_dags_yaml_clm_clm_cdo_04_wo
+        - vcard:cdo-04:three_workflow_dags_committed_and_validating
+        - vcard:cdo-04:negative_control_cyclic_dag_rejected_recorded
+        - vcard:cdo-04:makefile_targets_added_make_workflow_validate_green
+        - vcard:cdo-04:dag_net_correspondence_test_passes_with_mutation_check
+        - vcard:cdo-04:triad_card_clm_clm_cdo_04_workflow_dags_yaml_clm_clm_cdo_04_work
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-05-evidence-witness-ledger
     card_type: pcard
@@ -2379,12 +2379,12 @@ sprints:
     dod:
       total: 6
       vcard_refs:
-        - vcard:cdo-05:x_lifecycle_mcard_schema_committed_and_round_tripping
-        - vcard:cdo-05:x_per_firing_writer_implemented_inv_cdo_02_count_assertion_passe
-        - vcard:cdo-05:x_witness_emission_produces_a_real_witness_record_with_3_command
-        - vcard:cdo-05:x_derived_evidence_resolver_implemented_with_delete_witness_nega
-        - vcard:cdo-05:x_inv_ref_06_gate_implemented_with_mutation_check
-        - vcard:cdo-05:x_triad_card_clm_clm_cdo_05_evidence_ledger_yaml_clm_clm_cdo_05_
+        - vcard:cdo-05:lifecycle_mcard_schema_committed_and_round_tripping
+        - vcard:cdo-05:per_firing_writer_implemented_inv_cdo_02_count_assertion_passes
+        - vcard:cdo-05:witness_emission_produces_a_real_witness_record_with_3_command_w
+        - vcard:cdo-05:derived_evidence_resolver_implemented_with_delete_witness_negati
+        - vcard:cdo-05:inv_ref_06_gate_implemented_with_mutation_check
+        - vcard:cdo-05:triad_card_clm_clm_cdo_05_evidence_ledger_yaml_clm_clm_cdo_05_ev
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-06-invariant-gate-enforcement
     card_type: pcard
@@ -2394,14 +2394,14 @@ sprints:
     dod:
       total: 8
       vcard_refs:
-        - vcard:cdo-06:x_conservation_check_implemented_with_mutation_control
-        - vcard:cdo-06:x_misu_canary_implemented_with_mutation_control
-        - vcard:cdo-06:x_reachability_assertions_recorded
-        - vcard:cdo-06:x_bounded_liveness_check_recorded_residual_obligation_marked_ope
-        - vcard:cdo-06:x_acl_canary_implemented
-        - vcard:cdo-06:x_make_check_development_net_wired_into_ci
-        - vcard:cdo-06:x_classification_table_committed
-        - vcard:cdo-06:x_triad_card_clm_clm_cdo_06_invariant_gates_yaml_clm_clm_cdo_06_
+        - vcard:cdo-06:conservation_check_implemented_with_mutation_control
+        - vcard:cdo-06:misu_canary_implemented_with_mutation_control
+        - vcard:cdo-06:reachability_assertions_recorded
+        - vcard:cdo-06:bounded_liveness_check_recorded_residual_obligation_marked_open_
+        - vcard:cdo-06:acl_canary_implemented
+        - vcard:cdo-06:make_check_development_net_wired_into_ci
+        - vcard:cdo-06:classification_table_committed
+        - vcard:cdo-06:triad_card_clm_clm_cdo_06_invariant_gates_yaml_clm_clm_cdo_06_in
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-07-tri-runtime-orchestration-parity
     card_type: pcard
@@ -2411,12 +2411,12 @@ sprints:
     dod:
       total: 6
       vcard_refs:
-        - vcard:cdo-07:x_conformance_matrix_committed_recording_the_honest_current_stat
-        - vcard:cdo-07:x_no_silent_shadowing_dispatcher_fix_with_regression_test
-        - vcard:cdo-07:x_parity_subset_implemented_or_formally_scoped_conformance_harne
-        - vcard:cdo-07:x_usg_spec_corrected_to_match_reality
-        - vcard:cdo-07:x_all_three_runtime_suites_green_at_baseline
-        - vcard:cdo-07:x_triad_card_clm_clm_cdo_07_runtime_parity_yaml_clm_clm_cdo_07_r
+        - vcard:cdo-07:conformance_matrix_committed_recording_the_honest_current_state
+        - vcard:cdo-07:no_silent_shadowing_dispatcher_fix_with_regression_test
+        - vcard:cdo-07:parity_subset_implemented_or_formally_scoped_conformance_harness
+        - vcard:cdo-07:usg_spec_corrected_to_match_reality
+        - vcard:cdo-07:all_three_runtime_suites_green_at_baseline
+        - vcard:cdo-07:triad_card_clm_clm_cdo_07_runtime_parity_yaml_clm_clm_cdo_07_run
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-08-directory-handle-inventory-and-deployment-tokens
     card_type: pcard
@@ -2426,14 +2426,14 @@ sprints:
     dod:
       total: 8
       vcard_refs:
-        - vcard:cdo-08:x_clm_dir_capture_implemented_idempotent_and_deterministic_recor
-        - vcard:cdo-08:x_clm_dir_diff_clm_dir_sync_implemented_change_reporting_verifie
-        - vcard:cdo-08:x_clm_dir_assess_implemented_totals_cross_checked_against_du_par
-        - vcard:cdo-08:x_deployment_decision_action_tokens_action_deploy_gate_action_de
-        - vcard:cdo-08:x_lifecycle_net_extended_with_t_assess_t_decide_conservation_and
-        - vcard:cdo-08:x_clm_mcard_list_inspect_verify_de_stubbed_inv_cdo_08_regression
-        - vcard:cdo-08:x_inventory_stage_wired_into_the_delivery_dag
-        - vcard:cdo-08:x_triad_card_clm_clm_cdo_08_directory_inventory_yaml_clm_clm_cdo
+        - vcard:cdo-08:clm_dir_capture_implemented_idempotent_and_deterministic_recorde
+        - vcard:cdo-08:clm_dir_diff_clm_dir_sync_implemented_change_reporting_verified
+        - vcard:cdo-08:clm_dir_assess_implemented_totals_cross_checked_against_du_parti
+        - vcard:cdo-08:deployment_decision_action_tokens_action_deploy_gate_action_depl
+        - vcard:cdo-08:lifecycle_net_extended_with_t_assess_t_decide_conservation_and_m
+        - vcard:cdo-08:clm_mcard_list_inspect_verify_de_stubbed_inv_cdo_08_regression_t
+        - vcard:cdo-08:inventory_stage_wired_into_the_delivery_dag
+        - vcard:cdo-08:triad_card_clm_clm_cdo_08_directory_inventory_yaml_clm_clm_cdo_0
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-09-deployment-unit-admission-and-evolutionary-tracking
     card_type: pcard
@@ -2443,21 +2443,21 @@ sprints:
     dod:
       total: 15
       vcard_refs:
-        - vcard:cdo-09:x_landingpage_mcard_yaml_authored_as_a_meta_portal_deployment_un
-        - vcard:cdo-09:x_handle_mcard_deployment_unit_landingpage_registers_and_resolve
-        - vcard:cdo-09:x_genesis_capture_completes_with_secret_exclusions_env_provably_
-        - vcard:cdo-09:x_single_directory_packaged_into_a_growth_only_set_sqlite_db_fil
-        - vcard:cdo-09:x_unified_artifact_mcard_db_examined_for_uncompressed_payload_by
-        - vcard:cdo-09:x_interactive_meta_portal_deployment_unit_inspector_mounted_in_l
-        - vcard:cdo-09:x_playwright_test_suite_tests_features_presentation_lattice_spec
-        - vcard:cdo-09:x_clm_unit_evolution_reports_changes_correctly_ledger_holds_one_
-        - vcard:cdo-09:x_clm_unit_surfaces_reports_the_argocd_compose_k8s_facts_danglin
-        - vcard:cdo-09:x_net_extended_with_t_admit_t_track_t_evolve_conservation_and_mi
-        - vcard:cdo-09:x_deployment_decision_token_evaluated_for_the_unit_with_a_budget
-        - vcard:cdo-09:x_the_navigation_declaration_in_the_manifest_is_either_satisfied
-        - vcard:cdo-09:x_implementation_neutral_test_suite_executed_across_the_type_lat
-        - vcard:cdo-09:x_playwright_visual_inspection_executed_across_the_type_lattice_
-        - vcard:cdo-09:x_triad_card_clm_clm_cdo_09_deployment_unit_yaml_clm_clm_cdo_09_
+        - vcard:cdo-09:landingpage_mcard_yaml_authored_as_a_meta_portal_deployment_unit
+        - vcard:cdo-09:handle_mcard_deployment_unit_landingpage_registers_and_resolves_
+        - vcard:cdo-09:genesis_capture_completes_with_secret_exclusions_env_provably_ab
+        - vcard:cdo-09:single_directory_packaged_into_a_growth_only_set_sqlite_db_file_
+        - vcard:cdo-09:unified_artifact_mcard_db_examined_for_uncompressed_payload_byte
+        - vcard:cdo-09:interactive_meta_portal_deployment_unit_inspector_mounted_in_lan
+        - vcard:cdo-09:playwright_test_suite_tests_features_presentation_lattice_spec_j
+        - vcard:cdo-09:clm_unit_evolution_reports_changes_correctly_ledger_holds_one_mc
+        - vcard:cdo-09:clm_unit_surfaces_reports_the_argocd_compose_k8s_facts_dangling_
+        - vcard:cdo-09:net_extended_with_t_admit_t_track_t_evolve_conservation_and_misu
+        - vcard:cdo-09:deployment_decision_token_evaluated_for_the_unit_with_a_budget_b
+        - vcard:cdo-09:the_navigation_declaration_in_the_manifest_is_either_satisfied_b
+        - vcard:cdo-09:implementation_neutral_test_suite_executed_across_the_type_latti
+        - vcard:cdo-09:playwright_visual_inspection_executed_across_the_type_lattice_ba
+        - vcard:cdo-09:triad_card_clm_clm_cdo_09_deployment_unit_yaml_clm_clm_cdo_09_de
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-10-fiber-base-and-totality
     card_type: pcard
@@ -2467,12 +2467,12 @@ sprints:
     dod:
       total: 6
       vcard_refs:
-        - vcard:cdo-10:x_the_mcard_kind_taxonomy_is_committed_and_derived_from_kernel_p
-        - vcard:cdo-10:x_fibers_is_declared_in_the_registry_and_covers_the_taxonomy_exa
-        - vcard:cdo-10:x_the_fiber_totality_gate_passes_with_mutation_controls_for_unde
-        - vcard:cdo-10:x_the_island_inventory_is_retained_as_mount_points_not_as_the_fi
-        - vcard:cdo-10:x_the_unknown_card_resolution_path_is_implemented_and_tested_ret
-        - vcard:cdo-10:x_no_rendering_or_dispatch_is_claimed_that_is_cdo_11
+        - vcard:cdo-10:the_mcard_kind_taxonomy_is_committed_and_derived_from_kernel_pri
+        - vcard:cdo-10:fibers_is_declared_in_the_registry_and_covers_the_taxonomy_exact
+        - vcard:cdo-10:the_fiber_totality_gate_passes_with_mutation_controls_for_undecl
+        - vcard:cdo-10:the_island_inventory_is_retained_as_mount_points_not_as_the_fibe
+        - vcard:cdo-10:the_unknown_card_resolution_path_is_implemented_and_tested_retur
+        - vcard:cdo-10:no_rendering_or_dispatch_is_claimed_that_is_cdo_11
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-11-fiber-registry-and-dispatch
     card_type: pcard
@@ -2482,15 +2482,15 @@ sprints:
     dod:
       total: 9
       vcard_refs:
-        - vcard:cdo-11:x_the_adapter_contract_is_defined_documented_and_enforced
-        - vcard:cdo-11:x_dispatch_is_a_registry_lookup_with_no_per_kind_branch_in_the_c
-        - vcard:cdo-11:x_the_fallback_fiber_renders_undeclared_kinds_honestly_and_label
-        - vcard:cdo-11:x_the_extensibility_proof_passes_a_new_kind_displays_with_a_zero
-        - vcard:cdo-11:x_observational_equivalence_holds_adding_and_removing_a_fiber_le
-        - vcard:cdo-11:x_the_fiber_inspector_lists_exactly_the_declared_fibers_and_mark
-        - vcard:cdo-11:x_telemetry_carries_the_fiber_coordinate_the_dashboard_parses
-        - vcard:cdo-11:x_mount_lifecycle_witnesses_are_emitted_including_dispose_status
-        - vcard:cdo-11:x_no_desktop_shell_work_is_claimed_in_this_sprint
+        - vcard:cdo-11:the_adapter_contract_is_defined_documented_and_enforced
+        - vcard:cdo-11:dispatch_is_a_registry_lookup_with_no_per_kind_branch_in_the_cor
+        - vcard:cdo-11:the_fallback_fiber_renders_undeclared_kinds_honestly_and_labelle
+        - vcard:cdo-11:the_extensibility_proof_passes_a_new_kind_displays_with_a_zero_c
+        - vcard:cdo-11:observational_equivalence_holds_adding_and_removing_a_fiber_leav
+        - vcard:cdo-11:the_fiber_inspector_lists_exactly_the_declared_fibers_and_marks_
+        - vcard:cdo-11:telemetry_carries_the_fiber_coordinate_the_dashboard_parses
+        - vcard:cdo-11:mount_lifecycle_witnesses_are_emitted_including_dispose_status
+        - vcard:cdo-11:no_desktop_shell_work_is_claimed_in_this_sprint
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-12-fiber-conformance-harness
     card_type: pcard
@@ -2500,13 +2500,13 @@ sprints:
     dod:
       total: 7
       vcard_refs:
-        - vcard:cdo-12:x_the_harness_derives_its_workload_from_fibers_not_from_a_hardco
-        - vcard:cdo-12:x_every_declared_fiber_is_swept_across_the_full_lattice_basis
-        - vcard:cdo-12:x_reflow_rtl_containment_and_contrast_assertions_run_per_fiber_w
-        - vcard:cdo-12:x_membrane_isolation_and_boundary_diagnostics_run_per_fiber
-        - vcard:cdo-12:x_visual_witnesses_are_sealed_attributed_to_a_fiber_and_survive_
-        - vcard:cdo-12:x_a_coverage_report_lists_covered_and_uncovered_pairs_explicitly
-        - vcard:cdo-12:x_the_harness_is_unchanged_when_a_new_fiber_is_added_extensibili
+        - vcard:cdo-12:the_harness_derives_its_workload_from_fibers_not_from_a_hardcode
+        - vcard:cdo-12:every_declared_fiber_is_swept_across_the_full_lattice_basis
+        - vcard:cdo-12:reflow_rtl_containment_and_contrast_assertions_run_per_fiber_wit
+        - vcard:cdo-12:membrane_isolation_and_boundary_diagnostics_run_per_fiber
+        - vcard:cdo-12:visual_witnesses_are_sealed_attributed_to_a_fiber_and_survive_th
+        - vcard:cdo-12:a_coverage_report_lists_covered_and_uncovered_pairs_explicitly
+        - vcard:cdo-12:the_harness_is_unchanged_when_a_new_fiber_is_added_extensibility
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-13-fibration-metric-observability-and-spa-lagrangian-assessment
     card_type: pcard
@@ -2516,15 +2516,15 @@ sprints:
     dod:
       total: 9
       vcard_refs:
-        - vcard:cdo-13:x_three_metric_collectors_implemented_and_tested
-        - vcard:cdo-13:x_lagrangian_scorer_implemented_with_weights_externalized_to_mca
-        - vcard:cdo-13:x_d3_js_bundle_map_parallel_coordinates_treemap_and_admissibilit
-        - vcard:cdo-13:x_chart_js_radar_web_vitals_series_and_budget_bars_render
-        - vcard:cdo-13:x_per_unit_assessment_table_sorts_by_mathcal_l_and_exports_a_sch
-        - vcard:cdo-13:x_two_units_landingpage_mcard_studio_render_over_the_shared_base
-        - vcard:cdo-13:x_lazy_loading_assertion_passes_no_static_d3_chart_js_reference
-        - vcard:cdo-13:x_assessment_artifact_captured_by_the_cdo_08_inventory
-        - vcard:cdo-13:x_triad_card_clm_clm_cdo_13_fibration_observability_yaml_clm_clm
+        - vcard:cdo-13:three_metric_collectors_implemented_and_tested
+        - vcard:cdo-13:lagrangian_scorer_implemented_with_weights_externalized_to_mcard
+        - vcard:cdo-13:d3_js_bundle_map_parallel_coordinates_treemap_and_admissibility_
+        - vcard:cdo-13:chart_js_radar_web_vitals_series_and_budget_bars_render
+        - vcard:cdo-13:per_unit_assessment_table_sorts_by_mathcal_l_and_exports_a_schem
+        - vcard:cdo-13:two_units_landingpage_mcard_studio_render_over_the_shared_base_a
+        - vcard:cdo-13:lazy_loading_assertion_passes_no_static_d3_chart_js_reference
+        - vcard:cdo-13:assessment_artifact_captured_by_the_cdo_08_inventory
+        - vcard:cdo-13:triad_card_clm_clm_cdo_13_fibration_observability_yaml_clm_clm_c
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-14-correctness-and-hoare-triple-observability
     card_type: pcard
@@ -2534,17 +2534,17 @@ sprints:
     dod:
       total: 11
       vcard_refs:
-        - vcard:cdo-14:x_correctness_panel_renders_for_every_selected_unit_with_both_ga
-        - vcard:cdo-14:x_per_transition_hoare_table_matches_the_cdo_01_net_with_partial
-        - vcard:cdo-14:x_resource_bounded_triples_render_against_mcard_yaml_budgets
-        - vcard:cdo-14:x_certificate_chain_renders_with_verifier_identity_and_complexit
-        - vcard:cdo-14:x_directional_alignment_and_jacobian_render_with_threshold_bands
-        - vcard:cdo-14:x_safety_and_liveness_render_as_distinct_rows_safety_only_is_nev
-        - vcard:cdo-14:x_coherence_gluing_renders_all_four_quadrants
-        - vcard:cdo-14:x_repl_process_model_renders_with_per_phase_correctness_annotati
-        - vcard:cdo-14:x_brittleness_disclosure_renders_staleness
-        - vcard:cdo-14:x_panel_coexists_with_cdo_13_s_fibration_metrics_panel_and_is_pr
-        - vcard:cdo-14:x_triad_card_clm_clm_cdo_14_correctness_observability_yaml_clm_c
+        - vcard:cdo-14:correctness_panel_renders_for_every_selected_unit_with_both_galo
+        - vcard:cdo-14:per_transition_hoare_table_matches_the_cdo_01_net_with_partial_t
+        - vcard:cdo-14:resource_bounded_triples_render_against_mcard_yaml_budgets
+        - vcard:cdo-14:certificate_chain_renders_with_verifier_identity_and_complexity_
+        - vcard:cdo-14:directional_alignment_and_jacobian_render_with_threshold_bands
+        - vcard:cdo-14:safety_and_liveness_render_as_distinct_rows_safety_only_is_never
+        - vcard:cdo-14:coherence_gluing_renders_all_four_quadrants
+        - vcard:cdo-14:repl_process_model_renders_with_per_phase_correctness_annotation
+        - vcard:cdo-14:brittleness_disclosure_renders_staleness
+        - vcard:cdo-14:panel_coexists_with_cdo_13_s_fibration_metrics_panel_and_is_pres
+        - vcard:cdo-14:triad_card_clm_clm_cdo_14_correctness_observability_yaml_clm_clm
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-15-penpot-navigation-authoring
     card_type: pcard
@@ -2554,12 +2554,12 @@ sprints:
     dod:
       total: 6
       vcard_refs:
-        - vcard:cdo-15:x_the_navigation_penpot_file_declaration_and_the_filesystem_agre
-        - vcard:cdo-15:x_nav_init_render_drift_and_import_implemented_import_guarded_an
-        - vcard:cdo-15:x_every_navigable_frame_carries_a_plugin_data_clm_handle_unbound
-        - vcard:cdo-15:x_round_trip_is_stable_one_edit_yields_one_changed_handle_the_ar
-        - vcard:cdo-15:x_file_based_commands_pass_with_penpot_absent
-        - vcard:cdo-15:x_triad_card_passes_clm_evaluate_at_its_declared_level
+        - vcard:cdo-15:the_navigation_penpot_file_declaration_and_the_filesystem_agree_
+        - vcard:cdo-15:nav_init_render_drift_and_import_implemented_import_guarded_and_
+        - vcard:cdo-15:every_navigable_frame_carries_a_plugin_data_clm_handle_unbound_a
+        - vcard:cdo-15:round_trip_is_stable_one_edit_yields_one_changed_handle_the_arch
+        - vcard:cdo-15:file_based_commands_pass_with_penpot_absent
+        - vcard:cdo-15:triad_card_passes_clm_evaluate_at_its_declared_level
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-16-end-to-end-certification
     card_type: pcard
@@ -2569,14 +2569,14 @@ sprints:
     dod:
       total: 8
       vcard_refs:
-        - vcard:cdo-16:x_real_change_traversed_p_intent_p_committed_including_t_assess_
-        - vcard:cdo-16:x_evidence_bundle_emitted_with_real_command_witnesses
-        - vcard:cdo-16:x_inventory_assessment_committed_totalbytes_cross_checked_deploy
-        - vcard:cdo-16:x_derived_level_table_committed_declared_derived_for_every_sprin
-        - vcard:cdo-16:x_gate_battery_green_1_gate_demonstrated_load_bearing
-        - vcard:cdo-16:x_retrospective_committed
-        - vcard:cdo-16:x_program_archived_tracker_updated_tagged
-        - vcard:cdo-16:x_triad_card_clm_clm_cdo_16_certification_yaml_clm_clm_cdo_16_ce
+        - vcard:cdo-16:real_change_traversed_p_intent_p_committed_including_t_assess_t_
+        - vcard:cdo-16:evidence_bundle_emitted_with_real_command_witnesses
+        - vcard:cdo-16:inventory_assessment_committed_totalbytes_cross_checked_deployme
+        - vcard:cdo-16:derived_level_table_committed_declared_derived_for_every_sprint
+        - vcard:cdo-16:gate_battery_green_1_gate_demonstrated_load_bearing
+        - vcard:cdo-16:retrospective_committed
+        - vcard:cdo-16:program_archived_tracker_updated_tagged
+        - vcard:cdo-16:triad_card_clm_clm_cdo_16_certification_yaml_clm_clm_cdo_16_cert
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:rvp:00-program-charter-epic-rvp
     card_type: pcard
@@ -2660,12 +2660,12 @@ sprints:
     dod:
       total: 6
       vcard_refs:
-        - vcard:sty-01:x_the_audit_harness_reads_computed_styles_over_every_loadable_su
-        - vcard:sty-01:x_the_resolver_composites_alpha_and_handles_background_image_bot
-        - vcard:sty-01:x_the_token_contract_is_committed_and_reconciles_with_the_declar
-        - vcard:sty-01:x_the_baseline_is_committed_with_every_failure_classified_confir
-        - vcard:sty-01:x_the_inline_style_inventory_separates_presentational_from_struc
-        - vcard:sty-01:x_no_page_has_been_changed_verified_commit_1bcc7ba_the_sty_01_ha
+        - vcard:sty-01:the_audit_harness_reads_computed_styles_over_every_loadable_surf
+        - vcard:sty-01:the_resolver_composites_alpha_and_handles_background_image_both_
+        - vcard:sty-01:the_token_contract_is_committed_and_reconciles_with_the_declared
+        - vcard:sty-01:the_baseline_is_committed_with_every_failure_classified_confirme
+        - vcard:sty-01:the_inline_style_inventory_separates_presentational_from_structu
+        - vcard:sty-01:no_page_has_been_changed_verified_commit_1bcc7ba_the_sty_01_harn
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-02-layout-freeze
     card_type: pcard
@@ -2675,11 +2675,11 @@ sprints:
     dod:
       total: 5
       vcard_refs:
-        - vcard:sty-02:x_the_layout_baseline_is_committed_over_every_surface_and_viewpo
-        - vcard:sty-02:x_a_colour_only_change_passes_the_freeze_negative_control
-        - vcard:sty-02:x_a_1px_padding_change_and_a_display_change_each_fail_it_mutatio
-        - vcard:sty-02:x_volatile_regions_are_masked_with_the_obligation_recorded_not_e
-        - vcard:sty-02:x_no_page_has_been_changed_the_sprint_adds_a_test_harness_and_a_
+        - vcard:sty-02:the_layout_baseline_is_committed_over_every_surface_and_viewport
+        - vcard:sty-02:a_colour_only_change_passes_the_freeze_negative_control
+        - vcard:sty-02:a_1px_padding_change_and_a_display_change_each_fail_it_mutation_
+        - vcard:sty-02:volatile_regions_are_masked_with_the_obligation_recorded_not_exc
+        - vcard:sty-02:no_page_has_been_changed_the_sprint_adds_a_test_harness_and_a_ba
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-03-tokenise-shared-chrome
     card_type: pcard
@@ -2689,11 +2689,11 @@ sprints:
     dod:
       total: 5
       vcard_refs:
-        - vcard:sty-03:x_app_html_paints_no_presentational_literal_0_in_inline_attribut
-        - vcard:sty-03:x_the_17_unused_tokens_are_adopted_or_retired_with_a_reason_15_a
-        - vcard:sty-03:x_structural_declarations_are_byte_identical_within_the_survivin
-        - vcard:sty-03:x_app_html_renders_in_all_three_themes_with_0_contrast_failures_
-        - vcard:sty-03:x_no_dom_or_handler_changed_the_freeze_s_tag_index_count_compari
+        - vcard:sty-03:app_html_paints_no_presentational_literal_0_in_inline_attributes
+        - vcard:sty-03:the_17_unused_tokens_are_adopted_or_retired_with_a_reason_15_ado
+        - vcard:sty-03:structural_declarations_are_byte_identical_within_the_surviving_
+        - vcard:sty-03:app_html_renders_in_all_three_themes_with_0_contrast_failures_li
+        - vcard:sty-03:no_dom_or_handler_changed_the_freeze_s_tag_index_count_compariso
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-04-colour-convergence-index
     card_type: pcard
@@ -2703,11 +2703,11 @@ sprints:
     dod:
       total: 5
       vcard_refs:
-        - vcard:sty-04:x_zero_tailwind_literals_remain_in_presentational_declarations_0
-        - vcard:sty-04:x_translucencies_are_declared_overlay_tokens_with_their_own_cont
-        - vcard:sty-04:x_distinct_backgrounds_converge_onto_the_declared_set_with_the_r
-        - vcard:sty-04:x_the_visual_hierarchy_is_preserved_not_flattened_hue_identity_i
-        - vcard:sty-04:x_the_layout_freeze_passes_at_every_swept_viewport_30_30
+        - vcard:sty-04:zero_tailwind_literals_remain_in_presentational_declarations_0_i
+        - vcard:sty-04:translucencies_are_declared_overlay_tokens_with_their_own_contra
+        - vcard:sty-04:distinct_backgrounds_converge_onto_the_declared_set_with_the_red
+        - vcard:sty-04:the_visual_hierarchy_is_preserved_not_flattened_hue_identity_is_
+        - vcard:sty-04:the_layout_freeze_passes_at_every_swept_viewport_30_30
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-05-contrast-remediation
     card_type: pcard
@@ -2717,11 +2717,11 @@ sprints:
     dod:
       total: 5
       vcard_refs:
-        - vcard:sty-05:x_zero_confirmed_pairs_below_1_2_1_remain_under_the_corrected_re
-        - vcard:sty-05:x_the_badge_pattern_is_fixed_at_the_token_level_and_the_pairing_
-        - vcard:sty-05:x_every_state_colour_is_a_declared_foreground_background_pair
-        - vcard:sty-05:x_the_contrast_gate_fails_on_a_new_violation_and_passes_a_valid_
-        - vcard:sty-05:x_every_confirmed_failure_from_the_classified_baseline_is_cleare
+        - vcard:sty-05:zero_confirmed_pairs_below_1_2_1_remain_under_the_corrected_reso
+        - vcard:sty-05:the_badge_pattern_is_fixed_at_the_token_level_and_the_pairing_is
+        - vcard:sty-05:every_state_colour_is_a_declared_foreground_background_pair
+        - vcard:sty-05:the_contrast_gate_fails_on_a_new_violation_and_passes_a_valid_pa
+        - vcard:sty-05:every_confirmed_failure_from_the_classified_baseline_is_cleared_
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-06-theme-completeness
     card_type: pcard
@@ -2731,12 +2731,12 @@ sprints:
     dod:
       total: 6
       vcard_refs:
-        - vcard:sty-06:x_pkc_docs_index_html_is_on_the_token_layer_and_clears_its_confi
-        - vcard:sty-06:x_responsive_lab_html_clears_its_confirmed_failures_under_the_co
-        - vcard:sty-06:x_high_contrast_meets_aaa_and_never_encodes_state_by_hue_alone_t
-        - vcard:sty-06:x_the_theme_coverage_matrix_is_committed_with_uncovered_cells_ma
-        - vcard:sty-06:x_the_component_surfaces_are_theme_adaptive_and_measured_the_dep
-        - vcard:sty-06:x_no_page_is_outside_the_token_layer_every_page_paints_from_a_de
+        - vcard:sty-06:pkc_docs_index_html_is_on_the_token_layer_and_clears_its_confirm
+        - vcard:sty-06:responsive_lab_html_clears_its_confirmed_failures_under_the_corr
+        - vcard:sty-06:high_contrast_meets_aaa_and_never_encodes_state_by_hue_alone_the
+        - vcard:sty-06:the_theme_coverage_matrix_is_committed_with_uncovered_cells_mark
+        - vcard:sty-06:the_component_surfaces_are_theme_adaptive_and_measured_the_deplo
+        - vcard:sty-06:no_page_is_outside_the_token_layer_every_page_paints_from_a_decl
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-07-configurability-surface-and-gate
     card_type: pcard
@@ -2746,9 +2746,9 @@ sprints:
     dod:
       total: 5
       vcard_refs:
-        - vcard:sty-07:x_exactly_one_file_declares_palette_values
-        - vcard:sty-07:x_a_swap_changes_no_page_and_no_component_css_and_passes_the_flo
-        - vcard:sty-07:x_the_gate_enforces_every_property_with_mutation_controls_and_ne
-        - vcard:sty-07:x_the_certification_report_carries_the_baseline_the_final_measur
-        - vcard:sty-07:x_inv_sty_01_through_inv_sty_08_all_hold
+        - vcard:sty-07:exactly_one_file_declares_palette_values
+        - vcard:sty-07:a_swap_changes_no_page_and_no_component_css_and_passes_the_floor
+        - vcard:sty-07:the_gate_enforces_every_property_with_mutation_controls_and_nega
+        - vcard:sty-07:the_certification_report_carries_the_baseline_the_final_measurem
+        - vcard:sty-07:inv_sty_01_through_inv_sty_08_all_hold
       state: sealed
