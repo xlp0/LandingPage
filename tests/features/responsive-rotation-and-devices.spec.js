@@ -313,4 +313,42 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     expect(painted.transparent, 'the modal resolves a token background').toBe(false);
     expect(painted.bg).not.toBe(painted.rowBg);
   });
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // The tested page must remain reachable inside the device viewport
+  // ──────────────────────────────────────────────────────────────────────────
+  test('RVP-T06: a tested page taller than the device viewport can be scrolled to', async ({ page }) => {
+    // The reported defect: index.html pinned its own body to `height: 100vh;
+    // overflow: hidden`, so content taller than the emulated device was
+    // unreachable — the lab faithfully showed a page that hid its own content.
+    // A responsive lab is useless if the page under test cannot be inspected.
+    await page.selectOption('#public-site-selector', 'index.html');
+    await page.locator('#btn-load-in-iframe').click();
+    await page.waitForTimeout(1200);
+    await page.locator('#btn-orient-vertical').click();
+    await page.fill('#controlled-width-input', '832');
+    await page.fill('#controlled-height-input', '1133');
+    await page.locator('#btn-apply-custom-dim').click();
+    await page.waitForTimeout(1500);
+
+    const m = await page.evaluate(() => {
+      const doc = document.querySelector('#mission-control-iframe').contentDocument;
+      return {
+        contentH: doc.documentElement.scrollHeight,
+        viewH: doc.documentElement.clientHeight,
+        bodyOverflowY: getComputedStyle(doc.body).overflowY,
+      };
+    });
+
+    expect(m.contentH, 'the portal is taller than the device viewport').toBeGreaterThan(m.viewH);
+    expect(m.bodyOverflowY, 'the page does not hide its own overflow').not.toBe('hidden');
+
+    // and it actually scrolls
+    const after = await page.evaluate(() => {
+      const doc = document.querySelector('#mission-control-iframe').contentDocument;
+      doc.documentElement.scrollTop = 400;
+      return doc.documentElement.scrollTop;
+    });
+    expect(after, 'the tested page scrolls inside the device viewport').toBeGreaterThan(0);
+  });
 });

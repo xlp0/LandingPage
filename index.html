@@ -18,12 +18,16 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: var(--color-bg);
       color: var(--color-text-primary);
-      height: 100vh;
+      /* min-height, not height: with `height: 100vh; overflow: hidden` the
+         portal clipped its own content whenever the viewport was shorter than
+         the page — at 832x1133 the content is 1187px, so the bottom 92px was
+         unreachable and unscrollable. min-height keeps the centred hero when
+         the content fits and lets the page scroll when it does not. */
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
       background-image: radial-gradient(circle at top right, var(--color-bg-subtle) 0%, var(--color-bg) 100%);
       transition: background-color var(--motion-duration-normal) ease, color var(--motion-duration-normal) ease;
     }

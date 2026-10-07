@@ -153,9 +153,16 @@ test.describe('Layout freeze', () => {
     test.skip(mode !== 'capture', 'capture mode only');
     mkdirSync(dirname(OUT), { recursive: true });
     const tagVocab = [], clsVocab = [];
+    // A re-capture replaces the measurements but must not erase the record of
+    // *why* earlier re-baselines happened — that history is the only thing that
+    // distinguishes a sanctioned change from a laundered one.
+    let rebaselines = [];
+    try {
+      rebaselines = JSON.parse(readFileSync(OUT, 'utf8')).rebaselines ?? [];
+    } catch { /* first capture */ }
     const baseline = {
       captured: '2026-10-07', viewports: Object.keys(VIEWPORTS), format: 'compact-v1',
-      tag_vocab: tagVocab, cls_vocab: clsVocab, pages: {},
+      tag_vocab: tagVocab, cls_vocab: clsVocab, rebaselines, pages: {},
     };
     for (const p of PAGES) {
       baseline.pages[p.name] = { masked_regions: VOLATILE[p.name], viewports: {} };
