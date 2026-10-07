@@ -149,7 +149,10 @@ export class FibrationDashboard {
 
   async loadAssessmentData() {
     try {
-      const res = await fetch('/docs/sprints/_active/observability/fibration_assessment.json');
+      let res = await fetch('/docs/sprints/epic-cdo/observability/fibration_assessment.json');
+      if (!res.ok) {
+        res = await fetch('/docs/sprints/_active/observability/fibration_assessment.json');
+      }
       if (res.ok) {
         const data = await res.json();
         if (data.units && data.units.length > 0) {
