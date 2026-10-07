@@ -252,7 +252,7 @@ export class FibrationDashboard {
       name: u.unit,
       bytes: u.payload_bytes || 1200000,
       percent: Math.round(((u.payload_bytes || 1200000) / totalBytes) * 100),
-      color: u.regime === 'geodesic' ? '#10b981' : (u.regime === 'pruning' ? '#ef4444' : '#3b82f6')
+      color: u.regime === 'geodesic' ? 'var(--color-success)' : (u.regime === 'pruning' ? 'var(--color-danger)' : 'var(--color-primary)')
     }));
 
     renderPayloadTreemap(container, {
@@ -270,7 +270,7 @@ export class FibrationDashboard {
     container.innerHTML = `
       <table class="fibration-unit-table" id="fibration-unit-table" style="width: 100%; border-collapse: collapse; font-size: 12px; font-family: ui-monospace, monospace;">
         <thead>
-          <tr style="border-bottom: 2px solid #475569; text-align: left; color: #94a3b8;">
+          <tr style="border-bottom: 2px solid var(--panel-text-muted); text-align: left; color: var(--panel-text-muted);">
             <th style="padding: 6px;">Unit</th>
             <th style="padding: 6px;">Lattice Coordinate &tau;</th>
             <th style="padding: 6px;">Performance</th>
@@ -286,17 +286,17 @@ export class FibrationDashboard {
           ${sorted.map(u => {
             const isGeodesic = u.regime === 'geodesic';
             const isPruned = u.regime === 'pruning';
-            const badgeColor = isGeodesic ? '#10b981' : (isPruned ? '#ef4444' : '#f59e0b');
+            const badgeColor = isGeodesic ? 'var(--color-success)' : (isPruned ? 'var(--color-danger)' : 'var(--color-warning)');
             const coord = `${u.tau?.platform || 'web'}:${u.tau?.form_factor || 'desktop'}`;
             return `
-              <tr class="unit-row" data-unit="${u.unit}" style="border-bottom: 1px solid #334155; cursor: pointer;">
-                <td style="padding: 6px; font-weight: bold; color: #f8fafc;">${u.unit}</td>
-                <td style="padding: 6px; color: #38bdf8;"><code>${coord}</code></td>
+              <tr class="unit-row" data-unit="${u.unit}" style="border-bottom: 1px solid var(--color-surface-hover); cursor: pointer;">
+                <td style="padding: 6px; font-weight: bold; color: var(--panel-text);">${u.unit}</td>
+                <td style="padding: 6px; color: var(--color-info);"><code>${coord}</code></td>
                 <td style="padding: 6px;">LCP: ${u.performance_summary?.lcp_ms || '—'}ms &bull; H_T_res: ${u.performance_summary?.residual_entropy ?? 0}</td>
                 <td style="padding: 6px;">${((u.payload_bytes || 0) / (1024*1024)).toFixed(2)} MB ${u.within_budget ? '✓' : '✕'}</td>
                 <td style="padding: 6px;">${Math.round((u.functionality_coverage ?? 1.0) * 100)}%</td>
-                <td style="padding: 6px; color: #38bdf8;">${u.S_T}</td>
-                <td style="padding: 6px; color: #f59e0b;">${u.H_T}</td>
+                <td style="padding: 6px; color: var(--color-info);">${u.S_T}</td>
+                <td style="padding: 6px; color: var(--color-warning);">${u.H_T}</td>
                 <td style="padding: 6px; font-weight: bold; color: ${badgeColor};">${u.lagrangian > 0 ? '+' : ''}${u.lagrangian}</td>
                 <td style="padding: 6px;"><span style="color: ${badgeColor}; font-weight: bold;">${(u.regime || 'geodesic').toUpperCase()}</span></td>
               </tr>
@@ -314,27 +314,27 @@ export class FibrationDashboard {
     if (!slotElement) return;
     slotElement.innerHTML = `
       <div class="insp-metrics-dashboard" style="margin-top: 16px;">
-        <h4 style="margin: 0 0 12px; font-size: 14px; color: #38bdf8; display: flex; align-items: center; gap: 8px;">
+        <h4 style="margin: 0 0 12px; font-size: 14px; color: var(--color-info); display: flex; align-items: center; gap: 8px;">
           <span>📊 Fibration Metric Observability (CDO-13)</span>
-          <span style="font-size: 11px; background: rgba(56, 189, 248, 0.15); padding: 2px 8px; border-radius: 4px; border: 1px solid #38bdf8;">
+          <span style="font-size: 11px; background: var(--badge-info-bg); padding: 2px 8px; border-radius: 4px; border: 1px solid var(--color-info);">
             Lazy-Loaded Tier
           </span>
         </h4>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
           <!-- 1. Payload Treemap -->
-          <div class="metric-card" style="padding: 12px; background: #0b1120; border-radius: 8px; border: 1px solid #1e293b;">
-            <div style="font-size: 12px; font-weight: bold; color: #cbd5e1; margin-bottom: 8px;">
+          <div class="metric-card" style="padding: 12px; background: var(--panel-abyss); border-radius: 8px; border: 1px solid var(--color-bg-subtle);">
+            <div style="font-size: 12px; font-weight: bold; color: var(--panel-text); margin-bottom: 8px;">
               Payload Mass Treemap with Budget Threshold
             </div>
             <div id="insp-treemap-container" style="min-height: 220px;"></div>
           </div>
 
           <!-- 2. Functionality Radar -->
-          <div class="metric-card" style="padding: 12px; background: #0b1120; border-radius: 8px; border: 1px solid #1e293b;">
-            <div style="font-size: 12px; font-weight: bold; color: #cbd5e1; margin-bottom: 8px; display: flex; justify-content: space-between;">
+          <div class="metric-card" style="padding: 12px; background: var(--panel-abyss); border-radius: 8px; border: 1px solid var(--color-bg-subtle);">
+            <div style="font-size: 12px; font-weight: bold; color: var(--panel-text); margin-bottom: 8px; display: flex; justify-content: space-between;">
               <span>Functionality Coverage Radar</span>
-              <span id="radar-gap-indicator" style="font-size: 10px; color: #94a3b8;">Gaps for Missing Metrics</span>
+              <span id="radar-gap-indicator" style="font-size: 10px; color: var(--panel-text-muted);">Gaps for Missing Metrics</span>
             </div>
             <div style="position: relative; height: 220px; width: 100%;">
               <canvas id="insp-radar-canvas"></canvas>
@@ -342,8 +342,8 @@ export class FibrationDashboard {
           </div>
 
           <!-- 3. Web Vitals Multi-Series Line -->
-          <div class="metric-card" style="padding: 12px; background: #0b1120; border-radius: 8px; border: 1px solid #1e293b;">
-            <div style="font-size: 12px; font-weight: bold; color: #cbd5e1; margin-bottom: 8px;">
+          <div class="metric-card" style="padding: 12px; background: var(--panel-abyss); border-radius: 8px; border: 1px solid var(--color-bg-subtle);">
+            <div style="font-size: 12px; font-weight: bold; color: var(--panel-text); margin-bottom: 8px;">
               Web Vitals Multi-Series (LCP / INP / CLS Thresholds)
             </div>
             <div style="position: relative; height: 220px; width: 100%;">
@@ -352,8 +352,8 @@ export class FibrationDashboard {
           </div>
 
           <!-- 4. Grouped Budget Bars -->
-          <div class="metric-card" style="padding: 12px; background: #0b1120; border-radius: 8px; border: 1px solid #1e293b;">
-            <div style="font-size: 12px; font-weight: bold; color: #cbd5e1; margin-bottom: 8px;">
+          <div class="metric-card" style="padding: 12px; background: var(--panel-abyss); border-radius: 8px; border: 1px solid var(--color-bg-subtle);">
+            <div style="font-size: 12px; font-weight: bold; color: var(--panel-text); margin-bottom: 8px;">
               Grouped Budget Comparison (Unit vs Archetype Budgets)
             </div>
             <div style="position: relative; height: 220px; width: 100%;">
@@ -372,11 +372,11 @@ export class FibrationDashboard {
     // 1. Render Payload Treemap
     await renderPayloadTreemap(treemapContainer, archetypeData || {
       categories: [
-        { name: 'Scripts (ESM)', bytes: 890000, percent: 48, color: '#3b82f6' },
-        { name: 'Assets & Images', bytes: 641200, percent: 35, color: '#10b981' },
-        { name: 'Markup (HTML)', bytes: 142000, percent: 8, color: '#f59e0b' },
-        { name: 'Styles (Tokens)', bytes: 112000, percent: 6, color: '#ec4899' },
-        { name: 'Manifests', bytes: 60000, percent: 3, color: '#8b5cf6' }
+        { name: 'Scripts (ESM)', bytes: 890000, percent: 48, color: 'var(--color-primary)' },
+        { name: 'Assets & Images', bytes: 641200, percent: 35, color: 'var(--color-success)' },
+        { name: 'Markup (HTML)', bytes: 142000, percent: 8, color: 'var(--color-warning)' },
+        { name: 'Styles (Tokens)', bytes: 112000, percent: 6, color: 'var(--chart-4)' },
+        { name: 'Manifests', bytes: 60000, percent: 3, color: 'var(--badge-accent-text)' }
       ],
       total_bytes: archetypeData?.totalBytes || 1845200
     }, {

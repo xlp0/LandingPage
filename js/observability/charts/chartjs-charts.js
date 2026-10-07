@@ -9,6 +9,8 @@
  * Loaded lazily via dynamic import(); presentation-only (INV-REF-01).
  */
 
+import { cssVar } from '../theme-tokens.js';
+
 let _Chart = null;
 
 export async function getChartJS() {
@@ -78,12 +80,12 @@ export async function renderFunctionalityRadar(canvas, functionalityMetrics = {}
         label: options.label || 'Observed Conformance',
         data: dataValues,
         fill: true,
-        backgroundColor: 'rgba(56, 189, 248, 0.25)',
-        borderColor: '#38bdf8',
-        pointBackgroundColor: dataValues.map(v => v === null ? 'transparent' : '#38bdf8'),
-        pointBorderColor: dataValues.map(v => v === null ? 'transparent' : '#ffffff'),
-        pointHoverBackgroundColor: '#ffffff',
-        pointHoverBorderColor: '#38bdf8',
+        backgroundColor: cssVar('--badge-info-bg'),
+        borderColor: cssVar('--color-info'),
+        pointBackgroundColor: dataValues.map(v => v === null ? 'transparent' : cssVar('--color-info')),
+        pointBorderColor: dataValues.map(v => v === null ? 'transparent' : cssVar('--panel-text')),
+        pointHoverBackgroundColor: cssVar('--panel-text'),
+        pointHoverBorderColor: cssVar('--color-info'),
         spanGaps: false // CRITICAL AC: missing metric renders as GAP, never zero
       }]
     },
@@ -93,7 +95,7 @@ export async function renderFunctionalityRadar(canvas, functionalityMetrics = {}
       plugins: {
         legend: {
           display: true,
-          labels: { color: '#cbd5e1', font: { family: 'ui-monospace, monospace', size: 11 } }
+          labels: { color: cssVar('--panel-text'), font: { family: 'ui-monospace, monospace', size: 11 } }
         },
         tooltip: {
           callbacks: {
@@ -113,16 +115,16 @@ export async function renderFunctionalityRadar(canvas, functionalityMetrics = {}
           max: 1.0,
           ticks: {
             stepSize: 0.2,
-            color: '#94a3b8',
+            color: cssVar('--panel-text-muted'),
             backdropColor: 'transparent',
             callback: (v) => `${Math.round(v * 100)}%`
           },
-          grid: { color: 'rgba(148, 163, 184, 0.2)' },
-          angleLines: { color: 'rgba(148, 163, 184, 0.3)' },
+          grid: { color: cssVar('--overlay-subtle') },
+          angleLines: { color: cssVar('--overlay-soft') },
           pointLabels: {
             color: (ctx) => {
               const idx = ctx.index;
-              return dataValues[idx] === null ? '#ef4444' : '#cbd5e1';
+              return dataValues[idx] === null ? cssVar('--color-danger') : cssVar('--panel-text');
             },
             font: { family: 'ui-monospace, monospace', size: 11, weight: 'bold' }
           }
@@ -169,8 +171,8 @@ export async function renderWebVitalsSeries(canvas, vitalsHistory = [], options 
         {
           label: 'LCP (ms) [≤2500ms Good]',
           data: lcpData,
-          borderColor: '#10b981',
-          backgroundColor: 'rgba(16, 185, 129, 0.15)',
+          borderColor: cssVar('--color-success'),
+          backgroundColor: cssVar('--color-success-surface'),
           borderWidth: 2.5,
           tension: 0.3,
           fill: false,
@@ -179,8 +181,8 @@ export async function renderWebVitalsSeries(canvas, vitalsHistory = [], options 
         {
           label: 'INP (ms) [≤200ms Good]',
           data: inpData,
-          borderColor: '#38bdf8',
-          backgroundColor: 'rgba(56, 189, 248, 0.15)',
+          borderColor: cssVar('--color-info'),
+          backgroundColor: cssVar('--badge-info-bg'),
           borderWidth: 2,
           tension: 0.3,
           fill: false,
@@ -189,8 +191,8 @@ export async function renderWebVitalsSeries(canvas, vitalsHistory = [], options 
         {
           label: 'CLS (score x1000) [≤100 Good]',
           data: clsData,
-          borderColor: '#f59e0b',
-          backgroundColor: 'rgba(245, 158, 11, 0.15)',
+          borderColor: cssVar('--color-warning'),
+          backgroundColor: cssVar('--color-warning-surface'),
           borderWidth: 2,
           borderDash: [5, 5],
           tension: 0.3,
@@ -206,7 +208,7 @@ export async function renderWebVitalsSeries(canvas, vitalsHistory = [], options 
       plugins: {
         legend: {
           display: true,
-          labels: { color: '#cbd5e1', font: { family: 'ui-monospace, monospace', size: 10 } }
+          labels: { color: cssVar('--panel-text'), font: { family: 'ui-monospace, monospace', size: 10 } }
         },
         tooltip: {
           callbacks: {
@@ -221,8 +223,8 @@ export async function renderWebVitalsSeries(canvas, vitalsHistory = [], options 
       },
       scales: {
         x: {
-          ticks: { color: '#94a3b8', font: { family: 'ui-monospace, monospace' } },
-          grid: { color: 'rgba(148, 163, 184, 0.15)' }
+          ticks: { color: cssVar('--panel-text-muted'), font: { family: 'ui-monospace, monospace' } },
+          grid: { color: cssVar('--overlay-subtle') }
         },
         y: {
           type: 'linear',
@@ -231,15 +233,15 @@ export async function renderWebVitalsSeries(canvas, vitalsHistory = [], options 
           min: 0,
           max: 3000,
           ticks: {
-            color: '#94a3b8',
+            color: cssVar('--panel-text-muted'),
             font: { family: 'ui-monospace, monospace' },
             callback: (v) => `${v}ms`
           },
           grid: {
             color: (ctx) => {
-              if (ctx.tick.value === 2500) return 'rgba(239, 68, 68, 0.6)'; // LCP threshold
-              if (ctx.tick.value === 200) return 'rgba(245, 158, 11, 0.5)';  // INP threshold
-              return 'rgba(148, 163, 184, 0.15)';
+              if (ctx.tick.value === 2500) return cssVar('--badge-danger-border'); // LCP threshold
+              if (ctx.tick.value === 200) return cssVar('--badge-warning-border');  // INP threshold
+              return cssVar('--overlay-subtle');
             }
           }
         }
@@ -283,15 +285,15 @@ export async function renderBudgetBars(canvas, unitTotalBytes = 1845200, archety
         {
           label: 'Archetype Budget Limit (MB)',
           data: budgetMb,
-          backgroundColor: 'rgba(56, 189, 248, 0.3)',
-          borderColor: '#38bdf8',
+          backgroundColor: cssVar('--badge-info-border'),
+          borderColor: cssVar('--color-info'),
           borderWidth: 1.5
         },
         {
           label: `Unit Allocation (${unitMb} MB)`,
           data: actualMb,
-          backgroundColor: actualMb.map((val, idx) => val <= budgetMb[idx] ? 'rgba(16, 185, 129, 0.65)' : 'rgba(239, 68, 68, 0.75)'),
-          borderColor: actualMb.map((val, idx) => val <= budgetMb[idx] ? '#10b981' : '#ef4444'),
+          backgroundColor: actualMb.map((val, idx) => val <= budgetMb[idx] ? cssVar('--badge-success-bg') : cssVar('--badge-danger-border')),
+          borderColor: actualMb.map((val, idx) => val <= budgetMb[idx] ? cssVar('--color-success') : cssVar('--color-danger')),
           borderWidth: 1.5
         }
       ]
@@ -302,7 +304,7 @@ export async function renderBudgetBars(canvas, unitTotalBytes = 1845200, archety
       plugins: {
         legend: {
           display: true,
-          labels: { color: '#cbd5e1', font: { family: 'ui-monospace, monospace', size: 10 } }
+          labels: { color: cssVar('--panel-text'), font: { family: 'ui-monospace, monospace', size: 10 } }
         },
         tooltip: {
           callbacks: {
@@ -321,16 +323,16 @@ export async function renderBudgetBars(canvas, unitTotalBytes = 1845200, archety
       },
       scales: {
         x: {
-          ticks: { color: '#cbd5e1', font: { family: 'ui-monospace, monospace', size: 10 } },
-          grid: { color: 'rgba(148, 163, 184, 0.1)' }
+          ticks: { color: cssVar('--panel-text'), font: { family: 'ui-monospace, monospace', size: 10 } },
+          grid: { color: cssVar('--overlay-faint') }
         },
         y: {
           ticks: {
-            color: '#94a3b8',
+            color: cssVar('--panel-text-muted'),
             font: { family: 'ui-monospace, monospace' },
             callback: (v) => `${v} MB`
           },
-          grid: { color: 'rgba(148, 163, 184, 0.15)' }
+          grid: { color: cssVar('--overlay-subtle') }
         }
       }
     }

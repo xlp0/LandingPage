@@ -48,7 +48,7 @@ export async function renderFiberBundleMap(container, units = [], options = {}) 
     .attr('viewBox', `0 0 ${width} ${height}`)
     .attr('width', '100%')
     .attr('height', height)
-    .style('background', 'var(--surface-primary, #0f172a)')
+    .style('background', 'var(--surface-primary, var(--color-bg))')
     .style('border-radius', '8px')
     .style('font-family', 'ui-monospace, monospace');
 
@@ -58,12 +58,12 @@ export async function renderFiberBundleMap(container, units = [], options = {}) 
     .attr('class', 'bundle-tooltip')
     .style('position', 'absolute')
     .style('visibility', 'hidden')
-    .style('background', 'rgba(15, 23, 42, 0.95)')
-    .style('border', '1px solid #38bdf8')
+    .style('background', 'var(--panel-deep-strong)')
+    .style('border', '1px solid var(--color-info)')
     .style('border-radius', '6px')
     .style('padding', '8px 12px')
     .style('font-size', '12px')
-    .style('color', '#f8fafc')
+    .style('color', 'var(--panel-text)')
     .style('pointer-events', 'none')
     .style('z-index', '100');
 
@@ -87,14 +87,14 @@ export async function renderFiberBundleMap(container, units = [], options = {}) 
     .attr('x2', width - margin.right + 20)
     .attr('y1', height - margin.bottom)
     .attr('y2', height - margin.bottom)
-    .attr('stroke', '#64748b')
+    .style('stroke', 'var(--color-text-muted)')
     .attr('stroke-width', 2)
     .attr('stroke-dasharray', '4 4');
 
   svg.append('text')
     .attr('x', width - margin.right)
     .attr('y', height - margin.bottom + 25)
-    .attr('fill', '#94a3b8')
+    .style('fill', 'var(--panel-text-muted)')
     .attr('text-anchor', 'end')
     .attr('font-size', '11px')
     .text('Base Space B (Type Lattice τ Coordinates)');
@@ -106,12 +106,12 @@ export async function renderFiberBundleMap(container, units = [], options = {}) 
       .attr('cx', x)
       .attr('cy', height - margin.bottom)
       .attr('r', 5)
-      .attr('fill', '#38bdf8');
+      .style('fill', 'var(--color-info)');
 
     svg.append('text')
       .attr('x', x)
       .attr('y', height - margin.bottom + 18)
-      .attr('fill', '#cbd5e1')
+      .style('fill', 'var(--panel-text)')
       .attr('text-anchor', 'middle')
       .attr('font-size', '10px')
       .text(coord);
@@ -124,7 +124,7 @@ export async function renderFiberBundleMap(container, units = [], options = {}) 
     const fiberHeight = yScale(Math.max(0.1, u.S_T || 0.5));
     const isGeodesic = u.regime === 'geodesic';
     const isPruned = u.regime === 'pruning';
-    const fiberColor = isGeodesic ? '#10b981' : (isPruned ? '#ef4444' : '#f59e0b');
+    const fiberColor = isGeodesic ? 'var(--color-success)' : (isPruned ? 'var(--color-danger)' : 'var(--color-warning)');
     // Fiber thickness encodes metric magnitude (payload or S_T)
     const thickness = Math.max(3, Math.min(10, (u.S_T || 0.5) * 8));
 
@@ -147,7 +147,7 @@ export async function renderFiberBundleMap(container, units = [], options = {}) 
       .attr('cy', fiberHeight)
       .attr('r', thickness / 1.5 + 2)
       .attr('fill', fiberColor)
-      .attr('stroke', '#ffffff')
+      .style('stroke', 'var(--panel-text)')
       .attr('stroke-width', 1.5)
       .style('cursor', 'pointer');
 
@@ -255,7 +255,7 @@ export async function renderParallelCoordinates(container, units = [], options =
     .attr('viewBox', `0 0 ${width} ${height}`)
     .attr('width', '100%')
     .attr('height', height)
-    .style('background', 'var(--surface-primary, #0f172a)')
+    .style('background', 'var(--surface-primary, var(--color-bg))')
     .style('border-radius', '8px')
     .style('font-family', 'ui-monospace, monospace');
 
@@ -297,8 +297,8 @@ export async function renderParallelCoordinates(container, units = [], options =
     .append('path')
     .attr('d', path)
     .attr('class', d => `par-line par-line-${d.unit}`)
-    .attr('fill', 'none')
-    .attr('stroke', d => d.regime === 'geodesic' ? '#10b981' : (d.regime === 'pruning' ? '#ef4444' : '#f59e0b'))
+    .style('fill', 'none')
+    .attr('stroke', d => d.regime === 'geodesic' ? 'var(--color-success)' : (d.regime === 'pruning' ? 'var(--color-danger)' : 'var(--color-warning)'))
     .attr('stroke-width', 2.5)
     .attr('stroke-opacity', 0.85);
 
@@ -349,17 +349,17 @@ export async function renderParallelCoordinates(container, units = [], options =
   });
 
   axes.selectAll('text')
-    .attr('fill', '#94a3b8')
+    .style('fill', 'var(--panel-text-muted)')
     .attr('font-size', '9px');
 
   axes.selectAll('path, line')
-    .attr('stroke', '#475569');
+    .style('stroke', 'var(--panel-text-muted)');
 
   // Axis Titles
   axes.append('text')
     .attr('y', margin.top - 12)
     .attr('text-anchor', 'middle')
-    .attr('fill', '#38bdf8')
+    .style('fill', 'var(--color-info)')
     .attr('font-size', '10px')
     .attr('font-weight', 'bold')
     .text(d => d.label);
@@ -412,7 +412,7 @@ export async function renderPayloadTreemap(container, payloadData, options = {})
       name: ext,
       bytes: size,
       percent: Math.round((size / total) * 100),
-      color: ext.includes('js') ? '#3b82f6' : (ext.includes('html') ? '#f59e0b' : '#10b981')
+      color: ext.includes('js') ? 'var(--color-primary)' : (ext.includes('html') ? 'var(--color-warning)' : 'var(--color-success)')
     }));
   }
 
@@ -429,19 +429,19 @@ export async function renderPayloadTreemap(container, payloadData, options = {})
     .style('align-items', 'center')
     .style('margin-bottom', '8px')
     .style('padding', '6px 10px')
-    .style('background', 'rgba(30, 41, 59, 0.7)')
+    .style('background', 'var(--panel)')
     .style('border-radius', '6px')
-    .style('border', `1px solid ${withinBudget ? '#10b981' : '#ef4444'}`);
+    .style('border', `1px solid ${withinBudget ? 'var(--color-success)' : 'var(--color-danger)'}`);
 
   header.append('div')
     .style('font-size', '12px')
     .style('font-weight', '600')
-    .style('color', '#f8fafc')
+    .style('color', 'var(--panel-text)')
     .html(`<span>Payload Mass Treemap: <b>${(totalBytes / (1024*1024)).toFixed(2)} MB</b></span>`);
 
   header.append('div')
     .style('font-size', '11px')
-    .style('color', withinBudget ? '#10b981' : '#ef4444')
+    .style('color', withinBudget ? 'var(--color-success)' : 'var(--color-danger)')
     .style('font-weight', 'bold')
     .text(`Archetype Budget: ${(budgetBytes / (1024*1024)).toFixed(0)} MB (${utilization}% - ${withinBudget ? '✓ Within Budget' : '✕ Breach'})`);
 
@@ -451,7 +451,7 @@ export async function renderPayloadTreemap(container, payloadData, options = {})
       name: c.name,
       value: c.bytes,
       percent: c.percent,
-      color: c.color || '#38bdf8'
+      color: c.color || 'var(--color-info)'
     }))
   };
 
@@ -471,7 +471,7 @@ export async function renderPayloadTreemap(container, payloadData, options = {})
     .attr('width', '100%')
     .attr('height', height - 40)
     .style('border-radius', '6px')
-    .style('background', '#0b1120');
+    .style('background', 'var(--panel-abyss)');
 
   const cell = svg.selectAll('g')
     .data(root.leaves())
@@ -489,7 +489,7 @@ export async function renderPayloadTreemap(container, payloadData, options = {})
   cell.append('text')
     .attr('x', 6)
     .attr('y', 16)
-    .attr('fill', '#ffffff')
+    .style('fill', 'var(--panel-text)')
     .attr('font-size', '11px')
     .attr('font-weight', 'bold')
     .text(d => (d.x1 - d.x0 > 50) ? d.data.name : '');
@@ -497,7 +497,7 @@ export async function renderPayloadTreemap(container, payloadData, options = {})
   cell.append('text')
     .attr('x', 6)
     .attr('y', 30)
-    .attr('fill', 'rgba(255, 255, 255, 0.85)')
+    .style('fill', 'var(--color-surface)')
     .attr('font-size', '10px')
     .text(d => (d.x1 - d.x0 > 60 && d.y1 - d.y0 > 35) ? `${(d.data.value / 1024).toFixed(0)} KB (${d.data.percent}%)` : '');
 
@@ -522,7 +522,7 @@ export async function renderAdmissibilityCone(container, units = [], options = {
     .attr('viewBox', `0 0 ${width} ${height}`)
     .attr('width', '100%')
     .attr('height', height)
-    .style('background', 'var(--surface-primary, #0f172a)')
+    .style('background', 'var(--surface-primary, var(--color-bg))')
     .style('border-radius', '8px')
     .style('font-family', 'ui-monospace, monospace');
 
@@ -545,7 +545,7 @@ export async function renderAdmissibilityCone(container, units = [], options = {
     .attr('y', margin.top)
     .attr('width', width - margin.left - margin.right)
     .attr('height', yZero - margin.top)
-    .attr('fill', 'rgba(16, 185, 129, 0.12)');
+    .style('fill', 'var(--color-success-surface)');
 
   // Shading Demonic Pruning Region (ℒ <= 0)
   svg.append('rect')
@@ -554,7 +554,7 @@ export async function renderAdmissibilityCone(container, units = [], options = {
     .attr('y', yZero)
     .attr('width', width - margin.left - margin.right)
     .attr('height', height - margin.bottom - yZero)
-    .attr('fill', 'rgba(239, 68, 68, 0.12)');
+    .style('fill', 'var(--badge-danger-bg)');
 
   // Imaginary-Metric Boundary (ℒ = 0)
   svg.append('line')
@@ -563,7 +563,7 @@ export async function renderAdmissibilityCone(container, units = [], options = {
     .attr('x2', width - margin.right)
     .attr('y1', yZero)
     .attr('y2', yZero)
-    .attr('stroke', '#f59e0b')
+    .style('stroke', 'var(--color-warning)')
     .attr('stroke-width', 2)
     .attr('stroke-dasharray', '6 4');
 
@@ -572,7 +572,7 @@ export async function renderAdmissibilityCone(container, units = [], options = {
     .attr('x', width - margin.right - 10)
     .attr('y', margin.top + 22)
     .attr('text-anchor', 'end')
-    .attr('fill', '#10b981')
+    .style('fill', 'var(--color-success)')
     .attr('font-size', '12px')
     .attr('font-weight', 'bold')
     .text('Admissible Cone (ℒ > 0, ds ∈ ℝ⁺ Stationary Geodesic)');
@@ -581,7 +581,7 @@ export async function renderAdmissibilityCone(container, units = [], options = {
     .attr('x', width - margin.right - 10)
     .attr('y', yZero - 8)
     .attr('text-anchor', 'end')
-    .attr('fill', '#f59e0b')
+    .style('fill', 'var(--color-warning)')
     .attr('font-size', '11px')
     .attr('font-style', 'italic')
     .text('Imaginary Boundary (ℒ = 0, ds = 0)');
@@ -590,7 +590,7 @@ export async function renderAdmissibilityCone(container, units = [], options = {
     .attr('x', width - margin.right - 10)
     .attr('y', height - margin.bottom - 15)
     .attr('text-anchor', 'end')
-    .attr('fill', '#ef4444')
+    .style('fill', 'var(--color-danger)')
     .attr('font-size', '12px')
     .attr('font-weight', 'bold')
     .text('Demonic Pruning Region (ℒ ≤ 0, ds ∈ iℝ Imaginary Debt)');
@@ -602,21 +602,21 @@ export async function renderAdmissibilityCone(container, units = [], options = {
   svg.append('g')
     .attr('transform', `translate(0, ${height - margin.bottom})`)
     .call(xAxis)
-    .selectAll('text').attr('fill', '#94a3b8');
+    .selectAll('text').style('fill', 'var(--panel-text-muted)');
 
   svg.append('g')
     .attr('transform', `translate(${margin.left}, 0)`)
     .call(yAxis)
-    .selectAll('text').attr('fill', '#94a3b8');
+    .selectAll('text').style('fill', 'var(--panel-text-muted)');
 
-  svg.selectAll('.domain, line').attr('stroke', '#475569');
+  svg.selectAll('.domain, line').style('stroke', 'var(--panel-text-muted)');
 
   // Axis Labels
   svg.append('text')
     .attr('x', (width + margin.left) / 2)
     .attr('y', height - 10)
     .attr('text-anchor', 'middle')
-    .attr('fill', '#cbd5e1')
+    .style('fill', 'var(--panel-text)')
     .attr('font-size', '11px')
     .text('Execution Latency / Time Metric Δt (ms)');
 
@@ -625,7 +625,7 @@ export async function renderAdmissibilityCone(container, units = [], options = {
     .attr('x', -(height / 2))
     .attr('y', 18)
     .attr('text-anchor', 'middle')
-    .attr('fill', '#cbd5e1')
+    .style('fill', 'var(--panel-text)')
     .attr('font-size', '11px')
     .text('Software Lagrangian ℒ = S_T - H_T');
 
@@ -636,7 +636,7 @@ export async function renderAdmissibilityCone(container, units = [], options = {
     const cx = xScale(deltaT);
     const cy = yScale(L);
     const isPruned = L <= 0;
-    const color = isPruned ? '#ef4444' : '#10b981';
+    const color = isPruned ? 'var(--color-danger)' : 'var(--color-success)';
 
     // Node glyph
     svg.append('circle')
@@ -645,7 +645,7 @@ export async function renderAdmissibilityCone(container, units = [], options = {
       .attr('cy', cy)
       .attr('r', 7)
       .attr('fill', color)
-      .attr('stroke', '#ffffff')
+      .style('stroke', 'var(--panel-text)')
       .attr('stroke-width', 2)
       .style('cursor', 'pointer');
 

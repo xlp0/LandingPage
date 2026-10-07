@@ -113,8 +113,10 @@
 }
 
 .target-tab.active {
-  background: var(--color-primary);
-  color: var(--panel-text);
+  /* the darker paint carries its own foreground: --color-primary is too light
+     for text in dark (3.5:1), and --panel-text would be dark-on-blue in light */
+  background: var(--color-primary-hover);
+  color: var(--color-on-primary);
   border-color: var(--color-primary-hover);
   box-shadow: 0 0 12px var(--badge-info-border);
 }
@@ -806,7 +808,7 @@
 
 .mat-cell.zero-cell {
   background: var(--overlay-faint);
-  color: var(--color-text-muted);
+  color: var(--color-text-primary);
 }
 
 .matrix-legend {
@@ -898,8 +900,9 @@
 }
 
 .action-commit-btn {
-  background: var(--color-primary);
-  color: var(--panel-text);
+  /* the darker paint carries its own foreground — see .target-tab.active */
+  background: var(--color-primary-hover);
+  color: var(--color-on-primary);
   border: none;
   padding: 0.6rem 1.25rem;
   border-radius: 10px;

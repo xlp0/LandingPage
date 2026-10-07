@@ -162,11 +162,11 @@ export class LeastActionNavigator {
           <button class="close-btn" id="least-action-close-btn" title="Close Navigator">✕</button>
         </div>
 
-        <div class="navigator-mode-selector" id="navigator-mode-selector" style="display: flex; gap: 8px; margin: 0 20px 12px; padding: 4px; background: rgba(30, 41, 59, 0.6); border-radius: 6px; border: 1px solid #334155;">
-          <button id="nav-mode-geodesic-btn" class="nav-mode-btn active" style="flex: 1; padding: 8px 12px; background: #1e293b; border: 1px solid #38bdf8; color: #f8fafc; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;">
+        <div class="navigator-mode-selector" id="navigator-mode-selector" style="display: flex; gap: 8px; margin: 0 20px 12px; padding: 4px; background: var(--panel); border-radius: 6px; border: 1px solid var(--color-surface-hover);">
+          <button id="nav-mode-geodesic-btn" class="nav-mode-btn active" style="flex: 1; padding: 8px 12px; background: var(--color-bg-subtle); border: 1px solid var(--color-info); color: var(--panel-text); border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;">
             🧭 Stationary Action Geodesic (CDO-11)
           </button>
-          <button id="nav-mode-fibration-btn" class="nav-mode-btn" style="flex: 1; padding: 8px 12px; background: transparent; border: 1px solid transparent; color: #94a3b8; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;">
+          <button id="nav-mode-fibration-btn" class="nav-mode-btn" style="flex: 1; padding: 8px 12px; background: transparent; border: 1px solid transparent; color: var(--panel-text-muted); border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;">
             📊 Fibration Metric Observability (CDO-13)
           </button>
         </div>
@@ -242,9 +242,9 @@ export class LeastActionNavigator {
 
     if (mode === 'fibration') {
       geodesicBtn?.classList.remove('active');
-      geodesicBtn?.setAttribute('style', 'flex: 1; padding: 8px 12px; background: transparent; border: 1px solid transparent; color: #94a3b8; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;');
+      geodesicBtn?.setAttribute('style', 'flex: 1; padding: 8px 12px; background: transparent; border: 1px solid transparent; color: var(--panel-text-muted); border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;');
       fibrationBtn?.classList.add('active');
-      fibrationBtn?.setAttribute('style', 'flex: 1; padding: 8px 12px; background: #1e293b; border: 1px solid #38bdf8; color: #f8fafc; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;');
+      fibrationBtn?.setAttribute('style', 'flex: 1; padding: 8px 12px; background: var(--color-bg-subtle); border: 1px solid var(--color-info); color: var(--panel-text); border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;');
       if (tabsBar) tabsBar.style.display = 'none';
       if (content) content.style.display = 'none';
       if (footer) footer.style.display = 'none';
@@ -254,9 +254,9 @@ export class LeastActionNavigator {
       }
     } else {
       fibrationBtn?.classList.remove('active');
-      fibrationBtn?.setAttribute('style', 'flex: 1; padding: 8px 12px; background: transparent; border: 1px solid transparent; color: #94a3b8; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;');
+      fibrationBtn?.setAttribute('style', 'flex: 1; padding: 8px 12px; background: transparent; border: 1px solid transparent; color: var(--panel-text-muted); border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;');
       geodesicBtn?.classList.add('active');
-      geodesicBtn?.setAttribute('style', 'flex: 1; padding: 8px 12px; background: #1e293b; border: 1px solid #38bdf8; color: #f8fafc; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;');
+      geodesicBtn?.setAttribute('style', 'flex: 1; padding: 8px 12px; background: var(--color-bg-subtle); border: 1px solid var(--color-info); color: var(--panel-text); border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;');
       if (tabsBar) tabsBar.style.display = 'flex';
       if (content) content.style.display = 'block';
       if (footer) footer.style.display = 'flex';
@@ -299,8 +299,8 @@ export class LeastActionNavigator {
     const contentEl = document.getElementById('least-action-content');
     if (!contentEl || !dir) return;
 
-    const statusColor = dir.isRealAction ? (dir.recommended ? '#10b981' : '#3b82f6') : '#ef4444';
-    const statusBg = dir.isRealAction ? (dir.recommended ? 'rgba(16, 185, 129, 0.15)' : 'rgba(59, 130, 246, 0.15)') : 'rgba(239, 68, 68, 0.15)';
+    const statusColor = dir.isRealAction ? (dir.recommended ? 'var(--color-success)' : 'var(--color-primary)') : 'var(--color-danger)';
+    const statusBg = dir.isRealAction ? (dir.recommended ? 'var(--color-success-surface)' : 'var(--badge-info-bg)') : 'var(--badge-danger-bg)';
     const dsText = dir.isRealAction ? `${dir.metricDistance_ds.toFixed(2)} ∈ ℝ⁺ (Physical Geodesic)` : `${dir.metricDistance_ds.toFixed(2)} i ∈ iℝ (Imaginary Action)`;
 
     contentEl.innerHTML = `
@@ -418,7 +418,7 @@ export class LeastActionNavigator {
               </div>
               <div class="legend-row">
                 <span class="prop-label">Degeneracy System SNR:</span>
-                <span class="prop-val" style="color: #10b981; font-weight: 600;">${(dir.systemSnr * 100).toFixed(4)}%</span>
+                <span class="prop-val" style="color: var(--color-success); font-weight: 600;">${(dir.systemSnr * 100).toFixed(4)}%</span>
               </div>
             </div>
           </div>
@@ -428,7 +428,7 @@ export class LeastActionNavigator {
         <div class="recommendation-panel">
           <div class="panel-header">
             <span>Least Action Geodesic Decision (SSOT Protocol)</span>
-            <span class="rec-badge" style="color: ${dir.recommended ? '#10b981' : '#f59e0b'};">
+            <span class="rec-badge" style="color: ${dir.recommended ? 'var(--color-success)' : 'var(--color-warning)'};">
               ${dir.recommended ? '✓ RECOMMENDED DIRECTION' : (dir.isRealAction ? '△ VIABLE PATH' : '✕ FORBIDDEN PATH')}
             </span>
           </div>
@@ -474,38 +474,38 @@ export class LeastActionNavigator {
       <svg viewBox="0 0 260 260" class="compass-svg" id="compass-svg-element">
         <defs>
           <radialGradient id="compass-glow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="rgba(59, 130, 246, 0.15)"/>
-            <stop offset="100%" stop-color="rgba(15, 23, 42, 0.4)"/>
+            <stop offset="0%" style="stop-color: var(--badge-info-bg)"/>
+            <stop offset="100%" style="stop-color: var(--panel-deep-soft)"/>
           </radialGradient>
           <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+            <path d="M 0 1 L 10 5 L 0 9 z" style="fill: var(--color-success)" />
           </marker>
           <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M 0 1 L 10 5 L 0 9 z" fill="#3b82f6" />
+            <path d="M 0 1 L 10 5 L 0 9 z" style="fill: var(--color-primary)" />
           </marker>
           <marker id="arrow-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+            <path d="M 0 1 L 10 5 L 0 9 z" style="fill: var(--color-danger)" />
           </marker>
         </defs>
 
         <!-- Background Radar Circles -->
-        <circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#compass-glow)" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1.5" />
-        <circle cx="${cx}" cy="${cy}" r="${r * 0.66}" fill="none" stroke="rgba(255, 255, 255, 0.07)" stroke-width="1" stroke-dasharray="3,3" />
-        <circle cx="${cx}" cy="${cy}" r="${r * 0.33}" fill="none" stroke="rgba(255, 255, 255, 0.07)" stroke-width="1" stroke-dasharray="2,2" />
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#compass-glow)" style="stroke: var(--overlay-soft)" stroke-width="1.5" />
+        <circle cx="${cx}" cy="${cy}" r="${r * 0.66}" fill="none" style="stroke: var(--overlay-faint)" stroke-width="1" stroke-dasharray="3,3" />
+        <circle cx="${cx}" cy="${cy}" r="${r * 0.33}" fill="none" style="stroke: var(--overlay-faint)" stroke-width="1" stroke-dasharray="2,2" />
 
         <!-- Axis Lines -->
-        <line x1="${cx - r}" y1="${cy}" x2="${cx + r}" y2="${cy}" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1" />
-        <line x1="${cx}" y1="${cy - r}" x2="${cx}" y2="${cy + r}" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1" />
+        <line x1="${cx - r}" y1="${cy}" x2="${cx + r}" y2="${cy}" style="stroke: var(--overlay-soft)" stroke-width="1" />
+        <line x1="${cx}" y1="${cy - r}" x2="${cx}" y2="${cy + r}" style="stroke: var(--overlay-soft)" stroke-width="1" />
 
         <!-- SSOT Target Gradient Axis (道生一) -->
-        <line x1="${cx}" y1="${cy}" x2="${cx + 95}" y2="${cy - 40}" stroke="#60a5fa" stroke-width="2" stroke-dasharray="4,2" />
-        <text x="${cx + 100}" y="${cy - 45}" fill="#60a5fa" font-size="10" font-weight="600" text-anchor="start">∇S (SSOT)</text>
+        <line x1="${cx}" y1="${cy}" x2="${cx + 95}" y2="${cy - 40}" style="stroke: var(--badge-info-text)" stroke-width="2" stroke-dasharray="4,2" />
+        <text x="${cx + 100}" y="${cy - 45}" style="fill: var(--badge-info-text)" font-size="10" font-weight="600" text-anchor="start">∇S (SSOT)</text>
 
         <!-- Candidate Vectors -->
         ${Object.values(CANDIDATE_SPRINT_DIRECTIONS).map(d => {
           const isSelected = d.id === currentDir.id;
           const coords = toCoords(d.angleDeg, d.isRealAction ? 85 : 65);
-          const color = d.isRealAction ? (d.recommended ? '#10b981' : '#3b82f6') : '#ef4444';
+          const color = d.isRealAction ? (d.recommended ? 'var(--color-success)' : 'var(--color-primary)') : 'var(--color-danger)';
           const marker = d.isRealAction ? (d.recommended ? 'url(#arrow-green)' : 'url(#arrow-blue)') : 'url(#arrow-red)';
           const strokeWidth = isSelected ? 3.5 : 1.5;
           const strokeDash = d.isRealAction ? 'none' : '4,3';
@@ -525,8 +525,8 @@ export class LeastActionNavigator {
         }).join('')}
 
         <!-- Origin Node (Current Sprint CDO-10) -->
-        <circle cx="${cx}" cy="${cy}" r="6" fill="#a78bfa" stroke="#fff" stroke-width="2" />
-        <text x="${cx}" y="${cy + 18}" fill="#c4b5fd" font-size="9" text-anchor="middle" font-weight="600">CDO-10 (Now)</text>
+        <circle cx="${cx}" cy="${cy}" r="6" stroke-width="2" style="fill: var(--panel-accent-text); stroke: var(--panel-text)"/>
+        <text x="${cx}" y="${cy + 18}" style="fill: var(--badge-accent-text)" font-size="9" text-anchor="middle" font-weight="600">CDO-10 (Now)</text>
       </svg>
     `;
   }
@@ -558,7 +558,7 @@ export class LeastActionNavigator {
     const btn = document.getElementById('lock-direction-btn');
     if (btn) {
       btn.textContent = `✓ Locked to ${dir.sprintNumber}`;
-      btn.style.backgroundColor = '#10b981';
+      btn.style.backgroundColor = 'var(--color-success)';
       setTimeout(() => {
         btn.textContent = 'Lock Direction (Geodesic Geometer)';
         btn.style.backgroundColor = '';

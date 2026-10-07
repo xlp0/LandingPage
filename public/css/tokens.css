@@ -68,13 +68,13 @@
   --shadow-drawer: -15px 0 35px -5px rgba(0, 0, 0, 0.5);
   --shadow-panel: 0 4px 20px rgba(0, 0, 0, 0.4);
 
-  /* Component surface scale (theme-invariant).
-     The deployment inspector, the least-action modal and the manager chrome
-     are dark-surface components: their panels must stay dark in every theme,
-     because the text painted on them is light. Declared once here so every
-     painted value is a token, and collapsed to a three-step scale — the
-     first-generation component layer carried 5–6 ad-hoc alphas of a single
-     base colour (STY-04). */
+  /* Component surface scale — DARK DEFAULTS, overridden per theme.
+     The deployment inspector, the least-action modal and the side panes are
+     surfaces of their own; they follow the active theme like every other
+     surface. Declared here as the dark theme's values and overridden in the
+     light, high-contrast and prefers-color-scheme blocks below. Collapsed to
+     a three-step scale: the first-generation component layer carried 5–6
+     ad-hoc alphas of a single base colour (STY-04). */
   --panel-soft: rgba(30, 41, 59, 0.5);
   --panel: rgba(30, 41, 59, 0.7);
   --panel-strong: rgba(30, 41, 59, 0.9);
@@ -98,10 +98,10 @@
   --border-strong: rgba(255, 255, 255, 0.15);
   --border-emphasis: rgba(255, 255, 255, 0.2);
 
-  /* Text painted directly on those dark panels must be theme-invariant too —
-     a theme-aware text token would go dark in the light theme and vanish.
-     Self-contained badges (own background) use the --badge-* pairs instead,
-     which are safe in every theme because the light pair is a solid tint. */
+  /* Text painted directly on those panels. Theme-aware, so the panels can
+     flip: the light block re-declares each of these for a light surface.
+     Self-contained badges use the --badge-* pairs instead — safe in every
+     theme because the light pair is a solid tint. */
   --panel-text: #f8fafc;
   --panel-text-muted: #94a3b8;
   --panel-warning-surface: rgba(245, 158, 11, 0.1);
@@ -111,6 +111,16 @@
   /* Toast paints: saturated enough to carry white text; kept exact. */
   --toast-success-bg: #28a745;
   --toast-error-bg: #dc3545;
+
+  /* Chart series: data-viz colours need their own scale, because a series
+     colour must stay distinguishable from its siblings and from the surface. */
+  --chart-1: #3b82f6;
+  --chart-2: #10b981;
+  --chart-3: #f59e0b;
+  --chart-4: #ec4899;
+  --chart-5: #8b5cf6;
+  --chart-6: #06b6d4;
+  --chart-7: #f43f5e;
 
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -137,15 +147,18 @@
   --color-border: rgba(0, 0, 0, 0.08);
   --color-border-hover: rgba(37, 99, 235, 0.4);
   --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-muted: #64748b;
+  --color-text-secondary: #334155;
+  --color-text-muted: #475569;
   --color-primary: #2563eb;
   --color-primary-hover: #1d4ed8;
   --color-on-primary: #ffffff;
   --color-action: #007acc;
   --color-on-action: #ffffff;
   --color-scrim: rgba(0, 0, 0, 0.35);
-  --color-info: #0284c7;
+  --color-success: #047857;
+  --color-warning: #92400e;
+  --color-danger: #b91c1c;
+  --color-info: #075985;
   --color-info-surface: rgba(2, 132, 199, 0.1);
   --color-info-border: rgba(2, 132, 199, 0.3);
   --color-danger-surface: rgba(239, 68, 68, 0.1);
@@ -157,19 +170,55 @@
   --badge-info-text: #1d4ed8;
   --badge-info-border: rgba(29, 78, 216, 0.45);
   --badge-success-bg: #d1fae5;
-  --badge-success-text: #047857;
+  --badge-success-text: #065f46;
   --badge-success-border: rgba(4, 120, 87, 0.45);
   --badge-danger-bg: #fee2e2;
   --badge-danger-text: #b91c1c;
   --badge-danger-border: rgba(185, 28, 28, 0.4);
   --badge-warning-bg: #fef3c7;
-  --badge-warning-text: #b45309;
+  --badge-warning-text: #92400e;
   --badge-warning-border: rgba(180, 83, 9, 0.45);
   --badge-accent-bg: #ede9fe;
   --badge-accent-text: #6d28d9;
   --badge-accent-border: rgba(109, 40, 217, 0.4);
   --color-online: #15803d;
   --color-border-hover: rgba(37, 99, 235, 0.4);
+
+  /* Component surfaces: light panels with dark text. The values are the
+     mirror of the dark scale, so a panel keeps its elevation ordering. */
+  --panel-soft: rgba(255, 255, 255, 0.6);
+  --panel: rgba(255, 255, 255, 0.82);
+  --panel-strong: rgba(255, 255, 255, 0.95);
+  --panel-deep-soft: rgba(241, 245, 249, 0.75);
+  --panel-deep: rgba(241, 245, 249, 0.88);
+  --panel-deep-strong: rgba(248, 250, 252, 0.97);
+  --panel-abyss: #f8fafc;
+  --overlay-faint: rgba(15, 23, 42, 0.02);
+  --overlay-subtle: rgba(15, 23, 42, 0.04);
+  --overlay-soft: rgba(15, 23, 42, 0.07);
+  --scrim-soft: rgba(15, 23, 42, 0.05);
+  --scrim-medium: rgba(15, 23, 42, 0.07);
+  --scrim-strong: rgba(15, 23, 42, 0.4);
+  --scrim-opaque: rgba(15, 23, 42, 0.5);
+  --border-faint: rgba(15, 23, 42, 0.06);
+  --border-subtle: rgba(15, 23, 42, 0.09);
+  --border: rgba(15, 23, 42, 0.12);
+  --border-strong: rgba(15, 23, 42, 0.18);
+  --border-emphasis: rgba(15, 23, 42, 0.25);
+  --panel-text: #0f172a;
+  --panel-text-muted: #475569;
+  --panel-warning-surface: rgba(245, 158, 11, 0.16);
+  --panel-warning-text: #92400e;
+  --panel-danger-text: #b91c1c;
+  --panel-accent-text: #6d28d9;
+
+  --chart-1: #2563eb;
+  --chart-2: #047857;
+  --chart-3: #b45309;
+  --chart-4: #be185d;
+  --chart-5: #6d28d9;
+  --chart-6: #0e7490;
+  --chart-7: #be123c;
 
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
@@ -224,6 +273,46 @@
   --shadow-lg: none;
   --shadow-hover: none;
   --blur-surface: 0px;
+  /* Component surfaces: black panels with white text and white borders.
+     This matches the theme's own black/white/yellow design — white panels
+     would have inverted it and left the theme-aware text dark on dark. */
+  --panel-soft: #000000;
+  --panel: #000000;
+  --panel-strong: #000000;
+  --panel-deep-soft: #000000;
+  --panel-deep: #000000;
+  --panel-deep-strong: #000000;
+  --panel-abyss: #000000;
+  --overlay-faint: rgba(255, 255, 255, 0.15);
+  --overlay-subtle: rgba(255, 255, 255, 0.2);
+  --overlay-soft: rgba(255, 255, 255, 0.28);
+  --scrim-soft: rgba(0, 0, 0, 0.85);
+  --scrim-medium: rgba(0, 0, 0, 0.88);
+  --scrim-strong: rgba(0, 0, 0, 0.92);
+  --scrim-opaque: rgba(0, 0, 0, 0.96);
+  --border-faint: #ffffff;
+  --border-subtle: #ffffff;
+  --border: #ffffff;
+  --border-strong: #ffffff;
+  --border-emphasis: #ffffff;
+  --panel-text: #ffffff;
+  --panel-text-muted: #ffffff;
+  --panel-warning-surface: #000000;
+  --panel-warning-text: #ffff00;
+  --panel-danger-text: #ff8888;
+  --panel-accent-text: #00ffff;
+  /* the state solids inherit the dark values, which are only ~5.6:1 on black */
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+  --color-danger: #ff6b6b;
+  --chart-1: #0000cc;
+  --chart-2: #006600;
+  --chart-3: #8a4b00;
+  --chart-4: #99004d;
+  --chart-5: #4c0099;
+  --chart-6: #005566;
+  --chart-7: #990033;
+
 }
 
 /* Energy Saving / Low Power Mode */
@@ -270,15 +359,18 @@
     --color-border: rgba(0, 0, 0, 0.08);
     --color-border-hover: rgba(37, 99, 235, 0.4);
     --color-text-primary: #0f172a;
-    --color-text-secondary: #475569;
-    --color-text-muted: #64748b;
+    --color-text-secondary: #334155;
+    --color-text-muted: #475569;
     --color-primary: #2563eb;
     --color-primary-hover: #1d4ed8;
     --color-on-primary: #ffffff;
     --color-action: #007acc;
     --color-on-action: #ffffff;
     --color-scrim: rgba(0, 0, 0, 0.35);
-    --color-info: #0284c7;
+    --color-success: #047857;
+    --color-warning: #92400e;
+    --color-danger: #b91c1c;
+    --color-info: #075985;
     --color-info-surface: rgba(2, 132, 199, 0.1);
     --color-info-border: rgba(2, 132, 199, 0.3);
     --color-danger-surface: rgba(239, 68, 68, 0.1);
@@ -289,17 +381,53 @@
     --badge-info-text: #1d4ed8;
     --badge-info-border: rgba(29, 78, 216, 0.45);
     --badge-success-bg: #d1fae5;
-    --badge-success-text: #047857;
+    --badge-success-text: #065f46;
     --badge-success-border: rgba(4, 120, 87, 0.45);
     --badge-danger-bg: #fee2e2;
     --badge-danger-text: #b91c1c;
     --badge-danger-border: rgba(185, 28, 28, 0.4);
     --badge-warning-bg: #fef3c7;
-    --badge-warning-text: #b45309;
+    --badge-warning-text: #92400e;
     --badge-warning-border: rgba(180, 83, 9, 0.45);
     --badge-accent-bg: #ede9fe;
     --badge-accent-text: #6d28d9;
     --badge-accent-border: rgba(109, 40, 217, 0.4);
     --color-online: #15803d;
+
+    /* Component surfaces follow the media query too, or a page without an
+       explicit data-theme would keep dark panels on a light canvas. */
+    --panel-soft: rgba(255, 255, 255, 0.6);
+    --panel: rgba(255, 255, 255, 0.82);
+    --panel-strong: rgba(255, 255, 255, 0.95);
+    --panel-deep-soft: rgba(241, 245, 249, 0.75);
+    --panel-deep: rgba(241, 245, 249, 0.88);
+    --panel-deep-strong: rgba(248, 250, 252, 0.97);
+    --panel-abyss: #f8fafc;
+    --overlay-faint: rgba(15, 23, 42, 0.02);
+    --overlay-subtle: rgba(15, 23, 42, 0.04);
+    --overlay-soft: rgba(15, 23, 42, 0.07);
+    --scrim-soft: rgba(15, 23, 42, 0.05);
+    --scrim-medium: rgba(15, 23, 42, 0.07);
+    --scrim-strong: rgba(15, 23, 42, 0.4);
+    --scrim-opaque: rgba(15, 23, 42, 0.5);
+    --border-faint: rgba(15, 23, 42, 0.06);
+    --border-subtle: rgba(15, 23, 42, 0.09);
+    --border: rgba(15, 23, 42, 0.12);
+    --border-strong: rgba(15, 23, 42, 0.18);
+    --border-emphasis: rgba(15, 23, 42, 0.25);
+    --panel-text: #0f172a;
+    --panel-text-muted: #475569;
+    --panel-warning-surface: rgba(245, 158, 11, 0.16);
+    --panel-warning-text: #92400e;
+    --panel-danger-text: #b91c1c;
+    --panel-accent-text: #6d28d9;
+  --chart-1: #2563eb;
+  --chart-2: #047857;
+  --chart-3: #b45309;
+  --chart-4: #be185d;
+  --chart-5: #6d28d9;
+  --chart-6: #0e7490;
+  --chart-7: #be123c;
+
   }
 }

@@ -26,11 +26,11 @@ export const TARGET_ARCHETYPES = {
     viewport: 'Fluid Responsive (320px - 2560px)',
     features: ['ServiceWorker PWA', 'Faro RUM Telemetry', 'Zero-Runtime CSS Tokens'],
     categories: [
-      { name: 'Markup (HTML)', bytes: 142000, percent: 8, color: '#f59e0b' },
-      { name: 'Scripts (ESM)', bytes: 890000, percent: 48, color: '#3b82f6' },
-      { name: 'Styles (Tokens)', bytes: 112000, percent: 6, color: '#ec4899' },
-      { name: 'Assets & Images', bytes: 641200, percent: 35, color: '#10b981' },
-      { name: 'Manifests (YAML/JSON)', bytes: 60000, percent: 3, color: '#8b5cf6' }
+      { name: 'Markup (HTML)', bytes: 142000, percent: 8, color: 'var(--color-warning)' },
+      { name: 'Scripts (ESM)', bytes: 890000, percent: 48, color: 'var(--color-primary)' },
+      { name: 'Styles (Tokens)', bytes: 112000, percent: 6, color: 'var(--chart-4)' },
+      { name: 'Assets & Images', bytes: 641200, percent: 35, color: 'var(--color-success)' },
+      { name: 'Manifests (YAML/JSON)', bytes: 60000, percent: 3, color: 'var(--badge-accent-text)' }
     ],
     sampleHandles: [
       'meta:mcard.yaml',
@@ -54,10 +54,10 @@ export const TARGET_ARCHETYPES = {
     viewport: 'Multi-Window / Ultrawide (1440x900 - 3840x2160)',
     features: ['Native IPC Bridge', 'GPU Acceleration', 'Local Storage Mesh'],
     categories: [
-      { name: 'Tauri / Rust Core', bytes: 9200000, percent: 62, color: '#ef4444' },
-      { name: 'Frontend Bundle', bytes: 2950000, percent: 20, color: '#3b82f6' },
-      { name: 'Native Icons & Assets', bytes: 2100000, percent: 14, color: '#10b981' },
-      { name: 'Configs & Schemas', bytes: 600000, percent: 4, color: '#8b5cf6' }
+      { name: 'Tauri / Rust Core', bytes: 9200000, percent: 62, color: 'var(--color-danger)' },
+      { name: 'Frontend Bundle', bytes: 2950000, percent: 20, color: 'var(--color-primary)' },
+      { name: 'Native Icons & Assets', bytes: 2100000, percent: 14, color: 'var(--color-success)' },
+      { name: 'Configs & Schemas', bytes: 600000, percent: 4, color: 'var(--badge-accent-text)' }
     ],
     sampleHandles: [
       'meta:mcard.yaml',
@@ -80,10 +80,10 @@ export const TARGET_ARCHETYPES = {
     viewport: 'Touch Safe-Area (375x667 - 430x932)',
     features: ['Touch Gestures', 'Offline First Cache', 'Cellular Data Throttling'],
     categories: [
-      { name: 'Mobile App Shell', bytes: 1400000, percent: 41, color: '#3b82f6' },
-      { name: 'Splash & App Icons', bytes: 1350000, percent: 39, color: '#10b981' },
-      { name: 'Mobile CSS Tokens', bytes: 420000, percent: 12, color: '#ec4899' },
-      { name: 'Offline State Cache', bytes: 280000, percent: 8, color: '#8b5cf6' }
+      { name: 'Mobile App Shell', bytes: 1400000, percent: 41, color: 'var(--color-primary)' },
+      { name: 'Splash & App Icons', bytes: 1350000, percent: 39, color: 'var(--color-success)' },
+      { name: 'Mobile CSS Tokens', bytes: 420000, percent: 12, color: 'var(--chart-4)' },
+      { name: 'Offline State Cache', bytes: 280000, percent: 8, color: 'var(--badge-accent-text)' }
     ],
     sampleHandles: [
       'meta:mcard.yaml',
@@ -106,10 +106,10 @@ export const TARGET_ARCHETYPES = {
     viewport: 'Micro Circular / Rectangular (160x160 - 454x454)',
     features: ['0ms Motion Eco-Mode', 'High-Contrast OLED Pure Black', 'Strict <2MB RAM'],
     categories: [
-      { name: 'Micro-Watchface SVG', bytes: 210000, percent: 46, color: '#10b981' },
-      { name: 'Compact Engine JS', bytes: 160000, percent: 35, color: '#3b82f6' },
-      { name: 'OLED Black Tokens', bytes: 62000, percent: 13, color: '#ec4899' },
-      { name: 'Telemetry Micro-Tick', bytes: 28800, percent: 6, color: '#8b5cf6' }
+      { name: 'Micro-Watchface SVG', bytes: 210000, percent: 46, color: 'var(--color-success)' },
+      { name: 'Compact Engine JS', bytes: 160000, percent: 35, color: 'var(--color-primary)' },
+      { name: 'OLED Black Tokens', bytes: 62000, percent: 13, color: 'var(--chart-4)' },
+      { name: 'Telemetry Micro-Tick', bytes: 28800, percent: 6, color: 'var(--badge-accent-text)' }
     ],
     sampleHandles: [
       'meta:mcard.yaml',
@@ -132,10 +132,10 @@ export const TARGET_ARCHETYPES = {
     viewport: 'Dual 4K Spatial Canvas (90 / 120 FPS)',
     features: ['WebXR Immersive Session', 'glTF 3D Shaders', 'Spatial Ambisonic Audio'],
     categories: [
-      { name: 'glTF 3D Meshes & Textures', bytes: 18200000, percent: 64, color: '#6366f1' },
-      { name: 'Spatial Ambisonic Audio', bytes: 4800000, percent: 17, color: '#f59e0b' },
-      { name: 'WASM Physics & Shader Shaders', bytes: 3800000, percent: 13, color: '#10b981' },
-      { name: 'Spatial UI Overlay', bytes: 1700000, percent: 6, color: '#3b82f6' }
+      { name: 'glTF 3D Meshes & Textures', bytes: 18200000, percent: 64, color: 'var(--badge-info-text)' },
+      { name: 'Spatial Ambisonic Audio', bytes: 4800000, percent: 17, color: 'var(--color-warning)' },
+      { name: 'WASM Physics & Shader Shaders', bytes: 3800000, percent: 13, color: 'var(--color-success)' },
+      { name: 'Spatial UI Overlay', bytes: 1700000, percent: 6, color: 'var(--color-primary)' }
     ],
     sampleHandles: [
       'meta:mcard.yaml',
@@ -242,7 +242,7 @@ export class DeploymentUnitInspector {
     const compressedKb = (target.compressedBytes / 1024).toFixed(0);
 
     const isAdmissible = target.totalBytes <= target.budgetBytes;
-    const badgeColor = isAdmissible ? '#10b981' : '#ef4444';
+    const badgeColor = isAdmissible ? 'var(--color-success)' : 'var(--color-danger)';
 
     contentEl.innerHTML = `
       <div class="inspector-target-hero">
@@ -348,14 +348,14 @@ export class DeploymentUnitInspector {
       </div>
 
       <!-- DV-CDO-13-10: Inspector Correctness Handover Slot (for CDO-14) -->
-      <div id="insp-slot-correctness" class="inspector-slot-correctness" style="margin-top: 16px; padding: 12px 16px; border: 1px dashed #64748b; border-radius: 8px; background: rgba(30, 41, 59, 0.4);">
-        <div style="font-size: 12px; font-weight: bold; color: #94a3b8; display: flex; align-items: center; justify-content: space-between;">
+      <div id="insp-slot-correctness" class="inspector-slot-correctness" style="margin-top: 16px; padding: 12px 16px; border: 1px dashed var(--color-text-muted); border-radius: 8px; background: var(--panel-soft);">
+        <div style="font-size: 12px; font-weight: bold; color: var(--panel-text-muted); display: flex; align-items: center; justify-content: space-between;">
           <span>🔍 Correctness Observability &amp; Hoare Triples (CDO-14 Handover Slot)</span>
-          <span class="correctness-status-tag" style="background: rgba(148, 163, 184, 0.2); color: #cbd5e1; padding: 2px 6px; border-radius: 4px; font-size: 11px;">
+          <span class="correctness-status-tag" style="background: var(--overlay-subtle); color: var(--panel-text); padding: 2px 6px; border-radius: 4px; font-size: 11px;">
             Handover Slot
           </span>
         </div>
-        <p class="correctness-placeholder-text" style="font-size: 12px; color: #94a3b8; margin: 8px 0 0;">
+        <p class="correctness-placeholder-text" style="font-size: 12px; color: var(--panel-text-muted); margin: 8px 0 0;">
           correctness not yet evaluated
         </p>
       </div>

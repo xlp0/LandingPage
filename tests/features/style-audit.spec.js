@@ -319,6 +319,35 @@ test.describe('Style audit', () => {
     });
   }
 
+  // STY-06 follow-up: the component surfaces (deployment inspector, least-action
+  // modal, side panes) are `display: none` until opened, and the audit skips
+  // zero-size elements — so the page audit above has never measured them. This
+  // pass opens them and audits their interiors, per theme. Without it, "the
+  // panels are theme-adaptive" would be a claim about code nobody looked at.
+  for (const t of ['dark', 'light', 'high-contrast']) {
+    test(`components index [${t}]`, async ({ page }) => {
+      await page.setViewportSize({ width: 1440, height: 900 });
+      if (t !== 'high-contrast') await page.emulateMedia({ colorScheme: t });
+      await page.goto('/index.html');
+      await page.evaluate((th) => { document.documentElement.dataset.theme = th; }, t);
+      await page.waitForTimeout(1500);
+      const opened = await page.evaluate(() => {
+        const done = [];
+        try { window.__deployment_inspector?.open?.(); done.push('inspector'); } catch { /* */ }
+        try { window.__least_action_navigator?.open?.(); done.push('least-action'); } catch { /* */ }
+        return done;
+      });
+      await page.waitForTimeout(1500);
+      const result = await page.evaluate(audit);
+      writeFileSync(resolve(OUT, `index.components.${t}.json`),
+        JSON.stringify({ page: '/index.html', surface: 'components', forcedTheme: t,
+                         opened, ...result }, null, 2) + '\n');
+      console.log(`AUDIT index.components.${t}: opened=[${opened.join(',')}] ` +
+        `elements=${result.elements} contrastFailures=${result.contrastFailureCount} ` +
+        `distinctBg=${result.colors.distinct.background}`);
+    });
+  }
+
   // DV-STY-01-02 controls: constructed fixtures through the same resolver.
   test('audit fidelity controls', async ({ page }) => {
     await page.goto('/index.html');
