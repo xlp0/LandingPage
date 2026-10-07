@@ -351,4 +351,146 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     });
     expect(after, 'the tested page scrolls inside the device viewport').toBeGreaterThan(0);
   });
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // DoD residual coverage — the items the first pass left unverified
+  // ──────────────────────────────────────────────────────────────────────────
+  test('RVP-T07: subscribers receive add/remove/reset deltas; ↺ Reset restores the factory set', async ({ page }) => {
+    // RVP-02 DoD 4 (subscription signals) + Charter DoD 2 (restore defaults
+    // via the UI). Driven at the store boundary for the signal contract, then
+    // at the UI for reset.
+    const r = await page.evaluate(() => {
+      const reg = window.__device_registry;
+      const seen = [];
+      const unsub = reg.subscribe((event, device) => seen.push([event, device?.id ?? null]));
+      const added = reg.add({ name: 'Signal Probe', category: 'phone', width: 400, height: 800 });
+      reg.remove(added.id);
+      reg.resetToDefaults();
+      unsub();
+      // after unsubscribe the listener must not observe anything
+      reg.add({ name: 'After Unsub', category: 'phone', width: 400, height: 800 });
+      reg.resetToDefaults();
+      return seen;
+    });
+    expect(r).toEqual([
+      ['add', 'signal-probe'],
+      ['remove', 'signal-probe'],
+      ['reset', null],
+    ]);
+
+    // the UI path: a custom chip exists, ↺ Reset removes it, storage is factory-only
+    await page.evaluate(() =>
+      window.__device_registry.add({ name: 'Reset Probe', category: 'phone', width: 400, height: 800 }));
+    await expect(page.locator('.size-preset-btn').filter({ hasText: 'Reset Probe' })).toBeVisible();
+
+    await page.locator('#btn-open-device-manager').click();
+    await page.locator('#btn-reset-devices').click();
+    await page.locator('#btn-close-modal').click();
+
+    await expect(page.locator('.size-preset-btn').filter({ hasText: 'Reset Probe' })).toHaveCount(0);
+    const stored = await page.evaluate((k) => JSON.parse(localStorage.getItem(k)), STORAGE_KEY);
+    expect(stored.every((d) => d.isBuiltin), 'storage is factory-only after reset').toBe(true);
+  });
+
+  test('RVP-T08: the device manager honours Escape, Tab, and Enter', async ({ page }) => {
+    // RVP-03 DoD 4 — the keyboard contract the sprint declares.
+    await page.locator('#btn-open-device-manager').click();
+    const modal = page.locator('#device-manager-modal');
+    await expect(modal).toBeVisible();
+
+    // Tab advances focus through the form fields
+    await page.locator('#input-device-name').focus();
+    await page.keyboard.press('Tab');
+    await expect(page.locator('#select-device-category')).toBeFocused();
+
+    // Escape closes the modal
+    await page.keyboard.press('Escape');
+    await expect(modal).not.toBeVisible();
+
+    // Enter in a field submits the form — implicit submission via the
+    // type="submit" button — and lands the chip, same as clicking Add
+    await page.locator('#btn-open-device-manager').click();
+    await page.fill('#input-device-name', 'Enter Submitted');
+    await page.fill('#input-device-width', '460');
+    await page.fill('#input-device-height', '920');
+    await page.locator('#input-device-height').press('Enter');
+
+    await expect(page.locator('.size-preset-btn').filter({ hasText: 'Enter Submitted' })).toBeVisible();
+    const stored = await page.evaluate((k) => JSON.parse(localStorage.getItem(k)), STORAGE_KEY);
+    expect(stored.some((d) => d.name === 'Enter Submitted')).toBe(true);
+  });
+
+  test('RVP-T09: telemetry reports dims, ratio, scale and orientation in both pills', async ({ page }) => {
+    // RVP-01 DoD 3 + RVP-04 DoD 4. aspectRatio(393, 852): the reduced fraction
+    // 131:284 is unreadable, so the registry normalises to 852/393 ≈ 2.17:1 —
+    // the value asserted here is computed, never hand-labelled.
+    const dim = page.locator('#controlled-frame-dim');
+    const status = page.locator('#controlled-panel-status');
+
+    await page.locator('#btn-orient-vertical').click();
+    await page.locator('#btn-size-mobile').click();
+    await page.waitForTimeout(500);
+
+    await expect(dim).toContainText('393px × 852px');
+    await expect(dim).toContainText('(2.17:1)');
+    await expect(dim).toContainText('↕ Vertical (Portrait)');
+    await expect(dim).toContainText('100% Scale');
+
+    await expect(status).toContainText('393px × 852px');
+    await expect(status).toContainText('(2.17:1)');
+    await expect(status).toContainText('↕ Vertical (Portrait)');
+
+    // a device that does not fit reports its real factor, not "100%"
+    await page.locator('#btn-orient-horizontal').click();
+    await page.locator('#btn-size-desktop').click(); // 1920 × 1080
+    await page.waitForTimeout(600);
+
+    const scale = await page.evaluate(() =>
+      Number(document.querySelector('#controlled-panel-frame').style.getPropertyValue('--frame-scale-factor')));
+    expect(scale).toBeLessThan(1);
+    await expect(dim).toContainText(`${Math.round(scale * 100)}% Scale`);
+    await expect(dim).toContainText('↔ Horizontal (Landscape)');
+  });
+
+  test('RVP-T10: applying custom W×H resizes the frame to exactly those dims', async ({ page }) => {
+    // RVP-04 DoD 2 — both axes apply at once, through the button and Enter.
+    await page.fill('#controlled-width-input', '500');
+    await page.fill('#controlled-height-input', '700');
+    await page.locator('#btn-apply-custom-dim').click();
+    await page.waitForTimeout(600);
+
+    let box = await page.locator(FRAME).boundingBox();
+    expect(box.width).toBeCloseTo(500, 0);
+    expect(box.height).toBeCloseTo(700, 0);
+
+    await page.fill('#controlled-width-input', '600');
+    await page.fill('#controlled-height-input', '400');
+    await page.locator('#controlled-height-input').press('Enter');
+    await page.waitForTimeout(600);
+
+    box = await page.locator(FRAME).boundingBox();
+    expect(box.width).toBeCloseTo(600, 0);
+    expect(box.height).toBeCloseTo(400, 0);
+  });
+
+  test('RVP-T11: the frame declares a geometry transition pipeline, lifted after boot', async ({ page }) => {
+    // RVP-04 DoD 3 — the rotation pulse is a declared animation channel, not a
+    // jump cut. RVP-T01 already proves the channel lands on exact geometry;
+    // this proves the channel exists. Duration is >0 under default motion
+    // (prefers-reduced-motion legitimately forces ~0ms, so this asserts the
+    // declared pipeline in the default environment the suite pins).
+    const t = await page.evaluate(() => {
+      const cs = getComputedStyle(document.querySelector('#controlled-panel-frame'));
+      return {
+        props: cs.transitionProperty,
+        durations: cs.transitionDuration.split(',').map((d) => parseFloat(d)),
+        booting: document.body.classList.contains('lab-booting'),
+      };
+    });
+    expect(t.booting, 'transitions are enabled once initial geometry is committed').toBe(false);
+    for (const p of ['width', 'height', 'transform']) {
+      expect(t.props, `the frame transitions ${p}`).toContain(p);
+    }
+    expect(Math.max(...t.durations), 'the transition has a non-zero duration').toBeGreaterThan(0);
+  });
 });
