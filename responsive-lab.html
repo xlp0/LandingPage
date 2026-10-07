@@ -22,7 +22,12 @@
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--color-bg);
       color: var(--color-text-primary);
-      min-height: 100vh;
+      /* height, not min-height: the workbench is window-sized, so the stage
+         reports the space actually available. With min-height the stage's
+         content could inflate the body past the viewport, and the containment
+         math would then measure a stage that had already grown to fit the very
+         device it was supposed to bound (INV-RVP-02). */
+      height: 100vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;

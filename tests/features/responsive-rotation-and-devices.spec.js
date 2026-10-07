@@ -99,6 +99,51 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     });
     expect(overflow.x).toBeLessThanOrEqual(1);
     expect(overflow.y).toBeLessThanOrEqual(1);
+
+    // …and the *page* must not scroll either. If it does, the stage has inflated
+    // to fit the device, the scale is computed against a stage that already
+    // contains it, and the frame is cut off by the window while this test still
+    // reports containment. RVP-04's DoD requires "no scrollbars".
+    const pageOverflow = await page.evaluate(
+      () => document.documentElement.scrollHeight - window.innerHeight,
+    );
+    expect(pageOverflow, 'the workbench must not scroll').toBeLessThanOrEqual(1);
+  });
+
+  test('RVP-T02c: containment holds in a small window, where the stage could inflate', async ({ page }) => {
+    // The regression this covers: with `body { min-height: 100vh }` the stage's
+    // content pushed the body past the viewport (904px of document in a 700px
+    // window). The stage then reported 749px of available height, the scale
+    // resolved to 60% instead of 44%, and the 1180px-tall device was clipped by
+    // the window — the containment assertion passed while the user saw a frame
+    // that did not fit. A short window is what exposes it.
+    await page.setViewportSize({ width: 1280, height: 700 });
+    await page.goto('/responsive-lab.html');
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(400);
+
+    await page.locator('#btn-orient-vertical').click();
+    await page.locator('#btn-size-tablet').click();   // 820 x 1180 portrait
+    await page.waitForTimeout(700);
+
+    const m = await page.evaluate(() => {
+      const stage = document.querySelector('#lab-stage-container');
+      const frame = document.querySelector('#controlled-panel-frame');
+      const host = stage.getBoundingClientRect();
+      const fb = frame.getBoundingClientRect();
+      return {
+        docOverflow: document.documentElement.scrollHeight - window.innerHeight,
+        frameVisible: Math.min(fb.bottom, host.bottom) - Math.max(fb.top, host.top),
+        frameHeight: fb.height,
+        scale: Number(frame.style.getPropertyValue('--frame-scale-factor')),
+        aspect: fb.width / fb.height,
+      };
+    });
+
+    expect(m.docOverflow, 'the page does not scroll').toBeLessThanOrEqual(1);
+    expect(m.frameVisible, 'the whole frame height is visible').toBeGreaterThanOrEqual(m.frameHeight - 1);
+    expect(m.scale, 'the device is scaled down, not left at 100%').toBeLessThan(1);
+    expect(m.aspect, 'the rendered frame keeps the device aspect').toBeCloseTo(820 / 1180, 2);
   });
 
   test('RVP-T02b: a device that fits is never upscaled by the margin', async ({ page }) => {

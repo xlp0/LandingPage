@@ -34,6 +34,13 @@ A modern, **static-first, modular web application** with **serverless P2P commun
 - **Microphone Support**: Enabled `microphone` permission for iframe integrations, allowing voice interaction with supported chatbots.
 - **Smart Fallback**: Automatically provides a direct link button for services that block iframe embedding (e.g., ChatGPT, Claude), ensuring users can always access their tools.
 
+### **📱 Responsive UI Lab & Viewport Workbench**
+- **Dynamic 2D Geometry & Rotation (`INV-RVP-01`)**: Full-window responsive testing workbench (`responsive-lab.html`) with dual-axis orientation swapping. Clicking orientation toggles physically swaps target width and height while maintaining aspect ratios without distortion.
+- **Layout-Box Stage Containment (`INV-RVP-02`)**: Automatic scale factor $s = \min(1, W_{\text{available}} / w_{\text{target}}, H_{\text{available}} / h_{\text{target}})$ inside a dedicated `.viewport-scale-wrapper`. Even the largest desktop or rotated tablet viewports fit completely within the available stage space with zero window scrollbars.
+- **Declarative Device Registry (`INV-RVP-03`)**: Built-in catalog of 8 modern devices (`js/device-registry.js`) from phones to XR headsets, with schema validation ($[100, 7680]$ px bounds) and persistent `localStorage` storage.
+- **Interactive Device Manager**: Add custom screen sizes with automated greatest-common-divisor (GCD) aspect ratio calculation, delete user-added devices, or reset to factory defaults.
+- **Zero-Dependency Guarantee (`INV-REF-01`)**: Pure vanilla JavaScript and native CSS variables (`--frame-target-width`, `--frame-target-height`, `--frame-scale-factor`).
+
 ### **🏗️ Modular Architecture**
 - **MCard Manager**: Advanced card management with IndexedDB persistence, handle support (`@welcome`), and **Duplications** detection (v11+).
 - **Modular HTML**: `index.html` logic is fully modularized into dedicated ESM-ready scripts (`public/js/pwa-init.js`, `ui-inline-handlers.js`, etc.) while preserving external interfaces.
@@ -659,6 +666,15 @@ This project is provided as-is for exploring PKC design concepts and serverless 
 ---
 
 ## 🐛 **Recent Bug Fixes**
+
+### **October 2026**
+- **EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry (`responsive-lab.html`)**:
+  - Replaced legacy 1D width-only preset buttons with dynamic device registry (`js/device-registry.js`) and rendered preset ribbon.
+  - Implemented true 2D orientation swapping (Portrait $\leftrightarrow$ Landscape) with physical dimension exchange and smooth transitions (`INV-RVP-01`).
+  - Implemented layout-box stage containment (`.viewport-scale-wrapper`), scaling oversized viewports to fit the workbench with a 5% margin (`INV-RVP-02`).
+  - Fixed workbench stage inflation bug where `body { min-height: 100vh }` allowed tall viewports to push the body height beyond the window, leading to clipped frames in short viewports. Enforced strict `body { height: 100vh }`.
+  - Added Device Manager modal dialog with closed schema validation, custom viewport creation, deletion of user devices, and `localStorage` self-healing (`INV-RVP-03`).
+  - Added Playwright test suite `tests/features/responsive-rotation-and-devices.spec.js` (18 passing assertions, including small-window containment `RVP-T02c`).
 
 ### **January 2026**
 - **Fixed Apps dropdown in CardTypes sidebar** - The Apps category dropdown was not responding to clicks. Root cause: `viewManager` singleton was created but not exposed to `window`, causing `window.viewManager.toggleSubmenu('apps')` to fail silently. Fix: Added `window.viewManager = viewManager;` in `public/js/ViewManager.js`.
