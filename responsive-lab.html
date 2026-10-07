@@ -429,6 +429,14 @@
                   height var(--motion-duration-slow) var(--motion-ease);
     }
 
+    /* Boot: no transition until the first geometry is committed, so the frame
+       does not animate into its initial state. Anything measuring the frame
+       early would otherwise see a box mid-flight. */
+    body.lab-booting .viewport-frame,
+    body.lab-booting .viewport-scale-wrapper {
+      transition: none;
+    }
+
     /* Orientation carries colour only — the dimensions come from the geometry
        state, so these classes cannot disagree with it. */
     .viewport-frame.orientation-vertical {
@@ -702,7 +710,7 @@
   </style>
 </head>
 
-<body>
+<body class="lab-booting">
   <!-- Top Navigation Bar -->
   <header class="lab-navbar">
     <div class="lab-nav-left">
@@ -1348,6 +1356,10 @@
     btnOrientHorizontal?.classList.add('active');
     renderPresets();
     applyViewportGeometry();
+    // commit the initial geometry with transitions off, then enable them
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => document.body.classList.remove('lab-booting'));
+    });
 
     // public API — kept for scripted use and extended with the 2D geometry
     window.__set_controlled_panel_width = (w) => setViewportSize(parseInt(w, 10), viewport.height, 'px', '');
