@@ -18,6 +18,8 @@
   --color-primary: #3b82f6;
   --color-primary-hover: #2563eb;
   --color-on-primary: #ffffff;
+  --color-action: #007acc;
+  --color-on-action: #ffffff;
   --color-scrim: rgba(0, 0, 0, 0.35);
   --color-accent: #a78bfa;
   --color-success: #10b981;
@@ -63,6 +65,7 @@
   --gradient-brand: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
   --gradient-primary-deep: linear-gradient(135deg, #4f46e5 0%, #6d28d9 100%);
   --gradient-text-brand: linear-gradient(to right, #60a5fa, #a78bfa);
+  --shadow-text-hero: 2px 2px 4px rgba(0, 0, 0, 0.2);
 
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -94,6 +97,8 @@
   --color-primary: #2563eb;
   --color-primary-hover: #1d4ed8;
   --color-on-primary: #ffffff;
+  --color-action: #007acc;
+  --color-on-action: #ffffff;
   --color-scrim: rgba(0, 0, 0, 0.35);
   --color-accent: #7c3aed;
   --color-info: #0284c7;
@@ -141,6 +146,8 @@
   --color-primary: #00ffff;
   --color-primary-hover: #ffff00;
   --color-on-primary: #000000;
+  --color-action: #00ffff;
+  --color-on-action: #000000;
   --color-scrim: rgba(0, 0, 0, 0.6);
   --color-accent: #ffff00;
   --color-info: #00ffff;
@@ -225,6 +232,8 @@
     --color-primary: #2563eb;
     --color-primary-hover: #1d4ed8;
     --color-on-primary: #ffffff;
+    --color-action: #007acc;
+    --color-on-action: #ffffff;
     --color-scrim: rgba(0, 0, 0, 0.35);
     --color-accent: #7c3aed;
     --color-info: #0284c7;

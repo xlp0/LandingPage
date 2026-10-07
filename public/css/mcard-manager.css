@@ -38,7 +38,7 @@ body {
 
 .header {
   background: #2d2d30;
-  color: white;
+  color: var(--color-text-primary);
   padding: 12px 20px;
   display: flex;
   align-items: center;
@@ -88,7 +88,7 @@ body {
 
 .header-btn:hover {
   background: #3e3e42;
-  color: white;
+  color: var(--color-text-primary);
 }
 
 .main-content {
@@ -241,7 +241,7 @@ body {
 
 .type-item.active {
   background: #37373d;
-  color: white;
+  color: var(--color-text-primary);
 }
 
 .type-item-content {
@@ -270,8 +270,8 @@ body {
 }
 
 .type-item.active .type-count {
-  background: #007acc;
-  color: white;
+  background: var(--color-action);
+  color: var(--color-on-action);
 }
 
 /* Apps submenu styles */
@@ -341,7 +341,7 @@ body {
 
 .mcard-item.active {
   background: #37373d;
-  border-left: 2px solid #007acc;
+  border-left: 2px solid var(--color-action);
 }
 
 .mcard-item-header {
@@ -464,13 +464,13 @@ body {
 }
 
 .upload-section:hover {
-  border-color: #007acc;
+  border-color: var(--color-action);
   background: #2a2d2e;
 }
 
 .upload-section.drag-over {
   background: #2a2d2e;
-  border-color: #007acc;
+  border-color: var(--color-action);
   transform: scale(1.01);
 }
 
@@ -497,8 +497,8 @@ input[type="file"] {
 }
 
 .btn {
-  background: #007acc;
-  color: white;
+  background: var(--color-action);
+  color: var(--color-on-action);
   border: none;
   padding: 6px 12px;
   border-radius: 4px;
@@ -521,6 +521,7 @@ input[type="file"] {
 
 .btn-secondary {
   background: #3e3e42;
+  color: var(--color-text-primary);
   margin-left: 0;
 }
 
@@ -617,7 +618,7 @@ input[type="file"] {
   bottom: 20px;
   right: 20px;
   background: #333;
-  color: white;
+  color: var(--color-text-primary);
   padding: 16px 24px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -680,7 +681,7 @@ input[type="file"] {
 
 .search-box:focus {
   outline: none;
-  border-color: #007acc;
+  border-color: var(--color-action);
   background: #1e1e1e;
 }
 
@@ -709,14 +710,14 @@ input[type="file"] {
 
 .filter-toggle-btn:hover {
   background: #4a4a4a;
-  border-color: #007acc;
-  color: #007acc;
+  border-color: var(--color-action);
+  color: var(--color-action);
 }
 
 .filter-toggle-btn.active {
-  background: #007acc;
-  border-color: #007acc;
-  color: white;
+  background: var(--color-action);
+  border-color: var(--color-action);
+  color: var(--color-on-action);
 }
 
 /* Search Filters Dropdown */
@@ -778,7 +779,7 @@ input[type="file"] {
 .filter-option input[type="checkbox"],
 .filter-option input[type="radio"] {
   cursor: pointer;
-  accent-color: #007acc;
+  accent-color: var(--color-action);
 }
 
 .filter-actions {
@@ -802,8 +803,8 @@ input[type="file"] {
 
 .filter-clear-btn:hover {
   background: #3e3e42;
-  border-color: #007acc;
-  color: #007acc;
+  border-color: var(--color-action);
+  color: var(--color-action);
 }
 
 /* Chat Panel Styles */
@@ -835,7 +836,7 @@ input[type="file"] {
 }
 
 .chat-close-btn:hover {
-  color: white;
+  color: var(--color-text-primary);
   background: #3e3e42;
   border-radius: 4px;
 }
@@ -872,8 +873,8 @@ input[type="file"] {
 }
 
 .chat-message.user .chat-message-bubble {
-  background: #007acc;
-  color: white;
+  background: var(--color-action);
+  color: var(--color-on-action);
 }
 
 .chat-message.assistant .chat-message-bubble {
@@ -908,7 +909,7 @@ input[type="file"] {
 
 .chat-input:focus {
   outline: none;
-  border-color: #007acc;
+  border-color: var(--color-action);
   background: #1e1e1e;
 }
 
@@ -919,8 +920,8 @@ input[type="file"] {
 .chat-send-btn {
   margin-top: 8px;
   width: 100%;
-  background: #007acc;
-  color: white;
+  background: var(--color-action);
+  color: var(--color-on-action);
   border: none;
   padding: 8px;
   border-radius: 4px;
@@ -1301,7 +1302,7 @@ input[type="file"] {
 
 .calendar-header {
   background: #2d2d30;
-  color: white;
+  color: var(--color-text-primary);
   padding: 12px 20px;
   display: flex;
   align-items: center;

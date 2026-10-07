@@ -27,6 +27,9 @@ const audit = (mode) => {
   const norm = (s) => String(s ?? '').trim();
   const isTransparent = (s) => /^(transparent|rgba?\(0,\s*0,\s*0,\s*0\))$/.test(norm(s));
 
+  // STY-06 DV-03: high-contrast must clear AAA (7:1), not merely AA.
+  const highContrast = document.documentElement.dataset.theme === 'high-contrast';
+
   // ── every declared custom property on :root, and whether anything reads it ──
   const declared = new Set();
   const used = new Set();
@@ -201,7 +204,7 @@ const audit = (mode) => {
     const sizePx = parseFloat(s.fontSize) || 16;
     const weight = parseInt(s.fontWeight, 10) || 400;
     const isLarge = sizePx >= 24 || (sizePx >= 18.66 && weight >= 700);
-    const floor = isLarge ? 3 : 4.5;
+    const floor = highContrast ? (isLarge ? 4.5 : 7) : (isLarge ? 3 : 4.5);
     // conservative: the worst candidate surface decides; a pass is a pass on every stop.
     let worst = null, allFail = true;
     for (const surf of cands) {
