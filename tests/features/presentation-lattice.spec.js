@@ -604,11 +604,11 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     // Grouped budget bars canvas
     await expect(page.locator('#insp-budget-canvas')).toBeVisible();
 
-    // Step 9: Verify #insp-slot-correctness handover placeholder
-    console.log('[Test] Step 9: Verifying #insp-slot-correctness handover placeholder');
+    // Step 9: Verify #insp-slot-correctness hydrated panel
+    console.log('[Test] Step 9: Verifying #insp-slot-correctness hydrated panel');
     const correctnessSlot = page.locator('#insp-slot-correctness');
     await expect(correctnessSlot).toBeVisible();
-    await expect(correctnessSlot).toContainText('correctness not yet evaluated');
+    await expect(correctnessSlot).toContainText('Correctness');
 
     // Step 10: Switch target archetype to Wearable in inspector and verify metrics update
     console.log('[Test] Step 10: Switching inspector target to Wearable to test budget comparison');

@@ -362,6 +362,7 @@ export class DeploymentUnitInspector {
     `;
 
     this.hydrateMetricsSlot(target);
+    this.hydrateCorrectnessSlot(target);
   }
 
   async hydrateMetricsSlot(target) {
@@ -396,6 +397,22 @@ export class DeploymentUnitInspector {
       await this.fibrationDashboard.mountInspectorMetrics(slotEl, unitData, target);
     } catch (err) {
       console.warn('[Inspector] Lazy loading FibrationDashboard failed:', err);
+    }
+  }
+
+  async hydrateCorrectnessSlot(target) {
+    const slotEl = document.getElementById('insp-slot-correctness');
+    if (!slotEl) return;
+
+    try {
+      const { evaluate } = await import('../observability/correctness/evaluate.js');
+      const { mountCorrectnessPanel } = await import('../observability/correctness/correctness-panel.js');
+
+      const unitName = target.id === 'desktop' ? 'mcard-studio' : 'LandingPage';
+      const correctnessData = await evaluate(unitName);
+      mountCorrectnessPanel(slotEl, correctnessData);
+    } catch (err) {
+      console.warn('[Inspector] Lazy loading correctness panel failed:', err);
     }
   }
 
@@ -447,6 +464,14 @@ export class DeploymentUnitInspector {
         delete metricsSlot.__cleanup;
       }
       metricsSlot.innerHTML = '';
+    }
+    const correctnessSlot = document.getElementById('insp-slot-correctness');
+    if (correctnessSlot) {
+      if (correctnessSlot.__cleanup) {
+        correctnessSlot.__cleanup();
+        delete correctnessSlot.__cleanup;
+      }
+      correctnessSlot.innerHTML = '';
     }
   }
 
