@@ -138,7 +138,7 @@ navigation:
   penpot_file: "design/landing-navigation.penpot"
   penpot_instance: "http://localhost:3449"
   flows:
-    - { name: "main-nav", starting_frame: "<frame-uuid>" }
+    - { name: "main-nav", starting_frame: "d7570000-0000-8000-8000-000000000011" }
   render_targets:
     - "index.html"
     - "js/nav.js"
