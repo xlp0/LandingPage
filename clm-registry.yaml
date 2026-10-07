@@ -1939,6 +1939,15 @@ sprints:
         - vcard:sprint-407:x_update_docs_architecture_code_migration_to_clm_md
         - vcard:sprint-407:x_graduate_sprints_403_407_into_the_12_aspect_deployment_archite
       state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:00-program-charter-epic-orc-ii
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-ORC-II
+    title: "Program Charter: EPIC-ORC-II \u2014 Closure: Making the Invariants Enforced"
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
   - handle: urn:clm:handle:docs:sprints:_active:00-program-charter-epic-orc
     card_type: mcard
     archetype: specification_mcard
@@ -2062,6 +2071,119 @@ sprints:
         - vcard:orc-08:certification_records_what_did_not_change_no_submodule_s_behavio
         - vcard:orc-08:cross_repo_acts_are_named_the_clm_submodule_change_card_type_is_
         - vcard:orc-08:recurrence_is_mechanically_blocked_a_second_content_store_an_uns
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-09-structural-path-detection
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-09
+    title: 'Sprint ORC-09: Structural Path-Reference Detection'
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:orc-09:every_historical_form_is_detected_each_of_the_five_fixtures_is_r
+        - vcard:orc-09:untracked_files_are_scanned_a_file_created_and_not_staged_is_det
+        - vcard:orc-09:the_surface_covers_every_repository_a_hardcoded_estate_path_in_s
+        - vcard:orc-09:the_detector_has_teeth_disabling_expression_reconstruction_makes
+        - vcard:orc-09:no_allowlist_entry_is_a_whole_file_every_entry_names_a_path_and_
+        - vcard:orc-09:zero_false_positives_on_the_live_tree_the_estate_gate_and_the_pa
+        - vcard:orc-09:the_finding_record_is_emitted_registry_path_references_json_list
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-10-column-level-schema-conformance
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-10
+    title: 'Sprint ORC-10: Column-Level Schema Conformance & One Declaration'
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:orc-10:descriptors_are_compared_the_checker_reports_a_difference_in_typ
+        - vcard:orc-10:the_nullability_difference_is_gone_handle_history_previous_hash_
+        - vcard:orc-10:the_default_difference_is_gone_card_g_time_agrees_between_declar
+        - vcard:orc-10:one_declaration_migrations_rs_no_longer_restates_the_core_create
+        - vcard:orc-10:order_independence_holds_a_tape_built_via_the_producer_path_and_
+        - vcard:orc-10:every_tape_conforms_all_three_deployed_tapes_agree_with_the_decl
+        - vcard:orc-10:no_regression_make_orc_schema_passes_the_layer3_suite_stays_gree
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-11-enum-constraint-on-deployed-substrate
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-11
+    title: 'Sprint ORC-11: The Enum Constraint on Deployed Substrate'
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:orc-11:the_database_refuses_inserting_card_type_bogus_into_each_deploye
+        - vcard:orc-11:lossless_row_count_and_content_digest_are_identical_before_and_a
+        - vcard:orc-11:indexes_and_triggers_survive_the_idx_handle_current_hash_and
+        - vcard:orc-11:idempotent_re_running_the_rebuild_detects_the_constraint_is_alre
+        - vcard:orc-11:atomic_an_induced_failure_mid_rebuild_leaves_the_original_card_t
+        - vcard:orc-11:foreign_keys_hold_pragma_foreign_key_check_is_clean_on_every_tap
+        - vcard:orc-11:no_regression_make_orc_schema_passes_sealing_still_writes_a_chai
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-12-continuity-reconciled
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-12
+    title: 'Sprint ORC-12: Continuity Reconciled, Not Reported'
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:orc-12:windows_are_enumerated_structurally_each_gap_reports_its_boundin
+        - vcard:orc-12:both_existing_gaps_are_reconciled_the_two_current_gaps_carry_wha
+        - vcard:orc-12:an_unreconciled_gap_fails_the_gate_removing_a_reconciliation_ent
+        - vcard:orc-12:a_phantom_reconciliation_is_reported_an_entry_naming_a_window_th
+        - vcard:orc-12:no_blanket_waiver_is_expressible_there_is_no_field_flag_or_wildc
+        - vcard:orc-12:the_gate_runs_strict_stage_4_invokes_strict_asserted_by_reading_
+        - vcard:orc-12:the_count_is_visible_and_monotone_the_number_of_accepted_windows
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-13-display-parity-in-a-browser
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-13
+    title: 'Sprint ORC-13: Display Parity Observed in a Browser'
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:orc-13:the_registry_is_served_api_clm_registry_returns_the_sprints_sect
+        - vcard:orc-13:sealed_state_is_observable_a_sealed_and_a_specification_entry_ar
+        - vcard:orc-13:the_artifact_is_served_and_is_the_sealed_original_the_bytes_retu
+        - vcard:orc-13:traversal_is_refused_file_and_a_non_allowlisted_subdir_both_retu
+        - vcard:orc-13:the_route_is_load_bearing_removing_the_route_makes_the_spec_fail
+        - vcard:orc-13:no_dead_candidates_each_of_the_two_modules_carries_one_witness_p
+        - vcard:orc-13:no_regression_npm_run_test_presentation_stays_12_12_and_make_sty
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-14-kernel-yaml-conformance
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-14
+    title: 'Sprint ORC-14: The Kernel''s YAML Reader Made Conformant'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:orc-14:escaping_is_conformant_inside_a_single_quoted_scalar_unescapes_t
+        - vcard:orc-14:folding_is_conformant_a_scalar_wrapped_across_lines_folds_to_a_s
+        - vcard:orc-14:both_languages_agree_the_identical_fixture_suite_passes_in_types
+        - vcard:orc-14:the_historical_instance_is_a_fixture_the_exact_manifest_scalar_t
+        - vcard:orc-14:the_workarounds_are_deleted_encode_sprint_py_no_longer_forces_do
+        - vcard:orc-14:all_manifests_still_ingest_clmeval_evaluate_succeeds_for_every_e
+        - vcard:orc-14:the_fix_is_load_bearing_reverting_the_reader_change_makes_the_fi
+        - vcard:orc-14:no_regression_the_layer3_suite_stays_green_and_make_orc_gate_sti
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-15-gate-controls-in-isolation
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-15
+    title: 'Sprint ORC-15: Gate Controls in Isolation'
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:orc-15:no_control_writes_to_the_live_tree_the_estate_s_digest_is_identi
+        - vcard:orc-15:interruption_is_safe_killing_a_control_mid_run_leaves_every_live
+        - vcard:orc-15:no_submodule_writes_no_control_opens_a_file_under_landingpage_or
+        - vcard:orc-15:all_seven_controls_still_detect_the_control_run_reports_7_7_so_i
+        - vcard:orc-15:the_fixture_tree_is_faithful_the_fixture_s_schema_and_registry_a
+        - vcard:orc-15:the_claim_is_unconditional_the_certification_s_wording_is_amende
+        - vcard:orc-15:no_regression_make_orc_gate_still_passes_7_7_stages_and_7_7_cont
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-01-development-lifecycle-cpn-specification
     card_type: pcard
