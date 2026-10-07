@@ -149,10 +149,13 @@ export class FibrationDashboard {
 
   async loadAssessmentData() {
     try {
-      let res = await fetch('/docs/sprints/epic-cdo/observability/fibration_assessment.json');
-      if (!res.ok) {
-        res = await fetch('/docs/sprints/_active/observability/fibration_assessment.json');
-      }
+      // Read the record through the registry API. The previous fetch targeted a
+      // filesystem path the portal never served and fell back to a tree that has not
+      // existed since the CDO program graduated — so the dashboard silently showed
+      // nothing.
+      const res = await fetch(
+        '/api/clm/program-artifact?program=cdo&subdir=observability&file=fibration_assessment.json'
+      );
       if (res.ok) {
         const data = await res.json();
         if (data.units && data.units.length > 0) {

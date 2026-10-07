@@ -130,6 +130,36 @@ router.post('/telemetry', express.json(), (req, res) => {
   });
 });
 
+/**
+ * GET /api/clm/program-artifact
+ * Serves a read-only record from a graduated program archive.
+ *
+ * The portal renders program records (observability, inventory, parity,
+ * conformance). It must not read them from a path that does not exist, and it
+ * must not accept an arbitrary path — so the reference is structured
+ * (program / subdir / file) and every component is validated before use.
+ */
+const PROGRAMS_ROOT = path.join(__dirname, '..', '..', 'docs', 'sprints', 'programs');
+const ALLOWED_SUBDIRS = new Set(['observability', 'inventory', 'parity', 'conformance']);
+const SAFE_SEGMENT = /^[A-Za-z0-9][A-Za-z0-9_.-]*$/;
+
+router.get('/program-artifact', (req, res) => {
+  const { program, subdir, file } = req.query;
+  if (
+    !SAFE_SEGMENT.test(program || '') ||
+    !ALLOWED_SUBDIRS.has(subdir) ||
+    !SAFE_SEGMENT.test(file || '')
+  ) {
+    return res.status(400).json({ error: 'invalid artifact reference' });
+  }
+  const target = path.resolve(PROGRAMS_ROOT, program, subdir, file);
+  // resolve() then re-check containment: `..` in any segment cannot escape.
+  if (!target.startsWith(PROGRAMS_ROOT + path.sep) || !fs.existsSync(target)) {
+    return res.status(404).json({ error: 'artifact not found' });
+  }
+  res.sendFile(target);
+});
+
 // ⚠️ Server-side CLM execution disabled
 // CLMRunner is not exported by mcard-js library
 // Use browser-side BrowserCLMRunner instead

@@ -2063,7 +2063,7 @@ sprints:
         - vcard:orc-08:cross_repo_acts_are_named_the_clm_submodule_change_card_type_is_
         - vcard:orc-08:recurrence_is_mechanically_blocked_a_second_content_store_an_uns
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-cdo:sprint-cdo-01-development-lifecycle-cpn-specification
+  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-01-development-lifecycle-cpn-specification
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-01
@@ -2076,7 +2076,7 @@ sprints:
         - vcard:cdo-01:x_x_top_d_0_and_misu_assertions_pass_with_mutation_tests_15_15
         - vcard:cdo-01:x_triad_card_clm_clm_cdo_01_lifecycle_cpn_yaml_clm_clm_cdo_01_li
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-cdo:sprint-cdo-02-conversational-turn-protocol
+  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-02-conversational-turn-protocol
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-02
@@ -2089,7 +2089,7 @@ sprints:
         - vcard:cdo-02:x_adapter_contract_with_cordis_scope_disposal_documented
         - vcard:cdo-02:x_triad_card_clm_clm_cdo_02_turn_protocol_yaml_clm_clm_cdo_02_tu
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-cdo:sprint-cdo-03-development-action-library
+  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-03-development-action-library
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-03
@@ -2103,7 +2103,7 @@ sprints:
         - vcard:cdo-03:x_action_library_index_committed
         - vcard:cdo-03:x_triad_card_clm_clm_cdo_03_action_library_yaml_clm_clm_cdo_03_a
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-cdo:sprint-cdo-04-development-workflow-dags-and-makefile
+  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-04-development-workflow-dags-and-makefile
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-04
@@ -2117,7 +2117,7 @@ sprints:
         - vcard:cdo-04:x_dag_net_correspondence_test_passes_with_mutation_check
         - vcard:cdo-04:x_triad_card_clm_clm_cdo_04_workflow_dags_yaml_clm_clm_cdo_04_wo
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-cdo:sprint-cdo-05-evidence-witness-ledger
+  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-05-evidence-witness-ledger
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-05
@@ -2132,7 +2132,7 @@ sprints:
         - vcard:cdo-05:x_inv_ref_06_gate_implemented_with_mutation_check
         - vcard:cdo-05:x_triad_card_clm_clm_cdo_05_evidence_ledger_yaml_clm_clm_cdo_05_
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-cdo:sprint-cdo-06-invariant-gate-enforcement
+  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-06-invariant-gate-enforcement
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-06
@@ -2149,7 +2149,7 @@ sprints:
         - vcard:cdo-06:x_classification_table_committed
         - vcard:cdo-06:x_triad_card_clm_clm_cdo_06_invariant_gates_yaml_clm_clm_cdo_06_
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-cdo:sprint-cdo-07-tri-runtime-orchestration-parity
+  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-07-tri-runtime-orchestration-parity
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-07
@@ -2164,7 +2164,7 @@ sprints:
         - vcard:cdo-07:x_all_three_runtime_suites_green_at_baseline
         - vcard:cdo-07:x_triad_card_clm_clm_cdo_07_runtime_parity_yaml_clm_clm_cdo_07_r
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-cdo:sprint-cdo-08-directory-handle-inventory-and-deployment-tokens
+  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-08-directory-handle-inventory-and-deployment-tokens
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-08
@@ -2181,7 +2181,7 @@ sprints:
         - vcard:cdo-08:x_inventory_stage_wired_into_the_delivery_dag
         - vcard:cdo-08:x_triad_card_clm_clm_cdo_08_directory_inventory_yaml_clm_clm_cdo
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-cdo:sprint-cdo-09-deployment-unit-admission-and-evolutionary-tracking
+  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-09-deployment-unit-admission-and-evolutionary-tracking
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-09
@@ -2205,7 +2205,7 @@ sprints:
         - vcard:cdo-09:x_playwright_visual_inspection_executed_across_the_type_lattice_
         - vcard:cdo-09:x_triad_card_clm_clm_cdo_09_deployment_unit_yaml_clm_clm_cdo_09_
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-cdo:sprint-cdo-10-fiber-base-and-totality
+  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-10-fiber-base-and-totality
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-10
@@ -2220,7 +2220,7 @@ sprints:
         - vcard:cdo-10:x_the_unknown_card_resolution_path_is_implemented_and_tested_ret
         - vcard:cdo-10:x_no_rendering_or_dispatch_is_claimed_that_is_cdo_11
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-cdo:sprint-cdo-11-fiber-registry-and-dispatch
+  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-11-fiber-registry-and-dispatch
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-11
@@ -2238,7 +2238,7 @@ sprints:
         - vcard:cdo-11:x_mount_lifecycle_witnesses_are_emitted_including_dispose_status
         - vcard:cdo-11:x_no_desktop_shell_work_is_claimed_in_this_sprint
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-cdo:sprint-cdo-12-fiber-conformance-harness
+  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-12-fiber-conformance-harness
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-12
@@ -2254,7 +2254,7 @@ sprints:
         - vcard:cdo-12:x_a_coverage_report_lists_covered_and_uncovered_pairs_explicitly
         - vcard:cdo-12:x_the_harness_is_unchanged_when_a_new_fiber_is_added_extensibili
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-cdo:sprint-cdo-13-fibration-metric-observability-and-spa-lagrangian-assessment
+  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-13-fibration-metric-observability-and-spa-lagrangian-assessment
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-13
@@ -2272,7 +2272,7 @@ sprints:
         - vcard:cdo-13:x_assessment_artifact_captured_by_the_cdo_08_inventory
         - vcard:cdo-13:x_triad_card_clm_clm_cdo_13_fibration_observability_yaml_clm_clm
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-cdo:sprint-cdo-14-correctness-and-hoare-triple-observability
+  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-14-correctness-and-hoare-triple-observability
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-14
@@ -2292,7 +2292,7 @@ sprints:
         - vcard:cdo-14:x_panel_coexists_with_cdo_13_s_fibration_metrics_panel_and_is_pr
         - vcard:cdo-14:x_triad_card_clm_clm_cdo_14_correctness_observability_yaml_clm_c
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-cdo:sprint-cdo-15-penpot-navigation-authoring
+  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-15-penpot-navigation-authoring
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-15
@@ -2307,7 +2307,7 @@ sprints:
         - vcard:cdo-15:x_file_based_commands_pass_with_penpot_absent
         - vcard:cdo-15:x_triad_card_passes_clm_evaluate_at_its_declared_level
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-cdo:sprint-cdo-16-end-to-end-certification
+  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-16-end-to-end-certification
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-16
@@ -2324,7 +2324,7 @@ sprints:
         - vcard:cdo-16:x_program_archived_tracker_updated_tagged
         - vcard:cdo-16:x_triad_card_clm_clm_cdo_16_certification_yaml_clm_clm_cdo_16_ce
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-rvp:00-program-charter-epic-rvp
+  - handle: urn:clm:handle:docs:sprints:programs:rvp:00-program-charter-epic-rvp
     card_type: pcard
     archetype: ClmTriadManifest
     code: 00-PROGRAM-CHARTER-EPIC-RVP
@@ -2337,7 +2337,7 @@ sprints:
         - vcard:00-program-charter-epic-rvp:custom_screen_sizes_persist_across_browser_reloads_via_localstor
         - vcard:00-program-charter-epic-rvp:automated_playwright_test_suite_passes_100_across_all_orientatio
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-rvp:sprint-rvp-01-2d-viewport-geometry-and-rotation
+  - handle: urn:clm:handle:docs:sprints:programs:rvp:sprint-rvp-01-2d-viewport-geometry-and-rotation
     card_type: pcard
     archetype: ClmTriadManifest
     code: RVP-01
@@ -2350,7 +2350,7 @@ sprints:
         - vcard:rvp-01:pill_status_reflection_controlled_frame_dim_and_controlled_panel
         - vcard:rvp-01:no_stage_overflow_a_rotated_viewport_never_pushes_sidebar_contro
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-rvp:sprint-rvp-02-declarative-device-registry-schema
+  - handle: urn:clm:handle:docs:sprints:programs:rvp:sprint-rvp-02-declarative-device-registry-schema
     card_type: pcard
     archetype: ClmTriadManifest
     code: RVP-02
@@ -2363,7 +2363,7 @@ sprints:
         - vcard:rvp-02:protected_deletion_built_in_devices_cannot_be_accidentally_delet
         - vcard:rvp-02:subscription_signals_adding_or_removing_a_device_immediately_fir
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-rvp:sprint-rvp-03-interactive-device-manager-ui
+  - handle: urn:clm:handle:docs:sprints:programs:rvp:sprint-rvp-03-interactive-device-manager-ui
     card_type: pcard
     archetype: ClmTriadManifest
     code: RVP-03
@@ -2376,7 +2376,7 @@ sprints:
         - vcard:rvp-03:selection_dimension_application_clicking_any_preset_in_the_sideb
         - vcard:rvp-03:keyboard_escape_accessibility_pressing_escape_closes_the_modal_a
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-rvp:sprint-rvp-04-canvas-scaling-and-rotation-animation
+  - handle: urn:clm:handle:docs:sprints:programs:rvp:sprint-rvp-04-canvas-scaling-and-rotation-animation
     card_type: pcard
     archetype: ClmTriadManifest
     code: RVP-04
@@ -2389,7 +2389,7 @@ sprints:
         - vcard:rvp-04:smooth_rotation_pulse_rotating_the_screen_triggers_a_fluid_anima
         - vcard:rvp-04:live_telemetry_fidelity_the_header_pill_dynamically_updates_with
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-rvp:sprint-rvp-05-e2e-playwright-verification-and-certification
+  - handle: urn:clm:handle:docs:sprints:programs:rvp:sprint-rvp-05-e2e-playwright-verification-and-certification
     card_type: mcard
     archetype: specification_mcard
     code: RVP-05
@@ -2398,7 +2398,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:epic-sty:sprint-sty-01-style-audit-and-token-contract
+  - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-01-style-audit-and-token-contract
     card_type: pcard
     archetype: ClmTriadManifest
     code: STY-01
@@ -2413,7 +2413,7 @@ sprints:
         - vcard:sty-01:x_the_inline_style_inventory_separates_presentational_from_struc
         - vcard:sty-01:x_no_page_has_been_changed_verified_commit_1bcc7ba_the_sty_01_ha
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-sty:sprint-sty-02-layout-freeze
+  - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-02-layout-freeze
     card_type: pcard
     archetype: ClmTriadManifest
     code: STY-02
@@ -2427,7 +2427,7 @@ sprints:
         - vcard:sty-02:x_volatile_regions_are_masked_with_the_obligation_recorded_not_e
         - vcard:sty-02:x_no_page_has_been_changed_the_sprint_adds_a_test_harness_and_a_
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-sty:sprint-sty-03-tokenise-shared-chrome
+  - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-03-tokenise-shared-chrome
     card_type: pcard
     archetype: ClmTriadManifest
     code: STY-03
@@ -2441,7 +2441,7 @@ sprints:
         - vcard:sty-03:x_app_html_renders_in_all_three_themes_with_0_contrast_failures_
         - vcard:sty-03:x_no_dom_or_handler_changed_the_freeze_s_tag_index_count_compari
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-sty:sprint-sty-04-colour-convergence-index
+  - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-04-colour-convergence-index
     card_type: pcard
     archetype: ClmTriadManifest
     code: STY-04
@@ -2455,7 +2455,7 @@ sprints:
         - vcard:sty-04:x_the_visual_hierarchy_is_preserved_not_flattened_hue_identity_i
         - vcard:sty-04:x_the_layout_freeze_passes_at_every_swept_viewport_30_30
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-sty:sprint-sty-05-contrast-remediation
+  - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-05-contrast-remediation
     card_type: pcard
     archetype: ClmTriadManifest
     code: STY-05
@@ -2469,7 +2469,7 @@ sprints:
         - vcard:sty-05:x_the_contrast_gate_fails_on_a_new_violation_and_passes_a_valid_
         - vcard:sty-05:x_every_confirmed_failure_from_the_classified_baseline_is_cleare
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-sty:sprint-sty-06-theme-completeness
+  - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-06-theme-completeness
     card_type: pcard
     archetype: ClmTriadManifest
     code: STY-06
@@ -2484,7 +2484,7 @@ sprints:
         - vcard:sty-06:x_the_component_surfaces_are_theme_adaptive_and_measured_the_dep
         - vcard:sty-06:x_no_page_is_outside_the_token_layer_every_page_paints_from_a_de
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:epic-sty:sprint-sty-07-configurability-surface-and-gate
+  - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-07-configurability-surface-and-gate
     card_type: pcard
     archetype: ClmTriadManifest
     code: STY-07
