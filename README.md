@@ -96,20 +96,30 @@ Every CLM component follows the **Abstract → Concrete → Balanced** pattern:
 
 ### **CLM-Driven Testing**
 
-All tests are organized using CLM principles:
+All tests are organized using CLM principles and executed via Playwright:
 
 | Test Category | Purpose | CLM Alignment |
 |---------------|---------|---------------|
-| **Smoke Tests** (`tests/smoke/`) | Fast navigation validation | Abstract (goal verification) |
-| **Component Tests** (`tests/components/`) | Isolated component testing | Concrete (implementation) |
-| **Feature Tests** (`tests/features/`) | Deep feature validation | Balanced (metrics & outcomes) |
+| **Smoke Tests** (`tests/smoke/`) | Fast navigation validation (~15s) | Abstract (goal verification) |
+| **Component Tests** (`tests/components/`) | Isolated component testing (~60s) | Concrete (implementation) |
+| **Feature Tests** (`tests/features/`) | Deep feature validation (~120s) | Balanced (metrics & outcomes) |
 
 ```bash
 # Run tests by CLM category
 npm run test:smoke       # Abstract - Does it load correctly?
 npm run test:components  # Concrete - Does the implementation work?
 npm run test:features    # Balanced - Does it meet performance metrics?
+
+# List all discovered tests across projects
+npx playwright test --list
+
+# Start interactive background test server (IDE test runner extension protocol)
+npx playwright test-server
 ```
+
+> **Note on Test Architecture & Configuration:**
+> - **Playwright Version:** Uses `@playwright/test` `^1.57.0` (matching monorepo hoisted version `1.63.0`), enabling the JSON-RPC `test-server` command used by IDE test runners.
+> - **File Patterns:** [playwright.config.js](playwright.config.js) defines `testMatch: '**/*.spec.js'` to isolate browser end-to-end tests from standalone Vitest unit test suites (`tests/observability/*.test.js`).
 
 ### **CLM Dashboard**
 

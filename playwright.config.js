@@ -21,6 +21,7 @@ const SLOW_MO = process.env.SLOWMO ? parseInt(process.env.SLOWMO, 10) : (process
 
 export default defineConfig({
   testDir: './tests',
+  testMatch: '**/*.spec.js',
 
   /* Run tests in files in parallel */
   fullyParallel: false,
