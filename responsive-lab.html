@@ -125,9 +125,11 @@
     }
 
     .nav-action-link.primary {
+      /* a primary-painted surface carries its own foreground: --color-text-primary
+         is white in high-contrast, and this background is yellow there (1.07:1) */
       background: linear-gradient(135deg, var(--color-primary-hover), var(--color-primary-hover));
       border: 1px solid var(--color-primary);
-      color: var(--color-text-primary);
+      color: var(--color-on-primary);
     }
 
     .nav-action-link.primary:hover {
@@ -382,14 +384,17 @@
       position: relative;
     }
 
-    /* Controlled Viewport Frame */
+    /* Controlled Viewport Frame — RVP-01: both axes are real geometry.
+       The frame is driven by --frame-target-width/height; an orientation class
+       no longer fakes a dimension via min-height. */
     .viewport-frame {
-      flex: 1;
-      width: 100%;
-      height: 100%;
-      min-height: 0;
-      max-width: 100%;
-      max-height: 100%;
+      flex: none;
+      width: var(--frame-target-width, 100%);
+      height: var(--frame-target-height, 100%);
+      /* No max-width here: the wrapper is the scaled size, so a percentage cap
+         would clamp the frame to the scaled box and the transform would shrink
+         it a second time. The wrapper bounds the layout; the transform scales
+         the paint. */
       background: var(--panel-abyss);
       border: 1px solid var(--border-strong);
       border-radius: 12px;
@@ -397,17 +402,36 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), height 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s ease;
+      transform: scale(var(--frame-scale-factor, 1));
+      transform-origin: center center;
+      transition: transform var(--motion-duration-slow) var(--motion-ease),
+                  width var(--motion-duration-slow) var(--motion-ease),
+                  height var(--motion-duration-slow) var(--motion-ease);
     }
 
+    /* RVP-04: the wrapper lays out at the SCALED size. A transform alone paints
+       smaller but still lays out (w, h), so the stage would keep overflowing —
+       the very thing the scaling exists to prevent. */
+    .viewport-scale-wrapper {
+      width: calc(var(--frame-target-width, 100%) * var(--frame-scale-factor, 1));
+      height: calc(var(--frame-target-height, 100%) * var(--frame-scale-factor, 1));
+      max-width: 100%;
+      max-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: width var(--motion-duration-slow) var(--motion-ease),
+                  height var(--motion-duration-slow) var(--motion-ease);
+    }
+
+    /* Orientation carries colour only — the dimensions come from the geometry
+       state, so these classes cannot disagree with it. */
     .viewport-frame.orientation-vertical {
-      min-height: 380px;
       border-color: var(--badge-success-border);
       box-shadow: 0 25px 50px -12px var(--shadow-panel), 0 0 20px var(--color-success-surface);
     }
 
     .viewport-frame.orientation-horizontal {
-      min-height: 300px;
       border-color: var(--badge-info-border);
       box-shadow: 0 25px 50px -12px var(--shadow-panel), 0 0 25px var(--badge-info-bg);
     }
@@ -505,6 +529,171 @@
       font-weight: 600;
       color: var(--badge-success-text);
     }
+    /* ── RVP-03: device preset ribbon and Device Manager ──────────────────
+       Every colour below is a token (INV-RVP-06): no literal is permitted in
+       this block, and the style gate enforces that. */
+    .preset-chips-scroll {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      max-height: 12rem;
+      overflow-y: auto;
+    }
+
+    .chip-custom-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin-left: 0.3rem;
+      border-radius: 50%;
+      background: var(--badge-accent-text);
+      vertical-align: middle;
+    }
+
+    .device-manager-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: var(--scrim-opaque);
+      backdrop-filter: blur(var(--blur-surface, 8px));
+    }
+
+    .device-manager-backdrop.open {
+      display: flex;
+    }
+
+    .device-manager-modal {
+      width: 100%;
+      max-width: 720px;
+      max-height: 86vh;
+      overflow-y: auto;
+      background: var(--panel-strong);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg, 12px);
+      box-shadow: var(--shadow-hover);
+      color: var(--panel-text);
+      padding: 1.25rem 1.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .dm-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.75rem;
+    }
+
+    .dm-header h2 {
+      margin: 0;
+      font-size: 1.05rem;
+      color: var(--panel-text);
+    }
+
+    .dm-hint {
+      margin: 0;
+      font-size: 0.8rem;
+      color: var(--panel-text-muted);
+    }
+
+    .dm-form {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr auto;
+      gap: 0.5rem;
+      align-items: end;
+      padding: 0.85rem;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md, 8px);
+      background: var(--overlay-faint);
+    }
+
+    .dm-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      font-size: 0.72rem;
+      color: var(--panel-text-muted);
+    }
+
+    .dm-field input,
+    .dm-field select {
+      background: var(--panel-deep);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm, 4px);
+      color: var(--panel-text);
+      padding: 0.35rem 0.5rem;
+      font-size: 0.8rem;
+      font-family: inherit;
+    }
+
+    .dm-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .dm-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 0.6rem;
+      align-items: center;
+      padding: 0.5rem 0.65rem;
+      border: 1px solid var(--border-faint);
+      border-radius: var(--radius-sm, 4px);
+      background: var(--overlay-faint);
+      font-size: 0.8rem;
+    }
+
+    .dm-row-name {
+      color: var(--panel-text);
+    }
+
+    .dm-row-dims {
+      color: var(--panel-text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+    }
+
+    .dm-lock {
+      font-size: 0.7rem;
+      color: var(--panel-text-muted);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill, 9999px);
+      padding: 0.1rem 0.5rem;
+      white-space: nowrap;
+    }
+
+    .dm-delete {
+      background: var(--badge-danger-bg);
+      border: 1px solid var(--badge-danger-border);
+      color: var(--badge-danger-text);
+      border-radius: var(--radius-sm, 4px);
+      padding: 0.2rem 0.5rem;
+      cursor: pointer;
+      font-size: 0.74rem;
+    }
+
+    .dm-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 0.75rem;
+    }
+
+    .dm-error {
+      color: var(--panel-danger-text);
+      font-size: 0.75rem;
+      min-height: 1rem;
+    }
   </style>
 </head>
 
@@ -588,37 +777,34 @@
           </div>
         </div>
 
-        <!-- Dimension Presets -->
+        <!-- Dimension Presets — RVP-03: rendered from the device registry.
+             The built-in chips keep their #btn-size-* ids because
+             presentation-lattice.spec.js asserts on #btn-size-desktop. -->
         <div class="toolbar-group">
-          <span class="group-label">Dimension Presets:</span>
-          <div class="toolbar-group-row">
-            <button id="btn-size-mobile" class="toolbar-btn size-preset-btn" data-width="390" title="Test Mobile viewport width (390px)">
-              <span>📱 Mobile (390px)</span>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+            <span class="group-label">Dimension Presets:</span>
+            <button id="btn-open-device-manager" class="toolbar-btn" title="Open Device Preset Manager" aria-label="Open Device Preset Manager">
+              <span>⚙️ Manage</span>
             </button>
-            <button id="btn-size-tablet" class="toolbar-btn size-preset-btn" data-width="768" title="Test Tablet viewport width (768px)">
-              <span>📟 Tablet (768px)</span>
-            </button>
-            <button id="btn-size-split" class="toolbar-btn size-preset-btn" data-width="50%" title="Test 50% split width">
-              <span>🪟 Split (50%)</span>
-            </button>
-            <button id="btn-size-desktop" class="toolbar-btn size-preset-btn" data-width="1024" title="Test Desktop viewport width (1024px)">
-              <span>🖥️ Desktop (1024px)</span>
-            </button>
-            <button id="btn-size-full" class="toolbar-btn size-preset-btn active" data-width="100%" title="Reset to Full container width (100%)">
-              <span>↔ Full (100%)</span>
-            </button>
+          </div>
+          <div id="device-presets-container" class="toolbar-group-row preset-chips-scroll" role="group" aria-label="Device dimension presets">
+            <!-- rendered by the registry subscriber -->
           </div>
         </div>
 
-        <!-- Custom Dimension Form -->
+        <!-- Custom Geometry — RVP-04: dual-axis, with Fit-to-Screen and Rotate -->
         <div class="toolbar-group">
           <span class="group-label">Custom Geometry:</span>
-          <div class="custom-dim-form">
+          <div class="custom-dim-form" style="display: grid; grid-template-columns: auto 1fr auto 1fr auto; gap: 0.25rem; align-items: center;">
             <label for="controlled-width-input" style="font-size: 0.72rem; color: var(--color-text-muted);">W:</label>
-            <input id="controlled-width-input" type="number" class="dim-input" value="768" min="320" max="3840" aria-label="Custom width in pixels" />
-            <span style="font-size: 0.72rem; color: var(--color-text-muted);">px</span>
-            <button id="btn-apply-custom-width" type="button" class="toolbar-btn" style="padding: 0.2rem 0.5rem; margin-left: 0.25rem;">Apply</button>
-            <button id="btn-rotate-viewport" type="button" class="toolbar-btn" style="padding: 0.2rem 0.5rem;" title="Swap Width and Height (90° Rotation)">🔄 Rotate</button>
+            <input id="controlled-width-input" type="number" class="dim-input" value="393" min="100" max="7680" aria-label="Width in pixels" />
+            <label for="controlled-height-input" style="font-size: 0.72rem; color: var(--color-text-muted);">H:</label>
+            <input id="controlled-height-input" type="number" class="dim-input" value="852" min="100" max="7680" aria-label="Height in pixels" />
+            <button id="btn-apply-custom-dim" type="button" class="toolbar-btn" style="padding: 0.2rem 0.5rem;">Apply</button>
+          </div>
+          <div style="display: flex; gap: 0.5rem; margin-top: 0.35rem;">
+            <button id="btn-rotate-viewport" type="button" class="toolbar-btn" style="flex: 1;" title="Swap Width and Height (90° Rotation)">🔄 Rotate (90°)</button>
+            <button id="btn-scale-toggle" type="button" class="toolbar-btn" title="Toggle between 100% Actual Size and Fit-to-Screen">🔍 Fit: Auto</button>
           </div>
         </div>
       </div>
@@ -649,22 +835,72 @@
         </div>
       </div>
 
-      <!-- Viewport Frame Stage -->
-      <div class="viewport-frame orientation-horizontal" id="controlled-panel-frame">
-        <div class="viewport-frame-bar">
-          <div class="frame-controls-dots">
-            <span class="dot dot-red"></span>
-            <span class="dot dot-yellow"></span>
-            <span class="dot dot-green"></span>
-            <span style="font-weight: 600; color: var(--color-text-primary); margin-left: 0.5rem;">Responsive Iframe Surface</span>
+      <!-- Viewport Frame Stage — RVP-04: the wrapper is sized to the SCALED
+           dimensions so the stage lays out what it actually sees. -->
+      <div class="viewport-scale-wrapper" id="viewport-scale-wrapper">
+        <div class="viewport-frame orientation-horizontal" id="controlled-panel-frame" style="--frame-target-width: 100%; --frame-target-height: 100%;">
+          <div class="viewport-frame-bar">
+            <div class="frame-controls-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+              <span style="font-weight: 600; color: var(--color-text-primary); margin-left: 0.5rem;">Responsive Iframe Surface</span>
+            </div>
+            <span class="frame-dimension-pill" id="controlled-frame-dim">100% × 100% • ↔ Horizontal (Landscape)</span>
           </div>
-          <span class="frame-dimension-pill" id="controlled-frame-dim">100% • ↔ Horizontal (Landscape)</span>
-        </div>
-        <div class="viewport-iframe-wrapper">
-          <iframe id="mission-control-iframe" src="app.html" title="Responsive UI Lab Test Frame" loading="lazy" class="viewport-iframe"></iframe>
+          <div class="viewport-iframe-wrapper">
+            <iframe id="mission-control-iframe" src="app.html" title="Responsive UI Lab Test Frame" loading="lazy" class="viewport-iframe"></iframe>
+          </div>
         </div>
       </div>
     </main>
+  </div>
+
+  <!-- RVP-03: Device Preset Manager. The ids below are the contract RVP-05's
+       suite drives; the attribute name on each delete control is
+       data-delete-device="<slug>". -->
+  <div class="device-manager-backdrop" id="device-manager-modal" role="dialog" aria-modal="true" aria-labelledby="device-manager-title">
+    <div class="device-manager-modal">
+      <div class="dm-header">
+        <h2 id="device-manager-title">⚙️ Device Preset Manager</h2>
+        <button id="btn-close-modal" class="toolbar-btn" aria-label="Close Device Preset Manager">✕</button>
+      </div>
+
+      <p class="dm-hint">Manage standard and custom screen sizes for responsive viewport testing.</p>
+
+      <form class="dm-form" id="device-form" autocomplete="off" novalidate>
+        <label class="dm-field" for="input-device-name">Name
+          <input id="input-device-name" type="text" maxlength="40" placeholder="iPhone 16 Pro Max" />
+        </label>
+        <label class="dm-field" for="select-device-category">Category
+          <select id="select-device-category">
+            <option value="phone">Phone</option>
+            <option value="tablet">Tablet</option>
+            <option value="desktop">Desktop</option>
+            <option value="wearable">Wearable</option>
+            <option value="custom">Custom</option>
+          </select>
+        </label>
+        <label class="dm-field" for="input-device-width">Width (px)
+          <input id="input-device-width" type="number" placeholder="440" />
+        </label>
+        <label class="dm-field" for="input-device-height">Height (px)
+          <input id="input-device-height" type="number" placeholder="956" />
+        </label>
+        <button id="btn-save-device" type="submit" class="toolbar-btn">Add Device Preset</button>
+      </form>
+
+      <div class="dm-error" id="device-form-error" role="alert" aria-live="polite"></div>
+
+      <div class="dm-list" id="device-manager-list" role="list">
+        <!-- rendered from the registry -->
+      </div>
+
+      <div class="dm-actions">
+        <button id="btn-reset-devices" class="toolbar-btn" type="button">↺ Reset All to Defaults</button>
+        <button id="btn-close-modal-footer" class="toolbar-btn" type="button">Close</button>
+      </div>
+    </div>
   </div>
 
   <!-- Bottom Status Bar -->
@@ -679,24 +915,34 @@
     </div>
   </footer>
 
-  <script>
+  <script type="module">
     // ══════════════════════════════════════════════════════════════════════
-    // Sprint CDO-12: Full-Window Responsive UI Lab Workbench Logic
+    // EPIC-RVP — Responsive Viewport Rotation & Dynamic Device Registry
+    //   RVP-01  true (w, h) geometry, physical rotation
+    //   RVP-02  the registry store (js/device-registry.js)
+    //   RVP-03  the preset ribbon and Device Manager
+    //   RVP-04  layout-box containment, auto-scale, dual-axis inputs
+    // Zero dependencies (INV-RVP-05); nothing here touches clm/ (INV-REF-01).
     // ══════════════════════════════════════════════════════════════════════
+    import { DeviceRegistry, aspectRatio, DIM_MIN, DIM_MAX } from './js/device-registry.js';
+
     const workspaceContainer = document.getElementById('lab-workspace-container');
     const controlledFrame = document.getElementById('controlled-panel-frame');
+    const scaleWrapper = document.getElementById('viewport-scale-wrapper');
     const controlledFrameDim = document.getElementById('controlled-frame-dim');
     const controlledStatus = document.getElementById('controlled-panel-status');
     const customWidthInput = document.getElementById('controlled-width-input');
-    const applyCustomWidthBtn = document.getElementById('btn-apply-custom-width');
+    const customHeightInput = document.getElementById('controlled-height-input');
+    const applyCustomDimBtn = document.getElementById('btn-apply-custom-dim');
     const rotateBtn = document.getElementById('btn-rotate-viewport');
+    const scaleToggleBtn = document.getElementById('btn-scale-toggle');
     const btnOrientVertical = document.getElementById('btn-orient-vertical');
     const btnOrientHorizontal = document.getElementById('btn-orient-horizontal');
     const btnArrangeVertical = document.getElementById('btn-arrange-vertical');
     const btnArrangeHorizontal = document.getElementById('btn-arrange-horizontal');
     const btnArrangeVerticalDock = document.getElementById('btn-arrange-vertical-dock');
     const btnArrangeHorizontalDock = document.getElementById('btn-arrange-horizontal-dock');
-    const sizePresetBtns = document.querySelectorAll('.size-preset-btn[data-width]');
+    const presetsContainer = document.getElementById('device-presets-container');
     const siteSelector = document.getElementById('public-site-selector');
     const loadIframeBtn = document.getElementById('btn-load-in-iframe');
     const popoutBtn = document.getElementById('mission-control-popout-btn');
@@ -705,96 +951,303 @@
     const corsBlockTargetName = document.getElementById('cors-block-target-name');
     const corsStatusPill = document.getElementById('cors-status-pill');
     const iframe = document.getElementById('mission-control-iframe');
+    const managerModal = document.getElementById('device-manager-modal');
+    const managerList = document.getElementById('device-manager-list');
+    const deviceForm = document.getElementById('device-form');
+    const deviceFormError = document.getElementById('device-form-error');
 
     let currentArrangement = 'horizontal';
-    let currentOrientation = 'horizontal';
-    let currentWidthSetting = '100%';
-    let currentLabel = 'Full (100%)';
 
-    function setArrangement(arrangement) {
-      if (!workspaceContainer) return;
-      currentArrangement = arrangement === 'vertical' ? 'vertical' : 'horizontal';
-      if (currentArrangement === 'horizontal') {
-        workspaceContainer.classList.remove('arrangement-vertical');
-        workspaceContainer.classList.add('arrangement-horizontal');
-        btnArrangeHorizontal?.classList.add('active');
-        btnArrangeVertical?.classList.remove('active');
-        btnArrangeHorizontalDock?.classList.add('active');
-        btnArrangeVerticalDock?.classList.remove('active');
-      } else {
-        workspaceContainer.classList.remove('arrangement-horizontal');
-        workspaceContainer.classList.add('arrangement-vertical');
-        btnArrangeVertical?.classList.add('active');
-        btnArrangeHorizontal?.classList.remove('active');
-        btnArrangeVerticalDock?.classList.add('active');
-        btnArrangeHorizontalDock?.classList.remove('active');
+    // ── RVP-01: the viewport state is (w, h, orientation) ───────────────────
+    // `unit` is 'px' or '%' so the Full/Split presets stay relative while a
+    // device preset is absolute. Both axes are real; nothing is inferred from
+    // a CSS class.
+    let viewport = { width: 100, height: 100, unit: '%', orientation: 'horizontal', label: 'Full (100%)' };
+    let scaleMode = 'auto';   // 'auto' = fit to stage; 'actual' = never scale
+    let currentScale = 1;
+
+    const registry = new DeviceRegistry();
+
+    const px = (v) => (Number.isFinite(v) ? `${v}px` : v);
+    const fmt = (v, unit) => (unit === '%' ? `${v}%` : px(v));
+
+    function applyViewportGeometry() {
+      if (!controlledFrame) return;
+      const w = fmt(viewport.width, viewport.unit);
+      const h = fmt(viewport.height, viewport.unit);
+      controlledFrame.style.setProperty('--frame-target-width', w);
+      controlledFrame.style.setProperty('--frame-target-height', h);
+      if (scaleWrapper) {
+        scaleWrapper.style.setProperty('--frame-target-width', w);
+        scaleWrapper.style.setProperty('--frame-target-height', h);
       }
+      if (customWidthInput && viewport.unit === 'px') customWidthInput.value = viewport.width;
+      if (customHeightInput && viewport.unit === 'px') customHeightInput.value = viewport.height;
+      recomputeScale();
       updateDimensionLabels();
-      console.log(`[Responsive UI Lab] Workspace arrangement set to: ${currentArrangement}`);
     }
 
+    /** INV-RVP-01: rotation is a swap. */
     function setOrientation(orientation) {
       if (!controlledFrame) return;
-      currentOrientation = orientation === 'horizontal' ? 'horizontal' : 'vertical';
-      if (currentOrientation === 'horizontal') {
-        controlledFrame.classList.remove('orientation-vertical');
-        controlledFrame.classList.add('orientation-horizontal');
-        btnOrientHorizontal?.classList.add('active');
-        btnOrientVertical?.classList.remove('active');
-      } else {
-        controlledFrame.classList.remove('orientation-horizontal');
-        controlledFrame.classList.add('orientation-vertical');
-        btnOrientVertical?.classList.add('active');
-        btnOrientHorizontal?.classList.remove('active');
-      }
+      const next = orientation === 'horizontal' ? 'horizontal' : 'vertical';
+      if (next === viewport.orientation) return;   // delta_orient(S, theta) = S
 
+      viewport = { ...viewport, width: viewport.height, height: viewport.width, orientation: next };
+      controlledFrame.classList.toggle('orientation-horizontal', next === 'horizontal');
+      controlledFrame.classList.toggle('orientation-vertical', next === 'vertical');
+      btnOrientHorizontal?.classList.toggle('active', next === 'horizontal');
+      btnOrientVertical?.classList.toggle('active', next === 'vertical');
+      applyViewportGeometry();
+      console.log(`[Responsive UI Lab] Orientation -> ${next} (${viewport.width} x ${viewport.height})`);
+    }
+
+    function rotateViewport() {
+      setOrientation(viewport.orientation === 'vertical' ? 'horizontal' : 'vertical');
+    }
+
+    function setViewportSize(width, height, unit, label) {
+      viewport = {
+        width,
+        height,
+        unit,
+        label: label || `${fmt(width, unit)} x ${fmt(height, unit)}`,
+        orientation: viewport.orientation,
+      };
+      applyViewportGeometry();
+    }
+
+    /** A registry preset stores portrait dimensions; the active orientation
+     *  decides which becomes the width. Vertical (portrait) keeps them as
+     *  stored, horizontal (landscape) swaps them. */
+    function applyDevicePreset(device) {
+      const landscape = viewport.orientation === 'horizontal';
+      const w = landscape ? device.height : device.width;
+      const h = landscape ? device.width : device.height;
+      setViewportSize(w, h, 'px', device.name);
+      markActiveChip(device.id);
+    }
+
+    // ── RVP-04: containment ────────────────────────────────────────────────
+    // s = min(1, W_stage/w, H_stage/h) — the invariant. The 5% margin is applied
+    // only inside the scaled branch, so it can never upscale a device that fits.
+    function computeScale() {
+      if (!controlledFrame || !scaleWrapper) return 1;
+      const stage = controlledFrame.closest('.lab-stage-container');
+      if (!stage) return 1;
+      if (viewport.unit === '%') return 1;            // relative sizes already fit
+
+      const availW = stage.clientWidth;
+      const availH = stage.clientHeight;
+      if (!availW || !availH) return 1;
+
+      const s = Math.min(1, availW / viewport.width, availH / viewport.height);
+      if (s >= 1) return 1;
+      if (scaleMode === 'actual') return 1;
+      return s * 0.95;
+    }
+
+    function recomputeScale() {
+      const s = computeScale();
+      currentScale = s;
+      controlledFrame?.style.setProperty('--frame-scale-factor', String(s));
+      scaleWrapper?.style.setProperty('--frame-scale-factor', String(s));
+      if (scaleToggleBtn) {
+        scaleToggleBtn.textContent = scaleMode === 'actual' ? '🔍 Fit: 100%' : '🔍 Fit: Auto';
+      }
       updateDimensionLabels();
-      console.log(`[Responsive UI Lab] Orientation set to: ${currentOrientation}`);
     }
 
     function updateDimensionLabels() {
-      const orientIcon = currentOrientation === 'vertical' ? '↕ Vertical (Portrait)' : '↔ Horizontal (Landscape)';
+      const orientIcon = viewport.orientation === 'vertical' ? '↕ Vertical (Portrait)' : '↔ Horizontal (Landscape)';
       const arrangeIcon = currentArrangement === 'horizontal' ? '☲ Side-by-Side Dock' : '☰ Stacked Topbar';
+      const dims = `${fmt(viewport.width, viewport.unit)} × ${fmt(viewport.height, viewport.unit)}`;
+      const ratio = viewport.unit === 'px' ? ` (${aspectRatio(viewport.width, viewport.height)})` : '';
+      const scaleNote = currentScale < 1 ? ` • ${Math.round(currentScale * 100)}% Scale` : ' • 100% Scale';
+
       if (controlledFrameDim) {
-        controlledFrameDim.textContent = `${currentWidthSetting} • ${orientIcon}`;
+        controlledFrameDim.textContent = `${dims}${ratio} • ${orientIcon}${scaleNote}`;
       }
       if (controlledStatus) {
-        controlledStatus.textContent = `● Viewport: ${currentLabel || currentWidthSetting} • ${orientIcon} • [${arrangeIcon}]`;
+        const name = viewport.label ? `${viewport.label} • ` : '';
+        controlledStatus.textContent = `● Viewport: ${name}${dims}${ratio}${scaleNote} • ${orientIcon} • [${arrangeIcon}]`;
       }
     }
-    updateDimensionLabels();
 
-    function setControlledPanelWidth(widthVal, label = '') {
-      if (!controlledFrame) return;
-      const formattedWidth = String(widthVal).endsWith('%') ? String(widthVal) : `${parseInt(widthVal, 10)}px`;
-      currentWidthSetting = formattedWidth;
-      currentLabel = label || formattedWidth;
+    // ── RVP-03: the preset ribbon, rendered from the registry ──────────────
+    // Built-in chips keep the #btn-size-* ids that presentation-lattice.spec.js
+    // asserts on; the id is derived from the device id, not its index.
+    const BUILTIN_CHIP_IDS = {
+      'iphone-16-pro': 'btn-size-mobile',
+      'ipad-air-11': 'btn-size-tablet',
+      'macbook-air-13': 'btn-size-desktop',
+    };
+    let activeChipId = 'btn-size-full';
 
-      if (String(widthVal).endsWith('%')) {
-        controlledFrame.style.width = String(widthVal);
-        if (customWidthInput) {
-          const parentWidth = controlledFrame.parentElement?.clientWidth || 1000;
-          const px = Math.round((parseInt(widthVal, 10) / 100) * parentWidth);
-          customWidthInput.value = px;
+    function chipIdFor(device) {
+      return BUILTIN_CHIP_IDS[device.id] || `btn-size-${device.id}`;
+    }
+
+    function markActiveChip(deviceId) {
+      activeChipId = deviceId ? chipIdFor({ id: deviceId }) : null;
+      presetsContainer?.querySelectorAll('.size-preset-btn').forEach((b) => {
+        b.classList.toggle('active', b.id === activeChipId);
+      });
+    }
+
+    function renderPresets() {
+      if (!presetsContainer) return;
+      const devices = registry.getAll();
+      presetsContainer.replaceChildren();
+
+      for (const d of devices) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.id = chipIdFor(d);
+        btn.className = 'toolbar-btn size-preset-btn';
+        btn.dataset.deviceId = d.id;
+        btn.title = `${d.name} — ${d.width} × ${d.height}px (${aspectRatio(d.width, d.height)})`;
+        btn.innerHTML = `<span>${d.name} (${d.width}px)</span>`;
+
+        if (!d.isBuiltin) {
+          const dot = document.createElement('span');
+          dot.className = 'chip-custom-dot';
+          dot.setAttribute('aria-hidden', 'true');
+          btn.appendChild(dot);
         }
-      } else {
-        const px = parseInt(widthVal, 10);
-        controlledFrame.style.width = `${px}px`;
-        if (customWidthInput) customWidthInput.value = px;
+
+        btn.addEventListener('click', () => applyDevicePreset(d));
+        presetsContainer.appendChild(btn);
       }
 
-      updateDimensionLabels();
-
-      sizePresetBtns.forEach(btn => {
-        const btnVal = btn.getAttribute('data-width');
-        const numVal = String(parseInt(widthVal, 10));
-        if (btnVal === widthVal || btnVal === numVal || `${btnVal}px` === widthVal) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
+      // the Full (100%) affordance is relative, so it is not a device
+      const full = document.createElement('button');
+      full.type = 'button';
+      full.id = 'btn-size-full';
+      full.className = 'toolbar-btn size-preset-btn';
+      full.title = 'Reset to full container size (100%)';
+      full.innerHTML = '<span>↔ Full (100%)</span>';
+      full.addEventListener('click', () => {
+        setViewportSize(100, 100, '%', 'Full (100%)');
+        markActiveChip(null);
+        full.classList.add('active');
       });
-      console.log(`[Responsive UI Lab] Controlled panel size set to: ${formattedWidth} (${currentLabel})`);
+      presetsContainer.appendChild(full);
+
+      if (activeChipId) {
+        presetsContainer.querySelector(`#${CSS.escape(activeChipId)}`)?.classList.add('active');
+      }
+    }
+
+    function renderManagerList() {
+      if (!managerList) return;
+      managerList.replaceChildren();
+      for (const d of registry.getAll()) {
+        const row = document.createElement('div');
+        row.className = 'dm-row';
+        row.setAttribute('role', 'listitem');
+
+        const name = document.createElement('span');
+        name.className = 'dm-row-name';
+        name.textContent = d.name;
+
+        const dims = document.createElement('span');
+        dims.className = 'dm-row-dims';
+        dims.textContent = `${d.width} × ${d.height} px (${aspectRatio(d.width, d.height)})`;
+
+        row.append(name, dims);
+
+        if (d.isBuiltin) {
+          const lock = document.createElement('span');
+          lock.className = 'dm-lock';
+          lock.textContent = 'Built-in 🔒';
+          row.appendChild(lock);
+        } else {
+          const del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'dm-delete';
+          del.dataset.deleteDevice = d.id;
+          del.textContent = '🗑️ Delete';
+          del.addEventListener('click', () => {
+            if (!window.confirm(`Delete preset '${d.name}'? This action cannot be undone.`)) return;
+            registry.remove(d.id);
+          });
+          row.appendChild(del);
+        }
+        managerList.appendChild(row);
+      }
+    }
+
+    function openDeviceManager() {
+      if (!managerModal) return;
+      renderManagerList();
+      managerModal.classList.add('open');
+      document.getElementById('input-device-name')?.focus();
+    }
+
+    function closeDeviceManager() {
+      managerModal?.classList.remove('open');
+      if (deviceFormError) deviceFormError.textContent = '';
+    }
+
+    // ── RVP-03: wiring ─────────────────────────────────────────────────────
+    document.getElementById('btn-open-device-manager')?.addEventListener('click', openDeviceManager);
+    document.getElementById('btn-close-modal')?.addEventListener('click', closeDeviceManager);
+    document.getElementById('btn-close-modal-footer')?.addEventListener('click', closeDeviceManager);
+    managerModal?.addEventListener('click', (e) => {
+      if (e.target === managerModal) closeDeviceManager();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && managerModal?.classList.contains('open')) closeDeviceManager();
+    });
+
+    document.getElementById('btn-reset-devices')?.addEventListener('click', () => registry.resetToDefaults());
+
+    deviceForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nameEl = document.getElementById('input-device-name');
+      const catEl = document.getElementById('select-device-category');
+      const wEl = document.getElementById('input-device-width');
+      const hEl = document.getElementById('input-device-height');
+      // Number('') is 0, so an empty field must not be read as a number
+      const wRaw = wEl.value.trim();
+      const hRaw = hEl.value.trim();
+      try {
+        registry.add({
+          name: nameEl.value,
+          category: catEl.value,
+          width: wRaw === '' ? NaN : Number(wRaw),
+          height: hRaw === '' ? NaN : Number(hRaw),
+        });
+        deviceForm.reset();
+        if (deviceFormError) deviceFormError.textContent = '';
+      } catch (err) {
+        // INV-RVP-03: rejected before injection — the modal stays open
+        if (deviceFormError) deviceFormError.textContent = err.message;
+      }
+    });
+
+    registry.subscribe((event) => {
+      renderPresets();
+      renderManagerList();
+      if (event === 'reset') markActiveChip(null);
+      console.log(`[Responsive UI Lab] device registry: ${event}`);
+    });
+
+    // ── arrangement ────────────────────────────────────────────────────────
+    function setArrangement(arrangement) {
+      if (!workspaceContainer) return;
+      currentArrangement = arrangement === 'vertical' ? 'vertical' : 'horizontal';
+      const horizontal = currentArrangement === 'horizontal';
+      workspaceContainer.classList.toggle('arrangement-horizontal', horizontal);
+      workspaceContainer.classList.toggle('arrangement-vertical', !horizontal);
+      btnArrangeHorizontal?.classList.toggle('active', horizontal);
+      btnArrangeVertical?.classList.toggle('active', !horizontal);
+      btnArrangeHorizontalDock?.classList.toggle('active', horizontal);
+      btnArrangeVerticalDock?.classList.toggle('active', !horizontal);
+      recomputeScale();
+      updateDimensionLabels();
+      console.log(`[Responsive UI Lab] Workspace arrangement set to: ${currentArrangement}`);
     }
 
     btnArrangeVertical?.addEventListener('click', () => setArrangement('vertical'));
@@ -804,34 +1257,46 @@
 
     btnOrientVertical?.addEventListener('click', () => setOrientation('vertical'));
     btnOrientHorizontal?.addEventListener('click', () => setOrientation('horizontal'));
+    rotateBtn?.addEventListener('click', rotateViewport);
 
-    sizePresetBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const widthVal = btn.getAttribute('data-width');
-        const label = btn.textContent.trim();
-        setControlledPanelWidth(widthVal, label);
-      });
-    });
-
-    function applyCustomWidth() {
-      const parsed = parseInt(customWidthInput?.value || '768', 10);
-      const val = (!isNaN(parsed) && parsed >= 100) ? parsed : 768;
-      setControlledPanelWidth(`${val}px`, `Custom (${val}px)`);
+    // ── RVP-04: dual-axis apply and the fit toggle ─────────────────────────
+    function applyCustomDimensions() {
+      const clamp = (raw, fallback) => {
+        const n = parseInt(raw ?? '', 10);
+        if (!Number.isFinite(n)) return fallback;
+        return Math.min(DIM_MAX, Math.max(DIM_MIN, n));
+      };
+      const w = clamp(customWidthInput?.value, viewport.width);
+      const h = clamp(customHeightInput?.value, viewport.height);
+      setViewportSize(w, h, 'px', `Custom (${w}×${h})`);
+      markActiveChip(null);
     }
 
-    applyCustomWidthBtn?.addEventListener('click', applyCustomWidth);
-    customWidthInput?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        applyCustomWidth();
-      }
+    applyCustomDimBtn?.addEventListener('click', applyCustomDimensions);
+    for (const el of [customWidthInput, customHeightInput]) {
+      el?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          applyCustomDimensions();
+        }
+      });
+    }
+
+    scaleToggleBtn?.addEventListener('click', () => {
+      scaleMode = scaleMode === 'auto' ? 'actual' : 'auto';
+      recomputeScale();
     });
 
-    rotateBtn?.addEventListener('click', () => {
-      const nextOrient = currentOrientation === 'vertical' ? 'horizontal' : 'vertical';
-      setOrientation(nextOrient);
-    });
+    // the stage resizes with the window and with the arrangement
+    if (window.ResizeObserver) {
+      new ResizeObserver(() => recomputeScale()).observe(
+        controlledFrame?.closest('.lab-stage-container') || document.body,
+      );
+    } else {
+      window.addEventListener('resize', recomputeScale);
+    }
 
+    // ── target selection / sandbox diagnostics ─────────────────────────────
     function updateSiteSelection() {
       if (!siteSelector) return;
       const selectedOption = siteSelector.options[siteSelector.selectedIndex];
@@ -846,13 +1311,13 @@
         if (corsBlockTargetName) corsBlockTargetName.textContent = name;
         if (corsStatusPill) {
           corsStatusPill.textContent = '⚠️ Iframe Blocked (' + reason + ')';
-          corsStatusPill.style.color = '#f87171';
+          corsStatusPill.style.color = 'var(--badge-danger-text)';
         }
       } else {
         if (corsBlockAlert) corsBlockAlert.style.display = 'none';
         if (corsStatusPill) {
           corsStatusPill.textContent = '● Controlled Viewport Active (Iframe Compatible)';
-          corsStatusPill.style.color = '#34d399';
+          corsStatusPill.style.color = 'var(--badge-success-text)';
         }
       }
     }
@@ -864,22 +1329,30 @@
       if (!siteSelector) return;
       const selectedOption = siteSelector.options[siteSelector.selectedIndex];
       const url = selectedOption.value;
-      if (iframe) {
-        iframe.src = url;
-      }
+      if (iframe) iframe.src = url;
       updateSiteSelection();
       console.log('[Responsive UI Lab] Loaded target into viewport:', url);
     });
 
     popoutBtn?.addEventListener('click', () => {
-      const url = siteSelector?.value || 'app.html';
-      window.open(url, '_blank');
+      window.open(siteSelector?.value || 'app.html', '_blank');
     });
 
-    window.__set_controlled_panel_width = setControlledPanelWidth;
-    window.__get_controlled_panel_width = () => controlledFrame?.style.width || '100%';
+    // ── boot ───────────────────────────────────────────────────────────────
+    controlledFrame?.classList.add('orientation-horizontal');
+    btnOrientHorizontal?.classList.add('active');
+    renderPresets();
+    applyViewportGeometry();
+
+    // public API — kept for scripted use and extended with the 2D geometry
+    window.__set_controlled_panel_width = (w) => setViewportSize(parseInt(w, 10), viewport.height, 'px', '');
+    window.__get_controlled_panel_width = () => controlledFrame?.style.getPropertyValue('--frame-target-width') || '100%';
     window.__set_controlled_orientation = setOrientation;
-    window.__get_controlled_orientation = () => currentOrientation;
+    window.__get_controlled_orientation = () => viewport.orientation;
+    window.__get_viewport_geometry = () => ({ ...viewport, scale: currentScale });
+    window.__set_viewport_geometry = (w, h) => setViewportSize(w, h, 'px', '');
+    window.__rotate_viewport = rotateViewport;
+    window.__device_registry = registry;
   </script>
 </body>
 

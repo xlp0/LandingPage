@@ -405,7 +405,8 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     const controlledFrameDim = page.locator('#controlled-frame-dim');
     const controlledStatus = page.locator('#controlled-panel-status');
     const customWidthInput = page.locator('#controlled-width-input');
-    const applyCustomWidthBtn = page.locator('#btn-apply-custom-width');
+    const applyCustomWidthBtn = page.locator('#btn-apply-custom-dim');
+    const customHeightInput = page.locator('#controlled-height-input');
     const btnRotate = page.locator('#btn-rotate-viewport');
     const iframe = page.locator('#mission-control-iframe');
     const btnOrientVertical = page.locator('#btn-orient-vertical');
@@ -450,11 +451,11 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     await expect(controlledFrameDim).toContainText('Horizontal (Landscape)');
     await expect(controlledStatus).toContainText('Horizontal (Landscape)');
 
-    // Set 1024px Desktop preset in Horizontal orientation arrangement with app.html
+    // RVP-03: presets are now real devices — Desktop is the MacBook Air 13" (1280px)
     await page.locator('#btn-size-desktop').click();
     await page.waitForTimeout(500);
     await expect(page.locator('#btn-size-desktop')).toHaveClass(/active/);
-    await expect(controlledFrameDim).toContainText('1024px');
+    await expect(controlledFrameDim).toContainText('1280px');
 
     // Save visual screenshot artifact for Horizontal orientation arrangement
     await page.screenshot({ path: '/Users/bkoo/.gemini/antigravity-ide/brain/5a248492-2b93-4a68-b3a9-8cb161d32e58/responsive_ui_lab_horizontal_arrangement.png' });
@@ -478,32 +479,34 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     await page.waitForTimeout(300);
 
     // Step 5: Test size presets on the full-window stage
-    console.log('[Test] Step 5a: Testing Mobile Viewport (390px)');
+    console.log('[Test] Step 5a: Testing Mobile device preset (iPhone 16 Pro, 393px)');
     await page.locator('#btn-size-mobile').click();
     await page.waitForTimeout(400);
     await expect(page.locator('#btn-size-mobile')).toHaveClass(/active/);
-    await expect(controlledFrame).toHaveCSS('width', '390px');
-    await expect(controlledFrameDim).toContainText('390px');
+    await expect(controlledFrame).toHaveCSS('width', '393px');
+    await expect(controlledFrameDim).toContainText('393px');
 
-    console.log('[Test] Step 5b: Testing Tablet Viewport (768px)');
+    console.log('[Test] Step 5b: Testing Tablet device preset (iPad Air 11", 820px)');
     await page.locator('#btn-size-tablet').click();
     await page.waitForTimeout(400);
     await expect(page.locator('#btn-size-tablet')).toHaveClass(/active/);
-    await expect(controlledFrame).toHaveCSS('width', '768px');
-    await expect(controlledFrameDim).toContainText('768px');
+    await expect(controlledFrame).toHaveCSS('width', '820px');
+    await expect(controlledFrameDim).toContainText('820px');
 
-    console.log('[Test] Step 5c: Testing Split Viewport (50%)');
-    await page.locator('#btn-size-split').click();
+    console.log('[Test] Step 5c: Testing Full (100%) relative width');
+    await page.locator('#btn-size-full').click();
     await page.waitForTimeout(400);
-    await expect(page.locator('#btn-size-split')).toHaveClass(/active/);
-    await expect(controlledFrameDim).toContainText('50%');
+    await expect(page.locator('#btn-size-full')).toHaveClass(/active/);
+    await expect(controlledFrameDim).toContainText('100%');
 
-    console.log('[Test] Step 5d: Testing Custom Width Input (850px)');
+    console.log('[Test] Step 5d: Testing dual-axis Custom Geometry (850 x 900)');
     await customWidthInput.fill('850');
+    await customHeightInput.fill('900');
     await expect(customWidthInput).toHaveValue('850');
     await applyCustomWidthBtn.click();
     await page.waitForTimeout(400);
     await expect(controlledFrame).toHaveCSS('width', '850px');
+    await expect(controlledFrame).toHaveCSS('height', '900px');
     await expect(controlledFrameDim).toContainText('850px');
 
     console.log('[Test] Step 5e: Resetting to Full Container Width (100%)');

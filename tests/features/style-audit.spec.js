@@ -348,6 +348,35 @@ test.describe('Style audit', () => {
     });
   }
 
+  // RVP-03: the Device Manager is likewise `display: none` until opened, so it
+  // needs the same treatment — otherwise the new UI's contrast would be an
+  // assertion about markup rather than a measurement.
+  for (const t of ['dark', 'light', 'high-contrast']) {
+    test(`components responsive-lab [${t}]`, async ({ page }) => {
+      await page.setViewportSize({ width: 1440, height: 900 });
+      if (t !== 'high-contrast') await page.emulateMedia({ colorScheme: t });
+      await page.goto('/responsive-lab.html');
+      await page.evaluate((th) => { document.documentElement.dataset.theme = th; }, t);
+      await page.waitForTimeout(1200);
+      const opened = await page.evaluate(() => {
+        const done = [];
+        try {
+          document.getElementById('btn-open-device-manager')?.click();
+          done.push('device-manager');
+        } catch { /* */ }
+        return done;
+      });
+      await page.waitForTimeout(800);
+      const result = await page.evaluate(audit);
+      writeFileSync(resolve(OUT, `responsive-lab.components.${t}.json`),
+        JSON.stringify({ page: '/responsive-lab.html', surface: 'components', forcedTheme: t,
+                         opened, ...result }, null, 2) + '\n');
+      console.log(`AUDIT responsive-lab.components.${t}: opened=[${opened.join(',')}] ` +
+        `elements=${result.elements} contrastFailures=${result.contrastFailureCount} ` +
+        `distinctBg=${result.colors.distinct.background}`);
+    });
+  }
+
   // DV-STY-01-02 controls: constructed fixtures through the same resolver.
   test('audit fidelity controls', async ({ page }) => {
     await page.goto('/index.html');

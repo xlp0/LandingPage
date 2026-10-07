@@ -112,6 +112,15 @@
   --toast-success-bg: #28a745;
   --toast-error-bg: #dc3545;
 
+  /* Component geometry (EPIC-RVP). The responsive lab's viewport frame is sized
+     and scaled through custom properties so that the *layout* box and the paint
+     stay in step: the wrapper lays out at (target x scale) while the frame
+     carries the unscaled target and a transform. Declared here so every read
+     has one home — the closure gate rejects a read with no declaration. */
+  --frame-target-width: 100%;
+  --frame-target-height: 100%;
+  --frame-scale-factor: 1;
+
   /* Chart series: data-viz colours need their own scale, because a series
      colour must stay distinguishable from its siblings and from the surface. */
   --chart-1: #3b82f6;
