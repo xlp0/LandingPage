@@ -63,9 +63,9 @@
       font-size: 0.75rem;
       padding: 0.3rem 0.65rem;
       border-radius: 9999px;
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #34d399;
+      background: var(--badge-success-bg);
+      border: 1px solid var(--badge-success-border);
+      color: var(--badge-success-text);
       display: flex;
       align-items: center;
       gap: 0.35rem;
@@ -92,7 +92,7 @@
       font-weight: 800;
       letter-spacing: -0.02em;
       margin-bottom: 0.5rem;
-      background: linear-gradient(to right, #60a5fa, #a78bfa);
+      background: var(--gradient-text-brand);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       line-height: 1.1;
@@ -100,7 +100,7 @@
 
     p.subtitle {
       font-size: 1.25rem;
-      color: var(--text-secondary);
+      color: var(--color-text-secondary);
       margin-bottom: 3rem;
       font-weight: 300;
       letter-spacing: 0.05em;
@@ -136,7 +136,7 @@
     .card:hover {
       transform: translateY(-4px);
       box-shadow: var(--shadow-hover);
-      border-color: var(--color-border-hover, rgba(59, 130, 246, 0.3));
+      border-color: var(--color-border-hover, var(--badge-info-border));
       background: var(--color-surface-hover, #253346);
     }
 
@@ -164,7 +164,7 @@
       position: absolute;
       bottom: 2rem;
       font-size: 0.875rem;
-      color: var(--color-text-muted, rgba(148, 163, 184, 0.5));
+      color: var(--color-text-secondary);
     }
 
     a.primary-action {
@@ -247,11 +247,11 @@
     }
     .penpot-nav-link:hover {
       background: var(--color-surface-hover, rgba(255, 255, 255, 0.1));
-      color: #38bdf8;
+      color: var(--color-info);
     }
     .penpot-nav-link-active {
-      background: rgba(59, 130, 246, 0.25);
-      color: #60a5fa;
+      background: var(--badge-info-bg-strong);
+      color: var(--badge-info-text);
       font-weight: 600;
     }
 
@@ -351,9 +351,9 @@
           <button id="mission-control-sidepane-trigger" style="display: none;" aria-hidden="true"></button>
         </div>
         <div style="display: flex; gap: 0.35rem; margin-top: 0.75rem; flex-wrap: wrap; justify-content: center;">
-          <span style="font-size: 0.7rem; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 0.2rem 0.5rem; border-radius: 9999px;">↕ Vertical (Portrait)</span>
-          <span style="font-size: 0.7rem; background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 0.2rem 0.5rem; border-radius: 9999px;">↔ Horizontal (Landscape)</span>
-          <span style="font-size: 0.7rem; background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 0.2rem 0.5rem; border-radius: 9999px;">🖥️ Full-Window Real-Estate</span>
+          <span style="font-size: 0.7rem; background: var(--badge-success-bg); color: var(--badge-success-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">↕ Vertical (Portrait)</span>
+          <span style="font-size: 0.7rem; background: var(--badge-info-bg); color: var(--badge-info-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">↔ Horizontal (Landscape)</span>
+          <span style="font-size: 0.7rem; background: var(--badge-info-bg); color: var(--badge-info-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">🖥️ Full-Window Real-Estate</span>
         </div>
       </div>
 
@@ -366,9 +366,9 @@
         <h2>Least Action (ℒ)</h2>
         <p>Software Lagrangian (ℒ = S_T - H_T) &amp; Geodesic Sprints along Directionality (道) to SSOT.</p>
         <div style="display: flex; gap: 0.35rem; margin-top: 0.75rem; flex-wrap: wrap; justify-content: center;">
-          <span style="font-size: 0.7rem; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 0.2rem 0.5rem; border-radius: 9999px;">δS = 0 Stationary</span>
-          <span style="font-size: 0.7rem; background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 0.2rem 0.5rem; border-radius: 9999px;">Epiplexity S_T</span>
-          <span style="font-size: 0.7rem; background: rgba(239, 68, 68, 0.2); color: #f87171; padding: 0.2rem 0.5rem; border-radius: 9999px;">Entropy H_T</span>
+          <span style="font-size: 0.7rem; background: var(--badge-success-bg); color: var(--badge-success-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">δS = 0 Stationary</span>
+          <span style="font-size: 0.7rem; background: var(--badge-info-bg); color: var(--badge-info-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">Epiplexity S_T</span>
+          <span style="font-size: 0.7rem; background: var(--badge-danger-bg); color: var(--badge-danger-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">Entropy H_T</span>
         </div>
       </div>
 
@@ -391,17 +391,17 @@
         <h2>Deployment Units</h2>
         <p>Examine Web, Desktop, Mobile, Wearable, and AR/VR units packaged in Growth-only SQLite db.</p>
         <div style="display: flex; gap: 0.35rem; margin-top: 0.75rem; flex-wrap: wrap; justify-content: center;">
-          <span style="font-size: 0.7rem; background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 0.2rem 0.5rem; border-radius: 9999px;">Web</span>
-          <span style="font-size: 0.7rem; background: rgba(239, 68, 68, 0.2); color: #f87171; padding: 0.2rem 0.5rem; border-radius: 9999px;">Desktop</span>
-          <span style="font-size: 0.7rem; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 0.2rem 0.5rem; border-radius: 9999px;">Mobile</span>
-          <span style="font-size: 0.7rem; background: rgba(245, 158, 11, 0.2); color: #fbbf24; padding: 0.2rem 0.5rem; border-radius: 9999px;">Wearables</span>
-          <span style="font-size: 0.7rem; background: rgba(168, 85, 247, 0.2); color: #c084fc; padding: 0.2rem 0.5rem; border-radius: 9999px;">AR/VR</span>
+          <span style="font-size: 0.7rem; background: var(--badge-info-bg); color: var(--badge-info-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">Web</span>
+          <span style="font-size: 0.7rem; background: var(--badge-danger-bg); color: var(--badge-danger-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">Desktop</span>
+          <span style="font-size: 0.7rem; background: var(--badge-success-bg); color: var(--badge-success-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">Mobile</span>
+          <span style="font-size: 0.7rem; background: var(--badge-warning-bg); color: var(--badge-warning-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">Wearables</span>
+          <span style="font-size: 0.7rem; background: var(--badge-accent-bg); color: var(--badge-accent-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">AR/VR</span>
         </div>
       </div>
     </div>
 
     <div style="margin-top: 2rem; opacity: 0.7;">
-      <p style="font-size: 0.9rem; color: var(--color-text-muted, #64748b);">Status: <span style="color: #4ade80;">● Online</span> | Ver:
+      <p style="font-size: 0.9rem; color: var(--color-text-secondary);">Status: <span style="color: var(--color-online);">● Online</span> | Ver:
         0.1.0-alpha</p>
     </div>
   </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
   <meta charset="UTF-8">
@@ -65,8 +65,8 @@
 
     .back-home-btn:hover {
       background: rgba(255, 255, 255, 0.12);
-      border-color: #3b82f6;
-      color: #60a5fa;
+      border-color: var(--color-primary);
+      color: var(--badge-info-text);
     }
 
     .lab-title-group {
@@ -79,7 +79,7 @@
       font-size: 1.1rem;
       font-weight: 700;
       letter-spacing: -0.02em;
-      color: #fff;
+      color: var(--color-text-primary);
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -89,9 +89,9 @@
       font-size: 0.68rem;
       padding: 0.2rem 0.55rem;
       border-radius: 9999px;
-      background: rgba(59, 130, 246, 0.2);
-      color: #60a5fa;
-      border: 1px solid rgba(59, 130, 246, 0.3);
+      background: var(--badge-info-bg);
+      color: var(--badge-info-text);
+      border: 1px solid var(--badge-info-border);
       font-weight: 600;
     }
 
@@ -115,19 +115,19 @@
 
     .nav-action-link.secondary {
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--color-border);
       color: #cbd5e1;
     }
 
     .nav-action-link.secondary:hover {
       background: rgba(255, 255, 255, 0.1);
-      color: #fff;
+      color: var(--color-text-primary);
     }
 
     .nav-action-link.primary {
       background: linear-gradient(135deg, #2563eb, #1d4ed8);
       border: 1px solid #3b82f6;
-      color: #fff;
+      color: var(--color-text-primary);
     }
 
     .nav-action-link.primary:hover {
@@ -209,8 +209,8 @@
 
     .toolbar-btn:hover {
       background: rgba(59, 130, 246, 0.2);
-      color: #fff;
-      border-color: #3b82f6;
+      color: var(--color-text-primary);
+      border-color: var(--color-primary);
     }
 
     .toolbar-btn.active {
@@ -222,10 +222,10 @@
     }
 
     .orientation-btn-primary.active {
-      background: rgba(59, 130, 246, 0.25);
-      border-color: #3b82f6;
-      color: #60a5fa;
-      box-shadow: 0 0 10px rgba(59, 130, 246, 0.25);
+      background: var(--badge-info-bg-strong);
+      border-color: var(--color-primary);
+      color: var(--badge-info-text);
+      box-shadow: 0 0 10px var(--badge-info-bg-strong);
     }
 
     /* Custom dimensions form */
@@ -236,14 +236,14 @@
       background: rgba(0, 0, 0, 0.25);
       padding: 0.2rem 0.5rem;
       border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--color-border);
     }
 
     .dim-input {
       width: 58px;
       background: rgba(15, 23, 42, 0.8);
       border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #fff;
+      color: var(--color-text-primary);
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.75rem;
       padding: 0.2rem 0.35rem;
@@ -267,7 +267,7 @@
       max-width: 480px;
       background: rgba(30, 41, 59, 0.8);
       border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #fff;
+      color: var(--color-text-primary);
       font-size: 0.8rem;
       padding: 0.35rem 0.75rem;
       border-radius: 6px;
@@ -525,8 +525,8 @@
 
     <div class="lab-nav-right">
       <!-- Layout Arrangement Switcher in Navbar -->
-      <div class="arrangement-toggle-group" style="display: flex; gap: 0.25rem; background: rgba(0, 0, 0, 0.35); padding: 0.2rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
-        <span style="font-size: 0.72rem; color: #94a3b8; align-self: center; margin: 0 0.35rem; font-weight: 500;">Arrangement:</span>
+      <div class="arrangement-toggle-group" style="display: flex; gap: 0.25rem; background: var(--color-scrim); padding: 0.2rem; border-radius: 8px; border: 1px solid var(--color-border);">
+        <span style="font-size: 0.72rem; color: var(--color-text-muted); align-self: center; margin: 0 0.35rem; font-weight: 500;">Arrangement:</span>
         <button id="btn-arrange-horizontal" class="toolbar-btn arrangement-btn active" data-arrangement="horizontal" title="Horizontal arrangement (Controls in left sidebar, canvas beside)">
           <span>☲ Horizontal</span>
         </button>
@@ -548,7 +548,7 @@
   <aside class="real-estate-banner" id="cors-notice-banner">
     <div>
       <span class="real-estate-tag">🖥️ Full-Window Real-Estate</span>
-      <strong style="color: #fff; margin-left: 0.35rem;">Sprint CDO-12: Full-Window Workbench (Horizontal &amp; Vertical Arrangements)</strong>
+      <strong style="color: var(--color-text-primary); margin-left: 0.35rem;">Sprint CDO-12: Full-Window Workbench (Horizontal &amp; Vertical Arrangements)</strong>
       <span style="margin-left: 0.5rem;">Cramped sliding panels have been eliminated. Supports both Side-by-Side (Horizontal) and Stacked (Vertical) arrangements for testing live layout reflow across Vertical (Portrait) and Horizontal (Landscape) orientations.</span>
     </div>
     <div style="font-size: 0.72rem; opacity: 0.8;">
@@ -614,9 +614,9 @@
         <div class="toolbar-group">
           <span class="group-label">Custom Geometry:</span>
           <div class="custom-dim-form">
-            <label for="controlled-width-input" style="font-size: 0.72rem; color: #94a3b8;">W:</label>
+            <label for="controlled-width-input" style="font-size: 0.72rem; color: var(--color-text-muted);">W:</label>
             <input id="controlled-width-input" type="number" class="dim-input" value="768" min="320" max="3840" aria-label="Custom width in pixels" />
-            <span style="font-size: 0.72rem; color: #94a3b8;">px</span>
+            <span style="font-size: 0.72rem; color: var(--color-text-muted);">px</span>
             <button id="btn-apply-custom-width" type="button" class="toolbar-btn" style="padding: 0.2rem 0.5rem; margin-left: 0.25rem;">Apply</button>
             <button id="btn-rotate-viewport" type="button" class="toolbar-btn" style="padding: 0.2rem 0.5rem;" title="Swap Width and Height (90° Rotation)">🔄 Rotate</button>
           </div>
@@ -633,7 +633,7 @@
           <option value="https://www.google.com" data-status="blocked" data-reason="X-Frame-Options: SAMEORIGIN" data-desc="Google blocks third-party iframe embedding via X-Frame-Options: SAMEORIGIN">Google (https://www.google.com) - Blocked (SAMEORIGIN)</option>
           <option value="https://developer.mozilla.org" data-status="blocked" data-reason="CSP frame-ancestors: 'none'" data-desc="MDN Web Docs blocks iframing via Content-Security-Policy: frame-ancestors 'none'">MDN Web Docs - Blocked (CSP frame-ancestors: 'none')</option>
         </select>
-        <button id="btn-load-in-iframe" class="toolbar-btn" style="background: #2563eb; color: #fff; border-color: #3b82f6;">Load Target</button>
+        <button id="btn-load-in-iframe" class="toolbar-btn" style="background: var(--color-primary-hover); color: var(--color-on-primary); border-color: var(--color-primary);">Load Target</button>
         <span id="cors-status-pill" class="footer-status-pill" style="margin-top: 0.25rem;">● Controlled Viewport Active (Iframe Compatible)</span>
       </div>
     </aside>
@@ -656,7 +656,7 @@
             <span class="dot dot-red"></span>
             <span class="dot dot-yellow"></span>
             <span class="dot dot-green"></span>
-            <span style="font-weight: 600; color: #e2e8f0; margin-left: 0.5rem;">Responsive Iframe Surface</span>
+            <span style="font-weight: 600; color: var(--color-text-primary); margin-left: 0.5rem;">Responsive Iframe Surface</span>
           </div>
           <span class="frame-dimension-pill" id="controlled-frame-dim">100% • ↔ Horizontal (Landscape)</span>
         </div>
@@ -674,7 +674,7 @@
     </div>
     <div style="display: flex; align-items: center; gap: 1rem;">
       <span>GovTech OS • Responsive Layout Lab</span>
-      <span style="color: #64748b;">|</span>
+      <span style="color: var(--color-text-muted);">|</span>
       <span>INV-CDO-20 &amp; INV-CDO-21 Certified</span>
     </div>
   </footer>

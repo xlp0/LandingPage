@@ -15,7 +15,7 @@ body {
 
 /* Handle link styling */
 .mcard-handle-link {
-  color: #4fc3f7;
+  color: var(--color-info);
   text-decoration: none;
   font-weight: 500;
   cursor: pointer;
@@ -201,7 +201,7 @@ body {
 .collapse-btn {
   background: transparent;
   border: none;
-  color: #858585;
+  color: var(--color-text-secondary);
   cursor: pointer;
   padding: 4px;
   display: flex;
@@ -262,7 +262,7 @@ body {
 .type-count {
   font-size: 11px;
   background: #3e3e42;
-  color: #858585;
+  color: var(--color-text-secondary);
   padding: 2px 6px;
   border-radius: 10px;
   min-width: 20px;
@@ -372,7 +372,7 @@ body {
 .mcard-item-hash {
   font-family: 'Courier New', monospace;
   font-size: 11px;
-  color: #858585;
+  color: var(--color-text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -382,7 +382,7 @@ body {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
-  color: #858585;
+  color: var(--color-text-secondary);
   margin-top: 4px;
 }
 
@@ -487,7 +487,7 @@ body {
 }
 
 .upload-section p {
-  color: #858585;
+  color: var(--color-text-secondary);
   margin-bottom: 20px;
   font-size: 13px;
 }
@@ -531,7 +531,7 @@ input[type="file"] {
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: #858585;
+  color: var(--color-text-secondary);
 }
 
 .empty-state-icon {
@@ -685,7 +685,7 @@ input[type="file"] {
 }
 
 .search-box::placeholder {
-  color: #858585;
+  color: var(--color-text-secondary);
 }
 
 /* Filter Toggle Button */
@@ -746,7 +746,7 @@ input[type="file"] {
 .filter-label {
   display: block;
   font-size: 11px;
-  color: #858585;
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 8px;
@@ -883,7 +883,7 @@ input[type="file"] {
 
 .chat-message-time {
   font-size: 11px;
-  color: #858585;
+  color: var(--color-text-secondary);
   padding: 0 4px;
 }
 
@@ -913,7 +913,7 @@ input[type="file"] {
 }
 
 .chat-input::placeholder {
-  color: #858585;
+  color: var(--color-text-secondary);
 }
 
 .chat-send-btn {
@@ -948,7 +948,7 @@ input[type="file"] {
   width: 40px;
   height: 40px;
   border: 4px solid #3e3e42;
-  border-top-color: #4fc3f7;
+  border-top-color: var(--color-info);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -1094,7 +1094,7 @@ input[type="file"] {
     background: #2a2d2e;
     border-bottom: 1px solid #3e3e42;
     cursor: pointer;
-    color: #4fc3f7;
+    color: var(--color-info);
     font-size: 13px;
   }
   
@@ -1357,4 +1357,25 @@ input[type="file"] {
     width: 18px !important;
     height: 18px !important;
   }
+}
+
+/* STY-03: shared-chrome CTA — replaces three identical inline declarations.
+   Geometry is unchanged: same padding, radius and metrics as the inline form. */
+.btn-cta {
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-lg, 12px);
+  padding: 16px 48px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--motion-duration-normal, 300ms) ease;
+}
+.btn-cta--primary {
+  background: var(--gradient-primary);
+  box-shadow: 0 8px 24px var(--gradient-primary-shadow);
+}
+.btn-cta--success {
+  background: var(--gradient-success);
+  box-shadow: 0 8px 24px var(--gradient-success-shadow);
 }

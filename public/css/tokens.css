@@ -1,0 +1,254 @@
+/**
+ * GovTech Semantic Tokens (Framework-Agnostic Design System)
+ * Anchored in Function-Number Duality and Parameterized Type Lattice.
+ * Provides zero-runtime CSS variables consumed by Vanilla CSS, UnoCSS, or Tailwind.
+ */
+
+:root,
+[data-theme="dark"] {
+  --color-bg: #0f172a;
+  --color-bg-subtle: #1e293b;
+  --color-surface: rgba(30, 41, 59, 0.7);
+  --color-surface-hover: rgba(37, 51, 70, 0.9);
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-hover: rgba(59, 130, 246, 0.4);
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #94a3b8;
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+  --color-on-primary: #ffffff;
+  --color-scrim: rgba(0, 0, 0, 0.35);
+  --color-accent: #a78bfa;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #4fc3f7;
+
+  /* State pairs: a state colour is always declared with its surface, so a
+     badge is never hue-text on an arbitrary same-hue alpha literal (STY-05). */
+  --color-info-surface: rgba(79, 195, 247, 0.1);
+  --color-info-border: rgba(79, 195, 247, 0.3);
+  --color-danger-surface: rgba(239, 68, 68, 0.16);
+  --color-success-surface: rgba(16, 185, 129, 0.16);
+  --color-warning-surface: rgba(245, 158, 11, 0.16);
+
+  /* Badge pairs: state-hue text on its own tint. The tint is theme-stable;
+     the text weight adapts (400-shade on dark, 700-shade on light) so the
+     badge reads on both canvases — STY-04. */
+  --badge-info-bg: rgba(59, 130, 246, 0.2);
+  --badge-info-bg-strong: rgba(59, 130, 246, 0.25);
+  --badge-info-text: #93c5fd;
+  --badge-info-border: rgba(59, 130, 246, 0.4);
+  --badge-success-bg: rgba(16, 185, 129, 0.2);
+  --badge-success-text: #34d399;
+  --badge-success-border: rgba(16, 185, 129, 0.4);
+  --badge-danger-bg: rgba(239, 68, 68, 0.2);
+  --badge-danger-text: #f87171;
+  --badge-danger-border: rgba(239, 68, 68, 0.4);
+  --badge-warning-bg: rgba(245, 158, 11, 0.2);
+  --badge-warning-text: #fbbf24;
+  --badge-warning-border: rgba(245, 158, 11, 0.4);
+  --badge-accent-bg: rgba(168, 85, 247, 0.2);
+  --badge-accent-text: #c084fc;
+  --badge-accent-border: rgba(168, 85, 247, 0.4);
+  --color-online: #4ade80;
+  --color-border-hover: rgba(59, 130, 246, 0.3);
+
+  /* Gradient identity: brand marks and CTA paint — themable like any colour. */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-primary-shadow: rgba(102, 126, 234, 0.4);
+  --gradient-success: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+  --gradient-success-shadow: rgba(86, 171, 47, 0.4);
+  --gradient-brand: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  --gradient-primary-deep: linear-gradient(135deg, #4f46e5 0%, #6d28d9 100%);
+  --gradient-text-brand: linear-gradient(to right, #60a5fa, #a78bfa);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 9999px;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+  --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.35), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+
+  --blur-surface: 12px;
+  --motion-duration-fast: 150ms;
+  --motion-duration-normal: 250ms;
+  --motion-duration-slow: 400ms;
+  --motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="light"] {
+  --color-bg: #f8fafc;
+  --color-bg-subtle: #f1f5f9;
+  --color-surface: rgba(255, 255, 255, 0.85);
+  --color-surface-hover: rgba(255, 255, 255, 1);
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-hover: rgba(37, 99, 235, 0.4);
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-on-primary: #ffffff;
+  --color-scrim: rgba(0, 0, 0, 0.35);
+  --color-accent: #7c3aed;
+  --color-info: #0284c7;
+  --color-info-surface: rgba(2, 132, 199, 0.1);
+  --color-info-border: rgba(2, 132, 199, 0.3);
+  --color-danger-surface: rgba(239, 68, 68, 0.1);
+  --color-success-surface: rgba(16, 185, 129, 0.1);
+  --color-warning-surface: rgba(245, 158, 11, 0.12);
+
+  --badge-info-bg: #dbeafe;
+  --badge-info-bg-strong: #bfdbfe;
+  --badge-info-text: #1d4ed8;
+  --badge-info-border: rgba(29, 78, 216, 0.45);
+  --badge-success-bg: #d1fae5;
+  --badge-success-text: #047857;
+  --badge-success-border: rgba(4, 120, 87, 0.45);
+  --badge-danger-bg: #fee2e2;
+  --badge-danger-text: #b91c1c;
+  --badge-danger-border: rgba(185, 28, 28, 0.4);
+  --badge-warning-bg: #fef3c7;
+  --badge-warning-text: #b45309;
+  --badge-warning-border: rgba(180, 83, 9, 0.45);
+  --badge-accent-bg: #ede9fe;
+  --badge-accent-text: #6d28d9;
+  --badge-accent-border: rgba(109, 40, 217, 0.4);
+  --color-online: #15803d;
+  --color-border-hover: rgba(37, 99, 235, 0.4);
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="high-contrast"] {
+  --color-bg: #000000;
+  --color-bg-subtle: #121212;
+  --color-surface: #000000;
+  --color-surface-hover: #1e1e1e;
+  --color-border: #ffffff;
+  --color-border-hover: #ffff00;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #ffffff;
+  --color-text-muted: #e0e0e0;
+  --color-primary: #00ffff;
+  --color-primary-hover: #ffff00;
+  --color-on-primary: #000000;
+  --color-scrim: rgba(0, 0, 0, 0.6);
+  --color-accent: #ffff00;
+  --color-info: #00ffff;
+  --color-info-surface: rgba(0, 255, 255, 0.15);
+  --color-info-border: #00ffff;
+  --color-danger-surface: rgba(255, 255, 255, 0.15);
+  --color-success-surface: rgba(255, 255, 255, 0.15);
+  --color-warning-surface: rgba(255, 255, 255, 0.15);
+
+  --badge-info-bg: rgba(0, 255, 255, 0.18);
+  --badge-info-bg-strong: rgba(0, 255, 255, 0.25);
+  --badge-info-text: #ffffff;
+  --badge-info-border: #00ffff;
+  --badge-success-bg: rgba(255, 255, 255, 0.18);
+  --badge-success-text: #ffffff;
+  --badge-success-border: #ffffff;
+  --badge-danger-bg: rgba(255, 255, 255, 0.18);
+  --badge-danger-text: #ffffff;
+  --badge-danger-border: #ffffff;
+  --badge-warning-bg: rgba(255, 255, 255, 0.18);
+  --badge-warning-text: #ffffff;
+  --badge-warning-border: #ffff00;
+  --badge-accent-bg: rgba(255, 255, 255, 0.18);
+  --badge-accent-text: #ffffff;
+  --badge-accent-border: #ffffff;
+  --color-online: #00ff00;
+  --color-border-hover: #ffffff;
+
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-hover: none;
+  --blur-surface: 0px;
+}
+
+/* Energy Saving / Low Power Mode */
+[data-power-mode="energy-saving"] {
+  --motion-duration-fast: 0ms !important;
+  --motion-duration-normal: 0ms !important;
+  --motion-duration-slow: 0ms !important;
+  --blur-surface: 0px !important;
+  --shadow-hover: var(--shadow-sm) !important;
+}
+
+[data-power-mode="energy-saving"] *,
+[data-power-mode="energy-saving"] *::before,
+[data-power-mode="energy-saving"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-fast: 0ms !important;
+    --motion-duration-normal: 0ms !important;
+    --motion-duration-slow: 0ms !important;
+    --blur-surface: 0px !important;
+    --shadow-hover: var(--shadow-sm) !important;
+  }
+
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]):not([data-theme="high-contrast"]) {
+    --color-bg: #f8fafc;
+    --color-bg-subtle: #f1f5f9;
+    --color-surface: rgba(255, 255, 255, 0.85);
+    --color-surface-hover: rgba(255, 255, 255, 1);
+    --color-border: rgba(0, 0, 0, 0.08);
+    --color-border-hover: rgba(37, 99, 235, 0.4);
+    --color-text-primary: #0f172a;
+    --color-text-secondary: #475569;
+    --color-text-muted: #64748b;
+    --color-primary: #2563eb;
+    --color-primary-hover: #1d4ed8;
+    --color-on-primary: #ffffff;
+    --color-scrim: rgba(0, 0, 0, 0.35);
+    --color-accent: #7c3aed;
+    --color-info: #0284c7;
+    --color-info-surface: rgba(2, 132, 199, 0.1);
+    --color-info-border: rgba(2, 132, 199, 0.3);
+    --color-danger-surface: rgba(239, 68, 68, 0.1);
+    --color-success-surface: rgba(16, 185, 129, 0.1);
+    --color-warning-surface: rgba(245, 158, 11, 0.12);
+    --badge-info-bg: #dbeafe;
+    --badge-info-bg-strong: #bfdbfe;
+    --badge-info-text: #1d4ed8;
+    --badge-info-border: rgba(29, 78, 216, 0.45);
+    --badge-success-bg: #d1fae5;
+    --badge-success-text: #047857;
+    --badge-success-border: rgba(4, 120, 87, 0.45);
+    --badge-danger-bg: #fee2e2;
+    --badge-danger-text: #b91c1c;
+    --badge-danger-border: rgba(185, 28, 28, 0.4);
+    --badge-warning-bg: #fef3c7;
+    --badge-warning-text: #b45309;
+    --badge-warning-border: rgba(180, 83, 9, 0.45);
+    --badge-accent-bg: #ede9fe;
+    --badge-accent-text: #6d28d9;
+    --badge-accent-border: rgba(109, 40, 217, 0.4);
+    --color-online: #15803d;
+  }
+}
