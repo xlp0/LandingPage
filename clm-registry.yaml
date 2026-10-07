@@ -2167,7 +2167,7 @@ sprints:
     code: ORC-14
     title: 'Sprint ORC-14: The Kernel''s YAML Reader Made Conformant'
     dod:
-      total: 8
+      total: 11
       vcard_refs:
         - vcard:orc-14:escaping_is_conformant_inside_a_single_quoted_scalar_unescapes_t
         - vcard:orc-14:folding_is_conformant_a_scalar_wrapped_across_lines_folds_to_a_s
@@ -2176,7 +2176,10 @@ sprints:
         - vcard:orc-14:the_workarounds_are_deleted_encode_sprint_py_no_longer_forces_do
         - vcard:orc-14:all_manifests_still_ingest_clmeval_evaluate_succeeds_for_every_e
         - vcard:orc-14:the_fix_is_load_bearing_reverting_the_reader_change_makes_the_fi
-        - vcard:orc-14:no_regression_the_layer3_suite_stays_green_and_make_orc_gate_sti
+        - vcard:orc-14:the_fix_reaches_the_runtime_inv_orc3_08_the_fixture_suite_runs_a
+        - vcard:orc-14:the_chain_is_recorded_the_evidence_names_each_step_source_build_
+        - vcard:orc-14:the_python_mirror_is_not_forgotten_cel_eval_py_carries_the_same_
+        - vcard:orc-14:no_regression_the_layer3_suite_stays_green_verify_kernel_sh_stil
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-15-gate-controls-in-isolation
     card_type: pcard
@@ -2200,7 +2203,7 @@ sprints:
     code: ORC-16
     title: 'Sprint ORC-16: One Knowledge Namespace, Not Five'
     dod:
-      total: 8
+      total: 10
       vcard_refs:
         - vcard:orc-16:every_root_is_declared_with_a_reason_no_root_is_inferred_each_en
         - vcard:orc-16:ingested_with_handles_every_file_in_a_declared_root_has_a_handle
@@ -2209,6 +2212,8 @@ sprints:
         - vcard:orc-16:exclusion_is_load_bearing_adding_a_retired_root_back_to_the_name
         - vcard:orc-16:ingestion_is_idempotent_re_running_adds_no_card_and_no_new_handl
         - vcard:orc-16:nothing_was_rewritten_the_sha_256_of_every_file_under_every_decl
+        - vcard:orc-16:the_receiving_tape_is_declared_the_hub_s_platform_content_tape_i
+        - vcard:orc-16:the_budget_is_stated_each_root_reports_file_count_total_bytes_la
         - vcard:orc-16:no_regression_make_orc_gate_still_passes_and_the_layer3_suite_st
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-17-hub-is-a-node
@@ -2233,7 +2238,7 @@ sprints:
     code: ORC-18
     title: 'Sprint ORC-18: The Fourth Tape and the Node Identity'
     dod:
-      total: 7
+      total: 8
       vcard_refs:
         - vcard:orc-18:the_fourth_tape_exists_clm_db_routing_mesh_db_carries_the_canoni
         - vcard:orc-18:the_profile_records_four_registry_tape_profile_json_names_a_rout
@@ -2241,6 +2246,7 @@ sprints:
         - vcard:orc-18:learning_event_has_a_producer_sealing_a_transition_writes_exactl
         - vcard:orc-18:the_clock_is_a_clock_vector_clock_increments_per_node_and_merges
         - vcard:orc-18:the_kernel_can_read_what_the_platform_wrote_load_learning_events
+        - vcard:orc-18:the_clock_is_the_published_one_vectorclock_is_imported_from
         - vcard:orc-18:no_regression_make_orc_schema_make_orc_chain_and_the_layer3_suit
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-19-mesh-proven-at-platform-scale
@@ -2294,6 +2300,22 @@ sprints:
         - vcard:orc-21:it_is_not_repo_bound_a_vault_outside_the_repository_is_ingested_
         - vcard:orc-21:re_ingestion_is_revision_tracking_changing_one_vault_file_adds_e
         - vcard:orc-21:no_regression_make_orc_gate_passes_and_orc_16_s_repository_inges
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-22-kernel-pre-vcard-and-runtime-artifact
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-22
+    title: 'Sprint ORC-22: The Kernel Pre-VCard and the Runtime Artifact'
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:orc-22:v_pre_true_bash_clm_kernel_verify_kernel_sh_exits_0_on_the_commi
+        - vcard:orc-22:the_sbom_tracks_the_launcher_a_launcher_change_that_leaves_manif
+        - vcard:orc-22:drift_is_the_control_the_three_current_drifts_scripts_clmeval_cl
+        - vcard:orc-22:the_chain_is_declared_registry_kernel_artifact_json_names_the_so
+        - vcard:orc-22:the_entry_points_are_named_which_runtime_each_entry_point_select
+        - vcard:orc-22:the_pre_vcard_gates_evaluation_the_coordination_loop_refuses_to_
+        - vcard:orc-22:no_regression_make_orc_gate_passes_and_every_kernel_touching_spr
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-01-development-lifecycle-cpn-specification
     card_type: pcard
