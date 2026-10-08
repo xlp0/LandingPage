@@ -1939,646 +1939,6 @@ sprints:
         - vcard:sprint-407:update_docs_architecture_code_migration_to_clm_md
         - vcard:sprint-407:graduate_sprints_403_407_into_the_12_aspect_deployment_architect
       state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:00-program-charter-epic-orc-ii
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: 00-PROGRAM-CHARTER-EPIC-ORC-II
-    title: "Program Charter: EPIC-ORC-II \u2014 Closure: Making the Invariants Enforced"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:00-program-charter-epic-orc-ii:each_of_the_five_historical_path_forms_is_detected_by_a_fixture_
-        - vcard:00-program-charter-epic-orc-ii:every_core_column_s_full_descriptor_agrees_across_the_declaratio
-        - vcard:00-program-charter-epic-orc-ii:inserting_card_type_bogus_into_a_deployed_tape_is_refused_by_the
-        - vcard:00-program-charter-epic-orc-ii:every_continuity_gap_carries_a_reconciliation_the_gate_runs_the_
-        - vcard:00-program-charter-epic-orc-ii:a_running_portal_serves_the_registry_and_renders_a_sprint_s_seal
-        - vcard:00-program-charter-epic-orc-ii:the_kernel_s_yaml_reader_unescapes_and_folds_wrapped_scalars_ver
-        - vcard:00-program-charter-epic-orc-ii:no_gate_control_writes_to_the_live_tree_an_interrupted_control_l
-        - vcard:00-program-charter-epic-orc-ii:make_orc_gate_passes_with_the_extended_stage_set_and_every_new_s
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:00-program-charter-epic-orc-iii
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: 00-PROGRAM-CHARTER-EPIC-ORC-III
-    title: "Program Charter: EPIC-ORC-III \u2014 The Mesh: Knowledge Topology for a PKC Platform"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:00-program-charter-epic-orc-iii:every_knowledge_root_is_declared_ingested_as_cards_with_handles_
-        - vcard:00-program-charter-epic-orc-iii:the_hub_carries_an_mcard_yaml_there_is_one_root_config_every_dec
-        - vcard:00-program-charter-epic-orc-iii:the_routing_tape_exists_and_holds_rows_the_node_has_a_did_learni
-        - vcard:00-program-charter-epic-orc-iii:two_nodes_converge_and_the_convergence_is_witnessed_clocks_agree
-        - vcard:00-program-charter-epic-orc-iii:each_submodule_declares_knowledge_produces_consumes_and_the_decl
-        - vcard:00-program-charter-epic-orc-iii:the_configured_personal_vault_is_ingestible_with_provenance_and_
-        - vcard:00-program-charter-epic-orc-iii:the_kernel_s_pre_vcard_is_true_on_the_committed_tree_the_artifac
-        - vcard:00-program-charter-epic-orc-iii:make_orc_gate_passes_with_the_extended_stages_and_every_new_stag
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:00-program-charter-epic-orc-iv
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: 00-PROGRAM-CHARTER-EPIC-ORC-IV
-    title: "Program Charter: EPIC-ORC-IV \u2014 The Universal Monadic Triad: The Three-Tape Turing Architecture"
-    dod:
-      total: 18
-      vcard_refs:
-        - vcard:00-program-charter-epic-orc-iv:schema_mcard_schema_sql_contains_strictly_3_tables_card_handle_r
-        - vcard:00-program-charter-epic-orc-iv:card_type_is_removed_the_column_its_check_its_default_and_its_co
-        - vcard:00-program-charter-epic-orc-iv:type_detection_is_delegated_to_clm_kernel_inv_tape_01a_kindof_ha
-        - vcard:00-program-charter-epic-orc-iv:the_gate_detects_a_re_introduced_kind_column_so_this_correction_
-        - vcard:00-program-charter-epic-orc-iv:universal_handle_taxonomy_in_registry_handle_taxonomy_yaml_cover
-        - vcard:00-program-charter-epic-orc-iv:all_auxiliary_tables_card_tombstone_learning_event_execution_his
-        - vcard:00-program-charter-epic-orc-iv:scripts_ci_check_schema_conformance_py_verifies_that_all_tapes_d
-        - vcard:00-program-charter-epic-orc-iv:all_three_deployed_databases_in_clm_db_content_memory_db_agent_i
-        - vcard:00-program-charter-epic-orc-iv:submodule_schemas_in_clm_and_mcard_studio_match_schema_mcard_sch
-        - vcard:00-program-charter-epic-orc-iv:make_orc_gate_passes_8_8_stages_and_9_9_negative_controls_agains
-        - vcard:00-program-charter-epic-orc-iv:the_deviation_from_inv_tape_01_is_measured_and_bounded_while_the
-        - vcard:00-program-charter-epic-orc-iv:all_polyglot_runtimes_rust_typescript_python_access_content_iden
-        - vcard:00-program-charter-epic-orc-iv:the_python_runtime_had_the_card_model_and_the_schema_and_no_stor
-        - vcard:00-program-charter-epic-orc-iv:the_rust_runtime_had_every_operation_under_a_parallel_vocabulary
-        - vcard:00-program-charter-epic-orc-iv:the_operation_is_universal_the_spelling_is_idiomatic_registerhan
-        - vcard:00-program-charter-epic-orc-iv:lifecycle_is_external_inv_tape_04_the_core_schema_carries_no_tom
-        - vcard:00-program-charter-epic-orc-iv:nested_tapes_are_cards_inv_tape_06_every_sidecar_collection_and_
-        - vcard:00-program-charter-epic-orc-iv:the_prose_matches_the_tape_readme_md_and_docs_index_md_state_the
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:00-program-charter-epic-orc
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: 00-PROGRAM-CHARTER-EPIC-ORC
-    title: "Program Charter: EPIC-ORC \u2014 MCard_TDD as Protocol SSoT Orchestration Hub"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:00-program-charter-epic-orc:card_type_exists_and_discriminates_the_three_table_core_is_norma
-        - vcard:00-program-charter-epic-orc:every_sprint_under_docs_sprints_has_a_clmtriadmanifest_in_regist
-        - vcard:00-program-charter-epic-orc:the_coordination_loop_runs_a_submodule_update_end_to_end_and_sea
-        - vcard:00-program-charter-epic-orc:no_submodule_is_mutated_outside_a_sandwich_no_sandwich_spans_two
-        - vcard:00-program-charter-epic-orc:landingpage_renders_the_sprint_registry_and_mcard_studio_display
-        - vcard:00-program-charter-epic-orc:knowledge_continuity_every_graduated_program_asset_class_is_regi
-        - vcard:00-program-charter-epic-orc:the_estate_is_axis_clean_docs_sprints_top_level_holds_only_nn_as
-        - vcard:00-program-charter-epic-orc:the_gate_passes_with_every_negative_control_detecting_its_inject
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-01-schema-conformance-and-card-type
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-01
-    title: 'Sprint ORC-01: Schema Conformance & the Card-Type Discriminator'
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:orc-01:card_type_exists_and_discriminates_inserting_a_row_with_card_typ
-        - vcard:orc-01:the_core_is_identical_across_tapes_the_three_normative_tables_ha
-        - vcard:orc-01:adjuncts_are_declared_every_non_core_table_carries_an_extension_
-        - vcard:orc-01:empty_schema_principle_holds_no_domain_specific_table_exists_the
-        - vcard:orc-01:migration_is_lossless_existing_card_rows_survive_with_card_type_
-        - vcard:orc-01:the_submodule_change_is_isolated_git_c_clm_diff_stat_shows_only_
-        - vcard:orc-01:tape_mode_is_explicit_the_profile_is_recorded_and_the_checker_as
-        - vcard:orc-01:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-02-sprint-as-mcard-triad-encoding
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-02
-    title: "Sprint ORC-02: Sprint-as-MCard \u2014 Triad Manifest Encoding & Handle Registration"
-    dod:
-      total: 11
-      vcard_refs:
-        - vcard:orc-02:triad_closure_is_total_every_sprint_has_a_manifest_with_all_thre
-        - vcard:orc-02:the_dod_is_binding_every_dod_line_maps_to_a_postcondition_with_a
-        - vcard:orc-02:handles_resolve_both_ways_every_sprint_path_yields_a_handle_and_
-        - vcard:orc-02:manifests_are_loadable_clmeval_ingests_every_emitted_manifest_wi
-        - vcard:orc-02:legacy_cards_reconciled_not_rewritten_the_28_existing_cards_appe
-        - vcard:orc-02:every_graduated_asset_class_is_registered_cards_witnesses_certif
-        - vcard:orc-02:spec_sprints_encode_as_specifications_not_programs_an_aspect_dir
-        - vcard:orc-02:derivation_not_duplication_the_manifest_is_generated_from_the_sp
-        - vcard:orc-02:registration_is_idempotent_re_running_the_encoder_on_an_unchange
-        - vcard:orc-02:the_registry_is_one_card_inv_tape_06_registry_sprints_yaml_is_ha
-        - vcard:orc-02:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-03-coordination-loop
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-03
-    title: "Sprint ORC-03: The Coordination Loop \u2014 9-Phase REPL over Submodules"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:orc-03:the_loop_runs_end_to_end_on_a_real_sprint_and_mutates_one_submod
-        - vcard:orc-03:refusal_is_real_a_deliberately_dirtied_submodule_tree_is_refused
-        - vcard:orc-03:single_module_atomicity_holds_a_manifest_naming_two_targets_is_r
-        - vcard:orc-03:the_gates_are_not_decorative_removing_the_phase_4_check_makes_th
-        - vcard:orc-03:phase_mapping_is_faithful_each_of_the_9_phases_is_observable_in_
-        - vcard:orc-03:one_write_path_a_submodule_mutated_outside_the_loop_is_detected_
-        - vcard:orc-03:make_orchestrate_is_the_only_entry_no_makefile_target_mutates_a_
-        - vcard:orc-03:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-04-vcard-witness-sealing
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-04
-    title: 'Sprint ORC-04: VCard Witness Sealing & the Execution Tape'
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:orc-04:the_triple_is_present_and_derived_every_sealed_witness_carries_a
-        - vcard:orc-04:the_triple_is_logged_each_sandwich_appends_exactly_one_execution
-        - vcard:orc-04:tamper_detection_works_mutating_a_sealed_witness_s_content_makes
-        - vcard:orc-04:append_only_holds_no_delete_statement_exists_in_the_sealer_and_t
-        - vcard:orc-04:interleaving_is_detectable_two_sandwiches_over_the_same_submodul
-        - vcard:orc-04:one_transaction_an_induced_failure_after_the_vcard_insert_leaves
-        - vcard:orc-04:the_cdo_ledger_is_converged_not_paralleled_the_seal_path_uses_th
-        - vcard:orc-04:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-05-display-parity
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-05
-    title: "Sprint ORC-05: Display Parity \u2014 studio Membrane & LandingPage Registry"
-    dod:
-      total: 10
-      vcard_refs:
-        - vcard:orc-05:one_shape_every_registry_entry_canonical_and_legacy_validates_ag
-        - vcard:orc-05:studio_displays_a_sprint_the_membrane_renders_a_sprint_entry_fro
-        - vcard:orc-05:landingpage_renders_the_registry_the_portal_renders_the_same_ent
-        - vcard:orc-05:no_second_encoding_a_check_asserts_no_triad_field_is_authored_in
-        - vcard:orc-05:dod_state_is_observable_a_sealed_postcondition_and_an_unsealed_o
-        - vcard:orc-05:two_sandwiches_two_witnesses_the_studio_and_portal_changes_each_
-        - vcard:orc-05:no_vendored_evidence_the_byte_identical_copy_of_cdo_16_fiber_cer
-        - vcard:orc-05:graduated_artifacts_render_at_least_one_sealed_witness_and_one_c
-        - vcard:orc-05:the_projection_is_one_card_inv_tape_06_clm_registry_yaml_is_regi
-        - vcard:orc-05:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-06-estate-axis-separation
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-06
-    title: 'Sprint ORC-06: Estate Axis Separation & Lossless Relocation'
-    dod:
-      total: 10
-      vcard_refs:
-        - vcard:orc-06:lossless_182_renames_0_additions_0_deletions_every_file_s_sha_25
-        - vcard:orc-06:aspect_level_conforms_docs_sprints_holds_only_nn_aspect_programs
-        - vcard:orc-06:zero_dead_fallbacks_the_exists_else_count_drops_from_24_to_0_ass
-        - vcard:orc-06:the_writer_is_safe_layout_freeze_spec_js_writes_the_moved_baseli
-        - vcard:orc-06:no_tooling_under_docs_find_docs_name_py_o_name_mjs_o_name_sh_is_
-        - vcard:orc-06:suites_unaffected_make_sty_gate_pass_clm_tests_python_layer3_gre
-        - vcard:orc-06:handles_recorded_every_relocated_sprint_has_a_handle_history_row
-        - vcard:orc-06:no_inverse_dependency_grep_r_docs_sprints_clm_kernel_returns_not
-        - vcard:orc-06:three_sandwiches_three_witnesses_root_relocation_clm_rewires_and
-        - vcard:orc-06:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-07-path-and-config-ssot
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-07
-    title: 'Sprint ORC-07: Path & Config SSOT at the Root'
-    dod:
-      total: 7
-      vcard_refs:
-        - vcard:orc-07:precedence_is_enforced_an_explicit_override_beats_env_which_beat
-        - vcard:orc-07:zero_unallowlisted_hardcoded_paths_the_guard_passes_and_the_allo
-        - vcard:orc-07:relocation_is_config_only_renaming_a_directory_in_app_config_jso
-        - vcard:orc-07:all_three_submodule_roots_resolve_from_config_no_consumer_hardco
-        - vcard:orc-07:the_guard_has_teeth_adding_a_hardcoded_path_makes_make_check_pat
-        - vcard:orc-07:the_resolver_is_isomorphic_it_runs_unmodified_in_node_and_in_a_b
-        - vcard:orc-07:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-08-orchestration-gate-and-certification
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-08
-    title: 'Sprint ORC-08: Orchestration Gate & Certification'
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:orc-08:every_invariant_is_a_stage_and_the_stage_names_it_in_its_output_
-        - vcard:orc-08:every_stage_has_a_control_that_fails_7_injected_defects_7_detect
-        - vcard:orc-08:the_incident_regression_exists_two_uncoordinated_writers_over_on
-        - vcard:orc-08:the_loop_is_proven_end_to_end_a_real_sprint_runs_make_orchestrat
-        - vcard:orc-08:certification_records_what_did_not_change_no_submodule_s_behavio
-        - vcard:orc-08:cross_repo_acts_are_named_the_clm_submodule_change_card_type_is_
-        - vcard:orc-08:recurrence_is_mechanically_blocked_a_second_content_store_an_uns
-        - vcard:orc-08:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-09-structural-path-detection
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-09
-    title: 'Sprint ORC-09: Structural Path-Reference Detection'
-    dod:
-      total: 9
-      vcard_refs:
-        - vcard:orc-09:every_historical_form_is_detected_each_of_the_five_fixtures_is_r
-        - vcard:orc-09:untracked_files_are_scanned_a_file_created_and_not_staged_is_det
-        - vcard:orc-09:the_surface_covers_every_repository_a_hardcoded_estate_path_in_s
-        - vcard:orc-09:the_detector_has_teeth_disabling_expression_reconstruction_makes
-        - vcard:orc-09:no_allowlist_entry_is_a_whole_file_every_entry_names_a_path_and_
-        - vcard:orc-09:zero_false_positives_on_the_live_tree_the_estate_gate_and_the_pa
-        - vcard:orc-09:the_finding_record_is_emitted_registry_path_references_json_list
-        - vcard:orc-09:the_finding_record_is_one_card_inv_tape_06_registry_path_referen
-        - vcard:orc-09:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-10-column-level-schema-conformance
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-10
-    title: 'Sprint ORC-10: Column-Level Schema Conformance & One Declaration'
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:orc-10:descriptors_are_compared_the_checker_reports_a_difference_in_typ
-        - vcard:orc-10:the_nullability_difference_is_gone_handle_history_previous_hash_
-        - vcard:orc-10:the_default_difference_is_gone_card_g_time_agrees_between_declar
-        - vcard:orc-10:one_declaration_migrations_rs_no_longer_restates_the_core_create
-        - vcard:orc-10:order_independence_holds_a_tape_built_via_the_producer_path_and_
-        - vcard:orc-10:every_tape_conforms_all_three_deployed_tapes_agree_with_the_decl
-        - vcard:orc-10:no_regression_make_orc_schema_passes_cargo_test_lib_db_migration
-        - vcard:orc-10:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-11-enum-constraint-on-deployed-substrate
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-11
-    title: 'Sprint ORC-11: The Enum Constraint on Deployed Substrate'
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:orc-11:the_database_refuses_inserting_card_type_bogus_into_each_deploye
-        - vcard:orc-11:lossless_row_count_and_content_digest_are_identical_before_and_a
-        - vcard:orc-11:indexes_and_triggers_survive_the_idx_card_hash_index_exists_and_
-        - vcard:orc-11:idempotent_re_running_the_rebuild_detects_the_constraint_is_alre
-        - vcard:orc-11:atomic_an_induced_failure_mid_rebuild_leaves_the_original_card_t
-        - vcard:orc-11:foreign_keys_hold_pragma_foreign_key_check_is_clean_on_every_tap
-        - vcard:orc-11:no_regression_make_orc_schema_passes_make_orc_gate_passes_8_8_st
-        - vcard:orc-11:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-12-continuity-reconciled
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-12
-    title: 'Sprint ORC-12: Continuity Reconciled, Not Reported'
-    dod:
-      total: 9
-      vcard_refs:
-        - vcard:orc-12:windows_are_enumerated_structurally_each_gap_reports_its_boundin
-        - vcard:orc-12:both_existing_gaps_are_reconciled_all_current_gaps_carry_what_wh
-        - vcard:orc-12:an_unreconciled_gap_fails_the_gate_removing_a_reconciliation_ent
-        - vcard:orc-12:a_phantom_reconciliation_is_reported_an_entry_naming_a_window_th
-        - vcard:orc-12:no_blanket_waiver_is_expressible_there_is_no_field_flag_or_wildc
-        - vcard:orc-12:the_gate_runs_strict_stage_4_invokes_strict_asserted_by_scripts_
-        - vcard:orc-12:the_count_is_visible_and_monotone_the_number_of_accepted_windows
-        - vcard:orc-12:the_reconciliation_record_is_one_card_inv_tape_06_registry_unsea
-        - vcard:orc-12:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-13-display-parity-in-a-browser
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-13
-    title: 'Sprint ORC-13: Display Parity Observed in a Browser'
-    dod:
-      total: 9
-      vcard_refs:
-        - vcard:orc-13:the_registry_is_served_api_clm_registry_returns_the_sprints_sect
-        - vcard:orc-13:sealed_state_is_observable_a_sealed_and_a_specification_entry_ar
-        - vcard:orc-13:the_artifact_is_served_and_is_the_sealed_original_the_bytes_retu
-        - vcard:orc-13:traversal_is_refused_file_and_a_non_allowlisted_subdir_both_retu
-        - vcard:orc-13:the_route_is_load_bearing_removing_the_route_makes_the_spec_fail
-        - vcard:orc-13:no_dead_candidates_each_of_the_two_modules_carries_one_witness_p
-        - vcard:orc-13:no_regression_npm_run_test_presentation_stays_12_12_and_make_sty
-        - vcard:orc-13:the_served_copy_is_a_card_and_not_a_second_source_inv_tape_06_th
-        - vcard:orc-13:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-14-kernel-yaml-conformance
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-14
-    title: 'Sprint ORC-14: The Kernel''s YAML Reader Made Conformant'
-    dod:
-      total: 12
-      vcard_refs:
-        - vcard:orc-14:escaping_is_conformant_inside_a_single_quoted_scalar_unescapes_t
-        - vcard:orc-14:folding_is_conformant_a_scalar_wrapped_across_lines_folds_to_a_s
-        - vcard:orc-14:both_languages_agree_the_identical_fixture_suite_passes_in_types
-        - vcard:orc-14:the_historical_instance_is_a_fixture_the_exact_manifest_scalar_t
-        - vcard:orc-14:the_workarounds_are_deleted_encode_sprint_py_no_longer_forces_do
-        - vcard:orc-14:all_manifests_still_ingest_clmeval_evaluate_succeeds_for_every_e
-        - vcard:orc-14:the_fix_is_load_bearing_reverting_the_reader_change_makes_the_fi
-        - vcard:orc-14:the_fix_reaches_the_runtime_inv_orc3_08_the_fixture_suite_runs_a
-        - vcard:orc-14:the_chain_is_recorded_the_evidence_names_each_step_source_build_
-        - vcard:orc-14:the_python_mirror_is_not_forgotten_cel_eval_py_carries_the_same_
-        - vcard:orc-14:no_regression_the_layer3_suite_stays_green_verify_kernel_sh_stil
-        - vcard:orc-14:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-15-gate-controls-in-isolation
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-15
-    title: 'Sprint ORC-15: Gate Controls in Isolation'
-    dod:
-      total: 9
-      vcard_refs:
-        - vcard:orc-15:no_control_writes_to_the_live_tree_the_estate_s_digest_is_identi
-        - vcard:orc-15:interruption_is_safe_killing_a_control_mid_run_leaves_every_live
-        - vcard:orc-15:no_submodule_writes_no_control_opens_a_file_under_landingpage_or
-        - vcard:orc-15:all_seven_controls_still_detect_the_control_run_reports_7_7_so_i
-        - vcard:orc-15:the_fixture_tree_is_faithful_the_fixture_s_schema_and_registry_a
-        - vcard:orc-15:the_claim_is_unconditional_the_certification_s_wording_is_amende
-        - vcard:orc-15:no_regression_make_orc_gate_still_passes_7_7_stages_and_7_7_cont
-        - vcard:orc-15:a_control_run_is_addressable_inv_tape_06_the_fixture_estate_is_r
-        - vcard:orc-15:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-16-one-knowledge-namespace
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-16
-    title: 'Sprint ORC-16: One Knowledge Namespace, Not Five'
-    dod:
-      total: 12
-      vcard_refs:
-        - vcard:orc-16:every_root_is_declared_with_a_reason_no_root_is_inferred_each_en
-        - vcard:orc-16:ingested_with_handles_every_file_in_a_declared_root_has_a_handle
-        - vcard:orc-16:one_handle_per_content_a_file_present_in_two_trees_is_one_card_w
-        - vcard:orc-16:retired_surface_excluded_no_path_under_the_six_retired_roots_app
-        - vcard:orc-16:exclusion_is_load_bearing_adding_a_retired_root_back_to_the_name
-        - vcard:orc-16:ingestion_is_idempotent_re_running_adds_no_card_and_no_new_handl
-        - vcard:orc-16:nothing_was_rewritten_the_sha_256_of_every_file_under_every_decl
-        - vcard:orc-16:the_receiving_tape_is_declared_registry_tape_profile_json_names_
-        - vcard:orc-16:the_budget_is_stated_each_root_reports_file_count_total_bytes_la
-        - vcard:orc-16:no_regression_make_orc_gate_still_passes_and_the_layer3_suite_st
-        - vcard:orc-16:the_collection_and_its_index_are_cards_inv_tape_06_each_ingested
-        - vcard:orc-16:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-17-hub-is-a-node
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-17
-    title: "Sprint ORC-17: The Hub Is a Node \u2014 a Manifest and One Config"
-    dod:
-      total: 9
-      vcard_refs:
-        - vcard:orc-17:the_hub_describes_itself_root_mcard_yaml_declares_role_archetype
-        - vcard:orc-17:the_submodule_handles_resolve_each_declared_handle_names_a_real_
-        - vcard:orc-17:one_topology_the_tape_paths_are_declared_in_exactly_one_config_a
-        - vcard:orc-17:every_declared_path_exists_the_checker_opens_each_declared_tape_
-        - vcard:orc-17:a_placeholder_host_is_reported_a_served_config_containing_exampl
-        - vcard:orc-17:a_placeholder_contact_is_reported_a_served_config_with_an_empty_
-        - vcard:orc-17:the_manifest_agrees_with_the_gate_every_invariant_root_mcard_yam
-        - vcard:orc-17:no_regression_make_check_paths_make_orc_gate_and_the_layer3_suit
-        - vcard:orc-17:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-18-fourth-tape-and-node-identity
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-18
-    title: 'Sprint ORC-18: The Fourth Tape and the Node Identity'
-    dod:
-      total: 12
-      vcard_refs:
-        - vcard:orc-18:the_fourth_tape_exists_clm_db_routing_mesh_db_carries_the_canoni
-        - vcard:orc-18:the_profile_records_four_registry_tape_profile_json_names_a_rout
-        - vcard:orc-18:the_node_has_a_did_a_did_key_identity_is_registered_with_its_pub
-        - vcard:orc-18:a_mesh_event_is_one_card_sealing_a_transition_adds_exactly_one_r
-        - vcard:orc-18:the_clock_is_a_clock_vector_clock_increments_per_node_and_merges
-        - vcard:orc-18:the_kernel_can_read_what_the_platform_wrote_load_learning_events
-        - vcard:orc-18:vectorclock_rust_emitted_entries_typescript_s_tojson_emits_the_b
-        - vcard:orc-18:marking_rust_emitted_tokens_and_expects_color_hashes_the_platfor
-        - vcard:orc-18:the_handle_was_a_counter_my_first_writer_derived_it_from_seq_1_s
-        - vcard:orc-18:the_clock_is_the_published_one_vectorclock_is_imported_from_clm_
-        - vcard:orc-18:no_regression_make_orc_schema_make_orc_chain_and_the_layer3_suit
-        - vcard:orc-18:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-19-mesh-proven-at-platform-scale
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-19
-    title: 'Sprint ORC-19: The Mesh Proven at Platform Scale'
-    dod:
-      total: 11
-      vcard_refs:
-        - vcard:orc-19:two_nodes_exist_each_has_its_own_four_tapes_materialised_from_th
-        - vcard:orc-19:they_start_divergent_the_check_asserts_non_convergence_before_th
-        - vcard:orc-19:content_unions_after_the_exchange_each_node_s_card_set_equals_th
-        - vcard:orc-19:clocks_agree_the_vector_clocks_are_equal_after_the_exchange_and_
-        - vcard:orc-19:causality_holds_across_nodes_the_published_vectorclock_reports_b
-        - vcard:orc-19:a_partition_heals_nodes_diverged_while_apart_converge_on_reconne
-        - vcard:orc-19:the_exchange_is_recorded_the_routing_tape_holds_rows_naming_both
-        - vcard:orc-19:the_check_has_teeth_a_node_that_does_not_sync_fails_verified_by_
-        - vcard:orc-19:no_regression_make_orc_gate_passes_with_the_new_stage_and_the_la
-        - vcard:orc-19:a_node_is_one_mcard_inv_tape_06_each_node_root_mesh_node_a_mesh_
-        - vcard:orc-19:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-20-knowledge-contracts
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-20
-    title: 'Sprint ORC-20: Knowledge Contracts Between Submodules'
-    dod:
-      total: 11
-      vcard_refs:
-        - vcard:orc-20:all_three_declare_knowledge_each_submodule_s_mcard_yaml_carries_
-        - vcard:orc-20:no_wildcards_a_contract_entry_whose_produces_names_fails_the_che
-        - vcard:orc-20:declared_matches_actual_every_declared_consumption_is_observed_i
-        - vcard:orc-20:undeclared_reads_are_caught_reading_a_root_no_contract_declares_
-        - vcard:orc-20:stale_declarations_are_caught_a_declared_root_the_code_never_rea
-        - vcard:orc-20:totality_carries_across_every_card_type_the_kernel_produces_is_c
-        - vcard:orc-20:three_sandwiches_three_witnesses_verify_chain_py_reports_one_sea
-        - vcard:orc-20:scripts_orc_seal_witness_py_could_not_seal_it_inserted_into_exec
-        - vcard:orc-20:the_loop_reported_sealed_when_sealing_failed_the_verdict_depende
-        - vcard:orc-20:no_regression_make_orc_gate_passes_and_each_submodule_s_own_suit
-        - vcard:orc-20:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-21-personal-vault-as-source
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-21
-    title: 'Sprint ORC-21: The Personal Vault as a First-Class Source'
-    dod:
-      total: 10
-      vcard_refs:
-        - vcard:orc-21:the_vault_is_declared_registry_knowledge_roots_yaml_carries_a_pe
-        - vcard:orc-21:ingested_with_handles_every_file_the_declared_selection_admits_h
-        - vcard:orc-21:provenance_is_recorded_each_vault_card_names_its_source_path_con
-        - vcard:orc-21:the_env_override_wins_setting_knowledge_vault_to_a_different_dir
-        - vcard:orc-21:absence_is_reported_a_vault_path_that_does_not_exist_is_printed_
-        - vcard:orc-21:it_is_not_repo_bound_ingesting_a_vault_outside_the_repository_yi
-        - vcard:orc-21:re_ingestion_is_revision_tracking_changing_one_vault_file_adds_e
-        - vcard:orc-21:no_regression_make_orc_gate_passes_and_orc_16_s_repository_inges
-        - vcard:orc-21:the_vault_index_is_one_card_inv_tape_06_the_external_container_s
-        - vcard:orc-21:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-22-kernel-pre-vcard-and-runtime-artifact
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-22
-    title: 'Sprint ORC-22: The Kernel Pre-VCard and the Runtime Artifact'
-    dod:
-      total: 9
-      vcard_refs:
-        - vcard:orc-22:v_pre_true_bash_clm_kernel_verify_kernel_sh_exits_0_on_the_commi
-        - vcard:orc-22:the_sbom_tracks_the_launcher_a_launcher_change_that_leaves_manif
-        - vcard:orc-22:drift_is_the_control_the_three_current_drifts_scripts_clmeval_cl
-        - vcard:orc-22:the_chain_is_declared_registry_kernel_artifact_json_names_the_so
-        - vcard:orc-22:the_entry_points_are_named_which_runtime_each_entry_point_select
-        - vcard:orc-22:the_pre_vcard_gates_evaluation_the_coordination_loop_refuses_to_
-        - vcard:orc-22:no_regression_make_orc_gate_passes_and_every_kernel_touching_spr
-        - vcard:orc-22:the_artifact_chain_is_one_card_inv_tape_06_registry_kernel_artif
-        - vcard:orc-22:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-23-pristine-monadic-core
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-23
-    title: 'Sprint ORC-23: Pristine Monadic Core Restoration'
-    dod:
-      total: 12
-      vcard_refs:
-        - vcard:orc-23:schema_mcard_schema_sql_contains_exactly_3_create_table_statemen
-        - vcard:orc-23:card_table_contains_strictly_3_columns_hash_content_g_time_inv_t
-        - vcard:orc-23:no_card_type_column_exists_on_card_not_the_column_not_its_check_
-        - vcard:orc-23:type_detection_is_owned_by_clm_kernel_kindof_handle_exists_in_th
-        - vcard:orc-23:no_consumer_stores_a_kind_check_tape_invariant_py_reports_three_
-        - vcard:orc-23:no_auxiliary_tables_card_tombstone_learning_event_documents_clm_
-        - vcard:orc-23:confirmed_that_content_memory_db_agent_identities_db_and_executi
-        - vcard:orc-23:sqlite_test_database_initializes_cleanly_from_schema_mcard_schem
-        - vcard:orc-23:three_columns_on_every_table_card_3_handle_registry_3_handle_his
-        - vcard:orc-23:handle_registry_created_at_and_handle_history_id_are_gone_creati
-        - vcard:orc-23:change_type_is_gone_and_the_guarantee_is_kept_inv_tape_04_lifecy
-        - vcard:orc-23:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-24-universal-handle-namespace-and-history
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-24
-    title: 'Sprint ORC-24: Universal Handle Namespace & Version History Specification'
-    dod:
-      total: 5
-      vcard_refs:
-        - vcard:orc-24:the_taxonomy_is_complete_registry_handle_taxonomy_yaml_declares_
-        - vcard:orc-24:the_grammar_and_calculus_are_declared_registry_handle_taxonomy_y
-        - vcard:orc-24:the_identity_and_execution_tapes_carry_zero_custom_tables_pragma
-        - vcard:orc-24:the_driver_is_specified_once_the_ownership_block_names_the_singl
-        - vcard:orc-24:the_taxonomy_is_declared_here_and_implemented_in_clm_kernel_the_
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-25-conformance-gate-and-tooling-decoupling
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-25
-    title: 'Sprint ORC-25: Conformance Gate & Tooling Decoupling'
-    dod:
-      total: 9
-      vcard_refs:
-        - vcard:orc-25:every_declared_tape_is_audited_check_schema_conformance_py_repor
-        - vcard:orc-25:an_auxiliary_table_is_fatal_injecting_a_fourth_table_into_a_copy
-        - vcard:orc-25:stage_namespace_validates_the_namespace_it_fails_when_a_handle_p
-        - vcard:orc-25:a_fourth_column_is_fatal_injecting_a_fourth_column_into_a_copy_o
-        - vcard:orc-25:a_control_injects_a_fourth_column_check_orchestration_py_control
-        - vcard:orc-25:the_gate_exits_0_on_the_reconciled_substrate_make_orc_schema_ret
-        - vcard:orc-25:a_re_introduced_kind_column_fails_the_gate_adding_card_type_or_a
-        - vcard:orc-25:the_absence_and_the_delegation_are_asserted_together_card_carrie
-        - vcard:orc-25:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-26-substrate-and-tape-reconciliation
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-26
-    title: 'Sprint ORC-26: Substrate & Tape Reconciliation'
-    dod:
-      total: 11
-      vcard_refs:
-        - vcard:orc-26:the_migration_is_idempotent_and_self_tested_scripts_orc_migrate_
-        - vcard:orc-26:content_memory_db_is_the_triad_it_carries_exactly_card_handle_re
-        - vcard:orc-26:agent_identities_db_is_the_triad_it_carries_exactly_card_handle_
-        - vcard:orc-26:execution_log_db_is_the_triad_it_carries_exactly_card_handle_reg
-        - vcard:orc-26:zero_auxiliary_tables_no_tape_reports_an_extra_tables_entry_veri
-        - vcard:orc-26:no_card_is_lost_every_pre_migration_card_hash_is_present_after_t
-        - vcard:orc-26:all_three_tapes_pass_the_homogeneity_check_make_orc_schema_repor
-        - vcard:orc-26:no_column_is_dropped_without_its_information_re_homed_every_chan
-        - vcard:orc-26:each_lifecycle_sidecar_is_one_card_inv_tape_06_the_sidecar_is_ha
-        - vcard:orc-26:each_sidecar_is_one_card_inv_tape_06_every_lifecycle_sidecar_the
-        - vcard:orc-26:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-27-polyglot-estate-synchronization
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-27
-    title: 'Sprint ORC-27: Polyglot Estate Schema Synchronization'
-    dod:
-      total: 16
-      vcard_refs:
-        - vcard:orc-27:all_four_copies_of_mcard_schema_sql_across_the_repository_are_id
-        - vcard:orc-27:schema_mcard_schema_sql
-        - vcard:orc-27:clm_schema_mcard_schema_sql
-        - vcard:orc-27:clm_types_schemas_mcard_schema_sql
-        - vcard:orc-27:mcard_studio_docs_schema_mcard_schema_sql
-        - vcard:orc-27:the_rust_producer_deploys_the_same_three_columns_a_tape_built_by
-        - vcard:orc-27:the_typescript_vfs_passes_against_the_triad_its_suite_runs_green
-        - vcard:orc-27:src_layer0_storage_node_sqlite_ts_registerhandle_selected_and_in
-        - vcard:orc-27:src_layer2_portablesqlite_ts_the_export_insert_named_a_generated
-        - vcard:orc-27:tests_yaml_scalars_test_ts_a_stale_0_0_2_assertion_from_orc_18_s
-        - vcard:orc-27:the_estate_invariants_hold_python3_scripts_ci_check_development_
-        - vcard:orc-27:the_criterion_now_names_a_check_that_exists_the_phantom_make_che
-        - vcard:orc-27:make_orc_gate_passes_8_8_stages_and_9_9_negative_controls
-        - vcard:orc-27:kindof_is_one_function_with_three_bindings_python_rust_and_types
-        - vcard:orc-27:no_runtime_re_derives_a_kind_a_runtime_that_computes_a_kind_inde
-        - vcard:orc-27:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-28-measured-tape-debt-and-deterministic-records
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-28
-    title: 'Sprint ORC-28: Measured Tape Debt & Deterministic Records'
-    dod:
-      total: 10
-      vcard_refs:
-        - vcard:orc-28:the_deviation_is_measured_every_schema_declaration_and_every_dep
-        - vcard:orc-28:the_measurement_is_correct_the_declared_card_measures_4_columns_
-        - vcard:orc-28:the_debt_is_recorded_and_owned_registry_tape_invariant_baseline_
-        - vcard:orc-28:growth_fails_adding_a_tenth_table_raises_the_debt_to_48_and_the_
-        - vcard:orc-28:the_gate_enforces_it_make_orc_gate_stage_namespace_invokes_the_m
-        - vcard:orc-28:the_record_is_deterministic_two_consecutive_runs_of_node_scripts
-        - vcard:orc-28:the_honest_reading_is_preserved_the_dod_above_is_not_a_claim_tha
-        - vcard:orc-28:the_debt_is_0_check_tape_invariant_py_reports_debt_0_with_every_
-        - vcard:orc-28:the_measured_debt_is_one_card_inv_tape_06_registry_tape_invarian
-        - vcard:orc-28:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-29-nested-tapes-are-cards
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-29
-    title: "Sprint ORC-29: Nested Tapes Are Cards \u2014 the Lifecycle Sidecar"
-    dod:
-      total: 10
-      vcard_refs:
-        - vcard:orc-29:the_core_schema_carries_no_lifecycle_schema_mcard_schema_sql_has
-        - vcard:orc-29:a_sidecar_is_created_on_demand_and_only_then_a_tape_with_no_life
-        - vcard:orc-29:the_sidecar_is_a_tape_it_carries_exactly_card_handle_registry_ha
-        - vcard:orc-29:the_sidecar_is_one_card_after_a_wal_checkpoint_sha256_sidecar_by
-        - vcard:orc-29:the_address_is_stable_hashing_the_sidecar_twice_with_no_interven
-        - vcard:orc-29:a_retirement_is_two_writes_both_present_retiring_a_card_leaves_a
-        - vcard:orc-29:the_card_is_never_deleted_after_retirement_the_card_is_still_in_
-        - vcard:orc-29:the_sidecar_is_replaceable_rebuilding_a_sidecar_from_its_rows_le
-        - vcard:orc-29:the_pattern_is_registered_registry_tape_profile_json_declares_th
-        - vcard:orc-29:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
-      state: sealed
-  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-30-estate-documentation-alignment
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ORC-30
-    title: "Sprint ORC-30: Estate Documentation Alignment \u2014 `README.md` and `docs/`"
-    dod:
-      total: 11
-      vcard_refs:
-        - vcard:orc-30:the_readme_states_the_real_architecture_three_tapes_three_tables
-        - vcard:orc-30:the_readme_states_the_fractal_rule_inv_tape_06_with_the_deployed
-        - vcard:orc-30:the_readme_states_where_a_kind_lives_no_type_column_the_handle_n
-        - vcard:orc-30:docs_index_md_describes_the_current_architecture_the_six_tape_in
-        - vcard:orc-30:docs_top_level_is_mece_only_index_md_and_the_declared_category_d
-        - vcard:orc-30:zero_draft_directories_no_prefixed_directory_at_the_docs_top_lev
-        - vcard:orc-30:zero_orphans_every_md_under_docs_is_reachable_from_index_md_by_a
-        - vcard:orc-30:the_collection_is_one_card_inv_tape_06_docs_index_md_is_register
-        - vcard:orc-30:the_check_has_teeth_adding_a_loose_file_a_draft_directory_or_an_
-        - vcard:orc-30:no_regression_all_seven_gates_still_pass_and_make_orc_gate_stays
-        - vcard:orc-30:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
-      state: sealed
   - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-01-development-lifecycle-cpn-specification
     card_type: pcard
     archetype: ClmTriadManifest
@@ -2839,6 +2199,646 @@ sprints:
         - vcard:cdo-16:retrospective_committed
         - vcard:cdo-16:program_archived_tracker_updated_tagged
         - vcard:cdo-16:triad_card_clm_clm_cdo_16_certification_yaml_clm_clm_cdo_16_cert
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:00-program-charter-epic-orc-ii
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: 00-PROGRAM-CHARTER-EPIC-ORC-II
+    title: "Program Charter: EPIC-ORC-II \u2014 Closure: Making the Invariants Enforced"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:00-program-charter-epic-orc-ii:each_of_the_five_historical_path_forms_is_detected_by_a_fixture_
+        - vcard:00-program-charter-epic-orc-ii:every_core_column_s_full_descriptor_agrees_across_the_declaratio
+        - vcard:00-program-charter-epic-orc-ii:inserting_card_type_bogus_into_a_deployed_tape_is_refused_by_the
+        - vcard:00-program-charter-epic-orc-ii:every_continuity_gap_carries_a_reconciliation_the_gate_runs_the_
+        - vcard:00-program-charter-epic-orc-ii:a_running_portal_serves_the_registry_and_renders_a_sprint_s_seal
+        - vcard:00-program-charter-epic-orc-ii:the_kernel_s_yaml_reader_unescapes_and_folds_wrapped_scalars_ver
+        - vcard:00-program-charter-epic-orc-ii:no_gate_control_writes_to_the_live_tree_an_interrupted_control_l
+        - vcard:00-program-charter-epic-orc-ii:make_orc_gate_passes_with_the_extended_stage_set_and_every_new_s
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:00-program-charter-epic-orc-iii
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: 00-PROGRAM-CHARTER-EPIC-ORC-III
+    title: "Program Charter: EPIC-ORC-III \u2014 The Mesh: Knowledge Topology for a PKC Platform"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:00-program-charter-epic-orc-iii:every_knowledge_root_is_declared_ingested_as_cards_with_handles_
+        - vcard:00-program-charter-epic-orc-iii:the_hub_carries_an_mcard_yaml_there_is_one_root_config_every_dec
+        - vcard:00-program-charter-epic-orc-iii:the_routing_tape_exists_and_holds_rows_the_node_has_a_did_learni
+        - vcard:00-program-charter-epic-orc-iii:two_nodes_converge_and_the_convergence_is_witnessed_clocks_agree
+        - vcard:00-program-charter-epic-orc-iii:each_submodule_declares_knowledge_produces_consumes_and_the_decl
+        - vcard:00-program-charter-epic-orc-iii:the_configured_personal_vault_is_ingestible_with_provenance_and_
+        - vcard:00-program-charter-epic-orc-iii:the_kernel_s_pre_vcard_is_true_on_the_committed_tree_the_artifac
+        - vcard:00-program-charter-epic-orc-iii:make_orc_gate_passes_with_the_extended_stages_and_every_new_stag
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:00-program-charter-epic-orc-iv
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: 00-PROGRAM-CHARTER-EPIC-ORC-IV
+    title: "Program Charter: EPIC-ORC-IV \u2014 The Universal Monadic Triad: The Three-Tape Turing Architecture"
+    dod:
+      total: 18
+      vcard_refs:
+        - vcard:00-program-charter-epic-orc-iv:schema_mcard_schema_sql_contains_strictly_3_tables_card_handle_r
+        - vcard:00-program-charter-epic-orc-iv:card_type_is_removed_the_column_its_check_its_default_and_its_co
+        - vcard:00-program-charter-epic-orc-iv:type_detection_is_delegated_to_clm_kernel_inv_tape_01a_kindof_ha
+        - vcard:00-program-charter-epic-orc-iv:the_gate_detects_a_re_introduced_kind_column_so_this_correction_
+        - vcard:00-program-charter-epic-orc-iv:universal_handle_taxonomy_in_registry_handle_taxonomy_yaml_cover
+        - vcard:00-program-charter-epic-orc-iv:all_auxiliary_tables_card_tombstone_learning_event_execution_his
+        - vcard:00-program-charter-epic-orc-iv:scripts_ci_check_schema_conformance_py_verifies_that_all_tapes_d
+        - vcard:00-program-charter-epic-orc-iv:all_three_deployed_databases_in_clm_db_content_memory_db_agent_i
+        - vcard:00-program-charter-epic-orc-iv:submodule_schemas_in_clm_and_mcard_studio_match_schema_mcard_sch
+        - vcard:00-program-charter-epic-orc-iv:make_orc_gate_passes_8_8_stages_and_9_9_negative_controls_agains
+        - vcard:00-program-charter-epic-orc-iv:the_deviation_from_inv_tape_01_is_measured_and_bounded_while_the
+        - vcard:00-program-charter-epic-orc-iv:all_polyglot_runtimes_rust_typescript_python_access_content_iden
+        - vcard:00-program-charter-epic-orc-iv:the_python_runtime_had_the_card_model_and_the_schema_and_no_stor
+        - vcard:00-program-charter-epic-orc-iv:the_rust_runtime_had_every_operation_under_a_parallel_vocabulary
+        - vcard:00-program-charter-epic-orc-iv:the_operation_is_universal_the_spelling_is_idiomatic_registerhan
+        - vcard:00-program-charter-epic-orc-iv:lifecycle_is_external_inv_tape_04_the_core_schema_carries_no_tom
+        - vcard:00-program-charter-epic-orc-iv:nested_tapes_are_cards_inv_tape_06_every_sidecar_collection_and_
+        - vcard:00-program-charter-epic-orc-iv:the_prose_matches_the_tape_readme_md_and_docs_index_md_state_the
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:00-program-charter-epic-orc
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: 00-PROGRAM-CHARTER-EPIC-ORC
+    title: "Program Charter: EPIC-ORC \u2014 MCard_TDD as Protocol SSoT Orchestration Hub"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:00-program-charter-epic-orc:card_type_exists_and_discriminates_the_three_table_core_is_norma
+        - vcard:00-program-charter-epic-orc:every_sprint_under_docs_sprints_has_a_clmtriadmanifest_in_regist
+        - vcard:00-program-charter-epic-orc:the_coordination_loop_runs_a_submodule_update_end_to_end_and_sea
+        - vcard:00-program-charter-epic-orc:no_submodule_is_mutated_outside_a_sandwich_no_sandwich_spans_two
+        - vcard:00-program-charter-epic-orc:landingpage_renders_the_sprint_registry_and_mcard_studio_display
+        - vcard:00-program-charter-epic-orc:knowledge_continuity_every_graduated_program_asset_class_is_regi
+        - vcard:00-program-charter-epic-orc:the_estate_is_axis_clean_docs_sprints_top_level_holds_only_nn_as
+        - vcard:00-program-charter-epic-orc:the_gate_passes_with_every_negative_control_detecting_its_inject
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-01-schema-conformance-and-card-type
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-01
+    title: 'Sprint ORC-01: Schema Conformance & the Card-Type Discriminator'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:orc-01:card_type_exists_and_discriminates_inserting_a_row_with_card_typ
+        - vcard:orc-01:the_core_is_identical_across_tapes_the_three_normative_tables_ha
+        - vcard:orc-01:adjuncts_are_declared_every_non_core_table_carries_an_extension_
+        - vcard:orc-01:empty_schema_principle_holds_no_domain_specific_table_exists_the
+        - vcard:orc-01:migration_is_lossless_existing_card_rows_survive_with_card_type_
+        - vcard:orc-01:the_submodule_change_is_isolated_git_c_clm_diff_stat_shows_only_
+        - vcard:orc-01:tape_mode_is_explicit_the_profile_is_recorded_and_the_checker_as
+        - vcard:orc-01:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-02-sprint-as-mcard-triad-encoding
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-02
+    title: "Sprint ORC-02: Sprint-as-MCard \u2014 Triad Manifest Encoding & Handle Registration"
+    dod:
+      total: 11
+      vcard_refs:
+        - vcard:orc-02:triad_closure_is_total_every_sprint_has_a_manifest_with_all_thre
+        - vcard:orc-02:the_dod_is_binding_every_dod_line_maps_to_a_postcondition_with_a
+        - vcard:orc-02:handles_resolve_both_ways_every_sprint_path_yields_a_handle_and_
+        - vcard:orc-02:manifests_are_loadable_clmeval_ingests_every_emitted_manifest_wi
+        - vcard:orc-02:legacy_cards_reconciled_not_rewritten_the_28_existing_cards_appe
+        - vcard:orc-02:every_graduated_asset_class_is_registered_cards_witnesses_certif
+        - vcard:orc-02:spec_sprints_encode_as_specifications_not_programs_an_aspect_dir
+        - vcard:orc-02:derivation_not_duplication_the_manifest_is_generated_from_the_sp
+        - vcard:orc-02:registration_is_idempotent_re_running_the_encoder_on_an_unchange
+        - vcard:orc-02:the_registry_is_one_card_inv_tape_06_registry_sprints_yaml_is_ha
+        - vcard:orc-02:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-03-coordination-loop
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-03
+    title: "Sprint ORC-03: The Coordination Loop \u2014 9-Phase REPL over Submodules"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:orc-03:the_loop_runs_end_to_end_on_a_real_sprint_and_mutates_one_submod
+        - vcard:orc-03:refusal_is_real_a_deliberately_dirtied_submodule_tree_is_refused
+        - vcard:orc-03:single_module_atomicity_holds_a_manifest_naming_two_targets_is_r
+        - vcard:orc-03:the_gates_are_not_decorative_removing_the_phase_4_check_makes_th
+        - vcard:orc-03:phase_mapping_is_faithful_each_of_the_9_phases_is_observable_in_
+        - vcard:orc-03:one_write_path_a_submodule_mutated_outside_the_loop_is_detected_
+        - vcard:orc-03:make_orchestrate_is_the_only_entry_no_makefile_target_mutates_a_
+        - vcard:orc-03:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-04-vcard-witness-sealing
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-04
+    title: 'Sprint ORC-04: VCard Witness Sealing & the Execution Tape'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:orc-04:the_triple_is_present_and_derived_every_sealed_witness_carries_a
+        - vcard:orc-04:the_triple_is_logged_each_sandwich_appends_exactly_one_execution
+        - vcard:orc-04:tamper_detection_works_mutating_a_sealed_witness_s_content_makes
+        - vcard:orc-04:append_only_holds_no_delete_statement_exists_in_the_sealer_and_t
+        - vcard:orc-04:interleaving_is_detectable_two_sandwiches_over_the_same_submodul
+        - vcard:orc-04:one_transaction_an_induced_failure_after_the_vcard_insert_leaves
+        - vcard:orc-04:the_cdo_ledger_is_converged_not_paralleled_the_seal_path_uses_th
+        - vcard:orc-04:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-05-display-parity
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-05
+    title: "Sprint ORC-05: Display Parity \u2014 studio Membrane & LandingPage Registry"
+    dod:
+      total: 10
+      vcard_refs:
+        - vcard:orc-05:one_shape_every_registry_entry_canonical_and_legacy_validates_ag
+        - vcard:orc-05:studio_displays_a_sprint_the_membrane_renders_a_sprint_entry_fro
+        - vcard:orc-05:landingpage_renders_the_registry_the_portal_renders_the_same_ent
+        - vcard:orc-05:no_second_encoding_a_check_asserts_no_triad_field_is_authored_in
+        - vcard:orc-05:dod_state_is_observable_a_sealed_postcondition_and_an_unsealed_o
+        - vcard:orc-05:two_sandwiches_two_witnesses_the_studio_and_portal_changes_each_
+        - vcard:orc-05:no_vendored_evidence_the_byte_identical_copy_of_cdo_16_fiber_cer
+        - vcard:orc-05:graduated_artifacts_render_at_least_one_sealed_witness_and_one_c
+        - vcard:orc-05:the_projection_is_one_card_inv_tape_06_clm_registry_yaml_is_regi
+        - vcard:orc-05:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-06-estate-axis-separation
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-06
+    title: 'Sprint ORC-06: Estate Axis Separation & Lossless Relocation'
+    dod:
+      total: 10
+      vcard_refs:
+        - vcard:orc-06:lossless_182_renames_0_additions_0_deletions_every_file_s_sha_25
+        - vcard:orc-06:aspect_level_conforms_docs_sprints_holds_only_nn_aspect_programs
+        - vcard:orc-06:zero_dead_fallbacks_the_exists_else_count_drops_from_24_to_0_ass
+        - vcard:orc-06:the_writer_is_safe_layout_freeze_spec_js_writes_the_moved_baseli
+        - vcard:orc-06:no_tooling_under_docs_find_docs_name_py_o_name_mjs_o_name_sh_is_
+        - vcard:orc-06:suites_unaffected_make_sty_gate_pass_clm_tests_python_layer3_gre
+        - vcard:orc-06:handles_recorded_every_relocated_sprint_has_a_handle_history_row
+        - vcard:orc-06:no_inverse_dependency_grep_r_docs_sprints_clm_kernel_returns_not
+        - vcard:orc-06:three_sandwiches_three_witnesses_root_relocation_clm_rewires_and
+        - vcard:orc-06:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-07-path-and-config-ssot
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-07
+    title: 'Sprint ORC-07: Path & Config SSOT at the Root'
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:orc-07:precedence_is_enforced_an_explicit_override_beats_env_which_beat
+        - vcard:orc-07:zero_unallowlisted_hardcoded_paths_the_guard_passes_and_the_allo
+        - vcard:orc-07:relocation_is_config_only_renaming_a_directory_in_app_config_jso
+        - vcard:orc-07:all_three_submodule_roots_resolve_from_config_no_consumer_hardco
+        - vcard:orc-07:the_guard_has_teeth_adding_a_hardcoded_path_makes_make_check_pat
+        - vcard:orc-07:the_resolver_is_isomorphic_it_runs_unmodified_in_node_and_in_a_b
+        - vcard:orc-07:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-08-orchestration-gate-and-certification
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-08
+    title: 'Sprint ORC-08: Orchestration Gate & Certification'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:orc-08:every_invariant_is_a_stage_and_the_stage_names_it_in_its_output_
+        - vcard:orc-08:every_stage_has_a_control_that_fails_7_injected_defects_7_detect
+        - vcard:orc-08:the_incident_regression_exists_two_uncoordinated_writers_over_on
+        - vcard:orc-08:the_loop_is_proven_end_to_end_a_real_sprint_runs_make_orchestrat
+        - vcard:orc-08:certification_records_what_did_not_change_no_submodule_s_behavio
+        - vcard:orc-08:cross_repo_acts_are_named_the_clm_submodule_change_card_type_is_
+        - vcard:orc-08:recurrence_is_mechanically_blocked_a_second_content_store_an_uns
+        - vcard:orc-08:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-09-structural-path-detection
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-09
+    title: 'Sprint ORC-09: Structural Path-Reference Detection'
+    dod:
+      total: 9
+      vcard_refs:
+        - vcard:orc-09:every_historical_form_is_detected_each_of_the_five_fixtures_is_r
+        - vcard:orc-09:untracked_files_are_scanned_a_file_created_and_not_staged_is_det
+        - vcard:orc-09:the_surface_covers_every_repository_a_hardcoded_estate_path_in_s
+        - vcard:orc-09:the_detector_has_teeth_disabling_expression_reconstruction_makes
+        - vcard:orc-09:no_allowlist_entry_is_a_whole_file_every_entry_names_a_path_and_
+        - vcard:orc-09:zero_false_positives_on_the_live_tree_the_estate_gate_and_the_pa
+        - vcard:orc-09:the_finding_record_is_emitted_registry_path_references_json_list
+        - vcard:orc-09:the_finding_record_is_one_card_inv_tape_06_registry_path_referen
+        - vcard:orc-09:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-10-column-level-schema-conformance
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-10
+    title: 'Sprint ORC-10: Column-Level Schema Conformance & One Declaration'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:orc-10:descriptors_are_compared_the_checker_reports_a_difference_in_typ
+        - vcard:orc-10:the_nullability_difference_is_gone_handle_history_previous_hash_
+        - vcard:orc-10:the_default_difference_is_gone_card_g_time_agrees_between_declar
+        - vcard:orc-10:one_declaration_migrations_rs_no_longer_restates_the_core_create
+        - vcard:orc-10:order_independence_holds_a_tape_built_via_the_producer_path_and_
+        - vcard:orc-10:every_tape_conforms_all_three_deployed_tapes_agree_with_the_decl
+        - vcard:orc-10:no_regression_make_orc_schema_passes_cargo_test_lib_db_migration
+        - vcard:orc-10:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-11-enum-constraint-on-deployed-substrate
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-11
+    title: 'Sprint ORC-11: The Enum Constraint on Deployed Substrate'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:orc-11:the_database_refuses_inserting_card_type_bogus_into_each_deploye
+        - vcard:orc-11:lossless_row_count_and_content_digest_are_identical_before_and_a
+        - vcard:orc-11:indexes_and_triggers_survive_the_idx_card_hash_index_exists_and_
+        - vcard:orc-11:idempotent_re_running_the_rebuild_detects_the_constraint_is_alre
+        - vcard:orc-11:atomic_an_induced_failure_mid_rebuild_leaves_the_original_card_t
+        - vcard:orc-11:foreign_keys_hold_pragma_foreign_key_check_is_clean_on_every_tap
+        - vcard:orc-11:no_regression_make_orc_schema_passes_make_orc_gate_passes_8_8_st
+        - vcard:orc-11:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-12-continuity-reconciled
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-12
+    title: 'Sprint ORC-12: Continuity Reconciled, Not Reported'
+    dod:
+      total: 9
+      vcard_refs:
+        - vcard:orc-12:windows_are_enumerated_structurally_each_gap_reports_its_boundin
+        - vcard:orc-12:both_existing_gaps_are_reconciled_all_current_gaps_carry_what_wh
+        - vcard:orc-12:an_unreconciled_gap_fails_the_gate_removing_a_reconciliation_ent
+        - vcard:orc-12:a_phantom_reconciliation_is_reported_an_entry_naming_a_window_th
+        - vcard:orc-12:no_blanket_waiver_is_expressible_there_is_no_field_flag_or_wildc
+        - vcard:orc-12:the_gate_runs_strict_stage_4_invokes_strict_asserted_by_scripts_
+        - vcard:orc-12:the_count_is_visible_and_monotone_the_number_of_accepted_windows
+        - vcard:orc-12:the_reconciliation_record_is_one_card_inv_tape_06_registry_unsea
+        - vcard:orc-12:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-13-display-parity-in-a-browser
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-13
+    title: 'Sprint ORC-13: Display Parity Observed in a Browser'
+    dod:
+      total: 9
+      vcard_refs:
+        - vcard:orc-13:the_registry_is_served_api_clm_registry_returns_the_sprints_sect
+        - vcard:orc-13:sealed_state_is_observable_a_sealed_and_a_specification_entry_ar
+        - vcard:orc-13:the_artifact_is_served_and_is_the_sealed_original_the_bytes_retu
+        - vcard:orc-13:traversal_is_refused_file_and_a_non_allowlisted_subdir_both_retu
+        - vcard:orc-13:the_route_is_load_bearing_removing_the_route_makes_the_spec_fail
+        - vcard:orc-13:no_dead_candidates_each_of_the_two_modules_carries_one_witness_p
+        - vcard:orc-13:no_regression_npm_run_test_presentation_stays_12_12_and_make_sty
+        - vcard:orc-13:the_served_copy_is_a_card_and_not_a_second_source_inv_tape_06_th
+        - vcard:orc-13:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-14-kernel-yaml-conformance
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-14
+    title: 'Sprint ORC-14: The Kernel''s YAML Reader Made Conformant'
+    dod:
+      total: 12
+      vcard_refs:
+        - vcard:orc-14:escaping_is_conformant_inside_a_single_quoted_scalar_unescapes_t
+        - vcard:orc-14:folding_is_conformant_a_scalar_wrapped_across_lines_folds_to_a_s
+        - vcard:orc-14:both_languages_agree_the_identical_fixture_suite_passes_in_types
+        - vcard:orc-14:the_historical_instance_is_a_fixture_the_exact_manifest_scalar_t
+        - vcard:orc-14:the_workarounds_are_deleted_encode_sprint_py_no_longer_forces_do
+        - vcard:orc-14:all_manifests_still_ingest_clmeval_evaluate_succeeds_for_every_e
+        - vcard:orc-14:the_fix_is_load_bearing_reverting_the_reader_change_makes_the_fi
+        - vcard:orc-14:the_fix_reaches_the_runtime_inv_orc3_08_the_fixture_suite_runs_a
+        - vcard:orc-14:the_chain_is_recorded_the_evidence_names_each_step_source_build_
+        - vcard:orc-14:the_python_mirror_is_not_forgotten_cel_eval_py_carries_the_same_
+        - vcard:orc-14:no_regression_the_layer3_suite_stays_green_verify_kernel_sh_stil
+        - vcard:orc-14:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-15-gate-controls-in-isolation
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-15
+    title: 'Sprint ORC-15: Gate Controls in Isolation'
+    dod:
+      total: 9
+      vcard_refs:
+        - vcard:orc-15:no_control_writes_to_the_live_tree_the_estate_s_digest_is_identi
+        - vcard:orc-15:interruption_is_safe_killing_a_control_mid_run_leaves_every_live
+        - vcard:orc-15:no_submodule_writes_no_control_opens_a_file_under_landingpage_or
+        - vcard:orc-15:all_seven_controls_still_detect_the_control_run_reports_7_7_so_i
+        - vcard:orc-15:the_fixture_tree_is_faithful_the_fixture_s_schema_and_registry_a
+        - vcard:orc-15:the_claim_is_unconditional_the_certification_s_wording_is_amende
+        - vcard:orc-15:no_regression_make_orc_gate_still_passes_7_7_stages_and_7_7_cont
+        - vcard:orc-15:a_control_run_is_addressable_inv_tape_06_the_fixture_estate_is_r
+        - vcard:orc-15:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-16-one-knowledge-namespace
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-16
+    title: 'Sprint ORC-16: One Knowledge Namespace, Not Five'
+    dod:
+      total: 12
+      vcard_refs:
+        - vcard:orc-16:every_root_is_declared_with_a_reason_no_root_is_inferred_each_en
+        - vcard:orc-16:ingested_with_handles_every_file_in_a_declared_root_has_a_handle
+        - vcard:orc-16:one_handle_per_content_a_file_present_in_two_trees_is_one_card_w
+        - vcard:orc-16:retired_surface_excluded_no_path_under_the_six_retired_roots_app
+        - vcard:orc-16:exclusion_is_load_bearing_adding_a_retired_root_back_to_the_name
+        - vcard:orc-16:ingestion_is_idempotent_re_running_adds_no_card_and_no_new_handl
+        - vcard:orc-16:nothing_was_rewritten_the_sha_256_of_every_file_under_every_decl
+        - vcard:orc-16:the_receiving_tape_is_declared_registry_tape_profile_json_names_
+        - vcard:orc-16:the_budget_is_stated_each_root_reports_file_count_total_bytes_la
+        - vcard:orc-16:no_regression_make_orc_gate_still_passes_and_the_layer3_suite_st
+        - vcard:orc-16:the_collection_and_its_index_are_cards_inv_tape_06_each_ingested
+        - vcard:orc-16:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-17-hub-is-a-node
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-17
+    title: "Sprint ORC-17: The Hub Is a Node \u2014 a Manifest and One Config"
+    dod:
+      total: 9
+      vcard_refs:
+        - vcard:orc-17:the_hub_describes_itself_root_mcard_yaml_declares_role_archetype
+        - vcard:orc-17:the_submodule_handles_resolve_each_declared_handle_names_a_real_
+        - vcard:orc-17:one_topology_the_tape_paths_are_declared_in_exactly_one_config_a
+        - vcard:orc-17:every_declared_path_exists_the_checker_opens_each_declared_tape_
+        - vcard:orc-17:a_placeholder_host_is_reported_a_served_config_containing_exampl
+        - vcard:orc-17:a_placeholder_contact_is_reported_a_served_config_with_an_empty_
+        - vcard:orc-17:the_manifest_agrees_with_the_gate_every_invariant_root_mcard_yam
+        - vcard:orc-17:no_regression_make_check_paths_make_orc_gate_and_the_layer3_suit
+        - vcard:orc-17:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-18-fourth-tape-and-node-identity
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-18
+    title: 'Sprint ORC-18: The Fourth Tape and the Node Identity'
+    dod:
+      total: 12
+      vcard_refs:
+        - vcard:orc-18:the_fourth_tape_exists_clm_db_routing_mesh_db_carries_the_canoni
+        - vcard:orc-18:the_profile_records_four_registry_tape_profile_json_names_a_rout
+        - vcard:orc-18:the_node_has_a_did_a_did_key_identity_is_registered_with_its_pub
+        - vcard:orc-18:a_mesh_event_is_one_card_sealing_a_transition_adds_exactly_one_r
+        - vcard:orc-18:the_clock_is_a_clock_vector_clock_increments_per_node_and_merges
+        - vcard:orc-18:the_kernel_can_read_what_the_platform_wrote_load_learning_events
+        - vcard:orc-18:vectorclock_rust_emitted_entries_typescript_s_tojson_emits_the_b
+        - vcard:orc-18:marking_rust_emitted_tokens_and_expects_color_hashes_the_platfor
+        - vcard:orc-18:the_handle_was_a_counter_my_first_writer_derived_it_from_seq_1_s
+        - vcard:orc-18:the_clock_is_the_published_one_vectorclock_is_imported_from_clm_
+        - vcard:orc-18:no_regression_make_orc_schema_make_orc_chain_and_the_layer3_suit
+        - vcard:orc-18:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-19-mesh-proven-at-platform-scale
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-19
+    title: 'Sprint ORC-19: The Mesh Proven at Platform Scale'
+    dod:
+      total: 11
+      vcard_refs:
+        - vcard:orc-19:two_nodes_exist_each_has_its_own_four_tapes_materialised_from_th
+        - vcard:orc-19:they_start_divergent_the_check_asserts_non_convergence_before_th
+        - vcard:orc-19:content_unions_after_the_exchange_each_node_s_card_set_equals_th
+        - vcard:orc-19:clocks_agree_the_vector_clocks_are_equal_after_the_exchange_and_
+        - vcard:orc-19:causality_holds_across_nodes_the_published_vectorclock_reports_b
+        - vcard:orc-19:a_partition_heals_nodes_diverged_while_apart_converge_on_reconne
+        - vcard:orc-19:the_exchange_is_recorded_the_routing_tape_holds_rows_naming_both
+        - vcard:orc-19:the_check_has_teeth_a_node_that_does_not_sync_fails_verified_by_
+        - vcard:orc-19:no_regression_make_orc_gate_passes_with_the_new_stage_and_the_la
+        - vcard:orc-19:a_node_is_one_mcard_inv_tape_06_each_node_root_mesh_node_a_mesh_
+        - vcard:orc-19:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-20-knowledge-contracts
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-20
+    title: 'Sprint ORC-20: Knowledge Contracts Between Submodules'
+    dod:
+      total: 11
+      vcard_refs:
+        - vcard:orc-20:all_three_declare_knowledge_each_submodule_s_mcard_yaml_carries_
+        - vcard:orc-20:no_wildcards_a_contract_entry_whose_produces_names_fails_the_che
+        - vcard:orc-20:declared_matches_actual_every_declared_consumption_is_observed_i
+        - vcard:orc-20:undeclared_reads_are_caught_reading_a_root_no_contract_declares_
+        - vcard:orc-20:stale_declarations_are_caught_a_declared_root_the_code_never_rea
+        - vcard:orc-20:totality_carries_across_every_card_type_the_kernel_produces_is_c
+        - vcard:orc-20:three_sandwiches_three_witnesses_verify_chain_py_reports_one_sea
+        - vcard:orc-20:scripts_orc_seal_witness_py_could_not_seal_it_inserted_into_exec
+        - vcard:orc-20:the_loop_reported_sealed_when_sealing_failed_the_verdict_depende
+        - vcard:orc-20:no_regression_make_orc_gate_passes_and_each_submodule_s_own_suit
+        - vcard:orc-20:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-21-personal-vault-as-source
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-21
+    title: 'Sprint ORC-21: The Personal Vault as a First-Class Source'
+    dod:
+      total: 10
+      vcard_refs:
+        - vcard:orc-21:the_vault_is_declared_registry_knowledge_roots_yaml_carries_a_pe
+        - vcard:orc-21:ingested_with_handles_every_file_the_declared_selection_admits_h
+        - vcard:orc-21:provenance_is_recorded_each_vault_card_names_its_source_path_con
+        - vcard:orc-21:the_env_override_wins_setting_knowledge_vault_to_a_different_dir
+        - vcard:orc-21:absence_is_reported_a_vault_path_that_does_not_exist_is_printed_
+        - vcard:orc-21:it_is_not_repo_bound_ingesting_a_vault_outside_the_repository_yi
+        - vcard:orc-21:re_ingestion_is_revision_tracking_changing_one_vault_file_adds_e
+        - vcard:orc-21:no_regression_make_orc_gate_passes_and_orc_16_s_repository_inges
+        - vcard:orc-21:the_vault_index_is_one_card_inv_tape_06_the_external_container_s
+        - vcard:orc-21:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-22-kernel-pre-vcard-and-runtime-artifact
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-22
+    title: 'Sprint ORC-22: The Kernel Pre-VCard and the Runtime Artifact'
+    dod:
+      total: 9
+      vcard_refs:
+        - vcard:orc-22:v_pre_true_bash_clm_kernel_verify_kernel_sh_exits_0_on_the_commi
+        - vcard:orc-22:the_sbom_tracks_the_launcher_a_launcher_change_that_leaves_manif
+        - vcard:orc-22:drift_is_the_control_the_three_current_drifts_scripts_clmeval_cl
+        - vcard:orc-22:the_chain_is_declared_registry_kernel_artifact_json_names_the_so
+        - vcard:orc-22:the_entry_points_are_named_which_runtime_each_entry_point_select
+        - vcard:orc-22:the_pre_vcard_gates_evaluation_the_coordination_loop_refuses_to_
+        - vcard:orc-22:no_regression_make_orc_gate_passes_and_every_kernel_touching_spr
+        - vcard:orc-22:the_artifact_chain_is_one_card_inv_tape_06_registry_kernel_artif
+        - vcard:orc-22:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-23-pristine-monadic-core
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-23
+    title: 'Sprint ORC-23: Pristine Monadic Core Restoration'
+    dod:
+      total: 12
+      vcard_refs:
+        - vcard:orc-23:schema_mcard_schema_sql_contains_exactly_3_create_table_statemen
+        - vcard:orc-23:card_table_contains_strictly_3_columns_hash_content_g_time_inv_t
+        - vcard:orc-23:no_card_type_column_exists_on_card_not_the_column_not_its_check_
+        - vcard:orc-23:type_detection_is_owned_by_clm_kernel_kindof_handle_exists_in_th
+        - vcard:orc-23:no_consumer_stores_a_kind_check_tape_invariant_py_reports_three_
+        - vcard:orc-23:no_auxiliary_tables_card_tombstone_learning_event_documents_clm_
+        - vcard:orc-23:confirmed_that_content_memory_db_agent_identities_db_and_executi
+        - vcard:orc-23:sqlite_test_database_initializes_cleanly_from_schema_mcard_schem
+        - vcard:orc-23:three_columns_on_every_table_card_3_handle_registry_3_handle_his
+        - vcard:orc-23:handle_registry_created_at_and_handle_history_id_are_gone_creati
+        - vcard:orc-23:change_type_is_gone_and_the_guarantee_is_kept_inv_tape_04_lifecy
+        - vcard:orc-23:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-24-universal-handle-namespace-and-history
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-24
+    title: 'Sprint ORC-24: Universal Handle Namespace & Version History Specification'
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:orc-24:the_taxonomy_is_complete_registry_handle_taxonomy_yaml_declares_
+        - vcard:orc-24:the_grammar_and_calculus_are_declared_registry_handle_taxonomy_y
+        - vcard:orc-24:the_identity_and_execution_tapes_carry_zero_custom_tables_pragma
+        - vcard:orc-24:the_driver_is_specified_once_the_ownership_block_names_the_singl
+        - vcard:orc-24:the_taxonomy_is_declared_here_and_implemented_in_clm_kernel_the_
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-25-conformance-gate-and-tooling-decoupling
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-25
+    title: 'Sprint ORC-25: Conformance Gate & Tooling Decoupling'
+    dod:
+      total: 9
+      vcard_refs:
+        - vcard:orc-25:every_declared_tape_is_audited_check_schema_conformance_py_repor
+        - vcard:orc-25:an_auxiliary_table_is_fatal_injecting_a_fourth_table_into_a_copy
+        - vcard:orc-25:stage_namespace_validates_the_namespace_it_fails_when_a_handle_p
+        - vcard:orc-25:a_fourth_column_is_fatal_injecting_a_fourth_column_into_a_copy_o
+        - vcard:orc-25:a_control_injects_a_fourth_column_check_orchestration_py_control
+        - vcard:orc-25:the_gate_exits_0_on_the_reconciled_substrate_make_orc_schema_ret
+        - vcard:orc-25:a_re_introduced_kind_column_fails_the_gate_adding_card_type_or_a
+        - vcard:orc-25:the_absence_and_the_delegation_are_asserted_together_card_carrie
+        - vcard:orc-25:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-26-substrate-and-tape-reconciliation
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-26
+    title: 'Sprint ORC-26: Substrate & Tape Reconciliation'
+    dod:
+      total: 11
+      vcard_refs:
+        - vcard:orc-26:the_migration_is_idempotent_and_self_tested_scripts_orc_migrate_
+        - vcard:orc-26:content_memory_db_is_the_triad_it_carries_exactly_card_handle_re
+        - vcard:orc-26:agent_identities_db_is_the_triad_it_carries_exactly_card_handle_
+        - vcard:orc-26:execution_log_db_is_the_triad_it_carries_exactly_card_handle_reg
+        - vcard:orc-26:zero_auxiliary_tables_no_tape_reports_an_extra_tables_entry_veri
+        - vcard:orc-26:no_card_is_lost_every_pre_migration_card_hash_is_present_after_t
+        - vcard:orc-26:all_three_tapes_pass_the_homogeneity_check_make_orc_schema_repor
+        - vcard:orc-26:no_column_is_dropped_without_its_information_re_homed_every_chan
+        - vcard:orc-26:each_lifecycle_sidecar_is_one_card_inv_tape_06_the_sidecar_is_ha
+        - vcard:orc-26:each_sidecar_is_one_card_inv_tape_06_every_lifecycle_sidecar_the
+        - vcard:orc-26:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-27-polyglot-estate-synchronization
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-27
+    title: 'Sprint ORC-27: Polyglot Estate Schema Synchronization'
+    dod:
+      total: 16
+      vcard_refs:
+        - vcard:orc-27:all_four_copies_of_mcard_schema_sql_across_the_repository_are_id
+        - vcard:orc-27:schema_mcard_schema_sql
+        - vcard:orc-27:clm_schema_mcard_schema_sql
+        - vcard:orc-27:clm_types_schemas_mcard_schema_sql
+        - vcard:orc-27:mcard_studio_docs_schema_mcard_schema_sql
+        - vcard:orc-27:the_rust_producer_deploys_the_same_three_columns_a_tape_built_by
+        - vcard:orc-27:the_typescript_vfs_passes_against_the_triad_its_suite_runs_green
+        - vcard:orc-27:src_layer0_storage_node_sqlite_ts_registerhandle_selected_and_in
+        - vcard:orc-27:src_layer2_portablesqlite_ts_the_export_insert_named_a_generated
+        - vcard:orc-27:tests_yaml_scalars_test_ts_a_stale_0_0_2_assertion_from_orc_18_s
+        - vcard:orc-27:the_estate_invariants_hold_python3_scripts_ci_check_development_
+        - vcard:orc-27:the_criterion_now_names_a_check_that_exists_the_phantom_make_che
+        - vcard:orc-27:make_orc_gate_passes_8_8_stages_and_9_9_negative_controls
+        - vcard:orc-27:kindof_is_one_function_with_three_bindings_python_rust_and_types
+        - vcard:orc-27:no_runtime_re_derives_a_kind_a_runtime_that_computes_a_kind_inde
+        - vcard:orc-27:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-28-measured-tape-debt-and-deterministic-records
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-28
+    title: 'Sprint ORC-28: Measured Tape Debt & Deterministic Records'
+    dod:
+      total: 10
+      vcard_refs:
+        - vcard:orc-28:the_deviation_is_measured_every_schema_declaration_and_every_dep
+        - vcard:orc-28:the_measurement_is_correct_the_declared_card_measures_4_columns_
+        - vcard:orc-28:the_debt_is_recorded_and_owned_registry_tape_invariant_baseline_
+        - vcard:orc-28:growth_fails_adding_a_tenth_table_raises_the_debt_to_48_and_the_
+        - vcard:orc-28:the_gate_enforces_it_make_orc_gate_stage_namespace_invokes_the_m
+        - vcard:orc-28:the_record_is_deterministic_two_consecutive_runs_of_node_scripts
+        - vcard:orc-28:the_honest_reading_is_preserved_the_dod_above_is_not_a_claim_tha
+        - vcard:orc-28:the_debt_is_0_check_tape_invariant_py_reports_debt_0_with_every_
+        - vcard:orc-28:the_measured_debt_is_one_card_inv_tape_06_registry_tape_invarian
+        - vcard:orc-28:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-29-nested-tapes-are-cards
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-29
+    title: "Sprint ORC-29: Nested Tapes Are Cards \u2014 the Lifecycle Sidecar"
+    dod:
+      total: 10
+      vcard_refs:
+        - vcard:orc-29:the_core_schema_carries_no_lifecycle_schema_mcard_schema_sql_has
+        - vcard:orc-29:a_sidecar_is_created_on_demand_and_only_then_a_tape_with_no_life
+        - vcard:orc-29:the_sidecar_is_a_tape_it_carries_exactly_card_handle_registry_ha
+        - vcard:orc-29:the_sidecar_is_one_card_after_a_wal_checkpoint_sha256_sidecar_by
+        - vcard:orc-29:the_address_is_stable_hashing_the_sidecar_twice_with_no_interven
+        - vcard:orc-29:a_retirement_is_two_writes_both_present_retiring_a_card_leaves_a
+        - vcard:orc-29:the_card_is_never_deleted_after_retirement_the_card_is_still_in_
+        - vcard:orc-29:the_sidecar_is_replaceable_rebuilding_a_sidecar_from_its_rows_le
+        - vcard:orc-29:the_pattern_is_registered_registry_tape_profile_json_declares_th
+        - vcard:orc-29:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:programs:orc:sprint-orc-30-estate-documentation-alignment
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-30
+    title: "Sprint ORC-30: Estate Documentation Alignment \u2014 `README.md` and `docs/`"
+    dod:
+      total: 11
+      vcard_refs:
+        - vcard:orc-30:the_readme_states_the_real_architecture_three_tapes_three_tables
+        - vcard:orc-30:the_readme_states_the_fractal_rule_inv_tape_06_with_the_deployed
+        - vcard:orc-30:the_readme_states_where_a_kind_lives_no_type_column_the_handle_n
+        - vcard:orc-30:docs_index_md_describes_the_current_architecture_the_six_tape_in
+        - vcard:orc-30:docs_top_level_is_mece_only_index_md_and_the_declared_category_d
+        - vcard:orc-30:zero_draft_directories_no_prefixed_directory_at_the_docs_top_lev
+        - vcard:orc-30:zero_orphans_every_md_under_docs_is_reachable_from_index_md_by_a
+        - vcard:orc-30:the_collection_is_one_card_inv_tape_06_docs_index_md_is_register
+        - vcard:orc-30:the_check_has_teeth_adding_a_loose_file_a_draft_directory_or_an_
+        - vcard:orc-30:no_regression_all_seven_gates_still_pass_and_make_orc_gate_stays
+        - vcard:orc-30:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
   - handle: urn:mcard:handle:docs:sprints:programs:rvp:00-program-charter-epic-rvp
     card_type: pcard

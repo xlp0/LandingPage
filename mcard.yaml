@@ -123,7 +123,7 @@ observability:
       - web_vitals
       - session_tracking
       - lattice_measurement
-    grafana_dashboard_ref: "docs/sprints/_active/observability/grafana_faro_deployment_unit_dashboard.json"
+    grafana_dashboard_ref: "docs/sprints/programs/orc/observability/grafana_faro_deployment_unit_dashboard.json"
 
 deployment:
   surfaces:
