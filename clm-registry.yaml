@@ -1979,7 +1979,7 @@ sprints:
     code: 00-PROGRAM-CHARTER-EPIC-ORC-IV
     title: "Program Charter: EPIC-ORC-IV \u2014 The Universal Monadic Triad: The Three-Tape Turing Architecture"
     dod:
-      total: 12
+      total: 14
       vcard_refs:
         - vcard:00-program-charter-epic-orc-iv:schema_mcard_schema_sql_contains_strictly_3_tables_card_handle_r
         - vcard:00-program-charter-epic-orc-iv:card_type_is_removed_the_column_its_check_its_default_and_its_co
@@ -1993,6 +1993,8 @@ sprints:
         - vcard:00-program-charter-epic-orc-iv:make_orc_gate_passes_8_8_stages_and_8_8_negative_controls_agains
         - vcard:00-program-charter-epic-orc-iv:the_deviation_from_inv_tape_01_is_measured_and_bounded_while_the
         - vcard:00-program-charter-epic-orc-iv:all_polyglot_runtimes_rust_typescript_python_access_content_iden
+        - vcard:00-program-charter-epic-orc-iv:lifecycle_is_external_inv_tape_04_the_core_schema_carries_no_tom
+        - vcard:00-program-charter-epic-orc-iv:nested_tapes_are_cards_inv_tape_06_every_sidecar_collection_and_
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:00-program-charter-epic-orc
     card_type: pcard
@@ -2397,7 +2399,7 @@ sprints:
         - vcard:orc-23:sqlite_test_database_initializes_cleanly_from_schema_mcard_schem
         - vcard:orc-23:three_columns_on_every_table_card_3_handle_registry_3_handle_his
         - vcard:orc-23:handle_registry_created_at_and_handle_history_id_are_gone_creati
-        - vcard:orc-23:change_type_is_gone_and_the_guarantee_is_kept_inv_tape_04_is_ame
+        - vcard:orc-23:change_type_is_gone_and_the_guarantee_is_kept_inv_tape_04_lifecy
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-24-universal-handle-namespace-and-history
     card_type: pcard
@@ -2435,7 +2437,7 @@ sprints:
     code: ORC-26
     title: 'Sprint ORC-26: Substrate & Tape Reconciliation'
     dod:
-      total: 8
+      total: 9
       vcard_refs:
         - vcard:orc-26:migration_script_scripts_orc_migrate_substrate_to_turing_tapes_p
         - vcard:orc-26:clm_db_content_memory_db_rebuilt_to_strictly_3_tables_card_havin
@@ -2445,6 +2447,7 @@ sprints:
         - vcard:orc-26:cryptographic_checksum_verification_script_confirms_100_of_card_
         - vcard:orc-26:all_three_tapes_pass_verify_tape_homogeneity_in_check_schema_con
         - vcard:orc-26:no_column_is_dropped_without_its_information_re_homed_every_chan
+        - vcard:orc-26:each_lifecycle_sidecar_is_one_card_inv_tape_06_the_sidecar_is_ha
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-27-polyglot-estate-synchronization
     card_type: pcard
@@ -2483,6 +2486,24 @@ sprints:
         - vcard:orc-28:the_record_is_deterministic_two_consecutive_runs_of_node_scripts
         - vcard:orc-28:the_honest_reading_is_preserved_the_dod_above_is_not_a_claim_tha
         - vcard:orc-28:the_debt_reaches_0_owned_by_orc_23_and_orc_26_this_item_is_the_h
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-29-nested-tapes-are-cards
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-29
+    title: "Sprint ORC-29: Nested Tapes Are Cards \u2014 the Lifecycle Sidecar"
+    dod:
+      total: 9
+      vcard_refs:
+        - vcard:orc-29:the_core_schema_carries_no_lifecycle_schema_mcard_schema_sql_has
+        - vcard:orc-29:a_sidecar_is_created_on_demand_and_only_then_a_tape_with_no_life
+        - vcard:orc-29:the_sidecar_is_a_tape_it_carries_exactly_card_handle_registry_ha
+        - vcard:orc-29:the_sidecar_is_one_card_after_a_wal_checkpoint_sha256_sidecar_by
+        - vcard:orc-29:the_address_is_stable_hashing_the_sidecar_twice_with_no_interven
+        - vcard:orc-29:a_retirement_is_two_writes_both_present_retiring_a_card_leaves_a
+        - vcard:orc-29:the_card_is_never_deleted_after_retirement_the_card_is_still_in_
+        - vcard:orc-29:the_sidecar_is_replaceable_rebuilding_a_sidecar_from_its_rows_le
+        - vcard:orc-29:the_pattern_is_registered_registry_tape_profile_json_declares_th
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-01-development-lifecycle-cpn-specification
     card_type: pcard
