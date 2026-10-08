@@ -1973,6 +1973,23 @@ sprints:
         - vcard:00-program-charter-epic-orc-iii:the_kernel_s_pre_vcard_is_true_on_the_committed_tree_the_artifac
         - vcard:00-program-charter-epic-orc-iii:make_orc_gate_passes_with_the_extended_stages_and_every_new_stag
       state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:00-program-charter-epic-orc-iv
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: 00-PROGRAM-CHARTER-EPIC-ORC-IV
+    title: "Program Charter: EPIC-ORC-IV \u2014 The Universal Monadic Triad: The Three-Tape Turing Architecture"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:00-program-charter-epic-orc-iv:schema_mcard_schema_sql_contains_strictly_3_tables_card_handle_r
+        - vcard:00-program-charter-epic-orc-iv:universal_handle_taxonomy_in_registry_handle_taxonomy_yaml_cover
+        - vcard:00-program-charter-epic-orc-iv:all_auxiliary_tables_card_tombstone_learning_event_execution_his
+        - vcard:00-program-charter-epic-orc-iv:scripts_ci_check_schema_conformance_py_verifies_that_all_tapes_d
+        - vcard:00-program-charter-epic-orc-iv:all_three_deployed_databases_in_clm_db_content_memory_db_agent_i
+        - vcard:00-program-charter-epic-orc-iv:submodule_schemas_in_clm_and_mcard_studio_match_schema_mcard_sch
+        - vcard:00-program-charter-epic-orc-iv:make_orc_gate_passes_8_8_stages_and_8_8_negative_controls_agains
+        - vcard:00-program-charter-epic-orc-iv:all_polyglot_runtimes_rust_typescript_python_access_content_iden
+      state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:00-program-charter-epic-orc
     card_type: pcard
     archetype: ClmTriadManifest
@@ -2284,7 +2301,7 @@ sprints:
         - vcard:orc-18:the_fourth_tape_exists_clm_db_routing_mesh_db_carries_the_canoni
         - vcard:orc-18:the_profile_records_four_registry_tape_profile_json_names_a_rout
         - vcard:orc-18:the_node_has_a_did_a_did_key_identity_is_registered_with_its_pub
-        - vcard:orc-18:learning_event_has_a_producer_sealing_a_transition_writes_exactl
+        - vcard:orc-18:mesh_event_persisted_as_card_sealing_a_transition_writes_exactly
         - vcard:orc-18:the_clock_is_a_clock_vector_clock_increments_per_node_and_merges
         - vcard:orc-18:the_kernel_can_read_what_the_platform_wrote_load_learning_events
         - vcard:orc-18:the_clock_is_the_published_one_vectorclock_is_imported_from_clm_
@@ -2357,6 +2374,83 @@ sprints:
         - vcard:orc-22:the_entry_points_are_named_which_runtime_each_entry_point_select
         - vcard:orc-22:the_pre_vcard_gates_evaluation_the_coordination_loop_refuses_to_
         - vcard:orc-22:no_regression_make_orc_gate_passes_and_every_kernel_touching_spr
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-23-pristine-monadic-core
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-23
+    title: 'Sprint ORC-23: Pristine Monadic Core Restoration'
+    dod:
+      total: 6
+      vcard_refs:
+        - vcard:orc-23:schema_mcard_schema_sql_contains_exactly_3_create_table_statemen
+        - vcard:orc-23:card_table_contains_strictly_3_columns_hash_content_g_time_inv_t
+        - vcard:orc-23:no_card_type_column_exists_on_card
+        - vcard:orc-23:no_auxiliary_tables_card_tombstone_learning_event_documents_clm_
+        - vcard:orc-23:confirmed_that_content_memory_db_agent_identities_db_and_executi
+        - vcard:orc-23:sqlite_test_database_initializes_cleanly_from_schema_mcard_schem
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-24-universal-handle-namespace-and-history
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-24
+    title: 'Sprint ORC-24: Universal Handle Namespace & Version History Specification'
+    dod:
+      total: 4
+      vcard_refs:
+        - vcard:orc-24:registry_handle_taxonomy_yaml_authored_specifying_all_handle_sch
+        - vcard:orc-24:specification_docs_spec_universal_handle_namespace_md_authored_d
+        - vcard:orc-24:proven_that_agent_identities_db_and_execution_log_db_require_zer
+        - vcard:orc-24:universal_tri_table_driver_specification_documented_for_polyglot
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-25-conformance-gate-and-tooling-decoupling
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-25
+    title: 'Sprint ORC-25: Conformance Gate & Tooling Decoupling'
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:orc-25:scripts_ci_check_schema_conformance_py_audits_all_declared_tapes
+        - vcard:orc-25:any_auxiliary_table_across_any_tape_is_flagged_as_a_fatal_error
+        - vcard:orc-25:scripts_ci_check_orchestration_py_stage_1_validates_namespace_ba
+        - vcard:orc-25:negative_controls_verify_rejection_of_custom_tables_and_extra_co
+        - vcard:orc-25:conformance_gate_exits_with_code_0_on_the_reconciled_substrate
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-26-substrate-and-tape-reconciliation
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-26
+    title: 'Sprint ORC-26: Substrate & Tape Reconciliation'
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:orc-26:migration_script_scripts_orc_migrate_substrate_to_turing_tapes_p
+        - vcard:orc-26:clm_db_content_memory_db_rebuilt_to_strictly_3_tables_card_havin
+        - vcard:orc-26:clm_db_agent_identities_db_rebuilt_to_strictly_3_tables_card_hav
+        - vcard:orc-26:clm_db_execution_log_db_rebuilt_to_strictly_3_tables_card_having
+        - vcard:orc-26:zero_auxiliary_tables_exist_across_any_of_the_three_deployed_dat
+        - vcard:orc-26:cryptographic_checksum_verification_script_confirms_100_of_card_
+        - vcard:orc-26:all_three_tapes_pass_verify_tape_homogeneity_in_check_schema_con
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-27-polyglot-estate-synchronization
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-27
+    title: 'Sprint ORC-27: Polyglot Estate Schema Synchronization'
+    dod:
+      total: 10
+      vcard_refs:
+        - vcard:orc-27:all_four_copies_of_mcard_schema_sql_across_the_repository_are_id
+        - vcard:orc-27:schema_mcard_schema_sql
+        - vcard:orc-27:clm_schema_mcard_schema_sql
+        - vcard:orc-27:clm_types_schemas_mcard_schema_sql
+        - vcard:orc-27:mcard_studio_docs_schema_mcard_schema_sql
+        - vcard:orc-27:rust_pyo3_sqlite_migration_code_in_clm_rust_core_creates_strictl
+        - vcard:orc-27:typescript_and_javascript_vfs_storage_backends_pass_all_unit_and
+        - vcard:orc-27:scripts_ci_check_invariants_py_passes_15_15_invariants
+        - vcard:orc-27:make_check_boundaries_passes_24_24_architectural_layer_boundary_
+        - vcard:orc-27:make_orc_gate_passes_8_8_stages_and_8_8_negative_controls
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-01-development-lifecycle-cpn-specification
     card_type: pcard
