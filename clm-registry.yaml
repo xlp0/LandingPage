@@ -1979,7 +1979,7 @@ sprints:
     code: 00-PROGRAM-CHARTER-EPIC-ORC-IV
     title: "Program Charter: EPIC-ORC-IV \u2014 The Universal Monadic Triad: The Three-Tape Turing Architecture"
     dod:
-      total: 15
+      total: 18
       vcard_refs:
         - vcard:00-program-charter-epic-orc-iv:schema_mcard_schema_sql_contains_strictly_3_tables_card_handle_r
         - vcard:00-program-charter-epic-orc-iv:card_type_is_removed_the_column_its_check_its_default_and_its_co
@@ -1990,9 +1990,12 @@ sprints:
         - vcard:00-program-charter-epic-orc-iv:scripts_ci_check_schema_conformance_py_verifies_that_all_tapes_d
         - vcard:00-program-charter-epic-orc-iv:all_three_deployed_databases_in_clm_db_content_memory_db_agent_i
         - vcard:00-program-charter-epic-orc-iv:submodule_schemas_in_clm_and_mcard_studio_match_schema_mcard_sch
-        - vcard:00-program-charter-epic-orc-iv:make_orc_gate_passes_8_8_stages_and_8_8_negative_controls_agains
+        - vcard:00-program-charter-epic-orc-iv:make_orc_gate_passes_8_8_stages_and_9_9_negative_controls_agains
         - vcard:00-program-charter-epic-orc-iv:the_deviation_from_inv_tape_01_is_measured_and_bounded_while_the
         - vcard:00-program-charter-epic-orc-iv:all_polyglot_runtimes_rust_typescript_python_access_content_iden
+        - vcard:00-program-charter-epic-orc-iv:the_python_runtime_had_the_card_model_and_the_schema_and_no_stor
+        - vcard:00-program-charter-epic-orc-iv:the_rust_runtime_had_every_operation_under_a_parallel_vocabulary
+        - vcard:00-program-charter-epic-orc-iv:the_operation_is_universal_the_spelling_is_idiomatic_registerhan
         - vcard:00-program-charter-epic-orc-iv:lifecycle_is_external_inv_tape_04_the_core_schema_carries_no_tom
         - vcard:00-program-charter-epic-orc-iv:nested_tapes_are_cards_inv_tape_06_every_sidecar_collection_and_
         - vcard:00-program-charter-epic-orc-iv:the_prose_matches_the_tape_readme_md_and_docs_index_md_state_the
@@ -2311,7 +2314,7 @@ sprints:
     code: ORC-18
     title: 'Sprint ORC-18: The Fourth Tape and the Node Identity'
     dod:
-      total: 8
+      total: 11
       vcard_refs:
         - vcard:orc-18:the_fourth_tape_exists_clm_db_routing_mesh_db_carries_the_canoni
         - vcard:orc-18:the_profile_records_four_registry_tape_profile_json_names_a_rout
@@ -2319,6 +2322,9 @@ sprints:
         - vcard:orc-18:a_mesh_event_is_one_card_sealing_a_transition_adds_exactly_one_r
         - vcard:orc-18:the_clock_is_a_clock_vector_clock_increments_per_node_and_merges
         - vcard:orc-18:the_kernel_can_read_what_the_platform_wrote_load_learning_events
+        - vcard:orc-18:vectorclock_rust_emitted_entries_typescript_s_tojson_emits_the_b
+        - vcard:orc-18:marking_rust_emitted_tokens_and_expects_color_hashes_the_platfor
+        - vcard:orc-18:the_handle_was_a_counter_my_first_writer_derived_it_from_seq_1_s
         - vcard:orc-18:the_clock_is_the_published_one_vectorclock_is_imported_from_clm_
         - vcard:orc-18:no_regression_make_orc_schema_make_orc_chain_and_the_layer3_suit
       state: sealed
@@ -2367,7 +2373,7 @@ sprints:
       total: 9
       vcard_refs:
         - vcard:orc-21:the_vault_is_declared_registry_knowledge_roots_yaml_carries_a_pe
-        - vcard:orc-21:ingested_with_handles_every_file_in_the_vault_has_a_card_and_a_h
+        - vcard:orc-21:ingested_with_handles_every_file_the_declared_selection_admits_h
         - vcard:orc-21:provenance_is_recorded_each_vault_card_names_its_source_path_con
         - vcard:orc-21:the_env_override_wins_setting_knowledge_vault_to_a_different_dir
         - vcard:orc-21:absence_is_reported_a_vault_path_that_does_not_exist_is_printed_
@@ -2469,7 +2475,7 @@ sprints:
     code: ORC-27
     title: 'Sprint ORC-27: Polyglot Estate Schema Synchronization'
     dod:
-      total: 12
+      total: 15
       vcard_refs:
         - vcard:orc-27:all_four_copies_of_mcard_schema_sql_across_the_repository_are_id
         - vcard:orc-27:schema_mcard_schema_sql
@@ -2478,9 +2484,12 @@ sprints:
         - vcard:orc-27:mcard_studio_docs_schema_mcard_schema_sql
         - vcard:orc-27:the_rust_producer_deploys_the_same_three_columns_a_tape_built_by
         - vcard:orc-27:the_typescript_vfs_passes_against_the_triad_its_suite_runs_green
+        - vcard:orc-27:src_layer0_storage_node_sqlite_ts_registerhandle_selected_and_in
+        - vcard:orc-27:src_layer2_portablesqlite_ts_the_export_insert_named_a_generated
+        - vcard:orc-27:tests_yaml_scalars_test_ts_a_stale_0_0_2_assertion_from_orc_18_s
         - vcard:orc-27:the_estate_invariants_hold_python3_scripts_ci_check_development_
-        - vcard:orc-27:make_check_boundaries_passes_24_24_architectural_layer_boundary_
-        - vcard:orc-27:make_orc_gate_passes_8_8_stages_and_8_8_negative_controls
+        - vcard:orc-27:the_criterion_now_names_a_check_that_exists_the_phantom_make_che
+        - vcard:orc-27:make_orc_gate_passes_8_8_stages_and_9_9_negative_controls
         - vcard:orc-27:kindof_is_one_function_with_three_bindings_python_rust_and_types
         - vcard:orc-27:no_runtime_re_derives_a_kind_a_runtime_that_computes_a_kind_inde
       state: sealed
