@@ -1979,7 +1979,7 @@ sprints:
     code: 00-PROGRAM-CHARTER-EPIC-ORC-IV
     title: "Program Charter: EPIC-ORC-IV \u2014 The Universal Monadic Triad: The Three-Tape Turing Architecture"
     dod:
-      total: 14
+      total: 15
       vcard_refs:
         - vcard:00-program-charter-epic-orc-iv:schema_mcard_schema_sql_contains_strictly_3_tables_card_handle_r
         - vcard:00-program-charter-epic-orc-iv:card_type_is_removed_the_column_its_check_its_default_and_its_co
@@ -1995,6 +1995,7 @@ sprints:
         - vcard:00-program-charter-epic-orc-iv:all_polyglot_runtimes_rust_typescript_python_access_content_iden
         - vcard:00-program-charter-epic-orc-iv:lifecycle_is_external_inv_tape_04_the_core_schema_carries_no_tom
         - vcard:00-program-charter-epic-orc-iv:nested_tapes_are_cards_inv_tape_06_every_sidecar_collection_and_
+        - vcard:00-program-charter-epic-orc-iv:the_prose_matches_the_tape_readme_md_and_docs_index_md_state_the
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:00-program-charter-epic-orc
     card_type: pcard
@@ -2516,6 +2517,25 @@ sprints:
         - vcard:orc-29:the_card_is_never_deleted_after_retirement_the_card_is_still_in_
         - vcard:orc-29:the_sidecar_is_replaceable_rebuilding_a_sidecar_from_its_rows_le
         - vcard:orc-29:the_pattern_is_registered_registry_tape_profile_json_declares_th
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-30-estate-documentation-alignment
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-30
+    title: "Sprint ORC-30: Estate Documentation Alignment \u2014 `README.md` and `docs/`"
+    dod:
+      total: 10
+      vcard_refs:
+        - vcard:orc-30:the_readme_states_the_real_architecture_three_tapes_three_tables
+        - vcard:orc-30:the_readme_states_the_fractal_rule_inv_tape_06_with_the_deployed
+        - vcard:orc-30:the_readme_states_where_a_kind_lives_no_type_column_the_handle_n
+        - vcard:orc-30:docs_index_md_describes_the_current_architecture_the_six_tape_in
+        - vcard:orc-30:docs_top_level_is_mece_only_index_md_and_the_declared_category_d
+        - vcard:orc-30:zero_draft_directories_no_prefixed_directory_at_the_docs_top_lev
+        - vcard:orc-30:zero_orphans_every_md_under_docs_is_reachable_from_index_md_by_a
+        - vcard:orc-30:the_collection_is_one_card_inv_tape_06_docs_index_md_is_register
+        - vcard:orc-30:the_check_has_teeth_adding_a_loose_file_a_draft_directory_or_an_
+        - vcard:orc-30:no_regression_all_seven_gates_still_pass_and_make_orc_gate_stays
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-01-development-lifecycle-cpn-specification
     card_type: pcard
