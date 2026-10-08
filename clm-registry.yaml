@@ -2038,13 +2038,15 @@ sprints:
     code: EXP-07
     title: 'Sprint EXP-07: Cross-Language Runtime Conformance, Encoded as a CLM Triad'
     dod:
-      total: 6
+      total: 8
       vcard_refs:
         - vcard:exp-07:the_sequence_is_in_the_kernel_clm_kernel_clm_js_core_src_conform
         - vcard:exp-07:a_consumer_can_trigger_it_runconformance_is_exported_from_the_bu
         - vcard:exp-07:the_sequence_has_no_engine_dependency_conformance_ts_imports_nei
         - vcard:exp-07:the_triad_is_generated_this_sprint_produces_a_clmtriadmanifest_i
         - vcard:exp-07:the_three_dimensions_are_real_not_placeholders_abstract_spec_inv
+        - vcard:exp-07:the_fourth_runtime_is_declared_not_silently_absent_the_check_cov
+        - vcard:exp-07:a_wasm_binding_of_the_triad_the_cause_is_measured_cargo_build_li
         - vcard:exp-07:clmeval_conformance_opens_the_second_door_not_done_and_recorded_
       state: sealed
   - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-01-development-lifecycle-cpn-specification
