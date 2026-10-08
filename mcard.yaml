@@ -261,3 +261,13 @@ capture:
     - "playwright-report/**"
     - "test-results/**"
     - ".git/**"
+
+knowledge:
+  produces:
+    - handle_pattern: "urn:clm:mcard:projection:*"
+      role: derived_view
+      schema: schema/mcard_schema.sql
+  consumes:
+    - handle_pattern: "urn:clm:mcard:registry:*"
+      role: sprint_registry
+      schema: schema/mcard_schema.sql
