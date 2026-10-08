@@ -271,3 +271,6 @@ knowledge:
     - handle_pattern: "urn:clm:mcard:registry:*"
       role: sprint_registry
       schema: schema/mcard_schema.sql
+
+# ORC-20: the knowledge contract above was sealed by the coordination loop.
+knowledge_contract_sealed: ORC-20
