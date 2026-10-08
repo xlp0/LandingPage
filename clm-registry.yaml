@@ -1979,7 +1979,7 @@ sprints:
     code: 00-PROGRAM-CHARTER-EPIC-ORC-IV
     title: "Program Charter: EPIC-ORC-IV \u2014 The Universal Monadic Triad: The Three-Tape Turing Architecture"
     dod:
-      total: 8
+      total: 9
       vcard_refs:
         - vcard:00-program-charter-epic-orc-iv:schema_mcard_schema_sql_contains_strictly_3_tables_card_handle_r
         - vcard:00-program-charter-epic-orc-iv:universal_handle_taxonomy_in_registry_handle_taxonomy_yaml_cover
@@ -1988,6 +1988,7 @@ sprints:
         - vcard:00-program-charter-epic-orc-iv:all_three_deployed_databases_in_clm_db_content_memory_db_agent_i
         - vcard:00-program-charter-epic-orc-iv:submodule_schemas_in_clm_and_mcard_studio_match_schema_mcard_sch
         - vcard:00-program-charter-epic-orc-iv:make_orc_gate_passes_8_8_stages_and_8_8_negative_controls_agains
+        - vcard:00-program-charter-epic-orc-iv:the_deviation_from_inv_tape_01_is_measured_and_bounded_while_the
         - vcard:00-program-charter-epic-orc-iv:all_polyglot_runtimes_rust_typescript_python_access_content_iden
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:00-program-charter-epic-orc
@@ -2451,6 +2452,23 @@ sprints:
         - vcard:orc-27:scripts_ci_check_invariants_py_passes_15_15_invariants
         - vcard:orc-27:make_check_boundaries_passes_24_24_architectural_layer_boundary_
         - vcard:orc-27:make_orc_gate_passes_8_8_stages_and_8_8_negative_controls
+      state: sealed
+  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-28-measured-tape-debt-and-deterministic-records
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ORC-28
+    title: 'Sprint ORC-28: Measured Tape Debt & Deterministic Records'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:orc-28:the_deviation_is_measured_every_schema_declaration_and_every_dep
+        - vcard:orc-28:the_measurement_is_correct_the_declared_card_measures_4_columns_
+        - vcard:orc-28:the_debt_is_recorded_and_owned_registry_tape_invariant_baseline_
+        - vcard:orc-28:growth_fails_adding_a_tenth_table_raises_the_debt_to_48_and_the_
+        - vcard:orc-28:the_gate_enforces_it_make_orc_gate_stage_namespace_invokes_the_m
+        - vcard:orc-28:the_record_is_deterministic_two_consecutive_runs_of_node_scripts
+        - vcard:orc-28:the_honest_reading_is_preserved_the_dod_above_is_not_a_claim_tha
+        - vcard:orc-28:the_debt_reaches_0_owned_by_orc_23_and_orc_26_this_item_is_the_h
       state: sealed
   - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-01-development-lifecycle-cpn-specification
     card_type: pcard
