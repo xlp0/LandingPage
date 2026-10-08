@@ -2032,6 +2032,21 @@ sprints:
         - vcard:exp-06:the_harness_is_honest_about_the_transport_a_test_that_needs_a_se
         - vcard:exp-06:the_remainder_is_named_if_any_of_the_eleven_still_fails_it_is_li
       state: sealed
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-exp-07-runtime-conformance-as-clm-triad
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: EXP-07
+    title: 'Sprint EXP-07: Cross-Language Runtime Conformance, Encoded as a CLM Triad'
+    dod:
+      total: 6
+      vcard_refs:
+        - vcard:exp-07:the_sequence_is_in_the_kernel_clm_kernel_clm_js_core_src_conform
+        - vcard:exp-07:a_consumer_can_trigger_it_runconformance_is_exported_from_the_bu
+        - vcard:exp-07:the_sequence_has_no_engine_dependency_conformance_ts_imports_nei
+        - vcard:exp-07:the_triad_is_generated_this_sprint_produces_a_clmtriadmanifest_i
+        - vcard:exp-07:the_three_dimensions_are_real_not_placeholders_abstract_spec_inv
+        - vcard:exp-07:clmeval_conformance_opens_the_second_door_not_done_and_recorded_
+      state: sealed
   - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-01-development-lifecycle-cpn-specification
     card_type: pcard
     archetype: ClmTriadManifest
