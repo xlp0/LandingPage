@@ -2063,6 +2063,71 @@ sprints:
         - vcard:py-01:table_layers_declares_the_triad_and_only_the_triad_verified_by_r
         - vcard:py-01:the_tests_that_encoded_the_old_schema_are_migrated_not_deleted_t
       state: sealed
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-py-02-the-readers--the-nine-tombstone-joins
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PY-02
+    title: "Sprint PY-02: The Readers \u2014 the EIGHTEEN Tombstone Joins, Across Two Engines"
+    dod:
+      total: 4
+      vcard_refs:
+        - vcard:py-02:zero_left_join_card_tombstone_in_the_python_layer_the_count_is_0
+        - vcard:py-02:the_suite_is_no_worse_than_the_baseline_the_failure_count_is_no_
+        - vcard:py-02:the_tombstone_is_a_handle_a_retired_subject_resolves_through_urn
+        - vcard:py-02:no_engine_was_left_behind_duckdb_engine_py_and_sqlite_engine_py_
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-py-03-the-kind-moves-to-the-handle--the-six-changetype-sites
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PY-03
+    title: "Sprint PY-03: The Kind Moves to the Handle \u2014 the Six `change_type` Sites"
+    dod:
+      total: 4
+      vcard_refs:
+        - vcard:py-03:no_python_file_writes_change_type_the_count_is_0_verified_by_che
+        - vcard:py-03:a_retirement_is_still_recorded_the_fact_is_a_three_column_handle
+        - vcard:py-03:nothing_was_lost_in_the_move_reason_actor_and_tombstoned_at_are_
+        - vcard:py-03:the_suite_is_no_worse_than_the_baseline_verified_by_re_running_a
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-py-04-rowid-supplies-the-key--the-three-id-dependencies
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PY-04
+    title: "Sprint PY-04: `rowid` Supplies the Key \u2014 the Three `id` Dependencies"
+    dod:
+      total: 3
+      vcard_refs:
+        - vcard:py-04:no_python_file_depends_on_handle_history_id_the_count_is_0_verif
+        - vcard:py-04:the_order_is_unchanged_a_history_read_returns_rows_in_the_same_o
+        - vcard:py-04:the_suite_is_no_worse_than_the_baseline_verified_by_re_running_a
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-py-05-the-schema--one-atomic-step-and-it-is-last
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PY-05
+    title: "Sprint PY-05: The Schema \u2014 ONE ATOMIC STEP, and it is LAST"
+    dod:
+      total: 4
+      vcard_refs:
+        - vcard:py-05:both_copies_are_grounded_check_schema_copies_passes_with_no_decl
+        - vcard:py-05:the_suite_is_no_worse_than_the_baseline_the_failure_count_is_no_
+        - vcard:py-05:handle_history_has_exactly_three_columns_on_a_fresh_tape_no_id_n
+        - vcard:py-05:the_schema_exists_in_one_place_exactly_one_regular_file_is_named
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-py-06-the-tests-the-grounding-and-the-proof
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PY-06
+    title: 'Sprint PY-06: The Tests, the Grounding, and the Proof'
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:py-06:no_python_file_names_a_removed_table_check_triad_columns_in_code
+        - vcard:py-06:the_test_count_is_no_lower_than_the_baseline_s_the_total_after_t
+        - vcard:py-06:every_removal_is_recorded_each_test_whose_behaviour_changed_name
+        - vcard:py-06:the_schema_is_in_one_place_exactly_one_regular_file_named_mcard_
+        - vcard:py-06:no_declaration_survives_check_schema_conformance_py_passes_with_
+      state: sealed
   - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-01-development-lifecycle-cpn-specification
     card_type: pcard
     archetype: ClmTriadManifest
