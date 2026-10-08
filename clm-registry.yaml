@@ -2024,14 +2024,15 @@ sprints:
     code: SYNC-06
     title: 'Sprint SYNC-06: The Release Is Reproducible, and It Ships'
     dod:
-      total: 6
+      total: 7
       vcard_refs:
-        - vcard:sync-06:the_tarball_is_the_build_of_its_commit_clean_rebuild_from_commit
-        - vcard:sync-06:no_stale_build_output_ships_packed_file_list_contains_no_untrack
-        - vcard:sync-06:prepack_makes_a_stale_publish_impossible_npm_pack_triggers_npm_r
-        - vcard:sync-06:the_release_guide_exists_and_is_executable_docs_specifications_r
-        - vcard:sync-06:the_consumer_can_use_the_release_verified_that_kindof_returns_de
-        - vcard:sync-06:all_three_registries_carry_the_same_version_0_0_3_declared_in_pa
+        - vcard:sync-06:dist_is_cleaned_before_packing_the_build_removes_prior_output_so
+        - vcard:sync-06:prepack_makes_a_stale_publish_impossible_npm_publish_rebuilds_be
+        - vcard:sync-06:the_release_guide_exists_and_is_executable_every_pre_flight_bloc
+        - vcard:sync-06:the_tarball_is_the_build_of_its_commit_a_clean_rebuild_from_the_
+        - vcard:sync-06:no_stale_build_output_ships_the_packed_file_list_contains_no_fil
+        - vcard:sync-06:the_consumer_can_use_the_release_from_a_clean_directory_npm_inst
+        - vcard:sync-06:all_three_registries_carry_the_same_version_npm_pypi_and_crates_
       state: sealed
   - handle: urn:mcard:pcard:sprint:CDO-01
     card_type: pcard
