@@ -1939,6 +1939,99 @@ sprints:
         - vcard:sprint-407:update_docs_architecture_code_migration_to_clm_md
         - vcard:sprint-407:graduate_sprints_403_407_into_the_12_aspect_deployment_architect
       state: sealed
+  - handle: urn:mcard:handle:docs:sprints:_active:00-program-charter-epic-exp
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-EXP
+    title: "Program Charter: `EPIC-EXP` \u2014 The Portable Export Is a Kernel Capability"
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-exp-01-the-export-takes-a-backend
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: EXP-01
+    title: 'Sprint EXP-01: The Export Takes a Backend'
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:exp-01:the_export_takes_an_engine_compileportablesqlite_accepts_a_calle
+        - vcard:exp-01:no_temp_file_is_required_the_export_produces_its_bytes_without_t
+        - vcard:exp-01:existing_callers_are_unchanged_the_node_path_still_works_with_no
+        - vcard:exp-01:one_schema_source_the_export_still_calls_loadcanonicalmcardschem
+        - vcard:exp-01:two_engines_agree_the_same_cards_exported_through_nodesqliteback
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-exp-02-the-browser-binding
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: EXP-02
+    title: 'Sprint EXP-02: The Browser Binding'
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:exp-02:the_browser_can_export_the_export_runs_to_completion_in_a_browse
+        - vcard:exp-02:one_fixture_set_the_node_and_browser_bindings_run_over_the_same_
+        - vcard:exp-02:the_bytes_agree_the_same_cards_yield_the_same_sha256_through_nod
+        - vcard:exp-02:no_new_dependency_the_browser_binding_uses_sqljsbackend_already_
+        - vcard:exp-02:no_regression_the_full_kernel_suite_stays_green_verified_by_npx_
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-exp-03-the-export-is-one-mcard
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: EXP-03
+    title: 'Sprint EXP-03: The Export Is One MCard'
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:exp-03:the_export_has_an_address_an_exported_database_is_registered_as_
+        - vcard:exp-03:the_address_is_stable_two_exports_of_the_same_cards_taken_at_dif
+        - vcard:exp-03:the_timestamp_survives_the_export_time_is_still_recoverable_from
+        - vcard:exp-03:no_column_was_added_the_export_s_own_schema_is_still_the_canonic
+        - vcard:exp-03:the_control_has_teeth_injecting_a_wall_clock_value_into_the_payl
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-exp-04-the-ui-exports-locally
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: EXP-04
+    title: 'Sprint EXP-04: The UI Exports Locally'
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:exp-04:the_ui_exports_without_a_server_exportmcarddatabase_completes_wi
+        - vcard:exp-04:the_fallback_is_declared_not_inferred_the_server_path_is_taken_o
+        - vcard:exp-04:the_object_url_is_revoked_the_browser_export_releases_its_blob_u
+        - vcard:exp-04:the_failure_names_its_path_the_error_message_distinguishes_local
+        - vcard:exp-04:the_paths_agree_local_and_server_exports_of_the_same_cards_hash_
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-exp-05-the-round-trip-on-every-backend
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: EXP-05
+    title: 'Sprint EXP-05: The Round-Trip on Every Backend'
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:exp-05:the_round_trip_runs_on_both_engines_export_import_completes_on_n
+        - vcard:exp-05:hash_parity_is_100_every_card_hash_survives_the_round_trip_on_bo
+        - vcard:exp-05:history_is_genuine_no_handle_history_row_equals_the_current_head
+        - vcard:exp-05:the_handle_head_is_preserved_the_handle_resolves_to_the_same_car
+        - vcard:exp-05:differences_are_recorded_any_engine_specific_divergence_is_named
+      state: sealed
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-exp-06-the-eleven-pass
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: EXP-06
+    title: 'Sprint EXP-06: The Eleven Pass'
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:exp-06:the_eleven_pass_all_eleven_test_files_pass_verified_by_npx_vites
+        - vcard:exp-06:no_assertion_was_weakened_every_changed_test_s_diff_is_shown_and
+        - vcard:exp-06:no_canned_mock_any_fixture_route_serves_the_real_export_over_fix
+        - vcard:exp-06:the_harness_is_honest_about_the_transport_a_test_that_needs_a_se
+        - vcard:exp-06:the_remainder_is_named_if_any_of_the_eleven_still_fails_it_is_li
+      state: sealed
   - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-01-development-lifecycle-cpn-specification
     card_type: pcard
     archetype: ClmTriadManifest
