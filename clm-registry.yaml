@@ -2035,7 +2035,7 @@ sprints:
     code: ORC-02
     title: "Sprint ORC-02: Sprint-as-MCard \u2014 Triad Manifest Encoding & Handle Registration"
     dod:
-      total: 9
+      total: 10
       vcard_refs:
         - vcard:orc-02:triad_closure_is_total_every_sprint_has_a_manifest_with_all_thre
         - vcard:orc-02:the_dod_is_binding_every_dod_line_maps_to_a_postcondition_with_a
@@ -2046,6 +2046,7 @@ sprints:
         - vcard:orc-02:spec_sprints_encode_as_specifications_not_programs_an_aspect_dir
         - vcard:orc-02:derivation_not_duplication_the_manifest_is_generated_from_the_sp
         - vcard:orc-02:registration_is_idempotent_re_running_the_encoder_on_an_unchange
+        - vcard:orc-02:the_registry_is_one_card_inv_tape_06_registry_sprints_yaml_is_ha
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-03-coordination-loop
     card_type: pcard
@@ -2085,7 +2086,7 @@ sprints:
     code: ORC-05
     title: "Sprint ORC-05: Display Parity \u2014 studio Membrane & LandingPage Registry"
     dod:
-      total: 8
+      total: 9
       vcard_refs:
         - vcard:orc-05:one_shape_every_registry_entry_canonical_and_legacy_validates_ag
         - vcard:orc-05:studio_displays_a_sprint_the_membrane_renders_a_sprint_entry_fro
@@ -2095,6 +2096,7 @@ sprints:
         - vcard:orc-05:two_sandwiches_two_witnesses_the_studio_and_portal_changes_each_
         - vcard:orc-05:no_vendored_evidence_the_byte_identical_copy_of_cdo_16_fiber_cer
         - vcard:orc-05:graduated_artifacts_render_at_least_one_sealed_witness_and_one_c
+        - vcard:orc-05:the_projection_is_one_card_inv_tape_06_clm_registry_yaml_is_regi
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-06-estate-axis-separation
     card_type: pcard
@@ -2151,7 +2153,7 @@ sprints:
     code: ORC-09
     title: 'Sprint ORC-09: Structural Path-Reference Detection'
     dod:
-      total: 7
+      total: 8
       vcard_refs:
         - vcard:orc-09:every_historical_form_is_detected_each_of_the_five_fixtures_is_r
         - vcard:orc-09:untracked_files_are_scanned_a_file_created_and_not_staged_is_det
@@ -2160,6 +2162,7 @@ sprints:
         - vcard:orc-09:no_allowlist_entry_is_a_whole_file_every_entry_names_a_path_and_
         - vcard:orc-09:zero_false_positives_on_the_live_tree_the_estate_gate_and_the_pa
         - vcard:orc-09:the_finding_record_is_emitted_registry_path_references_json_list
+        - vcard:orc-09:the_finding_record_is_one_card_inv_tape_06_registry_path_referen
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-10-column-level-schema-conformance
     card_type: pcard
@@ -2199,7 +2202,7 @@ sprints:
     code: ORC-12
     title: 'Sprint ORC-12: Continuity Reconciled, Not Reported'
     dod:
-      total: 7
+      total: 8
       vcard_refs:
         - vcard:orc-12:windows_are_enumerated_structurally_each_gap_reports_its_boundin
         - vcard:orc-12:both_existing_gaps_are_reconciled_all_current_gaps_carry_what_wh
@@ -2208,6 +2211,7 @@ sprints:
         - vcard:orc-12:no_blanket_waiver_is_expressible_there_is_no_field_flag_or_wildc
         - vcard:orc-12:the_gate_runs_strict_stage_4_invokes_strict_asserted_by_scripts_
         - vcard:orc-12:the_count_is_visible_and_monotone_the_number_of_accepted_windows
+        - vcard:orc-12:the_reconciliation_record_is_one_card_inv_tape_06_registry_unsea
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-13-display-parity-in-a-browser
     card_type: pcard
@@ -2215,7 +2219,7 @@ sprints:
     code: ORC-13
     title: 'Sprint ORC-13: Display Parity Observed in a Browser'
     dod:
-      total: 7
+      total: 8
       vcard_refs:
         - vcard:orc-13:the_registry_is_served_api_clm_registry_returns_the_sprints_sect
         - vcard:orc-13:sealed_state_is_observable_a_sealed_and_a_specification_entry_ar
@@ -2224,6 +2228,7 @@ sprints:
         - vcard:orc-13:the_route_is_load_bearing_removing_the_route_makes_the_spec_fail
         - vcard:orc-13:no_dead_candidates_each_of_the_two_modules_carries_one_witness_p
         - vcard:orc-13:no_regression_npm_run_test_presentation_stays_12_12_and_make_sty
+        - vcard:orc-13:the_served_copy_is_a_card_and_not_a_second_source_inv_tape_06_th
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-14-kernel-yaml-conformance
     card_type: pcard
@@ -2251,7 +2256,7 @@ sprints:
     code: ORC-15
     title: 'Sprint ORC-15: Gate Controls in Isolation'
     dod:
-      total: 7
+      total: 8
       vcard_refs:
         - vcard:orc-15:no_control_writes_to_the_live_tree_the_estate_s_digest_is_identi
         - vcard:orc-15:interruption_is_safe_killing_a_control_mid_run_leaves_every_live
@@ -2260,6 +2265,7 @@ sprints:
         - vcard:orc-15:the_fixture_tree_is_faithful_the_fixture_s_schema_and_registry_a
         - vcard:orc-15:the_claim_is_unconditional_the_certification_s_wording_is_amende
         - vcard:orc-15:no_regression_make_orc_gate_still_passes_7_7_stages_and_7_7_cont
+        - vcard:orc-15:a_control_run_is_addressable_inv_tape_06_the_fixture_estate_is_r
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-16-one-knowledge-namespace
     card_type: pcard
@@ -2267,7 +2273,7 @@ sprints:
     code: ORC-16
     title: 'Sprint ORC-16: One Knowledge Namespace, Not Five'
     dod:
-      total: 10
+      total: 11
       vcard_refs:
         - vcard:orc-16:every_root_is_declared_with_a_reason_no_root_is_inferred_each_en
         - vcard:orc-16:ingested_with_handles_every_file_in_a_declared_root_has_a_handle
@@ -2279,6 +2285,7 @@ sprints:
         - vcard:orc-16:the_receiving_tape_is_declared_the_hub_s_platform_content_tape_i
         - vcard:orc-16:the_budget_is_stated_each_root_reports_file_count_total_bytes_la
         - vcard:orc-16:no_regression_make_orc_gate_still_passes_and_the_layer3_suite_st
+        - vcard:orc-16:the_collection_and_its_index_are_cards_inv_tape_06_each_ingested
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-17-hub-is-a-node
     card_type: pcard
@@ -2319,7 +2326,7 @@ sprints:
     code: ORC-19
     title: 'Sprint ORC-19: The Mesh Proven at Platform Scale'
     dod:
-      total: 9
+      total: 10
       vcard_refs:
         - vcard:orc-19:two_nodes_exist_each_has_its_own_four_tapes_materialised_from_th
         - vcard:orc-19:they_start_divergent_the_check_asserts_non_convergence_before_th
@@ -2330,6 +2337,7 @@ sprints:
         - vcard:orc-19:the_exchange_is_recorded_the_routing_tape_holds_rows_naming_both
         - vcard:orc-19:the_check_has_teeth_a_node_that_does_not_sync_fails_verified_by_
         - vcard:orc-19:no_regression_make_orc_gate_passes_with_the_new_stage_and_the_la
+        - vcard:orc-19:a_node_is_one_mcard_inv_tape_06_each_node_root_mesh_node_a_mesh_
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-20-knowledge-contracts
     card_type: pcard
@@ -2354,7 +2362,7 @@ sprints:
     code: ORC-21
     title: 'Sprint ORC-21: The Personal Vault as a First-Class Source'
     dod:
-      total: 8
+      total: 9
       vcard_refs:
         - vcard:orc-21:the_vault_is_declared_registry_knowledge_roots_yaml_carries_a_pe
         - vcard:orc-21:ingested_with_handles_every_file_in_the_vault_has_a_card_and_a_h
@@ -2364,6 +2372,7 @@ sprints:
         - vcard:orc-21:it_is_not_repo_bound_a_vault_outside_the_repository_is_ingested_
         - vcard:orc-21:re_ingestion_is_revision_tracking_changing_one_vault_file_adds_e
         - vcard:orc-21:no_regression_make_orc_gate_passes_and_orc_16_s_repository_inges
+        - vcard:orc-21:the_vault_index_is_one_card_inv_tape_06_the_external_container_s
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-22-kernel-pre-vcard-and-runtime-artifact
     card_type: pcard
@@ -2371,7 +2380,7 @@ sprints:
     code: ORC-22
     title: 'Sprint ORC-22: The Kernel Pre-VCard and the Runtime Artifact'
     dod:
-      total: 7
+      total: 8
       vcard_refs:
         - vcard:orc-22:v_pre_true_bash_clm_kernel_verify_kernel_sh_exits_0_on_the_commi
         - vcard:orc-22:the_sbom_tracks_the_launcher_a_launcher_change_that_leaves_manif
@@ -2380,6 +2389,7 @@ sprints:
         - vcard:orc-22:the_entry_points_are_named_which_runtime_each_entry_point_select
         - vcard:orc-22:the_pre_vcard_gates_evaluation_the_coordination_loop_refuses_to_
         - vcard:orc-22:no_regression_make_orc_gate_passes_and_every_kernel_touching_spr
+        - vcard:orc-22:the_artifact_chain_is_one_card_inv_tape_06_registry_kernel_artif
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-23-pristine-monadic-core
     card_type: pcard
@@ -2437,7 +2447,7 @@ sprints:
     code: ORC-26
     title: 'Sprint ORC-26: Substrate & Tape Reconciliation'
     dod:
-      total: 9
+      total: 10
       vcard_refs:
         - vcard:orc-26:migration_script_scripts_orc_migrate_substrate_to_turing_tapes_p
         - vcard:orc-26:clm_db_content_memory_db_rebuilt_to_strictly_3_tables_card_havin
@@ -2448,6 +2458,7 @@ sprints:
         - vcard:orc-26:all_three_tapes_pass_verify_tape_homogeneity_in_check_schema_con
         - vcard:orc-26:no_column_is_dropped_without_its_information_re_homed_every_chan
         - vcard:orc-26:each_lifecycle_sidecar_is_one_card_inv_tape_06_the_sidecar_is_ha
+        - vcard:orc-26:each_sidecar_is_one_card_inv_tape_06_every_lifecycle_sidecar_the
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-27-polyglot-estate-synchronization
     card_type: pcard
@@ -2476,7 +2487,7 @@ sprints:
     code: ORC-28
     title: 'Sprint ORC-28: Measured Tape Debt & Deterministic Records'
     dod:
-      total: 8
+      total: 9
       vcard_refs:
         - vcard:orc-28:the_deviation_is_measured_every_schema_declaration_and_every_dep
         - vcard:orc-28:the_measurement_is_correct_the_declared_card_measures_4_columns_
@@ -2486,6 +2497,7 @@ sprints:
         - vcard:orc-28:the_record_is_deterministic_two_consecutive_runs_of_node_scripts
         - vcard:orc-28:the_honest_reading_is_preserved_the_dod_above_is_not_a_claim_tha
         - vcard:orc-28:the_debt_reaches_0_owned_by_orc_23_and_orc_26_this_item_is_the_h
+        - vcard:orc-28:the_measured_debt_is_one_card_inv_tape_06_registry_tape_invarian
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-29-nested-tapes-are-cards
     card_type: pcard
