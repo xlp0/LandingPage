@@ -264,11 +264,11 @@ capture:
 
 knowledge:
   produces:
-    - handle_pattern: "urn:clm:mcard:projection:*"
+    - handle_pattern: "urn:mcard:mcard:projection:*"
       role: derived_view
       schema: schema/mcard_schema.sql
   consumes:
-    - handle_pattern: "urn:clm:mcard:registry:*"
+    - handle_pattern: "urn:mcard:mcard:registry:*"
       role: sprint_registry
       schema: schema/mcard_schema.sql
 

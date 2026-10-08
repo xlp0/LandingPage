@@ -1307,7 +1307,7 @@ fibers:
     example: examples/executable-pcard.mcard.json
 
 sprints:
-  - handle: urn:clm:handle:docs:sprints:01_formal-verification-and-soundness:sprint-378-formal-methods-verification-oracle-pipeline
+  - handle: urn:mcard:handle:docs:sprints:01_formal-verification-and-soundness:sprint-378-formal-methods-verification-oracle-pipeline
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-378
@@ -1321,7 +1321,7 @@ sprints:
         - vcard:sprint-378:make_formal_check_passes_cleanly_in_ci
         - vcard:sprint-378:joint_sign_off_by_winston_and_amelia
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:02_polyglot-package-registries-and-release:sprint-371-polyglot-package-registry-reservation-and-governance
+  - handle: urn:mcard:handle:docs:sprints:02_polyglot-package-registries-and-release:sprint-371-polyglot-package-registry-reservation-and-governance
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-371
@@ -1339,7 +1339,7 @@ sprints:
         - vcard:sprint-371:test_suites_verified_python_model_engine_191_passed_js_kernel_55
         - vcard:sprint-371:status_completed_sprint_371_implementation_complete_live_registr
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:02_polyglot-package-registries-and-release:sprint-397-clm-py-core-standardization
+  - handle: urn:mcard:handle:docs:sprints:02_polyglot-package-registries-and-release:sprint-397-clm-py-core-standardization
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-397
@@ -1348,7 +1348,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:02_polyglot-package-registries-and-release:sprint-398-mcard-package-relocation-clm-py-core
+  - handle: urn:mcard:handle:docs:sprints:02_polyglot-package-registries-and-release:sprint-398-mcard-package-relocation-clm-py-core
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-398
@@ -1373,7 +1373,7 @@ sprints:
         - vcard:sprint-398:run_uv_run_pytest_tests_parity_test_tripartite_parity_py_to_pass
         - vcard:sprint-398:run_full_regression_suite_make_test_uv_run_pytest_tests_to_ge_86
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:03_storage-crdt-and-kenotic-cas:sprint-372-data-model-tri-database-unification
+  - handle: urn:mcard:handle:docs:sprints:03_storage-crdt-and-kenotic-cas:sprint-372-data-model-tri-database-unification
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-372
@@ -1389,7 +1389,7 @@ sprints:
         - vcard:sprint-372:legacy_sqlite_schema_and_query_compatibility_layer_verified_zero
         - vcard:sprint-372:zero_regressions_in_unit_test_suites_uv_run_pytest_tests_model_t
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:03_storage-crdt-and-kenotic-cas:sprint-386-layer2-cas-merkle-tridb-and-vfs
+  - handle: urn:mcard:handle:docs:sprints:03_storage-crdt-and-kenotic-cas:sprint-386-layer2-cas-merkle-tridb-and-vfs
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-386
@@ -1398,7 +1398,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:03_storage-crdt-and-kenotic-cas:sprint-392-layer2-storage-engines-cas-collection
+  - handle: urn:mcard:handle:docs:sprints:03_storage-crdt-and-kenotic-cas:sprint-392-layer2-storage-engines-cas-collection
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-392
@@ -1407,7 +1407,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:04_petri-net-vm-and-execution-runtime:sprint-373-ptr-runtime-petri-net-vm-convergence
+  - handle: urn:mcard:handle:docs:sprints:04_petri-net-vm-and-execution-runtime:sprint-373-ptr-runtime-petri-net-vm-convergence
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-373
@@ -1424,7 +1424,7 @@ sprints:
         - vcard:sprint-373:legacy_ptr_test_suite_regression_shield_validated_all_18_test_fi
         - vcard:sprint-373:full_test_suite_green_uv_run_pytest_tests_ptr_make_js_test_make_
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:04_petri-net-vm-and-execution-runtime:sprint-377-triadic-coordinating-framework-architecture
+  - handle: urn:mcard:handle:docs:sprints:04_petri-net-vm-and-execution-runtime:sprint-377-triadic-coordinating-framework-architecture
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-377
@@ -1440,7 +1440,7 @@ sprints:
         - vcard:sprint-377:unit_tests_for_mcardcollection_pass_uv_run_pytest_tests_ontology
         - vcard:sprint-377:approved_by_winston_architect
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:04_petri-net-vm-and-execution-runtime:sprint-384-layer1-cpn-vm-and-execution-engine
+  - handle: urn:mcard:handle:docs:sprints:04_petri-net-vm-and-execution-runtime:sprint-384-layer1-cpn-vm-and-execution-engine
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-384
@@ -1449,7 +1449,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:04_petri-net-vm-and-execution-runtime:sprint-385-layer1-polyglot-runtimes-and-operations
+  - handle: urn:mcard:handle:docs:sprints:04_petri-net-vm-and-execution-runtime:sprint-385-layer1-polyglot-runtimes-and-operations
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-385
@@ -1458,7 +1458,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:04_petri-net-vm-and-execution-runtime:sprint-391b-layer1-cpn-execution-engine-decoupling
+  - handle: urn:mcard:handle:docs:sprints:04_petri-net-vm-and-execution-runtime:sprint-391b-layer1-cpn-execution-engine-decoupling
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-391b
@@ -1467,7 +1467,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:04_petri-net-vm-and-execution-runtime:sprint-399-clm-kernel-sovereignty-internal-decoupling
+  - handle: urn:mcard:handle:docs:sprints:04_petri-net-vm-and-execution-runtime:sprint-399-clm-kernel-sovereignty-internal-decoupling
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-399
@@ -1491,7 +1491,7 @@ sprints:
         - vcard:sprint-399:run_uv_run_pytest_tests_test_rag_py_tests_test_graphrag_py_to_pa
         - vcard:sprint-399:run_full_regression_suite_make_test_to_ge_864_passed_le_33_skipp
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:05_linguistic-eval-and-gateway:sprint-374-clm-interpretation-gateway-unification
+  - handle: urn:mcard:handle:docs:sprints:05_linguistic-eval-and-gateway:sprint-374-clm-interpretation-gateway-unification
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-374
@@ -1508,7 +1508,7 @@ sprints:
         - vcard:sprint-374:grep_rn_clmroot_mcard_returns_zero_hits
         - vcard:sprint-374:regression_test_clean_uv_run_pytest_clm_tests_make_test_make_js_
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:05_linguistic-eval-and-gateway:sprint-383-layer0-kenotic-core-and-parser-unification
+  - handle: urn:mcard:handle:docs:sprints:05_linguistic-eval-and-gateway:sprint-383-layer0-kenotic-core-and-parser-unification
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-383
@@ -1517,7 +1517,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:05_linguistic-eval-and-gateway:sprint-391-layer0-crosscutting-kenotic-models
+  - handle: urn:mcard:handle:docs:sprints:05_linguistic-eval-and-gateway:sprint-391-layer0-crosscutting-kenotic-models
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-391
@@ -1526,7 +1526,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:06_membrane-and-human-interface:sprint-375-mcard-studio-headless-gateway-integration
+  - handle: urn:mcard:handle:docs:sprints:06_membrane-and-human-interface:sprint-375-mcard-studio-headless-gateway-integration
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-375
@@ -1543,7 +1543,7 @@ sprints:
         - vcard:sprint-375:studio_test_suite_passes_make_studio_test_make_studio_check
         - vcard:sprint-375:studio_playwright_e2e_suite_passes_cleanly_npm_prefix_mcard_stud
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:06_membrane-and-human-interface:sprint-381-runtime-to-ui-functional-equivalence-comparator
+  - handle: urn:mcard:handle:docs:sprints:06_membrane-and-human-interface:sprint-381-runtime-to-ui-functional-equivalence-comparator
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-381
@@ -1558,7 +1558,7 @@ sprints:
         - vcard:sprint-381:makefile_target_make_compare_runtime_ui_integrated_into_vault_ch
         - vcard:sprint-381:approved_by_amelia_and_winston
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:06_membrane-and-human-interface:sprint-388-layer4-membrane-gateway-and-purification
+  - handle: urn:mcard:handle:docs:sprints:06_membrane-and-human-interface:sprint-388-layer4-membrane-gateway-and-purification
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-388
@@ -1567,7 +1567,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:06_membrane-and-human-interface:sprint-394-layer4-presentation-membrane-bootstrap-servers
+  - handle: urn:mcard:handle:docs:sprints:06_membrane-and-human-interface:sprint-394-layer4-presentation-membrane-bootstrap-servers
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-394
@@ -1576,7 +1576,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:07_mesh-networking-and-p2p-sync:sprint-387-layer3-agency-llm-lambda-and-transport
+  - handle: urn:mcard:handle:docs:sprints:07_mesh-networking-and-p2p-sync:sprint-387-layer3-agency-llm-lambda-and-transport
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-387
@@ -1585,7 +1585,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:07_mesh-networking-and-p2p-sync:sprint-393-layer3-cognitive-agency-vector-graphrag
+  - handle: urn:mcard:handle:docs:sprints:07_mesh-networking-and-p2p-sync:sprint-393-layer3-cognitive-agency-vector-graphrag
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-393
@@ -1594,7 +1594,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:09_kernel-bootstrap-and-baremetal-os:sprint-395-operational-script-evacuation-clm-tools
+  - handle: urn:mcard:handle:docs:sprints:09_kernel-bootstrap-and-baremetal-os:sprint-395-operational-script-evacuation-clm-tools
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-395
@@ -1603,7 +1603,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:10_security-audit-and-compliance:sprint-382-multi-agent-dialectic-governance-and-documentation
+  - handle: urn:mcard:handle:docs:sprints:10_security-audit-and-compliance:sprint-382-multi-agent-dialectic-governance-and-documentation
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-382
@@ -1618,7 +1618,7 @@ sprints:
         - vcard:sprint-382:scripts_ci_validate_documentation_py_passes_with_0_broken_links
         - vcard:sprint-382:triadic_review_approved_by_winston_amelia_and_paige
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:10_security-audit-and-compliance:sprint-402-deprecation-enforcement-and-certification
+  - handle: urn:mcard:handle:docs:sprints:10_security-audit-and-compliance:sprint-402-deprecation-enforcement-and-certification
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-402
@@ -1648,7 +1648,7 @@ sprints:
         - vcard:sprint-402:graduate_sprints_398_402_into_the_12_aspect_deployment_architect
         - vcard:sprint-402:update_changelog_md_with_phase_9_milestone_release_notes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-376-monorepo-polyglot-sdk-consolidation
+  - handle: urn:mcard:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-376-monorepo-polyglot-sdk-consolidation
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-376
@@ -1665,7 +1665,7 @@ sprints:
         - vcard:sprint-376:vault_master_quality_gate_make_vault_check_passes_cleanly_across
         - vcard:sprint-376:complete_ecosystem_test_suite_clean_make_project_check
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-379-polyglot-comparative-runtime-fleet-harness
+  - handle: urn:mcard:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-379-polyglot-comparative-runtime-fleet-harness
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-379
@@ -1680,7 +1680,7 @@ sprints:
         - vcard:sprint-379:make_polyglot_oracles_passes_cleanly_in_ci
         - vcard:sprint-379:verified_and_signed_off_by_amelia
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-380-unified-test-dataset-and-fuzz-corpora-management
+  - handle: urn:mcard:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-380-unified-test-dataset-and-fuzz-corpora-management
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-380
@@ -1695,7 +1695,7 @@ sprints:
         - vcard:sprint-380:scripts_ci_run_container_mcard_py_verified_with_live_docker_runn
         - vcard:sprint-380:approved_by_amelia_and_paige
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-389-rust-kernel-layered-parity
+  - handle: urn:mcard:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-389-rust-kernel-layered-parity
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-389
@@ -1704,7 +1704,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-390-typescript-sdk-layered-parity
+  - handle: urn:mcard:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-390-typescript-sdk-layered-parity
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-390
@@ -1713,7 +1713,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-396-test-suite-rewiring-mcard-purification
+  - handle: urn:mcard:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-396-test-suite-rewiring-mcard-purification
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-396
@@ -1722,7 +1722,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-400-test-suite-rewiring-layer0-layer2
+  - handle: urn:mcard:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-400-test-suite-rewiring-layer0-layer2
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-400
@@ -1748,7 +1748,7 @@ sprints:
         - vcard:sprint-400:run_composite_suite_uv_run_pytest_tests_model_tests_engine_tests
         - vcard:sprint-400:verify_zero_regressions_on_master_baseline_make_test_to_ge_864_p
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-401-test-suite-rewiring-layer3-layer4
+  - handle: urn:mcard:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-401-test-suite-rewiring-layer3-layer4
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-401
@@ -1772,7 +1772,7 @@ sprints:
         - vcard:sprint-401:run_full_regression_suite_make_test_to_ge_864_passed_le_33_skipp
         - vcard:sprint-401:run_make_vault_check_to_6_6_suites_passed
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-403-clm-test-infra-harmonization
+  - handle: urn:mcard:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-403-clm-test-infra-harmonization
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-403
@@ -1816,7 +1816,7 @@ sprints:
         - vcard:sprint-403:fix_test_zero_file_sys_stderr_in_kernel_in_clm_tests_python_util
         - vcard:sprint-403:verify_cd_clm_uv_run_pytest_tests_python_to_438_passed_0_failed
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-404-layer0-layer2-test-suite-migration
+  - handle: urn:mcard:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-404-layer0-layer2-test-suite-migration
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-404
@@ -1847,7 +1847,7 @@ sprints:
         - vcard:sprint-404:total_for_migrated_l0_l2_309_passed_2_skipped_0_failures
         - vcard:sprint-404:full_battery_verification_cd_clm_uv_run_pytest_tests_python_q_to
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-405-layer1-layer3-test-suite-migration
+  - handle: urn:mcard:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-405-layer1-layer3-test-suite-migration
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-405
@@ -1875,7 +1875,7 @@ sprints:
         - vcard:sprint-405:run_cumulative_battery_cd_clm_uv_run_pytest_tests_python_model_t
         - vcard:sprint-405:full_clm_battery_cd_clm_uv_run_pytest_tests_python_q_to_pass_1_1
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-406-layer4-support-test-suite-migration
+  - handle: urn:mcard:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-406-layer4-support-test-suite-migration
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-406
@@ -1898,7 +1898,7 @@ sprints:
         - vcard:sprint-406:run_full_test_battery_in_clm_cd_clm_uv_run_pytest_tests_python_q
         - vcard:sprint-406:assert_ge_1_300_tests_pass_with_0_failures_across_all_stratified
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-407-mcard-tdd-purge-and-makefile-rewiring
+  - handle: urn:mcard:handle:docs:sprints:11_polyglot-test-fleet-and-canary:sprint-407-mcard-tdd-purge-and-makefile-rewiring
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-407
@@ -1939,7 +1939,7 @@ sprints:
         - vcard:sprint-407:update_docs_architecture_code_migration_to_clm_md
         - vcard:sprint-407:graduate_sprints_403_407_into_the_12_aspect_deployment_architect
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:00-program-charter-epic-orc-ii
+  - handle: urn:mcard:handle:docs:sprints:_active:00-program-charter-epic-orc-ii
     card_type: pcard
     archetype: ClmTriadManifest
     code: 00-PROGRAM-CHARTER-EPIC-ORC-II
@@ -1956,7 +1956,7 @@ sprints:
         - vcard:00-program-charter-epic-orc-ii:no_gate_control_writes_to_the_live_tree_an_interrupted_control_l
         - vcard:00-program-charter-epic-orc-ii:make_orc_gate_passes_with_the_extended_stage_set_and_every_new_s
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:00-program-charter-epic-orc-iii
+  - handle: urn:mcard:handle:docs:sprints:_active:00-program-charter-epic-orc-iii
     card_type: pcard
     archetype: ClmTriadManifest
     code: 00-PROGRAM-CHARTER-EPIC-ORC-III
@@ -1973,7 +1973,7 @@ sprints:
         - vcard:00-program-charter-epic-orc-iii:the_kernel_s_pre_vcard_is_true_on_the_committed_tree_the_artifac
         - vcard:00-program-charter-epic-orc-iii:make_orc_gate_passes_with_the_extended_stages_and_every_new_stag
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:00-program-charter-epic-orc-iv
+  - handle: urn:mcard:handle:docs:sprints:_active:00-program-charter-epic-orc-iv
     card_type: pcard
     archetype: ClmTriadManifest
     code: 00-PROGRAM-CHARTER-EPIC-ORC-IV
@@ -2000,7 +2000,7 @@ sprints:
         - vcard:00-program-charter-epic-orc-iv:nested_tapes_are_cards_inv_tape_06_every_sidecar_collection_and_
         - vcard:00-program-charter-epic-orc-iv:the_prose_matches_the_tape_readme_md_and_docs_index_md_state_the
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:00-program-charter-epic-orc
+  - handle: urn:mcard:handle:docs:sprints:_active:00-program-charter-epic-orc
     card_type: pcard
     archetype: ClmTriadManifest
     code: 00-PROGRAM-CHARTER-EPIC-ORC
@@ -2017,13 +2017,13 @@ sprints:
         - vcard:00-program-charter-epic-orc:the_estate_is_axis_clean_docs_sprints_top_level_holds_only_nn_as
         - vcard:00-program-charter-epic-orc:the_gate_passes_with_every_negative_control_detecting_its_inject
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-01-schema-conformance-and-card-type
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-01-schema-conformance-and-card-type
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-01
     title: 'Sprint ORC-01: Schema Conformance & the Card-Type Discriminator'
     dod:
-      total: 7
+      total: 8
       vcard_refs:
         - vcard:orc-01:card_type_exists_and_discriminates_inserting_a_row_with_card_typ
         - vcard:orc-01:the_core_is_identical_across_tapes_the_three_normative_tables_ha
@@ -2032,14 +2032,15 @@ sprints:
         - vcard:orc-01:migration_is_lossless_existing_card_rows_survive_with_card_type_
         - vcard:orc-01:the_submodule_change_is_isolated_git_c_clm_diff_stat_shows_only_
         - vcard:orc-01:tape_mode_is_explicit_the_profile_is_recorded_and_the_checker_as
+        - vcard:orc-01:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-02-sprint-as-mcard-triad-encoding
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-02-sprint-as-mcard-triad-encoding
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-02
     title: "Sprint ORC-02: Sprint-as-MCard \u2014 Triad Manifest Encoding & Handle Registration"
     dod:
-      total: 10
+      total: 11
       vcard_refs:
         - vcard:orc-02:triad_closure_is_total_every_sprint_has_a_manifest_with_all_thre
         - vcard:orc-02:the_dod_is_binding_every_dod_line_maps_to_a_postcondition_with_a
@@ -2051,14 +2052,15 @@ sprints:
         - vcard:orc-02:derivation_not_duplication_the_manifest_is_generated_from_the_sp
         - vcard:orc-02:registration_is_idempotent_re_running_the_encoder_on_an_unchange
         - vcard:orc-02:the_registry_is_one_card_inv_tape_06_registry_sprints_yaml_is_ha
+        - vcard:orc-02:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-03-coordination-loop
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-03-coordination-loop
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-03
     title: "Sprint ORC-03: The Coordination Loop \u2014 9-Phase REPL over Submodules"
     dod:
-      total: 7
+      total: 8
       vcard_refs:
         - vcard:orc-03:the_loop_runs_end_to_end_on_a_real_sprint_and_mutates_one_submod
         - vcard:orc-03:refusal_is_real_a_deliberately_dirtied_submodule_tree_is_refused
@@ -2067,14 +2069,15 @@ sprints:
         - vcard:orc-03:phase_mapping_is_faithful_each_of_the_9_phases_is_observable_in_
         - vcard:orc-03:one_write_path_a_submodule_mutated_outside_the_loop_is_detected_
         - vcard:orc-03:make_orchestrate_is_the_only_entry_no_makefile_target_mutates_a_
+        - vcard:orc-03:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-04-vcard-witness-sealing
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-04-vcard-witness-sealing
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-04
     title: 'Sprint ORC-04: VCard Witness Sealing & the Execution Tape'
     dod:
-      total: 7
+      total: 8
       vcard_refs:
         - vcard:orc-04:the_triple_is_present_and_derived_every_sealed_witness_carries_a
         - vcard:orc-04:the_triple_is_logged_each_sandwich_appends_exactly_one_execution
@@ -2083,14 +2086,15 @@ sprints:
         - vcard:orc-04:interleaving_is_detectable_two_sandwiches_over_the_same_submodul
         - vcard:orc-04:one_transaction_an_induced_failure_after_the_vcard_insert_leaves
         - vcard:orc-04:the_cdo_ledger_is_converged_not_paralleled_the_seal_path_uses_th
+        - vcard:orc-04:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-05-display-parity
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-05-display-parity
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-05
     title: "Sprint ORC-05: Display Parity \u2014 studio Membrane & LandingPage Registry"
     dod:
-      total: 9
+      total: 10
       vcard_refs:
         - vcard:orc-05:one_shape_every_registry_entry_canonical_and_legacy_validates_ag
         - vcard:orc-05:studio_displays_a_sprint_the_membrane_renders_a_sprint_entry_fro
@@ -2101,14 +2105,15 @@ sprints:
         - vcard:orc-05:no_vendored_evidence_the_byte_identical_copy_of_cdo_16_fiber_cer
         - vcard:orc-05:graduated_artifacts_render_at_least_one_sealed_witness_and_one_c
         - vcard:orc-05:the_projection_is_one_card_inv_tape_06_clm_registry_yaml_is_regi
+        - vcard:orc-05:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-06-estate-axis-separation
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-06-estate-axis-separation
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-06
     title: 'Sprint ORC-06: Estate Axis Separation & Lossless Relocation'
     dod:
-      total: 9
+      total: 10
       vcard_refs:
         - vcard:orc-06:lossless_182_renames_0_additions_0_deletions_every_file_s_sha_25
         - vcard:orc-06:aspect_level_conforms_docs_sprints_holds_only_nn_aspect_programs
@@ -2119,14 +2124,15 @@ sprints:
         - vcard:orc-06:handles_recorded_every_relocated_sprint_has_a_handle_history_row
         - vcard:orc-06:no_inverse_dependency_grep_r_docs_sprints_clm_kernel_returns_not
         - vcard:orc-06:three_sandwiches_three_witnesses_root_relocation_clm_rewires_and
+        - vcard:orc-06:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-07-path-and-config-ssot
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-07-path-and-config-ssot
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-07
     title: 'Sprint ORC-07: Path & Config SSOT at the Root'
     dod:
-      total: 6
+      total: 7
       vcard_refs:
         - vcard:orc-07:precedence_is_enforced_an_explicit_override_beats_env_which_beat
         - vcard:orc-07:zero_unallowlisted_hardcoded_paths_the_guard_passes_and_the_allo
@@ -2134,14 +2140,15 @@ sprints:
         - vcard:orc-07:all_three_submodule_roots_resolve_from_config_no_consumer_hardco
         - vcard:orc-07:the_guard_has_teeth_adding_a_hardcoded_path_makes_make_check_pat
         - vcard:orc-07:the_resolver_is_isomorphic_it_runs_unmodified_in_node_and_in_a_b
+        - vcard:orc-07:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-08-orchestration-gate-and-certification
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-08-orchestration-gate-and-certification
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-08
     title: 'Sprint ORC-08: Orchestration Gate & Certification'
     dod:
-      total: 7
+      total: 8
       vcard_refs:
         - vcard:orc-08:every_invariant_is_a_stage_and_the_stage_names_it_in_its_output_
         - vcard:orc-08:every_stage_has_a_control_that_fails_7_injected_defects_7_detect
@@ -2150,14 +2157,15 @@ sprints:
         - vcard:orc-08:certification_records_what_did_not_change_no_submodule_s_behavio
         - vcard:orc-08:cross_repo_acts_are_named_the_clm_submodule_change_card_type_is_
         - vcard:orc-08:recurrence_is_mechanically_blocked_a_second_content_store_an_uns
+        - vcard:orc-08:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-09-structural-path-detection
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-09-structural-path-detection
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-09
     title: 'Sprint ORC-09: Structural Path-Reference Detection'
     dod:
-      total: 8
+      total: 9
       vcard_refs:
         - vcard:orc-09:every_historical_form_is_detected_each_of_the_five_fixtures_is_r
         - vcard:orc-09:untracked_files_are_scanned_a_file_created_and_not_staged_is_det
@@ -2167,14 +2175,15 @@ sprints:
         - vcard:orc-09:zero_false_positives_on_the_live_tree_the_estate_gate_and_the_pa
         - vcard:orc-09:the_finding_record_is_emitted_registry_path_references_json_list
         - vcard:orc-09:the_finding_record_is_one_card_inv_tape_06_registry_path_referen
+        - vcard:orc-09:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-10-column-level-schema-conformance
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-10-column-level-schema-conformance
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-10
     title: 'Sprint ORC-10: Column-Level Schema Conformance & One Declaration'
     dod:
-      total: 7
+      total: 8
       vcard_refs:
         - vcard:orc-10:descriptors_are_compared_the_checker_reports_a_difference_in_typ
         - vcard:orc-10:the_nullability_difference_is_gone_handle_history_previous_hash_
@@ -2183,14 +2192,15 @@ sprints:
         - vcard:orc-10:order_independence_holds_a_tape_built_via_the_producer_path_and_
         - vcard:orc-10:every_tape_conforms_all_three_deployed_tapes_agree_with_the_decl
         - vcard:orc-10:no_regression_make_orc_schema_passes_cargo_test_lib_db_migration
+        - vcard:orc-10:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-11-enum-constraint-on-deployed-substrate
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-11-enum-constraint-on-deployed-substrate
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-11
     title: 'Sprint ORC-11: The Enum Constraint on Deployed Substrate'
     dod:
-      total: 7
+      total: 8
       vcard_refs:
         - vcard:orc-11:the_database_refuses_inserting_card_type_bogus_into_each_deploye
         - vcard:orc-11:lossless_row_count_and_content_digest_are_identical_before_and_a
@@ -2199,14 +2209,15 @@ sprints:
         - vcard:orc-11:atomic_an_induced_failure_mid_rebuild_leaves_the_original_card_t
         - vcard:orc-11:foreign_keys_hold_pragma_foreign_key_check_is_clean_on_every_tap
         - vcard:orc-11:no_regression_make_orc_schema_passes_make_orc_gate_passes_8_8_st
+        - vcard:orc-11:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-12-continuity-reconciled
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-12-continuity-reconciled
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-12
     title: 'Sprint ORC-12: Continuity Reconciled, Not Reported'
     dod:
-      total: 8
+      total: 9
       vcard_refs:
         - vcard:orc-12:windows_are_enumerated_structurally_each_gap_reports_its_boundin
         - vcard:orc-12:both_existing_gaps_are_reconciled_all_current_gaps_carry_what_wh
@@ -2216,14 +2227,15 @@ sprints:
         - vcard:orc-12:the_gate_runs_strict_stage_4_invokes_strict_asserted_by_scripts_
         - vcard:orc-12:the_count_is_visible_and_monotone_the_number_of_accepted_windows
         - vcard:orc-12:the_reconciliation_record_is_one_card_inv_tape_06_registry_unsea
+        - vcard:orc-12:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-13-display-parity-in-a-browser
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-13-display-parity-in-a-browser
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-13
     title: 'Sprint ORC-13: Display Parity Observed in a Browser'
     dod:
-      total: 8
+      total: 9
       vcard_refs:
         - vcard:orc-13:the_registry_is_served_api_clm_registry_returns_the_sprints_sect
         - vcard:orc-13:sealed_state_is_observable_a_sealed_and_a_specification_entry_ar
@@ -2233,14 +2245,15 @@ sprints:
         - vcard:orc-13:no_dead_candidates_each_of_the_two_modules_carries_one_witness_p
         - vcard:orc-13:no_regression_npm_run_test_presentation_stays_12_12_and_make_sty
         - vcard:orc-13:the_served_copy_is_a_card_and_not_a_second_source_inv_tape_06_th
+        - vcard:orc-13:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-14-kernel-yaml-conformance
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-14-kernel-yaml-conformance
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-14
     title: 'Sprint ORC-14: The Kernel''s YAML Reader Made Conformant'
     dod:
-      total: 11
+      total: 12
       vcard_refs:
         - vcard:orc-14:escaping_is_conformant_inside_a_single_quoted_scalar_unescapes_t
         - vcard:orc-14:folding_is_conformant_a_scalar_wrapped_across_lines_folds_to_a_s
@@ -2253,14 +2266,15 @@ sprints:
         - vcard:orc-14:the_chain_is_recorded_the_evidence_names_each_step_source_build_
         - vcard:orc-14:the_python_mirror_is_not_forgotten_cel_eval_py_carries_the_same_
         - vcard:orc-14:no_regression_the_layer3_suite_stays_green_verify_kernel_sh_stil
+        - vcard:orc-14:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-15-gate-controls-in-isolation
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-15-gate-controls-in-isolation
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-15
     title: 'Sprint ORC-15: Gate Controls in Isolation'
     dod:
-      total: 8
+      total: 9
       vcard_refs:
         - vcard:orc-15:no_control_writes_to_the_live_tree_the_estate_s_digest_is_identi
         - vcard:orc-15:interruption_is_safe_killing_a_control_mid_run_leaves_every_live
@@ -2270,14 +2284,15 @@ sprints:
         - vcard:orc-15:the_claim_is_unconditional_the_certification_s_wording_is_amende
         - vcard:orc-15:no_regression_make_orc_gate_still_passes_7_7_stages_and_7_7_cont
         - vcard:orc-15:a_control_run_is_addressable_inv_tape_06_the_fixture_estate_is_r
+        - vcard:orc-15:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-16-one-knowledge-namespace
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-16-one-knowledge-namespace
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-16
     title: 'Sprint ORC-16: One Knowledge Namespace, Not Five'
     dod:
-      total: 11
+      total: 12
       vcard_refs:
         - vcard:orc-16:every_root_is_declared_with_a_reason_no_root_is_inferred_each_en
         - vcard:orc-16:ingested_with_handles_every_file_in_a_declared_root_has_a_handle
@@ -2290,14 +2305,15 @@ sprints:
         - vcard:orc-16:the_budget_is_stated_each_root_reports_file_count_total_bytes_la
         - vcard:orc-16:no_regression_make_orc_gate_still_passes_and_the_layer3_suite_st
         - vcard:orc-16:the_collection_and_its_index_are_cards_inv_tape_06_each_ingested
+        - vcard:orc-16:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-17-hub-is-a-node
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-17-hub-is-a-node
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-17
     title: "Sprint ORC-17: The Hub Is a Node \u2014 a Manifest and One Config"
     dod:
-      total: 8
+      total: 9
       vcard_refs:
         - vcard:orc-17:the_hub_describes_itself_root_mcard_yaml_declares_role_archetype
         - vcard:orc-17:the_submodule_handles_resolve_each_declared_handle_names_a_real_
@@ -2307,14 +2323,15 @@ sprints:
         - vcard:orc-17:a_placeholder_contact_is_reported_a_served_config_with_an_empty_
         - vcard:orc-17:the_manifest_agrees_with_the_gate_every_invariant_root_mcard_yam
         - vcard:orc-17:no_regression_make_check_paths_make_orc_gate_and_the_layer3_suit
+        - vcard:orc-17:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-18-fourth-tape-and-node-identity
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-18-fourth-tape-and-node-identity
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-18
     title: 'Sprint ORC-18: The Fourth Tape and the Node Identity'
     dod:
-      total: 11
+      total: 12
       vcard_refs:
         - vcard:orc-18:the_fourth_tape_exists_clm_db_routing_mesh_db_carries_the_canoni
         - vcard:orc-18:the_profile_records_four_registry_tape_profile_json_names_a_rout
@@ -2327,14 +2344,15 @@ sprints:
         - vcard:orc-18:the_handle_was_a_counter_my_first_writer_derived_it_from_seq_1_s
         - vcard:orc-18:the_clock_is_the_published_one_vectorclock_is_imported_from_clm_
         - vcard:orc-18:no_regression_make_orc_schema_make_orc_chain_and_the_layer3_suit
+        - vcard:orc-18:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-19-mesh-proven-at-platform-scale
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-19-mesh-proven-at-platform-scale
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-19
     title: 'Sprint ORC-19: The Mesh Proven at Platform Scale'
     dod:
-      total: 10
+      total: 11
       vcard_refs:
         - vcard:orc-19:two_nodes_exist_each_has_its_own_four_tapes_materialised_from_th
         - vcard:orc-19:they_start_divergent_the_check_asserts_non_convergence_before_th
@@ -2346,14 +2364,15 @@ sprints:
         - vcard:orc-19:the_check_has_teeth_a_node_that_does_not_sync_fails_verified_by_
         - vcard:orc-19:no_regression_make_orc_gate_passes_with_the_new_stage_and_the_la
         - vcard:orc-19:a_node_is_one_mcard_inv_tape_06_each_node_root_mesh_node_a_mesh_
+        - vcard:orc-19:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-20-knowledge-contracts
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-20-knowledge-contracts
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-20
     title: 'Sprint ORC-20: Knowledge Contracts Between Submodules'
     dod:
-      total: 10
+      total: 11
       vcard_refs:
         - vcard:orc-20:all_three_declare_knowledge_each_submodule_s_mcard_yaml_carries_
         - vcard:orc-20:no_wildcards_a_contract_entry_whose_produces_names_fails_the_che
@@ -2365,14 +2384,15 @@ sprints:
         - vcard:orc-20:scripts_orc_seal_witness_py_could_not_seal_it_inserted_into_exec
         - vcard:orc-20:the_loop_reported_sealed_when_sealing_failed_the_verdict_depende
         - vcard:orc-20:no_regression_make_orc_gate_passes_and_each_submodule_s_own_suit
+        - vcard:orc-20:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-21-personal-vault-as-source
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-21-personal-vault-as-source
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-21
     title: 'Sprint ORC-21: The Personal Vault as a First-Class Source'
     dod:
-      total: 9
+      total: 10
       vcard_refs:
         - vcard:orc-21:the_vault_is_declared_registry_knowledge_roots_yaml_carries_a_pe
         - vcard:orc-21:ingested_with_handles_every_file_the_declared_selection_admits_h
@@ -2383,14 +2403,15 @@ sprints:
         - vcard:orc-21:re_ingestion_is_revision_tracking_changing_one_vault_file_adds_e
         - vcard:orc-21:no_regression_make_orc_gate_passes_and_orc_16_s_repository_inges
         - vcard:orc-21:the_vault_index_is_one_card_inv_tape_06_the_external_container_s
+        - vcard:orc-21:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-22-kernel-pre-vcard-and-runtime-artifact
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-22-kernel-pre-vcard-and-runtime-artifact
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-22
     title: 'Sprint ORC-22: The Kernel Pre-VCard and the Runtime Artifact'
     dod:
-      total: 8
+      total: 9
       vcard_refs:
         - vcard:orc-22:v_pre_true_bash_clm_kernel_verify_kernel_sh_exits_0_on_the_commi
         - vcard:orc-22:the_sbom_tracks_the_launcher_a_launcher_change_that_leaves_manif
@@ -2400,14 +2421,15 @@ sprints:
         - vcard:orc-22:the_pre_vcard_gates_evaluation_the_coordination_loop_refuses_to_
         - vcard:orc-22:no_regression_make_orc_gate_passes_and_every_kernel_touching_spr
         - vcard:orc-22:the_artifact_chain_is_one_card_inv_tape_06_registry_kernel_artif
+        - vcard:orc-22:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-23-pristine-monadic-core
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-23-pristine-monadic-core
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-23
     title: 'Sprint ORC-23: Pristine Monadic Core Restoration'
     dod:
-      total: 11
+      total: 12
       vcard_refs:
         - vcard:orc-23:schema_mcard_schema_sql_contains_exactly_3_create_table_statemen
         - vcard:orc-23:card_table_contains_strictly_3_columns_hash_content_g_time_inv_t
@@ -2420,8 +2442,9 @@ sprints:
         - vcard:orc-23:three_columns_on_every_table_card_3_handle_registry_3_handle_his
         - vcard:orc-23:handle_registry_created_at_and_handle_history_id_are_gone_creati
         - vcard:orc-23:change_type_is_gone_and_the_guarantee_is_kept_inv_tape_04_lifecy
+        - vcard:orc-23:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-24-universal-handle-namespace-and-history
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-24-universal-handle-namespace-and-history
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-24
@@ -2435,13 +2458,13 @@ sprints:
         - vcard:orc-24:the_driver_is_specified_once_the_ownership_block_names_the_singl
         - vcard:orc-24:the_taxonomy_is_declared_here_and_implemented_in_clm_kernel_the_
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-25-conformance-gate-and-tooling-decoupling
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-25-conformance-gate-and-tooling-decoupling
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-25
     title: 'Sprint ORC-25: Conformance Gate & Tooling Decoupling'
     dod:
-      total: 8
+      total: 9
       vcard_refs:
         - vcard:orc-25:every_declared_tape_is_audited_check_schema_conformance_py_repor
         - vcard:orc-25:an_auxiliary_table_is_fatal_injecting_a_fourth_table_into_a_copy
@@ -2451,14 +2474,15 @@ sprints:
         - vcard:orc-25:the_gate_exits_0_on_the_reconciled_substrate_make_orc_schema_ret
         - vcard:orc-25:a_re_introduced_kind_column_fails_the_gate_adding_card_type_or_a
         - vcard:orc-25:the_absence_and_the_delegation_are_asserted_together_card_carrie
+        - vcard:orc-25:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-26-substrate-and-tape-reconciliation
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-26-substrate-and-tape-reconciliation
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-26
     title: 'Sprint ORC-26: Substrate & Tape Reconciliation'
     dod:
-      total: 10
+      total: 11
       vcard_refs:
         - vcard:orc-26:the_migration_is_idempotent_and_self_tested_scripts_orc_migrate_
         - vcard:orc-26:content_memory_db_is_the_triad_it_carries_exactly_card_handle_re
@@ -2470,14 +2494,15 @@ sprints:
         - vcard:orc-26:no_column_is_dropped_without_its_information_re_homed_every_chan
         - vcard:orc-26:each_lifecycle_sidecar_is_one_card_inv_tape_06_the_sidecar_is_ha
         - vcard:orc-26:each_sidecar_is_one_card_inv_tape_06_every_lifecycle_sidecar_the
+        - vcard:orc-26:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-27-polyglot-estate-synchronization
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-27-polyglot-estate-synchronization
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-27
     title: 'Sprint ORC-27: Polyglot Estate Schema Synchronization'
     dod:
-      total: 15
+      total: 16
       vcard_refs:
         - vcard:orc-27:all_four_copies_of_mcard_schema_sql_across_the_repository_are_id
         - vcard:orc-27:schema_mcard_schema_sql
@@ -2494,14 +2519,15 @@ sprints:
         - vcard:orc-27:make_orc_gate_passes_8_8_stages_and_9_9_negative_controls
         - vcard:orc-27:kindof_is_one_function_with_three_bindings_python_rust_and_types
         - vcard:orc-27:no_runtime_re_derives_a_kind_a_runtime_that_computes_a_kind_inde
+        - vcard:orc-27:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-28-measured-tape-debt-and-deterministic-records
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-28-measured-tape-debt-and-deterministic-records
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-28
     title: 'Sprint ORC-28: Measured Tape Debt & Deterministic Records'
     dod:
-      total: 9
+      total: 10
       vcard_refs:
         - vcard:orc-28:the_deviation_is_measured_every_schema_declaration_and_every_dep
         - vcard:orc-28:the_measurement_is_correct_the_declared_card_measures_4_columns_
@@ -2512,14 +2538,15 @@ sprints:
         - vcard:orc-28:the_honest_reading_is_preserved_the_dod_above_is_not_a_claim_tha
         - vcard:orc-28:the_debt_is_0_check_tape_invariant_py_reports_debt_0_with_every_
         - vcard:orc-28:the_measured_debt_is_one_card_inv_tape_06_registry_tape_invarian
+        - vcard:orc-28:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-29-nested-tapes-are-cards
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-29-nested-tapes-are-cards
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-29
     title: "Sprint ORC-29: Nested Tapes Are Cards \u2014 the Lifecycle Sidecar"
     dod:
-      total: 9
+      total: 10
       vcard_refs:
         - vcard:orc-29:the_core_schema_carries_no_lifecycle_schema_mcard_schema_sql_has
         - vcard:orc-29:a_sidecar_is_created_on_demand_and_only_then_a_tape_with_no_life
@@ -2530,14 +2557,15 @@ sprints:
         - vcard:orc-29:the_card_is_never_deleted_after_retirement_the_card_is_still_in_
         - vcard:orc-29:the_sidecar_is_replaceable_rebuilding_a_sidecar_from_its_rows_le
         - vcard:orc-29:the_pattern_is_registered_registry_tape_profile_json_declares_th
+        - vcard:orc-29:the_runtime_compresses_inv_frac_01_disposing_the_fiber_yields_ex
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-30-estate-documentation-alignment
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-orc-30-estate-documentation-alignment
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-30
     title: "Sprint ORC-30: Estate Documentation Alignment \u2014 `README.md` and `docs/`"
     dod:
-      total: 10
+      total: 11
       vcard_refs:
         - vcard:orc-30:the_readme_states_the_real_architecture_three_tapes_three_tables
         - vcard:orc-30:the_readme_states_the_fractal_rule_inv_tape_06_with_the_deployed
@@ -2549,8 +2577,9 @@ sprints:
         - vcard:orc-30:the_collection_is_one_card_inv_tape_06_docs_index_md_is_register
         - vcard:orc-30:the_check_has_teeth_adding_a_loose_file_a_draft_directory_or_an_
         - vcard:orc-30:no_regression_all_seven_gates_still_pass_and_make_orc_gate_stays
+        - vcard:orc-30:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-01-development-lifecycle-cpn-specification
+  - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-01-development-lifecycle-cpn-specification
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-01
@@ -2563,7 +2592,7 @@ sprints:
         - vcard:cdo-01:x_top_d_0_and_misu_assertions_pass_with_mutation_tests_15_15
         - vcard:cdo-01:triad_card_clm_clm_cdo_01_lifecycle_cpn_yaml_clm_clm_cdo_01_life
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-02-conversational-turn-protocol
+  - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-02-conversational-turn-protocol
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-02
@@ -2576,7 +2605,7 @@ sprints:
         - vcard:cdo-02:adapter_contract_with_cordis_scope_disposal_documented
         - vcard:cdo-02:triad_card_clm_clm_cdo_02_turn_protocol_yaml_clm_clm_cdo_02_turn
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-03-development-action-library
+  - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-03-development-action-library
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-03
@@ -2590,7 +2619,7 @@ sprints:
         - vcard:cdo-03:action_library_index_committed
         - vcard:cdo-03:triad_card_clm_clm_cdo_03_action_library_yaml_clm_clm_cdo_03_act
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-04-development-workflow-dags-and-makefile
+  - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-04-development-workflow-dags-and-makefile
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-04
@@ -2604,7 +2633,7 @@ sprints:
         - vcard:cdo-04:dag_net_correspondence_test_passes_with_mutation_check
         - vcard:cdo-04:triad_card_clm_clm_cdo_04_workflow_dags_yaml_clm_clm_cdo_04_work
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-05-evidence-witness-ledger
+  - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-05-evidence-witness-ledger
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-05
@@ -2619,7 +2648,7 @@ sprints:
         - vcard:cdo-05:inv_ref_06_gate_implemented_with_mutation_check
         - vcard:cdo-05:triad_card_clm_clm_cdo_05_evidence_ledger_yaml_clm_clm_cdo_05_ev
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-06-invariant-gate-enforcement
+  - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-06-invariant-gate-enforcement
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-06
@@ -2636,7 +2665,7 @@ sprints:
         - vcard:cdo-06:classification_table_committed
         - vcard:cdo-06:triad_card_clm_clm_cdo_06_invariant_gates_yaml_clm_clm_cdo_06_in
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-07-tri-runtime-orchestration-parity
+  - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-07-tri-runtime-orchestration-parity
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-07
@@ -2651,7 +2680,7 @@ sprints:
         - vcard:cdo-07:all_three_runtime_suites_green_at_baseline
         - vcard:cdo-07:triad_card_clm_clm_cdo_07_runtime_parity_yaml_clm_clm_cdo_07_run
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-08-directory-handle-inventory-and-deployment-tokens
+  - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-08-directory-handle-inventory-and-deployment-tokens
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-08
@@ -2668,7 +2697,7 @@ sprints:
         - vcard:cdo-08:inventory_stage_wired_into_the_delivery_dag
         - vcard:cdo-08:triad_card_clm_clm_cdo_08_directory_inventory_yaml_clm_clm_cdo_0
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-09-deployment-unit-admission-and-evolutionary-tracking
+  - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-09-deployment-unit-admission-and-evolutionary-tracking
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-09
@@ -2692,7 +2721,7 @@ sprints:
         - vcard:cdo-09:playwright_visual_inspection_executed_across_the_type_lattice_ba
         - vcard:cdo-09:triad_card_clm_clm_cdo_09_deployment_unit_yaml_clm_clm_cdo_09_de
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-10-fiber-base-and-totality
+  - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-10-fiber-base-and-totality
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-10
@@ -2707,7 +2736,7 @@ sprints:
         - vcard:cdo-10:the_unknown_card_resolution_path_is_implemented_and_tested_retur
         - vcard:cdo-10:no_rendering_or_dispatch_is_claimed_that_is_cdo_11
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-11-fiber-registry-and-dispatch
+  - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-11-fiber-registry-and-dispatch
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-11
@@ -2725,7 +2754,7 @@ sprints:
         - vcard:cdo-11:mount_lifecycle_witnesses_are_emitted_including_dispose_status
         - vcard:cdo-11:no_desktop_shell_work_is_claimed_in_this_sprint
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-12-fiber-conformance-harness
+  - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-12-fiber-conformance-harness
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-12
@@ -2741,7 +2770,7 @@ sprints:
         - vcard:cdo-12:a_coverage_report_lists_covered_and_uncovered_pairs_explicitly
         - vcard:cdo-12:the_harness_is_unchanged_when_a_new_fiber_is_added_extensibility
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-13-fibration-metric-observability-and-spa-lagrangian-assessment
+  - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-13-fibration-metric-observability-and-spa-lagrangian-assessment
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-13
@@ -2759,7 +2788,7 @@ sprints:
         - vcard:cdo-13:assessment_artifact_captured_by_the_cdo_08_inventory
         - vcard:cdo-13:triad_card_clm_clm_cdo_13_fibration_observability_yaml_clm_clm_c
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-14-correctness-and-hoare-triple-observability
+  - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-14-correctness-and-hoare-triple-observability
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-14
@@ -2779,7 +2808,7 @@ sprints:
         - vcard:cdo-14:panel_coexists_with_cdo_13_s_fibration_metrics_panel_and_is_pres
         - vcard:cdo-14:triad_card_clm_clm_cdo_14_correctness_observability_yaml_clm_clm
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-15-penpot-navigation-authoring
+  - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-15-penpot-navigation-authoring
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-15
@@ -2794,7 +2823,7 @@ sprints:
         - vcard:cdo-15:file_based_commands_pass_with_penpot_absent
         - vcard:cdo-15:triad_card_passes_clm_evaluate_at_its_declared_level
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:cdo:sprint-cdo-16-end-to-end-certification
+  - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-16-end-to-end-certification
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-16
@@ -2811,7 +2840,7 @@ sprints:
         - vcard:cdo-16:program_archived_tracker_updated_tagged
         - vcard:cdo-16:triad_card_clm_clm_cdo_16_certification_yaml_clm_clm_cdo_16_cert
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:rvp:00-program-charter-epic-rvp
+  - handle: urn:mcard:handle:docs:sprints:programs:rvp:00-program-charter-epic-rvp
     card_type: pcard
     archetype: ClmTriadManifest
     code: 00-PROGRAM-CHARTER-EPIC-RVP
@@ -2824,7 +2853,7 @@ sprints:
         - vcard:00-program-charter-epic-rvp:custom_screen_sizes_persist_across_browser_reloads_via_localstor
         - vcard:00-program-charter-epic-rvp:automated_playwright_test_suite_passes_100_across_all_orientatio
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:rvp:sprint-rvp-01-2d-viewport-geometry-and-rotation
+  - handle: urn:mcard:handle:docs:sprints:programs:rvp:sprint-rvp-01-2d-viewport-geometry-and-rotation
     card_type: pcard
     archetype: ClmTriadManifest
     code: RVP-01
@@ -2837,7 +2866,7 @@ sprints:
         - vcard:rvp-01:pill_status_reflection_controlled_frame_dim_and_controlled_panel
         - vcard:rvp-01:no_stage_overflow_a_rotated_viewport_never_pushes_sidebar_contro
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:rvp:sprint-rvp-02-declarative-device-registry-schema
+  - handle: urn:mcard:handle:docs:sprints:programs:rvp:sprint-rvp-02-declarative-device-registry-schema
     card_type: pcard
     archetype: ClmTriadManifest
     code: RVP-02
@@ -2850,7 +2879,7 @@ sprints:
         - vcard:rvp-02:protected_deletion_built_in_devices_cannot_be_accidentally_delet
         - vcard:rvp-02:subscription_signals_adding_or_removing_a_device_immediately_fir
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:rvp:sprint-rvp-03-interactive-device-manager-ui
+  - handle: urn:mcard:handle:docs:sprints:programs:rvp:sprint-rvp-03-interactive-device-manager-ui
     card_type: pcard
     archetype: ClmTriadManifest
     code: RVP-03
@@ -2863,7 +2892,7 @@ sprints:
         - vcard:rvp-03:selection_dimension_application_clicking_any_preset_in_the_sideb
         - vcard:rvp-03:keyboard_escape_accessibility_pressing_escape_closes_the_modal_a
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:rvp:sprint-rvp-04-canvas-scaling-and-rotation-animation
+  - handle: urn:mcard:handle:docs:sprints:programs:rvp:sprint-rvp-04-canvas-scaling-and-rotation-animation
     card_type: pcard
     archetype: ClmTriadManifest
     code: RVP-04
@@ -2876,7 +2905,7 @@ sprints:
         - vcard:rvp-04:smooth_rotation_pulse_rotating_the_screen_triggers_a_fluid_anima
         - vcard:rvp-04:live_telemetry_fidelity_the_header_pill_dynamically_updates_with
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:rvp:sprint-rvp-05-e2e-playwright-verification-and-certification
+  - handle: urn:mcard:handle:docs:sprints:programs:rvp:sprint-rvp-05-e2e-playwright-verification-and-certification
     card_type: mcard
     archetype: specification_mcard
     code: RVP-05
@@ -2885,7 +2914,7 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-01-style-audit-and-token-contract
+  - handle: urn:mcard:handle:docs:sprints:programs:sty:sprint-sty-01-style-audit-and-token-contract
     card_type: pcard
     archetype: ClmTriadManifest
     code: STY-01
@@ -2900,7 +2929,7 @@ sprints:
         - vcard:sty-01:the_inline_style_inventory_separates_presentational_from_structu
         - vcard:sty-01:no_page_has_been_changed_verified_commit_1bcc7ba_the_sty_01_harn
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-02-layout-freeze
+  - handle: urn:mcard:handle:docs:sprints:programs:sty:sprint-sty-02-layout-freeze
     card_type: pcard
     archetype: ClmTriadManifest
     code: STY-02
@@ -2914,7 +2943,7 @@ sprints:
         - vcard:sty-02:volatile_regions_are_masked_with_the_obligation_recorded_not_exc
         - vcard:sty-02:no_page_has_been_changed_the_sprint_adds_a_test_harness_and_a_ba
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-03-tokenise-shared-chrome
+  - handle: urn:mcard:handle:docs:sprints:programs:sty:sprint-sty-03-tokenise-shared-chrome
     card_type: pcard
     archetype: ClmTriadManifest
     code: STY-03
@@ -2928,7 +2957,7 @@ sprints:
         - vcard:sty-03:app_html_renders_in_all_three_themes_with_0_contrast_failures_li
         - vcard:sty-03:no_dom_or_handler_changed_the_freeze_s_tag_index_count_compariso
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-04-colour-convergence-index
+  - handle: urn:mcard:handle:docs:sprints:programs:sty:sprint-sty-04-colour-convergence-index
     card_type: pcard
     archetype: ClmTriadManifest
     code: STY-04
@@ -2942,7 +2971,7 @@ sprints:
         - vcard:sty-04:the_visual_hierarchy_is_preserved_not_flattened_hue_identity_is_
         - vcard:sty-04:the_layout_freeze_passes_at_every_swept_viewport_30_30
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-05-contrast-remediation
+  - handle: urn:mcard:handle:docs:sprints:programs:sty:sprint-sty-05-contrast-remediation
     card_type: pcard
     archetype: ClmTriadManifest
     code: STY-05
@@ -2956,7 +2985,7 @@ sprints:
         - vcard:sty-05:the_contrast_gate_fails_on_a_new_violation_and_passes_a_valid_pa
         - vcard:sty-05:every_confirmed_failure_from_the_classified_baseline_is_cleared_
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-06-theme-completeness
+  - handle: urn:mcard:handle:docs:sprints:programs:sty:sprint-sty-06-theme-completeness
     card_type: pcard
     archetype: ClmTriadManifest
     code: STY-06
@@ -2971,7 +3000,7 @@ sprints:
         - vcard:sty-06:the_component_surfaces_are_theme_adaptive_and_measured_the_deplo
         - vcard:sty-06:no_page_is_outside_the_token_layer_every_page_paints_from_a_decl
       state: sealed
-  - handle: urn:clm:handle:docs:sprints:programs:sty:sprint-sty-07-configurability-surface-and-gate
+  - handle: urn:mcard:handle:docs:sprints:programs:sty:sprint-sty-07-configurability-surface-and-gate
     card_type: pcard
     archetype: ClmTriadManifest
     code: STY-07
