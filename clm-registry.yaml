@@ -2283,7 +2283,7 @@ sprints:
         - vcard:orc-16:exclusion_is_load_bearing_adding_a_retired_root_back_to_the_name
         - vcard:orc-16:ingestion_is_idempotent_re_running_adds_no_card_and_no_new_handl
         - vcard:orc-16:nothing_was_rewritten_the_sha_256_of_every_file_under_every_decl
-        - vcard:orc-16:the_receiving_tape_is_declared_the_hub_s_platform_content_tape_i
+        - vcard:orc-16:the_receiving_tape_is_declared_registry_tape_profile_json_names_
         - vcard:orc-16:the_budget_is_stated_each_root_reports_file_count_total_bytes_la
         - vcard:orc-16:no_regression_make_orc_gate_still_passes_and_the_layer3_suite_st
         - vcard:orc-16:the_collection_and_its_index_are_cards_inv_tape_06_each_ingested
@@ -2294,14 +2294,15 @@ sprints:
     code: ORC-17
     title: "Sprint ORC-17: The Hub Is a Node \u2014 a Manifest and One Config"
     dod:
-      total: 7
+      total: 8
       vcard_refs:
         - vcard:orc-17:the_hub_describes_itself_root_mcard_yaml_declares_role_archetype
         - vcard:orc-17:the_submodule_handles_resolve_each_declared_handle_names_a_real_
-        - vcard:orc-17:one_topology_exactly_one_declaration_of_the_tape_paths_or_two_wi
+        - vcard:orc-17:one_topology_the_tape_paths_are_declared_in_exactly_one_config_a
         - vcard:orc-17:every_declared_path_exists_the_checker_opens_each_declared_tape_
-        - vcard:orc-17:placeholders_are_reported_a_placeholder_host_or_contact_in_a_ser
-        - vcard:orc-17:the_manifest_agrees_with_the_gate_the_invariants_the_hub_claims_
+        - vcard:orc-17:a_placeholder_host_is_reported_a_served_config_containing_exampl
+        - vcard:orc-17:a_placeholder_contact_is_reported_a_served_config_with_an_empty_
+        - vcard:orc-17:the_manifest_agrees_with_the_gate_every_invariant_root_mcard_yam
         - vcard:orc-17:no_regression_make_check_paths_make_orc_gate_and_the_layer3_suit
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-18-fourth-tape-and-node-identity
@@ -2315,7 +2316,7 @@ sprints:
         - vcard:orc-18:the_fourth_tape_exists_clm_db_routing_mesh_db_carries_the_canoni
         - vcard:orc-18:the_profile_records_four_registry_tape_profile_json_names_a_rout
         - vcard:orc-18:the_node_has_a_did_a_did_key_identity_is_registered_with_its_pub
-        - vcard:orc-18:mesh_event_persisted_as_card_sealing_a_transition_writes_exactly
+        - vcard:orc-18:a_mesh_event_is_one_card_sealing_a_transition_adds_exactly_one_r
         - vcard:orc-18:the_clock_is_a_clock_vector_clock_increments_per_node_and_merges
         - vcard:orc-18:the_kernel_can_read_what_the_platform_wrote_load_learning_events
         - vcard:orc-18:the_clock_is_the_published_one_vectorclock_is_imported_from_clm_
@@ -2333,7 +2334,7 @@ sprints:
         - vcard:orc-19:they_start_divergent_the_check_asserts_non_convergence_before_th
         - vcard:orc-19:content_unions_after_the_exchange_each_node_s_card_set_equals_th
         - vcard:orc-19:clocks_agree_the_vector_clocks_are_equal_after_the_exchange_and_
-        - vcard:orc-19:causality_holds_across_nodes_happened_before_and_is_concurrent_w
+        - vcard:orc-19:causality_holds_across_nodes_the_published_vectorclock_reports_b
         - vcard:orc-19:a_partition_heals_nodes_diverged_while_apart_converge_on_reconne
         - vcard:orc-19:the_exchange_is_recorded_the_routing_tape_holds_rows_naming_both
         - vcard:orc-19:the_check_has_teeth_a_node_that_does_not_sync_fails_verified_by_
@@ -2348,13 +2349,13 @@ sprints:
     dod:
       total: 8
       vcard_refs:
-        - vcard:orc-20:all_three_declare_knowledge_each_manifest_carries_a_knowledge_se
-        - vcard:orc-20:no_wildcards_a_contract_entry_naming_any_or_an_empty_list_fails_
+        - vcard:orc-20:all_three_declare_knowledge_each_submodule_s_mcard_yaml_carries_
+        - vcard:orc-20:no_wildcards_a_contract_entry_whose_produces_names_fails_the_che
         - vcard:orc-20:declared_matches_actual_every_declared_consumption_is_observed_i
         - vcard:orc-20:undeclared_reads_are_caught_reading_a_root_no_contract_declares_
         - vcard:orc-20:stale_declarations_are_caught_a_declared_root_the_code_never_rea
         - vcard:orc-20:totality_carries_across_every_card_type_the_kernel_produces_is_c
-        - vcard:orc-20:three_sandwiches_three_witnesses_each_submodule_s_contract_chang
+        - vcard:orc-20:three_sandwiches_three_witnesses_verify_chain_py_reports_one_sea
         - vcard:orc-20:no_regression_make_orc_gate_passes_and_each_submodule_s_own_suit
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-21-personal-vault-as-source
@@ -2369,8 +2370,8 @@ sprints:
         - vcard:orc-21:ingested_with_handles_every_file_in_the_vault_has_a_card_and_a_h
         - vcard:orc-21:provenance_is_recorded_each_vault_card_names_its_source_path_con
         - vcard:orc-21:the_env_override_wins_setting_knowledge_vault_to_a_different_dir
-        - vcard:orc-21:absence_is_reported_a_missing_unreadable_or_empty_vault_is_print
-        - vcard:orc-21:it_is_not_repo_bound_a_vault_outside_the_repository_is_ingested_
+        - vcard:orc-21:absence_is_reported_a_vault_path_that_does_not_exist_is_printed_
+        - vcard:orc-21:it_is_not_repo_bound_ingesting_a_vault_outside_the_repository_yi
         - vcard:orc-21:re_ingestion_is_revision_tracking_changing_one_vault_file_adds_e
         - vcard:orc-21:no_regression_make_orc_gate_passes_and_orc_16_s_repository_inges
         - vcard:orc-21:the_vault_index_is_one_card_inv_tape_06_the_external_container_s
@@ -2404,7 +2405,7 @@ sprints:
         - vcard:orc-23:card_table_contains_strictly_3_columns_hash_content_g_time_inv_t
         - vcard:orc-23:no_card_type_column_exists_on_card_not_the_column_not_its_check_
         - vcard:orc-23:type_detection_is_owned_by_clm_kernel_kindof_handle_exists_in_th
-        - vcard:orc-23:no_consumer_stores_a_kind_no_card_type_shaped_column_field_or_ca
+        - vcard:orc-23:no_consumer_stores_a_kind_check_tape_invariant_py_reports_three_
         - vcard:orc-23:no_auxiliary_tables_card_tombstone_learning_event_documents_clm_
         - vcard:orc-23:confirmed_that_content_memory_db_agent_identities_db_and_executi
         - vcard:orc-23:sqlite_test_database_initializes_cleanly_from_schema_mcard_schem
@@ -2420,10 +2421,10 @@ sprints:
     dod:
       total: 5
       vcard_refs:
-        - vcard:orc-24:registry_handle_taxonomy_yaml_authored_specifying_all_handle_sch
-        - vcard:orc-24:specification_docs_spec_universal_handle_namespace_md_authored_d
-        - vcard:orc-24:proven_that_agent_identities_db_and_execution_log_db_require_zer
-        - vcard:orc-24:universal_tri_table_driver_specification_documented_for_polyglot
+        - vcard:orc-24:the_taxonomy_is_complete_registry_handle_taxonomy_yaml_declares_
+        - vcard:orc-24:the_grammar_and_calculus_are_declared_registry_handle_taxonomy_y
+        - vcard:orc-24:the_identity_and_execution_tapes_carry_zero_custom_tables_pragma
+        - vcard:orc-24:the_driver_is_specified_once_the_ownership_block_names_the_singl
         - vcard:orc-24:the_taxonomy_is_declared_here_and_implemented_in_clm_kernel_the_
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-25-conformance-gate-and-tooling-decoupling
@@ -2434,11 +2435,11 @@ sprints:
     dod:
       total: 7
       vcard_refs:
-        - vcard:orc-25:scripts_ci_check_schema_conformance_py_audits_all_declared_tapes
-        - vcard:orc-25:any_auxiliary_table_across_any_tape_is_flagged_as_a_fatal_error
-        - vcard:orc-25:scripts_ci_check_orchestration_py_stage_1_validates_namespace_ba
-        - vcard:orc-25:negative_controls_verify_rejection_of_custom_tables_and_extra_co
-        - vcard:orc-25:conformance_gate_exits_with_code_0_on_the_reconciled_substrate
+        - vcard:orc-25:every_declared_tape_is_audited_check_schema_conformance_py_repor
+        - vcard:orc-25:an_auxiliary_table_is_fatal_injecting_a_fourth_table_into_a_copy
+        - vcard:orc-25:stage_namespace_validates_the_namespace_it_fails_when_a_handle_p
+        - vcard:orc-25:the_controls_reject_a_fourth_table_and_a_fourth_column_check_orc
+        - vcard:orc-25:the_gate_exits_0_on_the_reconciled_substrate_make_orc_schema_ret
         - vcard:orc-25:a_re_introduced_kind_column_fails_the_gate_adding_card_type_or_a
         - vcard:orc-25:the_absence_and_the_delegation_are_asserted_together_card_carrie
       state: sealed
@@ -2450,13 +2451,13 @@ sprints:
     dod:
       total: 10
       vcard_refs:
-        - vcard:orc-26:migration_script_scripts_orc_migrate_substrate_to_turing_tapes_p
-        - vcard:orc-26:clm_db_content_memory_db_rebuilt_to_strictly_3_tables_card_havin
-        - vcard:orc-26:clm_db_agent_identities_db_rebuilt_to_strictly_3_tables_card_hav
-        - vcard:orc-26:clm_db_execution_log_db_rebuilt_to_strictly_3_tables_card_having
-        - vcard:orc-26:zero_auxiliary_tables_exist_across_any_of_the_three_deployed_dat
-        - vcard:orc-26:cryptographic_checksum_verification_script_confirms_100_of_card_
-        - vcard:orc-26:all_three_tapes_pass_verify_tape_homogeneity_in_check_schema_con
+        - vcard:orc-26:the_migration_is_idempotent_and_self_tested_scripts_orc_migrate_
+        - vcard:orc-26:content_memory_db_is_the_triad_it_carries_exactly_card_handle_re
+        - vcard:orc-26:agent_identities_db_is_the_triad_it_carries_exactly_card_handle_
+        - vcard:orc-26:execution_log_db_is_the_triad_it_carries_exactly_card_handle_reg
+        - vcard:orc-26:zero_auxiliary_tables_no_tape_reports_an_extra_tables_entry_veri
+        - vcard:orc-26:no_card_is_lost_every_pre_migration_card_hash_is_present_after_t
+        - vcard:orc-26:all_three_tapes_pass_the_homogeneity_check_make_orc_schema_repor
         - vcard:orc-26:no_column_is_dropped_without_its_information_re_homed_every_chan
         - vcard:orc-26:each_lifecycle_sidecar_is_one_card_inv_tape_06_the_sidecar_is_ha
         - vcard:orc-26:each_sidecar_is_one_card_inv_tape_06_every_lifecycle_sidecar_the
@@ -2474,9 +2475,9 @@ sprints:
         - vcard:orc-27:clm_schema_mcard_schema_sql
         - vcard:orc-27:clm_types_schemas_mcard_schema_sql
         - vcard:orc-27:mcard_studio_docs_schema_mcard_schema_sql
-        - vcard:orc-27:rust_pyo3_sqlite_migration_code_in_clm_rust_core_creates_strictl
-        - vcard:orc-27:typescript_and_javascript_vfs_storage_backends_pass_all_unit_and
-        - vcard:orc-27:scripts_ci_check_invariants_py_passes_15_15_invariants
+        - vcard:orc-27:the_rust_producer_deploys_the_same_three_columns_a_tape_built_by
+        - vcard:orc-27:the_typescript_vfs_passes_against_the_triad_its_suite_runs_green
+        - vcard:orc-27:the_estate_invariants_hold_python3_scripts_ci_check_development_
         - vcard:orc-27:make_check_boundaries_passes_24_24_architectural_layer_boundary_
         - vcard:orc-27:make_orc_gate_passes_8_8_stages_and_8_8_negative_controls
         - vcard:orc-27:kindof_is_one_function_with_three_bindings_python_rust_and_types
@@ -2497,7 +2498,7 @@ sprints:
         - vcard:orc-28:the_gate_enforces_it_make_orc_gate_stage_namespace_invokes_the_m
         - vcard:orc-28:the_record_is_deterministic_two_consecutive_runs_of_node_scripts
         - vcard:orc-28:the_honest_reading_is_preserved_the_dod_above_is_not_a_claim_tha
-        - vcard:orc-28:the_debt_reaches_0_owned_by_orc_23_and_orc_26_this_item_is_the_h
+        - vcard:orc-28:the_debt_is_0_check_tape_invariant_py_reports_debt_0_with_every_
         - vcard:orc-28:the_measured_debt_is_one_card_inv_tape_06_registry_tape_invarian
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-29-nested-tapes-are-cards
