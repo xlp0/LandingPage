@@ -2433,12 +2433,13 @@ sprints:
     code: ORC-25
     title: 'Sprint ORC-25: Conformance Gate & Tooling Decoupling'
     dod:
-      total: 7
+      total: 8
       vcard_refs:
         - vcard:orc-25:every_declared_tape_is_audited_check_schema_conformance_py_repor
         - vcard:orc-25:an_auxiliary_table_is_fatal_injecting_a_fourth_table_into_a_copy
         - vcard:orc-25:stage_namespace_validates_the_namespace_it_fails_when_a_handle_p
-        - vcard:orc-25:the_controls_reject_a_fourth_table_and_a_fourth_column_check_orc
+        - vcard:orc-25:a_fourth_column_is_fatal_injecting_a_fourth_column_into_a_copy_o
+        - vcard:orc-25:a_control_injects_a_fourth_column_check_orchestration_py_control
         - vcard:orc-25:the_gate_exits_0_on_the_reconciled_substrate_make_orc_schema_ret
         - vcard:orc-25:a_re_introduced_kind_column_fails_the_gate_adding_card_type_or_a
         - vcard:orc-25:the_absence_and_the_delegation_are_asserted_together_card_carrie
