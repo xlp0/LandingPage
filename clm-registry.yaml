@@ -1954,13 +1954,14 @@ sprints:
     code: SYNC-01
     title: 'Sprint SYNC-01: The Gap Is the Gate'
     dod:
-      total: 5
+      total: 6
       vcard_refs:
         - vcard:sync-01:the_matrix_is_committed_and_current_docs_specifications_usg_pari
         - vcard:sync-01:the_battery_runs_in_the_release_pre_flight_the_0_0_3_release_gui
         - vcard:sync-01:every_divergence_has_an_owner_each_divergent_command_in_the_matr
         - vcard:sync-01:the_ratchet_is_green_before_the_work_starts_test_convergence_is_
         - vcard:sync-01:the_battery_is_honest_about_being_red_running_it_reports_the_div
+        - vcard:sync-01:parity_mutator_clean_reversion_inv_sync_06b_running_mutation_con
       state: sealed
   - handle: urn:mcard:pcard:sprint:SYNC-02
     card_type: pcard
@@ -1982,13 +1983,14 @@ sprints:
     code: SYNC-03
     title: 'Sprint SYNC-03: One Invariant Set'
     dod:
-      total: 5
+      total: 6
       vcard_refs:
         - vcard:sync-03:one_set_three_runtimes_the_data_checks_key_set_is_identical_on_p
         - vcard:sync-03:the_set_is_declared_once_exactly_one_artifact_enumerates_the_can
         - vcard:sync-03:no_invariant_silently_disappeared_every_key_present_before_the_c
         - vcard:sync-03:the_parity_subset_rises_check_usg_conformance_py_reports_check_c
         - vcard:sync-03:a_failing_invariant_still_fails_injecting_a_violated_invariant_m
+        - vcard:sync-03:order_independence_and_living_schema_controls_inv_sync_06a_check
       state: sealed
   - handle: urn:mcard:pcard:sprint:SYNC-04
     card_type: pcard
@@ -2010,13 +2012,14 @@ sprints:
     code: SYNC-05
     title: 'Sprint SYNC-05: The Artifact Carries the Grammar'
     dod:
-      total: 5
+      total: 6
       vcard_refs:
         - vcard:sync-05:the_built_artifact_declares_every_hub_kind_check_handle_kind_py_
         - vcard:sync-05:the_three_runtimes_agree_on_the_source_the_hub_kernel_drift_chec
         - vcard:sync-05:a_consumer_resolves_the_new_kinds_from_a_clean_install_kindof_re
         - vcard:sync-05:the_161_handles_resolve_the_registered_asset_handles_report_a_de
         - vcard:sync-05:the_battery_is_green_for_the_right_reason_it_went_green_because_
+        - vcard:sync-05:zero_mutation_leftovers_across_triad_trees_inv_sync_06b_running_
       state: sealed
   - handle: urn:mcard:pcard:sprint:SYNC-06
     card_type: pcard
@@ -2024,11 +2027,12 @@ sprints:
     code: SYNC-06
     title: 'Sprint SYNC-06: The Release Is Reproducible, and It Ships'
     dod:
-      total: 7
+      total: 8
       vcard_refs:
         - vcard:sync-06:dist_is_cleaned_before_packing_the_build_removes_prior_output_so
         - vcard:sync-06:prepack_makes_a_stale_publish_impossible_npm_publish_rebuilds_be
         - vcard:sync-06:the_release_guide_exists_and_is_executable_every_pre_flight_bloc
+        - vcard:sync-06:zero_mutation_leftovers_in_release_build_inv_sync_06b_running_al
         - vcard:sync-06:the_tarball_is_the_build_of_its_commit_a_clean_rebuild_from_the_
         - vcard:sync-06:no_stale_build_output_ships_the_packed_file_list_contains_no_fil
         - vcard:sync-06:the_consumer_can_use_the_release_from_a_clean_directory_npm_inst
