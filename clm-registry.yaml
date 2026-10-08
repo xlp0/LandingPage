@@ -2385,7 +2385,7 @@ sprints:
     code: ORC-23
     title: 'Sprint ORC-23: Pristine Monadic Core Restoration'
     dod:
-      total: 9
+      total: 11
       vcard_refs:
         - vcard:orc-23:schema_mcard_schema_sql_contains_exactly_3_create_table_statemen
         - vcard:orc-23:card_table_contains_strictly_3_columns_hash_content_g_time_inv_t
@@ -2395,7 +2395,9 @@ sprints:
         - vcard:orc-23:no_auxiliary_tables_card_tombstone_learning_event_documents_clm_
         - vcard:orc-23:confirmed_that_content_memory_db_agent_identities_db_and_executi
         - vcard:orc-23:sqlite_test_database_initializes_cleanly_from_schema_mcard_schem
-        - vcard:orc-23:the_column_count_decision_is_recorded_the_sprint_proceeds_on_inv
+        - vcard:orc-23:three_columns_on_every_table_card_3_handle_registry_3_handle_his
+        - vcard:orc-23:handle_registry_created_at_and_handle_history_id_are_gone_creati
+        - vcard:orc-23:change_type_is_gone_and_the_guarantee_is_kept_inv_tape_04_is_ame
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-24-universal-handle-namespace-and-history
     card_type: pcard
@@ -2433,7 +2435,7 @@ sprints:
     code: ORC-26
     title: 'Sprint ORC-26: Substrate & Tape Reconciliation'
     dod:
-      total: 7
+      total: 8
       vcard_refs:
         - vcard:orc-26:migration_script_scripts_orc_migrate_substrate_to_turing_tapes_p
         - vcard:orc-26:clm_db_content_memory_db_rebuilt_to_strictly_3_tables_card_havin
@@ -2442,6 +2444,7 @@ sprints:
         - vcard:orc-26:zero_auxiliary_tables_exist_across_any_of_the_three_deployed_dat
         - vcard:orc-26:cryptographic_checksum_verification_script_confirms_100_of_card_
         - vcard:orc-26:all_three_tapes_pass_verify_tape_homogeneity_in_check_schema_con
+        - vcard:orc-26:no_column_is_dropped_without_its_information_re_homed_every_chan
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-27-polyglot-estate-synchronization
     card_type: pcard
