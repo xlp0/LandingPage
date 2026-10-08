@@ -2049,6 +2049,20 @@ sprints:
         - vcard:exp-07:a_wasm_binding_of_the_triad_the_cause_is_measured_cargo_build_li
         - vcard:exp-07:clmeval_conformance_opens_the_second_door_not_done_and_recorded_
       state: sealed
+  - handle: urn:mcard:handle:docs:sprints:_active:sprint-py-01-python-layer-triad-migration
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PY-01
+    title: 'Sprint PY-01: The Python Layer''s Triad Migration'
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:py-01:the_python_layer_no_longer_names_a_removed_table_zero_references
+        - vcard:py-01:the_suite_is_no_worse_than_the_baseline_at_every_step_the_failur
+        - vcard:py-01:the_two_schema_copies_match_the_canonical_check_schema_copies_pa
+        - vcard:py-01:table_layers_declares_the_triad_and_only_the_triad_verified_by_r
+        - vcard:py-01:the_tests_that_encoded_the_old_schema_are_migrated_not_deleted_t
+      state: sealed
   - handle: urn:mcard:handle:docs:sprints:programs:cdo:sprint-cdo-01-development-lifecycle-cpn-specification
     card_type: pcard
     archetype: ClmTriadManifest
