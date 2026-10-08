@@ -2353,7 +2353,7 @@ sprints:
     code: ORC-20
     title: 'Sprint ORC-20: Knowledge Contracts Between Submodules'
     dod:
-      total: 8
+      total: 10
       vcard_refs:
         - vcard:orc-20:all_three_declare_knowledge_each_submodule_s_mcard_yaml_carries_
         - vcard:orc-20:no_wildcards_a_contract_entry_whose_produces_names_fails_the_che
@@ -2362,6 +2362,8 @@ sprints:
         - vcard:orc-20:stale_declarations_are_caught_a_declared_root_the_code_never_rea
         - vcard:orc-20:totality_carries_across_every_card_type_the_kernel_produces_is_c
         - vcard:orc-20:three_sandwiches_three_witnesses_verify_chain_py_reports_one_sea
+        - vcard:orc-20:scripts_orc_seal_witness_py_could_not_seal_it_inserted_into_exec
+        - vcard:orc-20:the_loop_reported_sealed_when_sealing_failed_the_verdict_depende
         - vcard:orc-20:no_regression_make_orc_gate_passes_and_each_submodule_s_own_suit
       state: sealed
   - handle: urn:clm:handle:docs:sprints:_active:sprint-orc-21-personal-vault-as-source
