@@ -1958,7 +1958,7 @@ sprints:
       vcard_refs:
         - vcard:sync-01:the_matrix_is_committed_and_current_docs_specifications_usg_pari
         - vcard:sync-01:the_battery_runs_in_the_release_pre_flight_the_0_0_3_release_gui
-        - vcard:sync-01:every_divergence_has_an_owner_each_divergent_command_runtime_pai
+        - vcard:sync-01:every_divergence_has_an_owner_each_divergent_command_in_the_matr
         - vcard:sync-01:the_ratchet_is_green_before_the_work_starts_test_convergence_is_
         - vcard:sync-01:the_battery_is_honest_about_being_red_running_it_reports_the_div
       state: sealed
