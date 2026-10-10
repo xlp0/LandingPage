@@ -1971,10 +1971,10 @@ sprints:
     dod:
       total: 5
       vcard_refs:
-        - vcard:col-02:the_cpn_fixture_remains_exact_five_fires_one_committed_marking_o
+        - vcard:col-02:the_cpn_fixture_remains_exact_the_declared_net_fires_5_times_end
         - vcard:col-02:composition_respects_declared_topology_sequential_output_hashes_
-        - vcard:col-02:the_studio_projection_preserves_identity_source_output_hashes_an
-        - vcard:col-02:the_local_dispatcher_is_not_mistaken_for_proof_simulated_output_
+        - vcard:col-02:the_studio_projection_preserves_identity_col_s_half_is_met_tests
+        - vcard:col-02:the_local_dispatcher_is_not_mistaken_for_proof_simulated_dispatc
         - vcard:col-02:failure_is_zero_promotion_negative_postcondition_leaves_the_comm
       state: sealed
   - handle: urn:mcard:pcard:sprint:COL-03
