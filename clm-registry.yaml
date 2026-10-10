@@ -1987,9 +1987,9 @@ sprints:
       vcard_refs:
         - vcard:col-03:three_runtime_positive_vector_agrees_all_3_declared_runtimes_exi
         - vcard:col-03:negative_vector_is_rejected_on_every_declared_runtime_each_retur
-        - vcard:col-03:witness_binds_the_lineage_a_pcard_input_output_hashes_before_aft
+        - vcard:col-03:witness_binds_the_lineage_runtime_command_exit_duration_normaliz
         - vcard:col-03:studio_displays_rather_than_forges_proof_a_studio_verified_view_
-        - vcard:col-03:failure_preserves_history_without_leaking_output_pre_post_commit
+        - vcard:col-03:failure_preserves_history_without_leaking_output_the_failed_vect
       state: sealed
   - handle: urn:mcard:pcard:sprint:COL-04
     card_type: pcard
