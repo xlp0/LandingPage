@@ -1973,7 +1973,7 @@ sprints:
       vcard_refs:
         - vcard:col-02:the_cpn_fixture_remains_exact_the_declared_net_fires_5_times_end
         - vcard:col-02:composition_respects_declared_topology_sequential_output_hashes_
-        - vcard:col-02:the_studio_projection_preserves_identity_col_s_half_is_met_tests
+        - vcard:col-02:the_studio_projection_preserves_identity_col_s_half_is_met_by_te
         - vcard:col-02:the_local_dispatcher_is_not_mistaken_for_proof_simulated_dispatc
         - vcard:col-02:failure_is_zero_promotion_negative_postcondition_leaves_the_comm
       state: sealed
@@ -3512,9 +3512,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: 55a7203f6297905e4734f61a90caa885548f57cc1d293975759037d463c8abd2
-  projection_sha256: 8caf170d7b597421801ef0898f068213b52eb578c0782a29f36529ad78e195a2
+  source_sha256: 7c2b42073db09b45ce87c4605d067a364836a6b9ea032c3ed415713a7b359bc4
+  projection_sha256: 1f9caab8acec181695410605bd1c2829fab8fb6bab25af0e1befc18a0a7473b3
   kernel_version: 0.0.3
-  landing_page_commit: b7b0e7a3778c884369e5c6a91a16d39348984ab8
+  landing_page_commit: fedeaa8b9e1f32901297e4b08df2e21c96246701
   sprint_count: 136
   unresolved_trace_refs: 0
