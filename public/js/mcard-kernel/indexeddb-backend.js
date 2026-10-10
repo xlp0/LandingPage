@@ -6,9 +6,8 @@
  * path and write-throughs to IndexedDB; `init()` hydrates the mirror from disk.
  * It replaces the former `IndexedDBEngine` from the removed mcard-js package.
  */
-import { MCard, ContentHash, Handle } from 'clm-kernel';
-
-const DB_NAME_DEFAULT = 'mcard-storage';
+import { MCard, ContentHash } from './compat.js';
+export class Handle { constructor(name) { this.name = name; } }
 const DB_VERSION = 1;
 const STORE_CARDS = 'cards';
 const STORE_HANDLES = 'handles';
@@ -219,4 +218,4 @@ export class IndexedDBBackend {
   }
 }
 
-export { ContentHash, Handle };
+export { ContentHash };

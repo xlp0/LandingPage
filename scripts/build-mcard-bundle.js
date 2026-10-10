@@ -3,9 +3,9 @@
  * Builds the browser bundle for the published clm-kernel (INV-CDO-33).
  *
  * The kernel's ESM entry imports Node built-ins unconditionally (`crypto`, `fs`,
- * `module`, `path`, `events`, `http`, `dgram`), so it cannot be bundled for the
- * browser as shipped. This script uses esbuild's JS API with a resolve plugin
- * that maps each built-in to a browser shim under
+ * `module`, `path`, `events`, `http`, `dgram`, `zlib`, `https`, `url`), so it
+ * cannot be bundled for the browser as shipped. This script uses esbuild's JS API
+ * with a resolve plugin that maps each built-in to a browser shim under
  * public/js/mcard-kernel/node-shims/. `--alias` cannot express this because it
  * maps package names, not file paths.
  *
@@ -22,7 +22,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '..');
 const shimDir = join(root, 'public', 'js', 'mcard-kernel', 'node-shims');
 
-const NODE_BUILTINS = ['crypto', 'fs', 'module', 'path', 'events', 'http', 'dgram'];
+const NODE_BUILTINS = ['crypto', 'fs', 'module', 'path', 'events', 'http', 'dgram', 'zlib', 'https', 'url'];
 
 const shimPlugin = {
   name: 'node-builtin-shims',
@@ -39,7 +39,7 @@ await build({
   bundle: true,
   format: 'esm',
   platform: 'browser',
-  outfile: join(root, 'public', 'js', 'vendor', 'clm-kernel.bundle.js'),
+  outfile: join(root, 'public', 'js', 'vendor', 'mcard-bundle.js'),
   plugins: [shimPlugin],
   // `Buffer` is a Node *global*, not an import, so a resolve plugin cannot catch
   // it. esbuild's inject replaces the free reference instead.

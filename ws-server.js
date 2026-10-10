@@ -1,6 +1,6 @@
 /**
  * PKC WebSocket Gateway Server (ESM)
- * ESM server; MCard functionality comes from the published clm-kernel (INV-CDO-33)
+ * ESM server; Neutral MCard dataset and room coordination server (INV-PKG-10, INV-PKG-11).
  */
 
 import express from 'express';
@@ -129,7 +129,7 @@ function startServer(options = {}) {
         console.log(`WebSocket endpoint: ws://${HOST}:${PORT}/ws/`);
         console.log(`Connected clients: ${connectedClients.size}`);
         console.log(`[Server] 📡 Periodic room list broadcast enabled (every 5 seconds)`);
-        console.log(`[Server] ✅ MCard API enabled via published clm-kernel`);
+        console.log(`[Server] ✅ MCard API enabled via neutral SQLite dataset engine`);
 
         if (options.onStart) options.onStart();
     });
@@ -291,7 +291,7 @@ app.get('/health', (req, res) => {
         version: process.env.npm_package_version || 'unknown',
         uptime: process.uptime(),
         // ...
-        mcard: { enabled: true, library: 'clm-kernel@0.0.1' }
+        mcard: { enabled: true, engine: 'neutral-sqlite-cas' }
     });
 });
 

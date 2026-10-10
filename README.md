@@ -665,6 +665,55 @@ This project is provided as-is for exploring PKC design concepts and serverless 
 
 ---
 
+## 📦 **Neutral Dataset Supplier & Format-Level Contract (`INV-PKG-10`, `INV-PKG-11`)**
+
+> **Role**: Independent Corpus & Dataset Supplier (Contract Version `1.0.0`)  
+> **Invariants**: `INV-PKG-10` (Zero Engine/Runtime Coupling), `INV-PKG-11` (Format-Level G-Set SQLite Contract)
+
+`LandingPage` operates as an **independent corpus producer**. It declares zero runtime dependencies on `clm-kernel`, `mcard-studio`, or any consumer runtime. All emitted knowledge datasets (`*.mcard.db`) conform strictly to the neutral format-level SQLite specification:
+
+### **1. MCard G-Set SQLite Schema (`*.mcard.db`)**
+```sql
+-- Core Content-Addressed MCard Table
+CREATE TABLE IF NOT EXISTS mcards (
+    hash TEXT PRIMARY KEY NOT NULL,        -- SHA-256 multihash
+    schema_version TEXT NOT NULL,          -- e.g. "1.0.0"
+    created_at INTEGER NOT NULL,           -- Unix timestamp (ms)
+    mime_type TEXT NOT NULL,               -- e.g. "text/markdown", "application/json"
+    author_did TEXT NOT NULL,              -- e.g. "did:key:z6Mku..."
+    payload_hash TEXT NOT NULL,            -- Hash of the raw blob
+    metadata_json TEXT,                    -- JSON string with metadata
+    sequence INTEGER NOT NULL DEFAULT 0,   -- Monotonic sequence number
+    uri TEXT                               -- Universal Resource Identifier
+);
+
+-- Monotonic Append-Only Blobs Table
+CREATE TABLE IF NOT EXISTS blobs (
+    payload_hash TEXT PRIMARY KEY NOT NULL,
+    size_bytes INTEGER NOT NULL,
+    data BLOB NOT NULL
+);
+
+-- Handle Registry (Mutable Pointers to Immutable Hashes)
+CREATE TABLE IF NOT EXISTS handle_registry (
+    handle TEXT PRIMARY KEY NOT NULL,
+    current_hash TEXT NOT NULL,
+    updated_at INTEGER NOT NULL
+);
+
+-- Directed Relations / Edges
+CREATE TABLE IF NOT EXISTS relations (
+    source_hash TEXT NOT NULL,
+    predicate TEXT NOT NULL,
+    target_hash TEXT NOT NULL,
+    PRIMARY KEY (source_hash, predicate, target_hash)
+);
+```
+
+Consumers (such as `mcard-studio`, CLI tools, or external platforms) ingest emitted datasets using standard SQLite queries without importing `LandingPage` source code.
+
+---
+
 ## 🐛 **Recent Bug Fixes**
 
 ### **October 2026**

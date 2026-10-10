@@ -49,7 +49,7 @@
     <button onclick="window.location.href='mcard-manager.html'">Go to MCard Manager</button>
 
     <script type="module">
-        import { MCard, IndexedDBEngine, CardCollection } from 'clm-kernel';
+        import { MCard, IndexedDBEngine, CardCollection } from './js/mcard-kernel/bundle-entry.js';
         
         window.createLatexCard = async function() {
             const statusDiv = document.getElementById('status');

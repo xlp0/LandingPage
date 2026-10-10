@@ -25,8 +25,7 @@
       'redux-thunk': `${vendorPath}/redux/redux-thunk-esm.js`,
       'immer': `${vendorPath}/redux/immer-esm.js`,
       'reselect': `${vendorPath}/redux/reselect-esm.js`,
-      '@reduxjs/toolkit': `${vendorPath}/redux/toolkit.esm.js`,
-      'clm-kernel': `${baseUrl}/js/vendor/clm-kernel.bundle.js`
+      '@reduxjs/toolkit': `${vendorPath}/redux/toolkit.esm.js`
     }
   };
 

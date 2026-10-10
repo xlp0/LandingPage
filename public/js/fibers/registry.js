@@ -20,7 +20,7 @@
  * callback's `guard.disposables` is the *savepoint rollback* list and is NOT
  * unwound by a successful unload — registering there leaks silently.
  */
-import { FiberLifecycle } from 'clm-kernel';
+import { FiberLifecycle } from './fiber-lifecycle.js';
 // the module namespace is itself an adapter (kind, coeffects, mount)
 import * as fallbackAdapter from './adapters/fallback.js';
 

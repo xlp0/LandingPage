@@ -44,4 +44,4 @@ export { Context, Service } from 'cordis';
  * dispatcher mounts every fiber through it, so the bundle must carry the exact
  * class the kernel uses rather than a second copy.
  */
-export { FiberLifecycle } from 'clm-kernel';
+export { FiberLifecycle } from '../fibers/fiber-lifecycle.js';

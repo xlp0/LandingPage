@@ -146,7 +146,7 @@ window.saveEditedCard = async () => {
   try {
     if (mode === 'create') {
       // Create new card
-      const { MCard } = await import('clm-kernel');
+      const { MCard } = await import('./mcard-kernel/compat.js');
       const card = await MCard.create(content);
       await manager.collection.add(card);
 
@@ -165,7 +165,7 @@ window.saveEditedCard = async () => {
 
     } else if (mode === 'edit') {
       // Update existing card - use updateHandle API
-      const { MCard } = await import('clm-kernel');
+      const { MCard } = await import('./mcard-kernel/compat.js');
       const newCard = await MCard.create(content);
       await manager.collection.add(newCard);
 

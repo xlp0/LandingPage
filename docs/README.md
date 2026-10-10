@@ -1,7 +1,26 @@
 # 📚 Documentation Structure Guide
 
-> **Last Updated:** December 11, 2025  
+> **Last Updated:** October 2026  
 > **Status:** Organized & Documented
+
+## 🌟 Authoritative Functional Specifications
+
+> For the comprehensive, extracted functional documentation library covering all systems of the platform, see:  
+> 📖 [**Functional Specifications Library (`docs/functionalities/`)**](functionalities/README.md)
+>
+> - [00. Master Overview & Architecture Map](functionalities/00-OVERVIEW-AND-FUNCTIONALITY-MAP.md)
+> - [01. Mission Control & MCard Management](functionalities/01-MISSION-CONTROL-AND-MCARD-MANAGEMENT.md)
+> - [02. Polymorphic Content Rendering Pipeline](functionalities/02-POLYMORPHIC-CONTENT-RENDERING-PIPELINE.md)
+> - [03. Cubical Logic Model (CLM) & Fiber Correctness](functionalities/03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md)
+> - [04. WebRTC P2P Mesh & Real-Time Collaboration](functionalities/04-WEBRTC-P2P-MESH-AND-REALTIME-COLLABORATION.md)
+> - [05. Real-Time Multiplayer Board Games](functionalities/05-REALTIME-MULTIPLAYER-BOARD-GAMES.md)
+> - [06. Authentication & Identity System (Zitadel OIDC)](functionalities/06-AUTHENTICATION-AND-IDENTITY-SYSTEM.md)
+> - [07. In-Browser AI & WebLLM Runtime](functionalities/07-IN-BROWSER-AI-AND-WEB-LLM-RUNTIME.md)
+> - [08. Observability, Lagrangian Mechanics & Telemetry](functionalities/08-OBSERVABILITY-LAGRANGIAN-AND-TELEMETRY.md)
+> - [09. Responsive UI Lab, Penpot & Design System](functionalities/09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md)
+> - [10. DevOps, ArgoCD GitOps & Cloud Infrastructure](functionalities/10-DEV-OPS-ARGO-CD-AND-INFRASTRUCTURE.md)
+
+---
 
 ## 🏗️ Documentation Architecture
 
@@ -13,6 +32,7 @@ This directory contains all technical documentation for the THK Mesh Landing Pag
 
 ```
 docs/
+├── functionalities/                  # 🌟 Comprehensive Functional Specifications Library (Extracted Oct 2026)
 ├── README.md                         # This file - Documentation guide
 ├── INDEX.md                          # Quick navigation index
 ├── REORGANIZATION_PROPOSAL.md        # Reorganization plan (completed!)

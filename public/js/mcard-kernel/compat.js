@@ -1,40 +1,95 @@
 /**
- * Compatibility layer over the published clm-kernel (INV-CDO-33).
+ * Neutral compatibility layer for LandingPage (INV-PKG-10, INV-PKG-11).
  *
- * The UI code was written against the removed `mcard-js` API. Rather than
- * rewriting ~7,000 lines of view logic, this module presents that same API
- * shape while every actual operation is performed by clm-kernel. Nothing here
- * reimplements MCard semantics — it adapts names and signatures.
- *
- *   legacy mcard-js            →  published clm-kernel
- *   MCard.create(content, o)   →  MCard.create(uri, payload, author, seq, meta)
- *   card.getContentAsText()    →  card.content
- *   card.getContent()          →  card.payload
- *   card.getSize()             →  byte length of the serialized payload
- *   MCard.fromObject(o)        →  MCard.fromJSON(o)
- *   CardCollection             →  MCardCollection
- *   ContentTypeInterpreter     →  detectMime / classifyClm
- *   validateHandle             →  local handle rule check (no kernel equivalent)
- *   IndexedDBEngine            →  local IndexedDBBackend (no kernel equivalent)
+ * Provides the legacy view layer with MCard, CardCollection, ContentTypeInterpreter,
+ * and ContentHash interfaces without any dependency on clm-kernel or mcard-studio.
  */
-import {
-  MCard as KernelMCard,
-  MCardCollection,
-  ContentHash,
-  detectMime,
-  classifyClm,
-  AgentDid,
-} from 'clm-kernel';
-import { IndexedDBBackend } from './indexeddb-backend.js';
+import { createHash } from './node-shims/crypto.js';
+
+export class ContentHash {
+  constructor(hex) {
+    this._hex = String(hex).toLowerCase();
+  }
+  asHex() { return this._hex; }
+  toString() { return this._hex; }
+  static fromHex(hex) { return new ContentHash(hex); }
+  static of(content) {
+    const text = typeof content === 'string' ? content : JSON.stringify(content ?? '');
+    const hex = createHash('sha256').update(text).digest('hex');
+    return new ContentHash(hex);
+  }
+}
+
+export class AgentDid {
+  constructor(did) { this._did = String(did); }
+  toString() { return this._did; }
+  static create(did) { return new AgentDid(did); }
+}
 
 const DEFAULT_AUTHOR = AgentDid.create('did:clm:landing-page');
 let sequenceCounter = 0;
 
+/** Native MCard implementation adhering to MCard G-Set specification */
+export class NativeMCard {
+  constructor(uri, payload, author, sequence, metadata) {
+    this.uri = uri;
+    this.payload = typeof payload === 'object' && payload !== null && 'value' in payload
+      ? payload
+      : { value: payload };
+    this.author = author || DEFAULT_AUTHOR;
+    this.sequence = sequence ?? sequenceCounter++;
+    this.metadata = metadata instanceof Map ? metadata : new Map(Object.entries(metadata ?? {}));
+    const text = typeof this.payload.value === 'string'
+      ? this.payload.value
+      : JSON.stringify(this.payload.value ?? '');
+    this.hash = ContentHash.of(text);
+    Object.freeze(this);
+  }
+
+  getMetadata(key) {
+    return this.metadata.get(key);
+  }
+
+  toJSON() {
+    return {
+      uri: this.uri,
+      hash: this.hash.asHex(),
+      author: String(this.author),
+      sequence: this.sequence,
+      payload: this.payload,
+      metadata: Object.fromEntries(this.metadata.entries()),
+    };
+  }
+
+  static create(uri, payload, author, sequence, metadata) {
+    return new NativeMCard(uri, payload, author, sequence, metadata);
+  }
+
+  static fromJSON(json) {
+    if (!json) return null;
+    const card = new NativeMCard(
+      json.uri || `mcard:${Date.now()}`,
+      json.payload?.value !== undefined ? json.payload.value : json.payload,
+      json.author || DEFAULT_AUTHOR,
+      json.sequence || 0,
+      json.metadata || {}
+    );
+    return card;
+  }
+
+  static fromStorage(hash, uri, payload, author, sequence, metadata) {
+    return new NativeMCard(uri, payload, author, sequence, metadata);
+  }
+
+  static withMetadata(card, newMeta) {
+    const meta = new Map(card.metadata.entries());
+    for (const [k, v] of Object.entries(newMeta)) meta.set(k, v);
+    return new NativeMCard(card.uri, card.payload, card.author, card.sequence + 1, meta);
+  }
+}
+
 /**
- * Wraps a kernel MCard with the legacy accessors the view layer calls.
- *
- * A wrapper rather than a decoration: kernel MCards are frozen (non-extensible),
- * so properties cannot be added to the instance.
+ * Wraps a card with the legacy accessors the view layer calls.
  */
 export class LegacyCard {
   constructor(card) {
@@ -68,55 +123,110 @@ export class LegacyCard {
   }
 
   getMetadata(key) {
-    return this._card.getMetadata(key);
+    return this._card.getMetadata ? this._card.getMetadata(key) : this.metadata?.get?.(key);
   }
 
   toJSON() {
-    return this._card.toJSON();
+    return this._card.toJSON ? this._card.toJSON() : this._card;
   }
 
-  /** The underlying kernel MCard, for code that needs the real thing. */
   get kernel() {
     return this._card;
   }
 }
 
-/** Wraps a kernel MCard in the legacy facade (idempotent). */
+/** Wraps a card in the legacy facade (idempotent). */
 export function decorate(card) {
   if (!card) return card;
   return card instanceof LegacyCard ? card : new LegacyCard(card);
 }
 
-/** Legacy-shaped MCard facade over the kernel's MCard. */
+/** Legacy-shaped MCard facade. */
 export const MCard = {
   create(content, options = {}) {
     const uri = options.uri ?? options.handle ?? `mcard:${Date.now()}-${sequenceCounter++}`;
     const metadata = new Map(Object.entries(options.metadata ?? {}));
-    return decorate(KernelMCard.create(
+    return decorate(NativeMCard.create(
       uri, content, options.author ?? DEFAULT_AUTHOR, sequenceCounter++, metadata,
     ));
   },
 
   fromObject(obj) {
-    return decorate(KernelMCard.fromJSON(obj));
+    return decorate(NativeMCard.fromJSON(obj));
   },
 
-  fromJSON: (json) => decorate(KernelMCard.fromJSON(json)),
-  fromStorage: (...args) => decorate(KernelMCard.fromStorage(...args)),
-  withMetadata: (...args) => decorate(KernelMCard.withMetadata(...args)),
+  fromJSON: (json) => decorate(NativeMCard.fromJSON(json)),
+  fromStorage: (...args) => decorate(NativeMCard.fromStorage(...args)),
+  withMetadata: (...args) => decorate(NativeMCard.withMetadata(...args)),
 
-  /** The unwrapped kernel class, for code that needs the real thing. */
-  kernel: KernelMCard,
+  kernel: NativeMCard,
 };
 
-/**
- * CardCollection adapter over MCardCollection.
- *
- * The view layer calls `add`, `addWithHandle`, `getByHandle`, `updateHandle`,
- * `getHandleHistory`, `getAllMCardsRaw` and reads `.count` as a property; the
- * kernel exposes `put`, `putWithHandle`, `resolve`, `history`, `list` and
- * `count()` as a method.
- */
+/** MCardCollection maintaining in-memory or storage-backed cards */
+export class MCardCollection {
+  constructor(storageBackend) {
+    this.storageBackend = storageBackend;
+    this._cards = new Map();
+    this._handles = new Map();
+    this._history = new Map();
+  }
+
+  put(card) {
+    const dec = decorate(card);
+    const hex = dec.hash.asHex ? dec.hash.asHex() : String(dec.hash);
+    this._cards.set(hex, dec);
+    if (this.storageBackend?.put) {
+      this.storageBackend.put(dec.hash, dec);
+    }
+    return dec.hash;
+  }
+
+  putWithHandle(card, handle) {
+    const hash = this.put(card);
+    const hex = hash.asHex ? hash.asHex() : String(hash);
+    this._handles.set(handle, hex);
+    const hist = this._history.get(handle) || [];
+    hist.push(hex);
+    this._history.set(handle, hist);
+    if (this.storageBackend?.registerHandle) {
+      this.storageBackend.registerHandle(handle, hash);
+    }
+    return hash;
+  }
+
+  get(hash) {
+    const hex = hash.asHex ? hash.asHex() : String(hash);
+    return this._cards.get(hex) || (this.storageBackend?.get ? this.storageBackend.get(hash) : undefined);
+  }
+
+  resolve(handle) {
+    return this._handles.get(handle) || (this.storageBackend?.resolveHandle ? this.storageBackend.resolveHandle(handle) : undefined);
+  }
+
+  resolveHandle(handle) {
+    return this.resolve(handle);
+  }
+
+  history(handle) {
+    return this._history.get(handle) || [];
+  }
+
+  list() {
+    if (this.storageBackend?.list) {
+      return this.storageBackend.list();
+    }
+    return Array.from(this._cards.values());
+  }
+
+  count() {
+    if (this.storageBackend?.count) {
+      return typeof this.storageBackend.count === 'function' ? this.storageBackend.count() : this.storageBackend.count;
+    }
+    return this._cards.size;
+  }
+}
+
+/** CardCollection adapter over MCardCollection */
 export class CardCollection {
   constructor(backendOrEngine) {
     this.engine = backendOrEngine;
@@ -125,12 +235,12 @@ export class CardCollection {
 
   add(card) {
     const hash = this._collection.put(decorate(card));
-    return hash.asHex ? hash.asHex() : hash;
+    return hash.asHex ? hash.asHex() : String(hash);
   }
 
   addWithHandle(card, handle) {
     const hash = this._collection.putWithHandle(decorate(card), handle);
-    return hash.asHex ? hash.asHex() : hash;
+    return hash.asHex ? hash.asHex() : String(hash);
   }
 
   get(hash) {
@@ -143,23 +253,24 @@ export class CardCollection {
     return hash ? this.get(hash) : undefined;
   }
 
-  /** Accepts either a hash or a card, matching the legacy call shapes. */
   updateHandle(handle, hashOrCard) {
     let hex = hashOrCard;
     if (hashOrCard && typeof hashOrCard === 'object' && hashOrCard.hash) {
       hex = hashOrCard.hash.asHex ? hashOrCard.hash.asHex() : hashOrCard.hash;
     }
     const h = typeof hex === 'string' ? ContentHash.fromHex(hex) : hex;
-    return this._collection.storageBackend.registerHandle(handle, h);
+    return this._collection.storageBackend?.registerHandle
+      ? this._collection.storageBackend.registerHandle(handle, h)
+      : this._collection.putWithHandle(this.get(h) || { hash: h }, handle);
   }
 
   resolveHandle(handle) {
     const hash = this._collection.resolveHandle(handle);
-    return hash ? (hash.asHex ? hash.asHex() : hash) : undefined;
+    return hash ? (hash.asHex ? hash.asHex() : String(hash)) : undefined;
   }
 
   getHandleHistory(handle) {
-    return this._collection.history(handle).map((h) => (h.asHex ? h.asHex() : h));
+    return this._collection.history(handle).map((h) => (h.asHex ? h.asHex() : String(h)));
   }
 
   getAllMCardsRaw() {
@@ -179,7 +290,6 @@ export class CardCollection {
   }
 }
 
-/** Handle rules enforced locally — the kernel exposes no handle validator. */
 export class HandleValidationError extends Error {
   constructor(message, handle) {
     super(message);
@@ -209,14 +319,6 @@ export function validateHandle(handle) {
   return true;
 }
 
-/**
- * Content-type facade over the kernel's `detectMime`.
- *
- * `detectMime(data, extHint)` takes bytes and is accurate when given an
- * extension hint (it consults both magic bytes and an extension map). With no
- * hint it only separates text from binary, so a content sniff runs first for the
- * common text formats the UI displays.
- */
 export class ContentTypeInterpreter {
   static detect(content, extHint = '') {
     const text = typeof content === 'string' ? content : JSON.stringify(content ?? '');
@@ -225,15 +327,9 @@ export class ContentTypeInterpreter {
     const sniffed = ContentTypeInterpreter._sniff(text);
     if (sniffed) return sniffed;
 
-    const bytes = new TextEncoder().encode(text);
-    try {
-      const mime = detectMime(bytes, extHint);
-      if (mime && mime !== 'application/octet-stream') return mime;
-    } catch { /* fall through */ }
     return 'text/plain';
   }
 
-  /** Structural sniff for the text formats the UI renders. */
   static _sniff(text) {
     const t = text.trimStart();
     if (/^<(!doctype|html|head|body)\b/i.test(t)) return 'text/html';
@@ -257,44 +353,21 @@ export class ContentTypeInterpreter {
     const s = typeof content === 'string' ? content : '';
     return /[\u0000-\u0008\u000E-\u001F]/.test(s);
   }
-
-  static isUnstructuredBinary(content) {
-    return ContentTypeInterpreter.isBinaryContent(content);
-  }
-
-  static hasPathologicalLines(content, maxLength = 10000) {
-    const s = typeof content === 'string' ? content : '';
-    return s.split('\n').some((line) => line.length > maxLength);
-  }
-
-  static isKnownLongLineExtension(ext) {
-    const known = new Set(['json', 'map', 'csv', 'svg', 'lock', 'wasm', 'b64']);
-    const e = String(ext ?? '').replace(/^\./, '').toLowerCase();
-    return known.has(e) || e.endsWith('.min.js');
-  }
 }
 
-/** GTime facade: the kernel produces ISO-8601 strings via computeGTime. */
-export class GTime {
-  constructor(value) {
-    this.value = value instanceof Date ? value.toISOString() : String(value ?? new Date().toISOString());
-  }
-
-  static now() {
-    return new GTime(new Date());
-  }
-
-  static from(value) {
-    return new GTime(value);
-  }
-
-  toISOString() {
-    return this.value;
-  }
-
-  toString() {
-    return this.value;
-  }
+export function detectMime(bytes, extHint = '') {
+  return ContentTypeInterpreter.detect(bytes, extHint);
 }
 
-export { MCardCollection, ContentHash, IndexedDBBackend, detectMime, classifyClm };
+export function classifyClm(mime) {
+  return {
+    abstract: `mcard.${String(mime).replace('/', '.')}`,
+    concrete: `renderers/${String(mime).split('/')[1] || 'default'}.html`,
+    balanced: true,
+  };
+}
+
+export const GTime = {
+  now() { return Date.now(); },
+  format(ts) { return new Date(ts).toISOString(); },
+};

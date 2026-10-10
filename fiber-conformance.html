@@ -28,39 +28,24 @@
 <div id="membrane-host" hidden></div>
 <div id="membrane-diagnostic" hidden role="status" aria-live="polite"></div>
 
-<script>
-  // Bare specifiers must resolve before the module below is evaluated.
-  const { protocol, hostname, port } = window.location;
-  const base = `${protocol}//${hostname}${port && port !== '80' && port !== '443' ? ':' + port : ''}`;
-  const map = document.createElement('script');
-  map.type = 'importmap';
-  map.textContent = JSON.stringify({
-    imports: { 'clm-kernel': `${base}/public/js/vendor/clm-kernel.bundle.js` },
-  });
-  document.currentScript.parentNode.insertBefore(map, document.currentScript.nextSibling);
-</script>
-
 <script type="module">
-/**
- * The conformance harness page.
- *
- * Renders exactly one fiber for one lattice coordinate, driven by query
- * parameters, so a real browser can measure a real laid-out surface. The
- * measurements themselves live in the spec: this page only mounts, because the
- * property under test is what the browser *lays out*, not what the adapter says
- * it would render.
- *
- * Grounding: arXiv:2608.25512 — sweeping the lattice is a context change, and a
- * fiber's activation is driven by its coeffect specification. Locale, direction,
- * display mode and power mode are applied to the document before the mount.
- *
- * Data comes from a pre-serialised bundle derived from the registry, so the page
- * carries no YAML parser and a fiber added by data alone still reaches it.
- */
 import { FiberRegistry } from './public/js/fibers/registry.js';
-import { MCard } from 'clm-kernel';
-// Context and Service are re-exported by the bundle so the page needs one import map entry
-import { Context, Service } from 'clm-kernel';
+import { MCard } from './public/js/mcard-kernel/compat.js';
+
+class Context {
+  constructor() { this.services = new Map(); }
+  plugin(Svc) {
+    const s = new Svc(this);
+    this.services.set(s.name, s);
+    this[s.name] = s;
+  }
+}
+class Service {
+  constructor(ctx, name) {
+    this.ctx = ctx;
+    this.name = name;
+  }
+}
 
 const q = new URLSearchParams(location.search);
 const kind = q.get('kind') ?? 'text/plain';

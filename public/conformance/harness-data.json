@@ -1562,7 +1562,7 @@
     "version": "1.0.0",
     "source": {
       "package": "clm-kernel",
-      "version": "0.0.1",
+      "version": "0.0.3",
       "note": "payload shapes read from the published MCardPayload union; classes from detectMime/classifyClm"
     },
     "payload_shapes": [

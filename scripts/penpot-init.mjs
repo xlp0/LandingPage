@@ -107,7 +107,7 @@ export function generatePenpotArchive(unitDir, options = {}) {
   entries['manifest.json'] = {
     type: 'penpot/export-files',
     version: 1,
-    generatedBy: 'clm-kernel/0.0.1',
+    generatedBy: 'clm-kernel/0.0.3',
     referer: 'penpot',
     files: [
       {
@@ -150,7 +150,7 @@ export function generatePenpotArchive(unitDir, options = {}) {
     },
     metadata: {
       referer: 'penpot',
-      generatedBy: 'clm-kernel/0.0.1',
+      generatedBy: 'clm-kernel/0.0.3',
     },
   };
 
