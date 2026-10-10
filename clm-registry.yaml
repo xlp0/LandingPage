@@ -1999,11 +1999,11 @@ sprints:
     dod:
       total: 5
       vcard_refs:
-        - vcard:col-04:eligibility_matches_the_fixture_for_the_3_value_3_occurrence_gol
-        - vcard:col-04:retirement_preserves_recursive_content_identity_exactly_one_acti
-        - vcard:col-04:archive_is_the_token_s_content_addressed_container_archive_file_
+        - vcard:col-04:eligibility_matches_the_fixture_for_the_3_value_golden_graph_rea
+        - vcard:col-04:retirement_preserves_recursive_content_identity_exactly_one_valu
+        - vcard:col-04:archive_is_the_token_s_content_addressed_container_sha256_archiv
         - vcard:col-04:recursive_g_set_closure_is_non_decreasing_every_pre_retirement_h
-        - vcard:col-04:negative_controls_preserve_state_pinned_reachable_retirement_att
+        - vcard:col-04:negative_controls_preserve_state_a_second_epoch_retires_nothing_
       state: sealed
   - handle: urn:mcard:pcard:sprint:COL-05
     card_type: pcard
