@@ -258,7 +258,7 @@ export class FiberRegistry {
     await lifecycle.activate(async () => {
       adapter.mount(card, host, scope, { fallback, fiber });
       // registered inside the active phase, so unload() unwinds it
-      lifecycle.disposables.add(() => {
+      lifecycle.disposables.push(() => {
         for (const fn of inverses.splice(0).reverse()) {
           try { fn(); } catch (e) { /* one failing inverse must not strand the rest */ }
         }
