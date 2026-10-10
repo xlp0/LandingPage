@@ -2000,9 +2000,9 @@ sprints:
       total: 5
       vcard_refs:
         - vcard:col-04:eligibility_matches_the_fixture_for_the_3_value_3_occurrence_gol
-        - vcard:col-04:retirement_changes_marking_not_content_exactly_one_active_occurr
-        - vcard:col-04:archive_round_trip_is_exact_one_archived_payload_restores_to_the
-        - vcard:col-04:g_set_is_monotone_fixture_card_count_is_3_before_and_4_after_add
+        - vcard:col-04:retirement_preserves_recursive_content_identity_exactly_one_acti
+        - vcard:col-04:archive_is_the_token_s_content_addressed_container_archive_file_
+        - vcard:col-04:recursive_g_set_closure_is_non_decreasing_every_pre_retirement_h
         - vcard:col-04:negative_controls_preserve_state_pinned_reachable_retirement_att
       state: sealed
   - handle: urn:mcard:pcard:sprint:COL-05
@@ -2034,7 +2034,7 @@ sprints:
         - vcard:col-06:evidence_coverage_closes_expected_runtime_case_rows_equal_observ
         - vcard:col-06:submodule_boundaries_hold_studio_resolves_its_published_kernel_d
         - vcard:col-06:graduation_is_registry_safe_encode_sprint_py_check_handle_round_
-        - vcard:col-06:retirement_remains_non_destructive_source_card_deletion_count_0_
+        - vcard:col-06:retirement_preserves_recursive_content_unarchived_source_hash_lo
       state: sealed
   - handle: urn:mcard:pcard:sprint:CDO-01
     card_type: pcard
