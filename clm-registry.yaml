@@ -1939,6 +1939,103 @@ sprints:
         - vcard:sprint-407:update_docs_architecture_code_migration_to_clm_md
         - vcard:sprint-407:graduate_sprints_403_407_into_the_12_aspect_deployment_architect
       state: sealed
+  - handle: urn:mcard:pcard:sprint:00-PROGRAM-CHARTER-EPIC-COL
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-COL
+    title: "Program Charter: EPIC-COL \u2014 Git-First Functional Lineage under PTR"
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:mcard:pcard:sprint:COL-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: COL-01
+    title: "Sprint Specification: COL-01 \u2014 Git-Tree Function Inventory & PTR Source Locators"
+    dod:
+      total: 6
+      vcard_refs:
+        - vcard:col-01:the_source_snapshot_is_pinned_report_the_root_commit_and_all_thr
+        - vcard:col-01:the_golden_inventory_counts_match_fixture_reports_3_module_repos
+        - vcard:col-01:every_locator_resolves_exactly_every_eligible_ref_resolves_at_it
+        - vcard:col-01:re_ingest_is_idempotent_the_second_pass_adds_0_mcards_and_has_th
+        - vcard:col-01:git_remains_the_source_inventory_generation_leaves_source_trees_
+        - vcard:col-01:core_schema_stays_grounded_while_extensions_are_versioned_schema
+      state: sealed
+  - handle: urn:mcard:pcard:sprint:COL-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: COL-02
+    title: "Sprint Specification: COL-02 \u2014 Triad-Linked PCards & CLM-to-Studio Projection"
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:col-02:the_cpn_fixture_remains_exact_five_fires_one_committed_marking_o
+        - vcard:col-02:composition_respects_declared_topology_sequential_output_hashes_
+        - vcard:col-02:the_studio_projection_preserves_identity_source_output_hashes_an
+        - vcard:col-02:the_local_dispatcher_is_not_mistaken_for_proof_simulated_output_
+        - vcard:col-02:failure_is_zero_promotion_negative_postcondition_leaves_the_comm
+      state: sealed
+  - handle: urn:mcard:pcard:sprint:COL-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: COL-03
+    title: "Sprint Specification: COL-03 \u2014 Polyglot PTR Execution and VCard Evidence"
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:col-03:three_runtime_positive_vector_agrees_all_3_declared_runtimes_exi
+        - vcard:col-03:negative_vector_is_rejected_on_every_declared_runtime_each_retur
+        - vcard:col-03:witness_binds_the_lineage_a_pcard_input_output_hashes_before_aft
+        - vcard:col-03:studio_displays_rather_than_forges_proof_a_studio_verified_view_
+        - vcard:col-03:failure_preserves_history_without_leaking_output_pre_post_commit
+      state: sealed
+  - handle: urn:mcard:pcard:sprint:COL-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: COL-04
+    title: "Sprint Specification: COL-04 \u2014 Reference Retirement and Verifiable Archive MCards"
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:col-04:eligibility_matches_the_fixture_for_the_3_value_3_occurrence_gol
+        - vcard:col-04:retirement_changes_marking_not_content_exactly_one_active_occurr
+        - vcard:col-04:archive_round_trip_is_exact_one_archived_payload_restores_to_the
+        - vcard:col-04:g_set_is_monotone_fixture_card_count_is_3_before_and_4_after_add
+        - vcard:col-04:negative_controls_preserve_state_pinned_reachable_retirement_att
+      state: sealed
+  - handle: urn:mcard:pcard:sprint:COL-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: COL-05
+    title: "Sprint Specification: COL-05 \u2014 Studio-to-LandingPage Projection and Browser Evidence"
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:col-05:projection_provenance_is_complete_published_kernel_version_funct
+        - vcard:col-05:submodule_boundary_holds_landingpage_consumes_the_neutral_regist
+        - vcard:col-05:behavior_matches_the_declared_fixture_every_required_output_equa
+        - vcard:col-05:browser_measurements_meet_the_declared_floors_overflow_offenders
+        - vcard:col-05:coverage_is_honest_every_unsupported_browser_platform_coordinate
+      state: sealed
+  - handle: urn:mcard:pcard:sprint:COL-06
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: COL-06
+    title: "Sprint Specification: COL-06 \u2014 Admitted-Cohort Lineage Audit and Program Certification"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:col-06:pinned_snapshot_is_reproducible_three_repository_roots_are_liste
+        - vcard:col-06:cohort_accounting_closes_in_scope_excluded_candidate_count_uncla
+        - vcard:col-06:triad_completeness_holds_for_admitted_functions_missing_a_refs_0
+        - vcard:col-06:execution_traces_close_each_expected_runtime_case_has_one_observ
+        - vcard:col-06:evidence_coverage_closes_expected_runtime_case_rows_equal_observ
+        - vcard:col-06:submodule_boundaries_hold_studio_resolves_its_published_kernel_d
+        - vcard:col-06:graduation_is_registry_safe_encode_sprint_py_check_handle_round_
+        - vcard:col-06:retirement_remains_non_destructive_source_card_deletion_count_0_
+      state: sealed
   - handle: urn:mcard:pcard:sprint:CDO-01
     card_type: pcard
     archetype: ClmTriadManifest
@@ -3028,6 +3125,116 @@ sprints:
         - vcard:orc-30:the_check_has_teeth_adding_a_loose_file_a_draft_directory_or_an_
         - vcard:orc-30:no_regression_all_seven_gates_still_pass_and_make_orc_gate_stays
         - vcard:orc-30:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
+      state: sealed
+  - handle: urn:mcard:pcard:sprint:00-PROGRAM-CHARTER-EPIC-PKG
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-PKG
+    title: "Program Charter: `EPIC-PKG` \u2014 Dual Deployment Orchestration, Hermetic Client Bundling, Three-Submodule Dependency Realignment & Submodule Release Synchronization"
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:mcard:pcard:sprint:PKG-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKG-01
+    title: 'Sprint PKG-01: System Topology, Dual-Deployment Roles & Documentation Architecture'
+    dod:
+      total: 10
+      vcard_refs:
+        - vcard:pkg-01:topology_and_dual_deployment_roles_fully_formalized_in_sprint_sp
+        - vcard:pkg-01:root_readme_md_edits_drafted_and_verified_against_existing_secti
+        - vcard:pkg-01:docs_index_md_and_docs_readme_md_cross_links_verified
+        - vcard:pkg-01:boundary_invariants_inv_top_01_inv_top_02_inv_top_03_inv_pkg_05_
+        - vcard:pkg-01:the_three_product_submodules_are_identified_by_role_clm_engine_p
+        - vcard:pkg-01:the_one_way_data_flow_landingpage_runtime_engine_information_con
+        - vcard:pkg-01:mcard_tdd_is_documented_as_the_ssot_coordinator_raw_source_test_
+        - vcard:pkg-01:landingpage_independence_inv_pkg_10_and_the_neutral_dataset_cont
+        - vcard:pkg-01:the_approved_kernel_version_each_consumer_s_manifest_and_lockfil
+        - vcard:pkg-01:raw_source_integration_checks_and_clean_room_published_consumer_
+      state: sealed
+  - handle: urn:mcard:pcard:sprint:PKG-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKG-02
+    title: 'Sprint PKG-02: Client Bundling & Isomorphic Kernel Hermeticity'
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:pkg-02:astro_config_mjs_modified_clm_kernel_removed_from_client_externa
+        - vcard:pkg-02:vendor_clm_kernel_codesplitting_group_added_with_priority_25
+        - vcard:pkg-02:viewport_hydration_watchdog_implemented_in_index_astro_inv_ux_01
+        - vcard:pkg-02:universal_zero_bare_import_scanner_written_and_verified_passing_
+        - vcard:pkg-02:bundle_budgets_check_bundle_budgets_mjs_pass_with_zero_errors
+        - vcard:pkg-02:isomorphic_kernel_primitives_execute_cleanly_in_headless_browser
+        - vcard:pkg-02:zero_changes_or_coupling_introduced_to_landingpage_inv_pkg_10
+      state: sealed
+  - handle: urn:mcard:pcard:sprint:PKG-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKG-03
+    title: 'Sprint PKG-03: Packaging Architecture & Artifact Generation'
+    dod:
+      total: 6
+      vcard_refs:
+        - vcard:pkg-03:app_package_meta_json_updated_with_version_0_0_2
+        - vcard:pkg-03:kernel_consensus_lock_verified_check_kernel_version_consensus_mj
+        - vcard:pkg-03:build_npm_app_mjs_stages_clean_package_into_dist_npm_mcard_studi
+        - vcard:pkg-03:staged_package_manifest_verified_free_of_workspace_file_links_in
+        - vcard:pkg-03:tarball_synthesized_and_audited_against_denyglobs_inv_np_02
+        - vcard:pkg-03:zero_changes_or_coupling_introduced_to_landingpage_inv_pkg_10
+      state: sealed
+  - handle: urn:mcard:pcard:sprint:PKG-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKG-04
+    title: 'Sprint PKG-04: Consumer Acceptance & Browser Agent Gates'
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:pkg-04:scripts_test_consumer_package_mjs_supports_local_tarball_and_rem
+        - vcard:pkg-04:port_conflict_fallback_implemented_and_verified
+        - vcard:pkg-04:playwright_chrome_test_runs_and_captures_screenshot_evidence_art
+        - vcard:pkg-04:zero_bare_import_exceptions_verified_in_browser_console
+        - vcard:pkg-04:multi_viewport_test_passes_desktop_tablet
+        - vcard:pkg-04:supplier_independence_gate_inv_pkg_10_passes_cleanly
+        - vcard:pkg-04:neutral_dataset_ingestion_test_inv_pkg_11_passes_with_zero_landi
+      state: sealed
+  - handle: urn:mcard:pcard:sprint:PKG-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKG-05
+    title: 'Sprint PKG-05: NPM Deployment, Root Documentation Update & Submodule Synchronization'
+    dod:
+      total: 9
+      vcard_refs:
+        - vcard:pkg-05:all_5_pre_publish_verification_gates_pass_sequentially_inside_mc
+        - vcard:pkg-05:package_published_to_npmjs_com_under_mcard_studio_0_0_2
+        - vcard:pkg-05:registry_verification_confirms_version_0_0_2_and_dist_tags_updat
+        - vcard:pkg-05:submodule_mcard_studio_committed_tagged_v0_0_2_and_pushed_to_rem
+        - vcard:pkg-05:root_readme_md_docs_index_md_and_docs_readme_md_updated_with_dua
+        - vcard:pkg-05:umbrella_mcard_tdd_submodule_pointer_advanced_and_committed_inv_
+        - vcard:pkg-05:independent_clean_consumer_installation_verified_in_headless_bro
+        - vcard:pkg-05:rollback_protocol_documented_and_ready
+        - vcard:pkg-05:pkg_05_graduation_evidence_reconciles_to_the_released_artifact_c
+      state: sealed
+  - handle: urn:mcard:pcard:sprint:PKG-06
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKG-06
+    title: 'Sprint PKG-06: LandingPage Independence & Neutral Dataset Contract'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:pkg-06:landingpage_package_json_and_package_lock_json_declare_no_clm_ke
+        - vcard:pkg-06:no_landingpage_source_or_asset_imports_a_sibling_submodule_as_a_
+        - vcard:pkg-06:the_neutral_dataset_contract_is_documented_and_versioned_charter
+        - vcard:pkg-06:the_supplier_independence_gate_4_1_passes_and_is_wired_into_ci
+        - vcard:pkg-06:the_dataset_ingestion_acceptance_4_2_passes_from_a_clean_consume
+        - vcard:pkg-06:any_residual_kernel_shaped_helper_is_labelled_an_optional_test_a
+        - vcard:pkg-06:mcard_tdd_records_the_landingpage_corpus_commit_b04e502_and_cont
+        - vcard:pkg-06:charter_1_5_and_the_active_readme_describe_landingpage_as_an_ind
       state: sealed
   - handle: urn:mcard:pcard:sprint:00-PROGRAM-CHARTER-EPIC-RVP
     card_type: pcard
