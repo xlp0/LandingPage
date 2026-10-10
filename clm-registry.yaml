@@ -2028,12 +2028,12 @@ sprints:
       total: 8
       vcard_refs:
         - vcard:col-06:pinned_snapshot_is_reproducible_three_repository_roots_are_liste
-        - vcard:col-06:cohort_accounting_closes_in_scope_excluded_candidate_count_uncla
-        - vcard:col-06:triad_completeness_holds_for_admitted_functions_missing_a_refs_0
+        - vcard:col-06:cohort_accounting_closes_in_scope_excluded_out_of_scope_candidat
+        - vcard:col-06:triad_completeness_holds_for_admitted_functions_over_the_admitte
         - vcard:col-06:execution_traces_close_each_expected_runtime_case_has_one_observ
         - vcard:col-06:evidence_coverage_closes_expected_runtime_case_rows_equal_observ
-        - vcard:col-06:submodule_boundaries_hold_studio_resolves_its_published_kernel_d
-        - vcard:col-06:graduation_is_registry_safe_encode_sprint_py_check_handle_round_
+        - vcard:col-06:submodule_boundaries_hold_no_submodule_imports_a_sibling_s_sourc
+        - vcard:col-06:graduation_is_registry_safe_encode_sprint_py_check_136_sprints_1
         - vcard:col-06:retirement_preserves_recursive_content_unarchived_source_hash_lo
       state: sealed
   - handle: urn:mcard:pcard:sprint:CDO-01
@@ -3512,9 +3512,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: 15e0cc8acb1df389eafc0e970ace95c39eba4a5f659ed22dc44f68800812da7e
-  projection_sha256: fcec09c23d92daddc06b4fe674e88323f0c26c19e75ff6ad5edb324dce2a9bf5
+  source_sha256: 55a7203f6297905e4734f61a90caa885548f57cc1d293975759037d463c8abd2
+  projection_sha256: 8caf170d7b597421801ef0898f068213b52eb578c0782a29f36529ad78e195a2
   kernel_version: 0.0.3
-  landing_page_commit: f9ce208382c307d58de1d14d0822455b6c4b5c8b
+  landing_page_commit: b7b0e7a3778c884369e5c6a91a16d39348984ab8
   sprint_count: 136
   unresolved_trace_refs: 0
