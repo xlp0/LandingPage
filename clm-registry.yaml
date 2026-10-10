@@ -2244,9 +2244,12 @@ sprints:
     code: COL-03
     title: "Sprint Specification: COL-03 \u2014 Polyglot PTR Execution and VCard Evidence"
     dod:
-      total: 5
+      total: 8
       vcard_refs:
         - vcard:col-03:three_runtime_positive_vector_agrees_all_3_declared_runtimes_exi
+        - vcard:col-03:python_s_envelope_py_carried_three_hardcoded_version_literals_0_
+        - vcard:col-03:rust_s_version_declared_layers_0_1_2_3_4_while_the_crate_has_src
+        - vcard:col-03:rust_s_shared_envelope_carried_twelve_hardcoded_0_4_0_literals_a
         - vcard:col-03:negative_vector_is_rejected_on_every_declared_runtime_each_retur
         - vcard:col-03:witness_binds_the_lineage_runtime_command_exit_duration_normaliz
         - vcard:col-03:studio_displays_rather_than_forges_proof_a_studio_verified_view_
@@ -3512,9 +3515,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: 2d743d03fe2dccc40332151c43174ceabaff52b00c24da03bf04a87a8e2e3534
-  projection_sha256: 88f9e5fccbc7a6bae7d97e8f1b1dc84cafcb3a4afd9006290c8dd73ae453457f
+  source_sha256: fcee3f692849d0568b5ab624bf6fe1891b822f153fcca085ff411f96d6b1e048
+  projection_sha256: db174b85a0407f4638e97ec5a0a1989edb2d274b9e960fdd841d0f55942ec001
   kernel_version: 0.0.3
-  landing_page_commit: 669be411241e566b2c51d7926667f3e56c5738fc
+  landing_page_commit: bac9477c7ab89035f2f7531e8429041ceb6191dc
   sprint_count: 136
   unresolved_trace_refs: 0
