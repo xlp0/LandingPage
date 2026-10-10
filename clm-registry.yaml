@@ -2013,11 +2013,11 @@ sprints:
     dod:
       total: 5
       vcard_refs:
-        - vcard:col-05:projection_provenance_is_complete_published_kernel_version_funct
-        - vcard:col-05:submodule_boundary_holds_landingpage_consumes_the_neutral_regist
-        - vcard:col-05:behavior_matches_the_declared_fixture_every_required_output_equa
-        - vcard:col-05:browser_measurements_meet_the_declared_floors_overflow_offenders
-        - vcard:col-05:coverage_is_honest_every_unsupported_browser_platform_coordinate
+        - vcard:col-05:projection_provenance_is_complete_the_projection_carries_its_own
+        - vcard:col-05:submodule_boundary_holds_no_submodule_imports_a_sibling_s_source
+        - vcard:col-05:behavior_matches_the_declared_fixture_every_projected_handle_cod
+        - vcard:col-05:browser_measurements_meet_the_declared_floors_397_passed_0_faile
+        - vcard:col-05:coverage_is_honest_every_unsupported_coordinate_is_recorded_unco
       state: sealed
   - handle: urn:mcard:pcard:sprint:COL-06
     card_type: pcard
@@ -3509,3 +3509,12 @@ sprints:
         - vcard:sync-06:the_consumer_can_use_the_release_from_a_clean_directory_npm_inst
         - vcard:sync-06:all_three_registries_carry_the_same_version_npm_pypi_and_crates_
       state: sealed
+
+projection_provenance:
+  generated_from: registry/sprints.yaml
+  source_sha256: 15e0cc8acb1df389eafc0e970ace95c39eba4a5f659ed22dc44f68800812da7e
+  projection_sha256: fcec09c23d92daddc06b4fe674e88323f0c26c19e75ff6ad5edb324dce2a9bf5
+  kernel_version: 0.0.3
+  landing_page_commit: f9ce208382c307d58de1d14d0822455b6c4b5c8b
+  sprint_count: 136
+  unresolved_trace_refs: 0
