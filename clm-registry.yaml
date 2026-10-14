@@ -4096,6 +4096,6 @@ projection_provenance:
   source_sha256: 5d75019c8cb7ac4cf44798e9d73f27996cb74cd829e078c9c6774160ab055634
   projection_sha256: 0d22dba067abdec4ee27dcb1e1deb2debe40c8ef83aee17a92a3506b3e95c292
   kernel_version: 0.0.4
-  landing_page_commit: afe31a67c1cf5a9542fe982d1c6461afb1625380
+  landing_page_commit: ac2fead2b018fce7dc89d71e7409565405a79e89
   sprint_count: 171
   unresolved_trace_refs: 0
