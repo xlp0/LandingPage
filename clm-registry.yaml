@@ -497,7 +497,7 @@ islands:
     isolation: top-level
     budget:
       max_bytes: 262144
-      observed_bytes: 29705
+      observed_bytes: 29417
     metrics_endpoint: /metrics/app
     island_mcard: mcard:island:app.html
   - url: /fiber-conformance.html
@@ -506,7 +506,7 @@ islands:
     isolation: top-level
     budget:
       max_bytes: 262144
-      observed_bytes: 7855
+      observed_bytes: 6685
     metrics_endpoint: /metrics/fiber-conformance
     island_mcard: mcard:island:fiber-conformance.html
   - url: /fiber-inspector.html
@@ -515,7 +515,7 @@ islands:
     isolation: top-level
     budget:
       max_bytes: 262144
-      observed_bytes: 10054
+      observed_bytes: 9334
     metrics_endpoint: /metrics/fiber-inspector
     island_mcard: mcard:island:fiber-inspector.html
   - url: /index.html
@@ -524,7 +524,7 @@ islands:
     isolation: top-level
     budget:
       max_bytes: 262144
-      observed_bytes: 20469
+      observed_bytes: 23271
     metrics_endpoint: /metrics/index
     island_mcard: mcard:island:index.html
   - url: /pkc-docs-index.html
@@ -533,7 +533,7 @@ islands:
     isolation: top-level
     budget:
       max_bytes: 262144
-      observed_bytes: 5983
+      observed_bytes: 6117
     metrics_endpoint: /metrics/pkc-docs-index
     island_mcard: mcard:island:pkc-docs-index.html
   - url: /responsive-lab.html
@@ -542,9 +542,18 @@ islands:
     isolation: top-level
     budget:
       max_bytes: 262144
-      observed_bytes: 32621
+      observed_bytes: 54102
     metrics_endpoint: /metrics/responsive-lab
     island_mcard: mcard:island:responsive-lab.html
+  - url: /sprint-registry.html
+    kind: page
+    hydration: client:idle
+    isolation: top-level
+    budget:
+      max_bytes: 262144
+      observed_bytes: 5557
+    metrics_endpoint: /metrics/sprint-registry
+    island_mcard: mcard:island:sprint-registry.html
   - url: /components/auth-status.html
     kind: component
     hydration: client:visible
@@ -578,7 +587,7 @@ islands:
     isolation: iframe-sandbox
     budget:
       max_bytes: 65536
-      observed_bytes: 22600
+      observed_bytes: 22612
     metrics_endpoint: /metrics/components-google-calendar
     island_mcard: mcard:island:components/google-calendar.html
   - url: /components/grafana-dashboard.html

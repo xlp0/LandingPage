@@ -32,8 +32,16 @@ export class DisposableList {
     }
   }
 
+  get size() {
+    return this._disposables.length;
+  }
+
   get length() {
     return this._disposables.length;
+  }
+
+  dispose() {
+    return this.unwind();
   }
 }
 
@@ -75,6 +83,13 @@ export class FiberLifecycle {
   async load(fn, opts = {}) {
     this._transition('loading');
     try {
+      if (this.coeffects?.requiredServices?.length > 0) {
+        if (!opts?.ctx) {
+          throw new Error(
+            `FiberLifecycle [${this.id}]: Cordis Context required to resolve coeffects: ${this.coeffects.requiredServices.join(', ')}`,
+          );
+        }
+      }
       if (fn) await fn(this.guard);
       this._transition('loaded');
     } catch (err) {
@@ -98,6 +113,6 @@ export class FiberLifecycle {
   async unload() {
     this._transition('unloading');
     await this._disposables.unwind();
-    this._transition('unloaded');
+    this._transition('disposed');
   }
 }
