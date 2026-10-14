@@ -2514,6 +2514,174 @@ sprints:
         - vcard:col-06:graduation_is_registry_safe_encode_sprint_py_check_136_sprints_1
         - vcard:col-06:retirement_preserves_recursive_content_unarchived_source_hash_lo
       state: sealed
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CRD-SPATIOTEMPORAL-COMPOSITIONALITY
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: 00-PROGRAM-CHARTER-EPIC-CRD-SPATIOTEMPORAL-COMPOSITIONALITY
+    title: "Program Charter: EPIC-CRD \u2014 Cordis Spatiotemporal Compositionality & In-Memory Execution Engine"
+    dod:
+      total: 6
+      vcard_refs:
+        - vcard:00-program-charter-epic-crd-spatiotemporal-compositionality:72_72_dod_items_verified_every_sprint_from_crd_00_through_crd_08
+        - vcard:00-program-charter-epic-crd-spatiotemporal-compositionality:schema_invariance_zero_modifications_to_the_frozen_3_table_triad
+        - vcard:00-program-charter-epic-crd-spatiotemporal-compositionality:sub_millisecond_rollback_benchmark_planted_postcondition_failure
+        - vcard:00-program-charter-epic-crd-spatiotemporal-compositionality:cross_runtime_parity_identical_fiber_lifecycle_state_machine_tra
+        - vcard:00-program-charter-epic-crd-spatiotemporal-compositionality:documentation_integrity_all_5_canonical_architecture_documents_t
+        - vcard:00-program-charter-epic-crd-spatiotemporal-compositionality:graduation_certification_a_cryptographically_sealed_docs_sprints
+      state: sealed
+  - handle: urn:pcard:sprint:CRD-00
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CRD-00
+    title: "Sprint Specification: CRD-00 \u2014 Grounding, Taxonomy & Substrate Census"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:crd-00:dod_crd_00_01_the_substrate_specification_formally_defines_the_m
+        - vcard:crd-00:dod_crd_00_02_fiber_instance_handles_are_assigned_top_level_urn_
+        - vcard:crd-00:dod_crd_00_03_census_fiber_substrate_py_inspects_clm_js_core_clm
+        - vcard:crd-00:dod_crd_00_04_the_coeffect_taxonomy_declares_standard_kernel_ser
+        - vcard:crd-00:dod_crd_00_05_the_typescript_runtime_correctly_declares_and_link
+        - vcard:crd-00:dod_crd_00_06_the_rust_fiber_module_kernel_clm_rust_core_src_fib
+        - vcard:crd-00:dod_crd_00_07_the_python_fiber_module_clm_layer2_fiber_passes_al
+        - vcard:crd-00:dod_crd_00_08_an_evidence_backed_documentationdeltarecord_is_emi
+      state: sealed
+  - handle: urn:pcard:sprint:CRD-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CRD-01
+    title: "Sprint Specification: CRD-01 \u2014 Tripartite Contract Enrichment (Coeffects & Fiber Specs)"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:crd-01:dod_crd_01_01_layer0_function_pcard_schema_json_supports_the_opt
+        - vcard:crd-01:dod_crd_01_02_layer0_function_pcard_schema_json_supports_the_opt
+        - vcard:crd-01:dod_crd_01_03_existing_lclm_01_tripartite_pcard_records_lacking_
+        - vcard:crd-01:dod_crd_01_04_the_typescript_runtime_parses_and_validates_enrich
+        - vcard:crd-01:dod_crd_01_05_the_python_runtime_parses_enriched_pcards_into_pyd
+        - vcard:crd-01:dod_crd_01_06_the_rust_runtime_deserializes_enriched_pcards_via_
+        - vcard:crd-01:dod_crd_01_07_the_schema_enforces_that_any_declared_savepointgua
+        - vcard:crd-01:dod_crd_01_08_an_evidence_backed_documentationdeltarecord_is_emi
+      state: sealed
+  - handle: urn:pcard:sprint:CRD-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CRD-02
+    title: "Sprint Specification: CRD-02 \u2014 Layer 1 CPN Transition Engine & Token Binding"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:crd-02:dod_crd_02_01_the_transition_loader_resolves_a_function_pcard_fr
+        - vcard:crd-02:dod_crd_02_02_input_tokens_from_p_text_pre_t_f_and_p_text_contra
+        - vcard:crd-02:dod_crd_02_03_an_in_process_cordis_fiber_governs_the_transition_
+        - vcard:crd-02:dod_crd_02_04_output_values_from_the_function_execution_are_enca
+        - vcard:crd-02:dod_crd_02_05_the_cpn_transition_engine_validates_token_conserva
+        - vcard:crd-02:dod_crd_02_06_in_process_transition_execution_achieves_a_median_
+        - vcard:crd-02:dod_crd_02_07_when_a_transition_throws_an_exception_the_fiber_ma
+        - vcard:crd-02:dod_crd_02_08_an_evidence_backed_documentationdeltarecord_is_emi
+      state: sealed
+  - handle: urn:pcard:sprint:CRD-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CRD-03
+    title: "Sprint Specification: CRD-03 \u2014 Reactive Coeffect Scheduler & Context Tree"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:crd-03:dod_crd_03_01_a_fiber_requiring_an_unmounted_service_enters_fibe
+        - vcard:crd-03:dod_crd_03_02_when_a_service_provider_registers_the_missing_inte
+        - vcard:crd-03:dod_crd_03_03_ctx_isolate_provides_strict_spatial_isolation_muta
+        - vcard:crd-03:dod_crd_03_04_ctx_isolate_is_implemented_as_a_merkle_dag_cut_the
+        - vcard:crd-03:dod_crd_03_05_the_three_core_ambient_services_sqlite_pool_crypto
+        - vcard:crd-03:dod_crd_03_06_optional_coeffects_optional_true_do_not_block_fibe
+        - vcard:crd-03:dod_crd_03_07_unmounting_a_service_deactivates_dependent_active_
+        - vcard:crd-03:dod_crd_03_08_an_evidence_backed_documentationdeltarecord_is_emi
+      state: sealed
+  - handle: urn:pcard:sprint:CRD-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CRD-04
+    title: "Sprint Specification: CRD-04 \u2014 Cross-Runtime SavepointGuard & Zero-Leak Rollback"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:crd-04:dod_crd_04_01_exactly_one_savepointguard_exists_per_runtime_type
+        - vcard:crd-04:dod_crd_04_02_when_a_postcondition_v_post_fails_savepointguard_r
+        - vcard:crd-04:dod_crd_04_03_sub_millisecond_rollback_benchmark_planted_errors_
+        - vcard:crd-04:dod_crd_04_04_zero_invariant_drift_h_t_to_0_rolling_back_a_faile
+        - vcard:crd-04:dod_crd_04_05_an_immutable_evidencereceiptrecord_with_verdict_fa
+        - vcard:crd-04:dod_crd_04_06_nested_savepoints_child_fibers_executing_within_a_
+        - vcard:crd-04:dod_crd_04_07_sudden_process_crash_and_panic_simulations_trigger
+        - vcard:crd-04:dod_crd_04_08_an_evidence_backed_documentationdeltarecord_is_emi
+      state: sealed
+  - handle: urn:pcard:sprint:CRD-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CRD-05
+    title: "Sprint Specification: CRD-05 \u2014 In-Process HMR, Epoch Migrations & Bitemporal Lineage"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:crd-05:dod_crd_05_01_the_hmr_engine_detects_an_update_in_handle_history
+        - vcard:crd-05:dod_crd_05_02_during_hmr_the_epoch_k_fiber_transitions_active_un
+        - vcard:crd-05:dod_crd_05_03_long_running_agent_dialogues_preserve_in_memory_co
+        - vcard:crd-05:dod_crd_05_04_bitemporal_recording_every_fiber_execution_state_i
+        - vcard:crd-05:dod_crd_05_05_merkle_dag_time_travel_time_travel_debugger_py_res
+        - vcard:crd-05:dod_crd_05_06_if_an_hmr_reload_fails_verification_e_g_new_code_f
+        - vcard:crd-05:dod_crd_05_07_cross_runtime_hmr_parity_typescript_module_re_impo
+        - vcard:crd-05:dod_crd_05_08_an_evidence_backed_documentationdeltarecord_is_emi
+      state: sealed
+  - handle: urn:pcard:sprint:CRD-06
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CRD-06
+    title: "Sprint Specification: CRD-06 \u2014 DeepSeek Harness & Conversational Programming Loop"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:crd-06:dod_crd_06_01_the_conversational_turn_runner_implements_the_form
+        - vcard:crd-06:dod_crd_06_02_scratchpad_isolation_intermediate_tool_outputs_cre
+        - vcard:crd-06:dod_crd_06_03_the_five_cordis_event_dispatch_modes_emit_waterfal
+        - vcard:crd-06:dod_crd_06_04_bail_mode_short_circuits_execution_if_a_vcard_prec
+        - vcard:crd-06:dod_crd_06_05_waterfall_mode_passes_the_accumulated_card_from_on
+        - vcard:crd-06:dod_crd_06_06_context_window_token_efficiency_isolated_turn_exec
+        - vcard:crd-06:dod_crd_06_07_cross_agent_collaboration_multiple_autonomous_suba
+        - vcard:crd-06:dod_crd_06_08_an_evidence_backed_documentationdeltarecord_is_emi
+      state: sealed
+  - handle: urn:pcard:sprint:CRD-07
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CRD-07
+    title: "Sprint Specification: CRD-07 \u2014 Architecture Documentation Review & As-Built Synthesis"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:crd-07:dod_crd_07_01_check_crd_doc_sync_py_validates_that_all_queued_do
+        - vcard:crd-07:dod_crd_07_02_docs_architecture_00_architecture_overview_md_is_u
+        - vcard:crd-07:dod_crd_07_03_docs_architecture_01_foundations_md_is_updated_to_
+        - vcard:crd-07:dod_crd_07_04_docs_architecture_02_pillar1_clm_meta_language_md_
+        - vcard:crd-07:dod_crd_07_05_docs_architecture_03_pillar2_ptr_meta_circular_run
+        - vcard:crd-07:dod_crd_07_06_docs_architecture_04_pillar3_vcard_identity_boolea
+        - vcard:crd-07:dod_crd_07_07_the_specification_and_guide_layer_is_synchronized_
+        - vcard:crd-07:dod_crd_07_08_the_documentation_synchronization_receipt_crd_07_d
+      state: sealed
+  - handle: urn:pcard:sprint:CRD-08
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CRD-08
+    title: "Sprint Specification: CRD-08 \u2014 Orchestration Gate, Runbook & Program Graduation"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:crd-08:dod_crd_08_01_the_end_to_end_integration_test_executes_a_complex
+        - vcard:crd-08:dod_crd_08_02_check_orchestration_py_passes_all_stages_including
+        - vcard:crd-08:dod_crd_08_03_negative_control_checks_confirm_that_illegal_opera
+        - vcard:crd-08:dod_crd_08_04_the_updated_human_agent_runbook_contains_clear_cop
+        - vcard:crd-08:dod_crd_08_05_cross_runtime_test_suites_across_all_three_runtime
+        - vcard:crd-08:dod_crd_08_06_the_comprehensive_program_report_crd_program_repor
+        - vcard:crd-08:dod_crd_08_07_the_graduation_certificate_docs_sprints_active_evi
+        - vcard:crd-08:dod_crd_08_08_the_program_staging_graduation_protocol_is_complet
+      state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-EXP
     card_type: mcard
     archetype: specification_mcard
@@ -3925,9 +4093,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: 6249a9d7f8edaad26867e53f1a176a38f7f60a08f8319c90f696616e9b5ecd5a
-  projection_sha256: 0919cfa213d272c05d1aa513433b03c0a714fa18a49ef1c70567594c30bab29f
+  source_sha256: c7cffdef0e2669cddd08a78e97a3740125ea8c40fbcf6bea946f3a76844ea0fe
+  projection_sha256: 0d22dba067abdec4ee27dcb1e1deb2debe40c8ef83aee17a92a3506b3e95c292
   kernel_version: 0.0.4
-  landing_page_commit: 6486d2b4c850b5622ba1651f6703198f65fe1898
-  sprint_count: 161
+  landing_page_commit: ca1e02cc1e1159fd74e267c9b791d0ad56ffb8be
+  sprint_count: 171
   unresolved_trace_refs: 0
