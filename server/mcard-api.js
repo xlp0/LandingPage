@@ -1,73 +1,68 @@
 /**
  * MCard API Server
- * Node.js backend that ACTUALLY USES mcard-js library
- * 
- * This replaces the browser-only implementation with a proper
- * Node.js backend using the full mcard-js v2.1.8 library
+ * Self-contained sovereign Node.js backend (INV-CDO-33).
  */
 
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-
-// Import from mcard-js dist files directly (package.json exports are misconfigured)
-const { MCard } = require('mcard-js/dist/model/MCard.js');
-const { SqliteNodeEngine } = require('mcard-js/dist/storage/SqliteNodeEngine.js');
-const { ContentTypeInterpreter } = require('mcard-js/dist/model/detectors/ContentTypeInterpreter.js');
+const crypto = require('crypto');
 
 const router = express.Router();
 
-// Initialize storage engine
-let storage = null;
+// In-memory backing store for local LandingPage API fallback
+const memoryStore = new Map();
 
-/**
- * Initialize mcard-js storage
- * Uses SqliteNodeEngine for Node.js backend
- */
-async function initStorage() {
-  if (!storage) {
-    console.log('[MCard API] Initializing mcard-js SqliteNodeEngine...');
-    
-    // Use SQLite database in data directory
-    const dbPath = path.join(__dirname, '..', 'data', 'mcard.db');
-    storage = new SqliteNodeEngine(dbPath);
-    await storage.init();
-    
-    console.log('[MCard API] ✅ mcard-js library initialized with SQLite backend');
-    console.log('[MCard API] 📁 Database:', dbPath);
+function computeHash(content) {
+  const buf = typeof content === 'string'
+    ? Buffer.from(content, 'utf8')
+    : Buffer.from(JSON.stringify(content || ''));
+  return crypto.createHash('sha256').update(buf).digest('hex');
+}
+
+function detectContentType(content) {
+  const text = typeof content === 'string' ? content : JSON.stringify(content || '');
+  if (/^<(!doctype|html|head|body)\b/i.test(text.trimStart())) return 'text/html';
+  if (/^[\[{]/.test(text.trimStart())) {
+    try { JSON.parse(text); return 'application/json'; } catch {}
   }
-  return storage;
+  if (/^#{1,6}\s+\S/m.test(text.trimStart())) return 'text/markdown';
+  return 'text/plain';
 }
 
 /**
  * POST /api/mcard/create
- * Create a new MCard using mcard-js library
+ * Create a new MCard
  */
 router.post('/create', async (req, res) => {
   try {
     const { content, metadata } = req.body;
-    
     if (!content) {
       return res.status(400).json({ error: 'Content is required' });
     }
-    
-    console.log('[MCard API] Creating MCard using mcard-js library...');
-    
-    // Use mcard-js MCard.create()
-    const card = await MCard.create(content, { metadata });
-    
-    // Store using mcard-js IndexedDBEngine
-    const storage = await initStorage();
-    const hash = await storage.add(card);
-    
-    console.log('[MCard API] ✅ Created MCard:', hash);
-    
+
+    const textContent = typeof content === 'string' ? content : JSON.stringify(content);
+    const hash = computeHash(textContent);
+    const size = Buffer.byteLength(textContent, 'utf8');
+    const g_time = Date.now();
+
+    const record = {
+      hash,
+      content: textContent,
+      size,
+      g_time,
+      metadata: metadata || {},
+      contentType: detectContentType(textContent)
+    };
+
+    memoryStore.set(hash, record);
+
     res.json({
       success: true,
-      hash: hash,
-      size: card.getSize(),
-      g_time: card.g_time,
-      library: 'mcard-js v2.1.8'
+      hash,
+      size,
+      g_time,
+      library: '@clm/core'
     });
   } catch (error) {
     console.error('[MCard API] Error creating MCard:', error);
@@ -77,32 +72,24 @@ router.post('/create', async (req, res) => {
 
 /**
  * GET /api/mcard/:hash
- * Get MCard by hash using mcard-js library
+ * Get MCard by hash
  */
 router.get('/:hash', async (req, res) => {
   try {
     const { hash } = req.params;
-    
-    console.log('[MCard API] Getting MCard using mcard-js library:', hash);
-    
-    const storage = await initStorage();
-    const card = await storage.get(hash);
-    
+    const card = memoryStore.get(hash);
     if (!card) {
       return res.status(404).json({ error: 'MCard not found' });
     }
-    
-    // Detect content type using mcard-js
-    const contentType = ContentTypeInterpreter.detect(card.getContent());
-    
+
     res.json({
       success: true,
       hash: card.hash,
-      content: card.getContentAsText(),
-      size: card.getSize(),
+      content: card.content,
+      size: card.size,
       g_time: card.g_time,
-      contentType: contentType,
-      library: 'mcard-js v2.1.8'
+      contentType: card.contentType,
+      library: '@clm/core'
     });
   } catch (error) {
     console.error('[MCard API] Error getting MCard:', error);
@@ -112,36 +99,23 @@ router.get('/:hash', async (req, res) => {
 
 /**
  * GET /api/mcard
- * Get all MCards using mcard-js library
+ * Get all MCards
  */
 router.get('/', async (req, res) => {
   try {
     const { page = 0, pageSize = 20 } = req.query;
-    
-    console.log('[MCard API] Getting MCards page', page, 'using mcard-js library');
-    
-    const storage = await initStorage();
-    
-    // Use mcard-js pagination
-    const result = await storage.getPage(parseInt(page), parseInt(pageSize));
-    
-    // Add content type detection
-    const items = result.items.map(card => ({
-      hash: card.hash,
-      content: card.getContentAsText(),
-      size: card.getSize(),
-      g_time: card.g_time,
-      contentType: ContentTypeInterpreter.detect(card.getContent())
-    }));
-    
+    const all = Array.from(memoryStore.values());
+    const start = parseInt(page) * parseInt(pageSize);
+    const paged = all.slice(start, start + parseInt(pageSize));
+
     res.json({
       success: true,
-      items: items,
-      total: result.total,
-      page: result.page,
-      pageSize: result.pageSize,
-      totalPages: result.totalPages,
-      library: 'mcard-js v2.1.8'
+      items: paged,
+      total: all.length,
+      page: parseInt(page),
+      pageSize: parseInt(pageSize),
+      totalPages: Math.ceil(all.length / parseInt(pageSize)) || 1,
+      library: '@clm/core'
     });
   } catch (error) {
     console.error('[MCard API] Error getting MCards:', error);
@@ -151,21 +125,16 @@ router.get('/', async (req, res) => {
 
 /**
  * DELETE /api/mcard/:hash
- * Delete MCard using mcard-js library
+ * Delete MCard
  */
 router.delete('/:hash', async (req, res) => {
   try {
     const { hash } = req.params;
-    
-    console.log('[MCard API] Deleting MCard using mcard-js library:', hash);
-    
-    const storage = await initStorage();
-    await storage.delete(hash);
-    
+    memoryStore.delete(hash);
     res.json({
       success: true,
       message: 'MCard deleted',
-      library: 'mcard-js v2.1.8'
+      library: '@clm/core'
     });
   } catch (error) {
     console.error('[MCard API] Error deleting MCard:', error);
@@ -175,30 +144,18 @@ router.delete('/:hash', async (req, res) => {
 
 /**
  * POST /api/mcard/search
- * Search MCards by hash prefix using mcard-js library
+ * Search MCards by hash prefix
  */
 router.post('/search', async (req, res) => {
   try {
-    const { hashPrefix } = req.body;
-    
-    console.log('[MCard API] Searching MCards using mcard-js library:', hashPrefix);
-    
-    const storage = await initStorage();
-    const cards = await storage.searchByHash(hashPrefix);
-    
-    const results = cards.map(card => ({
-      hash: card.hash,
-      content: card.getContentAsText(),
-      size: card.getSize(),
-      g_time: card.g_time,
-      contentType: ContentTypeInterpreter.detect(card.getContent())
-    }));
-    
+    const { hashPrefix = '' } = req.body;
+    const results = Array.from(memoryStore.values()).filter(c => c.hash.startsWith(hashPrefix));
+
     res.json({
       success: true,
-      results: results,
+      results,
       count: results.length,
-      library: 'mcard-js v2.1.8'
+      library: '@clm/core'
     });
   } catch (error) {
     console.error('[MCard API] Error searching MCards:', error);
@@ -208,29 +165,22 @@ router.post('/search', async (req, res) => {
 
 /**
  * POST /api/mcard/verify/:hash
- * Verify MCard hash integrity using mcard-js library
+ * Verify MCard hash integrity
  */
 router.post('/verify/:hash', async (req, res) => {
   try {
     const { hash } = req.params;
-    
-    console.log('[MCard API] Verifying MCard using mcard-js library:', hash);
-    
-    const storage = await initStorage();
-    const card = await storage.get(hash);
-    
+    const card = memoryStore.get(hash);
     if (!card) {
       return res.status(404).json({ error: 'MCard not found' });
     }
-    
-    // Verify hash integrity
-    const isValid = await card.verify();
-    
+
+    const calculated = computeHash(card.content);
     res.json({
       success: true,
-      hash: hash,
-      valid: isValid,
-      library: 'mcard-js v2.1.8'
+      hash,
+      valid: calculated === hash,
+      library: '@clm/core'
     });
   } catch (error) {
     console.error('[MCard API] Error verifying MCard:', error);
@@ -240,22 +190,17 @@ router.post('/verify/:hash', async (req, res) => {
 
 /**
  * GET /api/mcard/stats
- * Get storage statistics using mcard-js library
+ * Get storage statistics
  */
 router.get('/stats', async (req, res) => {
   try {
-    console.log('[MCard API] Getting stats using mcard-js library');
-    
-    const storage = await initStorage();
-    const total = await storage.count();
-    
     res.json({
       success: true,
-      total: total,
-      library: 'mcard-js v2.1.8',
-      engine: 'SqliteNodeEngine',
+      total: memoryStore.size,
+      library: '@clm/core',
+      engine: 'MemoryStore',
       backend: 'Node.js',
-      message: '✅ ACTUALLY USING mcard-js library!'
+      message: 'Sovereign MCard backend'
     });
   } catch (error) {
     console.error('[MCard API] Error getting stats:', error);

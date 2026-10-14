@@ -1,4 +1,4 @@
-import { executeStaticServer } from './node_modules/mcard-js/dist/ptr/node/clm/builtins/static-server.js';
+import { executeStaticServer } from './scripts/static-server.mjs';
 import yaml from 'js-yaml';
 import fs from 'fs';
 import path from 'path';

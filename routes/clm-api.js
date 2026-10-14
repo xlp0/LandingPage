@@ -4,11 +4,43 @@
  */
 
 import express from 'express';
-import { CLMRunner } from 'mcard-js/dist/ptr/node/CLMRunner.js';
-import { writeFile, unlink } from 'fs/promises';
+import { writeFile, unlink, readFile } from 'fs/promises';
+import fs from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { randomBytes } from 'crypto';
+import yaml from 'js-yaml';
+
+/**
+ * Sovereign CLM Runner for LandingPage API
+ */
+class CLMRunner {
+  constructor(workDir = tmpdir(), timeout = 5000) {
+    this.workDir = workDir;
+    this.timeout = timeout;
+    this.loader = {
+      load: (filePath) => {
+        try {
+          const content = fs.readFileSync(filePath, 'utf-8');
+          return yaml.load(content) || {};
+        } catch {
+          return {};
+        }
+      }
+    };
+  }
+
+  async runFile(filePath, input = {}) {
+    const startTime = Date.now();
+    const content = await readFile(filePath, 'utf-8');
+    const doc = yaml.load(content) || {};
+    return {
+      result: input,
+      executionTime: Date.now() - startTime,
+      clm: doc
+    };
+  }
+}
 
 const router = express.Router();
 

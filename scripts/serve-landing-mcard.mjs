@@ -1,10 +1,10 @@
-import { executeStaticServer } from './node_modules/mcard-js/dist/ptr/node/clm/builtins/static-server.js';
+import { executeStaticServer } from './static-server.mjs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-console.log('🚀 Using mcard-js static-server builtin to serve LandingPage...');
+console.log('🚀 Using sovereign static-server builtin to serve LandingPage...');
 
 const config = {
     action: 'deploy',

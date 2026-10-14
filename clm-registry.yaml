@@ -3707,6 +3707,83 @@ sprints:
         - vcard:orc-30:no_regression_all_seven_gates_still_pass_and_make_orc_gate_stays
         - vcard:orc-30:no_runtime_inv_frac_01_this_sprint_creates_suspends_and_disposes
       state: sealed
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-PFD-PURELY-FUNCTIONAL-DEPLOYMENT
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-PFD-PURELY-FUNCTIONAL-DEPLOYMENT
+    title: "Program Charter: EPIC-PFD \u2014 Purely Functional Deployment & Epistemic Realignment"
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:PFD-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PFD-01
+    title: "Sprint Specification: PFD-01 \u2014 Epistemic Grounding & Lambda-Calculus Structural Correspondence"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:pfd-01:dod_pfd_01_01_docs_architecture_cordis_purely_functional_deploym
+        - vcard:pfd-01:dod_pfd_01_02_docs_architecture_cordis_purely_functional_deploym
+        - vcard:pfd-01:dod_pfd_01_03_docs_architecture_00_architecture_overview_md_stat
+        - vcard:pfd-01:dod_pfd_01_04_docs_architecture_01_foundations_md_specifies_the_
+        - vcard:pfd-01:dod_pfd_01_05_docs_sprints_active_evidence_pfd_01_triadic_mappin
+        - vcard:pfd-01:dod_pfd_01_06_docs_architecture_cordis_purely_functional_deploym
+        - vcard:pfd-01:dod_pfd_01_07_the_documentation_estate_check_validates_reachabil
+        - vcard:pfd-01:dod_pfd_01_08_dod_testability_linter_validates_all_eight_criteri
+      state: sealed
+  - handle: urn:pcard:sprint:PFD-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PFD-02
+    title: "Sprint Specification: PFD-02 \u2014 Cordis Purely Functional Fiber & Coeffect Architecture Specification"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:pfd-02:dod_pfd_02_01_docs_architecture_cordis_spatiotemporal_composabil
+        - vcard:pfd-02:dod_pfd_02_02_docs_architecture_cordis_spatiotemporal_composabil
+        - vcard:pfd-02:dod_pfd_02_03_docs_specifications_spec_pfd_lambda_operational_se
+        - vcard:pfd-02:dod_pfd_02_04_docs_specifications_spec_pfd_lambda_operational_se
+        - vcard:pfd-02:dod_pfd_02_05_docs_sprints_active_evidence_pfd_02_fiber_coeffect
+        - vcard:pfd-02:dod_pfd_02_06_docs_specifications_spec_pfd_lambda_operational_se
+        - vcard:pfd-02:dod_pfd_02_07_the_documentation_estate_check_validates_zero_orph
+        - vcard:pfd-02:dod_pfd_02_08_dod_testability_linter_validates_all_eight_criteri
+      state: sealed
+  - handle: urn:pcard:sprint:PFD-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PFD-03
+    title: "Sprint Specification: PFD-03 \u2014 Developer Guides & Functional Playbook Workflows"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:pfd-03:dod_pfd_03_01_docs_guides_guide_authoring_purely_functional_play
+        - vcard:pfd-03:dod_pfd_03_02_docs_guides_guide_authoring_purely_functional_play
+        - vcard:pfd-03:dod_pfd_03_03_docs_guides_guide_authoring_purely_functional_play
+        - vcard:pfd-03:dod_pfd_03_04_docs_guides_documentation_hub_md_indexes_the_new_p
+        - vcard:pfd-03:dod_pfd_03_05_docs_guides_socratic_breathing_loop_md_aligns_the_
+        - vcard:pfd-03:dod_pfd_03_06_docs_sprints_active_evidence_pfd_03_playbook_valid
+        - vcard:pfd-03:dod_pfd_03_07_the_documentation_estate_check_validates_complete_
+        - vcard:pfd-03:dod_pfd_03_08_dod_testability_linter_validates_all_eight_criteri
+      state: sealed
+  - handle: urn:pcard:sprint:PFD-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PFD-04
+    title: "Sprint Specification: PFD-04 \u2014 Estate Audit, Invariant Sealing & Long-Term Developmental Roadmap"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:pfd-04:dod_pfd_04_01_docs_specifications_strategic_roadmap_agentic_os_e
+        - vcard:pfd-04:dod_pfd_04_02_docs_specifications_strategic_roadmap_agentic_os_e
+        - vcard:pfd-04:dod_pfd_04_03_docs_sprints_active_evidence_pfd_04_estate_integri
+        - vcard:pfd-04:dod_pfd_04_04_the_pfd_program_files_are_encoded_into_the_sprint_
+        - vcard:pfd-04:dod_pfd_04_05_invariant_inv_cdo_33_sovereign_package_boundary_is
+        - vcard:pfd-04:dod_pfd_04_06_the_10_stage_orchestration_gate_executes_and_passe
+        - vcard:pfd-04:dod_pfd_04_07_docs_sprints_active_certification_report_md_record
+        - vcard:pfd-04:dod_pfd_04_08_the_program_is_graduated_all_changes_committed_the
+      state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-PKG
     card_type: mcard
     archetype: specification_mcard
@@ -3816,6 +3893,83 @@ sprints:
         - vcard:pkg-06:any_residual_kernel_shaped_helper_is_labelled_an_optional_test_a
         - vcard:pkg-06:mcard_tdd_records_the_landingpage_corpus_commit_b04e502_and_cont
         - vcard:pkg-06:charter_1_5_and_the_active_readme_describe_landingpage_as_an_ind
+      state: sealed
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-RET-LEGACY-SURFACE-RETIREMENT
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-RET-LEGACY-SURFACE-RETIREMENT
+    title: "Program Charter: EPIC-RET \u2014 Legacy Surface Retirement & Knowledge Quarantine Program"
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:RET-00
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RET-00
+    title: "Sprint Specification: RET-00 \u2014 Formal Inventory Census & Baseline-Aware Boundary Guard"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:ret-00:dod_ret_00_01_ret_00_legacy_census_json_catalogs_all_312_tracked
+        - vcard:ret-00:dod_ret_00_02_scripts_ci_check_legacy_surface_boundary_py_implem
+        - vcard:ret-00:dod_ret_00_03_check_legacy_surface_boundary_py_asserts_that_no_n
+        - vcard:ret-00:dod_ret_00_04_ret_00_dependency_burndown_json_exhaustively_catal
+        - vcard:ret-00:dod_ret_00_05_manifest_deprecation_strings_are_verified_mcard_js
+        - vcard:ret-00:dod_ret_00_06_mcard_analysis_scan_report_txt_is_verified_as_cont
+        - vcard:ret-00:dod_ret_00_07_the_baseline_boundary_check_is_integrated_as_stage
+        - vcard:ret-00:dod_ret_00_08_an_evidence_backed_documentationdeltarecord_is_emi
+      state: sealed
+  - handle: urn:pcard:sprint:RET-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RET-01
+    title: "Sprint Specification: RET-01 \u2014 Live Dependency Decoupling & CI Hygiene"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:ret-01:dod_ret_01_01_pyproject_toml_removes_mcard_core_py_from_tool_uv_
+        - vcard:ret-01:dod_ret_01_02_protocol_entry_js_mjs_is_ported_to_clm_kernel_clm_
+        - vcard:ret-01:dod_ret_01_03_schema_runtime_registry_javascript_json_and_its_tw
+        - vcard:ret-01:dod_ret_01_04_clm_tools_clm_run_clms_unified_py_is_refactored_to
+        - vcard:ret-01:dod_ret_01_05_github_workflows_ci_yml_purges_all_build_install_a
+        - vcard:ret-01:dod_ret_01_06_dockerfile_docker_compose_yml_unified_server_yaml_
+        - vcard:ret-01:dod_ret_01_07_makefile_purges_js_dir_and_rs_dir_definitions_and_
+        - vcard:ret-01:dod_ret_01_08_the_boundary_guard_scripts_ci_check_legacy_surface
+      state: sealed
+  - handle: urn:pcard:sprint:RET-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RET-02
+    title: "Sprint Specification: RET-02 \u2014 Quarantine Relocation & Artifact Slimming"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:ret-02:dod_ret_02_01_archive_legacy_archive_notice_md_is_created_formal
+        - vcard:ret-02:dod_ret_02_02_mcard_core_mcard_js_mcard_py_mcard_rs_and_mcard_wa
+        - vcard:ret-02:dod_ret_02_03_mcard_analysis_is_permanently_deleted_from_the_rep
+        - vcard:ret-02:dod_ret_02_04_the_binary_artifact_mcard_wasm_pkg_mcard_wasm_bg_w
+        - vcard:ret-02:dod_ret_02_05_all_311_source_relocations_are_recorded_in_registr
+        - vcard:ret-02:dod_ret_02_06_the_workspace_root_contains_zero_mcard_directories
+        - vcard:ret-02:dod_ret_02_07_scripts_orc_encode_sprint_py_is_executed_to_re_enc
+        - vcard:ret-02:dod_ret_02_08_the_boundary_guard_scripts_ci_check_legacy_surface
+      state: sealed
+  - handle: urn:pcard:sprint:RET-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RET-03
+    title: "Sprint Specification: RET-03 \u2014 Registry Synchronization, Link Audit & CAS Sealing"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:ret-03:dod_ret_03_01_registry_knowledge_roots_yaml_is_updated_mcard_ana
+        - vcard:ret-03:dod_ret_03_02_registry_knowledge_index_json_is_regenerated_via_s
+        - vcard:ret-03:dod_ret_03_03_scripts_ci_check_docs_estate_py_passes_with_0_orph
+        - vcard:ret-03:dod_ret_03_04_documentation_references_across_docs_architecture_
+        - vcard:ret-03:dod_ret_03_05_the_boundary_guard_scripts_ci_check_legacy_surface
+        - vcard:ret-03:dod_ret_03_06_full_orchestration_gate_passes_all_10_stages_check
+        - vcard:ret-03:dod_ret_03_07_the_graduation_certificate_ret_graduation_json_is_
+        - vcard:ret-03:dod_ret_03_08_the_program_directory_active_graduates_and_is_relo
       state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-RVP
     card_type: pcard
@@ -4093,9 +4247,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: 947f198f03c70ffa2e6efe93d2d3f8eed7e41899ddf235160de71871afd05074
-  projection_sha256: 0d22dba067abdec4ee27dcb1e1deb2debe40c8ef83aee17a92a3506b3e95c292
+  source_sha256: b5fc1900f80b8b779b13400b12f30da35a9eea69921bb6109eff50769677f0ea
+  projection_sha256: e3d3789a5c22a17c3c1c32edc15e6bf8b11ea67145d0aaa5c2696f9ef078ea6b
   kernel_version: 0.0.4
-  landing_page_commit: ef051eda406f7e72a0879ed2cec1f5cc6e23ca69
-  sprint_count: 171
+  landing_page_commit: e9a55b16cdb4a2881f02d2504a1607b1b7857277
+  sprint_count: 181
   unresolved_trace_refs: 0
