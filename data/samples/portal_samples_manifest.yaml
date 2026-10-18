@@ -1,0 +1,142 @@
+generator: LandingPage/scripts/seed-portal-samples.mjs
+generated_at: '2026-10-18T00:00:00.000Z'
+hash_algorithm: blake3
+schema: card(hash, content, g_time) · handle_registry · handle_history
+sample_count: 6
+samples:
+  - handle: urn:mcard:content:landing_sample:pkc_sovereign_hero
+    label: PKC Sovereign Hero
+    kind: inline
+    url: null
+    fixture: null
+    snapshot_hash: dbc15055afde05251965db4c16da67e08939129add4ae3d7411019a538d6a909
+    content_bytes: 295
+    viewports:
+      cellphone:
+        width: 375
+        height: 812
+        max_bytes: 184320
+      laptop:
+        width: 1440
+        height: 900
+        max_bytes: 524288
+      desktop:
+        width: 1920
+        height: 1080
+        max_bytes: 786432
+      wearable:
+        width: 198
+        height: 242
+        max_bytes: 122880
+  - handle: urn:mcard:content:landing_sample:govtech_civic_portal
+    label: GovTech Civic Portal
+    kind: external
+    url: https://example.gov/civic
+    fixture: frameable
+    snapshot_hash: 73af96d81e0358a89e8c557ca3a7e42438d8a32a0753d3f87e37e932c4ff5a49
+    content_bytes: 184
+    viewports:
+      cellphone:
+        width: 375
+        height: 812
+        max_bytes: 184320
+      laptop:
+        width: 1440
+        height: 900
+        max_bytes: 524288
+      desktop:
+        width: 1920
+        height: 1080
+        max_bytes: 786432
+      wearable:
+        width: 198
+        height: 242
+        max_bytes: 122880
+  - handle: urn:mcard:content:landing_sample:mdn_docs_portal
+    label: MDN Documentation Portal
+    kind: external
+    url: https://developer.mozilla.org/
+    fixture: csp-frame-ancestors
+    snapshot_hash: ce756a3016336b19541db720f32c802fa557aee58d7119274a586c061b343786
+    content_bytes: 160
+    viewports:
+      cellphone:
+        width: 375
+        height: 812
+        max_bytes: 184320
+      laptop:
+        width: 1440
+        height: 900
+        max_bytes: 524288
+      desktop:
+        width: 1920
+        height: 1080
+        max_bytes: 786432
+      wearable:
+        width: 198
+        height: 242
+        max_bytes: 122880
+  - handle: urn:mcard:content:landing_sample:github_org_portal
+    label: GitHub Organization Portal
+    kind: external
+    url: https://github.com/
+    fixture: x-frame-options-deny
+    snapshot_hash: 104472ec4444aadac1576149911edf95ef1ab110a688d4cb21bb44b0b252204f
+    content_bytes: 137
+    viewports:
+      cellphone:
+        width: 375
+        height: 812
+        max_bytes: 184320
+      laptop:
+        width: 1440
+        height: 900
+        max_bytes: 524288
+      desktop:
+        width: 1920
+        height: 1080
+        max_bytes: 786432
+      wearable:
+        width: 198
+        height: 242
+        max_bytes: 122880
+  - handle: urn:mcard:content:landing_sample:open_wikimedia_portal
+    label: Open Wikimedia Portal
+    kind: external
+    url: https://www.wikipedia.org/
+    fixture: frameable
+    snapshot_hash: cb4a9f0cc5ad637adf0d4d2978807de48321f8991402996f4f01f3b7e2a79faa
+    content_bytes: 137
+    viewports:
+      cellphone:
+        width: 375
+        height: 812
+        max_bytes: 184320
+      laptop:
+        width: 1440
+        height: 900
+        max_bytes: 524288
+      desktop:
+        width: 1920
+        height: 1080
+        max_bytes: 786432
+      wearable:
+        width: 198
+        height: 242
+        max_bytes: 122880
+  - handle: urn:mcard:content:landing_sample:wearable_glance_portal
+    label: Wearable Glance Portal
+    kind: inline
+    url: null
+    fixture: null
+    snapshot_hash: 6954208e86e076dbc49264a9d7d676f737f547abd8a7946873cc45e75d2e7660
+    content_bytes: 121
+    viewports:
+      wearable:
+        width: 198
+        height: 242
+        max_bytes: 122880
+      cellphone:
+        width: 375
+        height: 812
+        max_bytes: 184320

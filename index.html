@@ -265,7 +265,7 @@
 <body>
 
   <!-- BEGIN: PENPOT-GENERATED-NAV (INV-CDO-11) -->
-  <nav class="penpot-nav-bar" id="penpot-site-nav" aria-label="Penpot Navigation Flow" data-graph-hash="1fbb8f3b1effb423b3683782f610e599f241c5f794186ef3f050ee6654ec6682">
+  <nav class="penpot-nav-bar" id="penpot-site-nav" aria-label="Penpot Navigation Flow" data-graph-hash="aca8f9317cb38d1546965cdbcf54d248853bcbeb63a1cf1c89be0b70928db085">
     <span class="penpot-nav-title">🎨 Flow: main-nav</span>
     <div class="penpot-nav-links">
       <a class="penpot-nav-link penpot-nav-link-active" href="index.html" data-penpot-frame="d7570000-0000-8000-8000-000000000011" data-penpot-handle="mcard:route:/index.html">Home</a>
@@ -583,6 +583,34 @@
     updateControlUI({ theme: presentation.currentTheme, powerMode: presentation.currentPowerMode });
   </script>
   <script type="module" src="js/nav.js"></script>
+
+  <!-- SMR-09: Single-Page MCard host (one active page) & Chrome-Light Sovereign HUD Pill -->
+  <section id="single-page-mcard-host" class="mcard-page-host"
+           data-handle="urn:mcard:content:landing_page"
+           aria-label="Active LandingPage MCard"></section>
+  <div id="mcard-sovereign-pill-mount"></div>
+  <script type="module">
+    import { mountSinglePageMCard } from './js/landing-page-mcard.js';
+    import { createMembrane } from './js/external-portal-membrane.js';
+    import { createApiClient } from './js/landing-page-mcard.js';
+
+    const api = createApiClient('');
+    const membrane = createMembrane({ probe: (url) => api.probe(url) });
+
+    const samples = await fetch('./data/samples/portal_samples_manifest.json')
+      .then((response) => (response.ok ? response.json() : { samples: [] }))
+      .then((manifest) => manifest.samples.map(({ handle, label }) => ({ handle, label })))
+      .catch(() => []);
+
+    mountSinglePageMCard({
+      api,
+      samples,
+      onExternalUrl: async (url) => {
+        const resolved = await membrane.resolve(url);
+        document.getElementById('single-page-mcard-host').innerHTML = resolved.html;
+      },
+    }).catch((error) => console.warn('[SMR-09] single-page MCard host:', error.message));
+  </script>
 </body>
 
 </html>

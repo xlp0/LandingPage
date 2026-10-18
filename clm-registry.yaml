@@ -2280,6 +2280,210 @@ sprints:
         - vcard:smr-18:dod_smr_18_07_the_graduation_certificates_docs_sprints_active_ev
         - vcard:smr-18:dod_smr_18_08_scripts_orc_encode_sprint_py_check_scripts_orc_syn
       state: sealed
+  - handle: urn:pcard:sprint:SMR-19
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: SMR-19
+    title: "Sprint Specification: SMR-19 \u2014 Unifying MCard Ontology (`File \u2261 MCard \u2261 Function \u2261 PCard \u2261 Plug-in`) & Two Petri Net Representables Across `docs/theory/`"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:smr-19:dod_smr_19_01_docs_theory_readme_md_and_docs_theory_01_foundatio
+        - vcard:smr-19:dod_smr_19_02_docs_theory_03_runtime_01_colored_petri_nets_md_fo
+        - vcard:smr-19:dod_smr_19_03_docs_theory_01_foundations_01_cubical_type_theory_
+        - vcard:smr-19:dod_smr_19_04_docs_theory_02_architecture_01_polynomial_functors
+        - vcard:smr-19:dod_smr_19_05_docs_theory_03_runtime_02_effect_handlers_md_and_d
+        - vcard:smr-19:dod_smr_19_06_all_chapters_in_docs_theory_contain_zero_occurrenc
+        - vcard:smr-19:dod_smr_19_07_every_markdown_file_under_docs_theory_is_reachable
+        - vcard:smr-19:dod_smr_19_08_the_verification_receipt_docs_sprints_active_evide
+      state: sealed
+  - handle: urn:pcard:sprint:SMR-20
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: SMR-20
+    title: "Sprint Specification: SMR-20 \u2014 System State as Marking Configurations in Constructive `PlaceTypeLattice` (`INV-508`) Across `docs/architecture/`"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:smr-20:dod_smr_20_01_docs_architecture_categorical_anatomy_of_agent_har
+        - vcard:smr-20:dod_smr_20_02_docs_architecture_cordis_purely_functional_deploym
+        - vcard:smr-20:dod_smr_20_03_docs_architecture_flue_agent_harness_md_includes_d
+        - vcard:smr-20:dod_smr_20_04_docs_architecture_porting_functor_md_defines_the_t
+        - vcard:smr-20:dod_smr_20_05_docs_architecture_architectural_refactoring_clm_mc
+        - vcard:smr-20:dod_smr_20_06_docs_architecture_readme_md_and_docs_index_md_stat
+        - vcard:smr-20:dod_smr_20_07_pytest_clm_tests_sprints_test_sprint_507_mcard_tok
+        - vcard:smr-20:dod_smr_20_08_the_receipt_docs_sprints_active_evidence_smr_20_ar
+      state: sealed
+  - handle: urn:pcard:sprint:SMR-21
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: SMR-21
+    title: "Sprint Specification: SMR-21 \u2014 Four-Tier Cordis Harness (`Plug-in`, `Bundle`, `Profile`, `Preset`), Seams & Brendan Fong's Decorated Cospans Across `docs/specifications/`"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:smr-21:dod_smr_21_01_docs_specifications_00_index_md_defines_the_three_
+        - vcard:smr-21:dod_smr_21_02_docs_specifications_prd_01_prd_pkc_mesh_os_md_spec
+        - vcard:smr-21:dod_smr_21_03_docs_specifications_epics_01_epic_agent_workflows_
+        - vcard:smr-21:dod_smr_21_04_docs_specifications_epics_02_epic_onboarding_and_r
+        - vcard:smr-21:dod_smr_21_05_docs_specifications_01_clm_language_spec_md_aligns
+        - vcard:smr-21:dod_smr_21_06_docs_specifications_strategic_roadmap_agentic_os_e
+        - vcard:smr-21:dod_smr_21_07_all_files_under_docs_specifications_pass_python3_s
+        - vcard:smr-21:dod_smr_21_08_the_receipt_docs_sprints_active_evidence_smr_21_sp
+      state: sealed
+  - handle: urn:pcard:sprint:SMR-22
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: SMR-22
+    title: "Sprint Specification: SMR-22 \u2014 `mcard-studio` Five Architectural Directives, Preset Workspaces & Visual Cospan Pushout Wiring Across `docs/guides/`"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:smr-22:dod_smr_22_01_docs_guides_guide_authoring_purely_functional_play
+        - vcard:smr-22:dod_smr_22_02_docs_guides_guide_authoring_purely_functional_play
+        - vcard:smr-22:dod_smr_22_03_docs_guides_socratic_breathing_loop_md_models_the_
+        - vcard:smr-22:dod_smr_22_04_docs_guides_running_mcard_studio_published_package
+        - vcard:smr-22:dod_smr_22_05_docs_guides_documentation_hub_md_indexes_docs_arch
+        - vcard:smr-22:dod_smr_22_06_docs_guides_cordis_spatiotemporal_compositionality
+        - vcard:smr-22:dod_smr_22_07_all_files_under_docs_guides_pass_python3_scripts_c
+        - vcard:smr-22:dod_smr_22_08_the_receipt_docs_sprints_active_evidence_smr_22_st
+      state: sealed
+  - handle: urn:pcard:sprint:SMR-23
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: SMR-23
+    title: "Sprint Specification: SMR-23 \u2014 Conversational Development Orchestration (CDO), Two-Plane Creative Mode & Valk's *Nets-Within-Nets* Documentation Alignment"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:smr-23:dod_smr_23_01_docs_theory_clm_conversational_development_orchest
+        - vcard:smr-23:dod_smr_23_02_docs_theory_clm_conversational_development_orchest
+        - vcard:smr-23:dod_smr_23_03_docs_theory_clm_as_deployment_process_language_md_
+        - vcard:smr-23:dod_smr_23_04_docs_theory_clm_as_deployment_process_language_md_
+        - vcard:smr-23:dod_smr_23_05_docs_decisions_readme_md_and_docs_decisions_dec_20
+        - vcard:smr-23:dod_smr_23_06_pytest_clm_tests_sprints_test_sprint_507_mcard_tok
+        - vcard:smr-23:dod_smr_23_07_all_modified_files_in_docs_theory_and_docs_decisio
+        - vcard:smr-23:dod_smr_23_08_the_receipt_docs_sprints_active_evidence_smr_23_cd
+      state: sealed
+  - handle: urn:pcard:sprint:SMR-24
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: SMR-24
+    title: "Sprint Specification: SMR-24 \u2014 Umbrella Documentation Ontological Parity Gate, Automated Vocabulary Verification & Canon Certification"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:smr-24:dod_smr_24_01_docs_sprints_active_00_program_charter_epic_smr_su
+        - vcard:smr-24:dod_smr_24_02_docs_index_md_docs_architecture_readme_md_and_docs
+        - vcard:smr-24:dod_smr_24_03_scripts_ci_check_docs_estate_py_passes_across_the_
+        - vcard:smr-24:dod_smr_24_04_scripts_ci_check_dod_testability_py_passes_across_
+        - vcard:smr-24:dod_smr_24_05_clm_gate_29_clm_tools_guards_check_docs_mcard_petr
+        - vcard:smr-24:dod_smr_24_06_scripts_ci_check_submodule_realignment_py_verifies
+        - vcard:smr-24:dod_smr_24_07_pytest_clm_tests_sprints_test_sprint_507_mcard_tok
+        - vcard:smr-24:dod_smr_24_08_the_ontological_parity_certification_receipt_docs_
+      state: sealed
+  - handle: urn:pcard:sprint:SMR-25
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: SMR-25
+    title: "Sprint Specification: SMR-25 \u2014 Faithful vs. Unfaithful Representability, the Pentadic Threshold ($n \\le 4$ vs. $n = 5$) & Wittgenstein's Horizon Across `docs/theory/`"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:smr-25:dod_smr_25_01_docs_theory_01_foundations_faithful_and_unfaithful
+        - vcard:smr-25:dod_smr_25_02_docs_theory_01_foundations_faithful_and_unfaithful
+        - vcard:smr-25:dod_smr_25_03_docs_theory_01_foundations_faithful_and_unfaithful
+        - vcard:smr-25:dod_smr_25_04_docs_theory_01_foundations_clm_as_self_reflexive_t
+        - vcard:smr-25:dod_smr_25_05_docs_theory_03_runtime_epiplexity_and_awareness_md
+        - vcard:smr-25:dod_smr_25_06_docs_theory_readme_md_and_docs_theory_workingnotes
+        - vcard:smr-25:dod_smr_25_07_all_files_in_docs_theory_pass_clm_gate_29_clm_tool
+        - vcard:smr-25:dod_smr_25_08_the_verification_receipt_docs_sprints_active_evide
+      state: sealed
+  - handle: urn:pcard:sprint:SMR-26
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: SMR-26
+    title: "Sprint Specification: SMR-26 \u2014 Braided Polynomial Affordance UI, Swim-Lane Interaction Diagrams & Reidemeister Compression Across `docs/architecture/`"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:smr-26:dod_smr_26_01_docs_architecture_layer4_presentation_workbench_an
+        - vcard:smr-26:dod_smr_26_02_docs_architecture_layer4_presentation_workbench_an
+        - vcard:smr-26:dod_smr_26_03_docs_architecture_layer4_presentation_workbench_an
+        - vcard:smr-26:dod_smr_26_04_docs_architecture_layer4_presentation_workbench_an
+        - vcard:smr-26:dod_smr_26_05_docs_architecture_00_architecture_overview_md_and_
+        - vcard:smr-26:dod_smr_26_06_docs_architecture_03_pillar2_ptr_meta_circular_run
+        - vcard:smr-26:dod_smr_26_07_docs_architecture_readme_md_indexes_the_braided_po
+        - vcard:smr-26:dod_smr_26_08_the_verification_receipt_docs_sprints_active_evide
+      state: sealed
+  - handle: urn:pcard:sprint:SMR-27
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: SMR-27
+    title: "Sprint Specification: SMR-27 \u2014 Cordis\u2013Parikh Canonical Data Structures & the Four-Tier Possibility Funnel Across `docs/architecture/`"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:smr-27:dod_smr_27_01_docs_architecture_cordis_spatiotemporal_composabil
+        - vcard:smr-27:dod_smr_27_02_docs_architecture_cordis_spatiotemporal_composabil
+        - vcard:smr-27:dod_smr_27_03_docs_architecture_cordis_spatiotemporal_composabil
+        - vcard:smr-27:dod_smr_27_04_docs_architecture_flux_petri_net_and_faro_grafana_
+        - vcard:smr-27:dod_smr_27_05_docs_architecture_six_layers_architecture_md_maps_
+        - vcard:smr-27:dod_smr_27_06_docs_architecture_zero_trust_made_concrete_md_form
+        - vcard:smr-27:dod_smr_27_07_all_updated_files_in_docs_architecture_pass_clm_ga
+        - vcard:smr-27:dod_smr_27_08_the_verification_receipt_docs_sprints_active_evide
+      state: sealed
+  - handle: urn:pcard:sprint:SMR-28
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: SMR-28
+    title: "Sprint Specification: SMR-28 \u2014 Burau Braid Invariants, 4-Lane UI Modularity & Bounded Representability Across `docs/specifications/`"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:smr-28:dod_smr_28_01_docs_specifications_prd_01_prd_pkc_mesh_os_md_spec
+        - vcard:smr-28:dod_smr_28_02_docs_specifications_runtime_conformance_md_defines
+        - vcard:smr-28:dod_smr_28_03_docs_specifications_runtime_conformance_md_and_doc
+        - vcard:smr-28:dod_smr_28_04_docs_specifications_technical_01_clm_language_spec
+        - vcard:smr-28:dod_smr_28_05_docs_specifications_technical_02_development_lifec
+        - vcard:smr-28:dod_smr_28_06_docs_specifications_00_index_md_and_docs_specifica
+        - vcard:smr-28:dod_smr_28_07_all_files_in_docs_specifications_pass_clm_gate_29_
+        - vcard:smr-28:dod_smr_28_08_the_verification_receipt_docs_sprints_active_evide
+      state: sealed
+  - handle: urn:pcard:sprint:SMR-29
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: SMR-29
+    title: "Sprint Specification: SMR-29 \u2014 Braided UI Design Principles, `ParikhCordisEngine` & Non-Flaky Burau TDD Practitioner Guides Across `docs/guides/` & `docs/decisions/`"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:smr-29:dod_smr_29_01_docs_guides_cordis_spatiotemporal_compositionality
+        - vcard:smr-29:dod_smr_29_02_docs_guides_cordis_spatiotemporal_compositionality
+        - vcard:smr-29:dod_smr_29_03_docs_guides_guide_authoring_purely_functional_play
+        - vcard:smr-29:dod_smr_29_04_docs_guides_running_mcard_studio_published_package
+        - vcard:smr-29:dod_smr_29_05_docs_guides_socratic_breathing_loop_md_models_the_
+        - vcard:smr-29:dod_smr_29_06_docs_guides_documentation_hub_md_and_docs_decision
+        - vcard:smr-29:dod_smr_29_07_all_files_in_docs_guides_and_docs_decisions_pass_c
+        - vcard:smr-29:dod_smr_29_08_the_verification_receipt_docs_sprints_active_evide
+      state: sealed
+  - handle: urn:pcard:sprint:SMR-30
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: SMR-30
+    title: "Sprint Specification: SMR-30 \u2014 Faithful Representability, Braided UI Design Canon Gate & 22-Sprint Estate Certification"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:smr-30:dod_smr_30_01_docs_sprints_active_00_program_charter_epic_smr_su
+        - vcard:smr-30:dod_smr_30_02_docs_index_md_links_docs_theory_01_foundations_fai
+        - vcard:smr-30:dod_smr_30_03_scripts_ci_check_docs_estate_py_passes_across_the_
+        - vcard:smr-30:dod_smr_30_04_scripts_ci_check_sprint_estate_py_passes_with_tool
+        - vcard:smr-30:dod_smr_30_05_scripts_ci_check_dod_testability_py_passes_across_
+        - vcard:smr-30:dod_smr_30_06_clm_gate_29_clm_tools_guards_check_docs_mcard_petr
+        - vcard:smr-30:dod_smr_30_07_scripts_ci_check_submodule_realignment_py_verifies
+        - vcard:smr-30:dod_smr_30_08_the_certification_receipt_docs_sprints_active_evid
+      state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CAS
     card_type: mcard
     archetype: specification_mcard
@@ -4665,9 +4869,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: e6602d2820b48652a61e43d4ff90f08539217f0db325b8d213703a4cfadae007
-  projection_sha256: 1211d788d31836c2a101f04e0df02f0d1c0139bbbae839f26e3224a1c2478583
+  source_sha256: 3eedecd8087963e0f3b3819d5c82aa99b20b5cc518802fdc16e6540d05cd3252
+  projection_sha256: 55e6fd2a0bafdbb48a77f465c610d90d3ce8908ca92dfbda83add378608a60c1
   kernel_version: 0.0.8
-  landing_page_commit: d6fcd95d3c5d1aec058a9a61acef1ad629599210
-  sprint_count: 206
+  landing_page_commit: 297f3fd1808f130824ea007346c8619e09be7f8d
+  sprint_count: 218
   unresolved_trace_refs: 0

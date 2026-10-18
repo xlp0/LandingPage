@@ -58,6 +58,13 @@ The system supports three execution modes for Cubical Logic Models:
 - **Batch Operations**: Quick removal of all duplicate entries to maintain a clean knowledge container.
 - **Sidebar Integration**: Real-time count of duplicates with a distinct UI badge.
 
+### **🗂️ Single-Page MCard Distillation & Portal Samples (EPIC-SMR / SMR-09)**
+- **Single-Page MCard**: `js/landing-page-mcard.js` distills the landing page itself into a self-describing MCard record, so the corpus supplier emits content-addressed data instead of bespoke payloads.
+- **External Portal Membrane**: `js/external-portal-membrane.js` isolates third-party portal embedding behind a membrane boundary, keeping the core page pure and the effect surface auditable.
+- **Sample Corpus**: `data/samples/` plus `scripts/seed-portal-samples.mjs` seed deterministic portal sample records for local development and tests.
+- **Server API**: `server/mcard-api.mjs` (ESM; replaces the legacy `server/mcard-api.js`) exposes the MCard endpoints used by the portal.
+- **Tests**: `tests/single-page-mcard.test.mjs` (node:test) and `tests/smoke/single-page-mcard.spec.js` (Playwright smoke).
+
 ---
 
 ## 🧊 **CLM-Based Development Architecture**
