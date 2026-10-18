@@ -2171,7 +2171,7 @@ sprints:
       vcard_refs:
         - vcard:smr-12:dod_smr_12_01_mcard_studio_src_core_viewport_devicearchetyperegi
         - vcard:smr-12:dod_smr_12_02_mcard_studio_src_ui_viewlets_responsiveviewportlab
-        - vcard:smr-12:dod_smr_12_03_mcard_studio_src_components_studio_views_webapp_we
+        - vcard:smr-12:dod_smr_12_03_mcard_studio_src_components_studio_views_cardviewl
         - vcard:smr-12:dod_smr_12_04_all_6_local_sample_portal_response_fixtures_pkc_so
         - vcard:smr-12:dod_smr_12_05_wearable_198_242_and_368_448_and_cellphone_375_812
         - vcard:smr-12:dod_smr_12_06_negative_control_a_synthetic_fixture_exceeding_the
@@ -2188,7 +2188,7 @@ sprints:
       vcard_refs:
         - vcard:smr-13:dod_smr_13_01_scripts_ci_check_submodule_realignment_py_verifies
         - vcard:smr-13:dod_smr_13_02_landingpage_s_active_server_and_ui_surface_is_dist
-        - vcard:smr-13:dod_smr_13_03_clm_tests_crd_test_crd13_realignment_e2e_py_exerci
+        - vcard:smr-13:dod_smr_13_03_tests_e2e_test_smr13_realignment_e2e_py_exercises_
         - vcard:smr-13:dod_smr_13_04_docs_guides_three_submodule_developer_refinement_r
         - vcard:smr-13:dod_smr_13_05_the_current_orchestration_gate_and_its_negative_co
         - vcard:smr-13:dod_smr_13_06_the_active_dods_in_smr_09_smr_18_pass_the_dod_test
@@ -2237,7 +2237,7 @@ sprints:
     dod:
       total: 8
       vcard_refs:
-        - vcard:smr-16:dod_smr_16_01_mcard_studio_package_json_pins_clm_kernel_at_0_0_8
+        - vcard:smr-16:dod_smr_16_01_mcard_studio_package_json_and_mcard_studio_scripts
         - vcard:smr-16:dod_smr_16_02_mcard_studio_src_services_namespaceprotocolclient_
         - vcard:smr-16:dod_smr_16_03_mcard_studio_src_components_studio_views_navigatio
         - vcard:smr-16:dod_smr_16_04_mcard_studio_src_ui_viewlets_petriconformanceviewl
@@ -2289,10 +2289,10 @@ sprints:
       total: 8
       vcard_refs:
         - vcard:smr-19:dod_smr_19_01_docs_theory_readme_md_and_docs_theory_01_foundatio
-        - vcard:smr-19:dod_smr_19_02_docs_theory_03_runtime_01_colored_petri_nets_md_fo
-        - vcard:smr-19:dod_smr_19_03_docs_theory_01_foundations_01_cubical_type_theory_
-        - vcard:smr-19:dod_smr_19_04_docs_theory_02_architecture_01_polynomial_functors
-        - vcard:smr-19:dod_smr_19_05_docs_theory_03_runtime_02_effect_handlers_md_and_d
+        - vcard:smr-19:dod_smr_19_02_docs_theory_03_runtime_conversational_mesh_kernel_
+        - vcard:smr-19:dod_smr_19_03_docs_theory_01_foundations_euler_four_square_closu
+        - vcard:smr-19:dod_smr_19_04_docs_theory_02_architecture_pkc_operating_system_m
+        - vcard:smr-19:dod_smr_19_05_docs_theory_03_runtime_epiplexity_and_awareness_md
         - vcard:smr-19:dod_smr_19_06_all_chapters_in_docs_theory_contain_zero_occurrenc
         - vcard:smr-19:dod_smr_19_07_every_markdown_file_under_docs_theory_is_reachable
         - vcard:smr-19:dod_smr_19_08_the_verification_receipt_docs_sprints_active_evide
@@ -2311,7 +2311,7 @@ sprints:
         - vcard:smr-20:dod_smr_20_04_docs_architecture_porting_functor_md_defines_the_t
         - vcard:smr-20:dod_smr_20_05_docs_architecture_architectural_refactoring_clm_mc
         - vcard:smr-20:dod_smr_20_06_docs_architecture_readme_md_and_docs_index_md_stat
-        - vcard:smr-20:dod_smr_20_07_pytest_clm_tests_sprints_test_sprint_507_mcard_tok
+        - vcard:smr-20:dod_smr_20_07_pytest_clm_tests_python_layer1_test_mcard_token_on
         - vcard:smr-20:dod_smr_20_08_the_receipt_docs_sprints_active_evidence_smr_20_ar
       state: sealed
   - handle: urn:pcard:sprint:SMR-21
@@ -2326,7 +2326,7 @@ sprints:
         - vcard:smr-21:dod_smr_21_02_docs_specifications_prd_01_prd_pkc_mesh_os_md_spec
         - vcard:smr-21:dod_smr_21_03_docs_specifications_epics_01_epic_agent_workflows_
         - vcard:smr-21:dod_smr_21_04_docs_specifications_epics_02_epic_onboarding_and_r
-        - vcard:smr-21:dod_smr_21_05_docs_specifications_01_clm_language_spec_md_aligns
+        - vcard:smr-21:dod_smr_21_05_docs_specifications_technical_01_clm_language_spec
         - vcard:smr-21:dod_smr_21_06_docs_specifications_strategic_roadmap_agentic_os_e
         - vcard:smr-21:dod_smr_21_07_all_files_under_docs_specifications_pass_python3_s
         - vcard:smr-21:dod_smr_21_08_the_receipt_docs_sprints_active_evidence_smr_21_sp
@@ -2361,7 +2361,7 @@ sprints:
         - vcard:smr-23:dod_smr_23_03_docs_theory_clm_as_deployment_process_language_md_
         - vcard:smr-23:dod_smr_23_04_docs_theory_clm_as_deployment_process_language_md_
         - vcard:smr-23:dod_smr_23_05_docs_decisions_readme_md_and_docs_decisions_dec_20
-        - vcard:smr-23:dod_smr_23_06_pytest_clm_tests_sprints_test_sprint_507_mcard_tok
+        - vcard:smr-23:dod_smr_23_06_pytest_clm_tests_python_layer1_test_mcard_token_on
         - vcard:smr-23:dod_smr_23_07_all_modified_files_in_docs_theory_and_docs_decisio
         - vcard:smr-23:dod_smr_23_08_the_receipt_docs_sprints_active_evidence_smr_23_cd
       state: sealed
@@ -2376,10 +2376,10 @@ sprints:
         - vcard:smr-24:dod_smr_24_01_docs_sprints_active_00_program_charter_epic_smr_su
         - vcard:smr-24:dod_smr_24_02_docs_index_md_docs_architecture_readme_md_and_docs
         - vcard:smr-24:dod_smr_24_03_scripts_ci_check_docs_estate_py_passes_across_the_
-        - vcard:smr-24:dod_smr_24_04_scripts_ci_check_dod_testability_py_passes_across_
+        - vcard:smr-24:dod_smr_24_04_scripts_ci_check_dod_testability_py_sprint_smr_24_
         - vcard:smr-24:dod_smr_24_05_clm_gate_29_clm_tools_guards_check_docs_mcard_petr
         - vcard:smr-24:dod_smr_24_06_scripts_ci_check_submodule_realignment_py_verifies
-        - vcard:smr-24:dod_smr_24_07_pytest_clm_tests_sprints_test_sprint_507_mcard_tok
+        - vcard:smr-24:dod_smr_24_07_pytest_clm_tests_python_layer1_test_mcard_token_on
         - vcard:smr-24:dod_smr_24_08_the_ontological_parity_certification_receipt_docs_
       state: sealed
   - handle: urn:pcard:sprint:SMR-25
@@ -2479,7 +2479,7 @@ sprints:
         - vcard:smr-30:dod_smr_30_02_docs_index_md_links_docs_theory_01_foundations_fai
         - vcard:smr-30:dod_smr_30_03_scripts_ci_check_docs_estate_py_passes_across_the_
         - vcard:smr-30:dod_smr_30_04_scripts_ci_check_sprint_estate_py_passes_with_tool
-        - vcard:smr-30:dod_smr_30_05_scripts_ci_check_dod_testability_py_passes_across_
+        - vcard:smr-30:dod_smr_30_05_scripts_ci_check_dod_testability_py_sprint_smr_30_
         - vcard:smr-30:dod_smr_30_06_clm_gate_29_clm_tools_guards_check_docs_mcard_petr
         - vcard:smr-30:dod_smr_30_07_scripts_ci_check_submodule_realignment_py_verifies
         - vcard:smr-30:dod_smr_30_08_the_certification_receipt_docs_sprints_active_evid
@@ -4869,9 +4869,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: bb234ff02bc414cae340c7cf74c09fd533692a4a37ffee0aa35804fc9fd8e9ed
-  projection_sha256: 55e6fd2a0bafdbb48a77f465c610d90d3ce8908ca92dfbda83add378608a60c1
-  kernel_version: 0.0.8
-  landing_page_commit: 6b5dedd043584b3e7cac823b9b7b77914c4c8d9c
+  source_sha256: 1b2b559172d52a1f376214b40d3f0a64d045b418ebbc58844a09cf39985c021f
+  projection_sha256: fd68defd2d37043ad3dd7260f2fa507cd691fc19fc01490f009e9ca9ca09c7e2
+  kernel_version: 0.0.9
+  landing_page_commit: 366f4f8f6b805892fb8b1aa8966d8dc9aec29158
   sprint_count: 218
   unresolved_trace_refs: 0
