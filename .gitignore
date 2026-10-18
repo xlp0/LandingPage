@@ -78,4 +78,9 @@ bin/
 /data/*.db
 /data/*.db-shm
 /data/*.db-wal
+# The same artifacts inside nested data directories (e.g. /data/samples/)
+/data/**/*.db
+/data/**/*.db-shm
+/data/**/*.db-wal
+/data/**/*.db-journal
 style-audit/
