@@ -1,0 +1,114 @@
+# LandingPage — Retired Island Tombstones (EPIC-SMR · SMR-13, DoD-SMR-13-02)
+#
+# G-Set retirement, not deletion. Each entry is an append-only tombstone: the
+# island's capability moved to `mcard-studio`, so the name is retired from the
+# active surface while the artifact itself is preserved. Nothing here is removed;
+# a tombstone records *why* a name is no longer the place to build on.
+#
+# `load_bearing` is the honest part of this record: a retirement is not a claim
+# that the artifact is already unused. `true` means the file is still imported or
+# linked by live code today, so it cannot be removed without a coordinated change
+# to its dependents. The gate reports these rather than pretending they are gone.
+
+version: 1
+program: EPIC-SMR
+sprint: SMR-13
+recorded_at: "2026-10-18T00:00:00.000Z"
+successor_submodule: mcard-studio
+
+islands:
+  - id: responsive-lab
+    artifact: responsive-lab.html
+    successor: "mcard-studio: pcard:render/viewport-lab (ResponsiveViewportLabViewlet)"
+    invariant: INV-SMR-06
+    load_bearing: true
+    dependents:
+      - index.html (nav links + control buttons + window.location)
+      - js/nav.js (destinationHandle mcard:route:/responsive-lab.html)
+      - js/device-registry.js (the registry this page rendered)
+      - tests/features/responsive-rotation-and-devices.spec.js
+      - tests/features/presentation-lattice.spec.js
+      - tests/features/layout-freeze.spec.js
+      - tests/features/style-audit.spec.js
+      - tests/features/penpot-navigation.spec.js
+    note: >-
+      The containment stage, orientation swap, and device registry are now native
+      studio capabilities. The page itself is still reachable from the landing
+      page navigation, so it stays until those links and specs are retired together.
+
+  - id: fiber-conformance
+    artifact: fiber-conformance.html
+    successor: "mcard-studio: pcard:render/petri-inspector (PetriConformanceViewlet)"
+    invariant: INV-SMR-07
+    load_bearing: true
+    dependents:
+      - tests/features/fiber-conformance.spec.js
+      - tests/features/layout-freeze.spec.js
+      - tests/features/style-audit.spec.js
+    note: >-
+      Fiber conformance inspection is native in the studio inspector; the page
+      still has a live spec that loads it.
+
+  - id: fiber-inspector
+    artifact: fiber-inspector.html
+    successor: "mcard-studio: pcard:render/petri-inspector (PetriConformanceViewlet)"
+    invariant: INV-SMR-07
+    load_bearing: true
+    dependents:
+      - tests/features/fiber-inspector.spec.js
+      - tests/features/layout-freeze.spec.js
+      - tests/features/style-audit.spec.js
+    note: "Marking and lifecycle inspection is native in the studio inspector."
+
+  - id: sprint-registry
+    artifact: sprint-registry.html
+    successor: "mcard-studio: pcard:render/sprint-governance (SprintGovernanceViewlet)"
+    invariant: INV-SMR-07
+    load_bearing: true
+    dependents:
+      - tests/features/sprint-registry.spec.js
+    note: "Sprint projection and DoD seals are native in the studio governance viewlet."
+
+  - id: app
+    artifact: app.html
+    successor: "mcard-studio: the Dockview spatial workbench"
+    invariant: INV-SMR-01
+    load_bearing: true
+    dependents:
+      - index.html (nav link 'Mission Control', split-launch link, targetUrl)
+      - js/nav.js (destinationHandle mcard:route:/app.html)
+      - tests/features/presentation-lattice.spec.js
+      - tests/features/layout-freeze.spec.js
+      - tests/features/chat-panel.spec.js
+      - tests/features/new-text-card.spec.js
+      - tests/features/penpot-navigation.spec.js
+      - tests/features/style-audit.spec.js
+      - scripts/penpot-init.mjs, scripts/penpot-screens.mjs, scripts/penpot-render.mjs
+    note: >-
+      The multi-card workbench role moved to the studio. This page is the landing
+      page's own "Mission Control" destination and is referenced by the Penpot
+      navigation tooling, so it is retired as a build target, not as a route.
+
+  - id: room-registry
+    artifact: room-registry.mjs
+    successor: "mcard-studio: the authenticated workspace/collection surface"
+    invariant: INV-SMR-07
+    load_bearing: true
+    dependents:
+      - ws-server.js (import, live dev server)
+      - packages/server/src/ws-server.js (import)
+      - packages/server/src/index.js (export { RoomRegistry })
+    note: >-
+      NOT superseded UI: this is live server code imported by the WebSocket server
+      that `npm run dev` starts and that the published package ships. Retiring the
+      name does not license removing the module.
+
+  - id: room-message-handler-server
+    artifact: room-message-handler-server.mjs
+    successor: "mcard-studio: the authenticated workspace/collection surface"
+    invariant: INV-SMR-07
+    load_bearing: true
+    dependents:
+      - ws-server.js (import, live dev server)
+      - packages/server/src/ws-server.js (import)
+    note: "Live server module, same as room-registry.mjs. Not removable while ws-server.js imports it."
