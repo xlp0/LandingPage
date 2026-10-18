@@ -499,8 +499,8 @@ test('DoD-SMR-09-05: the HUD pill renders hash, switcher, and the Studio deep li
 });
 
 test('DoD-SMR-09-08: the receipt and documentation delta are emitted and schema-shaped', () => {
-  const receiptPath = path.join(REPO_ROOT, 'docs/sprints/_active/evidence/smr-09-landing-single-card-receipt.json');
-  const deltaPath = path.join(REPO_ROOT, 'docs/sprints/_active/evidence/smr-09-doc-delta.yaml');
+  const receiptPath = path.join(REPO_ROOT, 'docs/sprints/programs/smr/evidence/smr-09-landing-single-card-receipt.json');
+  const deltaPath = path.join(REPO_ROOT, 'docs/sprints/programs/smr/evidence/smr-09-doc-delta.yaml');
   assert.equal(fs.existsSync(receiptPath), true, 'the receipt must exist');
   assert.equal(fs.existsSync(deltaPath), true, 'the documentation delta must exist');
 
