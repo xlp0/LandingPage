@@ -1948,185 +1948,6 @@ sprints:
         - vcard:sprint-407:update_docs_architecture_code_migration_to_clm_md
         - vcard:sprint-407:graduate_sprints_403_407_into_the_12_aspect_deployment_architect
       state: sealed
-  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-ULR-UNIX-PLAN9-DUALITY-AND-ESTATE-REORGANIZATION
-    card_type: mcard
-    archetype: specification_mcard
-    code: 00-PROGRAM-CHARTER-EPIC-ULR-UNIX-PLAN9-DUALITY-AND-ESTATE-REORGANIZATION
-    title: "Program Charter: EPIC-ULR \u2014 Four-Estate Boundary, Typed MCard Interop & Safe SPA Hosting"
-    dod:
-      total: 0
-      vcard_refs: []
-      state: specification
-  - handle: urn:pcard:sprint:ULR-01
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ULR-01
-    title: "Sprint Specification: ULR-01 \u2014 LeanRea Evidence-Based Functional Census & Four-Estate Boundary Contract"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:ulr-01:dod_ulr_01_01_the_census_json_records_root_submodule_commit_ids_
-        - vcard:ulr-01:dod_ulr_01_02_every_declared_package_edge_records_producer_consu
-        - vcard:ulr-01:dod_ulr_01_03_every_retire_candidate_records_consumers_tests_pac
-        - vcard:ulr-01:dod_ulr_01_04_the_dependency_matrix_records_the_approved_publish
-        - vcard:ulr-01:dod_ulr_01_05_the_readme_and_docs_index_md_link_to_the_charter_a
-        - vcard:ulr-01:dod_ulr_01_06_the_snapshot_records_committed_databases_gitmodule
-        - vcard:ulr-01:dod_ulr_01_07_the_validator_accepts_the_known_positive_surface_a
-        - vcard:ulr-01:dod_ulr_01_08_the_eight_dod_statements_pass_the_testability_lint
-      state: sealed
-  - handle: urn:pcard:sprint:ULR-02
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ULR-02
-    title: "Sprint Specification: ULR-02 \u2014 `clm-kernel` Producer Consensus & Published Consumer Compatibility"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:ulr-02:dod_ulr_02_01_producer_manifests_and_python_runtime_reporter_dec
-        - vcard:ulr-02:dod_ulr_02_02_clm_package_json_is_explicitly_classified_as_priva
-        - vcard:ulr-02:dod_ulr_02_03_the_studio_gate_validates_its_root_exact_pin_root_
-        - vcard:ulr-02:dod_ulr_02_04_the_npm_package_tarball_contains_each_declared_exp
-        - vcard:ulr-02:dod_ulr_02_05_python_and_rust_package_artifacts_build_in_isolate
-        - vcard:ulr-02:dod_ulr_02_06_zero_files_inside_clm_import_from_mcard_studio_and
-        - vcard:ulr-02:dod_ulr_02_07_all_clm_kernel_source_files_obey_the_500_line_modu
-        - vcard:ulr-02:dod_ulr_02_08_the_tri_registry_packaging_receipt_docs_sprints_ac
-      state: sealed
-  - handle: urn:pcard:sprint:ULR-03
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ULR-03
-    title: "Sprint Specification: ULR-03 \u2014 Serializable PCard Descriptors & Namespace API Conformance"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:ulr-03:dod_ulr_03_01_a_versioned_descriptor_schema_defines_canonical_fi
-        - vcard:ulr-03:dod_ulr_03_02_python_rust_and_typescript_encode_decode_supported
-        - vcard:ulr-03:dod_ulr_03_03_all_three_namespace_services_expose_the_same_nine_
-        - vcard:ulr-03:dod_ulr_03_04_failed_namespace_scope_checks_leave_all_card_and_h
-        - vcard:ulr-03:dod_ulr_03_05_host_adapters_are_documented_and_tested_as_logical
-        - vcard:ulr-03:dod_ulr_03_06_every_persisted_descriptor_record_obeys_card_hash_
-        - vcard:ulr-03:dod_ulr_03_07_public_exports_for_the_supported_descriptor_and_se
-        - vcard:ulr-03:dod_ulr_03_08_the_receipt_records_runtime_versions_fixture_hashe
-      state: sealed
-  - handle: urn:pcard:sprint:ULR-04
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ULR-04
-    title: "Sprint Specification: ULR-04 \u2014 Finite Petri Lattice Laws & Cross-Runtime Marking Contract"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:ulr-04:dod_ulr_04_01_placetypelattice_in_python_rust_and_typescript_acc
-        - vcard:ulr-04:dod_ulr_04_02_join_meet_and_bounded_lattice_laws_pass_for_the_de
-        - vcard:ulr-04:dod_ulr_04_03_mcardmarking_round_trips_normalized_place_id_quali
-        - vcard:ulr-04:dod_ulr_04_04_for_the_fixture_net_a_supplied_vector_y_is_accepte
-        - vcard:ulr-04:dod_ulr_04_05_the_implemented_lattice_and_marking_types_are_reac
-        - vcard:ulr-04:dod_ulr_04_06_documentation_uses_y_p_y_t_as_modeling_vocabulary_
-        - vcard:ulr-04:dod_ulr_04_07_changed_new_kernel_modules_stay_within_gate_27_siz
-        - vcard:ulr-04:dod_ulr_04_08_the_receipt_records_commit_ids_fixture_hashes_comm
-      state: sealed
-  - handle: urn:pcard:sprint:ULR-05
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ULR-05
-    title: "Sprint Specification: ULR-05 \u2014 Curated Portal Corpus, Sandbox Contract & Safe URL Probe"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:ulr-05:dod_ulr_05_01_the_six_portal_samples_are_built_from_portal_sampl
-        - vcard:ulr-05:dod_ulr_05_02_the_generated_test_db_has_exactly_card_handle_regi
-        - vcard:ulr-05:dod_ulr_05_03_probe_verdicts_frameable_blocked_unreachable_are_d
-        - vcard:ulr-05:dod_ulr_05_04_a_redirect_outside_the_approved_manifest_origin_an
-        - vcard:ulr-05:dod_ulr_05_05_the_frame_omits_allow_same_origin_the_telemetry_pr
-        - vcard:ulr-05:dod_ulr_05_06_ci_builds_the_corpus_without_deriving_any_record_f
-        - vcard:ulr-05:dod_ulr_05_07_csp_frame_ancestors_and_x_frame_options_are_evalua
-        - vcard:ulr-05:dod_ulr_05_08_the_receipt_records_the_base_commit_runtime_versio
-      state: sealed
-  - handle: urn:pcard:sprint:ULR-06
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ULR-06
-    title: "Sprint Specification: ULR-06 \u2014 `LandingPage` Legacy-Surface Retirement & Published-Kernel Boundary"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:ulr-06:dod_ulr_06_01_every_named_retirement_candidate_has_an_evidence_l
-        - vcard:ulr-06:dod_ulr_06_02_app_html_remains_in_the_package_when_the_retiremen
-        - vcard:ulr-06:dod_ulr_06_03_the_retirement_checker_blocks_removing_ws_server_j
-        - vcard:ulr-06:dod_ulr_06_04_clm_registry_yaml_internal_packages_and_heavy_depe
-        - vcard:ulr-06:dod_ulr_06_05_the_landingpage_consumer_resolves_the_exact_publis
-        - vcard:ulr-06:dod_ulr_06_06_the_remaining_application_surface_still_serves_the
-        - vcard:ulr-06:dod_ulr_06_07_every_physically_deleted_candidate_has_zero_refere
-        - vcard:ulr-06:dod_ulr_06_08_receipt_records_exact_commit_deleted_tombstoned_re
-      state: sealed
-  - handle: urn:pcard:sprint:ULR-07
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ULR-07
-    title: "Sprint Specification: ULR-07 \u2014 Generated Portal Corpus Integration & Viewport Regression Tests"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:ulr-07:dod_ulr_07_01_the_generated_temp_db_imports_through_importmcardd
-        - vcard:ulr-07:dod_ulr_07_02_the_production_responsiveviewportlabviewlet_render
-        - vcard:ulr-07:dod_ulr_07_03_the_standalone_viewport_playwright_harness_records
-        - vcard:ulr-07:dod_ulr_07_04_the_browser_test_request_log_contains_only_loopbac
-        - vcard:ulr-07:dod_ulr_07_05_the_production_studio_iframe_used_for_untrusted_ex
-        - vcard:ulr-07:dod_ulr_07_06_production_consumers_resolve_the_approved_publishe
-        - vcard:ulr-07:dod_ulr_07_07_the_studio_contract_gates_pass_for_the_production_
-        - vcard:ulr-07:dod_ulr_07_08_receipt_records_manifest_db_hashes_component_impor
-      state: sealed
-  - handle: urn:pcard:sprint:ULR-08
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ULR-08
-    title: "Sprint Specification: ULR-08 \u2014 Published-Kernel Workbench Contract & Preset Scope"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:ulr-08:dod_ulr_08_01_the_nested_peer_range_contains_the_approved_publis
-        - vcard:ulr-08:dod_ulr_08_02_the_root_consumer_remains_exact_pinned_to_publishe
-        - vcard:ulr-08:dod_ulr_08_03_the_studio_api_inventory_matches_the_installed_pub
-        - vcard:ulr-08:dod_ulr_08_04_browsing_an_available_descriptor_does_not_invoke_i
-        - vcard:ulr-08:dod_ulr_08_05_an_unregistered_operation_id_is_rejected_with_the_
-        - vcard:ulr-08:dod_ulr_08_06_the_four_preset_registry_matches_the_approved_capa
-        - vcard:ulr-08:dod_ulr_08_07_savepoint_disposal_benchmarks_record_runtime_fixtu
-        - vcard:ulr-08:dod_ulr_08_08_the_receipt_records_package_resolution_export_inve
-      state: sealed
-  - handle: urn:pcard:sprint:ULR-09
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ULR-09
-    title: "Sprint Specification: ULR-09 \u2014 Root Workspace, Compatibility & Submodule Retirement Audit"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:ulr-09:dod_ulr_09_01_a_consumer_map_covers_root_workspaces_production_i
-        - vcard:ulr-09:dod_ulr_09_02_a_root_library_workspace_is_removable_only_when_th
-        - vcard:ulr-09:dod_ulr_09_03_root_mcard_1_0_0_has_an_explicit_compatibility_dis
-        - vcard:ulr-09:dod_ulr_09_04_removing_the_stale_docs_to_do_plan_stanza_is_allow
-        - vcard:ulr-09:dod_ulr_09_05_the_canonical_schema_and_handle_taxonomy_still_pas
-        - vcard:ulr-09:dod_ulr_09_06_the_card_writer_census_reports_zero_newly_unclassi
-        - vcard:ulr-09:dod_ulr_09_07_the_root_package_and_workspace_installation_build_
-        - vcard:ulr-09:dod_ulr_09_08_receipt_lists_retire_retain_defer_decisions_consum
-      state: sealed
-  - handle: urn:pcard:sprint:ULR-10
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: ULR-10
-    title: "Sprint Specification: ULR-10 \u2014 Four-Estate Convergence Gate & Evidence-Based Graduation"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:ulr-10:dod_ulr_10_01_scripts_ci_check_ulr_convergence_py_runs_all_decla
-        - vcard:ulr-10:dod_ulr_10_02_the_evidence_index_contains_exactly_one_entry_for_
-        - vcard:ulr-10:dod_ulr_10_03_version_policy_is_represented_correctly_producer_w
-        - vcard:ulr-10:dod_ulr_10_04_triad_hash_law_verification_covers_the_committed_c
-        - vcard:ulr-10:dod_ulr_10_05_card_writer_convergence_and_triad_schema_remain_ve
-        - vcard:ulr-10:dod_ulr_10_06_all_required_repo_specific_tests_gates_pass_root_u
-        - vcard:ulr-10:dod_ulr_10_07_docs_sprint_estate_and_program_evidence_are_consis
-        - vcard:ulr-10:dod_ulr_10_08_the_graduation_receipt_includes_the_report_digest_
-      state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CAS
     card_type: mcard
     archetype: specification_mcard
@@ -5045,12 +4866,191 @@ sprints:
         - vcard:sync-06:the_consumer_can_use_the_release_from_a_clean_directory_npm_inst
         - vcard:sync-06:all_three_registries_carry_the_same_version_npm_pypi_and_crates_
       state: sealed
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-ULR-UNIX-PLAN9-DUALITY-AND-ESTATE-REORGANIZATION
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-ULR-UNIX-PLAN9-DUALITY-AND-ESTATE-REORGANIZATION
+    title: "Program Charter: EPIC-ULR \u2014 Four-Estate Boundary, Typed MCard Interop & Safe SPA Hosting"
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:ULR-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ULR-01
+    title: "Sprint Specification: ULR-01 \u2014 LeanRea Evidence-Based Functional Census & Four-Estate Boundary Contract"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:ulr-01:dod_ulr_01_01_the_census_json_records_root_submodule_commit_ids_
+        - vcard:ulr-01:dod_ulr_01_02_every_declared_package_edge_records_producer_consu
+        - vcard:ulr-01:dod_ulr_01_03_every_retire_candidate_records_consumers_tests_pac
+        - vcard:ulr-01:dod_ulr_01_04_the_dependency_matrix_records_the_approved_publish
+        - vcard:ulr-01:dod_ulr_01_05_the_readme_and_docs_index_md_link_to_the_charter_a
+        - vcard:ulr-01:dod_ulr_01_06_the_snapshot_records_committed_databases_gitmodule
+        - vcard:ulr-01:dod_ulr_01_07_the_validator_accepts_the_known_positive_surface_a
+        - vcard:ulr-01:dod_ulr_01_08_the_eight_dod_statements_pass_the_testability_lint
+      state: sealed
+  - handle: urn:pcard:sprint:ULR-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ULR-02
+    title: "Sprint Specification: ULR-02 \u2014 `clm-kernel` Producer Consensus & Published Consumer Compatibility"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:ulr-02:dod_ulr_02_01_producer_manifests_and_python_runtime_reporter_dec
+        - vcard:ulr-02:dod_ulr_02_02_clm_package_json_is_explicitly_classified_as_priva
+        - vcard:ulr-02:dod_ulr_02_03_the_studio_gate_validates_its_root_exact_pin_root_
+        - vcard:ulr-02:dod_ulr_02_04_the_npm_package_tarball_contains_each_declared_exp
+        - vcard:ulr-02:dod_ulr_02_05_python_and_rust_package_artifacts_build_in_isolate
+        - vcard:ulr-02:dod_ulr_02_06_zero_files_inside_clm_import_from_mcard_studio_and
+        - vcard:ulr-02:dod_ulr_02_07_all_clm_kernel_source_files_obey_the_500_line_modu
+        - vcard:ulr-02:dod_ulr_02_08_the_tri_registry_packaging_receipt_docs_sprints_pr
+      state: sealed
+  - handle: urn:pcard:sprint:ULR-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ULR-03
+    title: "Sprint Specification: ULR-03 \u2014 Serializable PCard Descriptors & Namespace API Conformance"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:ulr-03:dod_ulr_03_01_a_versioned_descriptor_schema_defines_canonical_fi
+        - vcard:ulr-03:dod_ulr_03_02_python_rust_and_typescript_encode_decode_supported
+        - vcard:ulr-03:dod_ulr_03_03_all_three_namespace_services_expose_the_same_nine_
+        - vcard:ulr-03:dod_ulr_03_04_failed_namespace_scope_checks_leave_all_card_and_h
+        - vcard:ulr-03:dod_ulr_03_05_host_adapters_are_documented_and_tested_as_logical
+        - vcard:ulr-03:dod_ulr_03_06_every_persisted_descriptor_record_obeys_card_hash_
+        - vcard:ulr-03:dod_ulr_03_07_public_exports_for_the_supported_descriptor_and_se
+        - vcard:ulr-03:dod_ulr_03_08_the_receipt_records_runtime_versions_fixture_hashe
+      state: sealed
+  - handle: urn:pcard:sprint:ULR-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ULR-04
+    title: "Sprint Specification: ULR-04 \u2014 Finite Petri Lattice Laws & Cross-Runtime Marking Contract"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:ulr-04:dod_ulr_04_01_placetypelattice_in_python_rust_and_typescript_acc
+        - vcard:ulr-04:dod_ulr_04_02_join_meet_and_bounded_lattice_laws_pass_for_the_de
+        - vcard:ulr-04:dod_ulr_04_03_mcardmarking_round_trips_normalized_place_id_quali
+        - vcard:ulr-04:dod_ulr_04_04_for_the_fixture_net_a_supplied_vector_y_is_accepte
+        - vcard:ulr-04:dod_ulr_04_05_the_implemented_lattice_and_marking_types_are_reac
+        - vcard:ulr-04:dod_ulr_04_06_documentation_uses_y_p_y_t_as_modeling_vocabulary_
+        - vcard:ulr-04:dod_ulr_04_07_changed_new_kernel_modules_stay_within_gate_27_siz
+        - vcard:ulr-04:dod_ulr_04_08_the_receipt_records_commit_ids_fixture_hashes_comm
+      state: sealed
+  - handle: urn:pcard:sprint:ULR-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ULR-05
+    title: "Sprint Specification: ULR-05 \u2014 Curated Portal Corpus, Sandbox Contract & Safe URL Probe"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:ulr-05:dod_ulr_05_01_the_six_portal_samples_are_built_from_portal_sampl
+        - vcard:ulr-05:dod_ulr_05_02_the_generated_test_db_has_exactly_card_handle_regi
+        - vcard:ulr-05:dod_ulr_05_03_probe_verdicts_frameable_blocked_unreachable_are_d
+        - vcard:ulr-05:dod_ulr_05_04_a_redirect_outside_the_approved_manifest_origin_an
+        - vcard:ulr-05:dod_ulr_05_05_the_frame_omits_allow_same_origin_the_telemetry_pr
+        - vcard:ulr-05:dod_ulr_05_06_ci_builds_the_corpus_without_deriving_any_record_f
+        - vcard:ulr-05:dod_ulr_05_07_csp_frame_ancestors_and_x_frame_options_are_evalua
+        - vcard:ulr-05:dod_ulr_05_08_the_receipt_records_the_base_commit_runtime_versio
+      state: sealed
+  - handle: urn:pcard:sprint:ULR-06
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ULR-06
+    title: "Sprint Specification: ULR-06 \u2014 `LandingPage` Legacy-Surface Retirement & Published-Kernel Boundary"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:ulr-06:dod_ulr_06_01_every_named_retirement_candidate_has_an_evidence_l
+        - vcard:ulr-06:dod_ulr_06_02_app_html_remains_in_the_package_when_the_retiremen
+        - vcard:ulr-06:dod_ulr_06_03_the_retirement_checker_blocks_removing_ws_server_j
+        - vcard:ulr-06:dod_ulr_06_04_clm_registry_yaml_internal_packages_and_heavy_depe
+        - vcard:ulr-06:dod_ulr_06_05_the_landingpage_consumer_resolves_the_exact_publis
+        - vcard:ulr-06:dod_ulr_06_06_the_remaining_application_surface_still_serves_the
+        - vcard:ulr-06:dod_ulr_06_07_every_physically_deleted_candidate_has_zero_refere
+        - vcard:ulr-06:dod_ulr_06_08_receipt_records_exact_commit_deleted_tombstoned_re
+      state: sealed
+  - handle: urn:pcard:sprint:ULR-07
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ULR-07
+    title: "Sprint Specification: ULR-07 \u2014 Generated Portal Corpus Integration & Viewport Regression Tests"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:ulr-07:dod_ulr_07_01_the_generated_temp_db_imports_through_importmcardd
+        - vcard:ulr-07:dod_ulr_07_02_the_production_responsiveviewportlabviewlet_render
+        - vcard:ulr-07:dod_ulr_07_03_the_standalone_viewport_playwright_harness_records
+        - vcard:ulr-07:dod_ulr_07_04_the_browser_test_request_log_contains_only_loopbac
+        - vcard:ulr-07:dod_ulr_07_05_the_production_studio_iframe_used_for_untrusted_ex
+        - vcard:ulr-07:dod_ulr_07_06_production_consumers_resolve_the_approved_publishe
+        - vcard:ulr-07:dod_ulr_07_07_the_studio_contract_gates_pass_for_the_production_
+        - vcard:ulr-07:dod_ulr_07_08_receipt_records_manifest_db_hashes_component_impor
+      state: sealed
+  - handle: urn:pcard:sprint:ULR-08
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ULR-08
+    title: "Sprint Specification: ULR-08 \u2014 Published-Kernel Workbench Contract & Preset Scope"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:ulr-08:dod_ulr_08_01_the_nested_peer_range_contains_the_approved_publis
+        - vcard:ulr-08:dod_ulr_08_02_the_root_consumer_remains_exact_pinned_to_publishe
+        - vcard:ulr-08:dod_ulr_08_03_the_studio_api_inventory_matches_the_installed_pub
+        - vcard:ulr-08:dod_ulr_08_04_browsing_an_available_descriptor_does_not_invoke_i
+        - vcard:ulr-08:dod_ulr_08_05_an_unregistered_operation_id_is_rejected_with_the_
+        - vcard:ulr-08:dod_ulr_08_06_the_four_preset_registry_matches_the_approved_capa
+        - vcard:ulr-08:dod_ulr_08_07_savepoint_disposal_benchmarks_record_runtime_fixtu
+        - vcard:ulr-08:dod_ulr_08_08_the_receipt_records_package_resolution_export_inve
+      state: sealed
+  - handle: urn:pcard:sprint:ULR-09
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ULR-09
+    title: "Sprint Specification: ULR-09 \u2014 Root Workspace, Compatibility & Submodule Retirement Audit"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:ulr-09:dod_ulr_09_01_a_consumer_map_covers_root_workspaces_production_i
+        - vcard:ulr-09:dod_ulr_09_02_a_root_library_workspace_is_removable_only_when_th
+        - vcard:ulr-09:dod_ulr_09_03_root_mcard_1_0_0_has_an_explicit_compatibility_dis
+        - vcard:ulr-09:dod_ulr_09_04_removing_the_stale_docs_to_do_plan_stanza_is_allow
+        - vcard:ulr-09:dod_ulr_09_05_the_canonical_schema_and_handle_taxonomy_still_pas
+        - vcard:ulr-09:dod_ulr_09_06_the_card_writer_census_reports_zero_newly_unclassi
+        - vcard:ulr-09:dod_ulr_09_07_the_root_package_and_workspace_installation_build_
+        - vcard:ulr-09:dod_ulr_09_08_receipt_lists_retire_retain_defer_decisions_consum
+      state: sealed
+  - handle: urn:pcard:sprint:ULR-10
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: ULR-10
+    title: "Sprint Specification: ULR-10 \u2014 Four-Estate Convergence Gate & Evidence-Based Graduation"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:ulr-10:dod_ulr_10_01_scripts_ci_check_ulr_convergence_py_runs_all_decla
+        - vcard:ulr-10:dod_ulr_10_02_the_evidence_index_contains_exactly_one_entry_for_
+        - vcard:ulr-10:dod_ulr_10_03_version_policy_is_represented_correctly_producer_w
+        - vcard:ulr-10:dod_ulr_10_04_triad_hash_law_verification_covers_the_committed_c
+        - vcard:ulr-10:dod_ulr_10_05_card_writer_convergence_and_triad_schema_remain_ve
+        - vcard:ulr-10:dod_ulr_10_06_all_required_repo_specific_tests_gates_pass_root_u
+        - vcard:ulr-10:dod_ulr_10_07_docs_sprint_estate_and_program_evidence_are_consis
+        - vcard:ulr-10:dod_ulr_10_08_the_graduation_receipt_includes_the_report_digest_
+      state: sealed
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: bfba88518b76f6b564702ee6e859ef568396a511f53c8da6befe86f327a1e520
-  projection_sha256: 14e5e57d700be433ea08ef85766a27cf5ab5fa102cbb234a0f75ac354ae15f29
+  source_sha256: a5443551a7c986e1769e07c2a6874eda50920b567a6390390dcdd1d27d89e23d
+  projection_sha256: afd184004d9f391149e30a40ad942597bb39853475699f6386094a900e9ca525
   kernel_version: 0.0.10
-  landing_page_commit: 53a73be73b5db77a509f2723bef83c083bf066f0
+  landing_page_commit: ccd9830d5528ddf66621c1772cd7a3f098b85df5
   sprint_count: 229
   unresolved_trace_refs: 0
