@@ -1948,117 +1948,6 @@ sprints:
         - vcard:sprint-407:update_docs_architecture_code_migration_to_clm_md
         - vcard:sprint-407:graduate_sprints_403_407_into_the_12_aspect_deployment_architect
       state: sealed
-  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-MKR-ROOT-MAKEFILE-MODERNIZATION-AND-SUBMODULE-DELEGATION
-    card_type: mcard
-    archetype: specification_mcard
-    code: 00-PROGRAM-CHARTER-EPIC-MKR-ROOT-MAKEFILE-MODERNIZATION-AND-SUBMODULE-DELEGATION
-    title: "Program Charter: EPIC-MKR \u2014 Root Makefile Modernization, Dead Surface Retirement & Submodule Delegation Architecture"
-    dod:
-      total: 0
-      vcard_refs: []
-      state: specification
-  - handle: urn:pcard:sprint:MKR-01
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: MKR-01
-    title: "Sprint Specification: MKR-01 \u2014 LeanRea Evidence Census & Stale Target Inventory"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:mkr-01:dod_mkr_01_01_the_census_records_all_targets_in_makefile_with_li
-        - vcard:mkr-01:dod_mkr_01_02_every_path_argument_in_recipes_is_checked_for_phys
-        - vcard:mkr-01:dod_mkr_01_03_target_lint_is_classified_with_evidence_of_missing
-        - vcard:mkr-01:dod_mkr_01_04_target_clm_run_py_is_classified_with_evidence_of_r
-        - vcard:mkr-01:dod_mkr_01_05_target_clm_run_js_is_classified_with_evidence_of_m
-        - vcard:mkr-01:dod_mkr_01_06_targets_studio_install_studio_dev_and_studio_test_
-        - vcard:mkr-01:dod_mkr_01_07_the_389_lines_of_historical_cdo_04_16_and_sty_01_0
-        - vcard:mkr-01:dod_mkr_01_08_the_eight_dod_statements_pass_the_testability_lint
-      state: sealed
-  - handle: urn:pcard:sprint:MKR-02
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: MKR-02
-    title: "Sprint Specification: MKR-02 \u2014 Sovereign Submodule Delegation & Toolchain Realignment"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:mkr-02:dod_mkr_02_01_the_delegation_matrix_records_all_root_submodule_t
-        - vcard:mkr-02:dod_mkr_02_02_targets_test_test_clm_py_clm_fnd_clm_equivalence_c
-        - vcard:mkr-02:dod_mkr_02_03_targets_build_rust_and_rs_build_delegate_to_make_c
-        - vcard:mkr-02:dod_mkr_02_04_target_init_db_delegates_to_make_c_clm_init_db_for
-        - vcard:mkr-02:dod_mkr_02_05_variable_studio_npm_uses_npm_prefix_mcard_studio_e
-        - vcard:mkr-02:dod_mkr_02_06_targets_landing_test_landing_presentation_and_stud
-        - vcard:mkr-02:dod_mkr_02_07_the_delegation_checker_verifies_that_no_bare_cargo
-        - vcard:mkr-02:dod_mkr_02_08_the_eight_dod_statements_pass_the_testability_lint
-      state: sealed
-  - handle: urn:pcard:sprint:MKR-03
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: MKR-03
-    title: "Sprint Specification: MKR-03 \u2014 Decommissioning Dead mcard Shims & Broken Chapter Runners"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:mkr-03:dod_mkr_03_01_the_decommission_plan_records_all_removed_targets_
-        - vcard:mkr-03:dod_mkr_03_02_variable_package_name_targeting_mcard_is_eliminate
-        - vcard:mkr-03:dod_mkr_03_03_targets_lint_and_type_check_operate_on_scripts_ci_
-        - vcard:mkr-03:dod_mkr_03_04_deprecated_deploy_and_security_targets_referencing
-        - vcard:mkr-03:dod_mkr_03_05_target_clm_run_py_eliminates_invocation_of_uv_run_
-        - vcard:mkr-03:dod_mkr_03_06_target_clm_run_js_eliminates_invocation_of_non_exi
-        - vcard:mkr-03:dod_mkr_03_07_the_cleanliness_checker_confirms_zero_references_t
-        - vcard:mkr-03:dod_mkr_03_08_the_eight_dod_statements_pass_the_testability_lint
-      state: sealed
-  - handle: urn:pcard:sprint:MKR-04
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: MKR-04
-    title: "Sprint Specification: MKR-04 \u2014 Pruning Historical CDO Workflows & Modular Archival"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:mkr-04:dod_mkr_04_01_the_archival_manifest_records_all_modularized_cdo_
-        - vcard:mkr-04:dod_mkr_04_02_legacy_cdo_and_sty_workflow_targets_are_modularize
-        - vcard:mkr-04:dod_mkr_04_03_root_makefile_line_count_is_strictly_under_250_lin
-        - vcard:mkr-04:dod_mkr_04_04_recipe_formal_check_delegates_to_make_c_clm_check_
-        - vcard:mkr-04:dod_mkr_04_05_recipe_polyglot_oracles_delegates_to_make_c_clm_te
-        - vcard:mkr-04:dod_mkr_04_06_root_makefile_eliminates_inline_probe_file_creatio
-        - vcard:mkr-04:dod_mkr_04_07_the_complexity_validator_rejects_synthetic_fixture
-        - vcard:mkr-04:dod_mkr_04_08_the_eight_dod_statements_pass_the_testability_lint
-      state: sealed
-  - handle: urn:pcard:sprint:MKR-05
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: MKR-05
-    title: "Sprint Specification: MKR-05 \u2014 Integrating ULR/SMR SSoT Gates & Unified Check Suite"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:mkr-05:dod_mkr_05_01_the_gate_coverage_matrix_records_all_canonical_scr
-        - vcard:mkr-05:dod_mkr_05_02_target_check_ulr_executes_check_ulr_census_py_chec
-        - vcard:mkr-05:dod_mkr_05_03_target_check_smr_executes_check_submodule_realignm
-        - vcard:mkr-05:dod_mkr_05_04_target_check_estate_executes_check_landingpage_ret
-        - vcard:mkr-05:dod_mkr_05_05_target_check_all_runs_root_gates_studio_spa_verify
-        - vcard:mkr-05:dod_mkr_05_06_target_help_formats_output_into_the_four_canonical
-        - vcard:mkr-05:dod_mkr_05_07_the_gate_coverage_checker_verifies_that_100_of_can
-        - vcard:mkr-05:dod_mkr_05_08_the_eight_dod_statements_pass_the_testability_lint
-      state: sealed
-  - handle: urn:pcard:sprint:MKR-06
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: MKR-06
-    title: "Sprint Specification: MKR-06 \u2014 Makefile Conformance Canary, Cross-Platform Gate & Program Certification"
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:mkr-06:dod_mkr_06_01_the_static_conformance_analyzer_scripts_ci_check_m
-        - vcard:mkr-06:dod_mkr_06_02_the_conformance_self_test_suite_passes_all_positiv
-        - vcard:mkr-06:dod_mkr_06_03_the_root_makefile_exposes_make_check_makefile_conf
-        - vcard:mkr-06:dod_mkr_06_04_every_public_target_declared_in_root_makefile_pass
-        - vcard:mkr-06:dod_mkr_06_05_the_conformance_analyzer_confirms_zero_references_
-        - vcard:mkr-06:dod_mkr_06_06_the_epic_mkr_conformance_report_and_evidence_index
-        - vcard:mkr-06:dod_mkr_06_07_the_graduation_witness_evidence_mkr_graduation_jso
-        - vcard:mkr-06:dod_mkr_06_08_the_estate_gate_documentation_gate_and_dod_testabi
-      state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CAS
     card_type: mcard
     archetype: specification_mcard
@@ -3263,6 +3152,117 @@ sprints:
         - vcard:lclm-10:dod_lclm_10_06_handle_based_batch_composition_resolves_a_typed_d
         - vcard:lclm-10:dod_lclm_10_07_existing_explicit_file_batch_mode_remains_unchang
         - vcard:lclm-10:dod_lclm_10_08_final_closure_is_declared_only_after_every_execut
+      state: sealed
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-MKR-ROOT-MAKEFILE-MODERNIZATION-AND-SUBMODULE-DELEGATION
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-MKR-ROOT-MAKEFILE-MODERNIZATION-AND-SUBMODULE-DELEGATION
+    title: "Program Charter: EPIC-MKR \u2014 Root Makefile Modernization, Dead Surface Retirement & Submodule Delegation Architecture"
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:MKR-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: MKR-01
+    title: "Sprint Specification: MKR-01 \u2014 LeanRea Evidence Census & Stale Target Inventory"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:mkr-01:dod_mkr_01_01_the_census_records_all_targets_in_makefile_with_li
+        - vcard:mkr-01:dod_mkr_01_02_every_path_argument_in_recipes_is_checked_for_phys
+        - vcard:mkr-01:dod_mkr_01_03_target_lint_is_classified_with_evidence_of_missing
+        - vcard:mkr-01:dod_mkr_01_04_target_clm_run_py_is_classified_with_evidence_of_r
+        - vcard:mkr-01:dod_mkr_01_05_target_clm_run_js_is_classified_with_evidence_of_m
+        - vcard:mkr-01:dod_mkr_01_06_targets_studio_install_studio_dev_and_studio_test_
+        - vcard:mkr-01:dod_mkr_01_07_the_389_lines_of_historical_cdo_04_16_and_sty_01_0
+        - vcard:mkr-01:dod_mkr_01_08_the_eight_dod_statements_pass_the_testability_lint
+      state: sealed
+  - handle: urn:pcard:sprint:MKR-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: MKR-02
+    title: "Sprint Specification: MKR-02 \u2014 Sovereign Submodule Delegation & Toolchain Realignment"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:mkr-02:dod_mkr_02_01_the_delegation_matrix_records_all_root_submodule_t
+        - vcard:mkr-02:dod_mkr_02_02_targets_test_test_clm_py_clm_fnd_clm_equivalence_c
+        - vcard:mkr-02:dod_mkr_02_03_targets_build_rust_and_rs_build_delegate_to_make_c
+        - vcard:mkr-02:dod_mkr_02_04_target_init_db_delegates_to_make_c_clm_init_db_for
+        - vcard:mkr-02:dod_mkr_02_05_variable_studio_npm_uses_npm_prefix_mcard_studio_e
+        - vcard:mkr-02:dod_mkr_02_06_targets_landing_test_landing_presentation_and_stud
+        - vcard:mkr-02:dod_mkr_02_07_the_delegation_checker_verifies_that_no_bare_cargo
+        - vcard:mkr-02:dod_mkr_02_08_the_eight_dod_statements_pass_the_testability_lint
+      state: sealed
+  - handle: urn:pcard:sprint:MKR-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: MKR-03
+    title: "Sprint Specification: MKR-03 \u2014 Decommissioning Dead mcard Shims & Broken Chapter Runners"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:mkr-03:dod_mkr_03_01_the_decommission_plan_records_all_removed_targets_
+        - vcard:mkr-03:dod_mkr_03_02_variable_package_name_targeting_mcard_is_eliminate
+        - vcard:mkr-03:dod_mkr_03_03_targets_lint_and_type_check_operate_on_scripts_ci_
+        - vcard:mkr-03:dod_mkr_03_04_deprecated_deploy_and_security_targets_referencing
+        - vcard:mkr-03:dod_mkr_03_05_target_clm_run_py_eliminates_invocation_of_uv_run_
+        - vcard:mkr-03:dod_mkr_03_06_target_clm_run_js_eliminates_invocation_of_non_exi
+        - vcard:mkr-03:dod_mkr_03_07_the_cleanliness_checker_confirms_zero_references_t
+        - vcard:mkr-03:dod_mkr_03_08_the_eight_dod_statements_pass_the_testability_lint
+      state: sealed
+  - handle: urn:pcard:sprint:MKR-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: MKR-04
+    title: "Sprint Specification: MKR-04 \u2014 Pruning Historical CDO Workflows & Modular Archival"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:mkr-04:dod_mkr_04_01_the_archival_manifest_records_all_modularized_cdo_
+        - vcard:mkr-04:dod_mkr_04_02_legacy_cdo_and_sty_workflow_targets_are_modularize
+        - vcard:mkr-04:dod_mkr_04_03_root_makefile_line_count_is_strictly_under_250_lin
+        - vcard:mkr-04:dod_mkr_04_04_recipe_formal_check_delegates_to_make_c_clm_check_
+        - vcard:mkr-04:dod_mkr_04_05_recipe_polyglot_oracles_delegates_to_make_c_clm_te
+        - vcard:mkr-04:dod_mkr_04_06_root_makefile_eliminates_inline_probe_file_creatio
+        - vcard:mkr-04:dod_mkr_04_07_the_complexity_validator_rejects_synthetic_fixture
+        - vcard:mkr-04:dod_mkr_04_08_the_eight_dod_statements_pass_the_testability_lint
+      state: sealed
+  - handle: urn:pcard:sprint:MKR-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: MKR-05
+    title: "Sprint Specification: MKR-05 \u2014 Integrating ULR/SMR SSoT Gates & Unified Check Suite"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:mkr-05:dod_mkr_05_01_the_gate_coverage_matrix_records_all_canonical_scr
+        - vcard:mkr-05:dod_mkr_05_02_target_check_ulr_executes_check_ulr_census_py_chec
+        - vcard:mkr-05:dod_mkr_05_03_target_check_smr_executes_check_submodule_realignm
+        - vcard:mkr-05:dod_mkr_05_04_target_check_estate_executes_check_landingpage_ret
+        - vcard:mkr-05:dod_mkr_05_05_target_check_all_runs_root_gates_studio_spa_verify
+        - vcard:mkr-05:dod_mkr_05_06_target_help_formats_output_into_the_four_canonical
+        - vcard:mkr-05:dod_mkr_05_07_the_gate_coverage_checker_verifies_that_100_of_can
+        - vcard:mkr-05:dod_mkr_05_08_the_eight_dod_statements_pass_the_testability_lint
+      state: sealed
+  - handle: urn:pcard:sprint:MKR-06
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: MKR-06
+    title: "Sprint Specification: MKR-06 \u2014 Makefile Conformance Canary, Cross-Platform Gate & Program Certification"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:mkr-06:dod_mkr_06_01_the_static_conformance_analyzer_scripts_ci_check_m
+        - vcard:mkr-06:dod_mkr_06_02_the_conformance_self_test_suite_passes_all_positiv
+        - vcard:mkr-06:dod_mkr_06_03_the_root_makefile_exposes_make_check_makefile_conf
+        - vcard:mkr-06:dod_mkr_06_04_every_public_target_declared_in_root_makefile_pass
+        - vcard:mkr-06:dod_mkr_06_05_the_conformance_analyzer_confirms_zero_references_
+        - vcard:mkr-06:dod_mkr_06_06_the_epic_mkr_conformance_report_and_evidence_index
+        - vcard:mkr-06:dod_mkr_06_07_the_graduation_witness_evidence_mkr_graduation_jso
+        - vcard:mkr-06:dod_mkr_06_08_the_estate_gate_documentation_gate_and_dod_testabi
       state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-ORC-II
     card_type: pcard
@@ -5159,9 +5159,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: 2bb63de7779ebe061cf024da196018af6aabf096d8729a7094e376970fa8cd8e
-  projection_sha256: dbe678f10978d9399bdbd08abdd4dc1a7800a6dbd5fad143254003bd760b02a4
+  source_sha256: 087a4ed92087a2496153bbdbdef5e31d0ec8f12c667355d9dc0e797d9bc3bd19
+  projection_sha256: 04d48281a28f79f40bc170078b9a03923b6c2874c6d61bdfbc75e0263c0f675d
   kernel_version: 0.0.10
-  landing_page_commit: 2a05a877f7bfe2179915448dc5afb8d902ecde24
+  landing_page_commit: 264f78ce0f3e0a577708f5c066f07da8df64415a
   sprint_count: 236
   unresolved_trace_refs: 0
