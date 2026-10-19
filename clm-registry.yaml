@@ -2691,6 +2691,100 @@ sprints:
         - vcard:crd-08:dod_crd_08_07_the_graduation_certificate_docs_sprints_active_evi
         - vcard:crd-08:dod_crd_08_08_the_program_staging_graduation_protocol_is_complet
       state: sealed
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-DOC-DOCUMENTATION-ESTATE-MODERNIZATION
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-DOC-DOCUMENTATION-ESTATE-MODERNIZATION
+    title: 'Program Charter: EPIC-DOC - Documentation Estate Modernization, Four-Estate Alignment and Cross-Reference Soundness'
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:DOC-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: DOC-01
+    title: 'Sprint DOC-01: Docs Estate Gate Remediation & Link Integrity'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:doc-01:dod_doc_01_01_the_navigation_link_in_docs_sprints_programs_cdo_r
+        - vcard:doc-01:dod_doc_01_02_the_gate_script_scripts_ci_check_docs_estate_py_ex
+        - vcard:doc-01:dod_doc_01_03_all_seven_top_level_documentation_categories_decla
+        - vcard:doc-01:dod_doc_01_04_the_documentation_root_contains_exactly_one_markdo
+        - vcard:doc-01:dod_doc_01_05_the_entrypoint_docs_index_md_contains_the_required
+        - vcard:doc-01:dod_doc_01_06_zero_draft_directories_with_underscore_prefixes_ex
+        - vcard:doc-01:dod_doc_01_07_the_sprint_document_sprint_doc_01_docs_estate_gate
+        - vcard:doc-01:dod_doc_01_08_the_verification_receipt_docs_sprints_active_evide
+      state: sealed
+  - handle: urn:pcard:sprint:DOC-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: DOC-02
+    title: 'Sprint DOC-02: Program Graduation Census & Post-RDS Alignment'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:doc-02:dod_doc_02_01_the_master_index_docs_index_md_records_epic_rds_as
+        - vcard:doc-02:dod_doc_02_02_the_staging_file_docs_sprints_active_readme_md_cit
+        - vcard:doc-02:dod_doc_02_03_all_documentation_files_reference_data_sample_pcar
+        - vcard:doc-02:dod_doc_02_04_zero_documentation_files_reference_deleted_root_cl
+        - vcard:doc-02:dod_doc_02_05_the_weekly_changelog_docs_changelog_2026_w43_md_re
+        - vcard:doc-02:dod_doc_02_06_root_directory_hygiene_passes_with_at_most_52_trac
+        - vcard:doc-02:dod_doc_02_07_the_sprint_document_sprint_doc_02_program_graduati
+        - vcard:doc-02:dod_doc_02_08_the_verification_receipt_docs_sprints_active_evide
+      state: sealed
+  - handle: urn:pcard:sprint:DOC-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: DOC-03
+    title: 'Sprint DOC-03: Core Architecture Modernization & Legacy Surface Purge'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:doc-03:dod_doc_03_01_the_package_distribution_matrix_in_docs_architectu
+        - vcard:doc-03:dod_doc_03_02_the_document_docs_architecture_00_architecture_ove
+        - vcard:doc-03:dod_doc_03_03_all_specification_references_in_docs_architecture_
+        - vcard:doc-03:dod_doc_03_04_links_to_retired_scratch_files_are_absent_from_doc
+        - vcard:doc-03:dod_doc_03_05_scratch_files_docs_architecture_optimization_notes
+        - vcard:doc-03:dod_doc_03_06_legacy_surface_boundary_verification_passes_with_z
+        - vcard:doc-03:dod_doc_03_07_the_sprint_document_sprint_doc_03_core_architectur
+        - vcard:doc-03:dod_doc_03_08_the_verification_receipt_docs_sprints_active_evide
+      state: sealed
+  - handle: urn:pcard:sprint:DOC-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: DOC-04
+    title: 'Sprint DOC-04: Four-Estate Guide Synchronization & Spec Linkage'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:doc-04:dod_doc_04_01_the_developer_guide_docs_guides_developer_migratio
+        - vcard:doc-04:dod_doc_04_02_the_workbench_guide_docs_guides_running_mcard_stud
+        - vcard:doc-04:dod_doc_04_03_the_documentation_hub_docs_guides_documentation_hu
+        - vcard:doc-04:dod_doc_04_04_the_specification_index_docs_specifications_00_ind
+        - vcard:doc-04:dod_doc_04_05_submodule_delegation_verification_passes_with_zero
+        - vcard:doc-04:dod_doc_04_06_root_makefile_help_target_cleanly_describes_all_fo
+        - vcard:doc-04:dod_doc_04_07_the_sprint_document_sprint_doc_04_four_estate_guid
+        - vcard:doc-04:dod_doc_04_08_the_verification_receipt_docs_sprints_active_evide
+      state: sealed
+  - handle: urn:pcard:sprint:DOC-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: DOC-05
+    title: 'Sprint DOC-05: Documentation Linter Ratchet & Program Certification'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:doc-05:dod_doc_05_01_the_linter_scripts_ci_check_docs_estate_py_enforce
+        - vcard:doc-05:dod_doc_05_02_the_linter_scripts_ci_check_docs_estate_py_passes_
+        - vcard:doc-05:dod_doc_05_03_the_unified_estate_gate_make_check_estate_complete
+        - vcard:doc-05:dod_doc_05_04_all_forty_dods_in_epic_doc_pass_testability_verifi
+        - vcard:doc-05:dod_doc_05_05_program_manifests_for_epic_doc_are_encoded_into_re
+        - vcard:doc-05:dod_doc_05_06_the_sprint_registry_registry_sprints_yaml_register
+        - vcard:doc-05:dod_doc_05_07_the_sprint_document_sprint_doc_05_documentation_li
+        - vcard:doc-05:dod_doc_05_08_the_program_certification_receipt_docs_sprints_act
+      state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-DWD-WASM-DECOMMISSION
     card_type: mcard
     archetype: specification_mcard
@@ -5270,9 +5364,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: b5f69654db18834e1f8e04d78ee1cf46a34a8c19bca0456fca26ec236dd379e4
-  projection_sha256: 1874b83af88477c18c36ba6e200260f2bb26b80fd4ee3810e09661582eaaaf9e
+  source_sha256: 615a25233e222d721ef5e436a761f08a387ae30ed8ccc8f56a546b37097df9b2
+  projection_sha256: e854093e233ec417f89f5c84eba6f2c7bb679d671f12a7976e267d2d5317bb88
   kernel_version: 0.0.10
-  landing_page_commit: 164c330a8464be5a6e685099adda3d51a5fd1530
-  sprint_count: 243
+  landing_page_commit: aedd607835854c07b24da7e2ff931f06d27443f9
+  sprint_count: 249
   unresolved_trace_refs: 0
