@@ -4091,6 +4091,117 @@ sprints:
         - vcard:pkg-06:mcard_tdd_records_the_landingpage_corpus_commit_b04e502_and_cont
         - vcard:pkg-06:charter_1_5_and_the_active_readme_describe_landingpage_as_an_ind
       state: sealed
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-RDS-ROOT-DIRECTORY-SIMPLIFICATION-AND-ESTATE-HYGIENE
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-RDS-ROOT-DIRECTORY-SIMPLIFICATION-AND-ESTATE-HYGIENE
+    title: 'Program Charter: EPIC-RDS - Root Directory Simplification, Dead Artifact Subtraction and Estate Boundary Hygiene'
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:RDS-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RDS-01
+    title: 'Sprint Specification: RDS-01 - Root Directory Census and Ownership Classification'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:rds-01:dod_rds_01_01_the_census_artifact_docs_sprints_active_evidence_r
+        - vcard:rds-01:dod_rds_01_02_every_entry_in_docs_sprints_active_evidence_rds_01
+        - vcard:rds-01:dod_rds_01_03_all_25_bucket_b_zero_ref_tracked_clutter_entries_h
+        - vcard:rds-01:dod_rds_01_04_bucket_assignments_across_a_b_c_d_and_e_are_mutual
+        - vcard:rds-01:dod_rds_01_05_the_census_validator_scripts_ci_check_root_census_
+        - vcard:rds-01:dod_rds_01_06_the_census_validator_scripts_ci_check_root_census_
+        - vcard:rds-01:dod_rds_01_07_the_census_validator_scripts_ci_check_root_census_
+        - vcard:rds-01:dod_rds_01_08_all_eight_dod_statements_in_sprint_rds_01_root_dir
+      state: sealed
+  - handle: urn:pcard:sprint:RDS-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RDS-02
+    title: 'Sprint Specification: RDS-02 - Subtracting Unreferenced Logs, Scratch Scripts and Persona Stubs'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:rds-02:dod_rds_02_01_zero_committed_log_and_optimization_dump_files_pyt
+        - vcard:rds-02:dod_rds_02_02_zero_one_off_python_scratch_and_migration_scripts_
+        - vcard:rds-02:dod_rds_02_03_zero_root_persona_stub_files_boot_md_heartbeat_md_
+        - vcard:rds-02:dod_rds_02_04_unreferenced_root_directory_system_is_absent_from_
+        - vcard:rds-02:dod_rds_02_05_the_subtraction_receipt_docs_sprints_active_eviden
+        - vcard:rds-02:dod_rds_02_06_the_clutter_subtraction_validator_scripts_ci_check
+        - vcard:rds-02:dod_rds_02_07_root_estate_verification_make_check_estate_passes_
+        - vcard:rds-02:dod_rds_02_08_all_eight_dod_statements_in_sprint_rds_02_subtract
+      state: sealed
+  - handle: urn:pcard:sprint:RDS-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RDS-03
+    title: 'Sprint Specification: RDS-03 - Deduplicating Lockfiles, Env Templates and Untracked Leaks'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:rds-03:dod_rds_03_01_files_pnpm_lock_yaml_and_pnpm_workspace_yaml_are_a
+        - vcard:rds-03:dod_rds_03_02_the_studio_ci_job_copies_env_example_instead_of_ex
+        - vcard:rds-03:dod_rds_03_03_untracked_root_sqlite_file_meta_functionality_db_a
+        - vcard:rds-03:dod_rds_03_04_file_gitignore_contains_explicit_ignore_rules_for_
+        - vcard:rds-03:dod_rds_03_05_the_receipt_docs_sprints_active_evidence_rds_03_to
+        - vcard:rds-03:dod_rds_03_06_the_toolchain_hygiene_validator_scripts_ci_check_r
+        - vcard:rds-03:dod_rds_03_07_root_estate_verification_make_check_estate_and_the
+        - vcard:rds-03:dod_rds_03_08_all_eight_dod_statements_in_sprint_rds_03_deduplic
+      state: sealed
+  - handle: urn:pcard:sprint:RDS-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RDS-04
+    title: 'Sprint Specification: RDS-04 - Consolidating Root Configuration Files into config/'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:rds-04:dod_rds_04_01_unreferenced_root_configuration_files_bmad_config_
+        - vcard:rds-04:dod_rds_04_02_app_config_json_mcard_yaml_and_unified_server_yaml
+        - vcard:rds-04:dod_rds_04_03_the_top_level_yaml_set_is_exactly_pre_commit_confi
+        - vcard:rds-04:dod_rds_04_04_the_top_level_json_set_is_exactly_package_json_pac
+        - vcard:rds-04:dod_rds_04_05_file_config_readme_md_documents_every_configuratio
+        - vcard:rds-04:dod_rds_04_06_the_receipt_docs_sprints_active_evidence_rds_04_co
+        - vcard:rds-04:dod_rds_04_07_the_config_boundary_validator_scripts_ci_check_roo
+        - vcard:rds-04:dod_rds_04_08_all_eight_dod_statements_in_sprint_rds_04_consolid
+      state: sealed
+  - handle: urn:pcard:sprint:RDS-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RDS-05
+    title: 'Sprint Specification: RDS-05 - Rationalizing Top-Level Directories and Agent Surfaces'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:rds-05:dod_rds_05_01_top_level_directory_sample_pcards_is_absent_from_t
+        - vcard:rds-05:dod_rds_05_02_top_level_directory_formal_remains_the_single_form
+        - vcard:rds-05:dod_rds_05_03_every_tracked_top_level_directory_at_the_repositor
+        - vcard:rds-05:dod_rds_05_04_every_allowlisted_top_level_directory_in_docs_spri
+        - vcard:rds-05:dod_rds_05_05_the_directory_validator_scripts_ci_check_top_level
+        - vcard:rds-05:dod_rds_05_06_the_directory_validator_scripts_ci_check_top_level
+        - vcard:rds-05:dod_rds_05_07_root_estate_verification_make_check_estate_and_ulr
+        - vcard:rds-05:dod_rds_05_08_all_eight_dod_statements_in_sprint_rds_05_rational
+      state: sealed
+  - handle: urn:pcard:sprint:RDS-06
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RDS-06
+    title: 'Sprint Specification: RDS-06 - Root Directory Allowlist Gate and Program Certification'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:rds-06:dod_rds_06_01_the_root_hygiene_gate_scripts_ci_check_root_direct
+        - vcard:rds-06:dod_rds_06_02_the_root_hygiene_self_test_suite_passes_all_positi
+        - vcard:rds-06:dod_rds_06_03_root_makefile_exposes_make_check_root_hygiene_wire
+        - vcard:rds-06:dod_rds_06_04_the_root_hygiene_gate_scripts_ci_check_root_direct
+        - vcard:rds-06:dod_rds_06_05_the_certification_report_and_evidence_index_reside
+        - vcard:rds-06:dod_rds_06_06_the_graduation_witness_evidence_rds_graduation_jso
+        - vcard:rds-06:dod_rds_06_07_the_unified_four_estate_check_suite_make_check_all
+        - vcard:rds-06:dod_rds_06_08_all_eight_dod_statements_in_sprint_rds_06_root_dir
+      state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-RET-LEGACY-SURFACE-RETIREMENT
     card_type: mcard
     archetype: specification_mcard
@@ -5159,9 +5270,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: 087a4ed92087a2496153bbdbdef5e31d0ec8f12c667355d9dc0e797d9bc3bd19
-  projection_sha256: 04d48281a28f79f40bc170078b9a03923b6c2874c6d61bdfbc75e0263c0f675d
+  source_sha256: b5f69654db18834e1f8e04d78ee1cf46a34a8c19bca0456fca26ec236dd379e4
+  projection_sha256: 1874b83af88477c18c36ba6e200260f2bb26b80fd4ee3810e09661582eaaaf9e
   kernel_version: 0.0.10
-  landing_page_commit: 264f78ce0f3e0a577708f5c066f07da8df64415a
-  sprint_count: 236
+  landing_page_commit: 164c330a8464be5a6e685099adda3d51a5fd1530
+  sprint_count: 243
   unresolved_trace_refs: 0
