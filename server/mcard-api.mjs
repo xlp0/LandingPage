@@ -19,13 +19,60 @@ import fs from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import { computeHash } from 'clm-kernel';
 
+import dns from 'node:dns';
+
 const router = express.Router();
 
 export const LANDING_HANDLE = 'urn:mcard:content:landing_page';
 export const DEFAULT_ALGORITHM = 'blake3';
 export const LEGACY_ALGORITHM = 'sha256';
 export const PROBE_BUDGET_MS = 600;
+export const MAX_PROBE_REDIRECTS = 3;
+export const MANIFEST_APPROVED_ORIGINS = Object.freeze([
+  'https://example.gov',
+  'https://developer.mozilla.org',
+  'https://github.com',
+  'https://www.wikipedia.org',
+]);
 const SAFE_URL_SCHEMES = new Set(['http:', 'https:']);
+
+const defaultResolver = async (hostname) => {
+  const records = await dns.promises.lookup(hostname, { all: true, verbatim: true });
+  return records.map((r) => r.address);
+};
+
+let probePolicy = {
+  allowedOrigins: [...MANIFEST_APPROVED_ORIGINS],
+  allowedFixtureOrigins: [],
+  embedderOrigin: '',
+  maxRedirects: MAX_PROBE_REDIRECTS,
+  resolver: defaultResolver,
+};
+
+/** Configure or override the server-side URL probe policy (used by tests and embedder configuration). */
+export function configureProbePolicy(overrides = {}) {
+  probePolicy = {
+    ...probePolicy,
+    ...overrides,
+    allowedOrigins: overrides.allowedOrigins ? [...overrides.allowedOrigins] : probePolicy.allowedOrigins,
+    allowedFixtureOrigins: overrides.allowedFixtureOrigins
+      ? [...overrides.allowedFixtureOrigins]
+      : probePolicy.allowedFixtureOrigins,
+  };
+  return probePolicy;
+}
+
+/** Reset probe policy to production defaults. */
+export function resetProbePolicy() {
+  probePolicy = {
+    allowedOrigins: [...MANIFEST_APPROVED_ORIGINS],
+    allowedFixtureOrigins: [],
+    embedderOrigin: '',
+    maxRedirects: MAX_PROBE_REDIRECTS,
+    resolver: defaultResolver,
+  };
+  return probePolicy;
+}
 
 let storage = null;
 let ready = false;
@@ -90,10 +137,51 @@ export function detectContentType(content) {
 }
 
 /**
- * Rejects anything that is not an absolute http(s) URL.
- * Returns `{ ok: true, url }` or `{ ok: false, reason }`.
+ * Classifies whether a hostname or IP literal falls in loopback, private RFC1918,
+ * CGNAT, link-local, cloud metadata, or unspecified address ranges.
  */
-export function validateExternalUrl(raw) {
+export function isProhibitedHostOrIp(rawHost, { allowLoopback = false } = {}) {
+  const host = String(rawHost ?? '').trim().toLowerCase().replace(/^\[|\]$/g, '');
+  if (!host) return { prohibited: true, reason: 'empty host' };
+  if (host === 'localhost' || host.endsWith('.localhost') || host === 'metadata.google.internal') {
+    return { prohibited: true, reason: `prohibited hostname '${host}'` };
+  }
+  const v4Mapped = host.startsWith('::ffff:') ? host.slice(7) : null;
+  const candidateIp = v4Mapped || host;
+  const ipv4Match = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(candidateIp);
+  if (ipv4Match) {
+    const octets = ipv4Match.slice(1, 5).map(Number);
+    if (octets.some((o) => o < 0 || o > 255)) return { prohibited: true, reason: 'invalid IPv4 address' };
+    const [a, b] = octets;
+    if (a === 127) {
+      return allowLoopback ? { prohibited: false } : { prohibited: true, reason: 'loopback address is prohibited' };
+    }
+    if (a === 0) return { prohibited: true, reason: 'unspecified address is prohibited' };
+    if (a === 10) return { prohibited: true, reason: 'private RFC1918 10.0.0.0/8 address is prohibited' };
+    if (a === 172 && b >= 16 && b <= 31) return { prohibited: true, reason: 'private RFC1918 172.16.0.0/12 address is prohibited' };
+    if (a === 192 && b === 168) return { prohibited: true, reason: 'private RFC1918 192.168.0.0/16 address is prohibited' };
+    if (a === 169 && b === 254) return { prohibited: true, reason: 'link-local / cloud metadata address is prohibited' };
+    if (a === 100 && b >= 64 && b <= 127) return { prohibited: true, reason: 'CGNAT 100.64.0.0/10 address is prohibited' };
+    if (a >= 224) return { prohibited: true, reason: 'multicast/reserved IPv4 address is prohibited' };
+    return { prohibited: false };
+  }
+  if (host.includes(':')) {
+    if (host === '::1' || host === '0:0:0:0:0:0:0:1') {
+      return allowLoopback ? { prohibited: false } : { prohibited: true, reason: 'IPv6 loopback is prohibited' };
+    }
+    if (host === '::' || host === '0:0:0:0:0:0:0:0') return { prohibited: true, reason: 'IPv6 unspecified is prohibited' };
+    if (/^fe[89ab][0-9a-f]:/.test(host)) return { prohibited: true, reason: 'IPv6 link-local is prohibited' };
+    if (/^f[cd][0-9a-f]{2}:/.test(host)) return { prohibited: true, reason: 'IPv6 unique-local is prohibited' };
+  }
+  return { prohibited: false };
+}
+
+/**
+ * Rejects anything that is not an absolute http(s) URL without credentials or
+ * prohibited private/loopback/link-local/metadata host literals.
+ * Returns `{ ok: true, url, origin, hostname }` or `{ ok: false, reason }`.
+ */
+export function validateExternalUrl(raw, { allowLoopback = false } = {}) {
   if (typeof raw !== 'string' || raw.trim() === '') {
     return { ok: false, reason: 'url must be a non-empty string' };
   }
@@ -106,7 +194,68 @@ export function validateExternalUrl(raw) {
   if (!SAFE_URL_SCHEMES.has(parsed.protocol)) {
     return { ok: false, reason: `url scheme '${parsed.protocol}' is not allowed` };
   }
-  return { ok: true, url: parsed.toString() };
+  if (parsed.username || parsed.password) {
+    return { ok: false, reason: 'url credentials are not allowed' };
+  }
+  const hostCheck = isProhibitedHostOrIp(parsed.hostname, { allowLoopback });
+  if (hostCheck.prohibited) {
+    return { ok: false, reason: hostCheck.reason };
+  }
+  return { ok: true, url: parsed.toString(), origin: parsed.origin, hostname: parsed.hostname };
+}
+
+/**
+ * Evaluates X-Frame-Options and CSP frame-ancestors headers against the configured
+ * embedding origin (DoD-ULR-05-07).
+ */
+export function evaluateFramingPolicy({ xFrameOptions = '', csp = '', targetOrigin = '', embedderOrigin = '' } = {}) {
+  const xfo = String(xFrameOptions ?? '').trim().toLowerCase();
+  const cspText = String(csp ?? '').trim();
+  const match = /(?:^|;)\s*frame-ancestors\s+([^;]+)/i.exec(cspText);
+  const directive = match ? match[1].trim() : null;
+  const hasFrameAncestors = Boolean(directive);
+  const normTarget = String(targetOrigin ?? '').trim().toLowerCase();
+  const normEmbedder = String(embedderOrigin ?? '').trim().toLowerCase();
+
+  let blocked = false;
+  if (hasFrameAncestors) {
+    const tokens = directive.split(/\s+/).map((t) => t.toLowerCase()).filter(Boolean);
+    if (tokens.includes("'none'")) {
+      blocked = true;
+    } else if (!normEmbedder) {
+      blocked = !tokens.includes('*');
+    } else {
+      let embedderProtocol = '';
+      try {
+        embedderProtocol = new URL(normEmbedder).protocol.toLowerCase();
+      } catch {
+        embedderProtocol = '';
+      }
+      const allowed = tokens.some((token) => {
+        if (token === '*') return true;
+        if (token === "'self'") return Boolean(normTarget) && normEmbedder === normTarget;
+        if (embedderProtocol && token === embedderProtocol) return true;
+        return token === normEmbedder;
+      });
+      blocked = !allowed;
+    }
+  } else if (xfo.includes('deny')) {
+    blocked = true;
+  } else if (xfo.includes('sameorigin')) {
+    blocked = !normEmbedder || !normTarget || normEmbedder !== normTarget;
+  }
+
+  return {
+    blocked,
+    frameable: !blocked,
+    verdict: blocked ? 'blocked' : 'frameable',
+    evidence: {
+      xFrameOptions: xfo || null,
+      frameAncestors: hasFrameAncestors,
+      frameAncestorsDirective: directive,
+      embedderOrigin: normEmbedder || null,
+    },
+  };
 }
 
 const TRIAD_DDL = `
@@ -415,38 +564,119 @@ router.put('/landing', (req, res) => {
 });
 
 /**
+ * Validates a probe hop against URL syntax, credential prohibition, origin allowlist,
+ * and resolved-address public-IP checks (DoD-ULR-05-04).
+ */
+export async function validateProbeHop(rawUrl, policy = probePolicy) {
+  let parsedOrigin = '';
+  try {
+    parsedOrigin = new URL(String(rawUrl ?? '').trim()).origin;
+  } catch {
+    /* handled by validateExternalUrl */
+  }
+  const isFixtureOrigin = Boolean(parsedOrigin) && policy.allowedFixtureOrigins.includes(parsedOrigin);
+  const urlCheck = validateExternalUrl(rawUrl, { allowLoopback: isFixtureOrigin });
+  if (!urlCheck.ok) return urlCheck;
+
+  if (!isFixtureOrigin && !policy.allowedOrigins.includes(urlCheck.origin)) {
+    return { ok: false, reason: `origin '${urlCheck.origin}' is not in the manifest-approved allowlist` };
+  }
+
+  if (!isFixtureOrigin) {
+    let resolved;
+    try {
+      resolved = await policy.resolver(urlCheck.hostname);
+    } catch {
+      return { ok: false, reason: `DNS resolution failed for '${urlCheck.hostname}'` };
+    }
+    if (!Array.isArray(resolved) || resolved.length === 0) {
+      return { ok: false, reason: `no DNS records resolved for '${urlCheck.hostname}'` };
+    }
+    for (const addr of resolved) {
+      const addrCheck = isProhibitedHostOrIp(addr, { allowLoopback: false });
+      if (addrCheck.prohibited) {
+        return { ok: false, reason: `resolved address '${addr}' is prohibited: ${addrCheck.reason}` };
+      }
+    }
+  }
+
+  return { ok: true, url: urlCheck.url, origin: urlCheck.origin, hostname: urlCheck.hostname, isFixtureOrigin };
+}
+
+/**
  * GET /probe-url?url= — framing verdict for an external page.
  * `frameable` | `blocked` | `unreachable`, decided inside the configured budget.
  * Tests point this at local fixtures; no live third-party request is required.
  */
 router.get('/probe-url', async (req, res) => {
-  const verdict = validateExternalUrl(req.query.url);
-  if (!verdict.ok) return res.status(400).json({ error: verdict.reason });
+  const initial = await validateProbeHop(req.query.url, probePolicy);
+  if (!initial.ok) {
+    return res.status(400).json({ error: initial.reason, frameable: false, verdict: 'unreachable' });
+  }
 
+  const embedderOrigin = String(req.query.embedderOrigin ?? probePolicy.embedderOrigin ?? '').trim();
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), PROBE_BUDGET_MS);
   try {
-    const response = await fetch(verdict.url, {
-      method: 'GET',
-      redirect: 'follow',
-      signal: controller.signal,
-      headers: { 'user-agent': 'MCard-LandingPage-Probe/1.0' },
-    });
-    const xfo = (response.headers.get('x-frame-options') || '').toLowerCase();
-    const csp = (response.headers.get('content-security-policy') || '').toLowerCase();
-    const frameAncestors = /frame-ancestors/.test(csp);
-    const blocked = xfo.includes('deny') || xfo.includes('sameorigin') || frameAncestors;
-    return res.json({
-      url: verdict.url,
-      status: response.status,
-      frameable: !blocked,
-      verdict: blocked ? 'blocked' : 'frameable',
-      evidence: { xFrameOptions: xfo || null, frameAncestors },
-      budgetMs: PROBE_BUDGET_MS,
-    });
+    let currentUrl = initial.url;
+    let currentOrigin = initial.origin;
+
+    for (let hop = 0; hop <= probePolicy.maxRedirects; hop += 1) {
+      const response = await fetch(currentUrl, {
+        method: 'GET',
+        redirect: 'manual',
+        signal: controller.signal,
+        headers: { 'user-agent': 'MCard-LandingPage-Probe/1.0' },
+      });
+      await response.body?.cancel?.().catch(() => {});
+
+      if (response.status >= 300 && response.status < 400) {
+        const location = response.headers.get('location');
+        if (!location) {
+          return res.status(400).json({ error: 'redirect missing location header', frameable: false, verdict: 'unreachable' });
+        }
+        if (hop === probePolicy.maxRedirects) {
+          return res.status(400).json({ error: 'redirect limit exceeded', frameable: false, verdict: 'unreachable' });
+        }
+        let nextUrl;
+        try {
+          nextUrl = new URL(location, currentUrl).toString();
+        } catch {
+          return res.status(400).json({ error: 'redirect location is malformed', frameable: false, verdict: 'unreachable' });
+        }
+        const nextHop = await validateProbeHop(nextUrl, probePolicy);
+        if (!nextHop.ok) {
+          return res.status(400).json({
+            error: `redirect rejected: ${nextHop.reason}`,
+            blockedRedirect: nextUrl,
+            frameable: false,
+            verdict: 'unreachable',
+          });
+        }
+        currentUrl = nextHop.url;
+        currentOrigin = nextHop.origin;
+        continue;
+      }
+
+      const framing = evaluateFramingPolicy({
+        xFrameOptions: response.headers.get('x-frame-options') || '',
+        csp: response.headers.get('content-security-policy') || '',
+        targetOrigin: currentOrigin,
+        embedderOrigin,
+      });
+      return res.json({
+        url: currentUrl,
+        status: response.status,
+        frameable: framing.frameable,
+        verdict: framing.verdict,
+        evidence: framing.evidence,
+        budgetMs: PROBE_BUDGET_MS,
+      });
+    }
+    return res.status(400).json({ error: 'redirect limit exceeded', frameable: false, verdict: 'unreachable' });
   } catch (e) {
     return res.json({
-      url: verdict.url,
+      url: initial.url,
       frameable: false,
       verdict: 'unreachable',
       evidence: { reason: e.name === 'AbortError' ? 'budget exceeded' : String(e.message ?? e) },

@@ -1,19 +1,16 @@
-# LandingPage — Retired Island Tombstones (EPIC-SMR · SMR-13, DoD-SMR-13-02)
+# LandingPage — Retired Island Tombstones & ULR-06 Retirement Dependency Ledger
+# (EPIC-SMR · SMR-13, DoD-SMR-13-02; EPIC-ULR · ULR-06, DoD-ULR-06-01..07)
 #
-# G-Set retirement, not deletion. Each entry is an append-only tombstone: the
-# island's capability moved to `mcard-studio`, so the name is retired from the
-# active surface while the artifact itself is preserved. Nothing here is removed;
-# a tombstone records *why* a name is no longer the place to build on.
-#
-# `load_bearing` is the honest part of this record: a retirement is not a claim
-# that the artifact is already unused. `true` means the file is still imported or
-# linked by live code today, so it cannot be removed without a coordinated change
-# to its dependents. The gate reports these rather than pretending they are gone.
+# G-Set retirement, not blind deletion. Each entry is a dependency-audited ledger row:
+# `load_bearing: true` means the file still has live routes, imports, package inclusion,
+# or E2E test consumers today and MUST remain on disk until its reference count reaches zero.
+# Physical deletion (`disposition: delete-after-zero-references` with file absent) is permitted
+# ONLY when `scripts/ci/check_landingpage_retirement.py --check` confirms zero active references.
 
-version: 1
-program: EPIC-SMR
-sprint: SMR-13
-recorded_at: "2026-10-18T00:00:00.000Z"
+version: 2
+program: EPIC-ULR
+sprint: ULR-06
+recorded_at: "2026-10-19T00:00:00.000Z"
 successor_submodule: mcard-studio
 
 islands:
@@ -22,6 +19,21 @@ islands:
     successor: "mcard-studio: pcard:render/viewport-lab (ResponsiveViewportLabViewlet)"
     invariant: INV-SMR-06
     load_bearing: true
+    disposition: tombstone
+    owner: "LandingPage -> mcard-studio (Sally / Amelia)"
+    migration_test: "npm --prefix mcard-studio test -- tests/portal-samples-Triad-load.test.ts"
+    routes:
+      - "index.html (nav links + control buttons)"
+      - "js/nav.js (destinationHandle mcard:route:/responsive-lab.html)"
+    imports:
+      - "js/device-registry.js"
+    package_inclusion: []
+    tests:
+      - "tests/features/responsive-rotation-and-devices.spec.js"
+      - "tests/features/presentation-lattice.spec.js"
+      - "tests/features/layout-freeze.spec.js"
+      - "tests/features/style-audit.spec.js"
+      - "tests/features/penpot-navigation.spec.js"
     dependents:
       - index.html (nav links + control buttons + window.location)
       - js/nav.js (destinationHandle mcard:route:/responsive-lab.html)
@@ -32,28 +44,50 @@ islands:
       - tests/features/style-audit.spec.js
       - tests/features/penpot-navigation.spec.js
     note: >-
-      The containment stage, orientation swap, and device registry are now native
+      The containment stage, orientation swap, and device registry are native
       studio capabilities. The page itself is still reachable from the landing
-      page navigation, so it stays until those links and specs are retired together.
+      page navigation and Playwright suites, so it stays until those links and specs are retired together.
 
   - id: fiber-conformance
     artifact: fiber-conformance.html
     successor: "mcard-studio: pcard:render/petri-inspector (PetriConformanceViewlet)"
     invariant: INV-SMR-07
     load_bearing: true
+    disposition: tombstone
+    owner: "LandingPage -> mcard-studio (Winston / Amelia)"
+    migration_test: "npm --prefix mcard-studio run check:gates"
+    routes:
+      - "clm-registry.yaml (/fiber-conformance.html)"
+    imports: []
+    package_inclusion: []
+    tests:
+      - "tests/features/fiber-conformance.spec.js"
+      - "tests/features/layout-freeze.spec.js"
+      - "tests/features/style-audit.spec.js"
     dependents:
       - tests/features/fiber-conformance.spec.js
       - tests/features/layout-freeze.spec.js
       - tests/features/style-audit.spec.js
     note: >-
       Fiber conformance inspection is native in the studio inspector; the page
-      still has a live spec that loads it.
+      still has live Playwright specs that load it.
 
   - id: fiber-inspector
     artifact: fiber-inspector.html
     successor: "mcard-studio: pcard:render/petri-inspector (PetriConformanceViewlet)"
     invariant: INV-SMR-07
     load_bearing: true
+    disposition: tombstone
+    owner: "LandingPage -> mcard-studio (Winston / Amelia)"
+    migration_test: "npm --prefix mcard-studio run check:gates"
+    routes:
+      - "clm-registry.yaml (/fiber-inspector.html)"
+    imports: []
+    package_inclusion: []
+    tests:
+      - "tests/features/fiber-inspector.spec.js"
+      - "tests/features/layout-freeze.spec.js"
+      - "tests/features/style-audit.spec.js"
     dependents:
       - tests/features/fiber-inspector.spec.js
       - tests/features/layout-freeze.spec.js
@@ -65,6 +99,15 @@ islands:
     successor: "mcard-studio: pcard:render/sprint-governance (SprintGovernanceViewlet)"
     invariant: INV-SMR-07
     load_bearing: true
+    disposition: tombstone
+    owner: "LandingPage -> mcard-studio (John / Quinn)"
+    migration_test: "npm --prefix mcard-studio run check:gates"
+    routes:
+      - "clm-registry.yaml (/sprint-registry.html)"
+    imports: []
+    package_inclusion: []
+    tests:
+      - "tests/features/sprint-registry.spec.js"
     dependents:
       - tests/features/sprint-registry.spec.js
     note: "Sprint projection and DoD seals are native in the studio governance viewlet."
@@ -74,6 +117,24 @@ islands:
     successor: "mcard-studio: the Dockview spatial workbench"
     invariant: INV-SMR-01
     load_bearing: true
+    disposition: tombstone
+    owner: "LandingPage -> mcard-studio (Sally / Amelia)"
+    migration_test: "node --test LandingPage/tests/single-page-mcard.test.mjs"
+    routes:
+      - "index.html (nav link 'Mission Control', split-launch link, targetUrl)"
+      - "js/nav.js (destinationHandle mcard:route:/app.html)"
+    imports:
+      - "scripts/penpot-init.mjs"
+      - "scripts/penpot-screens.mjs"
+      - "scripts/penpot-render.mjs"
+    package_inclusion: []
+    tests:
+      - "tests/features/presentation-lattice.spec.js"
+      - "tests/features/layout-freeze.spec.js"
+      - "tests/features/chat-panel.spec.js"
+      - "tests/features/new-text-card.spec.js"
+      - "tests/features/penpot-navigation.spec.js"
+      - "tests/features/style-audit.spec.js"
     dependents:
       - index.html (nav link 'Mission Control', split-launch link, targetUrl)
       - js/nav.js (destinationHandle mcard:route:/app.html)
@@ -89,11 +150,92 @@ islands:
       page's own "Mission Control" destination and is referenced by the Penpot
       navigation tooling, so it is retired as a build target, not as a route.
 
+  - id: pkc-docs-index
+    artifact: pkc-docs-index.html
+    successor: "mcard-studio: pcard:render/markdown + Sovereign Reader HUD"
+    invariant: INV-ULR-03
+    load_bearing: true
+    disposition: tombstone
+    owner: "LandingPage -> mcard-studio (Sally / Paige)"
+    migration_test: "node --test LandingPage/tests/single-page-mcard.test.mjs"
+    routes:
+      - "js/components/HeroContentComponent.js (href pkc-docs-index.html)"
+      - "clm-registry.yaml (/pkc-docs-index.html)"
+    imports: []
+    package_inclusion: []
+    tests:
+      - "tests/features/style-audit.spec.js"
+      - "tests/features/layout-freeze.spec.js"
+    dependents:
+      - js/components/HeroContentComponent.js
+      - tests/features/style-audit.spec.js
+      - tests/features/layout-freeze.spec.js
+    note: "Documentation index route still linked from HeroContentComponent and visual layout specs."
+
+  - id: clm-registry
+    artifact: clm-registry.yaml
+    successor: "LandingPage/data/samples/portal_samples_manifest.yaml"
+    invariant: INV-ULR-03
+    load_bearing: true
+    disposition: retain
+    owner: "LandingPage (Amelia / Quinn)"
+    migration_test: "node --test LandingPage/tests/single-page-mcard.test.mjs"
+    routes:
+      - "ws-server.js (/clm-registry.yaml static & fiber routes)"
+    imports:
+      - "public/js/fibers/registry.js"
+      - "public/conformance/harness.js"
+    package_inclusion: []
+    tests:
+      - "tests/smoke/clm-dashboard.spec.cjs"
+      - "tests/components/test-clm-welcome.spec.cjs"
+      - "tests/components/test-clm-youtube-viewer.spec.cjs"
+    dependents:
+      - public/js/fibers/registry.js
+      - tests/smoke/clm-dashboard.spec.cjs
+    note: "Retained while legacy fiber and smoke Playwright suites read clm-registry.yaml."
+
+  - id: ws-server
+    artifact: ws-server.js
+    successor: "LandingPage/server/mcard-api.mjs (mounted by ws-server.js)"
+    invariant: INV-ULR-05
+    load_bearing: true
+    disposition: retain
+    owner: "LandingPage (Winston / Amelia)"
+    migration_test: "node --test LandingPage/tests/single-page-mcard.test.mjs"
+    routes:
+      - "Dockerfile (CMD node ws-server.js)"
+      - "playwright.config.js (webServer command)"
+    imports:
+      - "index.js (import { startServer, app, server, wss } from './ws-server.js')"
+    package_inclusion:
+      - "package.json#files (ws-server.js)"
+      - "package.json#scripts.ws-server (node ws-server.js)"
+      - "package.json#scripts.dev (node ws-server.js)"
+    tests:
+      - "tests/smoke/clm-dashboard.spec.cjs"
+    dependents:
+      - index.js (package main entrypoint)
+      - package.json (files, scripts.dev, scripts.ws-server)
+      - playwright.config.js (webServer)
+    note: "Primary HTTP/WebSocket host entrypoint for LandingPage package and Playwright webServer."
+
   - id: room-registry
     artifact: room-registry.mjs
     successor: "mcard-studio: the authenticated workspace/collection surface"
     invariant: INV-SMR-07
     load_bearing: true
+    disposition: retain
+    owner: "LandingPage (Winston / Amelia)"
+    migration_test: "node --test LandingPage/tests/single-page-mcard.test.mjs"
+    routes: []
+    imports:
+      - "ws-server.js (import)"
+      - "packages/server/src/ws-server.js (import)"
+      - "packages/server/src/index.js (export { RoomRegistry })"
+    package_inclusion:
+      - "package.json#files (room-*.mjs)"
+    tests: []
     dependents:
       - ws-server.js (import, live dev server)
       - packages/server/src/ws-server.js (import)
@@ -108,6 +250,16 @@ islands:
     successor: "mcard-studio: the authenticated workspace/collection surface"
     invariant: INV-SMR-07
     load_bearing: true
+    disposition: retain
+    owner: "LandingPage (Winston / Amelia)"
+    migration_test: "node --test LandingPage/tests/single-page-mcard.test.mjs"
+    routes: []
+    imports:
+      - "ws-server.js (import)"
+      - "packages/server/src/ws-server.js (import)"
+    package_inclusion:
+      - "package.json#files (room-*.mjs)"
+    tests: []
     dependents:
       - ws-server.js (import, live dev server)
       - packages/server/src/ws-server.js (import)

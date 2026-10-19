@@ -25,9 +25,15 @@ import mcardRoutes, {
   CanonicalTriadBackend,
   DEFAULT_ALGORITHM,
   LANDING_HANDLE,
+  PROBE_BUDGET_MS,
   algorithmOf,
+  configureProbePolicy,
+  evaluateFramingPolicy,
   formatGTime,
   hashContent,
+  isProhibitedHostOrIp,
+  resetProbePolicy,
+  validateProbeHop,
   verifyRecord,
 } from '../server/mcard-api.mjs';
 import {
@@ -39,14 +45,20 @@ import {
   renderPill,
 } from '../js/landing-page-mcard.js';
 import {
+  MEMBRANE_STATES,
+  PROBE_VERDICTS,
   SANDBOX_ATTRIBUTES,
+  TELEMETRY_MESSAGE_TYPES,
+  TELEMETRY_SCHEMA_VERSION,
   assertSafeUrl,
   classifyProbe,
   createMembrane,
+  createTelemetryReceiver,
   renderGatewayCard,
   snapshotBody,
+  validatePortalTelemetryMessage,
 } from '../js/external-portal-membrane.js';
-import { SAMPLES, VIEWPORTS, seed, verify } from '../scripts/seed-portal-samples.mjs';
+import { SAMPLES, STAMP, VIEWPORTS, seed, verify } from '../scripts/seed-portal-samples.mjs';
 
 const REPO_ROOT = path.resolve(import.meta.dirname, '..', '..');
 
@@ -263,24 +275,29 @@ test('DoD-SMR-09-03: the probe reports frameable and blocked verdicts from local
   });
   await new Promise((resolve) => fixtures.listen(0, '127.0.0.1', resolve));
   const origin = `http://127.0.0.1:${fixtures.address().port}`;
+  configureProbePolicy({ allowedFixtureOrigins: [origin] });
 
-  await withServer(async (base) => {
-    const frameable = await (await fetch(`${base}/api/mcard/probe-url?url=${encodeURIComponent(origin)}`)).json();
-    assert.equal(frameable.verdict, 'frameable');
-    assert.equal(frameable.frameable, true);
+  try {
+    await withServer(async (base) => {
+      const frameable = await (await fetch(`${base}/api/mcard/probe-url?url=${encodeURIComponent(origin)}`)).json();
+      assert.equal(frameable.verdict, 'frameable');
+      assert.equal(frameable.frameable, true);
 
-    const blocked = await (await fetch(`${base}/api/mcard/probe-url?url=${encodeURIComponent(`${origin}/blocked`)}`)).json();
-    assert.equal(blocked.verdict, 'blocked');
-    assert.equal(blocked.evidence.xFrameOptions, 'deny');
+      const blocked = await (await fetch(`${base}/api/mcard/probe-url?url=${encodeURIComponent(`${origin}/blocked`)}`)).json();
+      assert.equal(blocked.verdict, 'blocked');
+      assert.equal(blocked.evidence.xFrameOptions, 'deny');
 
-    const csp = await (await fetch(`${base}/api/mcard/probe-url?url=${encodeURIComponent(`${origin}/csp`)}`)).json();
-    assert.equal(csp.verdict, 'blocked');
-    assert.equal(csp.evidence.frameAncestors, true);
+      const csp = await (await fetch(`${base}/api/mcard/probe-url?url=${encodeURIComponent(`${origin}/csp`)}`)).json();
+      assert.equal(csp.verdict, 'blocked');
+      assert.equal(csp.evidence.frameAncestors, true);
 
-    const bad = await fetch(`${base}/api/mcard/probe-url?url=${encodeURIComponent('javascript:1')}`);
-    assert.equal(bad.status, 400);
-  });
-  await new Promise((resolve) => fixtures.close(resolve));
+      const bad = await fetch(`${base}/api/mcard/probe-url?url=${encodeURIComponent('javascript:1')}`);
+      assert.equal(bad.status, 400);
+    });
+  } finally {
+    resetProbePolicy();
+    await new Promise((resolve) => fixtures.close(resolve));
+  }
 });
 
 test('DoD-SMR-09-01 (guard): no legacy 4-table DDL survives in LandingPage', () => {
@@ -531,3 +548,334 @@ test('DoD-SMR-09-07: the three SMR-09 modules stay within the 250-line ceiling',
     assert.equal(lines <= 250, true, `${relative} is ${lines} lines`);
   }
 });
+
+test('DoD-ULR-05-01 & DoD-ULR-05-02 (SCN-ULR-05-A): deterministic temp-seeded 6-sample corpus with pinned stamp and Triad hash-law', () => {
+  const dir1 = fs.mkdtempSync(path.join(os.tmpdir(), 'ulr05-seed1-'));
+  const dir2 = fs.mkdtempSync(path.join(os.tmpdir(), 'ulr05-seed2-'));
+  const db1 = path.join(dir1, 'portal_samples.mcard.db');
+  const mf1 = path.join(dir1, 'portal_samples_manifest.yaml');
+  const db2 = path.join(dir2, 'portal_samples.mcard.db');
+  const mf2 = path.join(dir2, 'portal_samples_manifest.yaml');
+
+  const manifest1 = seed({ dbFile: db1, manifestFile: mf1, stamp: STAMP });
+  const manifest2 = seed({ dbFile: db2, manifestFile: mf2, stamp: STAMP });
+  assert.equal(STAMP, '2026-10-18T00:00:00.000Z');
+  assert.equal(manifest1.sample_count, 6);
+  assert.deepEqual(manifest1, manifest2, 're-seeding with pinned STAMP produces identical manifest');
+
+  const canonicalManifest = yaml.load(
+    fs.readFileSync(path.join(REPO_ROOT, 'LandingPage/data/samples/portal_samples_manifest.yaml'), 'utf8')
+  );
+  assert.deepEqual(manifest1, canonicalManifest, 'temp-seeded manifest matches canonical manifest');
+
+  const store = new CanonicalTriadBackend(db1);
+  try {
+    assert.deepEqual(store.tables().sort(), ['card', 'handle_history', 'handle_registry']);
+    assert.equal(store.count(), 6);
+    for (const entry of manifest1.samples) {
+      const bound = store.resolveHandle(entry.handle);
+      assert.equal(bound, entry.snapshot_hash);
+      const card = store.get(bound);
+      assert.equal(card.verified, true);
+      assert.equal(card.gTime.startsWith('blake3|2026-10-18T00:00:00.000Z|'), true);
+      assert.equal(verifyRecord(card.hash, card.content, card.gTime), true);
+    }
+  } finally {
+    store.close();
+  }
+});
+
+test('DoD-ULR-05-03 (SCN-ULR-05-B): probe verdicts are distinct from render states and timeout aborts within budget', async () => {
+  assert.deepEqual([...PROBE_VERDICTS], ['frameable', 'blocked', 'unreachable']);
+  assert.deepEqual([...MEMBRANE_STATES], ['live', 'snapshot', 'offline']);
+  assert.equal(PROBE_BUDGET_MS, 600);
+
+  const requestLog = [];
+  const fixtures = http.createServer((req, res) => {
+    requestLog.push({ method: req.method, url: req.url });
+    if (req.url === '/delayed') {
+      const timer = setTimeout(() => {
+        if (!res.writableEnded) {
+          res.writeHead(200, { 'content-type': 'text/html' });
+          res.end('<html>too late</html>');
+        }
+      }, PROBE_BUDGET_MS + 400);
+      req.on('close', () => clearTimeout(timer));
+      return;
+    }
+    if (req.url === '/blocked-xfo') {
+      res.writeHead(200, { 'x-frame-options': 'DENY' });
+      res.end('<html>blocked</html>');
+      return;
+    }
+    res.writeHead(200, { 'content-type': 'text/html' });
+    res.end('<html>ok</html>');
+  });
+  await new Promise((resolve) => fixtures.listen(0, '127.0.0.1', resolve));
+  const origin = `http://127.0.0.1:${fixtures.address().port}`;
+  configureProbePolicy({ allowedFixtureOrigins: [origin] });
+
+  try {
+    await withServer(async (base) => {
+      const probeFn = async (targetUrl) =>
+        (await fetch(`${base}/api/mcard/probe-url?url=${encodeURIComponent(targetUrl)}`)).json();
+      const membrane = createMembrane({
+        probe: probeFn,
+        store: { pin: async (body) => hashContent(body, 'blake3') },
+        clock: () => STAMP,
+      });
+
+      const liveRes = await membrane.resolve(`${origin}/ok`, { nonce: 'nonce-123' });
+      assert.equal(liveRes.probeVerdict, 'frameable');
+      assert.equal(liveRes.state, 'live');
+      assert.match(liveRes.html, /data-mount-nonce="nonce-123"/);
+
+      const snapRes = await membrane.resolve(`${origin}/blocked-xfo`);
+      assert.equal(snapRes.probeVerdict, 'blocked');
+      assert.equal(snapRes.state, 'snapshot');
+
+      const started = Date.now();
+      const timeoutProbe = await probeFn(`${origin}/delayed`);
+      const elapsed = Date.now() - started;
+      assert.equal(timeoutProbe.verdict, 'unreachable');
+      assert.equal(timeoutProbe.frameable, false);
+      assert.equal(timeoutProbe.evidence.reason, 'budget exceeded');
+      assert.ok(elapsed < PROBE_BUDGET_MS + 350, `abort took ${elapsed}ms, expected near ${PROBE_BUDGET_MS}ms budget`);
+
+      const offRes = await membrane.resolve(`${origin}/delayed`);
+      assert.equal(offRes.probeVerdict, 'unreachable');
+      assert.equal(offRes.state, 'offline');
+    });
+    assert.equal(requestLog.length, 4, 'only local fixture endpoints were contacted');
+  } finally {
+    resetProbePolicy();
+    await new Promise((resolve) => fixtures.close(resolve));
+  }
+});
+
+test('DoD-ULR-05-04 & DoD-ULR-05-06 (SCN-ULR-05-C, Negative Control): SSRF, private/loopback/metadata, credentials, and prohibited redirects are rejected with zero hits', async () => {
+  const prohibitedHits = [];
+  const prohibitedServer = http.createServer((req, res) => {
+    prohibitedHits.push(req.url);
+    res.writeHead(200);
+    res.end('secret internal metadata');
+  });
+  await new Promise((resolve) => prohibitedServer.listen(0, '127.0.0.1', resolve));
+  const prohibitedOrigin = `http://127.0.0.1:${prohibitedServer.address().port}`;
+
+  const approvedHits = [];
+  const approvedFixture = http.createServer((req, res) => {
+    approvedHits.push(req.url);
+    if (req.url === '/redirect-to-loopback') {
+      res.writeHead(302, { location: `${prohibitedOrigin}/secret` });
+      return res.end();
+    }
+    if (req.url === '/redirect-to-metadata') {
+      res.writeHead(302, { location: 'http://169.254.169.254/latest/meta-data/' });
+      return res.end();
+    }
+    if (req.url === '/redirect-to-private') {
+      res.writeHead(302, { location: 'http://10.0.0.1/admin' });
+      return res.end();
+    }
+    if (req.url === '/redirect-to-unapproved-origin') {
+      res.writeHead(302, { location: 'https://evil.example.invalid/phish' });
+      return res.end();
+    }
+    res.writeHead(200);
+    return res.end('ok');
+  });
+  await new Promise((resolve) => approvedFixture.listen(0, '127.0.0.1', resolve));
+  const approvedOrigin = `http://127.0.0.1:${approvedFixture.address().port}`;
+
+  configureProbePolicy({
+    allowedFixtureOrigins: [approvedOrigin],
+    resolver: async (hostname) => {
+      if (hostname === 'example.gov') return ['10.24.0.5'];
+      return ['93.184.216.34'];
+    },
+  });
+
+  try {
+    await withServer(async (base) => {
+      for (const directBad of [
+        `${prohibitedOrigin}/secret`,
+        'http://169.254.169.254/latest/meta-data/',
+        'http://10.0.0.1/internal',
+        'http://172.16.5.4/internal',
+        'http://192.168.1.1/router',
+        'http://[::1]:8080/loopback',
+        'http://localhost:8080/admin',
+        'http://metadata.google.internal/computeMetadata/v1/',
+        'https://user:password@example.gov/civic',
+        'https://unapproved.example.com/page',
+        'https://example.gov/rebound-to-private',
+      ]) {
+        const res = await fetch(`${base}/api/mcard/probe-url?url=${encodeURIComponent(directBad)}`);
+        assert.equal(res.status, 400, `expected 400 rejection for ${directBad}`);
+        const body = await res.json();
+        assert.equal(body.frameable, false);
+        assert.equal(body.verdict, 'unreachable');
+      }
+
+      for (const redirectPath of [
+        '/redirect-to-loopback',
+        '/redirect-to-metadata',
+        '/redirect-to-private',
+        '/redirect-to-unapproved-origin',
+      ]) {
+        const res = await fetch(`${base}/api/mcard/probe-url?url=${encodeURIComponent(`${approvedOrigin}${redirectPath}`)}`);
+        assert.equal(res.status, 400, `expected 400 rejection for redirect ${redirectPath}`);
+        const body = await res.json();
+        assert.match(body.error, /redirect rejected/);
+        assert.equal(body.frameable, false);
+      }
+    });
+
+    assert.deepEqual(prohibitedHits, [], 'zero requests reached the prohibited loopback/internal server');
+    assert.equal(approvedHits.length, 4, 'only the initial approved fixture redirect endpoints were queried');
+  } finally {
+    resetProbePolicy();
+    await new Promise((resolve) => approvedFixture.close(resolve));
+    await new Promise((resolve) => prohibitedServer.close(resolve));
+  }
+});
+
+test('DoD-ULR-05-05 (SCN-ULR-05-D, Negative Control): sandbox omits allow-same-origin and postMessage telemetry validates source, nonce, and schema fail-closed', () => {
+  assert.equal(SANDBOX_ATTRIBUTES.includes('allow-same-origin'), false, 'allow-same-origin must stay absent');
+  assert.equal(TELEMETRY_SCHEMA_VERSION, 'mcard-portal-telemetry/v1');
+  assert.deepEqual([...TELEMETRY_MESSAGE_TYPES], ['portal:ready', 'portal:resize', 'portal:metric', 'portal:error']);
+
+  const childWindow = { id: 'sandbox-iframe-window' };
+  const forgedWindow = { id: 'attacker-window' };
+  const mountNonce = 'nonce-ulr05-abc';
+  const studioState = { accepted: [], rejected: [] };
+
+  const receiver = createTelemetryReceiver({
+    expectedSource: childWindow,
+    expectedNonce: mountNonce,
+    onTelemetry: (msg) => studioState.accepted.push(msg),
+    onReject: (err) => studioState.rejected.push(err.reason),
+  });
+
+  // Opaque origin ("null") with valid source, nonce, and schema succeeds.
+  const validVerdict = receiver.handleMessage({
+    source: childWindow,
+    origin: 'null',
+    data: {
+      schema: TELEMETRY_SCHEMA_VERSION,
+      type: 'portal:ready',
+      nonce: mountNonce,
+      payload: { height: 640 },
+    },
+  });
+  assert.equal(validVerdict.ok, true);
+  assert.equal(studioState.accepted.length, 1);
+  assert.equal(studioState.accepted[0].payload.height, 640);
+
+  // Forged source, wrong nonce, unknown schema version, unsupported type, and malformed payload all fail closed.
+  const forgedCases = [
+    {
+      event: { source: forgedWindow, origin: 'null', data: { schema: TELEMETRY_SCHEMA_VERSION, type: 'portal:ready', nonce: mountNonce } },
+      reason: 'source_mismatch',
+    },
+    {
+      event: { source: childWindow, origin: 'null', data: { schema: TELEMETRY_SCHEMA_VERSION, type: 'portal:ready', nonce: 'wrong-nonce' } },
+      reason: 'nonce_mismatch',
+    },
+    {
+      event: { source: childWindow, origin: 'null', data: { schema: 'mcard-portal-telemetry/v0', type: 'portal:ready', nonce: mountNonce } },
+      reason: 'unsupported_schema_version',
+    },
+    {
+      event: { source: childWindow, origin: 'null', data: { schema: TELEMETRY_SCHEMA_VERSION, type: 'portal:exec', nonce: mountNonce } },
+      reason: 'unsupported_message_type',
+    },
+    {
+      event: { source: childWindow, origin: 'null', data: 'not-an-object' },
+      reason: 'malformed_payload',
+    },
+    {
+      event: { source: childWindow, origin: 'null', data: { schema: TELEMETRY_SCHEMA_VERSION, type: 'portal:metric', nonce: mountNonce, payload: ['bad'] } },
+      reason: 'invalid_payload_object',
+    },
+  ];
+
+  for (const { event, reason } of forgedCases) {
+    const verdict = receiver.handleMessage(event);
+    assert.equal(verdict.ok, false);
+    assert.equal(verdict.reason, reason);
+  }
+  assert.equal(studioState.accepted.length, 1, 'rejected messages must never mutate Studio state');
+  assert.equal(studioState.rejected.length, forgedCases.length);
+
+  // Nonce revocation closes the receiver against replay.
+  receiver.revokeNonce();
+  const afterRevoke = receiver.handleMessage({
+    source: childWindow,
+    origin: 'null',
+    data: { schema: TELEMETRY_SCHEMA_VERSION, type: 'portal:ready', nonce: mountNonce },
+  });
+  assert.equal(afterRevoke.ok, false);
+  assert.equal(afterRevoke.reason, 'nonce_unconfigured');
+  assert.equal(studioState.accepted.length, 1);
+});
+
+test('DoD-ULR-05-07 (SCN-ULR-05-E): CSP frame-ancestors and X-Frame-Options are evaluated against the configured embedding origin', async () => {
+  const studioOrigin = 'https://studio.pkc.pub';
+  const fixtures = http.createServer((req, res) => {
+    if (req.url === '/csp-none') {
+      res.writeHead(200, { 'content-security-policy': "frame-ancestors 'none'" });
+      return res.end('none');
+    }
+    if (req.url === '/csp-other') {
+      res.writeHead(200, { 'content-security-policy': 'frame-ancestors https://other.example' });
+      return res.end('other');
+    }
+    if (req.url === '/csp-allow-studio') {
+      res.writeHead(200, { 'content-security-policy': `frame-ancestors 'self' ${studioOrigin}` });
+      return res.end('allowed');
+    }
+    if (req.url === '/xfo-sameorigin') {
+      res.writeHead(200, { 'x-frame-options': 'SAMEORIGIN' });
+      return res.end('sameorigin');
+    }
+    res.writeHead(200);
+    return res.end('ok');
+  });
+  await new Promise((resolve) => fixtures.listen(0, '127.0.0.1', resolve));
+  const origin = `http://127.0.0.1:${fixtures.address().port}`;
+  configureProbePolicy({ allowedFixtureOrigins: [origin], embedderOrigin: studioOrigin });
+
+  try {
+    await withServer(async (base) => {
+      const cspNone = await (await fetch(`${base}/api/mcard/probe-url?url=${encodeURIComponent(`${origin}/csp-none`)}`)).json();
+      assert.equal(cspNone.verdict, 'blocked');
+      assert.equal(cspNone.frameable, false);
+
+      const cspOther = await (await fetch(`${base}/api/mcard/probe-url?url=${encodeURIComponent(`${origin}/csp-other`)}`)).json();
+      assert.equal(cspOther.verdict, 'blocked');
+      assert.equal(cspOther.frameable, false);
+
+      const cspAllowed = await (await fetch(`${base}/api/mcard/probe-url?url=${encodeURIComponent(`${origin}/csp-allow-studio`)}`)).json();
+      assert.equal(cspAllowed.verdict, 'frameable', 'configured embedderOrigin allowed by frame-ancestors must remain frameable');
+      assert.equal(cspAllowed.frameable, true);
+      assert.equal(cspAllowed.evidence.frameAncestors, true);
+      assert.equal(cspAllowed.evidence.embedderOrigin, studioOrigin);
+
+      const xfoCross = await (await fetch(`${base}/api/mcard/probe-url?url=${encodeURIComponent(`${origin}/xfo-sameorigin`)}`)).json();
+      assert.equal(xfoCross.verdict, 'blocked');
+
+      const xfoSame = await (
+        await fetch(
+          `${base}/api/mcard/probe-url?url=${encodeURIComponent(`${origin}/xfo-sameorigin`)}&embedderOrigin=${encodeURIComponent(origin)}`
+        )
+      ).json();
+      assert.equal(xfoSame.verdict, 'frameable', 'SAMEORIGIN is frameable when embedderOrigin matches targetOrigin');
+    });
+  } finally {
+    resetProbePolicy();
+    await new Promise((resolve) => fixtures.close(resolve));
+  }
+});
+

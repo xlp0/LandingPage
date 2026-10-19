@@ -10,13 +10,22 @@
  * never invents storage of its own.
  */
 export const SANDBOX_ATTRIBUTES = 'allow-scripts allow-forms';
+export const PROBE_VERDICTS = Object.freeze(['frameable', 'blocked', 'unreachable']);
 export const MEMBRANE_STATES = Object.freeze(['live', 'snapshot', 'offline']);
+export const TELEMETRY_SCHEMA_VERSION = 'mcard-portal-telemetry/v1';
+export const TELEMETRY_MESSAGE_TYPES = Object.freeze([
+  'portal:ready',
+  'portal:resize',
+  'portal:metric',
+  'portal:error',
+]);
 
-/** The strict sandboxed frame used only in the live state. */
-export function renderSandboxedFrame(url) {
+/** The strict sandboxed frame used only in the live state (omits allow-same-origin). */
+export function renderSandboxedFrame(url, { nonce = null } = {}) {
+  const nonceAttr = nonce ? ` data-mount-nonce="${escapeAttr(nonce)}"` : '';
   return [
     `<iframe class="mcard-portal-frame" src="${escapeAttr(url)}"`,
-    ` sandbox="${SANDBOX_ATTRIBUTES}" referrerpolicy="no-referrer"`,
+    ` sandbox="${SANDBOX_ATTRIBUTES}" referrerpolicy="no-referrer"${nonceAttr}`,
     ` loading="lazy" title="External LandingPage (sandboxed)"></iframe>`,
   ].join('');
 }
@@ -46,7 +55,7 @@ export function renderOfflineNotice({ url = '', snapshotHash = null } = {}) {
   ].join('');
 }
 
-/** Maps a probe verdict to a membrane state. */
+/** Maps a probe verdict (`frameable` | `blocked` | `unreachable`) to a render state (`live` | `snapshot` | `offline`). */
 export function classifyProbe(probe) {
   if (!probe) return 'offline';
   if (probe.verdict === 'frameable') return 'live';
@@ -54,7 +63,65 @@ export function classifyProbe(probe) {
   return 'offline';
 }
 
-/** Rejects anything that is not an absolute http(s) URL. */
+/**
+ * Validates a postMessage telemetry event from a sandboxed child frame.
+ * Since `allow-same-origin` is omitted, `event.origin` alone (often `"null"`) is
+ * insufficient; receiver verifies `event.source`, per-mount `nonce`, and schema version.
+ */
+export function validatePortalTelemetryMessage(
+  event,
+  { expectedSource, expectedNonce, expectedOrigin = null, allowedTypes = TELEMETRY_MESSAGE_TYPES } = {}
+) {
+  if (!event || typeof event !== 'object') return { ok: false, reason: 'invalid_event' };
+  if (!expectedSource || event.source !== expectedSource) return { ok: false, reason: 'source_mismatch' };
+  if (!expectedNonce || typeof expectedNonce !== 'string') return { ok: false, reason: 'nonce_unconfigured' };
+  if (expectedOrigin !== null && event.origin !== expectedOrigin) return { ok: false, reason: 'origin_mismatch' };
+  const data = event.data;
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return { ok: false, reason: 'malformed_payload' };
+  if (data.schema !== TELEMETRY_SCHEMA_VERSION) return { ok: false, reason: 'unsupported_schema_version' };
+  if (typeof data.nonce !== 'string' || data.nonce !== expectedNonce) return { ok: false, reason: 'nonce_mismatch' };
+  if (typeof data.type !== 'string' || !allowedTypes.includes(data.type)) return { ok: false, reason: 'unsupported_message_type' };
+  if (data.payload !== undefined && (!data.payload || typeof data.payload !== 'object' || Array.isArray(data.payload))) {
+    return { ok: false, reason: 'invalid_payload_object' };
+  }
+  return {
+    ok: true,
+    message: {
+      schema: data.schema,
+      type: data.type,
+      nonce: data.nonce,
+      payload: data.payload ?? {},
+    },
+  };
+}
+
+/** Stateful per-mount telemetry receiver with nonce rotation/revocation and fail-closed dispatch. */
+export function createTelemetryReceiver({ expectedSource, expectedNonce, expectedOrigin = null, onTelemetry = () => {}, onReject = () => {} } = {}) {
+  let activeNonce = expectedNonce ?? null;
+  return {
+    handleMessage(event) {
+      const verdict = validatePortalTelemetryMessage(event, {
+        expectedSource,
+        expectedNonce: activeNonce,
+        expectedOrigin,
+      });
+      if (!verdict.ok) {
+        onReject(verdict);
+        return verdict;
+      }
+      onTelemetry(verdict.message);
+      return verdict;
+    },
+    rotateNonce(nextNonce) {
+      activeNonce = typeof nextNonce === 'string' && nextNonce.length > 0 ? nextNonce : null;
+    },
+    revokeNonce() {
+      activeNonce = null;
+    },
+  };
+}
+
+/** Rejects anything that is not an absolute http(s) URL without embedded credentials. */
 export function assertSafeUrl(raw) {
   let url;
   try {
@@ -64,6 +131,9 @@ export function assertSafeUrl(raw) {
   }
   if (url.protocol !== 'http:' && url.protocol !== 'https:') {
     throw Object.assign(new Error(`url scheme '${url.protocol}' is not allowed`), { status: 400 });
+  }
+  if (url.username || url.password) {
+    throw Object.assign(new Error('url credentials are not allowed'), { status: 400 });
   }
   return url.toString();
 }
@@ -86,7 +156,7 @@ export function createMembrane({ probe, store = null, clock = () => new Date().t
   if (typeof probe !== 'function') throw new Error('createMembrane requires a probe function');
 
   /** Resolve one URL to a membrane state, pinning a snapshot when framing is refused. */
-  async function resolve(rawUrl, { snapshotHash = null } = {}) {
+  async function resolve(rawUrl, { snapshotHash = null, nonce = null } = {}) {
     const url = assertSafeUrl(rawUrl);
     let verdict = null;
     try {
@@ -94,24 +164,25 @@ export function createMembrane({ probe, store = null, clock = () => new Date().t
     } catch (error) {
       verdict = { verdict: 'unreachable', reason: String(error?.message ?? error) };
     }
-    const state = classifyProbe(verdict);
+    const probeVerdict = PROBE_VERDICTS.includes(verdict?.verdict) ? verdict.verdict : 'unreachable';
+    const state = classifyProbe({ verdict: probeVerdict });
 
     if (state === 'live') {
-      return { url, state, html: renderSandboxedFrame(url), snapshotHash };
+      return { url, probeVerdict, state, html: renderSandboxedFrame(url, { nonce }), snapshotHash };
     }
 
     let pinned = snapshotHash;
     if (store && !pinned) {
-      const reason = verdict?.verdict === 'blocked' ? 'framing-blocked' : (verdict?.evidence?.reason ?? 'unreachable');
+      const reason = probeVerdict === 'blocked' ? 'framing-blocked' : (verdict?.evidence?.reason ?? 'unreachable');
       pinned = await store.pin(snapshotBody({ url, reason, capturedAt: clock() }));
     }
 
     return state === 'snapshot'
-      ? { url, state, html: renderGatewayCard({ url, snapshotHash: pinned, reason: 'framing-blocked' }), snapshotHash: pinned }
-      : { url, state, html: renderOfflineNotice({ url, snapshotHash: pinned }), snapshotHash: pinned };
+      ? { url, probeVerdict, state, html: renderGatewayCard({ url, snapshotHash: pinned, reason: 'framing-blocked' }), snapshotHash: pinned }
+      : { url, probeVerdict, state, html: renderOfflineNotice({ url, snapshotHash: pinned }), snapshotHash: pinned };
   }
 
-  return { resolve, states: MEMBRANE_STATES };
+  return { resolve, states: MEMBRANE_STATES, verdicts: PROBE_VERDICTS };
 }
 
 function escapeAttr(value) {
