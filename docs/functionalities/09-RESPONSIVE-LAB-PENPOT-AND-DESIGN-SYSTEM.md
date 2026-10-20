@@ -73,7 +73,8 @@ Governed by specification **RVP-02**, the device registry replaces ad-hoc CSS me
 - **Dynamic Rotation (`INV-RVP-01`)**: One-click toggle between Portrait and Landscape orientations, recalculating layout constraints and swapping width/height in real time.
 - **Layout Freeze & Overflow Detection**: Stress-tests reflow performance by cycling rapidly through viewport dimensions and asserting zero element clipping or horizontal overflow.
 - **Zoom & Pan Scaling (`INV-RVP-02`)**: Scales the preview container via CSS `--frame-scale-factor: s` to fit 4K/desktop viewports on small laptop displays without window scrollbars.
-- **Event Capture Ring Buffer (`INV-ERB-01..03`)**: Intercepts interaction streams with scale-free spatial normalization $[0.0, 1.0]$, serializing multi-device test telemetry into MCard datasets via `clm-kernel` for deterministic Playwright replay.
+- **Viewport-Only Fidelity (T0)**: The lab iframe emulates CSS viewport size and rotation only. Pixel ratio, touch and coarse pointer, hover, mobile user agent, media preferences, and safe-area insets need Playwright contexts (T1/T2) or a real device (T3). See the fidelity tiers in the [ERB sprint index](../sprints/_active/INDEX.md).
+- **Event Capture Ring Buffer (`INV-ERB-01..05`)** — *planned, ERB-00…06*: Captures interaction streams with scale-free normalization $[0.0, 1.0]$ computed in the target's own viewport (same-origin listeners or a cross-origin probe agent), serializes runs canonically into MCard datasets via `clm-kernel`, and feeds Playwright replay and device-sensitive conformance checks.
 
 ---
 

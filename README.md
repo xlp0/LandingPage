@@ -1,24 +1,27 @@
 # PKC Landing Page & Responsive Test Workbench
 ## Systematic Responsive Testing, Telemetry Capture & Replay for Chosen Web Targets
 
-A modern, **static-first, modular testing workbench and telemetry capture system** designed to systematically benchmark, test, and collect interaction data for a **chosen LandingPage target URL** across all device viewports (mobile, tablet, desktop, and foldable displays).
+A modern, **static-first, modular testing workbench** for the **device-sensitive functionality** of a **chosen LandingPage target URL**: behaviour that changes with viewport size, orientation, pixel density, touch versus mouse input, hover capability, user preferences (colour scheme, reduced motion), and safe-area insets.
 
-Powered by the **Responsive UI Lab**, an in-memory **Event Capture Ring Buffer**, the **Cubic Logic Model (`clm-kernel`)**, and the **MCard Canonical Triad SQLite Dataset Engine**, this platform provides frame-perfect device emulation, interaction logging, and deterministic **Playwright automated replay**.
+Powered by the **Responsive UI Lab**, the **Cubic Logic Model (`clm-kernel`)**, and the **MCard Canonical Triad SQLite Dataset Engine**. The active **ERB sprint series** adds an in-memory **Event Capture Ring Buffer**, **device capability profiles with declared fidelity tiers**, deterministic **Playwright replay**, and a **device-sensitive conformance suite**.
 
 ---
 
-## 🎯 **Core Focus: Systematic Single-Target Testing & Data Collection**
+## 🎯 **Core Focus: Systematic Single-Target, Device-Sensitive Testing & Data Collection**
 
 Instead of fragmented testing across disconnected pages, the platform centers around **one configurable target URL for a chosen LandingPage** (e.g. `http://localhost:4321/`, `app.html`, or custom staging deployments):
 
-1. **Chosen Target Binding**: Set target via UI selector or launch directly with query param:
+1. **Chosen Target Binding** ✅: Set target via UI selector or launch directly with query param:
    ```text
    http://localhost:3001/responsive-lab.html?target=http://localhost:4321/
    ```
-2. **Systematic Multi-Device Sweeping**: Test the target across 8 standard device profiles (iPhone 16 Pro, Galaxy S24, Pixel 8, iPad Pro, Desktop 1080p) with instant dual-axis rotation (`INV-RVP-01`).
-3. **Scale-Invariant Event Capture**: An in-memory bounded ring buffer (`INV-ERB-01`) logs micro-interactions, clicks, inputs, and orientation changes with coordinates normalized to the target's unscaled coordinate space $[0.0, 1.0]$ (`INV-ERB-02`).
-4. **MCard Test Dataset Ingestion**: Persist every test session into the Canonical Triad SQLite store (`data/mcard-api.db`) as an immutable record with `blake3` content hashes via `clm-kernel`.
-5. **Deterministic Playwright Replay**: Automated test suites consume the stored MCard artifact and replay user actions with exact viewport emulation and orientation swaps.
+2. **Multi-Device Viewport Sweeping** ✅: Test the target across the 8 built-in device profiles in [`js/device-registry.js`](js/device-registry.js) (iPhone 16 Pro, iPhone SE, Pixel 8, Galaxy S24, iPad Air 11", iPad Mini, MacBook Air 13", Desktop 1080p) with instant dual-axis rotation (`INV-RVP-01`).
+3. **Declared Fidelity Tiers** 🟡 *planned, ERB-05*: Every run states what was really emulated. T0 is the lab iframe (viewport only); T1/T2 are Playwright contexts (DPR, touch, mobile UA, media features, CDP throttling); T3 is a real device on the LAN (`INV-DSF-01`).
+4. **Scale-Invariant Event Capture** 🟡 *planned, ERB-01/02*: A bounded ring buffer (`INV-ERB-01`) logs taps, clicks, inputs, scrolls, media-query changes, and orientation changes, normalized to the target's own viewport $[0.0, 1.0]$ (`INV-ERB-02`). Same-origin targets are captured directly; cross-origin targets use an opt-in probe agent over an origin- and nonce-checked `postMessage` channel (`INV-ERB-05`).
+5. **MCard Test Dataset Ingestion** 🟡 *planned, ERB-03*: Persist every test session into the Canonical Triad SQLite store (`data/mcard-api.db`) as an immutable, canonically serialized record with `blake3` content hashes via `clm-kernel`, with per-device revision history.
+6. **Deterministic Playwright Replay & Device Conformance** 🟡 *planned, ERB-04/06*: Replay stored runs on registry-derived device contexts and run declarative device-sensitive checks (tap-target size, hover-to-touch paths, DPR assets, reduced motion, breakpoints) with per-check regression diffs.
+
+> See the [ERB sprint series index](docs/sprints/_active/INDEX.md) for the execution order, the master refactoring sequence, and the invariants.
 
 ---
 
@@ -28,7 +31,7 @@ Instead of fragmented testing across disconnected pages, the platform centers ar
 - **Direct Target Ingestion (`?target=<URL>`)**: Point the workbench to any local or external HTTP target.
 - **Dynamic 2D Geometry & Rotation (`INV-RVP-01`)**: Full-window responsive testing workbench with dual-axis orientation swapping. Clicking orientation toggles physically swaps target width and height while maintaining aspect ratios without distortion.
 - **Layout-Box Stage Containment (`INV-RVP-02`)**: Automatic scale factor $s = \min(1, W_{\text{available}} / w_{\text{target}}, H_{\text{available}} / h_{\text{target}})$ inside a dedicated `.viewport-scale-wrapper`. Even the largest desktop or rotated tablet viewports fit completely within the available stage space with zero window scrollbars.
-- **Declarative Device Registry (`INV-RVP-03`)**: Built-in catalog of 8 modern devices (`js/device-registry.js`) from phones to XR headsets, with schema validation ($[100, 7680]$ px bounds) and persistent `localStorage` storage.
+- **Declarative Device Registry (`INV-RVP-03`)**: Built-in catalog of 8 devices (`js/device-registry.js`) across phones, tablets, and desktops, with schema validation ($[100, 7680]$ px bounds) and persistent `localStorage` storage. Capability fields (touch, mobile, pointer, hover, safe-area) are planned in ERB-05.
 - **Interactive Device Manager**: Add custom screen sizes with automated greatest-common-divisor (GCD) aspect ratio calculation, delete user-added devices, or reset to factory defaults.
 - **Direct Portal Navigation**: `index.html` streamlined to highlight the Responsive UI Lab as the primary choice with top-level automatic navigation (`window.self === window.top`).
 - **Zero-Dependency Guarantee (`INV-REF-01`)**: Pure vanilla JavaScript and native CSS variables (`--frame-target-width`, `--frame-target-height`, `--frame-scale-factor`).

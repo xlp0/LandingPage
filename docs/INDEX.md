@@ -1,11 +1,14 @@
 # Responsive Test Workbench & LandingPage — Documentation Index
 
 ## 🎯 Active Development & Sprint Series (October 2026)
-- 🚀 **[Active Sprints Series: Responsive Event Capture & Playwright Replay (`docs/sprints/_active/`)](./sprints/_active/INDEX.md)**
-  - [SPRINT-ERB-01: Ring Buffer Core & State Engine](./sprints/_active/SPRINT-ERB-01-ring-buffer-core.md)
-  - [SPRINT-ERB-02: Membrane Interceptor, Spatial Normalization & Lab UI](./sprints/_active/SPRINT-ERB-02-membrane-normalization.md)
-  - [SPRINT-ERB-03: MCard & clm-kernel Storage Pipeline](./sprints/_active/SPRINT-ERB-03-mcard-clm-persistence.md)
-  - [SPRINT-ERB-04: Playwright Deterministic Replay Engine](./sprints/_active/SPRINT-ERB-04-playwright-deterministic-replay.md)
+- 🚀 **[Active Sprint Series ERB: Device-Sensitive Test Infrastructure (`docs/sprints/_active/`)](./sprints/_active/INDEX.md)** — listed in execution order
+  - [SPRINT-ERB-00: Responsive Lab Refactor Baseline](./sprints/_active/SPRINT-ERB-00-lab-refactor-baseline.md)
+  - [SPRINT-ERB-01: Bounded Event Ring Buffer & Recording State Machine](./sprints/_active/SPRINT-ERB-01-ring-buffer-core.md)
+  - [SPRINT-ERB-05: Device Capability Profiles & Fidelity Tiers](./sprints/_active/SPRINT-ERB-05-device-capability-profiles.md)
+  - [SPRINT-ERB-02: Capture Membranes, Scale-Free Normalization & Recording Ribbon](./sprints/_active/SPRINT-ERB-02-membrane-normalization.md)
+  - [SPRINT-ERB-03: MCard Test-Run Persistence via clm-kernel](./sprints/_active/SPRINT-ERB-03-mcard-clm-persistence.md)
+  - [SPRINT-ERB-04: Playwright Replay & Registry-Driven Device Sweeps](./sprints/_active/SPRINT-ERB-04-playwright-deterministic-replay.md)
+  - [SPRINT-ERB-06: Device-Sensitive Functionality Conformance Suite](./sprints/_active/SPRINT-ERB-06-device-sensitive-conformance.md)
 
 ## 🌟 Authoritative Functional Specifications (October 2026)
 
