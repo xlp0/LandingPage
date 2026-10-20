@@ -10,34 +10,47 @@
 ---
 
 ## 1. Context & Objective
-Implement a high-performance bounded circular memory buffer (ring buffer) and deterministic state engine. This component serves as the foundational in-memory event stream collector for testing a **chosen LandingPage target URL** across multi-viewport sweeps. It guarantees $O(1)$ push and sequential read operations with zero dynamic memory allocation on the active capture path, tracking dropped events cleanly under high-frequency interaction bursts.
+Implement a high-performance bounded circular memory buffer (ring buffer) and deterministic state engine located at `js/harness/event-ring-buffer.js`. 
+
+As part of the device-sensitive testing infrastructure, this component intercepts and buffers rapid streams of user interaction events (gestures, taps, touches, scrolls, and orientation toggles) from a **chosen LandingPage target URL**. It guarantees $O(1)$ push and sequential read operations with zero dynamic memory allocation during capture, tracking dropped events cleanly under high-frequency interaction bursts without degrading target frame rates.
 
 ---
 
-## 2. BMAD Agent Responsibilities
+## 2. Refactoring & Implementation Sequence
+
+### Step 1.1: Bounded Array Pre-Allocation
+- Pre-allocate buffer of fixed capacity $N = 2048$:
+  ```javascript
+  this._buffer = new Array(capacity);
+  this._head = 0;
+  this._tail = 0;
+  this._size = 0;
+  this._dropped = 0;
+  ```
+- Guarantee $O(1)$ constant time complexity per push.
+
+### Step 1.2: Overwrite Eviction & Drop Accounting (`INV-ERB-01`)
+- When `_size === _capacity`, overwrite oldest entry at `_tail`, advance `_tail = (_tail + 1) % _capacity`, and increment `_dropped`.
+- Ensure memory footprint never exceeds $N$ elements regardless of session duration.
+
+### Step 1.3: Finite State Machine (`INV-ERB-03`)
+- Enforce strict lifecycle transitions:
+  `IDLE` $\xrightarrow{\text{start()}}$ `RECORDING` $\xrightleftharpoons[\text{resume()}]{\text{pause()}}$ `PAUSED` $\xrightarrow{\text{stop()}}$ `FINALIZED` $\rightarrow$ `IDLE`.
+- Reject invalid transitions (e.g. attempting to push while `PAUSED` or `IDLE`).
+
+---
+
+## 3. BMAD Agent Responsibilities
 
 ### 🏛️ Architect (Winston)
 - Define buffer data structure, pointer wrap-around arithmetic, and state transitions.
-- Enforce **`INV-ERB-01`**: Fixed pre-allocated array of capacity $N = 2048$. When capacity is reached, overwrite the oldest unconsumed entry and increment `droppedCount`.
-- Enforce **`INV-ERB-03`**: State engine with strict transitions:
-  ```
-  [IDLE] --start()--> [RECORDING] <==pause()/resume()==> [PAUSED]
-                            |
-                         stop()
-                            v
-                      [FINALIZED] --> reset() --> [IDLE]
-  ```
+- Enforce **`INV-ERB-01`**: Zero dynamic allocation during recording; fixed memory footprint.
+- Enforce **`INV-ERB-03`**: Strict FSM preventing corrupted or partial recording states.
 
 ### 💻 Dev (Amelia)
-- Implement `js/event-ring-buffer.js` (ESM, zero dependencies):
-  - Pre-allocated internal buffer: `this._buffer = new Array(capacity)`.
-  - Head/tail index pointers with modular wrapping: `(index + 1) % capacity`.
-  - Methods:
-    - `push(event): boolean`
-    - `snapshot(): Array<NormalizedEvent>` (returns ordered chronological events)
-    - `clear(): void`
-    - `stats(): { capacity, size, dropped, head, tail }`
-- Implement state manager class `RecordingStateMachine`.
+- Implement `js/harness/event-ring-buffer.js` (ESM, zero external dependencies).
+- Export classes: `EventRingBuffer` and `RecordingStateMachine`.
+- Provide snapshot extraction: `snapshot(): NormalizedEvent[]` returning events in true chronological order.
 
 ### 🧪 Test Engineering Architect (TEA - Murat)
 - Author `tests/unit/event-ring-buffer.test.mjs` using `node:test` and `node:assert`:
@@ -49,9 +62,9 @@ Implement a high-performance bounded circular memory buffer (ring buffer) and de
 
 ---
 
-## 3. Technical Specification
+## 4. Technical Specification
 
-### 3.1 Data Shape
+### 4.1 Data Shape
 ```typescript
 interface RingBufferStats {
   capacity: number;
@@ -61,25 +74,11 @@ interface RingBufferStats {
 }
 ```
 
-### 3.2 Pointer Math
-```javascript
-// Push logic
-if (this._size === this._capacity) {
-  // Overwriting oldest
-  this._tail = (this._tail + 1) % this._capacity;
-  this._dropped++;
-} else {
-  this._size++;
-}
-this._buffer[this._head] = event;
-this._head = (this._head + 1) % this._capacity;
-```
-
 ---
 
-## 4. Definition of Done (DoD) & Verification
+## 5. Definition of Done (DoD) & Verification
 
-- [ ] `vcard:sprint-erb-01:ring_buffer_module_created`: `js/event-ring-buffer.js` implemented with zero external runtime dependencies.
+- [ ] `vcard:sprint-erb-01:ring_buffer_module_created`: `js/harness/event-ring-buffer.js` implemented with zero external runtime dependencies.
 - [ ] `vcard:sprint-erb-01:pointer_math_validated`: Circular wrap-around and overwrite logic proven bug-free.
 - [ ] `vcard:sprint-erb-01:fsm_state_transitions_verified`: State transitions strictly enforced per `INV-ERB-03`.
 - [ ] `vcard:sprint-erb-01:unit_test_suite_passes`: `node --test tests/unit/event-ring-buffer.test.mjs` executes and passes with 100% assertions.

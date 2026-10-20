@@ -1,11 +1,14 @@
 # Responsive Test Workbench & LandingPage — Documentation Index
 
 ## 🎯 Active Development & Sprint Series (October 2026)
-- 🚀 **[Active Sprints Series: Responsive Event Capture & Playwright Replay (`docs/sprints/_active/`)](./sprints/_active/INDEX.md)**
+- 🚀 **[Active Sprints Series: Device-Sensitive Testing Infrastructure (`docs/sprints/_active/`)](./sprints/_active/INDEX.md)**
+  - [SPRINT-ERB-00: Infrastructure Modularization & Device Harness Refactoring](./sprints/_active/SPRINT-ERB-00-infrastructure-refactoring.md)
   - [SPRINT-ERB-01: Ring Buffer Core & State Engine](./sprints/_active/SPRINT-ERB-01-ring-buffer-core.md)
-  - [SPRINT-ERB-02: Membrane Interceptor, Spatial Normalization & Lab UI](./sprints/_active/SPRINT-ERB-02-membrane-normalization.md)
-  - [SPRINT-ERB-03: MCard & clm-kernel Storage Pipeline](./sprints/_active/SPRINT-ERB-03-mcard-clm-persistence.md)
-  - [SPRINT-ERB-04: Playwright Deterministic Replay Engine](./sprints/_active/SPRINT-ERB-04-playwright-deterministic-replay.md)
+  - [SPRINT-ERB-02: Target Membrane Interceptor, Ergonomics & Normalization](./sprints/_active/SPRINT-ERB-02-membrane-normalization.md)
+  - [SPRINT-ERB-03: Device Telemetry Collector & MCard Dataset Pipeline](./sprints/_active/SPRINT-ERB-03-mcard-clm-persistence.md)
+  - [SPRINT-ERB-04: Deterministic Playwright Replay Driver](./sprints/_active/SPRINT-ERB-04-playwright-deterministic-replay.md)
+  - [SPRINT-ERB-05: Device-Sensitive Systematic Sweeps & Certification](./sprints/_active/SPRINT-ERB-05-device-sensitive-systematic-sweeps.md)
+  - 📖 **Guide**: [Device-Sensitive Testing Infrastructure Guide](08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md)
 
 ## 🌟 Authoritative Functional Specifications (October 2026)
 

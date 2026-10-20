@@ -7,18 +7,46 @@ Powered by the **Responsive UI Lab**, an in-memory **Event Capture Ring Buffer**
 
 ---
 
-## 🎯 **Core Focus: Systematic Single-Target Testing & Data Collection**
+## 🎯 **Core Focus: Infrastructure for Testing Device-Sensitive Functionalities**
 
-Instead of fragmented testing across disconnected pages, the platform centers around **one configurable target URL for a chosen LandingPage** (e.g. `http://localhost:4321/`, `app.html`, or custom staging deployments):
+Instead of treating responsive design as an afterthought or spreading focus across disparate demos, `LandingPage` functions as a dedicated **Testing & Telemetry Infrastructure** for certifying web applications and landing pages against real-world device constraints.
 
-1. **Chosen Target Binding**: Set target via UI selector or launch directly with query param:
-   ```text
-   http://localhost:3001/responsive-lab.html?target=http://localhost:4321/
-   ```
-2. **Systematic Multi-Device Sweeping**: Test the target across 8 standard device profiles (iPhone 16 Pro, Galaxy S24, Pixel 8, iPad Pro, Desktop 1080p) with instant dual-axis rotation (`INV-RVP-01`).
-3. **Scale-Invariant Event Capture**: An in-memory bounded ring buffer (`INV-ERB-01`) logs micro-interactions, clicks, inputs, and orientation changes with coordinates normalized to the target's unscaled coordinate space $[0.0, 1.0]$ (`INV-ERB-02`).
-4. **MCard Test Dataset Ingestion**: Persist every test session into the Canonical Triad SQLite store (`data/mcard-api.db`) as an immutable record with `blake3` content hashes via `clm-kernel`.
-5. **Deterministic Playwright Replay**: Automated test suites consume the stored MCard artifact and replay user actions with exact viewport emulation and orientation swaps.
+The infrastructure centers around **one configurable target URL for a chosen LandingPage** (e.g., `http://localhost:4321/`, `app.html`, or custom staging deployments):
+
+```text
+http://localhost:3001/responsive-lab.html?target=http://localhost:4321/
+```
+
+### 🔬 **Device-Sensitive Dimensions Certified**
+1. **Dynamic Geometry & Orientation Reflow (`INV-RVP-01`)**: Instant swapping of viewport width and height without layout clipping or text distortion.
+2. **Horizontal Viewport Bleed (`INV-DEV-01`)**: Automated detection of horizontal overflow (`document.documentElement.scrollWidth <= window.innerWidth`).
+3. **Touch Target Ergonomics (`INV-DEV-02`)**: Compliance validation ensuring interactive elements meet mobile tap size requirements ($\ge 44\text{px} \times 44\text{px}$).
+4. **Scale-Invariant Interaction Capture (`INV-ERB-01..03`)**: In-memory bounded ring buffer recording user and automated events with coordinates normalized to unscaled space $[0.0, 1.0]$.
+5. **Frame Budget & Layout Stability (`INV-DEV-04`)**: Real-time observation of frame latency ($16.6\text{ms}$ budget / $60\text{fps}$) and layout freeze absence during rapid reflows.
+6. **MCard Test Dataset Certification**: Content-addressed persistence of test run datasets into SQLite Triad (`data/mcard-api.db`) with `clm-kernel` hashing (`blake3`) for automated regression tracking.
+
+---
+
+## 🛠️ **Sequence of Refactoring Actions & Active Sprints**
+
+The transformation into a clean testing infrastructure is tracked under [`docs/sprints/_active/`](docs/sprints/_active/INDEX.md):
+
+```
+SPRINT-ERB-00 ──► SPRINT-ERB-01 ──► SPRINT-ERB-02 ──► SPRINT-ERB-03 ──► SPRINT-ERB-04 ──► SPRINT-ERB-05
+ Modularize        Ring Buffer       Membrane &        Telemetry &       Playwright        Systematic
+ responsive-lab    Core & FSM        Ergonomics        MCard Store       Replay Driver     Sweeps & Cert
+```
+
+| Sprint | Code / Focus | Primary Artifact | Verification Gate |
+| :--- | :--- | :--- | :--- |
+| **[ERB-00](docs/sprints/_active/SPRINT-ERB-00-infrastructure-refactoring.md)** | Infrastructure Modularization | `js/harness/viewport-stage.js`, `js/harness/target-membrane.js` | Zero regression on `responsive-rotation-and-devices.spec.js` |
+| **[ERB-01](docs/sprints/_active/SPRINT-ERB-01-ring-buffer-core.md)** | Ring Buffer Core & State Engine | `js/harness/event-ring-buffer.js` | `node --test tests/unit/event-ring-buffer.test.mjs` |
+| **[ERB-02](docs/sprints/_active/SPRINT-ERB-02-membrane-normalization.md)** | Target Membrane & Touch Ergonomics | `js/harness/membrane-interceptor.js`, `responsive-lab.html` | Invariant coordinate tests ($nx, ny \in [0.0, 1.0]$) |
+| **[ERB-03](docs/sprints/_active/SPRINT-ERB-03-mcard-clm-persistence.md)** | Device Telemetry & MCard Pipeline | `js/harness/telemetry-collector.js`, `server/mcard-session-adapter.mjs` | `node --test tests/unit/mcard-session-storage.test.mjs` |
+| **[ERB-04](docs/sprints/_active/SPRINT-ERB-04-playwright-deterministic-replay.md)** | Playwright Deterministic Replay | `scripts/playwright-replay-driver.mjs`, `tests/features/responsive-replay.spec.js` | `npx playwright test tests/features/responsive-replay.spec.js` |
+| **[ERB-05](docs/sprints/_active/SPRINT-ERB-05-device-sensitive-systematic-sweeps.md)** | Systematic Multi-Device Sweeps | `tests/features/systematic-landing-test.spec.js` | `TARGET_URL=http://localhost:4321/ npm run test:responsive` |
+
+Detailed guide available at: **[`docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md`](docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md)**.
 
 ---
 

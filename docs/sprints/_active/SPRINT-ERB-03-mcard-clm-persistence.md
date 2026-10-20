@@ -1,42 +1,66 @@
-# Sprint ERB-03: MCard Test Data Ingestion Pipeline & clm-kernel Hashing
+# Sprint ERB-03: Device Telemetry Collector & MCard SQLite Dataset Pipeline
 
 ## Metadata
 - **Sprint Code**: `SPRINT-ERB-03`
 - **Handle**: `urn:pcard:sprint:SPRINT-ERB-03`
 - **Status**: `SPECIFICATION`
 - **Archetype**: `ClmTriadManifest`
-- **pstack Playbook**: `feature` + `principle-type-system-discipline`
+- **pstack Playbook**: `feature` + `principle-type-system-discipline` + `principle-foundational-thinking`
 
 ---
 
 ## 1. Context & Objective
-Persist structured test runs and telemetry collected from the **chosen LandingPage target URL** directly into the MCard Canonical Triad SQLite dataset engine (`data/mcard-api.db`). The test dataset artifact must adhere to a strict schema (`urn:mcard:schema:responsive_test_run:v1`), compute cryptographic content hashes using `clm-kernel` (v0.0.9), and register a unique handle (`urn:mcard:test_run:<target_slug>:<id>`) with `g_time` provenance metadata for systematic historical regression comparisons.
+A robust testing infrastructure must not only capture what a user does, but also observe how the device-sensitive web application performs. 
+
+This sprint implements `js/harness/telemetry-collector.js` to collect device-critical runtime metrics from the **chosen LandingPage target URL**:
+1. **Horizontal Viewport Bleed**: Detects whether elements overflow the target viewport (`document.documentElement.scrollWidth > window.innerWidth`).
+2. **Layout Freeze & Reflow Latency**: Measures frame budget adherence ($16.6\text{ms}$ budget for $60\text{fps}$) during device rotations and responsive reflows.
+3. **Cumulative Layout Shift (CLS)**: Tracks unexpected layout shifts across responsive transitions.
+
+All telemetry and normalized event traces are packaged into a structured artifact (`urn:mcard:schema:responsive_test_run:v1`), hashed with `clm-kernel` (`blake3`), and stored immutably in the Canonical Triad SQLite database (`data/mcard-api.db`).
 
 ---
 
-## 2. BMAD Agent Responsibilities
+## 2. Refactoring & Implementation Sequence
+
+### Step 3.1: Implement `js/harness/telemetry-collector.js`
+- **Layout Overflow Audit**:
+  ```javascript
+  const hasHorizontalOverflow = doc.documentElement.scrollWidth > win.innerWidth;
+  const overflowingElements = [...doc.querySelectorAll('*')].filter(el => {
+    const r = el.getBoundingClientRect();
+    return r.right > win.innerWidth + 1; // 1px threshold for rounding
+  }).map(el => el.tagName + (el.id ? '#' + el.id : ''));
+  ```
+- **Frame Rate Monitor**: Uses `requestAnimationFrame` timestamp deltas during active testing to track jank and dropped frames.
+- **Performance Summary**: Generates summary statistics: `{ avgFps, droppedFrames, maxFrameMs, hasOverflow, overflowElements }`.
+
+### Step 3.2: Implement `server/mcard-session-adapter.mjs`
+- Connects to SQLite Triad engine via `DatabaseSync` in `server/mcard-api.mjs`.
+- Binds to `clm-kernel`'s `computeHash` (default `blake3`).
+- Handles endpoints:
+  - `POST /api/mcard/session/save`: Validates schema, mints MCard, registers handle `urn:mcard:test_run:<target_slug>:<id>`.
+  - `GET /api/mcard/session/:id`: Fetches full test run payload.
+  - `GET /api/mcard/session/target?url=<URL>`: Queries historical test runs for a given LandingPage URL to track performance trends over time.
+
+---
+
+## 3. BMAD Agent Responsibilities
 
 ### 📋 Analyst (Sophia)
 - Formalize JSON Schema for systematic test runs (`urn:mcard:schema:responsive_test_run:v1`).
-- Define metadata headers:
-  - `targetUrl`, `sessionId`, `deviceProfile`, `orientation`, `recordedAt`, `metrics` (TTI, layout shifts, frame latency), `droppedCount`, and `checksum`.
+- Ensure schema fields capture all device-sensitive observations: device profile, orientation, overflow flags, frame metrics, and event log.
 
 ### 🏛️ Architect (Winston)
-- Ensure alignment with MCard One Record Law (`card.hash = hex(H(content))`):
-  - Digest algorithm: `blake3` (default) or `sha256` (legacy fallback) provided by `clm-kernel`.
+- Enforce MCard One Record Law (`card.hash = hex(H(content))`):
+  - Digest algorithm: `blake3` via `clm-kernel`.
   - Provenance coordinate: `g_time = ALGORITHM|TIMESTAMP|LOCALE|type=responsive_test_run|target=<URL>`.
-- Define `/api/mcard/session` router endpoints:
-  - `POST /api/mcard/session/save`: Validates schema, mints card, binds handle.
-  - `GET /api/mcard/session/:id`: Fetches recorded session by handle or hash.
-  - `GET /api/mcard/session/target?url=<URL>`: Lists all historical test runs for a given LandingPage URL.
+- Isolate telemetry collection so it incurs zero observer overhead on the target page.
 
 ### 💻 Dev (Amelia)
-- Implement `server/mcard-session-adapter.mjs`:
-  - Integrate with `server/mcard-api.mjs` Triad SQLite connection (`DatabaseSync`).
-  - Bridge incoming payload to `clm-kernel`'s `computeHash`.
-- Implement client-side export inside `js/recording-controller.js`:
-  - `stopRecording()` serializes buffer snapshot and issues POST to `/api/mcard/session/save`.
-  - Displays copyable session handle & hash in UI badge upon completion.
+- Implement `js/harness/telemetry-collector.js`.
+- Implement `server/mcard-session-adapter.mjs`.
+- Wire `stopRecording()` in the workbench UI to bundle ring buffer events with telemetry metrics and post to the MCard API.
 
 ### 🧪 Test Engineering Architect (TEA - Murat)
 - Create integration test `tests/unit/mcard-session-storage.test.mjs`:
@@ -46,9 +70,9 @@ Persist structured test runs and telemetry collected from the **chosen LandingPa
 
 ---
 
-## 3. Technical Specification
+## 4. Technical Specification
 
-### 3.1 MCard Systematic Test Run Payload
+### 4.1 Schema Sample (`urn:mcard:schema:responsive_test_run:v1`)
 ```json
 {
   "schema": "urn:mcard:schema:responsive_test_run:v1",
@@ -61,31 +85,24 @@ Persist structured test runs and telemetry collected from the **chosen LandingPa
     "eventCount": 24,
     "droppedCount": 0,
     "telemetry": {
-      "avgFrameLatencyMs": 16.6,
-      "layoutShiftScore": 0.00
+      "avgFps": 59.8,
+      "maxFrameMs": 18.2,
+      "hasHorizontalOverflow": false,
+      "tapTargetViolations": []
     }
   },
-  "events": [
-    {
-      "seq": 1,
-      "t_rel_ms": 120.4,
-      "type": "click",
-      "target": { "selector": "#btn-explore", "tag": "button" },
-      "viewport": { "w": 393, "h": 852, "dpr": 3, "orientation": "portrait" },
-      "coords": { "nx": 0.52, "ny": 0.81 }
-    }
-  ]
+  "events": [ ... ]
 }
 ```
 
 ---
 
-## 4. Definition of Done (DoD) & Verification
+## 5. Definition of Done (DoD) & Verification
 
+- [ ] `vcard:sprint-erb-03:telemetry_collector_created`: `js/harness/telemetry-collector.js` detects overflow and frame jank.
 - [ ] `vcard:sprint-erb-03:schema_contract_defined`: Schema `urn:mcard:schema:responsive_test_run:v1` validated.
 - [ ] `vcard:sprint-erb-03:clm_kernel_hash_compliance`: Content hashes generated via `clm-kernel` `computeHash`.
 - [ ] `vcard:sprint-erb-03:triad_sqlite_persistence`: Saved test runs immutably committed to `data/mcard-api.db`.
-- [ ] `vcard:sprint-erb-03:target_history_retrieval`: Target-specific query endpoint `/api/mcard/session/target` returns test runs for the chosen LandingPage.
 - [ ] `vcard:sprint-erb-03:integration_test_passes`: `node --test tests/unit/mcard-session-storage.test.mjs` passes cleanly.
 
 ### Execution Command:
