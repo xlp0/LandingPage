@@ -10,7 +10,8 @@
 
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'http://localhost:3000/index.html';
+const PORT = process.env.PORT || 3001;
+const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}/index.html`;
 
 test.describe('Apps Menu - Smoke Tests', () => {
 

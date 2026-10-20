@@ -15,7 +15,7 @@ import { expect, test } from '@playwright/test';
 const LANDING_HANDLE = 'urn:mcard:content:landing_page';
 
 async function openLanding(page) {
-  await page.goto('/index.html');
+  await page.goto('/index.html?noredirect=1');
   // The PWA install prompt is unrelated to this contract; dismiss it if it appears.
   const dismiss = page.locator('#modal-dismiss-btn');
   try {

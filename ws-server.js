@@ -24,23 +24,57 @@ import authRoutes from './routes/auth.js';
 import clmRoutes from './routes/clm.js';
 
 // ⚠️ MCard API enabled for library use
-import mcardRoutes from './server/mcard-api.mjs';
+import mcardRoutes, { initMCardAPI } from './server/mcard-api.mjs';
+import { createTestRunRouter } from './server/test-run-api.mjs';
+
+const mcardStorage = await initMCardAPI();
 
 const app = express();
 
+// Base CORS origins
+const baseCorsOrigins = [
+    'http://localhost:3000',
+    'http://localhost:4321',
+    'http://localhost:8765',
+    'https://pkc.pub',
+    'https://test.pkc.pub',
+    'https://dev.pkc.pub',
+    'https://henry.pkc.pub'
+];
+
+// Dynamically augment with absolute origins declared in app-config.json#labTargets
+let dynamicOrigins = [...baseCorsOrigins];
+try {
+    const fs = await import('fs');
+    const configPath = path.join(__dirname, 'app-config.json');
+    if (fs.existsSync(configPath)) {
+        const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        if (Array.isArray(config.labTargets)) {
+            for (const target of config.labTargets) {
+                if (target.url && (target.url.startsWith('http://') || target.url.startsWith('https://'))) {
+                    try {
+                        const origin = new URL(target.url).origin;
+                        if (!dynamicOrigins.includes(origin)) {
+                            dynamicOrigins.push(origin);
+                        }
+                    } catch {}
+                }
+            }
+        }
+    }
+} catch (err) {
+    console.warn('[ws-server] Could not load app-config.json origins:', err.message);
+}
+
 // Enable CORS for all routes
 app.use(cors({
-    origin: [
-        'http://localhost:3000',
-        'http://localhost:4321',
-        'http://localhost:8765',
-        'https://pkc.pub',
-        'https://test.pkc.pub',
-        'https://dev.pkc.pub',
-        'https://henry.pkc.pub'
-    ],
+    origin: dynamicOrigins,
     credentials: true
 }));
+
+// SPRINT-ERB-03 §1.2: Mount test-run router before the 100kb global json parser with 2mb limit
+app.use('/api/test-runs', express.json({ limit: '2mb' }), createTestRunRouter({ storage: mcardStorage }));
+console.log('[Server] ✅ Test-Runs API enabled at /api/test-runs');
 
 // Parse JSON bodies
 app.use(express.json());

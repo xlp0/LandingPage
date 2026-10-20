@@ -145,15 +145,15 @@ With the 8 built-ins this produces 16 cases: iPhone 16 Pro, iPhone SE, Pixel 8, 
 
 ## 5. Definition of Done (DoD) & Verification
 
-- [ ] `vcard:sprint-erb-04:device_matrix_registry_derived`: Sweep and replay use only `device-matrix.js`; no device dimensions are typed in new specs (`INV-DSF-02`).
-- [ ] `vcard:sprint-erb-04:sweep_suite_green`: `systematic-landing-test.spec.js` passes all 16 cases against `app.html`.
-- [ ] `vcard:sprint-erb-04:replay_round_trip_verified`: A run recorded in the lab on `app.html` replays with `verdict: pass` at T1.
-- [ ] `vcard:sprint-erb-04:cross_origin_replay_verified`: The same holds for `http://localhost:4321/` with the probe agent, or the spec skips with the preflight reason when the target is down.
-- [ ] `vcard:sprint-erb-04:no_hidden_retries`: Both specs run with `retries: 0`.
-- [ ] `vcard:sprint-erb-04:results_minted`: With `MINT_RESULTS=1`, replay results appear under `urn:mcard:replay_result:*`.
-- [ ] `vcard:sprint-erb-04:replay_speed_modes`: `paced` replay works at `REPLAY_SPEED=1`, `2`, and `5`, and the speed is recorded in the result.
-- [ ] `vcard:sprint-erb-04:cli_summary_table`: `npm run test:responsive` prints the per-device summary table.
-- [ ] `vcard:sprint-erb-04:documentation_published`: `docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md` covers sweeps and replays, and its steps reproduce.
+- [x] `vcard:sprint-erb-04:device_matrix_registry_derived`: Sweep and replay use only `device-matrix.js`; no device dimensions are typed in new specs (`INV-DSF-02`).
+- [x] `vcard:sprint-erb-04:sweep_suite_green`: `systematic-landing-test.spec.js` passes all 16 cases against `app.html`.
+- [x] `vcard:sprint-erb-04:replay_round_trip_verified`: A run recorded in the lab on `app.html` replays with `verdict: pass` at T1.
+- [x] `vcard:sprint-erb-04:cross_origin_replay_verified`: The same holds for `http://localhost:4321/` with the probe agent, or the spec skips with the preflight reason when the target is down.
+- [x] `vcard:sprint-erb-04:no_hidden_retries`: Both specs run with `retries: 0`.
+- [x] `vcard:sprint-erb-04:results_minted`: With `MINT_RESULTS=1`, replay results appear under `urn:mcard:replay_result:*`.
+- [x] `vcard:sprint-erb-04:replay_speed_modes`: `paced` replay works at `REPLAY_SPEED=1`, `2`, and `5`, and the speed is recorded in the result.
+- [x] `vcard:sprint-erb-04:cli_summary_table`: `npm run test:responsive` prints the per-device summary table.
+- [x] `vcard:sprint-erb-04:documentation_published`: `docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md` covers sweeps and replays, and its steps reproduce.
 
 ### Execution Commands
 ```bash

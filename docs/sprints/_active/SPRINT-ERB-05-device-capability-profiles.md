@@ -166,13 +166,13 @@ interface FidelityDeclaration {
 
 ## 6. Definition of Done (DoD) & Verification
 
-- [ ] `vcard:sprint-erb-05:schema_v2_validated`: `validateDevice` accepts v1 and v2 input and rejects out-of-range or wrong-typed capability fields.
-- [ ] `vcard:sprint-erb-05:builtins_capability_complete`: All 8 built-ins carry v2 capability fields.
-- [ ] `vcard:sprint-erb-05:migration_idempotent_nondestructive`: v1 → v2 runs once, twice gives the same result, and v1 is preserved.
-- [ ] `vcard:sprint-erb-05:fidelity_resolver_verified`: `resolveFidelity` matches §5.3 for every runner.
-- [ ] `vcard:sprint-erb-05:device_matrix_single_source`: `tests/fixtures/device-matrix.js` derives every Playwright context from the registry (`INV-DSF-02`).
-- [ ] `vcard:sprint-erb-05:fidelity_badge_visible`: The lab shows the tier and the not-emulated list for the active preset.
-- [ ] `vcard:sprint-erb-05:no_regression`: RVP suite green.
+- [x] `vcard:sprint-erb-05:schema_v2_validated`: `validateDevice` accepts v1 and v2 input and rejects out-of-range or wrong-typed capability fields.
+- [x] `vcard:sprint-erb-05:builtins_capability_complete`: All 8 built-ins carry v2 capability fields.
+- [x] `vcard:sprint-erb-05:migration_idempotent_nondestructive`: v1 → v2 runs once, twice gives the same result, and v1 is preserved.
+- [x] `vcard:sprint-erb-05:fidelity_resolver_verified`: `resolveFidelity` matches §5.3 for every runner.
+- [x] `vcard:sprint-erb-05:device_matrix_single_source`: `tests/fixtures/device-matrix.js` derives every Playwright context from the registry (`INV-DSF-02`).
+- [x] `vcard:sprint-erb-05:fidelity_badge_visible`: The lab shows the tier and the not-emulated list for the active preset.
+- [x] `vcard:sprint-erb-05:no_regression`: RVP suite green.
 
 ### Execution Command
 ```bash

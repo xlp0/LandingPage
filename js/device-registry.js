@@ -1,16 +1,12 @@
 /**
- * RVP-02 — Declarative Device Preset Registry
+ * RVP-02 & ERB-05 — Declarative Device Preset Registry (Schema v2)
  *
- * The lab's screen sizes were five static HTML buttons carrying `data-width`
- * only. This replaces them with a schema-validated, persisted registry so
- * presets can be added, edited and removed at runtime.
- *
- * Zero dependencies (INV-RVP-05): vanilla ESM plus Web Storage. Nothing here
- * touches the DOM or `clm/` (INV-REF-01) — the registry is a pure store, and
- * `responsive-lab.html` is the only consumer that renders it.
+ * Stores device capability profiles (touch, pointer, hover, safe-area insets, mobile flag, user agent)
+ * alongside 2D dimensions. Serves as single source of truth for device-sensitive sweeps (INV-DSF-02).
  */
 
-export const STORAGE_KEY = 'pkc_responsive_lab_devices_v1';
+export const STORAGE_KEY_V1 = 'pkc_responsive_lab_devices_v1';
+export const STORAGE_KEY = 'pkc_responsive_lab_devices_v2';
 
 /** INV-RVP-03: the closed dimension contract. */
 export const DIM_MIN = 100;
@@ -18,33 +14,173 @@ export const DIM_MAX = 7680;
 
 export const CATEGORIES = ['phone', 'tablet', 'desktop', 'wearable', 'custom'];
 
+export const CATEGORY_DEFAULTS = Object.freeze({
+  phone: { hasTouch: true, isMobile: true, pointer: 'coarse', hover: false, defaultOrientation: 'portrait' },
+  tablet: { hasTouch: true, isMobile: true, pointer: 'coarse', hover: false, defaultOrientation: 'portrait' },
+  wearable: { hasTouch: true, isMobile: true, pointer: 'coarse', hover: false, defaultOrientation: 'portrait' },
+  desktop: { hasTouch: false, isMobile: false, pointer: 'fine', hover: true, defaultOrientation: 'landscape' },
+  custom: { hasTouch: false, isMobile: false, pointer: 'fine', hover: true, defaultOrientation: 'portrait' }
+});
+
 /**
- * Factory devices. Dimensions are portrait, in CSS pixels.
- *
- * No ratio is stored: the aspect ratio is *computed* from the dimensions, so a
- * label can never drift from the geometry it describes. (An earlier draft of
- * the catalog hand-wrote these, and two of them were wrong — 820x1180 was
- * labelled 4:3 and 1280x832 as 16:10, when they are 1.44:1 and 20:13.)
+ * Fills capability fields from category defaults if not specified.
+ */
+export function withCapabilityDefaults(device) {
+  if (!device || typeof device !== 'object') return device;
+  const category = CATEGORIES.includes(device.category) ? device.category : 'custom';
+  const defaults = CATEGORY_DEFAULTS[category] || CATEGORY_DEFAULTS.custom;
+
+  const defaultOrientation = typeof device.defaultOrientation === 'string'
+    ? device.defaultOrientation
+    : (category === 'custom' && Number.isFinite(device.width) && Number.isFinite(device.height)
+      ? (device.width > device.height ? 'landscape' : 'portrait')
+      : defaults.defaultOrientation);
+
+  return {
+    ...device,
+    category,
+    hasTouch: typeof device.hasTouch === 'boolean' ? device.hasTouch : defaults.hasTouch,
+    isMobile: typeof device.isMobile === 'boolean' ? device.isMobile : defaults.isMobile,
+    pointer: (device.pointer === 'coarse' || device.pointer === 'fine') ? device.pointer : defaults.pointer,
+    hover: typeof device.hover === 'boolean' ? device.hover : defaults.hover,
+    defaultOrientation,
+    schemaVersion: 2
+  };
+}
+
+/**
+ * Factory devices (Schema v2).
  */
 export const BUILTIN_DEVICES = Object.freeze([
-  { id: 'iphone-16-pro', name: 'iPhone 16 Pro', category: 'phone', width: 393, height: 852, pixelRatio: 3, isBuiltin: true },
-  { id: 'iphone-se', name: 'iPhone SE', category: 'phone', width: 375, height: 667, pixelRatio: 2, isBuiltin: true },
-  { id: 'pixel-8', name: 'Google Pixel 8', category: 'phone', width: 412, height: 915, pixelRatio: 2.625, isBuiltin: true },
-  { id: 'galaxy-s24', name: 'Samsung Galaxy S24', category: 'phone', width: 360, height: 780, pixelRatio: 3, isBuiltin: true },
-  { id: 'ipad-air-11', name: 'iPad Air 11"', category: 'tablet', width: 820, height: 1180, pixelRatio: 2, isBuiltin: true },
-  { id: 'ipad-mini', name: 'iPad Mini', category: 'tablet', width: 744, height: 1133, pixelRatio: 2, isBuiltin: true },
-  { id: 'macbook-air-13', name: 'MacBook Air 13"', category: 'desktop', width: 1280, height: 832, pixelRatio: 2, isBuiltin: true },
-  { id: 'desktop-fhd', name: 'Desktop 1080p', category: 'desktop', width: 1920, height: 1080, pixelRatio: 1, isBuiltin: true },
+  {
+    id: 'iphone-16-pro',
+    name: 'iPhone 16 Pro',
+    category: 'phone',
+    width: 393,
+    height: 852,
+    pixelRatio: 3,
+    hasTouch: true,
+    isMobile: true,
+    pointer: 'coarse',
+    hover: false,
+    defaultOrientation: 'portrait',
+    safeAreaInsets: { top: 59, right: 0, bottom: 34, left: 0 },
+    isBuiltin: true,
+    schemaVersion: 2
+  },
+  {
+    id: 'iphone-se',
+    name: 'iPhone SE',
+    category: 'phone',
+    width: 375,
+    height: 667,
+    pixelRatio: 2,
+    hasTouch: true,
+    isMobile: true,
+    pointer: 'coarse',
+    hover: false,
+    defaultOrientation: 'portrait',
+    isBuiltin: true,
+    schemaVersion: 2
+  },
+  {
+    id: 'pixel-8',
+    name: 'Google Pixel 8',
+    category: 'phone',
+    width: 412,
+    height: 915,
+    pixelRatio: 2.625,
+    hasTouch: true,
+    isMobile: true,
+    pointer: 'coarse',
+    hover: false,
+    defaultOrientation: 'portrait',
+    safeAreaInsets: { top: 24, right: 0, bottom: 0, left: 0 },
+    isBuiltin: true,
+    schemaVersion: 2
+  },
+  {
+    id: 'galaxy-s24',
+    name: 'Samsung Galaxy S24',
+    category: 'phone',
+    width: 360,
+    height: 780,
+    pixelRatio: 3,
+    hasTouch: true,
+    isMobile: true,
+    pointer: 'coarse',
+    hover: false,
+    defaultOrientation: 'portrait',
+    safeAreaInsets: { top: 24, right: 0, bottom: 0, left: 0 },
+    isBuiltin: true,
+    schemaVersion: 2
+  },
+  {
+    id: 'ipad-air-11',
+    name: 'iPad Air 11"',
+    category: 'tablet',
+    width: 820,
+    height: 1180,
+    pixelRatio: 2,
+    hasTouch: true,
+    isMobile: true,
+    pointer: 'coarse',
+    hover: false,
+    defaultOrientation: 'portrait',
+    isBuiltin: true,
+    schemaVersion: 2
+  },
+  {
+    id: 'ipad-mini',
+    name: 'iPad Mini',
+    category: 'tablet',
+    width: 744,
+    height: 1133,
+    pixelRatio: 2,
+    hasTouch: true,
+    isMobile: true,
+    pointer: 'coarse',
+    hover: false,
+    defaultOrientation: 'portrait',
+    isBuiltin: true,
+    schemaVersion: 2
+  },
+  {
+    id: 'macbook-air-13',
+    name: 'MacBook Air 13"',
+    category: 'desktop',
+    width: 1280,
+    height: 832,
+    pixelRatio: 2,
+    hasTouch: false,
+    isMobile: false,
+    pointer: 'fine',
+    hover: true,
+    defaultOrientation: 'landscape',
+    isBuiltin: true,
+    schemaVersion: 2
+  },
+  {
+    id: 'desktop-fhd',
+    name: 'Desktop 1080p',
+    category: 'desktop',
+    width: 1920,
+    height: 1080,
+    pixelRatio: 1,
+    hasTouch: false,
+    isMobile: false,
+    pointer: 'fine',
+    hover: true,
+    defaultOrientation: 'landscape',
+    isBuiltin: true,
+    schemaVersion: 2
+  }
 ]);
 
 const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
 
 /**
  * The aspect ratio of (w, h), derived — never hand-written.
- *
- * The reduced fraction is used when it stays readable (`1920x1080 -> 16:9`);
- * otherwise the ratio is normalised to the larger side (`820x1180 -> 1.44:1`),
- * because `131:284` is exact but unreadable.
  */
 export function aspectRatio(w, h) {
   if (!Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) return '—';
@@ -66,7 +202,8 @@ export function slugify(name) {
 }
 
 /**
- * INV-RVP-03 — validate before injection.
+ * INV-RVP-03 & ERB-05 — Validate before injection.
+ * Accepts v1 and v2 shapes; checks capability types when present.
  * @returns {{valid: boolean, errors: string[]}}
  */
 export function validateDevice(data) {
@@ -94,8 +231,55 @@ export function validateDevice(data) {
 
   if (data.pixelRatio !== undefined) {
     const p = data.pixelRatio;
-    if (typeof p !== 'number' || !Number.isFinite(p) || p <= 0) {
-      errors.push('pixelRatio must be a positive number');
+    if (typeof p !== 'number' || !Number.isFinite(p) || p <= 0 || p > 8) {
+      errors.push('pixelRatio must be a positive number up to 8');
+    }
+  }
+
+  // Capability field validations (Schema v2)
+  if (data.hasTouch !== undefined && typeof data.hasTouch !== 'boolean') {
+    errors.push('hasTouch must be a boolean');
+  }
+
+  if (data.isMobile !== undefined && typeof data.isMobile !== 'boolean') {
+    errors.push('isMobile must be a boolean');
+  }
+
+  if (data.hover !== undefined && typeof data.hover !== 'boolean') {
+    errors.push('hover must be a boolean');
+  }
+
+  if (data.pointer !== undefined && data.pointer !== 'coarse' && data.pointer !== 'fine') {
+    errors.push("pointer must be 'coarse' or 'fine'");
+  }
+
+  if (
+    data.defaultOrientation !== undefined &&
+    data.defaultOrientation !== 'portrait' &&
+    data.defaultOrientation !== 'landscape'
+  ) {
+    errors.push("defaultOrientation must be 'portrait' or 'landscape'");
+  }
+
+  if (data.userAgent !== undefined && typeof data.userAgent !== 'string') {
+    errors.push('userAgent must be a string');
+  }
+
+  if (data.safeAreaInsets !== undefined) {
+    const insets = data.safeAreaInsets;
+    if (
+      !insets ||
+      typeof insets !== 'object' ||
+      typeof insets.top !== 'number' ||
+      typeof insets.right !== 'number' ||
+      typeof insets.bottom !== 'number' ||
+      typeof insets.left !== 'number' ||
+      insets.top < 0 ||
+      insets.right < 0 ||
+      insets.bottom < 0 ||
+      insets.left < 0
+    ) {
+      errors.push('safeAreaInsets must contain non-negative numbers { top, right, bottom, left }');
     }
   }
 
@@ -130,15 +314,23 @@ export class DeviceRegistry {
 
   // ── mutations ─────────────────────────────────────────────────────────────
 
-  /** @returns {DevicePreset} the created device (throws on an invalid payload) */
+  /** @returns {Object} the created device (throws on an invalid payload) */
   add(data) {
-    const payload = {
+    const payload = withCapabilityDefaults({
       name: typeof data?.name === 'string' ? data.name.trim() : data?.name,
       category: data?.category ?? 'custom',
       width: data?.width,
       height: data?.height,
-      pixelRatio: data?.pixelRatio,
-    };
+      pixelRatio: data?.pixelRatio ?? 1,
+      hasTouch: data?.hasTouch,
+      isMobile: data?.isMobile,
+      pointer: data?.pointer,
+      hover: data?.hover,
+      defaultOrientation: data?.defaultOrientation,
+      userAgent: data?.userAgent,
+      safeAreaInsets: data?.safeAreaInsets
+    });
+
     const { valid, errors } = validateDevice(payload);
     if (!valid) {
       const err = new Error(`invalid device: ${errors.join('; ')}`);
@@ -150,7 +342,7 @@ export class DeviceRegistry {
       ...payload,
       id: this.#uniqueId(data?.id ? slugify(data.id) : slugify(payload.name)),
       isBuiltin: false,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date().toISOString()
     };
     this.devices.push(device);
     this.#commit('add', device);
@@ -161,7 +353,7 @@ export class DeviceRegistry {
     const i = this.devices.findIndex((d) => d.id === id);
     if (i === -1) throw new Error(`no device with id ${id}`);
 
-    const next = { ...this.devices[i], ...updates, id: this.devices[i].id };
+    const next = withCapabilityDefaults({ ...this.devices[i], ...updates, id: this.devices[i].id });
     const { valid, errors } = validateDevice(next);
     if (!valid) {
       const err = new Error(`invalid device: ${errors.join('; ')}`);
@@ -177,7 +369,6 @@ export class DeviceRegistry {
   remove(id) {
     const device = this.devices.find((d) => d.id === id);
     if (!device) return false;
-    // INV-RVP-03: a factory device is immutable; only resetToDefaults clears it
     if (device.isBuiltin) return false;
     this.devices = this.devices.filter((d) => d.id !== id);
     this.#commit('remove', device);
@@ -191,7 +382,6 @@ export class DeviceRegistry {
 
   // ── reactivity ────────────────────────────────────────────────────────────
 
-  /** @returns {() => void} unsubscribe */
   subscribe(listener) {
     if (typeof listener !== 'function') throw new TypeError('listener must be a function');
     this.listeners.add(listener);
@@ -221,9 +411,11 @@ export class DeviceRegistry {
 
   #persist() {
     try {
-      localStorage.setItem(this.storageKey, JSON.stringify(this.devices));
+      const json = JSON.stringify(this.devices);
+      localStorage.setItem(this.storageKey, json);
+      // Dual-write to v1 key for backward compatibility
+      localStorage.setItem(STORAGE_KEY_V1, json);
     } catch (e) {
-      // a full or unavailable store must not break the workbench
       console.warn('[DeviceRegistry] could not persist registry', e);
     }
   }
@@ -233,18 +425,26 @@ export class DeviceRegistry {
   }
 
   /**
-   * INV-RVP-04: read storage, keep only what validates, and guarantee the
-   * factory set is present. Any failure — absent, malformed, wrong shape —
-   * falls back to the factory devices silently, and the store is repaired so
-   * the warning does not repeat on every load.
+   * INV-RVP-04 & ERB-05 §5.2: read storage with idempotent migration from v1 to v2.
    */
   #load() {
     let raw = null;
+    let fromV1 = false;
+
     try {
       raw = localStorage.getItem(this.storageKey);
+      if (!raw) {
+        // Attempt idempotent v1 migration
+        const v1Raw = localStorage.getItem(STORAGE_KEY_V1);
+        if (v1Raw) {
+          raw = v1Raw;
+          fromV1 = true;
+        }
+      }
     } catch {
       return this.#seed();
     }
+
     if (!raw) {
       const seed = this.#seed();
       this.#write(seed);
@@ -255,30 +455,33 @@ export class DeviceRegistry {
       const parsed = JSON.parse(raw);
       if (!Array.isArray(parsed)) throw new Error('stored registry is not an array');
 
-      const kept = parsed.filter((d) => {
-        const { valid } = validateDevice(d);
-        if (!valid) console.warn('[DeviceRegistry] dropped an invalid stored record', d);
-        return valid;
-      });
+      const kept = parsed
+        .map((d) => (fromV1 ? withCapabilityDefaults(d) : d))
+        .filter((d) => {
+          const { valid } = validateDevice(d);
+          if (!valid) console.warn('[DeviceRegistry] dropped an invalid stored record', d);
+          return valid;
+        });
 
       const byId = new Map(kept.map((d) => [d.id, { ...d }]));
-      // factory devices are authoritative: re-seed any that storage lost
       for (const b of BUILTIN_DEVICES) byId.set(b.id, { ...b, ...(byId.get(b.id) ?? {}), isBuiltin: true });
       const merged = [...byId.values()];
-      if (merged.length !== parsed.length) this.#write(merged);
+      this.#write(merged);
       return merged;
     } catch (e) {
       console.warn('[DeviceRegistry] storage unusable; seeding factory defaults', e);
       const seed = this.#seed();
-      this.#write(seed);   // self-heal: the next load is clean
+      this.#write(seed);
       return seed;
     }
   }
 
-  /** Write without notifying subscribers (used during construction). */
   #write(devices) {
     try {
-      localStorage.setItem(this.storageKey, JSON.stringify(devices));
+      const json = JSON.stringify(devices);
+      localStorage.setItem(this.storageKey, json);
+      // Dual write to v1 for backwards compatibility with legacy tests
+      localStorage.setItem(STORAGE_KEY_V1, json);
     } catch (e) {
       console.warn('[DeviceRegistry] could not repair stored registry', e);
     }

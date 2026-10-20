@@ -180,15 +180,15 @@ The slug, not the raw URL, goes into `g_time`, which avoids delimiter ambiguity.
 
 ## 6. Definition of Done (DoD) & Verification
 
-- [ ] `vcard:sprint-erb-03:backend_shared_not_duplicated`: The test-run router uses the `initMCardAPI` backend instance (R1).
-- [ ] `vcard:sprint-erb-03:schema_contract_enforced`: `validateTestRun` rejects invalid and unknown-key payloads on the server.
-- [ ] `vcard:sprint-erb-03:canonical_hash_deterministic`: P1–P2 pass (`INV-ERB-04`).
-- [ ] `vcard:sprint-erb-03:large_session_accepted`: P4 passes.
-- [ ] `vcard:sprint-erb-03:regression_chain_available`: P5 passes.
-- [ ] `vcard:sprint-erb-03:target_history_retrieval`: P6 passes.
-- [ ] `vcard:sprint-erb-03:production_db_untouched_by_tests`: P7 passes.
-- [ ] `vcard:sprint-erb-03:telemetry_collector_created`: `telemetry-collector.js` reports overflow, frames, CLS, and tap violations for both same-origin and probe-agent targets.
-- [ ] `vcard:sprint-erb-03:client_save_with_offline_fallback`: Stop → saved handle shown; with the server stopped → JSON download offered.
+- [x] `vcard:sprint-erb-03:backend_shared_not_duplicated`: The test-run router uses the `initMCardAPI` backend instance (R1).
+- [x] `vcard:sprint-erb-03:schema_contract_enforced`: `validateTestRun` rejects invalid and unknown-key payloads on the server.
+- [x] `vcard:sprint-erb-03:canonical_hash_deterministic`: P1–P2 pass (`INV-ERB-04`).
+- [x] `vcard:sprint-erb-03:large_session_accepted`: P4 passes.
+- [x] `vcard:sprint-erb-03:regression_chain_available`: P5 passes.
+- [x] `vcard:sprint-erb-03:target_history_retrieval`: P6 passes.
+- [x] `vcard:sprint-erb-03:production_db_untouched_by_tests`: P7 passes.
+- [x] `vcard:sprint-erb-03:telemetry_collector_created`: `telemetry-collector.js` reports overflow, frames, CLS, and tap violations for both same-origin and probe-agent targets.
+- [x] `vcard:sprint-erb-03:client_save_with_offline_fallback`: Stop → saved handle shown; with the server stopped → JSON download offered.
 
 ### Execution Command
 ```bash

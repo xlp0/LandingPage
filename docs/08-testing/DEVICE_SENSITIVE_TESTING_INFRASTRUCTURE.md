@@ -10,8 +10,8 @@ Instead of treating responsive design as an afterthought or manually checking sc
 4. **Scale-Invariant Interaction Capture (`INV-ERB-01..03`)**: In-memory ring buffering of user and automated events with coordinates normalized to $[0.0, 1.0]$.
 5. **Frame Budget & Layout Stability (`INV-DEV-04`)**: Observation of frame latency ($16.6\text{ms}$ budget) and layout freeze absence during rapid reflows.
 
-> [!IMPORTANT]
-> **Status:** orientation reflow and multi-device viewport sweeping in the lab work today (EPIC-RVP). Capture, telemetry, MCard persistence, replay, conformance, and certification are **planned** in the ERB sprint series and are not implemented yet. Commands below that depend on them are marked *(planned)*.
+> [!NOTE]
+> **Status:** SPRINT-ERB-00 through SPRINT-ERB-04 are **implemented and verified**. Orientation reflow, event ring buffer, spatial normalization, MCard CLM persistence, Playwright replay driver, and systematic multi-device sweeps (`npm run test:responsive` and `npm run test:replay`) are fully operational. SPRINT-ERB-06 adds certification and conformance checks.
 
 **Fidelity tiers.** Every run states what was really emulated (`INV-DSF-01`). **T0** is the lab iframe, which emulates only the CSS viewport. **T1/T2** are Playwright contexts, which add DPR, touch, mobile user agent, media features, and (T2) CDP throttling. **T3** is a real device on the LAN. See the [series index](../sprints/_active/INDEX.md#1-device-sensitive-dimensions-and-fidelity-tiers) for the full table.
 
@@ -91,16 +91,65 @@ DPR applies only at T1 and above. In the lab iframe (T0) the target renders at t
 ## 5. Verification Commands
 
 ```bash
-# Available today
-npx playwright test tests/features/responsive-rotation-and-devices.spec.js --project=features   # geometry & rotation invariants
-npx playwright test tests/features/layout-freeze.spec.js --project=features                     # layout freeze absence
-
-# Planned (each command exists once its sprint lands)
-npm run test:unit                                                     # ERB-00: all node:test unit suites
-node --test tests/unit/event-ring-buffer.test.mjs                     # ERB-01: ring buffer
-node --test tests/unit/fidelity.test.mjs                              # ERB-05: fidelity resolver
-npx playwright test tests/features/responsive-capture.spec.js --project=features   # ERB-02: capture
-node --test tests/unit/test-run-api.test.mjs                          # ERB-03: storage & hashing pipeline
-TARGET_URL=http://localhost:4321/ npm run test:responsive             # ERB-04: full systematic sweep
-TARGET_URL=http://localhost:4321/ npx playwright test tests/features/device-conformance.spec.js --project=features   # ERB-06: conformance & certification
+npm run test:unit                                                     # ERB-00 through ERB-06: all node:test unit suites
+npm run test:responsive                                               # ERB-04/ERB-06: systematic multi-device sweep
+npm run test:replay                                                   # ERB-04: deterministic Playwright replay driver
+npm run test:conformance                                              # ERB-06: device-sensitive conformance suite
+TARGET_URL=http://localhost:4321/ MINT_RESULTS=1 npm run test:conformance # Conformance + MCard certification minting
 ```
+
+---
+
+## 6. Writing a Conformance Spec
+
+Conformance specs declare what checks apply to a target website or page. Specs are stored as JSON files under `tests/conformance/<slug>.conformance.json`:
+
+```json
+{
+  "schema": "urn:mcard:schema:device_conformance_spec:v1",
+  "target": "http://localhost:3001/app.html",
+  "targetSlug": "localhost-3001-app-html",
+  "devices": {
+    "categories": ["phone", "tablet", "desktop"],
+    "orientations": ["portrait", "landscape"]
+  },
+  "runner": "playwright",
+  "checks": [
+    { "id": "no-horizontal-overflow" },
+    { "id": "no-console-errors" },
+    { "id": "viewport-meta" },
+    { "id": "key-targets-visible", "params": { "selectors": ["main", "h1"] } },
+    { "id": "tap-target-size", "params": { "scope": "a, button, input, select", "min": 44 } },
+    { "id": "orientation-preserves-state", "params": { "fields": ["input[type=email]"] } },
+    { "id": "safe-area-insets", "params": { "selectors": ["header", "footer"] } }
+  ]
+}
+```
+
+### Central Fidelity Gating (`INV-DSF-01`)
+Checks declare required capabilities (e.g. `safeAreaInsets`, `pointer`, `hasTouch`). If a check requires a capability that the active runner tier does not emulate (such as `safeAreaInsets` running under Playwright Tier 1), the runner centrally flags the check as `skipped: fidelity`. Individual check modules never self-skip.
+
+---
+
+## 7. MCard Responsive Certification (`urn:mcard:certification:responsive:v1`)
+
+Following a full-matrix run (16 device × orientation combinations), the conformance runner mints an immutable certification MCard record:
+
+```json
+{
+  "schema": "urn:mcard:certification:responsive:v1",
+  "target": { "url": "http://localhost:3001/app.html", "slug": "localhost-3001-app-html" },
+  "specHash": "blake3:…",
+  "matrix": { "devices": 8, "orientations": 2 },
+  "certified": true,
+  "rule": ["INV-DEV-01", "INV-DEV-03"],
+  "reports": ["blake3:…", "…"],
+  "failures": [],
+  "maxFidelityTier": 1
+}
+```
+
+- **Certification Rule**: `certified` is `true` if and only if all 16 matrix combinations pass `INV-DEV-01` (`no-horizontal-overflow`) and `INV-DEV-03` (`orientation-preserves-state`).
+- **Cryptographic Triad Storage**: The certificate is content-addressed via Blake3 and bound to the latest target handle:
+  `urn:mcard:certification_latest:<slug>`.
+

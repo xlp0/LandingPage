@@ -21,7 +21,7 @@ const OUT = resolve(here, '..', '..', '..', 'docs', 'sprints', 'programs', 'sty'
 
 const PAGES = [
   { path: '/app.html', name: 'app' },
-  { path: '/index.html', name: 'index' },
+  { path: '/index.html?noredirect=1', name: 'index' },
   { path: '/responsive-lab.html', name: 'responsive-lab' },
   { path: '/fiber-inspector.html', name: 'fiber-inspector' },
   { path: '/fiber-conformance.html', name: 'fiber-conformance' },

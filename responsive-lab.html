@@ -820,19 +820,23 @@
             <button id="btn-scale-toggle" type="button" class="toolbar-btn" title="Toggle between 100% Actual Size and Fit-to-Screen">🔍 Fit: Auto</button>
           </div>
         </div>
+
+        <!-- Conformance Diagnostics Panel (SPRINT-ERB-06 R7) -->
+        <div class="toolbar-group" id="conformance-panel-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+            <span class="group-label">Conformance:</span>
+            <span id="conformance-status-badge" class="footer-status-pill" style="font-size: 0.7rem; color: var(--color-text-muted);">Standby</span>
+          </div>
+          <div id="conformance-details" style="font-size: 0.72rem; line-height: 1.4; background: var(--panel-surface, rgba(0,0,0,0.1)); padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border);">
+            <!-- Rendered by conformance-panel.js -->
+          </div>
+        </div>
       </div>
 
       <!-- Target URL & Sandbox Diagnostics Strip -->
       <div class="url-selector-strip" id="pane-url-bar">
         <span class="group-label" style="font-size: 0.75rem;">Test Target:</span>
-        <select id="public-site-selector" class="target-url-select" aria-label="Select target website to test iframe compatibility">
-          <option value="app.html" data-status="allowed" data-desc="Local Responsive UI Target (Iframe Compatible)">Local UI Target (app.html) - Iframe Compatible</option>
-          <option value="index.html" data-status="allowed" data-desc="GovTech OS Portal Page (Iframe Compatible)">GovTech OS Portal (index.html) - Iframe Compatible</option>
-          <option value="http://localhost:4321/" data-status="allowed" data-desc="Local App Target (http://localhost:4321/) - Iframe Compatible">Local App (http://localhost:4321/) - Iframe Compatible</option>
-          <option value="https://github.com" data-status="blocked" data-reason="X-Frame-Options: DENY" data-desc="GitHub blocks embedded iframe rendering via X-Frame-Options: DENY">GitHub (https://github.com) - Blocked (X-Frame-Options: DENY)</option>
-          <option value="https://www.google.com" data-status="blocked" data-reason="X-Frame-Options: SAMEORIGIN" data-desc="Google blocks third-party iframe embedding via X-Frame-Options: SAMEORIGIN">Google (https://www.google.com) - Blocked (SAMEORIGIN)</option>
-          <option value="https://developer.mozilla.org" data-status="blocked" data-reason="CSP frame-ancestors: 'none'" data-desc="MDN Web Docs blocks iframing via Content-Security-Policy: frame-ancestors 'none'">MDN Web Docs - Blocked (CSP frame-ancestors: 'none')</option>
-        </select>
+        <select id="public-site-selector" class="target-url-select" aria-label="Select target website to test iframe compatibility"></select>
         <button id="btn-load-in-iframe" class="toolbar-btn" style="background: var(--color-primary-hover); color: var(--color-on-primary); border-color: var(--color-primary);">Load Target</button>
         <span id="cors-status-pill" class="footer-status-pill" style="margin-top: 0.25rem;">● Controlled Viewport Active (Iframe Compatible)</span>
       </div>
@@ -863,7 +867,7 @@
             <span class="frame-dimension-pill" id="controlled-frame-dim">100% × 100% • ↔ Horizontal (Landscape)</span>
           </div>
           <div class="viewport-iframe-wrapper">
-            <iframe id="mission-control-iframe" src="app.html" title="Responsive UI Lab Test Frame" loading="lazy" class="viewport-iframe"></iframe>
+            <iframe id="mission-control-iframe" title="Responsive UI Lab Test Frame" loading="lazy" class="viewport-iframe"></iframe>
           </div>
         </div>
       </div>
@@ -930,475 +934,81 @@
   </footer>
 
   <script type="module">
-    // ══════════════════════════════════════════════════════════════════════
-    // EPIC-RVP — Responsive Viewport Rotation & Dynamic Device Registry
-    //   RVP-01  true (w, h) geometry, physical rotation
-    //   RVP-02  the registry store (js/device-registry.js)
-    //   RVP-03  the preset ribbon and Device Manager
-    //   RVP-04  layout-box containment, auto-scale, dual-axis inputs
-    // Zero dependencies (INV-RVP-05); nothing here touches clm/ (INV-REF-01).
-    // ══════════════════════════════════════════════════════════════════════
-    import { DeviceRegistry, aspectRatio, DIM_MIN, DIM_MAX } from './js/device-registry.js';
-
-    const workspaceContainer = document.getElementById('lab-workspace-container');
-    const controlledFrame = document.getElementById('controlled-panel-frame');
-    const scaleWrapper = document.getElementById('viewport-scale-wrapper');
-    const controlledFrameDim = document.getElementById('controlled-frame-dim');
-    const controlledStatus = document.getElementById('controlled-panel-status');
-    const customWidthInput = document.getElementById('controlled-width-input');
-    const customHeightInput = document.getElementById('controlled-height-input');
-    const applyCustomDimBtn = document.getElementById('btn-apply-custom-dim');
-    const rotateBtn = document.getElementById('btn-rotate-viewport');
-    const scaleToggleBtn = document.getElementById('btn-scale-toggle');
-    const btnOrientVertical = document.getElementById('btn-orient-vertical');
-    const btnOrientHorizontal = document.getElementById('btn-orient-horizontal');
-    const btnArrangeVertical = document.getElementById('btn-arrange-vertical');
-    const btnArrangeHorizontal = document.getElementById('btn-arrange-horizontal');
-    const btnArrangeVerticalDock = document.getElementById('btn-arrange-vertical-dock');
-    const btnArrangeHorizontalDock = document.getElementById('btn-arrange-horizontal-dock');
-    const presetsContainer = document.getElementById('device-presets-container');
-    const siteSelector = document.getElementById('public-site-selector');
-    const loadIframeBtn = document.getElementById('btn-load-in-iframe');
-    const popoutBtn = document.getElementById('mission-control-popout-btn');
-    const corsBlockAlert = document.getElementById('cors-block-alert');
-    const corsBlockReason = document.getElementById('cors-block-reason');
-    const corsBlockTargetName = document.getElementById('cors-block-target-name');
-    const corsStatusPill = document.getElementById('cors-status-pill');
-    const iframe = document.getElementById('mission-control-iframe');
-    const managerModal = document.getElementById('device-manager-modal');
-    const managerList = document.getElementById('device-manager-list');
-    const deviceForm = document.getElementById('device-form');
-    const deviceFormError = document.getElementById('device-form-error');
-
-    let currentArrangement = 'horizontal';
-
-    // ── RVP-01: the viewport state is (w, h, orientation) ───────────────────
-    // `unit` is 'px' or '%' so the Full/Split presets stay relative while a
-    // device preset is absolute. Both axes are real; nothing is inferred from
-    // a CSS class.
-    let viewport = { width: 100, height: 100, unit: '%', orientation: 'horizontal', label: 'Full (100%)' };
-    let scaleMode = 'auto';   // 'auto' = fit to stage; 'actual' = never scale
-    let currentScale = 1;
+    import { DeviceRegistry } from './js/device-registry.js';
+    import { createViewportStage } from './js/harness/viewport-stage.js';
+    import { createTargetMembrane } from './js/harness/target-membrane.js';
+    import { initLabToolbar } from './js/harness/lab-toolbar.js';
+    import { initDevicePresetsUI } from './js/harness/device-presets-ui.js';
+    import { installLabApi } from './js/harness/lab-api.js';
+    import { createCaptureSource } from './js/harness/membrane-interceptor.js';
+    import { InteractionRecorder } from './js/harness/recorder.js';
+    import { initRecordingRibbon } from './js/harness/recording-ribbon.js';
+    import { resolveFidelity } from './js/harness/fidelity.js';
+    import { initConformancePanel } from './js/harness/conformance-panel.js';
 
     const registry = new DeviceRegistry();
+    let presetsUI = null;
 
-    const px = (v) => (Number.isFinite(v) ? `${v}px` : v);
-    const fmt = (v, unit) => (unit === '%' ? `${v}%` : px(v));
+    const stage = createViewportStage({
+      onPresetDeactivate: () => presetsUI?.markActiveChip(null)
+    });
 
-    function applyViewportGeometry() {
-      if (!controlledFrame) return;
-      const w = fmt(viewport.width, viewport.unit);
-      const h = fmt(viewport.height, viewport.unit);
-      controlledFrame.style.setProperty('--frame-target-width', w);
-      controlledFrame.style.setProperty('--frame-target-height', h);
-      if (scaleWrapper) {
-        scaleWrapper.style.setProperty('--frame-target-width', w);
-        scaleWrapper.style.setProperty('--frame-target-height', h);
-      }
-      if (customWidthInput && viewport.unit === 'px') customWidthInput.value = viewport.width;
-      if (customHeightInput && viewport.unit === 'px') customHeightInput.value = viewport.height;
-      recomputeScale();
-      updateDimensionLabels();
-    }
+    presetsUI = initDevicePresetsUI({ registry, stage });
+    presetsUI.renderPresets();
 
-    /** INV-RVP-01: rotation is a swap. */
-    function setOrientation(orientation) {
-      if (!controlledFrame) return;
-      const next = orientation === 'horizontal' ? 'horizontal' : 'vertical';
-      if (next === viewport.orientation) return;   // delta_orient(S, theta) = S
+    const recorder = new InteractionRecorder();
 
-      viewport = { ...viewport, width: viewport.height, height: viewport.width, orientation: next };
-      controlledFrame.classList.toggle('orientation-horizontal', next === 'horizontal');
-      controlledFrame.classList.toggle('orientation-vertical', next === 'vertical');
-      btnOrientHorizontal?.classList.toggle('active', next === 'horizontal');
-      btnOrientVertical?.classList.toggle('active', next === 'vertical');
-      applyViewportGeometry();
-      console.log(`[Responsive UI Lab] Orientation -> ${next} (${viewport.width} x ${viewport.height})`);
-    }
-
-    function rotateViewport() {
-      setOrientation(viewport.orientation === 'vertical' ? 'horizontal' : 'vertical');
-    }
-
-    function setViewportSize(width, height, unit, label) {
-      viewport = {
-        width,
-        height,
-        unit,
-        label: label || `${fmt(width, unit)} x ${fmt(height, unit)}`,
-        orientation: viewport.orientation,
-      };
-      applyViewportGeometry();
-    }
-
-    /** A registry preset stores portrait dimensions; the active orientation
-     *  decides which becomes the width. Vertical (portrait) keeps them as
-     *  stored, horizontal (landscape) swaps them. */
-    function applyDevicePreset(device) {
-      const landscape = viewport.orientation === 'horizontal';
-      const w = landscape ? device.height : device.width;
-      const h = landscape ? device.width : device.height;
-      setViewportSize(w, h, 'px', device.name);
-      markActiveChip(device.id);
-    }
-
-    // ── RVP-04: containment ────────────────────────────────────────────────
-    // s = min(1, W_stage/w, H_stage/h) — the invariant. The 5% margin is applied
-    // only inside the scaled branch, so it can never upscale a device that fits.
-    function computeScale() {
-      if (!controlledFrame || !scaleWrapper) return 1;
-      const stage = controlledFrame.closest('.lab-stage-container');
-      if (!stage) return 1;
-      if (viewport.unit === '%') return 1;            // relative sizes already fit
-
-      const availW = stage.clientWidth;
-      const availH = stage.clientHeight;
-      if (!availW || !availH) return 1;
-
-      const s = Math.min(1, availW / viewport.width, availH / viewport.height);
-      if (s >= 1) return 1;
-      if (scaleMode === 'actual') return 1;
-      return s * 0.95;
-    }
-
-    function recomputeScale() {
-      const s = computeScale();
-      currentScale = s;
-      controlledFrame?.style.setProperty('--frame-scale-factor', String(s));
-      scaleWrapper?.style.setProperty('--frame-scale-factor', String(s));
-      if (scaleToggleBtn) {
-        scaleToggleBtn.textContent = scaleMode === 'actual' ? '🔍 Fit: 100%' : '🔍 Fit: Auto';
-      }
-      updateDimensionLabels();
-    }
-
-    function updateDimensionLabels() {
-      const orientIcon = viewport.orientation === 'vertical' ? '↕ Vertical (Portrait)' : '↔ Horizontal (Landscape)';
-      const arrangeIcon = currentArrangement === 'horizontal' ? '☲ Side-by-Side Dock' : '☰ Stacked Topbar';
-      const dims = `${fmt(viewport.width, viewport.unit)} × ${fmt(viewport.height, viewport.unit)}`;
-      const ratio = viewport.unit === 'px' ? ` (${aspectRatio(viewport.width, viewport.height)})` : '';
-      const scaleNote = currentScale < 1 ? ` • ${Math.round(currentScale * 100)}% Scale` : ' • 100% Scale';
-
-      if (controlledFrameDim) {
-        controlledFrameDim.textContent = `${dims}${ratio} • ${orientIcon}${scaleNote}`;
-      }
-      if (controlledStatus) {
-        const name = viewport.label ? `${viewport.label} • ` : '';
-        controlledStatus.textContent = `● Viewport: ${name}${dims}${ratio}${scaleNote} • ${orientIcon} • [${arrangeIcon}]`;
-      }
-    }
-
-    // ── RVP-03: the preset ribbon, rendered from the registry ──────────────
-    // Built-in chips keep the #btn-size-* ids that presentation-lattice.spec.js
-    // asserts on; the id is derived from the device id, not its index.
-    const BUILTIN_CHIP_IDS = {
-      'iphone-16-pro': 'btn-size-mobile',
-      'ipad-air-11': 'btn-size-tablet',
-      'macbook-air-13': 'btn-size-desktop',
-    };
-    let activeChipId = 'btn-size-full';
-
-    function chipIdFor(device) {
-      return BUILTIN_CHIP_IDS[device.id] || `btn-size-${device.id}`;
-    }
-
-    function markActiveChip(deviceId) {
-      activeChipId = deviceId ? chipIdFor({ id: deviceId }) : null;
-      presetsContainer?.querySelectorAll('.size-preset-btn').forEach((b) => {
-        b.classList.toggle('active', b.id === activeChipId);
+    function updateCaptureSource(targetDetail) {
+      const source = createCaptureSource(targetDetail, {
+        iframe: document.getElementById('mission-control-iframe'),
+        getDeviceProfile: () => {
+          const id = stage.getGeometry().deviceId;
+          return id ? registry.getById(id) : null;
+        },
+        getViewport: () => stage.getGeometry()
       });
+      recorder.setSource(source);
     }
 
-    function renderPresets() {
-      if (!presetsContainer) return;
-      const devices = registry.getAll();
-      presetsContainer.replaceChildren();
-
-      for (const d of devices) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.id = chipIdFor(d);
-        btn.className = 'toolbar-btn size-preset-btn';
-        btn.dataset.deviceId = d.id;
-        btn.title = `${d.name} — ${d.width} × ${d.height}px (${aspectRatio(d.width, d.height)})`;
-        btn.innerHTML = `<span>${d.name} (${d.width}px)</span>`;
-
-        if (!d.isBuiltin) {
-          const dot = document.createElement('span');
-          dot.className = 'chip-custom-dot';
-          dot.setAttribute('aria-hidden', 'true');
-          btn.appendChild(dot);
-        }
-
-        btn.addEventListener('click', () => applyDevicePreset(d));
-        presetsContainer.appendChild(btn);
-      }
-
-      // the Full (100%) affordance is relative, so it is not a device
-      const full = document.createElement('button');
-      full.type = 'button';
-      full.id = 'btn-size-full';
-      full.className = 'toolbar-btn size-preset-btn';
-      full.title = 'Reset to full container size (100%)';
-      full.innerHTML = '<span>↔ Full (100%)</span>';
-      full.addEventListener('click', () => {
-        setViewportSize(100, 100, '%', 'Full (100%)');
-        markActiveChip(null);
-        full.classList.add('active');
-      });
-      presetsContainer.appendChild(full);
-
-      if (activeChipId) {
-        presetsContainer.querySelector(`#${CSS.escape(activeChipId)}`)?.classList.add('active');
-      }
-    }
-
-    function renderManagerList() {
-      if (!managerList) return;
-      managerList.replaceChildren();
-      for (const d of registry.getAll()) {
-        const row = document.createElement('div');
-        row.className = 'dm-row';
-        row.setAttribute('role', 'listitem');
-
-        const name = document.createElement('span');
-        name.className = 'dm-row-name';
-        name.textContent = d.name;
-
-        const dims = document.createElement('span');
-        dims.className = 'dm-row-dims';
-        dims.textContent = `${d.width} × ${d.height} px (${aspectRatio(d.width, d.height)})`;
-
-        row.append(name, dims);
-
-        if (d.isBuiltin) {
-          const lock = document.createElement('span');
-          lock.className = 'dm-lock';
-          lock.textContent = 'Built-in 🔒';
-          row.appendChild(lock);
-        } else {
-          const del = document.createElement('button');
-          del.type = 'button';
-          del.className = 'dm-delete';
-          del.dataset.deleteDevice = d.id;
-          del.textContent = '🗑️ Delete';
-          del.addEventListener('click', () => {
-            if (!window.confirm(`Delete preset '${d.name}'? This action cannot be undone.`)) return;
-            registry.remove(d.id);
-          });
-          row.appendChild(del);
-        }
-        managerList.appendChild(row);
-      }
-    }
-
-    function openDeviceManager() {
-      if (!managerModal) return;
-      renderManagerList();
-      managerModal.classList.add('open');
-      document.getElementById('input-device-name')?.focus();
-    }
-
-    function closeDeviceManager() {
-      managerModal?.classList.remove('open');
-      if (deviceFormError) deviceFormError.textContent = '';
-    }
-
-    // ── RVP-03: wiring ─────────────────────────────────────────────────────
-    document.getElementById('btn-open-device-manager')?.addEventListener('click', openDeviceManager);
-    document.getElementById('btn-close-modal')?.addEventListener('click', closeDeviceManager);
-    document.getElementById('btn-close-modal-footer')?.addEventListener('click', closeDeviceManager);
-    managerModal?.addEventListener('click', (e) => {
-      if (e.target === managerModal) closeDeviceManager();
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && managerModal?.classList.contains('open')) closeDeviceManager();
+    const membrane = createTargetMembrane({
+      onTargetChange: (detail) => updateCaptureSource(detail)
     });
 
-    document.getElementById('btn-reset-devices')?.addEventListener('click', () => registry.resetToDefaults());
+    await initLabToolbar({ membrane });
+    updateCaptureSource(membrane.getTarget());
 
-    deviceForm?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const nameEl = document.getElementById('input-device-name');
-      const catEl = document.getElementById('select-device-category');
-      const wEl = document.getElementById('input-device-width');
-      const hEl = document.getElementById('input-device-height');
-      // Number('') is 0, so an empty field must not be read as a number
-      const wRaw = wEl.value.trim();
-      const hRaw = hEl.value.trim();
-      try {
-        registry.add({
-          name: nameEl.value,
-          category: catEl.value,
-          width: wRaw === '' ? NaN : Number(wRaw),
-          height: hRaw === '' ? NaN : Number(hRaw),
-        });
-        deviceForm.reset();
-        if (deviceFormError) deviceFormError.textContent = '';
-      } catch (err) {
-        // INV-RVP-03: rejected before injection — the modal stays open
-        if (deviceFormError) deviceFormError.textContent = err.message;
-      }
+    stage.applyGeometry('boot');
+
+    initRecordingRibbon({
+      recorder,
+      getFidelity: () => {
+        const geom = stage.getGeometry();
+        const activeDevice = geom.deviceId ? registry.getById(geom.deviceId) : null;
+        return resolveFidelity(activeDevice, 'lab-iframe');
+      },
+      getTarget: () => membrane.getTarget(),
+      getDevice: () => {
+        const geom = stage.getGeometry();
+        return geom.deviceId ? registry.getById(geom.deviceId) : null;
+      },
+      getOrientation: () => stage.getGeometry().orientation
     });
 
-    registry.subscribe((event) => {
-      renderPresets();
-      renderManagerList();
-      if (event === 'reset') markActiveChip(null);
-      console.log(`[Responsive UI Lab] device registry: ${event}`);
+    initConformancePanel({
+      getTarget: () => membrane.getTarget(),
+      getDevice: () => {
+        const geom = stage.getGeometry();
+        return geom.deviceId ? registry.getById(geom.deviceId) : null;
+      },
+      getOrientation: () => stage.getGeometry().orientation
     });
 
-    // ── arrangement ────────────────────────────────────────────────────────
-    function setArrangement(arrangement) {
-      if (!workspaceContainer) return;
-      currentArrangement = arrangement === 'vertical' ? 'vertical' : 'horizontal';
-      const horizontal = currentArrangement === 'horizontal';
-      workspaceContainer.classList.toggle('arrangement-horizontal', horizontal);
-      workspaceContainer.classList.toggle('arrangement-vertical', !horizontal);
-      btnArrangeHorizontal?.classList.toggle('active', horizontal);
-      btnArrangeVertical?.classList.toggle('active', !horizontal);
-      btnArrangeHorizontalDock?.classList.toggle('active', horizontal);
-      btnArrangeVerticalDock?.classList.toggle('active', !horizontal);
-      recomputeScale();
-      updateDimensionLabels();
-      console.log(`[Responsive UI Lab] Workspace arrangement set to: ${currentArrangement}`);
-    }
-
-    btnArrangeVertical?.addEventListener('click', () => setArrangement('vertical'));
-    btnArrangeHorizontal?.addEventListener('click', () => setArrangement('horizontal'));
-    btnArrangeVerticalDock?.addEventListener('click', () => setArrangement('vertical'));
-    btnArrangeHorizontalDock?.addEventListener('click', () => setArrangement('horizontal'));
-
-    btnOrientVertical?.addEventListener('click', () => setOrientation('vertical'));
-    btnOrientHorizontal?.addEventListener('click', () => setOrientation('horizontal'));
-    rotateBtn?.addEventListener('click', rotateViewport);
-
-    // ── RVP-04: dual-axis apply and the fit toggle ─────────────────────────
-    function applyCustomDimensions() {
-      const clamp = (raw, fallback) => {
-        const n = parseInt(raw ?? '', 10);
-        if (!Number.isFinite(n)) return fallback;
-        return Math.min(DIM_MAX, Math.max(DIM_MIN, n));
-      };
-      const w = clamp(customWidthInput?.value, viewport.width);
-      const h = clamp(customHeightInput?.value, viewport.height);
-      setViewportSize(w, h, 'px', `Custom (${w}×${h})`);
-      markActiveChip(null);
-    }
-
-    applyCustomDimBtn?.addEventListener('click', applyCustomDimensions);
-    for (const el of [customWidthInput, customHeightInput]) {
-      el?.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          applyCustomDimensions();
-        }
-      });
-    }
-
-    scaleToggleBtn?.addEventListener('click', () => {
-      scaleMode = scaleMode === 'auto' ? 'actual' : 'auto';
-      recomputeScale();
-    });
-
-    // the stage resizes with the window and with the arrangement
-    if (window.ResizeObserver) {
-      new ResizeObserver(() => recomputeScale()).observe(
-        controlledFrame?.closest('.lab-stage-container') || document.body,
-      );
-    } else {
-      window.addEventListener('resize', recomputeScale);
-    }
-
-    // ── target selection / sandbox diagnostics ─────────────────────────────
-    function updateSiteSelection() {
-      if (!siteSelector) return;
-      const selectedOption = siteSelector.options[siteSelector.selectedIndex];
-      const url = selectedOption ? selectedOption.value : 'app.html';
-      const status = selectedOption?.getAttribute('data-status');
-      const reason = selectedOption?.getAttribute('data-reason') || '';
-      const name = selectedOption?.text.split(' - ')[0] || url;
-
-      if (status === 'blocked') {
-        if (corsBlockAlert) corsBlockAlert.style.display = 'flex';
-        if (corsBlockReason) corsBlockReason.textContent = reason;
-        if (corsBlockTargetName) corsBlockTargetName.textContent = name;
-        if (corsStatusPill) {
-          corsStatusPill.textContent = '⚠️ Iframe Blocked (' + reason + ')';
-          corsStatusPill.style.color = 'var(--badge-danger-text)';
-        }
-      } else {
-        if (corsBlockAlert) corsBlockAlert.style.display = 'none';
-        if (corsStatusPill) {
-          corsStatusPill.textContent = '● Controlled Viewport Active (Iframe Compatible)';
-          corsStatusPill.style.color = 'var(--badge-success-text)';
-        }
-      }
-    }
-
-    siteSelector?.addEventListener('change', updateSiteSelection);
-    updateSiteSelection();
-
-    loadIframeBtn?.addEventListener('click', () => {
-      if (!siteSelector) return;
-      const selectedOption = siteSelector.options[siteSelector.selectedIndex];
-      const url = selectedOption.value;
-      if (iframe) iframe.src = url;
-      updateSiteSelection();
-      console.log('[Responsive UI Lab] Loaded target into viewport:', url);
-    });
-
-    popoutBtn?.addEventListener('click', () => {
-      window.open(siteSelector?.value || 'app.html', '_blank');
-    });
-
-    // ── boot ───────────────────────────────────────────────────────────────
-    controlledFrame?.classList.add('orientation-horizontal');
-    btnOrientHorizontal?.classList.add('active');
-    renderPresets();
-    applyViewportGeometry();
-
-    // Check for target URL parameter (e.g., ?target=http://localhost:4321/)
-    const urlParams = new URLSearchParams(window.location.search);
-    const targetParam = urlParams.get('target');
-    if (targetParam && iframe) {
-      iframe.src = targetParam;
-      // Prepend or select this target in the dropdown
-      let matchedOption = false;
-      for (let i = 0; i < siteSelector.options.length; i++) {
-        if (siteSelector.options[i].value === targetParam) {
-          siteSelector.selectedIndex = i;
-          matchedOption = true;
-          break;
-        }
-      }
-      if (!matchedOption) {
-        const customOpt = document.createElement('option');
-        customOpt.value = targetParam;
-        customOpt.textContent = `Chosen Target (${targetParam}) - Configured`;
-        customOpt.setAttribute('data-status', 'allowed');
-        customOpt.setAttribute('data-desc', `Chosen Target URL (${targetParam})`);
-        siteSelector.insertBefore(customOpt, siteSelector.firstChild);
-        siteSelector.selectedIndex = 0;
-      }
-      updateSiteSelection();
-      console.log('[Responsive UI Lab] Booted with target URL parameter:', targetParam);
-    }
-
-    // commit the initial geometry with transitions off, then enable them
+    // commit initial geometry with transitions off, then enable them
     requestAnimationFrame(() => {
       requestAnimationFrame(() => document.body.classList.remove('lab-booting'));
     });
 
-    // public API — kept for scripted use and extended with the 2D geometry
-    window.__set_controlled_panel_width = (w) => setViewportSize(parseInt(w, 10), viewport.height, 'px', '');
-    window.__get_controlled_panel_width = () => controlledFrame?.style.getPropertyValue('--frame-target-width') || '100%';
-    window.__set_controlled_orientation = setOrientation;
-    window.__get_controlled_orientation = () => viewport.orientation;
-    window.__get_viewport_geometry = () => ({ ...viewport, scale: currentScale });
-    window.__set_viewport_geometry = (w, h) => setViewportSize(w, h, 'px', '');
-    window.__rotate_viewport = rotateViewport;
-    window.__device_registry = registry;
+    installLabApi({ stage, membrane, registry, recorder });
   </script>
 </body>
 

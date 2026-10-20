@@ -1,0 +1,55 @@
+{
+  "labTargets": [
+    {
+      "url": "app.html",
+      "label": "Local UI Target (app.html) - Iframe Compatible",
+      "status": "allowed",
+      "desc": "Local Responsive UI Target (Iframe Compatible)"
+    },
+    {
+      "url": "index.html",
+      "label": "GovTech OS Portal (index.html) - Iframe Compatible",
+      "status": "allowed",
+      "desc": "GovTech OS Portal Page (Iframe Compatible)"
+    },
+    {
+      "url": "http://localhost:4321/",
+      "label": "Local App (http://localhost:4321/) - Iframe Compatible",
+      "status": "allowed",
+      "desc": "Local App Target (http://localhost:4321/) - Iframe Compatible"
+    },
+    {
+      "url": "http://127.0.0.1:3001/tests/fixtures/probe-target.html",
+      "label": "Cross-Origin Probe Target (127.0.0.1) - Iframe Compatible",
+      "status": "allowed",
+      "desc": "Cross-Origin Probe Target with Agent"
+    },
+    {
+      "url": "http://127.0.0.1:3001/tests/fixtures/probe-target-noagent.html",
+      "label": "Cross-Origin Target No Agent (127.0.0.1)",
+      "status": "allowed",
+      "desc": "Cross-Origin Target Without Agent"
+    },
+    {
+      "url": "https://github.com",
+      "label": "GitHub (https://github.com) - Blocked (X-Frame-Options: DENY)",
+      "status": "blocked",
+      "reason": "X-Frame-Options: DENY",
+      "desc": "GitHub blocks embedded iframe rendering via X-Frame-Options: DENY"
+    },
+    {
+      "url": "https://www.google.com",
+      "label": "Google (https://www.google.com) - Blocked (SAMEORIGIN)",
+      "status": "blocked",
+      "reason": "X-Frame-Options: SAMEORIGIN",
+      "desc": "Google blocks third-party iframe embedding via X-Frame-Options: SAMEORIGIN"
+    },
+    {
+      "url": "https://developer.mozilla.org",
+      "label": "MDN Web Docs - Blocked (CSP frame-ancestors: 'none')",
+      "status": "blocked",
+      "reason": "CSP frame-ancestors: 'none'",
+      "desc": "MDN Web Docs blocks iframing via Content-Security-Policy: frame-ancestors 'none'"
+    }
+  ]
+}

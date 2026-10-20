@@ -137,12 +137,12 @@ push(event) {
 
 ## 5. Definition of Done (DoD) & Verification
 
-- [ ] `vcard:sprint-erb-01:ring_buffer_module_created`: `js/harness/event-ring-buffer.js` exists with zero runtime dependencies and loads in both browser and Node.
-- [ ] `vcard:sprint-erb-01:state_machine_module_created`: `js/harness/recording-state-machine.js` exists with an injected clock.
-- [ ] `vcard:sprint-erb-01:pointer_math_validated`: Wrap-around, overwrite accounting, and gap-free `seq` are proven by tests.
-- [ ] `vcard:sprint-erb-01:fsm_exhaustively_tested`: All 20 `(state, action)` pairs are asserted against §4.2.
-- [ ] `vcard:sprint-erb-01:active_time_clock_verified`: Paused intervals are excluded from `t_rel_ms`.
-- [ ] `vcard:sprint-erb-01:unit_suites_pass`: Both suites pass under `npm run test:unit`.
+- [x] `vcard:sprint-erb-01:ring_buffer_module_created`: `js/harness/event-ring-buffer.js` exists with zero runtime dependencies and loads in both browser and Node.
+- [x] `vcard:sprint-erb-01:state_machine_module_created`: `js/harness/recording-state-machine.js` exists with an injected clock.
+- [x] `vcard:sprint-erb-01:pointer_math_validated`: Wrap-around, overwrite accounting, and gap-free `seq` are proven by tests.
+- [x] `vcard:sprint-erb-01:fsm_exhaustively_tested`: All 20 `(state, action)` pairs are asserted against §4.2.
+- [x] `vcard:sprint-erb-01:active_time_clock_verified`: Paused intervals are excluded from `t_rel_ms`.
+- [x] `vcard:sprint-erb-01:unit_suites_pass`: Both suites pass under `npm run test:unit`.
 
 ### Execution Command
 ```bash

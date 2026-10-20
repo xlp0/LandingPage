@@ -1,0 +1,20 @@
+{
+  "schema": "urn:mcard:schema:device_conformance_spec:v1",
+  "target": "http://localhost:3001/app.html",
+  "targetSlug": "localhost-3001-app-html",
+  "devices": {
+    "categories": ["phone", "tablet", "desktop"],
+    "orientations": ["portrait", "landscape"]
+  },
+  "runner": "playwright",
+  "checks": [
+    { "id": "no-horizontal-overflow" },
+    { "id": "no-console-errors" },
+    { "id": "viewport-meta" },
+    { "id": "key-targets-visible", "params": { "selectors": ["h1"] } },
+    { "id": "tap-target-size", "params": { "scope": "button, a, input, select", "min": 24 } },
+    { "id": "orientation-preserves-state", "params": { "fields": [] } },
+    { "id": "reduced-motion", "params": { "scope": "body" } },
+    { "id": "safe-area-insets", "params": { "selectors": ["header", "footer"] } }
+  ]
+}

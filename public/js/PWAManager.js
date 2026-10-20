@@ -2,6 +2,8 @@
  * PWAManager - Orchestrates PWA functionality
  * Handles service worker registration, install prompts, and online/offline detection
  */
+const ENABLE_PWA_SYSTEM = false; // Set to true to enable PWA features
+
 class PWAManager {
   constructor(configUrl = '/public/config/pwa-config.json') {
     this.configUrl = configUrl;
@@ -11,8 +13,6 @@ class PWAManager {
     this.installModal = null;
     this.initialized = false;
   }
-
-  const ENABLE_PWA_SYSTEM = false; // Set to true to enable PWA features
 
   /**
    * Initialize PWA Manager

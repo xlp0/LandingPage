@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lab Probe Fixture</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; position: relative; font-family: sans-serif; overflow: hidden; }
+
+    .corner-target {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: #0070f3;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      cursor: pointer;
+    }
+    #tl { top: 0; left: 0; }
+    #tr { top: 0; right: 0; }
+    #bl { bottom: 0; left: 0; }
+    #br { bottom: 0; right: 0; }
+    #center {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50px;
+      height: 50px;
+      background: #10b981;
+    }
+
+    .form-section {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .button-section {
+      position: absolute;
+      bottom: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn-small {
+      width: 20px;
+      height: 20px;
+      background: #ef4444;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-large {
+      width: 48px;
+      height: 48px;
+      background: #3b82f6;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="tl" class="corner-target" data-testid="target-top-left">TL</div>
+  <div id="tr" class="corner-target" data-testid="target-top-right">TR</div>
+  <div id="bl" class="corner-target" data-testid="target-bottom-left">BL</div>
+  <div id="br" class="corner-target" data-testid="target-bottom-right">BR</div>
+  <div id="center" class="corner-target" data-testid="target-center">CTR</div>
+
+  <div class="form-section">
+    <input type="password" id="pwd" data-testid="pwd-input" placeholder="Password">
+    <input type="text" id="txt" data-testid="text-input" placeholder="Normal text">
+  </div>
+
+  <div class="button-section">
+    <button class="btn-small" data-testid="btn-small" title="Small 20x20"></button>
+    <button class="btn-large" data-testid="btn-large" title="Large 48x48"></button>
+  </div>
+
+  <script type="module" src="/js/harness/lab-probe-agent.js"></script>
+</body>
+</html>

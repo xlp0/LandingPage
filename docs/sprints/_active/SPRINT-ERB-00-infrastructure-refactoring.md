@@ -156,14 +156,14 @@ Later sprints extend this object (`__lab.recorder` in ERB-02, `__lab.fidelity` i
 
 ## 6. Definition of Done (DoD) & Verification
 
-- [ ] `vcard:sprint-erb-00:target_boot_characterized`: RVP-T11 and RVP-T12 pass before and after the refactor.
-- [ ] `vcard:sprint-erb-00:geometry_module_extracted`: `viewport-geometry.js` is pure and covered by `tests/unit/viewport-geometry.test.mjs`.
-- [ ] `vcard:sprint-erb-00:viewport_change_event_emitted`: `lab:viewport-change` fires once per committed geometry change with the §5.2 shape.
-- [ ] `vcard:sprint-erb-00:single_iframe_src_writer`: `target-membrane.js` is the only assignment site of `iframe.src` (`INV-STU-01`).
-- [ ] `vcard:sprint-erb-00:single_target_registry`: `<select>` options and CORS origins both derive from `app-config.json#labTargets` (`INV-STU-02`).
-- [ ] `vcard:sprint-erb-00:lab_api_consolidated`: `window.__lab` is installed; the 8 legacy globals and all their callers are gone.
-- [ ] `vcard:sprint-erb-00:inline_script_thin`: The inline module in `responsive-lab.html` is ≤ 60 lines of boot wiring.
-- [ ] `vcard:sprint-erb-00:no_regression`: `responsive-rotation-and-devices.spec.js` pass count ≥ baseline (30) + 2 new tests; `layout-freeze.spec.js` unchanged; no assertion edited (`INV-INF-01`).
+- [x] `vcard:sprint-erb-00:target_boot_characterized`: RVP-T11 and RVP-T12 pass before and after the refactor.
+- [x] `vcard:sprint-erb-00:geometry_module_extracted`: `viewport-geometry.js` is pure and covered by `tests/unit/viewport-geometry.test.mjs`.
+- [x] `vcard:sprint-erb-00:viewport_change_event_emitted`: `lab:viewport-change` fires once per committed geometry change with the §5.2 shape.
+- [x] `vcard:sprint-erb-00:single_iframe_src_writer`: `target-membrane.js` is the only assignment site of `iframe.src` (`INV-STU-01`).
+- [x] `vcard:sprint-erb-00:single_target_registry`: `<select>` options and CORS origins both derive from `app-config.json#labTargets` (`INV-STU-02`).
+- [x] `vcard:sprint-erb-00:lab_api_consolidated`: `window.__lab` is installed; the 8 legacy globals and all their callers are gone.
+- [x] `vcard:sprint-erb-00:inline_script_thin`: The inline module in `responsive-lab.html` is ≤ 60 lines of boot wiring.
+- [x] `vcard:sprint-erb-00:no_regression`: `responsive-rotation-and-devices.spec.js` pass count ≥ baseline (30) + 2 new tests; `layout-freeze.spec.js` unchanged; no assertion edited (`INV-INF-01`).
 
 ### Execution Command
 ```bash

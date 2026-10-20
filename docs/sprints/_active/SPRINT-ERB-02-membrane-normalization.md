@@ -167,15 +167,15 @@ Lab URL: `http://localhost:3001/responsive-lab.html`. The cross-origin fixture i
 
 ## 6. Definition of Done (DoD) & Verification
 
-- [ ] `vcard:sprint-erb-02:membrane_schema_parameterized`: R1 landed with SMR-09 tests green.
-- [ ] `vcard:sprint-erb-02:normalizer_single_implementation`: Both sources use `normalize-event.js`; unit tests green.
-- [ ] `vcard:sprint-erb-02:same_origin_capture_verified`: C1–C3 pass.
-- [ ] `vcard:sprint-erb-02:cross_origin_probe_verified`: C4–C5 pass; forged and stale messages are rejected and counted (`INV-ERB-05`).
-- [ ] `vcard:sprint-erb-02:unavailable_state_explicit`: C6 passes.
-- [ ] `vcard:sprint-erb-02:scale_free_normalization_verified`: `nx, ny` stay within ±0.01 across `0.25 ≤ s ≤ 1.0` (`INV-ERB-02`).
-- [ ] `vcard:sprint-erb-02:ribbon_operational`: C7 passes; the ribbon shows source, counts, and fidelity.
-- [ ] `vcard:sprint-erb-02:touch_ergonomics_auditing`: C8 passes; undersized taps are flagged only on coarse-pointer profiles.
-- [ ] `vcard:sprint-erb-02:no_regression`: RVP suite and SMR-09 tests green.
+- [x] `vcard:sprint-erb-02:membrane_schema_parameterized`: R1 landed with SMR-09 tests green.
+- [x] `vcard:sprint-erb-02:normalizer_single_implementation`: Both sources use `normalize-event.js`; unit tests green.
+- [x] `vcard:sprint-erb-02:same_origin_capture_verified`: C1–C3 pass.
+- [x] `vcard:sprint-erb-02:cross_origin_probe_verified`: C4–C5 pass; forged and stale messages are rejected and counted (`INV-ERB-05`).
+- [x] `vcard:sprint-erb-02:unavailable_state_explicit`: C6 passes.
+- [x] `vcard:sprint-erb-02:scale_free_normalization_verified`: `nx, ny` stay within ±0.01 across `0.25 ≤ s ≤ 1.0` (`INV-ERB-02`).
+- [x] `vcard:sprint-erb-02:ribbon_operational`: C7 passes; the ribbon shows source, counts, and fidelity.
+- [x] `vcard:sprint-erb-02:touch_ergonomics_auditing`: C8 passes; undersized taps are flagged only on coarse-pointer profiles.
+- [x] `vcard:sprint-erb-02:no_regression`: RVP suite and SMR-09 tests green.
 
 ### Execution Command
 ```bash

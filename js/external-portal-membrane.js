@@ -70,7 +70,7 @@ export function classifyProbe(probe) {
  */
 export function validatePortalTelemetryMessage(
   event,
-  { expectedSource, expectedNonce, expectedOrigin = null, allowedTypes = TELEMETRY_MESSAGE_TYPES } = {}
+  { expectedSource, expectedNonce, expectedOrigin = null, allowedTypes = TELEMETRY_MESSAGE_TYPES, schema = TELEMETRY_SCHEMA_VERSION } = {}
 ) {
   if (!event || typeof event !== 'object') return { ok: false, reason: 'invalid_event' };
   if (!expectedSource || event.source !== expectedSource) return { ok: false, reason: 'source_mismatch' };
@@ -78,7 +78,7 @@ export function validatePortalTelemetryMessage(
   if (expectedOrigin !== null && event.origin !== expectedOrigin) return { ok: false, reason: 'origin_mismatch' };
   const data = event.data;
   if (!data || typeof data !== 'object' || Array.isArray(data)) return { ok: false, reason: 'malformed_payload' };
-  if (data.schema !== TELEMETRY_SCHEMA_VERSION) return { ok: false, reason: 'unsupported_schema_version' };
+  if (data.schema !== schema) return { ok: false, reason: 'unsupported_schema_version' };
   if (typeof data.nonce !== 'string' || data.nonce !== expectedNonce) return { ok: false, reason: 'nonce_mismatch' };
   if (typeof data.type !== 'string' || !allowedTypes.includes(data.type)) return { ok: false, reason: 'unsupported_message_type' };
   if (data.payload !== undefined && (!data.payload || typeof data.payload !== 'object' || Array.isArray(data.payload))) {
@@ -96,7 +96,15 @@ export function validatePortalTelemetryMessage(
 }
 
 /** Stateful per-mount telemetry receiver with nonce rotation/revocation and fail-closed dispatch. */
-export function createTelemetryReceiver({ expectedSource, expectedNonce, expectedOrigin = null, onTelemetry = () => {}, onReject = () => {} } = {}) {
+export function createTelemetryReceiver({
+  expectedSource,
+  expectedNonce,
+  expectedOrigin = null,
+  allowedTypes = TELEMETRY_MESSAGE_TYPES,
+  schema = TELEMETRY_SCHEMA_VERSION,
+  onTelemetry = () => {},
+  onReject = () => {}
+} = {}) {
   let activeNonce = expectedNonce ?? null;
   return {
     handleMessage(event) {
@@ -104,6 +112,8 @@ export function createTelemetryReceiver({ expectedSource, expectedNonce, expecte
         expectedSource,
         expectedNonce: activeNonce,
         expectedOrigin,
+        allowedTypes,
+        schema,
       });
       if (!verdict.ok) {
         onReject(verdict);

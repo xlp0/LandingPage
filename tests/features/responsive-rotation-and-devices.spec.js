@@ -273,7 +273,7 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     // the registry rejects a non-numeric payload that the UI cannot produce
     const rejected = await page.evaluate(() => {
       try {
-        window.__device_registry.add({ name: 'Not A Number', category: 'phone', width: 'abc', height: 900 });
+        window.__lab.registry.add({ name: 'Not A Number', category: 'phone', width: 'abc', height: 900 });
         return null;
       } catch (e) {
         return e.message;
@@ -360,7 +360,7 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     // via the UI). Driven at the store boundary for the signal contract, then
     // at the UI for reset.
     const r = await page.evaluate(() => {
-      const reg = window.__device_registry;
+      const reg = window.__lab.registry;
       const seen = [];
       const unsub = reg.subscribe((event, device) => seen.push([event, device?.id ?? null]));
       const added = reg.add({ name: 'Signal Probe', category: 'phone', width: 400, height: 800 });
@@ -380,7 +380,7 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
 
     // the UI path: a custom chip exists, ↺ Reset removes it, storage is factory-only
     await page.evaluate(() =>
-      window.__device_registry.add({ name: 'Reset Probe', category: 'phone', width: 400, height: 800 }));
+      window.__lab.registry.add({ name: 'Reset Probe', category: 'phone', width: 400, height: 800 }));
     await expect(page.locator('.size-preset-btn').filter({ hasText: 'Reset Probe' })).toBeVisible();
 
     await page.locator('#btn-open-device-manager').click();
@@ -492,5 +492,28 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
       expect(t.props, `the frame transitions ${p}`).toContain(p);
     }
     expect(Math.max(...t.durations), 'the transition has a non-zero duration').toBeGreaterThan(0);
+  });
+
+  test('RVP-T12: responsive-lab.html?target=app.html selects the matching option and loads it', async ({ page }) => {
+    await page.goto('/responsive-lab.html?target=app.html');
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(300);
+
+    const selVal = await page.locator('#public-site-selector').inputValue();
+    expect(selVal).toBe('app.html');
+    const iframeSrc = await page.locator('#mission-control-iframe').getAttribute('src');
+    expect(iframeSrc).toBe('app.html');
+  });
+
+  test('RVP-T13: an unknown ?target= prepends a Chosen Target option, selects it, and loads it', async ({ page }) => {
+    const customUrl = 'http://localhost:4321/test-page';
+    await page.goto(`/responsive-lab.html?target=${encodeURIComponent(customUrl)}`);
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(300);
+
+    const selVal = await page.locator('#public-site-selector').inputValue();
+    expect(selVal).toBe(customUrl);
+    const iframeSrc = await page.locator('#mission-control-iframe').getAttribute('src');
+    expect(iframeSrc).toBe(customUrl);
   });
 });

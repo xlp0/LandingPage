@@ -43,7 +43,14 @@ const defaultResolver = async (hostname) => {
 
 let probePolicy = {
   allowedOrigins: [...MANIFEST_APPROVED_ORIGINS],
-  allowedFixtureOrigins: [],
+  allowedFixtureOrigins: [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:4321',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:3001',
+    'http://127.0.0.1:4321'
+  ],
   embedderOrigin: '',
   maxRedirects: MAX_PROBE_REDIRECTS,
   resolver: defaultResolver,
@@ -143,7 +150,10 @@ export function detectContentType(content) {
 export function isProhibitedHostOrIp(rawHost, { allowLoopback = false } = {}) {
   const host = String(rawHost ?? '').trim().toLowerCase().replace(/^\[|\]$/g, '');
   if (!host) return { prohibited: true, reason: 'empty host' };
-  if (host === 'localhost' || host.endsWith('.localhost') || host === 'metadata.google.internal') {
+  if (host === 'localhost' || host.endsWith('.localhost')) {
+    return allowLoopback ? { prohibited: false } : { prohibited: true, reason: `prohibited hostname '${host}'` };
+  }
+  if (host === 'metadata.google.internal') {
     return { prohibited: true, reason: `prohibited hostname '${host}'` };
   }
   const v4Mapped = host.startsWith('::ffff:') ? host.slice(7) : null;
@@ -445,6 +455,25 @@ export class CanonicalTriadBackend {
       )
       .all(handle)
       .map((row) => ({ previousHash: row.previous_hash, changedAt: row.changed_at }));
+  }
+
+  /**
+   * Lists handles matching prefix with wildcard escaping.
+   * Order: newest updated_at first.
+   */
+  listHandles(prefix = '') {
+    const escaped = String(prefix).replace(/([%_\\])/g, '\\$1');
+    const pattern = `${escaped}%`;
+    return this.db
+      .prepare(
+        "SELECT handle, current_hash, updated_at FROM handle_registry WHERE handle LIKE ? ESCAPE '\\' ORDER BY updated_at DESC"
+      )
+      .all(pattern)
+      .map((row) => ({
+        handle: row.handle,
+        currentHash: row.current_hash,
+        updatedAt: row.updated_at,
+      }));
   }
 
   /** Release every handle bound to a hash. Cards are never deleted (G-Set, INV-REF-03). */
@@ -752,3 +781,6 @@ router.delete('/:hash', (req, res) => {
 
 export default router;
 export { storage };
+export function getStorage() {
+  return storage;
+}

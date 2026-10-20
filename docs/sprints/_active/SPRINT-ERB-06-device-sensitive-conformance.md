@@ -5,7 +5,7 @@
 ## Metadata
 - **Sprint Code**: `SPRINT-ERB-06`
 - **Handle**: `urn:pcard:sprint:SPRINT-ERB-06`
-- **Status**: `SPECIFICATION`
+- **Status**: `COMPLETED`
 - **Archetype**: `ClmTriadManifest`
 - **Depends on**: `SPRINT-ERB-04` (device contexts, preflight, sweep assertions), `SPRINT-ERB-03` (persistence, history), `SPRINT-ERB-05` (capability predicates, fidelity)
 - **Unblocks**: — (closes the series; optional T3 track below)
@@ -165,8 +165,8 @@ Adopted from Yohanes's ERB-05. After a full matrix run (never in `FAST_MODE`), t
 ```
 
 - **Rule**: `certified` is `true` only when every `(device, orientation)` passes `no-horizontal-overflow` (`INV-DEV-01`) and `orientation-preserves-state` (`INV-DEV-03`). Other checks show up in the reports but do not block certification unless the spec lists them in `certifyOn`.
-- `reports` holds the hashes of the conformance reports it rolls up, so the certificate is verifiable from content.
-- `maxFidelityTier` states the evidence level honestly. A T1 certificate does not claim real-device behavior (`INV-DSF-01`).
+- **reports** holds the hashes of the conformance reports it rolls up, so the certificate is verifiable from content.
+- **maxFidelityTier** states the evidence level honestly. A T1 certificate does not claim real-device behavior (`INV-DSF-01`).
 - Handle: `urn:mcard:certification_latest:<slug>`, rebound each certification run.
 
 ---
@@ -183,15 +183,15 @@ This track implements the transport specified in ERB-05 §5.4. Run it only after
 
 ## 8. Definition of Done (DoD) & Verification
 
-- [ ] `vcard:sprint-erb-06:check_catalog_complete`: All §2 checks exist with good/bad fixture tests.
-- [ ] `vcard:sprint-erb-06:sweep_migrated_to_catalog`: `systematic-landing-test.spec.js` has no inline assertions left (R2).
-- [ ] `vcard:sprint-erb-06:fidelity_gating_central`: Checks needing a higher tier report `skipped: fidelity`; no check self-skips (`INV-DSF-01`).
-- [ ] `vcard:sprint-erb-06:capability_predicates_applied`: `appliesTo` uses ERB-05 profile fields only, for example `tap-target-size` is `not-applicable` on desktop.
-- [ ] `vcard:sprint-erb-06:reports_minted_with_history`: Reports persist and the diff endpoint shows per-check transitions.
-- [ ] `vcard:sprint-erb-06:targets_seeded`: Specs exist for `app.html` and `http://localhost:4321/`.
-- [ ] `vcard:sprint-erb-06:lab_panel_operational`: The lab shows the latest conformance summary for the active device.
-- [ ] `vcard:sprint-erb-06:device_invariants_enforced`: `INV-DEV-01..03` are blocking checks, and `INV-DEV-04` (`frame-budget`) reports as advisory unless the spec enforces it.
-- [ ] `vcard:sprint-erb-06:certification_minted`: A full-matrix run mints `urn:mcard:certification:responsive:v1` with the certification rule applied and its report hashes listed.
+- [x] `vcard:sprint-erb-06:check_catalog_complete`: All §2 checks exist with good/bad fixture tests.
+- [x] `vcard:sprint-erb-06:sweep_migrated_to_catalog`: `systematic-landing-test.spec.js` has no inline assertions left (R2).
+- [x] `vcard:sprint-erb-06:fidelity_gating_central`: Checks needing a higher tier report `skipped: fidelity`; no check self-skips (`INV-DSF-01`).
+- [x] `vcard:sprint-erb-06:capability_predicates_applied`: `appliesTo` uses ERB-05 profile fields only, for example `tap-target-size` is `not-applicable` on desktop.
+- [x] `vcard:sprint-erb-06:reports_minted_with_history`: Reports persist and the diff endpoint shows per-check transitions.
+- [x] `vcard:sprint-erb-06:targets_seeded`: Specs exist for `app.html` and `http://localhost:4321/`.
+- [x] `vcard:sprint-erb-06:lab_panel_operational`: The lab shows the latest conformance summary for the active device.
+- [x] `vcard:sprint-erb-06:device_invariants_enforced`: `INV-DEV-01..03` are blocking checks, and `INV-DEV-04` (`frame-budget`) reports as advisory unless the spec enforces it.
+- [x] `vcard:sprint-erb-06:certification_minted`: A full-matrix run mints `urn:mcard:certification:responsive:v1` with the certification rule applied and its report hashes listed.
 
 ### Execution Command
 ```bash
