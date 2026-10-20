@@ -1357,6 +1357,34 @@
     btnOrientHorizontal?.classList.add('active');
     renderPresets();
     applyViewportGeometry();
+
+    // Check for target URL parameter (e.g., ?target=http://localhost:4321/)
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetParam = urlParams.get('target');
+    if (targetParam && iframe) {
+      iframe.src = targetParam;
+      // Prepend or select this target in the dropdown
+      let matchedOption = false;
+      for (let i = 0; i < siteSelector.options.length; i++) {
+        if (siteSelector.options[i].value === targetParam) {
+          siteSelector.selectedIndex = i;
+          matchedOption = true;
+          break;
+        }
+      }
+      if (!matchedOption) {
+        const customOpt = document.createElement('option');
+        customOpt.value = targetParam;
+        customOpt.textContent = `Chosen Target (${targetParam}) - Configured`;
+        customOpt.setAttribute('data-status', 'allowed');
+        customOpt.setAttribute('data-desc', `Chosen Target URL (${targetParam})`);
+        siteSelector.insertBefore(customOpt, siteSelector.firstChild);
+        siteSelector.selectedIndex = 0;
+      }
+      updateSiteSelection();
+      console.log('[Responsive UI Lab] Booted with target URL parameter:', targetParam);
+    }
+
     // commit the initial geometry with transitions off, then enable them
     requestAnimationFrame(() => {
       requestAnimationFrame(() => document.body.classList.remove('lab-booting'));

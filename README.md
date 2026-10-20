@@ -1,45 +1,35 @@
-# PKC Landing Page
-## Personal Knowledge Container (PKC) - Decentralized Communication System
+# PKC Landing Page & Responsive Test Workbench
+## Systematic Responsive Testing, Telemetry Capture & Replay for Chosen Web Targets
 
-A modern, **static-first, modular web application** with **serverless P2P communication capabilities** built entirely with browser-native WebRTC APIs. Features rich markdown documentation viewing, LaTeX math rendering, Mermaid diagrams, **interactive games**, and **zero-dependency peer-to-peer networking**.
+A modern, **static-first, modular testing workbench and telemetry capture system** designed to systematically benchmark, test, and collect interaction data for a **chosen LandingPage target URL** across all device viewports (mobile, tablet, desktop, and foldable displays).
+
+Powered by the **Responsive UI Lab**, an in-memory **Event Capture Ring Buffer**, the **Cubic Logic Model (`clm-kernel`)**, and the **MCard Canonical Triad SQLite Dataset Engine**, this platform provides frame-perfect device emulation, interaction logging, and deterministic **Playwright automated replay**.
 
 ---
 
-## 🚀 **Core Features**
+## 🎯 **Core Focus: Systematic Single-Target Testing & Data Collection**
 
-### **📡 Serverless P2P Communication**
-- **Zero Dependencies**: Pure WebRTC APIs - no external servers or CDNs required
-- **Browser-Native**: Direct peer-to-peer connections without signaling infrastructure
-- **Manual Invitation Exchange**: URL/QR code-based peer discovery (truly serverless)
-- **Cross-Device Support**: Connect phones, tablets, and computers on local network
-- **End-to-End Encryption**: WebRTC provides transport encryption (DTLS)
-- **Privacy-First**: No central servers tracking connections
+Instead of fragmented testing across disconnected pages, the platform centers around **one configurable target URL for a chosen LandingPage** (e.g. `http://localhost:4321/`, `app.html`, or custom staging deployments):
 
-### **📚 Rich Documentation Viewer**
-- **Full Markdown Support**: Headers, lists, tables, code blocks, images, and links
-- **LaTeX Math Rendering**: Mathematical equations using KaTeX (Obsidian-compatible)
-- **Mermaid Diagrams**: Flowcharts, sequence diagrams, class diagrams, and more
-- **Syntax Highlighting**: Code blocks with language-specific highlighting
-- **3D Visualization**: Interactive 3D object rendering using Three.js and Anime.js by the **MCard Manager**
+1. **Chosen Target Binding**: Set target via UI selector or launch directly with query param:
+   ```text
+   http://localhost:3001/responsive-lab.html?target=http://localhost:4321/
+   ```
+2. **Systematic Multi-Device Sweeping**: Test the target across 8 standard device profiles (iPhone 16 Pro, Galaxy S24, Pixel 8, iPad Pro, Desktop 1080p) with instant dual-axis rotation (`INV-RVP-01`).
+3. **Scale-Invariant Event Capture**: An in-memory bounded ring buffer (`INV-ERB-01`) logs micro-interactions, clicks, inputs, and orientation changes with coordinates normalized to the target's unscaled coordinate space $[0.0, 1.0]$ (`INV-ERB-02`).
+4. **MCard Test Dataset Ingestion**: Persist every test session into the Canonical Triad SQLite store (`data/mcard-api.db`) as an immutable record with `blake3` content hashes via `clm-kernel`.
+5. **Deterministic Playwright Replay**: Automated test suites consume the stored MCard artifact and replay user actions with exact viewport emulation and orientation swaps.
 
-### **🎮 Interactive Games & Simulations**
-- **Bali Adventure**: Explore the Ubud Rice Terraces in a React-based 2D RPG (`public/examples/games/play_ubud.html`)
-- **3D Theater**: High-fidelity 3D visualization engine for viewing complex data structures
-- **Music Visualizer V5**: Interactive music notation with 3D frequency visualization, Web Workers, and FileLoader caching (`public/examples/Music/SyncedMusicVisualizerV5.html`)
-- **Morphism Cube**: Category theory recursion schemes visualized in 3D (`public/examples/3DGames/MorphismCube/`)
-- **3D Object Viewer**: A dedicated 3D model viewer (Git Submodule) located at `public/examples/3DGames/3DObjectViewer`. Ensure submodules are initialized to use this feature.
+---
 
-### **🤖 AI Chatbot Panel**
-- **Integrated AI Assistance**: Access external AI tools like ChatGPT, Claude, and Gemini directly within the interface.
-- **Microphone Support**: Enabled `microphone` permission for iframe integrations, allowing voice interaction with supported chatbots.
-- **Smart Fallback**: Automatically provides a direct link button for services that block iframe embedding (e.g., ChatGPT, Claude), ensuring users can always access their tools.
+## 🚀 **Workbench Features**
 
-### **📱 Responsive UI Lab & Viewport Workbench**
-- **Dynamic 2D Geometry & Rotation (`INV-RVP-01`)**: Full-window responsive testing workbench (`responsive-lab.html`) with dual-axis orientation swapping. Clicking orientation toggles physically swaps target width and height while maintaining aspect ratios without distortion.
+### 📱 **Responsive UI Lab & Viewport Stage (`responsive-lab.html`)**
+- **Direct Target Ingestion (`?target=<URL>`)**: Point the workbench to any local or external HTTP target.
+- **Dynamic 2D Geometry & Rotation (`INV-RVP-01`)**: Full-window responsive testing workbench with dual-axis orientation swapping. Clicking orientation toggles physically swaps target width and height while maintaining aspect ratios without distortion.
 - **Layout-Box Stage Containment (`INV-RVP-02`)**: Automatic scale factor $s = \min(1, W_{\text{available}} / w_{\text{target}}, H_{\text{available}} / h_{\text{target}})$ inside a dedicated `.viewport-scale-wrapper`. Even the largest desktop or rotated tablet viewports fit completely within the available stage space with zero window scrollbars.
 - **Declarative Device Registry (`INV-RVP-03`)**: Built-in catalog of 8 modern devices (`js/device-registry.js`) from phones to XR headsets, with schema validation ($[100, 7680]$ px bounds) and persistent `localStorage` storage.
 - **Interactive Device Manager**: Add custom screen sizes with automated greatest-common-divisor (GCD) aspect ratio calculation, delete user-added devices, or reset to factory defaults.
-- **Target Selection & Local App Testing**: Pre-configured iframe test targets including `app.html`, `index.html`, and local development servers (`http://localhost:4321/`) with real-time sandbox header diagnostics (X-Frame-Options and CSP frame-ancestors).
 - **Direct Portal Navigation**: `index.html` streamlined to highlight the Responsive UI Lab as the primary choice with top-level automatic navigation (`window.self === window.top`).
 - **Zero-Dependency Guarantee (`INV-REF-01`)**: Pure vanilla JavaScript and native CSS variables (`--frame-target-width`, `--frame-target-height`, `--frame-scale-factor`).
 

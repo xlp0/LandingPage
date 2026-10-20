@@ -66,12 +66,14 @@ Governed by specification **RVP-02**, the device registry replaces ad-hoc CSS me
 
 ---
 
-## 3. Responsive Lab Capabilities ([`responsive-lab.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/responsive-lab.html))
+## 3. Responsive Lab Capabilities ([`responsive-lab.html`](file:///Users/yohanessurya/Documents/Development/MCard_TDD/LandingPage/responsive-lab.html))
 
+- **Single Target Ingestion (`?target=<URL>`)**: Dynamically binds the laboratory viewport stage to any designated LandingPage URL (e.g., `http://localhost:4321/` or `app.html`), enabling focused benchmarking of a single web target.
 - **Full-Window Viewport Workbench**: Emulates target screen sizes inside an isolated sandbox container.
-- **Dynamic Rotation**: One-click toggle between Portrait and Landscape orientations, recalculating layout constraints in real time.
-- **Layout Freeze Detection**: Stress-tests reflow performance by cycling rapidly through viewport dimensions and asserting zero element clipping or horizontal overflow.
-- **Zoom & Pan Scaling**: Scales the preview container (25% to 150%) to fit 4K/desktop viewports on small laptop displays.
+- **Dynamic Rotation (`INV-RVP-01`)**: One-click toggle between Portrait and Landscape orientations, recalculating layout constraints and swapping width/height in real time.
+- **Layout Freeze & Overflow Detection**: Stress-tests reflow performance by cycling rapidly through viewport dimensions and asserting zero element clipping or horizontal overflow.
+- **Zoom & Pan Scaling (`INV-RVP-02`)**: Scales the preview container via CSS `--frame-scale-factor: s` to fit 4K/desktop viewports on small laptop displays without window scrollbars.
+- **Event Capture Ring Buffer (`INV-ERB-01..03`)**: Intercepts interaction streams with scale-free spatial normalization $[0.0, 1.0]$, serializing multi-device test telemetry into MCard datasets via `clm-kernel` for deterministic Playwright replay.
 
 ---
 

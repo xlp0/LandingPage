@@ -1,10 +1,18 @@
-# THK Mesh Landing Page - Documentation Index
+# Responsive Test Workbench & LandingPage — Documentation Index
+
+## 🎯 Active Development & Sprint Series (October 2026)
+- 🚀 **[Active Sprints Series: Responsive Event Capture & Playwright Replay (`docs/sprints/_active/`)](./sprints/_active/INDEX.md)**
+  - [SPRINT-ERB-01: Ring Buffer Core & State Engine](./sprints/_active/SPRINT-ERB-01-ring-buffer-core.md)
+  - [SPRINT-ERB-02: Membrane Interceptor, Spatial Normalization & Lab UI](./sprints/_active/SPRINT-ERB-02-membrane-normalization.md)
+  - [SPRINT-ERB-03: MCard & clm-kernel Storage Pipeline](./sprints/_active/SPRINT-ERB-03-mcard-clm-persistence.md)
+  - [SPRINT-ERB-04: Playwright Deterministic Replay Engine](./sprints/_active/SPRINT-ERB-04-playwright-deterministic-replay.md)
 
 ## 🌟 Authoritative Functional Specifications (October 2026)
 
 The complete functional specification library extracting every system capability:
 
 - 📖 **[Functional Specifications Library (`docs/functionalities/`)](functionalities/README.md)**
+  - [09. Responsive UI Lab, Target Ingestion & Viewport Stage](functionalities/09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md)
   - [00. Master Overview & Architecture Map](functionalities/00-OVERVIEW-AND-FUNCTIONALITY-MAP.md)
   - [01. Mission Control & MCard Management](functionalities/01-MISSION-CONTROL-AND-MCARD-MANAGEMENT.md)
   - [02. Polymorphic Content Rendering Pipeline](functionalities/02-POLYMORPHIC-CONTENT-RENDERING-PIPELINE.md)
@@ -14,7 +22,6 @@ The complete functional specification library extracting every system capability
   - [06. Authentication & Identity System (Zitadel OIDC)](functionalities/06-AUTHENTICATION-AND-IDENTITY-SYSTEM.md)
   - [07. In-Browser AI & WebLLM Runtime](functionalities/07-IN-BROWSER-AI-AND-WEB-LLM-RUNTIME.md)
   - [08. Observability, Lagrangian Mechanics & Telemetry](functionalities/08-OBSERVABILITY-LAGRANGIAN-AND-TELEMETRY.md)
-  - [09. Responsive UI Lab, Penpot & Design System](functionalities/09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md)
   - [10. DevOps, ArgoCD GitOps & Cloud Infrastructure](functionalities/10-DEV-OPS-ARGO-CD-AND-INFRASTRUCTURE.md)
 
 ---
