@@ -4,7 +4,8 @@ Testing strategies, verification checklists, and quality assurance.
 
 ## Documents in This Section
 
-- **VERIFICATION_CHECKLIST.md** - Pre-release verification checklist
+- **[DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md](DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md)** — Comprehensive guide on using LandingPage as an infrastructure for testing device-sensitive web applications
+- **[VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md)** — Pre-release verification checklist
 
 ## Testing Categories
 

@@ -1,4 +1,6 @@
-# Sprint ERB-00: Responsive Lab Refactor Baseline
+# Sprint ERB-00: Infrastructure Modularization & Lab Refactor Baseline
+
+> **Merged spec.** This file combines two parallel drafts from 2026-10-20: Yohanes's `41cc6a1` (module home `js/harness/`, `target-membrane.js`, `lab-toolbar.js`, `INV-INF-01`) and the code-verified refactor sequence R0–R7.
 
 ## Metadata
 - **Sprint Code**: `SPRINT-ERB-00`
@@ -7,7 +9,7 @@
 - **Archetype**: `ClmTriadManifest`
 - **Depends on**: — (first in series)
 - **Unblocks**: `SPRINT-ERB-01`, `SPRINT-ERB-05`, and through them every later sprint
-- **pstack Playbook**: `architect` + `principle-subtract-before-you-add` + `principle-migrate-callers-then-delete-legacy-apis` + `principle-sequence-verifiable-units`
+- **pstack Playbook**: `architect` + `principle-boundary-discipline` + `principle-subtract-before-you-add` + `principle-migrate-callers-then-delete-legacy-apis` + `principle-sequence-verifiable-units`
 
 ---
 
@@ -44,7 +46,7 @@ Adding capture, fidelity badges, and conformance panels to that script would loc
 ### 🏛️ Architect (Winston)
 - Approve the module map in §4 before code moves. Each module has one reason to change.
 - Define the two DOM events and their `detail` shapes (§5.2).
-- Enforce `INV-STU-01` structurally: after R3, `target-binding.js` is the **only** code that assigns `iframe.src`.
+- Enforce `INV-STU-01` structurally: after R3, `target-membrane.js` is the **only** code that assigns `iframe.src`.
 
 ### 💻 Dev (Amelia)
 - Execute R0–R7 in order. One step per commit. Each commit leaves both gates green.
@@ -53,7 +55,8 @@ Adding capture, fidelity badges, and conformance panels to that script would loc
 ### 🧪 TEA (Murat)
 - Write the R0 characterization tests **before** any extraction.
 - Write unit tests for every pure module extracted in R1 and R3.
-- Record the baseline pass count of `responsive-rotation-and-devices.spec.js` (30 at last run) and fail the sprint if it drops.
+- Record the baseline pass counts of `responsive-rotation-and-devices.spec.js` (30 at last run) and `layout-freeze.spec.js`. Fail the sprint if either drops.
+- Enforce **`INV-INF-01` (Zero Regression Guarantee)**: no existing Playwright **assertion** (expected value or matcher) changes during this sprint. R6 may only rewrite how a test reaches the lab (for example `window.__device_registry` → `window.__lab.registry`), never what it expects.
 
 ### 📝 Tech Writer (Paige)
 - Update `docs/functionalities/09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md` with the module map and the `window.__lab` API.
@@ -64,16 +67,21 @@ Adding capture, fidelity badges, and conformance panels to that script would loc
 
 ```text
 responsive-lab.html            ← markup + CSS + ≤ 60-line boot script
-js/responsive-lab/
-  viewport-geometry.js         ← pure: computeScale, rotate, clampDims, formatDims      (R1)
-  viewport-stage.js            ← DOM: CSS vars, ResizeObserver, emits lab:viewport-change (R2)
-  target-binding.js            ← resolveTarget (pure) + bindTarget (sole iframe.src writer),
-                                 emits lab:target-change                                 (R3)
-  lab-targets.js               ← loads app-config.json#labTargets, renders <select>      (R4)
-  device-presets-ui.js         ← preset chips + Device Manager modal                     (R5)
-  lab-api.js                   ← installs window.__lab                                   (R6)
+js/harness/
+  viewport-geometry.js         ← pure: computeScale, rotate, clampDims, formatDims        (R1)
+  viewport-stage.js            ← DOM: CSS vars, ResizeObserver; setViewportSize, setOrientation,
+                                 rotate, recomputeScale, getGeometry; emits lab:viewport-change (R2)
+  target-membrane.js           ← resolveTarget (pure) + bindTarget (sole iframe.src writer),
+                                 getTargetUrl, getIframeWindow, getIframeRect, checkSandboxPolicy;
+                                 emits lab:target-change                                   (R3)
+  lab-toolbar.js               ← loads app-config.json#labTargets; renders the target <select>,
+                                 Load Target and pop-out controls                          (R4)
+  device-presets-ui.js         ← preset chips + Device Manager modal                       (R5)
+  lab-api.js                   ← installs window.__lab                                     (R6)
 js/device-registry.js          ← unchanged in this sprint (extended in ERB-05)
 ```
+
+`checkSandboxPolicy(url)` returns `{ allowed, reason? }`. It wraps the existing iframe-compatibility diagnostics (the `data-status` / CORS-block alert logic in `updateSiteSelection`) and, for absolute URLs, the server probe `GET /api/mcard/probe-url`. It does not add a new probe.
 
 ---
 
@@ -81,11 +89,11 @@ js/device-registry.js          ← unchanged in this sprint (extended in ERB-05)
 
 ### 5.1 Refactoring Sequence
 
-Run both gates after **every** step:
+Run all gates after **every** step:
 
 ```bash
 npm run test:unit            # from R7 onward; before R7 run node --test on the new files directly
-npx playwright test tests/features/responsive-rotation-and-devices.spec.js --project=features
+npx playwright test tests/features/responsive-rotation-and-devices.spec.js tests/features/layout-freeze.spec.js --project=features
 ```
 
 | Step | Action | Kind | Exit check |
@@ -93,8 +101,8 @@ npx playwright test tests/features/responsive-rotation-and-devices.spec.js --pro
 | **R0** | Add **RVP-T11**: `responsive-lab.html?target=app.html` selects the matching `<option>` and loads it. Add **RVP-T12**: an unknown `?target=` prepends a "Chosen Target" option, selects it, and loads it. | Characterization | Both pass on unchanged code. |
 | **R1** | Move scale and rotation math into `viewport-geometry.js` as pure functions. The inline script imports them. Add `tests/unit/viewport-geometry.test.mjs`: containment (`s = min(1, W/w, H/h)`), no upscaling, rotate-twice identity, `DIM_MIN`/`DIM_MAX` clamping. | Extract | Unit + RVP green. |
 | **R2** | Move CSS-variable writes and the `ResizeObserver` into `viewport-stage.js` (`createViewportStage({ frame, wrapper, container })`). On every committed change, dispatch `lab:viewport-change` on `document`. | Extract | RVP-T01, T02, T02b, T02c, T09, T10 green. |
-| **R3** | Create `target-binding.js`. `resolveTarget(raw, baseHref)` resolves relative URLs with `new URL(raw, baseHref)`, then validates absolute URLs with `assertSafeUrl` from `js/external-portal-membrane.js`. `bindTarget(url)` is the single writer of `iframe.src`; the pop-out reads `getTarget()`. Remove the static `src="app.html"` and boot through `bindTarget(resolveTarget(param ?? defaultTarget))`. Dispatch `lab:target-change`. Add `tests/unit/target-binding.test.mjs`: relative resolution, `javascript:` / `data:` / credentialed URLs rejected. | Consolidate | RVP-T06, T11, T12 green. `grep -n "iframe.src" responsive-lab.html` returns nothing. |
-| **R4** | Add `labTargets` to `app-config.json` (`[{ url, label, status, desc }]`). `lab-targets.js` fetches `/app-config.json` and renders the `<select>`. `ws-server.js` builds its CORS `origin` list from the static base list plus the origins of absolute `labTargets` URLs. Delete the hardcoded `<option>` elements. | Consolidate | Selector shows the same entries as before. `curl -H 'Origin: http://localhost:4321' -I http://localhost:3001/health` still returns `Access-Control-Allow-Origin`. |
+| **R3** | Create `target-membrane.js`. `resolveTarget(raw, baseHref)` resolves relative URLs with `new URL(raw, baseHref)`, then validates absolute URLs with `assertSafeUrl` from `js/external-portal-membrane.js`. `bindTarget(url)` is the single writer of `iframe.src`; the pop-out reads `getTarget()`. Remove the static `src="app.html"` and boot through `bindTarget(resolveTarget(param ?? defaultTarget))`. Dispatch `lab:target-change`. Add `tests/unit/target-membrane.test.mjs`: relative resolution, `javascript:` / `data:` / credentialed URLs rejected. | Consolidate | RVP-T06, T11, T12 green. `grep -n "iframe.src" responsive-lab.html` returns nothing. |
+| **R4** | Add `labTargets` to `app-config.json` (`[{ url, label, status, desc }]`). `lab-toolbar.js` fetches `/app-config.json` and renders the `<select>`. `ws-server.js` builds its CORS `origin` list from the static base list plus the origins of absolute `labTargets` URLs. Delete the hardcoded `<option>` elements. | Consolidate | Selector shows the same entries as before. `curl -H 'Origin: http://localhost:4321' -I http://localhost:3001/health` still returns `Access-Control-Allow-Origin`. |
 | **R5** | Move `renderPresets`, `renderManagerList`, `openDeviceManager`, `closeDeviceManager`, and the form handlers into `device-presets-ui.js`. | Extract | RVP-T03, T03b, T03c, T04, T05, T07, T08 green. |
 | **R6** | `lab-api.js` installs `window.__lab` (§5.3). Grep every caller of the 8 legacy globals in this repo **and** sibling repos under `MCard_TDD/` (for example `mcard-studio`). Migrate them, then delete the legacy globals in the **same** commit. | Migrate + delete | `grep -rn "__set_controlled\|__get_controlled\|__set_viewport_geometry\|__get_viewport_geometry\|__rotate_viewport\|__device_registry"` returns nothing outside `CHANGELOG.md`. |
 | **R7** | Create `tests/unit/`. Add `"test:unit": "node --test tests/unit/"` to `package.json`. Move the R1/R3 tests there if they started elsewhere. Do **not** move existing `node:test` files in this sprint. | Harness | `npm run test:unit` exits 0. |
@@ -114,7 +122,7 @@ interface LabViewportChangeDetail {
   cause: 'preset' | 'rotate' | 'custom' | 'resize' | 'boot';
 }
 
-// dispatched on document by target-binding.js after iframe.src is assigned
+// dispatched on document by target-membrane.js after iframe.src is assigned
 interface LabTargetChangeDetail {
   url: string;              // absolute URL after resolution
   origin: string;           // new URL(url).origin
@@ -151,14 +159,14 @@ Later sprints extend this object (`__lab.recorder` in ERB-02, `__lab.fidelity` i
 - [ ] `vcard:sprint-erb-00:target_boot_characterized`: RVP-T11 and RVP-T12 pass before and after the refactor.
 - [ ] `vcard:sprint-erb-00:geometry_module_extracted`: `viewport-geometry.js` is pure and covered by `tests/unit/viewport-geometry.test.mjs`.
 - [ ] `vcard:sprint-erb-00:viewport_change_event_emitted`: `lab:viewport-change` fires once per committed geometry change with the §5.2 shape.
-- [ ] `vcard:sprint-erb-00:single_iframe_src_writer`: `target-binding.js` is the only assignment site of `iframe.src` (`INV-STU-01`).
+- [ ] `vcard:sprint-erb-00:single_iframe_src_writer`: `target-membrane.js` is the only assignment site of `iframe.src` (`INV-STU-01`).
 - [ ] `vcard:sprint-erb-00:single_target_registry`: `<select>` options and CORS origins both derive from `app-config.json#labTargets` (`INV-STU-02`).
 - [ ] `vcard:sprint-erb-00:lab_api_consolidated`: `window.__lab` is installed; the 8 legacy globals and all their callers are gone.
 - [ ] `vcard:sprint-erb-00:inline_script_thin`: The inline module in `responsive-lab.html` is ≤ 60 lines of boot wiring.
-- [ ] `vcard:sprint-erb-00:no_regression`: `responsive-rotation-and-devices.spec.js` pass count ≥ baseline (30) + 2 new tests.
+- [ ] `vcard:sprint-erb-00:no_regression`: `responsive-rotation-and-devices.spec.js` pass count ≥ baseline (30) + 2 new tests; `layout-freeze.spec.js` unchanged; no assertion edited (`INV-INF-01`).
 
 ### Execution Command
 ```bash
 npm run test:unit && \
-npx playwright test tests/features/responsive-rotation-and-devices.spec.js --project=features
+npx playwright test tests/features/responsive-rotation-and-devices.spec.js tests/features/layout-freeze.spec.js --project=features
 ```

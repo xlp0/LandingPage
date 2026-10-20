@@ -7,21 +7,52 @@ Powered by the **Responsive UI Lab**, the **Cubic Logic Model (`clm-kernel`)**, 
 
 ---
 
-## 🎯 **Core Focus: Systematic Single-Target, Device-Sensitive Testing & Data Collection**
+## 🎯 **Core Focus: Infrastructure for Testing Device-Sensitive Functionalities**
 
-Instead of fragmented testing across disconnected pages, the platform centers around **one configurable target URL for a chosen LandingPage** (e.g. `http://localhost:4321/`, `app.html`, or custom staging deployments):
+Instead of treating responsive design as an afterthought or spreading focus across disparate demos, `LandingPage` functions as a dedicated **Testing & Telemetry Infrastructure** for certifying web applications and landing pages against real-world device constraints.
 
-1. **Chosen Target Binding** ✅: Set target via UI selector or launch directly with query param:
-   ```text
-   http://localhost:3001/responsive-lab.html?target=http://localhost:4321/
-   ```
-2. **Multi-Device Viewport Sweeping** ✅: Test the target across the 8 built-in device profiles in [`js/device-registry.js`](js/device-registry.js) (iPhone 16 Pro, iPhone SE, Pixel 8, Galaxy S24, iPad Air 11", iPad Mini, MacBook Air 13", Desktop 1080p) with instant dual-axis rotation (`INV-RVP-01`).
-3. **Declared Fidelity Tiers** 🟡 *planned, ERB-05*: Every run states what was really emulated. T0 is the lab iframe (viewport only); T1/T2 are Playwright contexts (DPR, touch, mobile UA, media features, CDP throttling); T3 is a real device on the LAN (`INV-DSF-01`).
-4. **Scale-Invariant Event Capture** 🟡 *planned, ERB-01/02*: A bounded ring buffer (`INV-ERB-01`) logs taps, clicks, inputs, scrolls, media-query changes, and orientation changes, normalized to the target's own viewport $[0.0, 1.0]$ (`INV-ERB-02`). Same-origin targets are captured directly; cross-origin targets use an opt-in probe agent over an origin- and nonce-checked `postMessage` channel (`INV-ERB-05`).
-5. **MCard Test Dataset Ingestion** 🟡 *planned, ERB-03*: Persist every test session into the Canonical Triad SQLite store (`data/mcard-api.db`) as an immutable, canonically serialized record with `blake3` content hashes via `clm-kernel`, with per-device revision history.
-6. **Deterministic Playwright Replay & Device Conformance** 🟡 *planned, ERB-04/06*: Replay stored runs on registry-derived device contexts and run declarative device-sensitive checks (tap-target size, hover-to-touch paths, DPR assets, reduced motion, breakpoints) with per-check regression diffs.
+The infrastructure centers around **one configurable target URL for a chosen LandingPage** (e.g., `http://localhost:4321/`, `app.html`, or custom staging deployments), set via the UI selector or a query param:
 
-> See the [ERB sprint series index](docs/sprints/_active/INDEX.md) for the execution order, the master refactoring sequence, and the invariants.
+```text
+http://localhost:3001/responsive-lab.html?target=http://localhost:4321/
+```
+
+### 🔬 **Device-Sensitive Dimensions**
+
+✅ = works today · 🟡 = planned in the ERB sprint series
+
+1. **Dynamic Geometry & Orientation Reflow (`INV-RVP-01`)** ✅: Instant swapping of viewport width and height without layout clipping or text distortion, across the 8 built-in profiles in [`js/device-registry.js`](js/device-registry.js) (iPhone 16 Pro, iPhone SE, Pixel 8, Galaxy S24, iPad Air 11", iPad Mini, MacBook Air 13", Desktop 1080p).
+2. **Declared Fidelity Tiers (`INV-DSF-01`)** 🟡 *ERB-05*: Every run states what was really emulated. T0 is the lab iframe (viewport only); T1/T2 are Playwright contexts (DPR, touch, mobile UA, media features, CDP throttling); T3 is a real device on the LAN.
+3. **Horizontal Viewport Bleed (`INV-DEV-01`)** 🟡 *ERB-03/06*: Automated detection of horizontal overflow (`document.documentElement.scrollWidth <= window.innerWidth`).
+4. **Touch Target Ergonomics (`INV-DEV-02`)** 🟡 *ERB-02/06*: Interactive elements on coarse-pointer devices meet mobile tap size requirements ($\ge 44\text{px} \times 44\text{px}$ by default).
+5. **Scale-Invariant Interaction Capture (`INV-ERB-01..05`)** 🟡 *ERB-01/02*: A bounded in-memory ring buffer records user and automated events, normalized to the target's own viewport $[0.0, 1.0]$. Same-origin targets are captured directly; cross-origin targets use an opt-in probe agent over an origin- and nonce-checked `postMessage` channel.
+6. **Frame Budget & Layout Stability (`INV-DEV-04`)** 🟡 *ERB-03/06*: Observation of frame latency ($16.6\text{ms}$ budget / $60\text{fps}$) and layout shift during rapid reflows.
+7. **MCard Test Dataset Certification** 🟡 *ERB-03/06*: Content-addressed persistence of test runs into the SQLite Triad (`data/mcard-api.db`) with `clm-kernel` hashing (`blake3`), per-check regression diffs, and a responsive certification record per target.
+
+---
+
+## 🛠️ **Sequence of Refactoring Actions & Active Sprints**
+
+The transformation into a clean testing infrastructure is tracked under [`docs/sprints/_active/`](docs/sprints/_active/INDEX.md). Sprint numbers are identifiers; execution follows the dependency graph (ERB-01 and ERB-05 run in parallel):
+
+```
+                 ┌─► ERB-01 Ring Buffer & FSM ────────┐
+ERB-00 Modularize┤                                    ├─► ERB-02 ──► ERB-03 ──► ERB-04 ──► ERB-06
+                 └─► ERB-05 Device Profiles & Fidelity ┘    Membrane    Telemetry   Replay &    Conformance
+                                                              & Ergonomics & MCard     Sweeps      & Certification
+```
+
+| Sprint | Code / Focus | Primary Artifact | Verification Gate |
+| :--- | :--- | :--- | :--- |
+| **[ERB-00](docs/sprints/_active/SPRINT-ERB-00-infrastructure-refactoring.md)** | Infrastructure Modularization | `js/harness/viewport-stage.js`, `js/harness/target-membrane.js`, `js/harness/lab-toolbar.js` | `npm run test:unit` + zero regression on `responsive-rotation-and-devices.spec.js` |
+| **[ERB-01](docs/sprints/_active/SPRINT-ERB-01-ring-buffer-core.md)** | Ring Buffer Core & State Engine | `js/harness/event-ring-buffer.js` | `node --test tests/unit/event-ring-buffer.test.mjs` |
+| **[ERB-05](docs/sprints/_active/SPRINT-ERB-05-device-capability-profiles.md)** | Device Capability Profiles & Fidelity Tiers | `js/device-registry.js` (schema v2), `js/harness/fidelity.js` | `node --test tests/unit/fidelity.test.mjs` |
+| **[ERB-02](docs/sprints/_active/SPRINT-ERB-02-membrane-normalization.md)** | Target Membrane & Touch Ergonomics | `js/harness/membrane-interceptor.js`, `js/harness/lab-probe-agent.js` | `tests/features/responsive-capture.spec.js` ($nx, ny \in [0.0, 1.0]$) |
+| **[ERB-03](docs/sprints/_active/SPRINT-ERB-03-mcard-clm-persistence.md)** | Device Telemetry & MCard Pipeline | `js/harness/telemetry-collector.js`, `server/test-run-api.mjs` | `node --test tests/unit/test-run-api.test.mjs` |
+| **[ERB-04](docs/sprints/_active/SPRINT-ERB-04-playwright-deterministic-replay.md)** | Playwright Replay & Systematic Sweeps | `scripts/playwright-replay-driver.mjs`, `tests/features/systematic-landing-test.spec.js` | `TARGET_URL=http://localhost:4321/ npm run test:responsive` |
+| **[ERB-06](docs/sprints/_active/SPRINT-ERB-06-device-sensitive-conformance.md)** | Conformance Suite & Certification | `tests/conformance/checks/*.js`, `urn:mcard:certification:responsive:v1` | `tests/features/device-conformance.spec.js` |
+
+Detailed guide available at: **[`docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md`](docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md)**. The [ERB sprint series index](docs/sprints/_active/INDEX.md) holds the master refactoring sequence and all invariants.
 
 ---
 

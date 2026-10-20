@@ -1,5 +1,7 @@
 # Sprint ERB-05: Device Capability Profiles & Fidelity Tiers
 
+> **Merge note (41cc6a1).** This file replaces Yohanes's `SPRINT-ERB-05-device-sensitive-systematic-sweeps.md`. Its two halves moved: the multi-device sweep is now in ERB-04, and certification is now in ERB-06 §6.3. ERB-05 keeps the number for the capability registry and fidelity tiers, which both of those depend on. His safe-area CSS-variable idea from ERB-02 becomes the visual-only notch overlay in R8 below.
+
 ## Metadata
 - **Sprint Code**: `SPRINT-ERB-05`
 - **Handle**: `urn:pcard:sprint:SPRINT-ERB-05`
@@ -53,12 +55,13 @@ Preference and environment dimensions (`colorScheme`, `reducedMotion`, `locale`,
 
 ### 💻 Dev (Amelia)
 - Extend `validateDevice` and `BUILTIN_DEVICES` in `js/device-registry.js`.
-- Add `js/responsive-lab/fidelity.js` (pure).
+- Add `js/harness/fidelity.js` (pure).
 - Add `tests/fixtures/device-matrix.js`, which maps registry profiles to Playwright context options.
 - Extend `window.__lab` with `fidelity: { current(): FidelityDeclaration }`.
 
 ### 🎨 UX Designer (Sally)
 - Add a fidelity badge to the lab telemetry pill, for example **`T0 · viewport only`**. Its tooltip lists `notEmulated` (for example "DPR 3, touch, mobile UA, safe-area").
+- Add a toggleable **safe-area overlay** that draws the profile's `safeAreaInsets` (notch, home indicator) over the device frame and swaps sides on rotation. It is a design guide only: it does not change the target's `env(safe-area-inset-*)` values, and no check may treat it as evidence.
 
 ### 🧪 TEA (Murat)
 - `tests/unit/device-registry-v2.test.mjs`: v2 validation, migration, and idempotency.
@@ -74,10 +77,11 @@ Preference and environment dimensions (`colorScheme`, `reducedMotion`, `locale`,
 | **R1** | Extend `validateDevice` with the optional v2 fields (§5.1). v1-shaped input stays valid; missing fields are filled from category defaults by a new pure `withCapabilityDefaults(device)`. | Extend | RVP-T03, T04 green; new unit tests green. |
 | **R2** | Add capability fields to every entry in `BUILTIN_DEVICES` (§5.1 table). | Extend | `tests/unit/device-registry-v2.test.mjs` asserts all 8 built-ins validate as v2. |
 | **R3** | Change `STORAGE_KEY` to `pkc_responsive_lab_devices_v2`. On load: if v2 is missing and v1 exists, migrate v1 → v2 with `withCapabilityDefaults` and write v2. **Leave v1 untouched** so rolling back the code restores the old state. | Migrate (idempotent) | Migrating twice produces the same v2. RVP-T03c (corrupted storage → factory set) still green. |
-| **R4** | Add `js/responsive-lab/fidelity.js` with `resolveFidelity(profile, runner, runOptions)`. | Add | `tests/unit/fidelity.test.mjs` green. |
+| **R4** | Add `js/harness/fidelity.js` with `resolveFidelity(profile, runner, runOptions)`. | Add | `tests/unit/fidelity.test.mjs` green. |
 | **R5** | Add `tests/fixtures/device-matrix.js`. It imports `BUILTIN_DEVICES` and exports `toPlaywrightContext(profile, orientation)` and `deviceMatrix({ categories, orientations })`. No device numbers are typed anywhere else in tests. | Consolidate | A unit test asserts the matrix size is 8 devices × 2 orientations = 16. |
 | **R6** | Install `window.__lab.fidelity` and render the badge. The badge re-renders on `lab:viewport-change` (ERB-00 event). | Wire | Manual check plus RVP-T09 (telemetry pills) green. |
 | **R7** | Update the device table in `docs/functionalities/09-…md` with the capability columns. | Docs | Paige review. |
+| **R8** | Add the safe-area overlay toggle to `js/harness/lab-toolbar.js`, drawn from `safeAreaInsets`. | Add (UX) | Overlay follows rotation; RVP suite green with the overlay off (default). |
 
 ---
 

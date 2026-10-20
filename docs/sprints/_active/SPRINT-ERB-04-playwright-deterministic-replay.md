@@ -1,4 +1,6 @@
-# Sprint ERB-04: Playwright Replay & Registry-Driven Device Sweeps
+# Sprint ERB-04: Deterministic Playwright Replay Driver & Systematic Multi-Device Sweeps
+
+> **Merge note (41cc6a1).** This sprint merges two drafts. From Yohanes's ERB-04 it takes the replay `speed` multiplier (1×/2×/5×) and the `SLOWMO`/`HEADED` observation modes. From his ERB-05 it takes the systematic sweep (`tests/features/systematic-landing-test.spec.js`, `npm run test:responsive`, `FAST_MODE`, and the CLI summary table). Certification, the other half of his ERB-05, moved to ERB-06 (§6.3 there). The device matrix comes from the registry (ERB-05) and is not typed in specs.
 
 ## Metadata
 - **Sprint Code**: `SPRINT-ERB-04`
@@ -20,7 +22,7 @@ Turn stored test runs into automated evidence:
 
 ### 1.1 Corrections to the earlier draft
 - **One device source**: the earlier matrix hardcoded "iPad Pro 11 (834 × 1194)", which is not in `js/device-registry.js` (the registry has iPad Air 11" 820 × 1180 and iPad Mini 744 × 1133). Every device now comes from `tests/fixtures/device-matrix.js` (ERB-05, `INV-DSF-02`).
-- **One spec name**: the old INDEX said `responsive-replay.spec.js` while the sprint said `systematic-landing-test.spec.js`. This sprint uses `tests/features/responsive-replay.spec.js` (replay) and `tests/features/device-sweep.spec.js` (sweep).
+- **Two specs, fixed names**: replay is `tests/features/responsive-replay.spec.js`. The sweep is `tests/features/systematic-landing-test.spec.js`, run by `npm run test:responsive` (both names adopted from Yohanes's draft).
 - **Honest fidelity**: replay at top level in an emulated context is T1. Replay inside the lab iframe (`--via-lab`) is T0. The replay result records which one it was.
 - **Orientation limits**: Playwright cannot change `isMobile`/`hasTouch` mid-context, and `setViewportSize` does not fire `screen.orientation` change events. An `orientation_change` replays as a viewport swap, and `screenOrientationApi` is listed in `notEmulated`.
 - **No hidden flakiness**: the `features` project has `retries: 2`. Replay and sweep specs call `test.describe.configure({ retries: 0 })`.
@@ -31,7 +33,7 @@ Turn stored test runs into automated evidence:
 ## 2. BMAD Agent Responsibilities
 
 ### 🧪 TEA (Murat)
-- `tests/features/device-sweep.spec.js`: for each `deviceMatrix()` entry (8 devices × 2 orientations), create a context with `toPlaywrightContext(profile, orientation)`, load `TARGET_URL`, and assert:
+- `tests/features/systematic-landing-test.spec.js`: for each `deviceMatrix()` entry (8 devices × 2 orientations), create a context with `toPlaywrightContext(profile, orientation)`, load `TARGET_URL`, and assert:
   - `document.documentElement.scrollWidth <= window.innerWidth` (no horizontal overflow);
   - zero `console.error` and `pageerror` events;
   - every selector in `SWEEP_KEY_SELECTORS` (env or default `['main', 'h1']`) is visible and inside the viewport width.
@@ -39,12 +41,12 @@ Turn stored test runs into automated evidence:
 - Both specs mint a result record (§4.4) when `MINT_RESULTS=1`.
 
 ### 💻 Dev (Amelia)
-- `tests/fixtures/replay-driver.js`: `replayRun(page, run, { mode = 'deterministic' })` (§4.2).
+- `scripts/playwright-replay-driver.mjs`: `replayRun(page, run, { mode = 'deterministic', speed = 1 })` (§4.2).
 - `tests/fixtures/target-preflight.js`: `ensureTargetReachable(request, url)` → `test.skip(...)` with the reason.
-- `package.json` scripts: `test:sweep` and `test:replay` (§5).
+- `package.json` scripts: `test:responsive` and `test:replay` (§5).
 
 ### 📝 Tech Writer (Paige)
-- Write `docs/08-testing/SYSTEMATIC-LANDING-TESTING.md`: binding a target, recording in the lab, reading the fidelity badge, running sweeps and replays, and inspecting results in SQLite.
+- Extend the existing guide [`docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md`](../../08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md) instead of adding a new file. Cover binding a target, recording in the lab, reading the fidelity badge, running sweeps and replays (including the replay-driver options that were planned for a separate `REPLAY_DRIVER.md`), and inspecting results in SQLite.
 - Add the ERB-00…04 entries to `CHANGELOG.md`.
 
 ---
@@ -54,8 +56,8 @@ Turn stored test runs into automated evidence:
 | Step | Action | Kind | Exit check |
 | :--- | :--- | :--- | :--- |
 | **R1** | Where `responsive-rotation-and-devices.spec.js` types device dimensions that match a registry entry, import them from `tests/fixtures/device-matrix.js`. Keep deliberately custom dimensions (for example oversized-device containment cases) as literals. | Migrate | RVP suite green with an identical pass count. |
-| **R2** | Add `target-preflight.js` and `replay-driver.js` with unit-level tests against the same-origin fixture `tests/fixtures/probe-target.html` (ERB-02/R7). | Add | Driver replays a hand-written 5-event run on the fixture. |
-| **R3** | Add `device-sweep.spec.js`. | Add | `TARGET_URL=app.html npm run test:sweep` green. |
+| **R2** | Add `target-preflight.js` and `scripts/playwright-replay-driver.mjs` with unit-level tests against the same-origin fixture `tests/fixtures/probe-target.html` (ERB-02/R7). | Add | Driver replays a hand-written 5-event run on the fixture. |
+| **R3** | Add `systematic-landing-test.spec.js`. | Add | `TARGET_URL=app.html npm run test:responsive` green. |
 | **R4** | Add `responsive-replay.spec.js`. | Add | Record → save → replay round-trip on `app.html` green. |
 | **R5** | Add the npm scripts and the testing guide. | Docs/harness | Guide steps reproduce on a clean checkout. |
 
@@ -96,7 +98,20 @@ With the 8 built-ins this produces 16 cases: iPhone 16 Pro, iPhone SE, Pixel 8, 
 **Modes**
 
 - `deterministic` (default) ignores recorded timings and waits for Playwright actionability. Use it for correctness.
-- `paced` waits until `t_rel_ms` before each action. Use it for timing-sensitive UI and performance telemetry.
+- `paced` waits until `t_rel_ms / speed` before each action. `speed` is `1`, `2`, or `5` (env `REPLAY_SPEED`). Use it for timing-sensitive UI and performance telemetry. Results record the speed, because frame telemetry at 5× is not comparable to 1×.
+
+**Environment switches** (shared by the sweep and replay specs)
+
+| Variable | Effect |
+| :--- | :--- |
+| `TARGET_URL` | Target to test. Default `app.html`. |
+| `HEADED=1` | Runs headed so a person can watch. |
+| `SLOWMO=<ms>` | Passes `launchOptions.slowMo` for demos and debugging. Never used in CI. |
+| `FAST_MODE=1` | Sweep only: portrait orientation and the first device of each registry `category`, for a quick local loop. CI always runs the full matrix. |
+| `REPLAY_SPEED` | `1` (default), `2`, or `5`; `paced` mode only. |
+| `MINT_RESULTS=1` | Mints result records (§4.4). |
+
+**CLI summary.** After the sweep, a custom reporter prints one row per `(device, orientation)` with the columns `device`, `orientation`, `overflow`, `console`, `keyTargets`, and `verdict`, then a total line. ERB-06 adds its check columns to the same table.
 
 ### 4.3 Parity Checks
 
@@ -131,20 +146,23 @@ With the 8 built-ins this produces 16 cases: iPhone 16 Pro, iPhone SE, Pixel 8, 
 ## 5. Definition of Done (DoD) & Verification
 
 - [ ] `vcard:sprint-erb-04:device_matrix_registry_derived`: Sweep and replay use only `device-matrix.js`; no device dimensions are typed in new specs (`INV-DSF-02`).
-- [ ] `vcard:sprint-erb-04:sweep_suite_green`: `device-sweep.spec.js` passes all 16 cases against `app.html`.
+- [ ] `vcard:sprint-erb-04:sweep_suite_green`: `systematic-landing-test.spec.js` passes all 16 cases against `app.html`.
 - [ ] `vcard:sprint-erb-04:replay_round_trip_verified`: A run recorded in the lab on `app.html` replays with `verdict: pass` at T1.
 - [ ] `vcard:sprint-erb-04:cross_origin_replay_verified`: The same holds for `http://localhost:4321/` with the probe agent, or the spec skips with the preflight reason when the target is down.
 - [ ] `vcard:sprint-erb-04:no_hidden_retries`: Both specs run with `retries: 0`.
 - [ ] `vcard:sprint-erb-04:results_minted`: With `MINT_RESULTS=1`, replay results appear under `urn:mcard:replay_result:*`.
-- [ ] `vcard:sprint-erb-04:documentation_published`: `docs/08-testing/SYSTEMATIC-LANDING-TESTING.md` exists and its steps reproduce.
+- [ ] `vcard:sprint-erb-04:replay_speed_modes`: `paced` replay works at `REPLAY_SPEED=1`, `2`, and `5`, and the speed is recorded in the result.
+- [ ] `vcard:sprint-erb-04:cli_summary_table`: `npm run test:responsive` prints the per-device summary table.
+- [ ] `vcard:sprint-erb-04:documentation_published`: `docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md` covers sweeps and replays, and its steps reproduce.
 
 ### Execution Commands
 ```bash
 # package.json
-#   "test:sweep":  "playwright test tests/features/device-sweep.spec.js --project=features"
+#   "test:responsive":  "playwright test tests/features/systematic-landing-test.spec.js --project=features"
 #   "test:replay": "playwright test tests/features/responsive-replay.spec.js --project=features"
 
-TARGET_URL=app.html npm run test:sweep
-TARGET_URL=http://localhost:4321/ npm run test:sweep
+TARGET_URL=app.html npm run test:responsive
+TARGET_URL=http://localhost:4321/ npm run test:responsive
 TARGET_URL=http://localhost:4321/ MINT_RESULTS=1 npm run test:replay
+FAST_MODE=1 HEADED=1 SLOWMO=250 TARGET_URL=http://localhost:4321/ npm run test:responsive   # watchable local loop
 ```

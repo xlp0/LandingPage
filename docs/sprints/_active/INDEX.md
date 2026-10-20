@@ -1,6 +1,8 @@
 # Active Sprint Series ERB: Device-Sensitive Test Infrastructure
 
-> Responsive Lab → Event Capture → MCard Test Data → Playwright Replay → Device Conformance
+> Responsive Lab → Event Capture → MCard Test Data → Playwright Replay → Device Conformance & Certification
+
+> **Merge note (41cc6a1).** Two refinements of this series were written in parallel and are merged here. From Yohanes's version: the `js/harness/` module home, `target-membrane.js`, `lab-toolbar.js`, `membrane-interceptor.js`, `telemetry-collector.js`, live tap ergonomics, the sweep spec name and `npm run test:responsive`, the replay speed and slow-motion modes, invariants `INV-INF-01` and `INV-DEV-01..04`, the certification record, and the [Device-Sensitive Testing Infrastructure Guide](../../08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md). From the code-verified version: the fidelity tiers, the cross-origin probe agent, the dedicated `/api/test-runs` router with its own body limit, the registry-derived device matrix, and the conformance catalog. His ERB-05 (sweeps and certification) is split between ERB-04 and ERB-06; the ERB-05 number now holds device capability profiles.
 
 ## Executive Summary
 
@@ -13,13 +15,15 @@ The series delivers five capabilities, in order:
 1. A **refactored Responsive UI Lab** whose stage, target binding, and test API are testable ESM modules (`SPRINT-ERB-00`).
 2. A **bounded event ring buffer** and recording state machine (`SPRINT-ERB-01`).
 3. **Device capability profiles** and an explicit **fidelity tier** for every run (`SPRINT-ERB-05`).
-4. **Capture membranes** for same-origin and cross-origin targets, with scale-free normalization (`SPRINT-ERB-02`).
-5. **MCard test-run persistence** via `clm-kernel` (v0.0.9), **Playwright replay and sweeps**, and a **declarative device-conformance suite** with regression history (`SPRINT-ERB-03`, `-04`, `-06`).
+4. **Capture membranes** for same-origin and cross-origin targets, with scale-free normalization and live tap-target ergonomics (`SPRINT-ERB-02`).
+5. **In-target device telemetry** (overflow, frame timing, layout shift) and **MCard test-run persistence** via `clm-kernel` (v0.0.9), **Playwright replay and systematic sweeps**, and a **declarative device-conformance suite** with regression history and responsive certification (`SPRINT-ERB-03`, `-04`, `-06`).
 
 The work runs under the **BMAD (BMM) multi-agent framework** with **pstack (`poteto-mode`)** engineering rigor.
 
 > [!IMPORTANT]
 > All sprints are in `SPECIFICATION`. README and functional-spec statements about ring-buffer capture, MCard test datasets, and replay describe **planned** capabilities until the matching sprint is sealed.
+
+**Guide:** [`docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md`](../../08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md) is the user-facing guide for this series. ERB-04 and ERB-06 extend it.
 
 ---
 
@@ -44,6 +48,18 @@ A browser iframe can only emulate the CSS viewport. Every other device dimension
 - **T1–T2** is for automated replay, sweeps, and conformance.
 - **T3** is ground truth. Its interface is specified in ERB-05; implementation is an optional track in ERB-06.
 
+### 1.1 Device-Sensitive Functionalities Under Test
+
+| Functionality | Invariant | Check (ERB-06) | Measured by | Lowest tier |
+| :--- | :--- | :--- | :--- | :---: |
+| Orientation reflow without clipping | `INV-RVP-01`, `INV-DEV-03` | `orientation-preserves-state` | Sweep + replay | T0 |
+| No horizontal viewport bleed | `INV-DEV-01` | `no-horizontal-overflow` | `telemetry-collector.js` (ERB-03), sweep | T0 |
+| Touch-target ergonomics (≥ 44 px) | `INV-DEV-02` | `tap-target-size` | Live ribbon indicator (ERB-02), conformance | T1 (coarse pointer) |
+| Frame budget during interaction | `INV-DEV-04` | `frame-budget` (advisory) | `telemetry-collector.js`, `paced` replay | T1 |
+| Layout stability (CLS) | — | `layout-stability` | `telemetry-collector.js` | T1 |
+| Breakpoints, DPR assets, reduced motion, colour scheme, hover-to-touch paths | — | catalog checks | Conformance | T1 |
+| Safe-area insets, real `screen.orientation` | — | `safe-area-insets` | T3 probe agent | T3 |
+
 ---
 
 ## 2. Baseline vs. Gap (verified against `main` @ `6f9a53a`)
@@ -66,25 +82,25 @@ Sprint codes are stable identifiers. Execution order follows the dependency grap
 
 ```mermaid
 graph LR
-    S0["ERB-00<br/>Lab Refactor Baseline"] --> S1["ERB-01<br/>Ring Buffer & FSM"]
+    S0["ERB-00<br/>Infrastructure Modularization"] --> S1["ERB-01<br/>Ring Buffer & FSM"]
     S0 --> S5["ERB-05<br/>Device Capability Profiles<br/>& Fidelity Tiers"]
-    S1 --> S2["ERB-02<br/>Capture Membranes<br/>& Normalization"]
+    S1 --> S2["ERB-02<br/>Membrane Interceptor<br/>& Normalization"]
     S5 --> S2
-    S2 --> S3["ERB-03<br/>MCard Test-Run Persistence"]
-    S3 --> S4["ERB-04<br/>Playwright Replay<br/>& Device Sweeps"]
+    S2 --> S3["ERB-03<br/>Telemetry & MCard Persistence"]
+    S3 --> S4["ERB-04<br/>Replay Driver<br/>& Systematic Sweeps"]
     S5 --> S4
-    S4 --> S6["ERB-06<br/>Device-Sensitive<br/>Conformance Suite"]
+    S4 --> S6["ERB-06<br/>Conformance Suite<br/>& Certification"]
 ```
 
 | Order | Sprint | Title | Status | Primary artifacts | Verification gate |
 | :---: | :--- | :--- | :--- | :--- | :--- |
-| 1 | **[ERB-00](./SPRINT-ERB-00-lab-refactor-baseline.md)** | Lab Refactor Baseline | 🟡 SPECIFICATION | `js/responsive-lab/*.js`, `app-config.json#labTargets` | `npm run test:unit` + RVP suite green after **every** step |
-| 2a | **[ERB-01](./SPRINT-ERB-01-ring-buffer-core.md)** | Ring Buffer Core & Recording FSM | 🟡 SPECIFICATION | `js/responsive-lab/event-ring-buffer.js`, `recording-state-machine.js` | `node --test tests/unit/event-ring-buffer.test.mjs tests/unit/recording-state-machine.test.mjs` |
-| 2b | **[ERB-05](./SPRINT-ERB-05-device-capability-profiles.md)** | Device Capability Profiles & Fidelity Tiers | 🟡 SPECIFICATION | `js/device-registry.js` (schema v2), `js/responsive-lab/fidelity.js`, `tests/fixtures/device-matrix.js` | `node --test tests/unit/device-registry-v2.test.mjs tests/unit/fidelity.test.mjs` |
-| 3 | **[ERB-02](./SPRINT-ERB-02-membrane-normalization.md)** | Capture Membranes & Scale-Free Normalization | 🟡 SPECIFICATION | `js/responsive-lab/capture-*.js`, `lab-probe-agent.js`, `normalize-event.js` | `npx playwright test tests/features/responsive-capture.spec.js --project=features` |
-| 4 | **[ERB-03](./SPRINT-ERB-03-mcard-clm-persistence.md)** | MCard Test-Run Persistence | 🟡 SPECIFICATION | `server/test-run-api.mjs`, `js/responsive-lab/test-run-schema.js` | `node --test tests/unit/test-run-api.test.mjs` |
-| 5 | **[ERB-04](./SPRINT-ERB-04-playwright-deterministic-replay.md)** | Playwright Replay & Device Sweeps | 🟡 SPECIFICATION | `tests/fixtures/replay-driver.js`, `tests/features/responsive-replay.spec.js`, `device-sweep.spec.js` | `TARGET_URL=… npx playwright test tests/features/responsive-replay.spec.js tests/features/device-sweep.spec.js --project=features` |
-| 6 | **[ERB-06](./SPRINT-ERB-06-device-sensitive-conformance.md)** | Device-Sensitive Conformance Suite | 🟡 SPECIFICATION | `tests/conformance/checks/*.js`, `tests/conformance/*.conformance.json`, `tests/features/device-conformance.spec.js` | `TARGET_URL=… npx playwright test tests/features/device-conformance.spec.js --project=features` |
+| 1 | **[ERB-00](./SPRINT-ERB-00-infrastructure-refactoring.md)** | Infrastructure Modularization & Lab Refactor Baseline | 🟡 SPECIFICATION | `js/harness/viewport-stage.js`, `target-membrane.js`, `lab-toolbar.js`, `app-config.json#labTargets` | `npm run test:unit` + RVP suite green after **every** step |
+| 2a | **[ERB-01](./SPRINT-ERB-01-ring-buffer-core.md)** | Ring Buffer Core & Recording FSM | 🟡 SPECIFICATION | `js/harness/event-ring-buffer.js`, `recording-state-machine.js` | `node --test tests/unit/event-ring-buffer.test.mjs tests/unit/recording-state-machine.test.mjs` |
+| 2b | **[ERB-05](./SPRINT-ERB-05-device-capability-profiles.md)** | Device Capability Profiles & Fidelity Tiers | 🟡 SPECIFICATION | `js/device-registry.js` (schema v2), `js/harness/fidelity.js`, `tests/fixtures/device-matrix.js` | `node --test tests/unit/device-registry-v2.test.mjs tests/unit/fidelity.test.mjs` |
+| 3 | **[ERB-02](./SPRINT-ERB-02-membrane-normalization.md)** | Target Membrane Interceptor, Touch Ergonomics & Normalization | 🟡 SPECIFICATION | `js/harness/membrane-interceptor.js`, `capture-*.js`, `lab-probe-agent.js`, `normalize-event.js` | `npx playwright test tests/features/responsive-capture.spec.js --project=features` |
+| 4 | **[ERB-03](./SPRINT-ERB-03-mcard-clm-persistence.md)** | Device Telemetry Collector & MCard Test-Run Persistence | 🟡 SPECIFICATION | `js/harness/telemetry-collector.js`, `server/test-run-api.mjs`, `js/harness/test-run-schema.js` | `node --test tests/unit/test-run-api.test.mjs` |
+| 5 | **[ERB-04](./SPRINT-ERB-04-playwright-deterministic-replay.md)** | Playwright Replay Driver & Systematic Sweeps | 🟡 SPECIFICATION | `scripts/playwright-replay-driver.mjs`, `tests/features/responsive-replay.spec.js`, `tests/features/systematic-landing-test.spec.js` | `TARGET_URL=… npm run test:responsive` and `npm run test:replay` |
+| 6 | **[ERB-06](./SPRINT-ERB-06-device-sensitive-conformance.md)** | Conformance Suite & Certification | 🟡 SPECIFICATION | `tests/conformance/checks/*.js`, `tests/conformance/*.conformance.json`, `tests/features/device-conformance.spec.js`, `urn:mcard:certification:responsive:v1` | `TARGET_URL=… npx playwright test tests/features/device-conformance.spec.js --project=features` |
 
 ---
 
@@ -102,7 +118,7 @@ npx playwright test tests/features/responsive-rotation-and-devices.spec.js --pro
 | 1 | `ERB-00/R0` Characterize `?target=` boot (new RVP-T11, RVP-T12) | ERB-00 | Test-only | Untested boot path from `6f9a53a` |
 | 2 | `ERB-00/R1` Extract pure geometry → `viewport-geometry.js` | ERB-00 | Extract | Inline `computeScale` / rotate math |
 | 3 | `ERB-00/R2` Extract stage binding → `viewport-stage.js`; emit `lab:viewport-change` | ERB-00 | Extract | Inline CSS-variable writes and `ResizeObserver` |
-| 4 | `ERB-00/R3` Single writer of `iframe.src` → `target-binding.js` (reuses `assertSafeUrl`) | ERB-00 | Consolidate | Static `src`, 2 inline `iframe.src =` writers, independent pop-out read |
+| 4 | `ERB-00/R3` Single writer of `iframe.src` → `target-membrane.js` (reuses `assertSafeUrl`) | ERB-00 | Consolidate | Static `src`, 2 inline `iframe.src =` writers, independent pop-out read |
 | 5 | `ERB-00/R4` Single target registry `app-config.json#labTargets` | ERB-00 | Consolidate | Hardcoded `<option>`s and CORS array entries |
 | 6 | `ERB-00/R5` Extract presets/manager UI → `device-presets-ui.js` | ERB-00 | Extract | Inline `renderPresets` / manager modal |
 | 7 | `ERB-00/R6` `window.__lab` namespace; migrate callers; delete legacy globals | ERB-00 | Migrate + delete | 8 `window.__*` globals |
@@ -115,8 +131,10 @@ npx playwright test tests/features/responsive-rotation-and-devices.spec.js --pro
 | 14 | `ERB-03/R2` Add `CanonicalTriadBackend.listHandles(prefix)` | ERB-03 | Extend | Ad-hoc SQL in routers |
 | 15 | `ERB-03/R3` Mount `/api/test-runs` with 2 MB parser before global `express.json()` | ERB-03 | Reorder **(behaviour change)** | 413 on large sessions |
 | 16 | `ERB-04/R1` Migrate RVP spec hardcoded device dims to `device-matrix.js` | ERB-04 | Migrate | Duplicated device numbers |
-| 17 | `ERB-06/R1` Lift sweep assertions into the conformance check catalog | ERB-06 | Extract | Inline asserts in `device-sweep.spec.js` |
-| 18 | `ERB-06/R2` `device-sweep.spec.js` becomes "conformance with default spec"; delete duplicates | ERB-06 | Migrate + delete | Duplicated assertion code |
+| 17 | `ERB-06/R1` Lift sweep assertions into the conformance check catalog | ERB-06 | Extract | Inline asserts in `systematic-landing-test.spec.js` |
+| 18 | `ERB-06/R2` `systematic-landing-test.spec.js` becomes "conformance with default spec"; delete duplicates | ERB-06 | Migrate + delete | Duplicated assertion code |
+
+Steps that only **add** new modules (for example `membrane-interceptor.js` in ERB-02, `telemetry-collector.js` in ERB-03/R5, the replay driver in ERB-04, the certification roll-up in ERB-06/R8) are listed in their own sprint and not repeated here.
 
 ---
 
@@ -136,6 +154,11 @@ npx playwright test tests/features/responsive-rotation-and-devices.spec.js --pro
 | `INV-DSF-01` | Declared fidelity | Every run and report records `fidelity.tier`, `emulated[]`, and `notEmulated[]`. A check that needs a higher tier is reported `skipped: fidelity`, never passed. | ERB-05 |
 | `INV-DSF-02` | Single device source of truth | Lab presets, Playwright contexts, and conformance predicates all derive from `js/device-registry.js`. | ERB-05 |
 | `INV-PRV-01` | Capture privacy | No raw keystrokes. Values of `password`, `cc-*`, `one-time-code`, and `[data-lab-redact]` inputs are replaced with `"<redacted>"`. | ERB-02 |
+| `INV-INF-01` | Refactor parity | Infrastructure refactors never change what a test asserts. ERB-00/R6 may change only how tests reach the lab (accessors), never the assertions or their pass counts. | ERB-00 |
+| `INV-DEV-01` | No horizontal bleed | `document.documentElement.scrollWidth ≤ window.innerWidth` on every device and orientation. | ERB-03 (measured), ERB-06 (enforced) |
+| `INV-DEV-02` | Touch-target size | Interactive elements on coarse-pointer devices are ≥ 44 × 44 CSS px by default; a spec may lower the floor to 24 (WCAG AA). | ERB-02 (live), ERB-06 (enforced) |
+| `INV-DEV-03` | Orientation parity | A portrait ↔ landscape swap keeps form state and keeps `INV-DEV-01`. | ERB-06 |
+| `INV-DEV-04` | Frame budget | Average frame time ≤ 20 ms against a 16.6 ms (60 fps) budget during listed interactions. Advisory by default. | ERB-03 (measured), ERB-06 (advisory check) |
 
 ---
 
@@ -157,7 +180,7 @@ Persona names match the installed BMAD skills (`bmad-agent-*`).
 
 ## 7. Cross-Sprint Conventions
 
-- **Module home**: new browser modules live in `js/responsive-lab/`. They are zero-dependency ESM and must import in both the browser and Node (`node:test`) when they hold no DOM code.
+- **Module home**: new browser modules live in `js/harness/`. They are zero-dependency ESM and must import in both the browser and Node (`node:test`) when they hold no DOM code.
 - **Unit tests**: `tests/unit/*.test.mjs` with `node:test` + `node:assert/strict`, run by `npm run test:unit`. Playwright's `testMatch: '**/*.spec.js'` already excludes them.
 - **Browser tests**: `tests/features/*.spec.js` (`features` project). Replay and conformance specs call `test.describe.configure({ retries: 0 })`, because retries would hide nondeterminism.
 - **External targets**: Playwright's `webServer` only starts `:3001`. Specs that use `TARGET_URL` preflight it with `request.get()` and call `test.skip()` with a clear reason when it is unreachable.

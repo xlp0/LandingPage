@@ -1,4 +1,6 @@
-# Sprint ERB-02: Capture Membranes, Scale-Free Normalization & Recording Ribbon
+# Sprint ERB-02: Target Membrane Interceptor, Touch Ergonomics & Scale-Free Normalization
+
+> **Merged spec.** Combines Yohanes's `41cc6a1` draft (`js/harness/membrane-interceptor.js`, live touch-ergonomics auditing, rAF throttling) with the code-verified cross-origin capture design below.
 
 ## Metadata
 - **Sprint Code**: `SPRINT-ERB-02`
@@ -44,15 +46,18 @@ This is scale-free by construction (`INV-ERB-02`). The parent-side `getBoundingC
 - Selector priority: `[data-testid]` → `#id` (if unique) → `[aria-label]` + role → CSS path with `:nth-of-type`, max depth 5.
 
 ### 💻 Dev (Amelia)
-- `js/responsive-lab/normalize-event.js` (pure, no DOM globals; DOM facts are passed in).
-- `js/responsive-lab/capture-same-origin.js` and `js/responsive-lab/capture-probe-agent.js` (the lab side of each source).
-- `js/responsive-lab/lab-probe-agent.js` (runs inside the target; zero dependencies; reuses `normalize-event.js`).
-- `js/responsive-lab/recorder.js` composes `EventRingBuffer` + `RecordingStateMachine` + the active `CaptureSource`. It also listens to `lab:viewport-change` and `lab:target-change` from ERB-00.
-- `js/responsive-lab/recording-ribbon.js` (UI only; talks to `recorder.js` through its public methods).
+- `js/harness/normalize-event.js` (pure, no DOM globals; DOM facts are passed in).
+- `js/harness/membrane-interceptor.js` — the lab-side entry point. On every `lab:target-change` it calls `createCaptureSource(detail)`, which returns the right `CaptureSource` (`same-origin`, `probe-agent`, or `unavailable`). It applies `requestAnimationFrame` throttling to scroll and drag streams.
+- `js/harness/capture-same-origin.js` and `js/harness/capture-probe-agent.js` (the two concrete sources behind the interceptor).
+- `js/harness/lab-probe-agent.js` (runs inside the target; zero dependencies; reuses `normalize-event.js`).
+- `js/harness/recorder.js` composes `EventRingBuffer` + `RecordingStateMachine` + the active `CaptureSource`. It also listens to `lab:viewport-change` and `lab:target-change` from ERB-00.
+- `js/harness/recording-ribbon.js` (UI only; talks to `recorder.js` through its public methods).
 - Extend `window.__lab` with `recorder: { start, pause, resume, stop, state, stats, snapshot, source }`.
 
 ### 🎨 UX Designer (Sally)
-- Recording ribbon in `responsive-lab.html`: active target and capture source (`same-origin` / `probe-agent` / `unavailable`), 🔴 Start / ⏸ Pause / ⏹ Stop, live event count, drop count, rejected-message count, and the ERB-05 fidelity badge.
+- Recording ribbon in `responsive-lab.html`: active target and capture source (`same-origin` / `probe-agent` / `unavailable`), 🔴 Start / ⏸ Pause / ⏹ Stop, live event count, drop count, rejected-message count, a **tap-target health indicator** (count of undersized taps this session), and the ERB-05 fidelity badge.
+- Undersized-tap markers: a brief outline on the stage at the tapped element's rect.
+- Safe-area notch overlays moved to ERB-05 as a **visual guide** only. Injecting `--safe-area-*` custom properties into the target was dropped: real pages read `env(safe-area-inset-*)`, which an iframe cannot change, so it would report false passes. Real safe-area checks need T3 (ERB-06).
 - Colours from `public/css/semantic-tokens.css` only (RVP-T05 already checks tokens in the manager UI; apply the same rule).
 
 ### 🧪 TEA (Murat)
@@ -108,6 +113,11 @@ interface NormalizedEvent {
     | 'pause' | 'resume';         // FSM markers
   target?: { selector: string; tag: string; role?: string };
   pointer?: { pointerType: 'mouse' | 'touch' | 'pen'; button: number };
+  ergonomics?: {                                         // pointer events only (live touch-ergonomics audit)
+    rect: { w: number; h: number };                      // tapped element's CSS px box
+    undersized: boolean;                                 // true when the active profile has pointer 'coarse'
+                                                         // and w or h < minTapTarget (default 44, INV-DEV-02)
+  };
   coords?: { nx: number; ny: number };                   // 4-decimal, clamped to [0, 1]
   scroll?: { x: number; y: number; docW: number; docH: number };
   viewport: { w: number; h: number; dpr: number; orientation: 'portrait' | 'landscape' };
@@ -151,6 +161,7 @@ Lab URL: `http://localhost:3001/responsive-lab.html`. The cross-origin fixture i
 | **C5** | Cross-origin; inject a forged `postMessage` from a non-allowlisted window and a replayed message with a stale nonce | Both are dropped; `rejectReasons` shows `origin_mismatch` / `source_mismatch` and `nonce_mismatch`. |
 | **C6** | Cross-origin fixture **without** agent | Source is `unavailable`; Start is disabled; the reason is shown. |
 | **C7** | Start → 5 clicks → Pause → 3 clicks → Resume → 2 clicks → Stop | `stats().size === 7` + markers; state `FINALIZED`; `t_rel_ms` excludes the paused interval. |
+| **C8** | Same-origin fixture with a 20×20 px button and a 48×48 px button; preset `iphone-16-pro` (coarse) then `desktop-fhd` (fine) | On the phone, only the 20×20 tap has `ergonomics.undersized: true` and the ribbon indicator shows 1. On desktop, neither is flagged. |
 
 ---
 
@@ -163,6 +174,7 @@ Lab URL: `http://localhost:3001/responsive-lab.html`. The cross-origin fixture i
 - [ ] `vcard:sprint-erb-02:unavailable_state_explicit`: C6 passes.
 - [ ] `vcard:sprint-erb-02:scale_free_normalization_verified`: `nx, ny` stay within ±0.01 across `0.25 ≤ s ≤ 1.0` (`INV-ERB-02`).
 - [ ] `vcard:sprint-erb-02:ribbon_operational`: C7 passes; the ribbon shows source, counts, and fidelity.
+- [ ] `vcard:sprint-erb-02:touch_ergonomics_auditing`: C8 passes; undersized taps are flagged only on coarse-pointer profiles.
 - [ ] `vcard:sprint-erb-02:no_regression`: RVP suite and SMR-09 tests green.
 
 ### Execution Command

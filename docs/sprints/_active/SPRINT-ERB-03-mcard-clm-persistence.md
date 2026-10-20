@@ -1,4 +1,6 @@
-# Sprint ERB-03: MCard Test-Run Persistence via `clm-kernel`
+# Sprint ERB-03: Device Telemetry Collector & MCard Test-Run Persistence via `clm-kernel`
+
+> **Merged spec.** Combines Yohanes's `41cc6a1` draft (`js/harness/telemetry-collector.js`: overflow audit, frame monitor, CLS) with the code-verified persistence design. His proposed `server/mcard-session-adapter.mjs` at `/api/mcard/session/*` is replaced by `server/test-run-api.mjs` at `/api/test-runs` for the reasons in §1.2.
 
 ## Metadata
 - **Sprint Code**: `SPRINT-ERB-03`
@@ -47,7 +49,13 @@ Store each finished recording as an immutable, content-addressed MCard in the Ca
 - Define `canonicalJson(value)`: recursively sorted object keys, no insignificant whitespace, `undefined` dropped, and non-finite numbers rejected. Coordinates are already rounded to 4 decimals in ERB-02's `normalizeEvent`.
 
 ### 💻 Dev (Amelia)
-- `js/responsive-lab/test-run-schema.js` — isomorphic and zero-dependency: `validateTestRun(obj) → { valid, errors[] }` and `canonicalJson(obj)`. Follow the hand-written style of `validateDevice` in `js/device-registry.js`.
+- `js/harness/telemetry-collector.js` — runs **inside the target** (loaded by the same-origin source or bundled into `lab-probe-agent.js`), so it works for cross-origin targets too. Zero dependencies. It collects, per recording:
+  - **Horizontal overflow** (`INV-DEV-01`): `scrollWidth > innerWidth`, plus up to 20 offending elements (`tag#id`) whose `getBoundingClientRect().right > innerWidth + 1`. Sampled at start, after each `viewport_change`, and at stop.
+  - **Frame monitor** (`INV-DEV-04`): `requestAnimationFrame` deltas while recording → `avgFps`, `maxFrameMs`, `droppedFrames` (deltas > 16.7 ms counted per missed frame).
+  - **Layout stability**: cumulative layout shift from a `PerformanceObserver({ type: 'layout-shift', buffered: true })`, excluding shifts with `hadRecentInput`. When the browser lacks this entry type, it reports `cls: null` instead of 0.
+  - **Tap ergonomics**: count of `ergonomics.undersized` pointer events (ERB-02).
+  - It sends one summary with `lab:final-state`; it never streams per-frame data.
+- `js/harness/test-run-schema.js` — isomorphic and zero-dependency: `validateTestRun(obj) → { valid, errors[] }` and `canonicalJson(obj)`. Follow the hand-written style of `validateDevice` in `js/device-registry.js`.
 - `server/test-run-api.mjs` — `createTestRunRouter({ storage })`.
 - Client: `recorder.stop()` (ERB-02) assembles the run, validates it locally for UX feedback, and POSTs it. The server re-validates, because the boundary is the server. On network failure the client offers a JSON download, so a capture is never lost.
 - The ribbon shows the returned handle and short hash with a copy button.
@@ -66,7 +74,8 @@ Store each finished recording as an immutable, content-addressed MCard in the Ca
 | **R2** | Add `CanonicalTriadBackend.listHandles(prefix)`: `SELECT handle, current_hash, updated_at FROM handle_registry WHERE handle LIKE ? ESCAPE '\'`, with `%` and `_` escaped in `prefix`. Unit-test the escaping. | Extend | New unit test green. |
 | **R3** | Add `test-run-schema.js` and its tests. | Add | Unit tests green. |
 | **R4** | Add `server/test-run-api.mjs`. In `ws-server.js`, mount it **before** L46: `app.use('/api/test-runs', express.json({ limit: '2mb' }), createTestRunRouter({ storage }))`. **(Behaviour change: new route; no change to existing routes.)** | Reorder + add | `tests/unit/test-run-api.test.mjs` green; existing `/api/mcard/*` smoke unaffected. |
-| **R5** | Wire `recorder.stop()` → POST → ribbon badge, with the offline JSON-download fallback. | Wire | Manual run against `app.html` shows a handle; a follow-up GET returns the same canonical bytes. |
+| **R5** | Add `telemetry-collector.js` with `tests/unit/telemetry-collector.test.mjs` (pure summary functions tested with synthetic frame deltas and shift entries). | Add | Unit tests green. |
+| **R6** | Wire `recorder.stop()` → collect telemetry → POST → ribbon badge, with the offline JSON-download fallback. | Wire | Manual run against `app.html` shows a handle; a follow-up GET returns the same canonical bytes. |
 
 ---
 
@@ -100,6 +109,12 @@ Store each finished recording as an immutable, content-addressed MCard in the Ca
     "eventCount": 24,
     "droppedCount": 0,
     "rejectedMessages": 0
+  },
+  "telemetry": {
+    "overflow": { "hasHorizontalOverflow": false, "elements": [] },
+    "frames": { "avgFps": 59.8, "maxFrameMs": 18.2, "droppedFrames": 1 },
+    "cls": 0.01,
+    "tapTargetViolations": 0
   },
   "finalState": { "url": "http://localhost:4321/explore", "domDigest": "blake3:…" },
   "events": [
@@ -172,6 +187,7 @@ The slug, not the raw URL, goes into `g_time`, which avoids delimiter ambiguity.
 - [ ] `vcard:sprint-erb-03:regression_chain_available`: P5 passes.
 - [ ] `vcard:sprint-erb-03:target_history_retrieval`: P6 passes.
 - [ ] `vcard:sprint-erb-03:production_db_untouched_by_tests`: P7 passes.
+- [ ] `vcard:sprint-erb-03:telemetry_collector_created`: `telemetry-collector.js` reports overflow, frames, CLS, and tap violations for both same-origin and probe-agent targets.
 - [ ] `vcard:sprint-erb-03:client_save_with_offline_fallback`: Stop → saved handle shown; with the server stopped → JSON download offered.
 
 ### Execution Command

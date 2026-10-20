@@ -1,14 +1,15 @@
 # Responsive Test Workbench & LandingPage — Documentation Index
 
 ## 🎯 Active Development & Sprint Series (October 2026)
-- 🚀 **[Active Sprint Series ERB: Device-Sensitive Test Infrastructure (`docs/sprints/_active/`)](./sprints/_active/INDEX.md)** — listed in execution order
-  - [SPRINT-ERB-00: Responsive Lab Refactor Baseline](./sprints/_active/SPRINT-ERB-00-lab-refactor-baseline.md)
+- 🚀 **[Active Sprint Series ERB: Device-Sensitive Testing Infrastructure (`docs/sprints/_active/`)](./sprints/_active/INDEX.md)** — listed in execution order
+  - [SPRINT-ERB-00: Infrastructure Modularization & Lab Refactor Baseline](./sprints/_active/SPRINT-ERB-00-infrastructure-refactoring.md)
   - [SPRINT-ERB-01: Bounded Event Ring Buffer & Recording State Machine](./sprints/_active/SPRINT-ERB-01-ring-buffer-core.md)
-  - [SPRINT-ERB-05: Device Capability Profiles & Fidelity Tiers](./sprints/_active/SPRINT-ERB-05-device-capability-profiles.md)
-  - [SPRINT-ERB-02: Capture Membranes, Scale-Free Normalization & Recording Ribbon](./sprints/_active/SPRINT-ERB-02-membrane-normalization.md)
-  - [SPRINT-ERB-03: MCard Test-Run Persistence via clm-kernel](./sprints/_active/SPRINT-ERB-03-mcard-clm-persistence.md)
-  - [SPRINT-ERB-04: Playwright Replay & Registry-Driven Device Sweeps](./sprints/_active/SPRINT-ERB-04-playwright-deterministic-replay.md)
-  - [SPRINT-ERB-06: Device-Sensitive Functionality Conformance Suite](./sprints/_active/SPRINT-ERB-06-device-sensitive-conformance.md)
+  - [SPRINT-ERB-05: Device Capability Profiles & Fidelity Tiers](./sprints/_active/SPRINT-ERB-05-device-capability-profiles.md) (parallel with ERB-01)
+  - [SPRINT-ERB-02: Target Membrane Interceptor, Touch Ergonomics & Scale-Free Normalization](./sprints/_active/SPRINT-ERB-02-membrane-normalization.md)
+  - [SPRINT-ERB-03: Device Telemetry Collector & MCard Test-Run Persistence](./sprints/_active/SPRINT-ERB-03-mcard-clm-persistence.md)
+  - [SPRINT-ERB-04: Deterministic Playwright Replay Driver & Systematic Multi-Device Sweeps](./sprints/_active/SPRINT-ERB-04-playwright-deterministic-replay.md)
+  - [SPRINT-ERB-06: Device-Sensitive Conformance Suite & Certification](./sprints/_active/SPRINT-ERB-06-device-sensitive-conformance.md)
+  - 📖 **Guide**: [Device-Sensitive Testing Infrastructure Guide](08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md)
 
 ## 🌟 Authoritative Functional Specifications (October 2026)
 

@@ -1,4 +1,6 @@
-# Sprint ERB-06: Device-Sensitive Functionality Conformance Suite
+# Sprint ERB-06: Device-Sensitive Functionality Conformance Suite & Certification
+
+> **Merge note (41cc6a1).** Yohanes's ERB-05 defined the device invariants `INV-DEV-01..04` and a responsive certification record. This sprint carries both. Each invariant is a catalog check (see the `Invariant` column in §2), and certification is a roll-up record over the conformance reports (§6.3). His sweep spec became the ERB-04 sweep, and R1/R2 below migrate it onto this catalog.
 
 ## Metadata
 - **Sprint Code**: `SPRINT-ERB-06`
@@ -28,21 +30,23 @@ It adds a **declarative conformance spec per target**, a **catalog of reusable d
 
 Each check is a small module in `tests/conformance/checks/<id>.js` exporting `{ id, appliesTo(profile, run), requires: string[], run(page, params) → { status, evidence } }`. `requires` lists capability names from ERB-05 §5.3; the runner compares them to the context's `FidelityDeclaration`.
 
-| Check id | Applies to | Requires | Pass condition |
-| :--- | :--- | :--- | :--- |
-| `no-horizontal-overflow` | all | `viewport` | `scrollWidth <= innerWidth` after load and after each listed interaction |
-| `no-console-errors` | all | `viewport` | Zero `console.error` and `pageerror` |
-| `key-targets-visible` | all | `viewport` | Every `params.selectors` is visible and within viewport width |
-| `breakpoint-layout` | per `params.byCategory` | `viewport` | Listed selectors are visible or hidden as declared for the device category (for example, `#nav-toggle` visible on phone, `#nav-desktop` hidden) |
-| `viewport-meta` | `isMobile` | `isMobile` | `<meta name="viewport">` contains `width=device-width` |
-| `tap-target-size` | `pointer === 'coarse'` | `hasTouch`, `pointer` | Each interactive element in `params.scope` is ≥ 24 × 24 CSS px (WCAG 2.5.8 AA). The report also lists elements below 44 × 44 (WCAG 2.5.5 AAA) as advisory. |
-| `hover-has-touch-path` | `hover === false` | `hasTouch`, `hover` | Every element listed in `params.hoverMenus` opens on `tap()` |
-| `orientation-preserves-state` | `category ∈ {phone, tablet}` | `viewport` | Values filled into `params.fields` survive a portrait ↔ landscape swap |
-| `dpr-assets` | `pixelRatio ≥ 2` | `pixelRatio` | For each `img[srcset]` in `params.scope`, `currentSrc` picks a candidate with density ≥ 2x (or width ≥ rendered width × DPR) |
-| `reduced-motion` | all, run with `reducedMotion: 'reduce'` | `reducedMotion` | `document.getAnimations()` on `params.scope` has no running animation longer than 0.01 s |
-| `color-scheme` | all, run with light and dark | `colorScheme` | `params.selectors` have WCAG AA contrast (≥ 4.5:1) in both schemes |
-| `geolocation-denied` | when `params.enabled` | `permissions`, `geolocation` | With geolocation permission denied, `params.fallbackSelector` becomes visible |
-| `safe-area-insets` | profiles with `safeAreaInsets` | `safeAreaInsets` | Fixed or sticky elements in `params.selectors` keep clear of the inset areas. T3 only, so it **always skips below T3**. |
+| Check id | Invariant | Applies to | Requires | Pass condition |
+| :--- | :--- | :--- | :--- | :--- |
+| `no-horizontal-overflow` | `INV-DEV-01` | all | `viewport` | `scrollWidth <= innerWidth` after load and after each listed interaction. Evidence lists the overflowing elements. |
+| `no-console-errors` | | all | `viewport` | Zero `console.error` and `pageerror` |
+| `key-targets-visible` | | all | `viewport` | Every `params.selectors` is visible and within viewport width |
+| `breakpoint-layout` | | per `params.byCategory` | `viewport` | Listed selectors are visible or hidden as declared for the device category (for example, `#nav-toggle` visible on phone, `#nav-desktop` hidden) |
+| `viewport-meta` | | `isMobile` | `isMobile` | `<meta name="viewport">` contains `width=device-width` |
+| `tap-target-size` | `INV-DEV-02` | `pointer === 'coarse'` | `hasTouch`, `pointer` | Each interactive element in `params.scope` is at least `params.min` × `params.min` CSS px. `params.min` defaults to 44 (`INV-DEV-02`, WCAG 2.5.5 AAA). A spec may lower it to 24 (WCAG 2.5.8 AA, the floor); the report then lists elements below 44 as advisory. |
+| `hover-has-touch-path` | | `hover === false` | `hasTouch`, `hover` | Every element listed in `params.hoverMenus` opens on `tap()` |
+| `orientation-preserves-state` | `INV-DEV-03` | `category ∈ {phone, tablet}` | `viewport` | Values filled into `params.fields` survive a portrait ↔ landscape swap, and `no-horizontal-overflow` still holds after the swap (reflow parity) |
+| `frame-budget` | `INV-DEV-04` | all, `paced` runs only | `viewport` | Telemetry from ERB-03 shows `avgFrameMs ≤ params.avgMs` (default 20) during the listed interactions. **Advisory by default** (`params.enforce: false`), because frame timing on emulated or CI hardware is noisy. |
+| `layout-stability` | | all | `viewport`, `layoutShiftApi` | Cumulative Layout Shift from ERB-03 telemetry `≤ params.maxCls` (default 0.1). `skipped: fidelity` when the browser has no layout-shift API. |
+| `dpr-assets` | | `pixelRatio ≥ 2` | `pixelRatio` | For each `img[srcset]` in `params.scope`, `currentSrc` picks a candidate with density ≥ 2x (or width ≥ rendered width × DPR) |
+| `reduced-motion` | | all, run with `reducedMotion: 'reduce'` | `reducedMotion` | `document.getAnimations()` on `params.scope` has no running animation longer than 0.01 s |
+| `color-scheme` | | all, run with light and dark | `colorScheme` | `params.selectors` have WCAG AA contrast (≥ 4.5:1) in both schemes |
+| `geolocation-denied` | | when `params.enabled` | `permissions`, `geolocation` | With geolocation permission denied, `params.fallbackSelector` becomes visible |
+| `safe-area-insets` | | profiles with `safeAreaInsets` | `safeAreaInsets` | Fixed or sticky elements in `params.selectors` keep clear of the inset areas. T3 only, so it **always skips below T3**. The ERB-05 notch overlay is a visual guide, not evidence. |
 
 Adding a check is one file plus one catalog entry. No spec code changes.
 
@@ -66,7 +70,9 @@ One JSON file per target: `tests/conformance/<slug>.conformance.json` (JSON keep
     { "id": "breakpoint-layout", "params": { "byCategory": {
         "phone":   { "visible": ["[data-testid=nav-toggle]"], "hidden": ["[data-testid=nav-desktop]"] },
         "desktop": { "visible": ["[data-testid=nav-desktop]"], "hidden": ["[data-testid=nav-toggle]"] } } } },
-    { "id": "tap-target-size", "params": { "scope": "a, button, [role=button], input, select" } },
+    { "id": "tap-target-size", "params": { "scope": "a, button, [role=button], input, select", "min": 44 } },
+    { "id": "orientation-preserves-state", "params": { "fields": ["input[type=email]"] } },
+    { "id": "layout-stability", "params": { "maxCls": 0.1 } },
     { "id": "reduced-motion", "params": { "scope": "body" } },
     { "id": "safe-area-insets", "params": { "selectors": ["header", "footer"] } }
   ]
@@ -94,7 +100,7 @@ One JSON file per target: `tests/conformance/<slug>.conformance.json` (JSON keep
 - Prove fidelity honesty: running `safe-area-insets` at T1 yields `skipped: fidelity`, never `pass`.
 
 ### 📝 Tech Writer (Paige)
-- Add a "Writing a conformance spec" section to `docs/08-testing/SYSTEMATIC-LANDING-TESTING.md`.
+- Add a "Writing a conformance spec" section and a "Certification" section to [`docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md`](../../08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md).
 
 ---
 
@@ -102,13 +108,14 @@ One JSON file per target: `tests/conformance/<slug>.conformance.json` (JSON keep
 
 | Step | Action | Kind | Exit check |
 | :--- | :--- | :--- | :--- |
-| **R1** | Move the sweep assertions from `device-sweep.spec.js` (ERB-04) into `checks/no-horizontal-overflow.js`, `checks/no-console-errors.js`, and `checks/key-targets-visible.js`. | Extract | Check unit tests green. |
-| **R2** | Rewrite `device-sweep.spec.js` as "conformance with the default spec" (those three checks), then delete its inline assertions in the same commit. | Migrate + delete | `npm run test:sweep` still produces 16 green cases. |
+| **R1** | Move the sweep assertions from `systematic-landing-test.spec.js` (ERB-04) into `checks/no-horizontal-overflow.js`, `checks/no-console-errors.js`, and `checks/key-targets-visible.js`. | Extract | Check unit tests green. |
+| **R2** | Rewrite `systematic-landing-test.spec.js` as "conformance with the default spec" (those three checks), then delete its inline assertions in the same commit. | Migrate + delete | `npm run test:responsive` still produces 16 green cases. |
 | **R3** | Add the remaining checks, one commit each, each with good/bad fixture tests. | Add | Each check's fixture test is green. |
 | **R4** | Add `runner.js` with central fidelity gating, plus `device-conformance.spec.js`. | Add | `app.html` spec green; `safe-area-insets` reports `skipped: fidelity` at T1. |
 | **R5** | Mint reports and bind `latest` handles; add the diff endpoint. | Add | Two consecutive runs return a diff with zero changes. |
 | **R6** | Seed `tests/conformance/localhost-3001-app-html.conformance.json` and `tests/conformance/localhost-4321.conformance.json`. | Seed | Both run (or skip by preflight) cleanly. |
 | **R7** | Add the lab Conformance panel. | Wire | Manual check plus RVP suite green. |
+| **R8** | Mint the certification roll-up (§6.3) and add the check columns to the ERB-04 CLI summary table. | Add | `app.html` gets `certified: true`; deliberately breaking `no-horizontal-overflow` on one device flips it to `false` with that device named. |
 
 ---
 
@@ -139,6 +146,29 @@ One JSON file per target: `tests/conformance/<slug>.conformance.json` (JSON keep
 - `GET /api/test-runs/conformance/diff?target=<url>&device=<id>&orientation=<o>` compares the current and previous report under the latest handle and returns per-check transitions (`pass → fail`, `fail → pass`, `skipped → pass` when the tier rose, and so on).
 - `GET /api/test-runs/conformance/latest?target=<url>` returns the latest summary for every `(device, orientation)` (used by the lab panel).
 
+### 6.3 Certification Roll-up `urn:mcard:certification:responsive:v1`
+
+Adopted from Yohanes's ERB-05. After a full matrix run (never in `FAST_MODE`), the runner mints one certification record per target:
+
+```json
+{
+  "schema": "urn:mcard:certification:responsive:v1",
+  "target": { "url": "http://localhost:4321/", "slug": "localhost-4321" },
+  "specHash": "blake3:…",
+  "matrix": { "devices": 8, "orientations": 2 },
+  "certified": true,
+  "rule": ["INV-DEV-01", "INV-DEV-03"],
+  "reports": ["blake3:…", "…"],
+  "failures": [],
+  "maxFidelityTier": 1
+}
+```
+
+- **Rule**: `certified` is `true` only when every `(device, orientation)` passes `no-horizontal-overflow` (`INV-DEV-01`) and `orientation-preserves-state` (`INV-DEV-03`). Other checks show up in the reports but do not block certification unless the spec lists them in `certifyOn`.
+- `reports` holds the hashes of the conformance reports it rolls up, so the certificate is verifiable from content.
+- `maxFidelityTier` states the evidence level honestly. A T1 certificate does not claim real-device behavior (`INV-DSF-01`).
+- Handle: `urn:mcard:certification_latest:<slug>`, rebound each certification run.
+
 ---
 
 ## 7. Optional Track: T3 Real-Device Capture
@@ -154,12 +184,14 @@ This track implements the transport specified in ERB-05 §5.4. Run it only after
 ## 8. Definition of Done (DoD) & Verification
 
 - [ ] `vcard:sprint-erb-06:check_catalog_complete`: All §2 checks exist with good/bad fixture tests.
-- [ ] `vcard:sprint-erb-06:sweep_migrated_to_catalog`: `device-sweep.spec.js` has no inline assertions left (R2).
+- [ ] `vcard:sprint-erb-06:sweep_migrated_to_catalog`: `systematic-landing-test.spec.js` has no inline assertions left (R2).
 - [ ] `vcard:sprint-erb-06:fidelity_gating_central`: Checks needing a higher tier report `skipped: fidelity`; no check self-skips (`INV-DSF-01`).
 - [ ] `vcard:sprint-erb-06:capability_predicates_applied`: `appliesTo` uses ERB-05 profile fields only, for example `tap-target-size` is `not-applicable` on desktop.
 - [ ] `vcard:sprint-erb-06:reports_minted_with_history`: Reports persist and the diff endpoint shows per-check transitions.
 - [ ] `vcard:sprint-erb-06:targets_seeded`: Specs exist for `app.html` and `http://localhost:4321/`.
 - [ ] `vcard:sprint-erb-06:lab_panel_operational`: The lab shows the latest conformance summary for the active device.
+- [ ] `vcard:sprint-erb-06:device_invariants_enforced`: `INV-DEV-01..03` are blocking checks, and `INV-DEV-04` (`frame-budget`) reports as advisory unless the spec enforces it.
+- [ ] `vcard:sprint-erb-06:certification_minted`: A full-matrix run mints `urn:mcard:certification:responsive:v1` with the certification rule applied and its report hashes listed.
 
 ### Execution Command
 ```bash

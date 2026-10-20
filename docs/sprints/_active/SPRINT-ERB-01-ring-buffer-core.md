@@ -1,11 +1,13 @@
 # Sprint ERB-01: Bounded Event Ring Buffer & Recording State Machine
 
+> **Merged spec.** Keeps the module home `js/harness/` and the class names `EventRingBuffer` / `RecordingStateMachine` from Yohanes's `41cc6a1` draft. Two adjustments: the classes live in two files (data vs. control), and the "zero-allocation" claim is restated as "no buffer growth" (§4.3).
+
 ## Metadata
 - **Sprint Code**: `SPRINT-ERB-01`
 - **Handle**: `urn:pcard:sprint:SPRINT-ERB-01`
 - **Status**: `SPECIFICATION`
 - **Archetype**: `ClmTriadManifest`
-- **Depends on**: `SPRINT-ERB-00` (module home `js/responsive-lab/`, `npm run test:unit`)
+- **Depends on**: `SPRINT-ERB-00` (module home `js/harness/`, `npm run test:unit`)
 - **Runs in parallel with**: `SPRINT-ERB-05`
 - **Unblocks**: `SPRINT-ERB-02`
 - **pstack Playbook**: `tdd` + `principle-model-the-domain` + `principle-foundational-thinking`
@@ -33,13 +35,13 @@ No lab wiring happens in this sprint. Both modules are greenfield and must run u
 - Require `seq` to be assigned by the buffer and to increase by exactly 1 per accepted push, including pushes that overwrite. Replay (ERB-04) detects loss as gaps in `seq`.
 
 ### 💻 Dev (Amelia)
-- `js/responsive-lab/event-ring-buffer.js`:
+- `js/harness/event-ring-buffer.js`:
   - `constructor({ capacity = 2048 } = {})`: throws `RangeError` unless `capacity` is an integer in `[1, 2048]`.
   - `push(event): number` — freezes the event shallowly, stamps `seq`, and returns that `seq`.
   - `snapshot(): ReadonlyArray<CapturedEvent>` — a new array in chronological order (oldest → newest).
   - `clear(): void` — empties slots, resets `size`, `dropped`, `head`, and `tail`. Keeps `nextSeq` monotonic within the instance.
   - `stats(): RingBufferStats`.
-- `js/responsive-lab/recording-state-machine.js`:
+- `js/harness/recording-state-machine.js`:
   - `constructor({ now = () => performance.now() } = {})` — the clock is injected so tests are deterministic.
   - `start()`, `pause()`, `resume()`, `stop()`, `reset()`, `state`, `canAccept()`, and `activeElapsedMs()`.
   - `onTransition(listener)` returns an unsubscribe function. The recorder (ERB-02) uses it to push `pause` / `resume` marker events.
@@ -71,7 +73,7 @@ This sprint adds code only. It touches no existing file except `package.json` if
 | **R1** | Write the two test files first (red). | Tests fail because the modules are missing. |
 | **R2** | Implement `event-ring-buffer.js` until its tests pass. | `node --test tests/unit/event-ring-buffer.test.mjs` passes. |
 | **R3** | Implement `recording-state-machine.js` until its tests pass. | `node --test tests/unit/recording-state-machine.test.mjs` passes. |
-| **R4** | Confirm browser loadability: `await import('/js/responsive-lab/event-ring-buffer.js')` in the lab console (no Node-only APIs). | Import resolves with no errors. |
+| **R4** | Confirm browser loadability: `await import('/js/harness/event-ring-buffer.js')` in the lab console (no Node-only APIs). | Import resolves with no errors. |
 
 ---
 
@@ -135,8 +137,8 @@ push(event) {
 
 ## 5. Definition of Done (DoD) & Verification
 
-- [ ] `vcard:sprint-erb-01:ring_buffer_module_created`: `js/responsive-lab/event-ring-buffer.js` exists with zero runtime dependencies and loads in both browser and Node.
-- [ ] `vcard:sprint-erb-01:state_machine_module_created`: `js/responsive-lab/recording-state-machine.js` exists with an injected clock.
+- [ ] `vcard:sprint-erb-01:ring_buffer_module_created`: `js/harness/event-ring-buffer.js` exists with zero runtime dependencies and loads in both browser and Node.
+- [ ] `vcard:sprint-erb-01:state_machine_module_created`: `js/harness/recording-state-machine.js` exists with an injected clock.
 - [ ] `vcard:sprint-erb-01:pointer_math_validated`: Wrap-around, overwrite accounting, and gap-free `seq` are proven by tests.
 - [ ] `vcard:sprint-erb-01:fsm_exhaustively_tested`: All 20 `(state, action)` pairs are asserted against §4.2.
 - [ ] `vcard:sprint-erb-01:active_time_clock_verified`: Paused intervals are excluded from `t_rel_ms`.

@@ -21,6 +21,10 @@ All notable changes to the PKC Landing Page are documented in this file. The for
 - **ERB-04**: Derives the device matrix from `js/device-registry.js` (removes the non-existent "iPad Pro 11" entry), unifies spec names, pins `retries: 0`, and preflights external targets.
 - **BMAD roster**: Persona names aligned with the installed BMAD skills (Mary, Sally); pstack playbooks reference real skill names.
 - **`README.md`, `docs/INDEX.md`, `docs/functionalities/09-…md`**: Planned ERB capabilities are now marked as planned, device names match the registry, and the T0 viewport-only fidelity limit is stated.
+- **Merged with Yohanes's parallel refinement (`41cc6a1`)** into one 7-sprint series; each sprint carries a merge note.
+  - *Adopted from 41cc6a1*: the `js/harness/` module home, `target-membrane.js`, `lab-toolbar.js`, `membrane-interceptor.js` with live tap-target ergonomics, `telemetry-collector.js` (overflow, frame timing, CLS), the sweep spec `tests/features/systematic-landing-test.spec.js` with `npm run test:responsive`, `FAST_MODE`/`HEADED`/`SLOWMO`, replay speed 1×/2×/5×, a CLI summary table, invariants `INV-INF-01` and `INV-DEV-01..04`, the certification record `urn:mcard:certification:responsive:v1`, and the guide `docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md`.
+  - *Replaced*: his `SPRINT-ERB-05-device-sensitive-systematic-sweeps.md` was split. Sweeps moved to ERB-04 and certification to ERB-06 §6.3, and ERB-05 now holds device capability profiles. `server/mcard-session-adapter.mjs` became `server/test-run-api.mjs`, because `/api/mcard/session` would be captured by the `/:hash` route. The 5-device matrix became the 8-device registry matrix.
+  - *Guide*: now shows planned-versus-available status, fidelity tiers, the dependency-ordered roadmap, all 8 registry devices, and verification commands that match the sprint specs.
 
 ## 0.1.0 — 2026-10-18
 
