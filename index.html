@@ -6,6 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GovTech Platform | Mission Control</title>
   <meta name="description" content="GovTech Operating System - Computational Trinitarianism">
+  <!-- Automatic direct navigation to Responsive UI Lab (top-level only) -->
+  <script>
+    // Always directly go to Responsive UI Lab at top-level without having to click on it
+    if (window.self === window.top && !window.location.search.includes('noredirect')) {
+      window.location.replace('responsive-lab.html');
+    }
+  </script>
   <link rel="stylesheet" href="./public/css/semantic-tokens.css">
   <style>
     * {
@@ -88,6 +95,7 @@
       padding: 2rem;
       max-width: 800px;
       width: 100%;
+      min-height: 1180px;
       animation: fadeIn var(--motion-duration-slow) ease-out;
     }
 
@@ -268,9 +276,7 @@
   <nav class="penpot-nav-bar" id="penpot-site-nav" aria-label="Penpot Navigation Flow" data-graph-hash="aca8f9317cb38d1546965cdbcf54d248853bcbeb63a1cf1c89be0b70928db085">
     <span class="penpot-nav-title">🎨 Flow: main-nav</span>
     <div class="penpot-nav-links">
-      <a class="penpot-nav-link penpot-nav-link-active" href="index.html" data-penpot-frame="d7570000-0000-8000-8000-000000000011" data-penpot-handle="mcard:route:/index.html">Home</a>
-      <a class="penpot-nav-link" href="app.html" data-penpot-frame="d7570000-0000-8000-8000-000000000012" data-penpot-handle="mcard:route:/app.html">Mission Control</a>
-      <a class="penpot-nav-link" href="responsive-lab.html" data-penpot-frame="d7570000-0000-8000-8000-000000000013" data-penpot-handle="mcard:route:/responsive-lab.html">Responsive UI Lab</a>
+      <a class="penpot-nav-link penpot-nav-link-active" href="responsive-lab.html" data-penpot-frame="d7570000-0000-8000-8000-000000000013" data-penpot-handle="mcard:route:/responsive-lab.html">Responsive UI Lab</a>
     </div>
   </nav>
   <!-- END: PENPOT-GENERATED-NAV -->
@@ -280,12 +286,6 @@
       <span class="faro-pulse"></span>
       <span>Faro RUM</span>
     </div>
-    <!-- Sprint CDO-11: Mission Control Observability Cockpit -->
-    <button class="control-btn" id="mission-control-btn" title="Launch Mission Control (Backend Observable Data & Grafana Cockpit)">
-      <span id="split-icon">🎛️</span>
-      <span id="split-label">Mission Control</span>
-    </button>
-    <button class="control-btn" id="mission-control-split-btn" style="display: none;" aria-hidden="true" title="Mission Control Split Alias"></button>
     
     <!-- Sprint CDO-12: Responsive UI Lab Full-Window Viewport Workbench -->
     <a class="control-btn" id="responsive-ui-lab-btn" href="responsive-lab.html" title="Open Responsive UI Lab (Full-Window Viewport & Orientation Workbench)">
@@ -294,18 +294,6 @@
     </a>
     <button class="control-btn" id="mission-control-sidepane-btn" style="display: none;" aria-hidden="true" title="Side Pane Alias"></button>
 
-    <button class="control-btn" id="least-action-btn" title="Open Least Action & Directionality Navigator (Software Lagrangian ℒ = S_T - H_T)">
-      <span id="least-action-icon">🧭</span>
-      <span id="least-action-label">Least Action (ℒ)</span>
-    </button>
-    <button class="control-btn" id="fibration-observability-btn" title="Open Cross-Unit Fibration Observability & Lagrangian Dashboard">
-      <span id="fibration-icon">📊</span>
-      <span id="fibration-label">Fibration</span>
-    </button>
-    <button class="control-btn" id="deployment-inspector-btn" title="Open Meta-Portal Deployment Unit Inspector">
-      <span id="inspector-icon">📦</span>
-      <span id="inspector-label">Deployment Units</span>
-    </button>
     <button class="control-btn" id="theme-toggle-btn" title="Toggle Display Theme (Dark / Light / High-Contrast)">
       <span id="theme-icon">🌙</span>
       <span id="theme-label">Dark</span>
@@ -320,27 +308,9 @@
     <h1>GovTech OS</h1>
     <p class="subtitle">Computational Trinitarianism</p>
 
-    <div class="card-grid">
-      <!-- Sprint CDO-11: Mission Control Observability Gateway Card -->
-      <div id="mission-control-card" class="card" style="cursor: pointer;">
-        <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-        </svg>
-        <h2>Mission Control</h2>
-        <p>Operational cockpit for backend observable data, Grafana Faro Web SDK RUM telemetry, and deployment metrics.</p>
-        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.75rem;">
-          <a id="mission-control-link" href="app.html" target="_blank" class="split-launch-btn" title="Launch Mission Control in split pane / separate tab">
-            <span>⧉ Open Observability Cockpit</span>
-          </a>
-        </div>
-        <div class="cors-safe-badge" title="Safe from iframe X-Frame-Options and CSP frame-ancestors restrictions via Google Split-View (Cmd+Option+N)">
-          <span>✓ Grafana Faro Telemetry • CORS &amp; Frame-Isolation Safe</span>
-        </div>
-      </div>
-
+    <div class="card-grid" style="max-width: 580px; margin: 2rem auto;">
       <!-- Sprint CDO-12: Responsive UI Lab Full-Window Workbench Card -->
-      <div id="responsive-ui-lab-card" class="card" style="cursor: pointer;">
+      <div id="responsive-ui-lab-card" class="card" style="cursor: pointer; width: 100%;">
         <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M4 6h16M4 12h16m-7 6h7M7 17l-3-3 3-3" />
@@ -358,48 +328,6 @@
           <span style="font-size: 0.7rem; background: var(--badge-success-bg); color: var(--badge-success-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">↕ Vertical (Portrait)</span>
           <span style="font-size: 0.7rem; background: var(--badge-info-bg); color: var(--badge-info-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">↔ Horizontal (Landscape)</span>
           <span style="font-size: 0.7rem; background: var(--badge-info-bg); color: var(--badge-info-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">🖥️ Full-Window Real-Estate</span>
-        </div>
-      </div>
-
-      <!-- Least Action & Directionality Navigator Card -->
-      <div id="least-action-card" class="card" style="cursor: pointer;">
-        <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-        <h2>Least Action (ℒ)</h2>
-        <p>Software Lagrangian (ℒ = S_T - H_T) &amp; Geodesic Sprints along Directionality (道) to SSOT.</p>
-        <div style="display: flex; gap: 0.35rem; margin-top: 0.75rem; flex-wrap: wrap; justify-content: center;">
-          <span style="font-size: 0.7rem; background: var(--badge-success-bg); color: var(--badge-success-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">δS = 0 Stationary</span>
-          <span style="font-size: 0.7rem; background: var(--badge-info-bg); color: var(--badge-info-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">Epiplexity S_T</span>
-          <span style="font-size: 0.7rem; background: var(--badge-danger-bg); color: var(--badge-danger-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">Entropy H_T</span>
-        </div>
-      </div>
-
-      <!-- MCard Studio Card -->
-      <a id="mcard-studio-link" href="https://mcardstudio.pkc.pub/" class="card">
-        <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-        </svg>
-        <h2>MCard Studio</h2>
-        <p>Access and manage your persistent files.</p>
-      </a>
-
-      <!-- Meta-Portal Deployment Unit Inspector Card -->
-      <div id="deployment-inspector-card" class="card" style="cursor: pointer;">
-        <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-        </svg>
-        <h2>Deployment Units</h2>
-        <p>Examine Web, Desktop, Mobile, Wearable, and AR/VR units packaged in Growth-only SQLite db.</p>
-        <div style="display: flex; gap: 0.35rem; margin-top: 0.75rem; flex-wrap: wrap; justify-content: center;">
-          <span style="font-size: 0.7rem; background: var(--badge-info-bg); color: var(--badge-info-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">Web</span>
-          <span style="font-size: 0.7rem; background: var(--badge-danger-bg); color: var(--badge-danger-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">Desktop</span>
-          <span style="font-size: 0.7rem; background: var(--badge-success-bg); color: var(--badge-success-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">Mobile</span>
-          <span style="font-size: 0.7rem; background: var(--badge-warning-bg); color: var(--badge-warning-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">Wearables</span>
-          <span style="font-size: 0.7rem; background: var(--badge-accent-bg); color: var(--badge-accent-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">AR/VR</span>
         </div>
       </div>
     </div>

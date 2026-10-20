@@ -828,6 +828,7 @@
         <select id="public-site-selector" class="target-url-select" aria-label="Select target website to test iframe compatibility">
           <option value="app.html" data-status="allowed" data-desc="Local Responsive UI Target (Iframe Compatible)">Local UI Target (app.html) - Iframe Compatible</option>
           <option value="index.html" data-status="allowed" data-desc="GovTech OS Portal Page (Iframe Compatible)">GovTech OS Portal (index.html) - Iframe Compatible</option>
+          <option value="http://localhost:4321/" data-status="allowed" data-desc="Local App Target (http://localhost:4321/) - Iframe Compatible">Local App (http://localhost:4321/) - Iframe Compatible</option>
           <option value="https://github.com" data-status="blocked" data-reason="X-Frame-Options: DENY" data-desc="GitHub blocks embedded iframe rendering via X-Frame-Options: DENY">GitHub (https://github.com) - Blocked (X-Frame-Options: DENY)</option>
           <option value="https://www.google.com" data-status="blocked" data-reason="X-Frame-Options: SAMEORIGIN" data-desc="Google blocks third-party iframe embedding via X-Frame-Options: SAMEORIGIN">Google (https://www.google.com) - Blocked (SAMEORIGIN)</option>
           <option value="https://developer.mozilla.org" data-status="blocked" data-reason="CSP frame-ancestors: 'none'" data-desc="MDN Web Docs blocks iframing via Content-Security-Policy: frame-ancestors 'none'">MDN Web Docs - Blocked (CSP frame-ancestors: 'none')</option>

@@ -39,6 +39,8 @@ A modern, **static-first, modular web application** with **serverless P2P commun
 - **Layout-Box Stage Containment (`INV-RVP-02`)**: Automatic scale factor $s = \min(1, W_{\text{available}} / w_{\text{target}}, H_{\text{available}} / h_{\text{target}})$ inside a dedicated `.viewport-scale-wrapper`. Even the largest desktop or rotated tablet viewports fit completely within the available stage space with zero window scrollbars.
 - **Declarative Device Registry (`INV-RVP-03`)**: Built-in catalog of 8 modern devices (`js/device-registry.js`) from phones to XR headsets, with schema validation ($[100, 7680]$ px bounds) and persistent `localStorage` storage.
 - **Interactive Device Manager**: Add custom screen sizes with automated greatest-common-divisor (GCD) aspect ratio calculation, delete user-added devices, or reset to factory defaults.
+- **Target Selection & Local App Testing**: Pre-configured iframe test targets including `app.html`, `index.html`, and local development servers (`http://localhost:4321/`) with real-time sandbox header diagnostics (X-Frame-Options and CSP frame-ancestors).
+- **Direct Portal Navigation**: `index.html` streamlined to highlight the Responsive UI Lab as the primary choice with top-level automatic navigation (`window.self === window.top`).
 - **Zero-Dependency Guarantee (`INV-REF-01`)**: Pure vanilla JavaScript and native CSS variables (`--frame-target-width`, `--frame-target-height`, `--frame-scale-factor`).
 
 ### **🏗️ Modular Architecture**
@@ -724,6 +726,11 @@ Consumers (such as `mcard-studio`, CLI tools, or external platforms) ingest emit
 ## 🐛 **Recent Bug Fixes**
 
 ### **October 2026**
+- **Responsive UI Lab & Portal Navigation Updates (`responsive-lab.html`, `index.html`, `ws-server.js`)**:
+  - Streamlined `index.html` to present Responsive UI Lab as the primary choice with top-level direct navigation (`window.self === window.top`) to bypass extra clicks while maintaining scrollability test compliance.
+  - Added `http://localhost:4321/` to `#public-site-selector` in `responsive-lab.html` for testing local Astro and frontend applications inside the iframe workbench.
+  - Added `http://localhost:4321` to allowed CORS origins in `ws-server.js`.
+  - Aligned `clm-kernel` dependency to published `0.0.9`.
 - **EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry (`responsive-lab.html`)**:
   - Replaced legacy 1D width-only preset buttons with dynamic device registry (`js/device-registry.js`) and rendered preset ribbon.
   - Implemented true 2D orientation swapping (Portrait $\leftrightarrow$ Landscape) with physical dimension exchange and smooth transitions (`INV-RVP-01`).
