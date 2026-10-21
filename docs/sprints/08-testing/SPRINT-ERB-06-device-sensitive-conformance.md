@@ -5,7 +5,7 @@
 ## Metadata
 - **Sprint Code**: `SPRINT-ERB-06`
 - **Handle**: `urn:pcard:sprint:SPRINT-ERB-06`
-- **Status**: `COMPLETED`
+- **Status**: `GRADUATED`
 - **Archetype**: `ClmTriadManifest`
 - **Depends on**: `SPRINT-ERB-04` (device contexts, preflight, sweep assertions), `SPRINT-ERB-03` (persistence, history), `SPRINT-ERB-05` (capability predicates, fidelity)
 - **Unblocks**: — (closes the series; optional T3 track below)

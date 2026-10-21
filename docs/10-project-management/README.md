@@ -1,84 +1,51 @@
-# 📋 Project Management
+# 📋 Project Management, Epics & Sprint Coordination
 
-Epics, user stories, workflows, and project documentation.
+This directory documents the project management framework, historical epics, user stories, and agile methodology used in `LandingPage`, guided by the BMAD agent framework and pstack principles.
 
-## Documents in This Section
+---
 
-### Epics & Stories
-- **epics/** - Large features and initiatives
-  - **README.md** - Epic guidelines
-  - **EPIC-001-WebRTC-Reconnection-Stability.md**
-- **stories/** - User stories and small features
-  - **STORY-001-Fix-Duplicate-Offer-Processing.md**
-  - **STORY-002-Prevent-Stale-Timeout-Callbacks.md**
-  - **STORY-003-Fix-Duplicate-Answer-Processing.md**
-  - **STORY-004-Configure-Public-STUN-Servers.md**
-  - **STORY-005-Implement-Connection-Health-Monitoring.md**
-  - **STORY-006-Add-ICE-Restart-Capability.md**
-  - **STORY-007-Fix-Signaling-Service-Destruction.md**
-  - **STORY-008-Integrate-WebLLM-Chat.md**
+## 🎯 Agile Organization & Sprint Architecture
 
-### Implementation Guides
-- **IMPLEMENTATION_GUIDE.md** - General implementation guide
-- **LIBRARY_ONLY_MIGRATION.md** - Library migration strategy
-- **REFACTORING_SUMMARY.md** - Refactoring documentation
-- **PHASE1_COMPLETE.md** - Phase 1 completion summary
+In `LandingPage`, project management follows a multi-tiered structure coordinated with the broader `MCard_TDD` monorepo:
 
-### Workflow
-- **bmm-brainstorming-session-2025-11-07.md** - Brainstorming notes
-- **bmm-workflow-status.yaml** - Workflow status
+1. **Sprint Specifications (`docs/sprints/`)**:
+   - Master sprint directory tracking execution programs.
+   - **Graduated Programs**: [**`docs/sprints/08-testing/`**](../sprints/08-testing/INDEX.md) archives the completed 7-sprint **Program ERB: Device-Sensitive Testing Infrastructure** (ERB-00 through ERB-06).
+   - **Active Sprints**: [**`docs/sprints/_active/`**](../sprints/_active/INDEX.md) tracks currently in-flight work.
+2. **Cross-Estate Epics**:
+   - `EPIC-COL`: Functional lineage and Git tree SSOT across `clm`, `mcard-studio`, and `LandingPage`.
+   - `EPIC-RVP`: Physical 2D orientation model and layout-box containment.
+   - `EPIC-STY`: Unified token palette (`tokens.css`) and strict style audit gates.
+   - `EPIC-SMR`: Single-page MCard distillation (`SMR-09`) and portal sample corpus.
+3. **BMAD Agent Framework Roles**:
+   - 🏛️ **Winston (System Architect)**: Technical design leader, estate boundaries, and invariant enforcement.
+   - 💻 **Amelia (Software Engineer)**: Code execution, TDD implementation, and verification passes.
+   - 📋 **John (Product Manager)**: Requirements discovery, sprint planning, and acceptance criteria.
+   - 📊 **Mary (Strategic Business Analyst)**: Gap analysis, requirements synthesis, and risk profiling.
+   - 🎨 **Sally (UX Designer)**: Viewport stage ergonomics, touch target compliance, and responsive layouts.
+   - ✍️ **Paige (Technical Writer)**: Knowledge curation, Diátaxis documentation, and API references.
 
-## Epic/Story Format
+---
 
-### Epic Format
-```markdown
-# EPIC-XXX: Epic Title
+## 📚 Documents in This Section
 
-## Overview
-Brief description of the epic.
+### Implementation Guides & Migration
+- **[IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md)** — Comprehensive architecture and implementation guide.
+- **[LIBRARY_ONLY_MIGRATION.md](LIBRARY_ONLY_MIGRATION.md)** — Migration strategy to zero-dependency client logic and library consumption.
+- **[REFACTORING_SUMMARY.md](REFACTORING_SUMMARY.md)** — Major refactoring milestones and module extractions.
+- **[PHASE1_COMPLETE.md](PHASE1_COMPLETE.md)** — Phase 1 completion milestone and foundation stabilization.
+- **[bmm-brainstorming-session-2025-11-07.md](bmm-brainstorming-session-2025-11-07.md)** — Brainstorming session notes on modularization and P2P communication.
 
-## Goals
-- Goal 1
-- Goal 2
+### Historical Epics & Stories
+- **[epics/](epics/)** — Feature epic documents:
+  - `README.md` — Epic formatting and lifecycle rules.
+  - `EPIC-001-WebRTC-Reconnection-Stability.md` — WebRTC stability and auto-reconnection.
+- **[stories/](stories/)** — User stories for historical feature development (STORY-001..008).
 
-## Stories
-- STORY-XXX
-- STORY-YYY
+---
 
-## Success Criteria
-- Criteria 1
-- Criteria 2
-```
+## 🧭 Related Functional Tiers
 
-### Story Format
-```markdown
-# STORY-XXX: Story Title
-
-## User Story
-As a [user type], I want [goal] so that [benefit].
-
-## Acceptance Criteria
-- [ ] Criteria 1
-- [ ] Criteria 2
-
-## Technical Details
-Implementation notes.
-
-## Testing
-Test scenarios.
-```
-
-## Workflow
-
-1. **Epic Creation** - Define large feature
-2. **Story Breakdown** - Split into user stories
-3. **Implementation** - Develop features
-4. **Testing** - Verify functionality
-5. **Documentation** - Update docs
-6. **Deployment** - Release to production
-
-## Related Sections
-
-- [08-testing/](../08-testing/) - Testing strategies
-- [07-deployment/](../07-deployment/) - Deployment process
-- [00-getting-started/](../00-getting-started/) - Project status
+- [**08-testing/**](../08-testing/README.md) — Testing infrastructure and Program ERB sprint specifications.
+- [**00-getting-started/**](../00-getting-started/README.md) — Developer setup and onboarding.
+- [**11-standards/**](../11-standards/README.md) — Coding conventions and architectural invariants.

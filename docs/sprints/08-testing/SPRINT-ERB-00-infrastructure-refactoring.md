@@ -5,7 +5,7 @@
 ## Metadata
 - **Sprint Code**: `SPRINT-ERB-00`
 - **Handle**: `urn:pcard:sprint:SPRINT-ERB-00`
-- **Status**: `SPECIFICATION`
+- **Status**: `GRADUATED`
 - **Archetype**: `ClmTriadManifest`
 - **Depends on**: — (first in series)
 - **Unblocks**: `SPRINT-ERB-01`, `SPRINT-ERB-05`, and through them every later sprint

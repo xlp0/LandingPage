@@ -1,56 +1,62 @@
-# 📊 State Management
+# 📊 State Management Architecture
 
-Redux architecture, slices, and state patterns.
+This directory documents state management in `LandingPage`, covering the Redux Toolkit application store, WebRTC connection state, and the deterministic Recording State Machine in the Responsive UI Lab.
 
-## Documents in This Section
+---
 
-### Core Documentation
-- **redux/** - Redux documentation folder
-  - **INDEX.md** - Redux overview and navigation
-  - **REDUX_ARCHITECTURE.md** - State architecture
-  - **slices/** - Individual slice documentation
-    - **auth-slice.md** - Authentication state
-    - **clm-slice.md** - CLM component state
-    - **rtc-connection-slice.md** - WebRTC connections
-    - **participants-slice.md** - User management
-    - **invitations-slice.md** - Invitation system
+## 🎯 Dual State Architecture
 
-### Testing & Fixes
-- **REDUX_AUTH_TESTING.md** - Auth testing guide
-- **REDUX_FIX_SUMMARY.md** - Bug fixes summary
-- **REDUX_SLICES_IMPLEMENTATION.md** - Implementation guide
+State management in `LandingPage` is divided into two distinct models:
 
-## Redux Store Structure
-
-```javascript
-{
-  auth: {          // Authentication state
-    user, token, isAuthenticated
-  },
-  clm: {           // CLM components
-    components, registry, loading
-  },
-  rtcConnection: { // WebRTC connections
-    localStream, peerConnections, status
-  },
-  participants: {  // User management
-    list, active, status
-  },
-  invitations: {   // Invitation system
-    pending, accepted, rejected
-  }
-}
+```
+┌────────────────────────────────────────────────────────┐
+│                   State Management                     │
+│                                                        │
+│  ┌──────────────────────────┐  ┌────────────────────┐  │
+│  │   Global Redux Store     │  │  Lab Recording FSM │  │
+│  │     (Redux Toolkit)      │  │ (Deterministic 20) │  │
+│  ├──────────────────────────┤  ├────────────────────┤  │
+│  │ • auth                   │  │ • IDLE             │  │
+│  │ • clm                    │  │ • RECORDING        │  │
+│  │ • rtcConnection          │  │ • PAUSED           │  │
+│  │ • participants           │  │ • STOPPED          │  │
+│  │ • invitations            │  │ (INV-ERB-03)       │  │
+│  └──────────────────────────┘  └────────────────────┘  │
+└────────────────────────────────────────────────────────┘
 ```
 
-## Quick Start
+1. **Global Application State (Redux Toolkit)**:
+   - Manages asynchronous user sessions, Zitadel OIDC identity, WebRTC peer connections, and CLM component state.
+2. **Deterministic Recording State Machine (`INV-ERB-03`)**:
+   - Manages test interaction recording in the Responsive UI Lab.
+   - Enforces a closed 20-pair `(state, action) -> nextState` transition table.
+   - Decoupled from the data layer (`EventRingBuffer`, `INV-ERB-01`) for pure testability and zero jank.
+3. **Device Registry Persistence (`INV-RVP-03`, `INV-DSF-02`)**:
+   - Manages device profiles and custom viewports with schema v2 validation and self-healing `localStorage` fallback.
 
-1. **Overview** - Read [redux/INDEX.md](redux/INDEX.md)
-2. **Architecture** - Study [redux/REDUX_ARCHITECTURE.md](redux/REDUX_ARCHITECTURE.md)
-3. **Slices** - Explore [redux/slices/](redux/slices/)
-4. **Testing** - Follow [REDUX_AUTH_TESTING.md](REDUX_AUTH_TESTING.md)
+---
 
-## Related Sections
+## 📚 Documents in This Section
 
-- [02-authentication/](../02-authentication/) - Auth implementation
-- [04-networking/](../04-networking/) - RTC implementation
-- [08-testing/](../08-testing/) - Testing strategies
+### Redux Documentation
+- **[redux/INDEX.md](redux/INDEX.md)** — Redux store overview and slice index.
+- **[redux/REDUX_ARCHITECTURE.md](redux/REDUX_ARCHITECTURE.md)** — Detailed state architecture and action flows.
+- **[redux/slices/](redux/slices/)** — Individual slice specifications:
+  - `auth-slice.md` — Authentication state, tokens, and user claims.
+  - `clm-slice.md` — Cubical Logic Model component registry and runtime state.
+  - `rtc-connection-slice.md` — WebRTC peer connections and signaling states.
+  - `participants-slice.md` — Presence and mesh participant tracking.
+  - `invitations-slice.md` — P2P session and game matchmaking invitations.
+
+### Implementation & Testing
+- **[REDUX_SLICES_IMPLEMENTATION.md](REDUX_SLICES_IMPLEMENTATION.md)** — Implementation guide for building and extending Redux slices.
+- **[REDUX_AUTH_TESTING.md](REDUX_AUTH_TESTING.md)** — Unit and integration testing strategies for the auth slice.
+- **[REDUX_FIX_SUMMARY.md](REDUX_FIX_SUMMARY.md)** — History of bug fixes and reducer optimizations.
+
+---
+
+## 🧭 Related Functional Tiers
+
+- [**02-authentication/**](../02-authentication/README.md) — Zitadel PKCE authentication integration.
+- [**04-networking/**](../04-networking/README.md) — WebRTC connection lifecycle and signaling.
+- [**08-testing/**](../08-testing/README.md) — Recording state machine verification and unit test suite.

@@ -5,6 +5,7 @@ Testing strategies, verification checklists, and quality assurance.
 ## Documents in This Section
 
 - **[DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md](DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md)** — Comprehensive guide on using LandingPage as an infrastructure for testing device-sensitive web applications
+- **[Program ERB Sprint Specifications](../sprints/08-testing/INDEX.md)** — Graduated sprint specifications (ERB-00 through ERB-06)
 - **[VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md)** — Pre-release verification checklist
 
 ## Testing Categories

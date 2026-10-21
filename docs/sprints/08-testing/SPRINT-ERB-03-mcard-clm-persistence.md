@@ -5,7 +5,7 @@
 ## Metadata
 - **Sprint Code**: `SPRINT-ERB-03`
 - **Handle**: `urn:pcard:sprint:SPRINT-ERB-03`
-- **Status**: `SPECIFICATION`
+- **Status**: `GRADUATED`
 - **Archetype**: `ClmTriadManifest`
 - **Depends on**: `SPRINT-ERB-02` (event payload, `lab:final-state`), `SPRINT-ERB-05` (`device` + `fidelity` blocks)
 - **Unblocks**: `SPRINT-ERB-04`, `SPRINT-ERB-06`

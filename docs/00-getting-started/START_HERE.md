@@ -1,380 +1,158 @@
-# 🚀 THK Mesh Landing Page - START HERE
+# 🚀 Developer Onboarding Guide — Start Here
 
-## Welcome! 👋
-
-You've just received a complete, production-ready local-first landing page for THK Mesh. Here's how to get started in the next 5 minutes.
+Welcome to the **PKC Landing Page & Responsive Test Workbench** codebase! This document provides complete onboarding context for developers joining the project.
 
 ---
 
-## ⚡ Quick Start (Choose One)
+## 🎯 What is the LandingPage Project?
 
-### Option A: Open in Browser (Fastest - 30 seconds)
-```
-1. Open this file in your file explorer:
-   /Users/Henrykoo/Documents/GovTech/THKMesh/LandingPage/landing-enhanced.html
+Within the **MCard_TDD** monorepo framework, `LandingPage` functions as **Submodule 3** (Estate 4 under the ULR-01 architectural census). Rather than functioning as a traditional static landing page, it is specialized into three core responsibilities:
 
-2. Double-click to open in your default browser
+1. **Responsive Test Workbench (`responsive-lab.html`)**:
+   A dedicated testing workbench for certifying the **device-sensitive functionality** of any chosen target web application. It emulates 8 modern devices across phones, tablets, and desktops, tracks 7 device dimensions (orientation reflow, horizontal bleed, touch ergonomics, event capture ring buffer, frame timing, CLS, and Triad persistence), and provides deterministic Playwright replay.
 
-3. Click around to explore!
-```
+2. **Single-Page MCard Distillation (`SMR-09`)**:
+   Emits the landing page as a self-describing, content-addressed MCard (`urn:mcard:content:landing_page`) and hosts a 6-sample portal database (`data/samples/portal_samples.mcard.db`) on the canonical 3-table Triad SQLite schema.
 
-### Option B: Use Local Server (Recommended - 2 minutes)
+3. **SSRF-Guarded External Portal Membrane**:
+   Provides secure iframe embedding and URL probing with connection-level DNS, loopback/link-local/private-IP blocking, and redirect validation (`js/external-portal-membrane.js`, `server/mcard-api.mjs`).
+
+---
+
+## 💻 Prerequisites & Setup
+
+### Prerequisites
+- **Node.js**: $\ge 18.0.0$ (LTS recommended)
+- **npm**: $\ge 9.0.0$
+- Modern browser (Chromium, Firefox, or WebKit)
+
+### Quick Setup
+
 ```bash
-# Open Terminal and run:
-cd /Users/Henrykoo/Documents/GovTech/THKMesh/LandingPage
-python3 -m http.server 3000
+# 1. Navigate to the repository
+cd LandingPage
 
-# Then open in browser:
-http://localhost:3000/landing-enhanced.html
-```
+# 2. Install dependencies
+npm install
 
-### Option C: Test Offline Mode (5 minutes)
-```
-1. Open landing-enhanced.html in browser
-2. Press F12 to open DevTools
-3. Go to Network tab
-4. Set to "Offline"
-5. Navigate between pages - everything still works!
+# 3. (Optional) Install Playwright browser binaries for testing
+npm run install-browsers
 ```
 
 ---
 
-## 📚 What You Got
+## 🚀 Running the Workbench
 
-### ✅ Main Landing Page
-- **File:** `landing-enhanced.html`
-- **Features:** Navigation, offline support, responsive design
-- **Status:** Ready to use immediately
+Start the local development server:
 
-### ✅ Authentication System
-- **Files:** `auth-callback-enhanced.html`, `js/oauth-handler.js`
-- **Features:** OAuth2 with Zitadel, CSRF protection
-- **Status:** Ready for Zitadel integration
-
-### ✅ Local Storage Manager
-- **File:** `js/local-storage-manager.js`
-- **Features:** User data, documents, settings management
-- **Status:** Fully functional
-
-### ✅ Comprehensive Documentation
-- **QUICKSTART.md** - 5-minute setup guide
-- **LANDING_PAGE_README.md** - Full documentation
-- **ZITADEL_SETUP.md** - Authentication setup
-- **IMPLEMENTATION_GUIDE.md** - Architecture details
-- **LANDING_PAGE_INDEX.md** - Navigation guide
-
-### ✅ Testing Tools
-- **File:** `test-offline.html`
-- **Features:** Run offline tests, inspect storage
-- **Status:** Ready to verify functionality
-
----
-
-## 🎯 What Can You Do Right Now?
-
-### ✅ Works Offline
-- Navigate between pages
-- Create documents
-- View stored data
-- All changes save locally
-
-### ✅ Works Online
-- Authenticate with Zitadel
-- Sync with cloud (when configured)
-- Connect with others (P2P ready)
-
-### ✅ Works Everywhere
-- Desktop browsers
-- Mobile browsers
-- Tablets
-- Any device with a browser
-
----
-
-## 🔍 Explore the Features
-
-### 1. Navigation
-- Click "Home" → See welcome message
-- Click "Features" → See feature cards
-- Click "About" → See about section
-- **All instant, no page reloads!**
-
-### 2. Local Storage
-- Open DevTools (F12)
-- Go to Application → Local Storage
-- Look for `thk-mesh-*` keys
-- See your data being stored
-
-### 3. Online/Offline Status
-- Bottom right corner shows status
-- Green dot = Online
-- Red dot = Offline
-- Try going offline to test!
-
-### 4. Storage Info
-- Bottom left corner shows storage usage
-- Number of items stored
-- Total storage size
-
----
-
-## 🔐 Next: Set Up Authentication (Optional)
-
-### To Enable Zitadel Login:
-
-1. **Go to Zitadel:** https://zit.pkc.pub
-2. **Create OAuth2 App:**
-   - Project: "THK Mesh"
-   - App Name: "THK Mesh Landing"
-   - Type: Web
-3. **Get Client ID** from app details
-4. **Update Configuration:**
-   - Open `landing-enhanced.html`
-   - Find: `clientId: 'YOUR_ZITADEL_CLIENT_ID'`
-   - Replace with your actual Client ID
-5. **Add Redirect URI to Zitadel:**
-   - `http://localhost:3000/auth-callback-enhanced.html`
-6. **Test Login:**
-   - Click "Login" button
-   - You'll be redirected to Zitadel
-   - After login, you'll be back on the landing page
-
-**See [ZITADEL_SETUP.md](./ZITADEL_SETUP.md) for detailed instructions.**
-
----
-
-## 🧪 Test Offline Functionality
-
-### Run Tests:
-1. Open `test-offline.html` in browser
-2. Click "Run All Tests"
-3. See all tests pass ✅
-
-### Manual Testing:
-1. Open `landing-enhanced.html`
-2. Create a document (click around)
-3. Open DevTools → Network → Set to "Offline"
-4. Navigate between pages
-5. Create another document
-6. Everything still works! ✅
-
----
-
-## 📁 File Guide
-
-```
-landing-enhanced.html          ← OPEN THIS FIRST
-├── Main landing page
-├── Navigation (Home, Features, About)
-├── Authentication UI
-└── Status indicators
-
-auth-callback-enhanced.html    ← OAuth2 callback
-├── Handles Zitadel redirect
-├── Stores user data
-└── Redirects back to landing
-
-js/
-├── local-storage-manager.js   ← Storage interface
-│   ├── User management
-│   ├── Document CRUD
-│   └── Settings management
-└── oauth-handler.js           ← OAuth2 handler
-    ├── Authorization URL
-    ├── Callback handling
-    └── Token exchange
-
-test-offline.html              ← Test functionality
-├── Run offline tests
-├── Inspect storage
-└── Verify everything works
-
-Documentation/
-├── START_HERE.md              ← You are here
-├── QUICKSTART.md              ← 5-min setup
-├── LANDING_PAGE_README.md     ← Full docs
-├── ZITADEL_SETUP.md          ← Auth setup
-├── IMPLEMENTATION_GUIDE.md    ← Architecture
-├── LANDING_PAGE_INDEX.md      ← Navigation
-└── LANDING_PAGE_SUMMARY.md    ← Summary
-```
-
----
-
-## 🎓 Learning Resources
-
-### For Beginners
-1. Open `landing-enhanced.html`
-2. Click around and explore
-3. Read [QUICKSTART.md](./QUICKSTART.md)
-4. Test offline mode
-
-### For Developers
-1. Read [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md)
-2. Review module code
-3. Check [LANDING_PAGE_README.md](./LANDING_PAGE_README.md)
-4. Integrate with your backend
-
-### For DevOps
-1. Read [ZITADEL_SETUP.md](./ZITADEL_SETUP.md)
-2. Configure Zitadel
-3. Set up backend endpoints
-4. Deploy to production
-
----
-
-## ❓ Common Questions
-
-### Q: Do I need a server to use this?
-**A:** No! It works completely offline. You can open `landing-enhanced.html` directly in your browser.
-
-### Q: Does it work on mobile?
-**A:** Yes! The design is responsive and works on all devices.
-
-### Q: Can I use this without Zitadel?
-**A:** Yes! The landing page works perfectly without authentication. Zitadel is optional.
-
-### Q: Where is my data stored?
-**A:** In your browser's local storage. It never leaves your device unless you sync to the cloud.
-
-### Q: How much data can I store?
-**A:** About 10MB per domain in most browsers.
-
-### Q: Is it secure?
-**A:** Yes! Local storage is isolated per domain, and OAuth2 provides secure authentication.
-
-### Q: Can I deploy this?
-**A:** Yes! Deploy to any static hosting (Netlify, Vercel, GitHub Pages, etc.).
-
-### Q: What if I lose my data?
-**A:** You can export your data using the storage manager. See [LANDING_PAGE_README.md](./LANDING_PAGE_README.md).
-
----
-
-## 🚨 Troubleshooting
-
-### "Page doesn't load"
-→ Check browser console (F12) for errors
-→ Try a different browser
-→ Clear browser cache
-
-### "Offline mode doesn't work"
-→ Make sure data was saved before going offline
-→ Check DevTools → Application → Local Storage
-→ Try refreshing the page
-
-### "Login doesn't work"
-→ Check Client ID is set correctly
-→ Verify redirect URI matches Zitadel config
-→ Check browser console for errors
-
-### "Can't find a file"
-→ Make sure you're in the correct directory
-→ Check file names are spelled correctly
-→ Use the file explorer to navigate
-
----
-
-## 🎯 Your Next Steps
-
-### Right Now (5 minutes)
-- [ ] Open `landing-enhanced.html`
-- [ ] Click around to explore
-- [ ] Check local storage in DevTools
-
-### Today (30 minutes)
-- [ ] Read [QUICKSTART.md](./QUICKSTART.md)
-- [ ] Test offline mode
-- [ ] Run `test-offline.html` tests
-
-### This Week (2 hours)
-- [ ] Read [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md)
-- [ ] Set up Zitadel (optional)
-- [ ] Plan backend integration
-
-### This Month (1 day)
-- [ ] Implement backend endpoints
-- [ ] Deploy to staging
-- [ ] Test in production
-
----
-
-## 📞 Need Help?
-
-1. **Check Documentation**
-   - [LANDING_PAGE_INDEX.md](./LANDING_PAGE_INDEX.md) - Navigation guide
-   - [QUICKSTART.md](./QUICKSTART.md) - Quick answers
-   - [LANDING_PAGE_README.md](./LANDING_PAGE_README.md) - Full reference
-
-2. **Check Browser Console**
-   - Press F12
-   - Look for error messages
-   - Check for debug logs
-
-3. **Run Tests**
-   - Open `test-offline.html`
-   - Click "Run All Tests"
-   - See what's working
-
-4. **Inspect Storage**
-   - DevTools → Application → Local Storage
-   - Look for `thk-mesh-*` keys
-   - Verify data is being stored
-
----
-
-## 🎉 You're Ready!
-
-Everything is set up and ready to go. Here's what you have:
-
-✅ **Production-ready landing page**
-✅ **Offline support**
-✅ **Local storage management**
-✅ **OAuth2 authentication ready**
-✅ **Comprehensive documentation**
-✅ **Testing tools**
-✅ **Security best practices**
-
----
-
-## 🚀 Let's Go!
-
-**Open this file now:**
-```
-/Users/Henrykoo/Documents/GovTech/THKMesh/LandingPage/landing-enhanced.html
-```
-
-**Or run this command:**
 ```bash
-cd /Users/Henrykoo/Documents/GovTech/THKMesh/LandingPage
-python3 -m http.server 3000
-# Then open: http://localhost:3000/landing-enhanced.html
+npm run dev
+# Or: npm run ws-server
+```
+
+The server starts on port **3001** (or the port defined in `.env`).
+
+### Key Application Routes
+
+| Route | Description |
+| :--- | :--- |
+| **`http://localhost:3001/responsive-lab.html`** | **Primary Workbench**: Responsive UI Lab viewport stage, device registry, interaction recorder, and telemetry inspector. |
+| **`http://localhost:3001/responsive-lab.html?target=http://localhost:4321/`** | **Target Testing**: Launches the lab pointing to an external or local application (e.g., local Astro dev server). |
+| **`http://localhost:3001/index.html`** | **Portal Entry**: Auto-navigates to the Responsive UI Lab at top level while remaining embeddable as an iframe target. |
+| **`http://localhost:3001/app.html`** | **Mission Control**: Cockpit for MCard browsing, WebLLM AI runtime, and Lagrangian mechanics telemetry. |
+| **`http://localhost:3001/api/test-runs`** | **Test Runs REST API**: SQLite Triad endpoint for persisting and querying test sessions with Blake3 hashing. |
+| **`http://localhost:3001/api/mcard`** | **MCard API**: ESM endpoint querying SQLite content-addressed cards and handles. |
+
+---
+
+## 🧪 Running the Automated Verification Battery
+
+All capabilities are verified through automated unit tests, feature specs, replay drivers, and conformance checks:
+
+```bash
+# Run all unit tests (73 tests across 12 suites)
+npm run test:unit
+
+# Run multi-device systematic sweep across 8 profiles × 2 orientations (16 tests)
+npm run test:responsive
+
+# Run deterministic Playwright replay driver at 1×, 2×, 5× (4 tests)
+npm run test:replay
+
+# Run 15-check device conformance catalog & mint responsive certificate (16 tests)
+npm run test:conformance
+
+# Run viewport rotation and device containment tests (17 tests)
+npx playwright test tests/features/responsive-rotation-and-devices.spec.js --project=features
+
+# Run event capture and telemetry tests (8 tests)
+npx playwright test tests/features/responsive-capture.spec.js --project=features
 ```
 
 ---
 
-## 📚 Documentation Map
+## 📁 Repository Directory Structure
 
 ```
-START_HERE.md (You are here)
-    ↓
-QUICKSTART.md (5-minute setup)
-    ↓
-LANDING_PAGE_README.md (Full documentation)
-    ↓
-IMPLEMENTATION_GUIDE.md (Architecture)
-    ↓
-ZITADEL_SETUP.md (Authentication)
-    ↓
-LANDING_PAGE_INDEX.md (Navigation guide)
+LandingPage/
+├── responsive-lab.html           # Primary Responsive UI Lab & Test Workbench
+├── index.html                    # Streamlined portal entry & embeddable target
+├── app.html                      # Mission Control cockpit
+├── ws-server.js                  # Express & WebSocket server with CORS allowlist
+├── package.json                  # Dependencies (clm-kernel@0.0.9 pin)
+├── app-config.json               # Lab target URLs registry (INV-STU-02)
+├── retired-islands.yaml          # Formal catalog of retired legacy surfaces
+├── js/
+│   ├── harness/                  # Lab ESM harness (ERB-00..06 modules)
+│   │   ├── viewport-stage.js     # Viewport geometry & containment (INV-RVP-01..02)
+│   │   ├── target-membrane.js    # Single-writer iframe membrane (INV-STU-01)
+│   │   ├── lab-toolbar.js        # Lab UI controls & target selector
+│   │   ├── event-ring-buffer.js  # Bounded FIFO ring buffer (INV-ERB-01)
+│   │   ├── recording-state-machine.js # 20-pair deterministic FSM (INV-ERB-03)
+│   │   ├── fidelity.js           # Declared fidelity tiers T0–T3 (INV-DSF-01)
+│   │   ├── membrane-interceptor.js # Parent-iframe event interceptor & tap ergonomics
+│   │   ├── lab-probe-agent.js    # Opt-in cross-origin probe agent
+│   │   ├── normalize-event.js    # Scale-free coordinate normalization (INV-ERB-02)
+│   │   ├── telemetry-collector.js# Bleed, frame budget & CLS tracking (INV-DEV-01..04)
+│   │   └── test-run-schema.js    # Triad serialization & Blake3 hashing (INV-ERB-04)
+│   ├── device-registry.js        # Schema v2 device profiles (8 built-in devices)
+│   ├── landing-page-mcard.js     # SMR-09 single-page MCard distillation
+│   ├── external-portal-membrane.js # SSRF-guarded portal membrane
+│   └── nav.js                    # Penpot-generated navigation logic
+├── server/
+│   ├── test-run-api.mjs          # /api/test-runs SQLite Triad router
+│   └── mcard-api.mjs             # /api/mcard ESM API router
+├── data/
+│   ├── mcard-api.db              # SQLite Triad database for test runs and MCards
+│   └── samples/                  # Deterministic 6-sample portal corpus
+├── scripts/
+│   ├── playwright-replay-driver.mjs # Headless Playwright replay driver
+│   └── seed-portal-samples.mjs   # Seed script for portal sample corpus
+├── tests/
+│   ├── unit/                     # node:test unit suites
+│   ├── features/                 # Playwright feature specs
+│   └── conformance/              # 15-check modular conformance catalog
+└── docs/                         # Tiered documentation directory
+    ├── 00-getting-started/       # Onboarding, quickstart, status
+    ├── 01-architecture/          # System design & Monorepo estate boundaries
+    ├── 02-authentication/        # Zitadel OIDC & PKCE authentication
+    ├── 03-data-management/       # MCard Triad storage & clm-kernel integration
+    ├── 04-networking/            # WebRTC P2P mesh & signaling
+    ├── 05-state-management/      # Redux store & state slices
+    ├── 06-components/            # UI components & CLM framework
+    ├── 07-deployment/            # ArgoCD GitOps, Docker, CDN
+    ├── 08-testing/               # Device-sensitive testing infrastructure
+    ├── 09-performance/           # Observability, Faro telemetry, Web Vitals
+    ├── 10-project-management/    # Epics, stories, and sprint tracking
+    └── 11-standards/             # Coding guidelines, CSS rules, standards
 ```
 
 ---
 
-**Welcome to THK Mesh! Let's build something amazing together.** 🚀
+## 🏛️ Monorepo Position & Boundary Discipline
 
----
-
-**Version:** 1.0.0
-**Status:** Production Ready
-**Last Updated:** January 2024
+When contributing to `LandingPage`, keep in mind these architectural invariants:
+- **Estate Separation (`ULR-01`)**: `LandingPage` is a consumer of `clm-kernel` and does not define its own cryptographic primitives or alternative logic engines.
+- **Kernel Consensus**: Both `LandingPage` and `mcard-studio` pin `clm-kernel@0.0.9`. Any version change must be coordinated across the monorepo via `kernel-version-consensus.json`.
+- **SSOT Integrity**: Navigation routes and structure are authored in `design/landing-navigation.penpot` and verified via `scripts/penpot-drift.mjs`.
+- **Zero Runtime Dependencies for Lab Stage (`INV-REF-01`)**: The core viewport stage and event ring buffer run in vanilla JavaScript with native CSS custom properties.

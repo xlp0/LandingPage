@@ -11,9 +11,9 @@ Instead of treating responsive design as an afterthought or manually checking sc
 5. **Frame Budget & Layout Stability (`INV-DEV-04`)**: Observation of frame latency ($16.6\text{ms}$ budget) and layout freeze absence during rapid reflows.
 
 > [!NOTE]
-> **Status:** SPRINT-ERB-00 through SPRINT-ERB-04 are **implemented and verified**. Orientation reflow, event ring buffer, spatial normalization, MCard CLM persistence, Playwright replay driver, and systematic multi-device sweeps (`npm run test:responsive` and `npm run test:replay`) are fully operational. SPRINT-ERB-06 adds certification and conformance checks.
+> **Status:** SPRINT-ERB-00 through SPRINT-ERB-06 are **fully implemented, verified, and graduated**. All capabilities — orientation reflow, event ring buffer, spatial normalization, MCard CLM persistence, Playwright replay driver, systematic multi-device sweeps (`npm run test:responsive` and `npm run test:replay`), 15-check conformance suite (`npm run test:conformance`), and responsive certification `urn:mcard:certification:responsive:v1` — are fully operational and certified.
 
-**Fidelity tiers.** Every run states what was really emulated (`INV-DSF-01`). **T0** is the lab iframe, which emulates only the CSS viewport. **T1/T2** are Playwright contexts, which add DPR, touch, mobile user agent, media features, and (T2) CDP throttling. **T3** is a real device on the LAN. See the [series index](../sprints/_active/INDEX.md#1-device-sensitive-dimensions-and-fidelity-tiers) for the full table.
+**Fidelity tiers.** Every run states what was really emulated (`INV-DSF-01`). **T0** is the lab iframe, which emulates only the CSS viewport. **T1/T2** are Playwright contexts, which add DPR, touch, mobile user agent, media features, and (T2) CDP throttling. **T3** is a real device on the LAN. See the [series index](../sprints/08-testing/INDEX.md#1-device-sensitive-dimensions-and-fidelity-tiers) for the full table.
 
 ---
 
@@ -26,9 +26,9 @@ Launch the Responsive Lab directly bound to your chosen target:
 ```text
 http://localhost:3001/responsive-lab.html?target=http://localhost:4321/
 ```
-The lab shell will automatically embed `http://localhost:4321/` in the controlled viewport frame and calibrate the device stage. The event capture ribbon arrives with ERB-02 *(planned)*.
+The lab shell will automatically embed `http://localhost:4321/` in the controlled viewport frame, calibrate the device stage, and display the live event capture ribbon and fidelity badge.
 
-### Automated Playwright CLI *(planned, ERB-04)*
+### Automated Playwright CLI
 Run systematic sweeps and replay sessions via terminal:
 ```bash
 # Sweep local dev server
@@ -50,22 +50,22 @@ Playwright's `webServer` starts only `:3001`. Start an external target such as `
 
 ## 3. Sequence of Refactoring & Architecture Roadmap
 
-The transformation of the codebase is tracked across 7 active sprints under [`docs/sprints/_active/`](../sprints/_active/INDEX.md). Sprint numbers are identifiers; execution follows the dependency graph:
+The transformation of the codebase is tracked across 7 graduated sprints under [`docs/sprints/08-testing/`](../sprints/08-testing/INDEX.md). Sprint numbers are identifiers; execution follows the dependency graph:
 
 ```
                  ┌─► ERB-01 Ring Buffer & FSM ────────┐
 ERB-00 Modularize┤                                    ├─► ERB-02 ──► ERB-03 ──► ERB-04 ──► ERB-06
                  └─► ERB-05 Device Profiles & Fidelity ┘    Membrane    Telemetry   Replay &    Conformance
-                                                              & Ergonomics & MCard     Sweeps      & Certification
+                                                               & Ergonomics & MCard     Sweeps      & Certification
 ```
 
-1. **[SPRINT-ERB-00](../sprints/_active/SPRINT-ERB-00-infrastructure-refactoring.md)**: Extract the inline scripts in `responsive-lab.html` into `js/harness/viewport-stage.js`, `js/harness/target-membrane.js`, and `js/harness/lab-toolbar.js`; one writer of `iframe.src`; one target registry; `window.__lab` test API (`INV-INF-01`).
-2. **[SPRINT-ERB-01](../sprints/_active/SPRINT-ERB-01-ring-buffer-core.md)**: Implement `js/harness/event-ring-buffer.js` (fixed slot array, $N \le 2048$, O(1) push, overwrites counted) and the recording state machine.
-3. **[SPRINT-ERB-05](../sprints/_active/SPRINT-ERB-05-device-capability-profiles.md)**: Add touch, pointer, hover, mobile, and safe-area capabilities to `js/device-registry.js`, the fidelity resolver, and `tests/fixtures/device-matrix.js`. Runs in parallel with ERB-01.
-4. **[SPRINT-ERB-02](../sprints/_active/SPRINT-ERB-02-membrane-normalization.md)**: Implement `js/harness/membrane-interceptor.js` with same-origin capture, an opt-in probe agent for cross-origin targets, normalization to $[0.0, 1.0]$ in the target's own viewport, and live touch-ergonomics auditing.
-5. **[SPRINT-ERB-03](../sprints/_active/SPRINT-ERB-03-mcard-clm-persistence.md)**: Implement `js/harness/telemetry-collector.js` (overflow, frame timing, layout shift) and `server/test-run-api.mjs`, which persists test runs to SQLite with `clm-kernel` hashing.
-6. **[SPRINT-ERB-04](../sprints/_active/SPRINT-ERB-04-playwright-deterministic-replay.md)**: Build `scripts/playwright-replay-driver.mjs` and the systematic sweep `tests/features/systematic-landing-test.spec.js` over the registry matrix.
-7. **[SPRINT-ERB-06](../sprints/_active/SPRINT-ERB-06-device-sensitive-conformance.md)**: Declarative conformance checks (`INV-DEV-01..04` and more), regression diffs, and the responsive certification record `urn:mcard:certification:responsive:v1`.
+1. **[SPRINT-ERB-00](../sprints/08-testing/SPRINT-ERB-00-infrastructure-refactoring.md)**: Extract the inline scripts in `responsive-lab.html` into `js/harness/viewport-stage.js`, `js/harness/target-membrane.js`, and `js/harness/lab-toolbar.js`; one writer of `iframe.src`; one target registry; `window.__lab` test API (`INV-INF-01`).
+2. **[SPRINT-ERB-01](../sprints/08-testing/SPRINT-ERB-01-ring-buffer-core.md)**: Implement `js/harness/event-ring-buffer.js` (fixed slot array, $N \le 2048$, O(1) push, overwrites counted) and the recording state machine.
+3. **[SPRINT-ERB-05](../sprints/08-testing/SPRINT-ERB-05-device-capability-profiles.md)**: Add touch, pointer, hover, mobile, and safe-area capabilities to `js/device-registry.js`, the fidelity resolver, and `tests/fixtures/device-matrix.js`. Runs in parallel with ERB-01.
+4. **[SPRINT-ERB-02](../sprints/08-testing/SPRINT-ERB-02-membrane-normalization.md)**: Implement `js/harness/membrane-interceptor.js` with same-origin capture, an opt-in probe agent for cross-origin targets, normalization to $[0.0, 1.0]$ in the target's own viewport, and live touch-ergonomics auditing.
+5. **[SPRINT-ERB-03](../sprints/08-testing/SPRINT-ERB-03-mcard-clm-persistence.md)**: Implement `js/harness/telemetry-collector.js` (overflow, frame timing, layout shift) and `server/test-run-api.mjs`, which persists test runs to SQLite with `clm-kernel` hashing.
+6. **[SPRINT-ERB-04](../sprints/08-testing/SPRINT-ERB-04-playwright-deterministic-replay.md)**: Build `scripts/playwright-replay-driver.mjs` and the systematic sweep `tests/features/systematic-landing-test.spec.js` over the registry matrix.
+7. **[SPRINT-ERB-06](../sprints/08-testing/SPRINT-ERB-06-device-sensitive-conformance.md)**: Declarative conformance checks (`INV-DEV-01..04` and more), regression diffs, and the responsive certification record `urn:mcard:certification:responsive:v1`.tification record `urn:mcard:certification:responsive:v1`.
 
 ---
 

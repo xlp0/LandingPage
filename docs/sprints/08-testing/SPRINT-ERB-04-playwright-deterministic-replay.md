@@ -5,7 +5,7 @@
 ## Metadata
 - **Sprint Code**: `SPRINT-ERB-04`
 - **Handle**: `urn:pcard:sprint:SPRINT-ERB-04`
-- **Status**: `SPECIFICATION`
+- **Status**: `GRADUATED`
 - **Archetype**: `ClmTriadManifest`
 - **Depends on**: `SPRINT-ERB-03` (stored runs, `/api/test-runs`), `SPRINT-ERB-05` (`tests/fixtures/device-matrix.js`, fidelity resolver)
 - **Unblocks**: `SPRINT-ERB-06`

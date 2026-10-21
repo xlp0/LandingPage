@@ -24,7 +24,7 @@
 
 ## 🏗️ Documentation Architecture
 
-This directory contains all technical documentation for the THK Mesh Landing Page project. The documentation is organized by category to help you quickly find what you need.
+This directory contains all technical documentation for the **PKC Landing Page & Responsive Test Workbench** (Submodule 3 of `MCard_TDD`). The documentation is organized into 12 functional tiers and dedicated functional specifications to guide architecture, implementation, testing, and deployment.
 
 ---
 
@@ -106,9 +106,14 @@ docs/
 │   ├── BACKEND_IMPLEMENTATION.md
 │   └── caching-strategy.md
 │
-├── 🔍 08-testing/                   # Testing
+├── 🔍 08-testing/                   # Device-Sensitive Testing Infrastructure
 │   ├── README.md                    # Testing overview
-│   └── VERIFICATION_CHECKLIST.md
+│   ├── DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md # Testing infrastructure guide
+│   └── VERIFICATION_CHECKLIST.md    # Pre-deployment verification checklist
+│
+├── 🏃 sprints/08-testing/           # 🏆 Program ERB Sprints (Graduated 2026-10-21)
+│   ├── INDEX.md                     # Master sprint index & graduation record
+│   └── SPRINT-ERB-00..06.md         # ERB-00 through ERB-06 specifications
 │
 ├── 📈 09-performance/               # Performance & monitoring
 │   ├── README.md                    # Performance overview

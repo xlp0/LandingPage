@@ -5,7 +5,7 @@
 ## Metadata
 - **Sprint Code**: `SPRINT-ERB-05`
 - **Handle**: `urn:pcard:sprint:SPRINT-ERB-05`
-- **Status**: `SPECIFICATION`
+- **Status**: `GRADUATED`
 - **Archetype**: `ClmTriadManifest`
 - **Depends on**: `SPRINT-ERB-00` (`window.__lab`, `npm run test:unit`)
 - **Runs in parallel with**: `SPRINT-ERB-01`

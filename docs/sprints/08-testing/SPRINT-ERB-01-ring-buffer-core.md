@@ -5,7 +5,7 @@
 ## Metadata
 - **Sprint Code**: `SPRINT-ERB-01`
 - **Handle**: `urn:pcard:sprint:SPRINT-ERB-01`
-- **Status**: `SPECIFICATION`
+- **Status**: `GRADUATED`
 - **Archetype**: `ClmTriadManifest`
 - **Depends on**: `SPRINT-ERB-00` (module home `js/harness/`, `npm run test:unit`)
 - **Runs in parallel with**: `SPRINT-ERB-05`

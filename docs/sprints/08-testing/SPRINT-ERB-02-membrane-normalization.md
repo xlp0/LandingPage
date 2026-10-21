@@ -5,7 +5,7 @@
 ## Metadata
 - **Sprint Code**: `SPRINT-ERB-02`
 - **Handle**: `urn:pcard:sprint:SPRINT-ERB-02`
-- **Status**: `SPECIFICATION`
+- **Status**: `GRADUATED`
 - **Archetype**: `ClmTriadManifest`
 - **Depends on**: `SPRINT-ERB-00` (events, `bindTarget`, `window.__lab`), `SPRINT-ERB-01` (buffer + FSM), `SPRINT-ERB-05` (`pointer`/`hasTouch`, fidelity)
 - **Unblocks**: `SPRINT-ERB-03`
