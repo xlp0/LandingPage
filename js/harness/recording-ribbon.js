@@ -7,7 +7,7 @@
 export function initRecordingRibbon(options = {}) {
   const {
     recorder,
-    container = document.querySelector('.workbench-toolbar') || document.body,
+    container = options.container || document.getElementById('lab-recording-bar') || document.querySelector('.workbench-toolbar') || document.body,
     getFidelity = () => ({ tier: 0, runner: 'lab-iframe', emulated: [], notEmulated: [] }),
     getTarget = () => null,
     getDevice = () => null,
