@@ -4,6 +4,26 @@ All notable changes to the PKC Landing Page are documented in this file. The for
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-10-21
+
+### Completed & Graduated — Program SMO (Submodule Modularity, Universal MCard Content Browser, and Organizational Alignment)
+Successfully implemented, verified, and graduated all 6 sprints of **Program SMO** (`SMO-00` through `SMO-05`) from `docs/sprints/_active/` to permanent architectural home `docs/sprints/01-architecture/`.
+
+- **SMO-00 (Program Charter & Invariants)**: Defined Program Charter, established invariants `INV-SMO-01..05`, standardized the Universal 4-Modality MCard Content Browser architecture (Static Media, Text/Documents, Inert Source Code, Sandboxed Executable Web Pages), and aligned four-estate positioning across `MCard_TDD`, `clm`, `mcard-studio`, and `LandingPage`.
+- **SMO-01 (Submodule Topology, Monorepo Duality & Binary-Safe Triad API)**: Enforced submodule sovereignty (`INV-SMO-01`, zero cross-submodule imports) and monorepo duality. Upgraded `CanonicalTriadBackend` in `server/mcard-api.mjs` to verify digests over raw `Buffer` / `Uint8Array` bytes before UTF-8 decoding (`INV-SMO-03`), preventing binary corruption for media files, and implemented raw byte streaming via `GET /api/mcard/:hash/raw` with `X-Content-Type-Options: nosniff`.
+- **SMO-02 (Published Latest `clm-kernel@0.0.10` Consensus & Universal Type Judgment)**: Enforced exact-pin parity on published `clm-kernel@0.0.10` across `package.json`, `package-lock.json`, and `recorder.js` (`INV-SMO-02`), passing live npm registry consensus checks. Integrated `clm-kernel`'s 48-type `TypeInterpreter`, `detectMime`, and `isBinary` into `server/mcard-modality.mjs` to classify all content into the four universal modalities.
+- **SMO-03 (Four-Estate Cross-Boundary Contracts & 4-Modality Browser Membrane)**: Unified `js/landing-page-mcard.js`, `js/renderers/RendererRegistry.js`, and `js/external-portal-membrane.js` into an execution-isolated 4-modality browser dispatcher (`INV-SMO-03`, `INV-SMO-04`). Hardened `EmbedRenderer.js` with `sandbox="allow-scripts allow-forms" referrerpolicy="no-referrer"`. Seeded deterministic 4-modality sample corpus in `scripts/seed-portal-samples.mjs` and permitted `:5320` workbench target.
+- **SMO-04 (Documentation Hygiene, Universal MCard Canon & Tier Reorganization)**: Eliminated loose root documentation sprawl in `docs/` by relocating files to numbered tiers (`02-authentication/`, `03-data-management/`, `06-components/games/`, `archive/`). Authored canonical architecture specification `docs/01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md` and synchronized `docs/INDEX.md` and `docs/README.md`.
+- **SMO-05 (Master README Alignment & Full-Program Verification)**: Overhauled root `README.md` to document the Universal 4-Modality MCard Content Browser and testing workbench, cross-estate positioning, and verified the complete test battery across `LandingPage`.
+
+### Verification Battery
+- **Kernel Version Consensus**: 100% green against live npm registry `clm-kernel@0.0.10` (`check-kernel-version-consensus.mjs`).
+- **Single-Page MCard Tests**: 24/24 passing (`node --test tests/single-page-mcard.test.mjs`).
+- **Unit Test Suite**: 97/97 passing (`npm run test:unit`).
+- **Portal Sample Corpus**: 6/6 samples seeded and verified with 4 modalities (`node scripts/seed-portal-samples.mjs`).
+- **Submodule Boundary**: 0 cross-submodule filesystem imports in `server/`, `js/`, `scripts/`, `tests/`.
+- **Documentation Integrity**: 100% relative link resolution in `README.md`, `docs/INDEX.md`, and all sprint specs.
+
 ## [0.2.0] — 2026-10-21
 
 ### Completed & Graduated — Program ERB (Device-Sensitive Testing Infrastructure)

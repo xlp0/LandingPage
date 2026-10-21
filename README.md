@@ -1,786 +1,165 @@
-# PKC Landing Page & Responsive Test Workbench
-## Systematic Responsive Testing, Telemetry Capture & Replay for Chosen Web Targets
+# PKC Landing Page, Universal 4-Modality MCard Browser & Responsive Test Workbench
 
-A modern, **static-first, modular testing workbench** for the **device-sensitive functionality** of a **chosen LandingPage target URL**: behaviour that changes with viewport size, orientation, pixel density, touch versus mouse input, hover capability, user preferences (colour scheme, reduced motion), and safe-area insets.
+## Systematic MCard Content Browsing, Responsive Testing, Telemetry Capture & Replay
 
-Powered by the **Responsive UI Lab**, the **Cubic Logic Model (`clm-kernel`)**, and the **MCard Canonical Triad SQLite Dataset Engine**. The graduated **ERB sprint series** delivers an in-memory **Event Capture Ring Buffer**, **device capability profiles with declared fidelity tiers**, deterministic **Playwright replay**, and a **device-sensitive conformance suite**.
+`LandingPage` is **Estate 3** of the `MCard_TDD` four-estate workspace. It serves two tightly integrated roles:
 
----
-
-## 🎯 **Core Focus: Infrastructure for Testing Device-Sensitive Functionalities**
-
-Instead of treating responsive design as an afterthought or spreading focus across disparate demos, `LandingPage` functions as a dedicated **Testing & Telemetry Infrastructure** for certifying web applications and landing pages against real-world device constraints.
-
-The infrastructure centers around **one configurable target URL for a chosen LandingPage** (e.g., `http://localhost:4321/`, `app.html`, or custom staging deployments), set via the UI selector or a query param:
-
-```text
-http://localhost:3001/responsive-lab.html?target=http://localhost:4321/
-```
-
-### 🔬 **Device-Sensitive Dimensions (100% Certified)**
-
-All 7 core device dimensions are fully operational and verified across the test fleet:
-
-1. **Dynamic Geometry & Orientation Reflow (`INV-RVP-01`)** ✅: Instant swapping of viewport width and height without layout clipping or text distortion, across the 8 built-in profiles in [`js/device-registry.js`](js/device-registry.js) (iPhone 16 Pro, iPhone SE, Pixel 8, Galaxy S24, iPad Air 11", iPad Mini, MacBook Air 13", Desktop 1080p).
-2. **Declared Fidelity Tiers (`INV-DSF-01`, `INV-DSF-02`)** ✅ *(ERB-05)*: Every run and report declares what was really emulated. T0 is the lab iframe (viewport only); T1/T2 are Playwright contexts (DPR, touch, mobile UA, media features, CDP throttling); T3 is a real device on the LAN.
-3. **Horizontal Viewport Bleed (`INV-DEV-01`)** ✅ *(ERB-03/06)*: Automated detection of horizontal overflow (`document.documentElement.scrollWidth <= window.innerWidth`).
-4. **Touch Target Ergonomics (`INV-DEV-02`)** ✅ *(ERB-02/06)*: Interactive elements on coarse-pointer devices meet mobile tap size requirements ($\ge 44\text{px} \times 44\text{px}$ by default).
-5. **Scale-Invariant Interaction Capture (`INV-ERB-01..05`, `INV-PRV-01`)** ✅ *(ERB-01/02)*: A bounded in-memory ring buffer records user and automated events, normalized to the target's own viewport $[0.0, 1.0]$. Same-origin targets are captured directly; cross-origin targets use an opt-in probe agent over an origin- and nonce-checked `postMessage` channel. Sensitive input data is automatically redacted.
-6. **Frame Budget & Layout Stability (`INV-DEV-04`)** ✅ *(ERB-03/06)*: Observation of frame latency ($16.6\text{ms}$ budget / $60\text{fps}$) and layout shift (CLS) during rapid reflows.
-7. **MCard Test Dataset Certification (`INV-ERB-04`)** ✅ *(ERB-03/06)*: Content-addressed persistence of test runs into the SQLite Triad (`data/mcard-api.db`) with `clm-kernel` hashing (`blake3`), per-check regression diffs, and the responsive certification record `urn:mcard:certification:responsive:v1`.
+1. **Universal 4-Modality MCard Content Browser**: A modular, execution-isolated browser for all content stored in the **MCard Canonical Triad SQLite Dataset Engine** (`card`, `handle_registry`, `handle_history`), powered by the published **`clm-kernel@0.0.10`** npm package (`computeHash`, `TypeInterpreter`, `detectMime`, `isBinary`). Every MCard is classified and projected across four universal modalities (`media`, `document`, `code`, `webapp`).
+2. **Device-Sensitive Responsive Test Workbench**: A static-first testing and telemetry harness (`responsive-lab.html`) for certifying chosen web targets across viewport geometry, orientation swap, pixel density, touch ergonomics, scale-invariant interaction capture (`[0.0, 1.0]`), and deterministic Playwright replay.
 
 ---
 
-## 🏆 **Completed & Graduated Sprint Series ERB (08-Testing)**
+## 🏛️ Four-Estate `MCard_TDD` Positioning
 
-The transformation into a clean testing infrastructure has successfully completed and graduated. All sprint specifications are archived under [`docs/sprints/08-testing/`](docs/sprints/08-testing/INDEX.md) (with graduation pointer at [`docs/sprints/_active/`](docs/sprints/_active/INDEX.md)):
+| Estate | Submodule / Path | Published Package | Primary Responsibility |
+| :--- | :--- | :--- | :--- |
+| **1. Kernel** | `clm/` | `clm-kernel@0.0.10` | Zero-dependency cryptographic hashing (`blake3`, `sha256`), `g_time` stamping, and `TypeInterpreter` / `detectMime` / `isBinary` judgment. |
+| **2. Studio** | `mcard-studio/` | `mcard-studio@0.2.9` | 9-Viewlet browser IDE and workbench on port `5320` for authoring, inspecting, and certifying MCards. |
+| **3. Portal & Lab** | `LandingPage/` | `pkc-landing-page-monorepo` | Universal 4-Modality MCard Content Browser, Single-Page MCard host (`urn:mcard:content:landing_page`), and Responsive Test Workbench on port `3001`. |
+| **4. Orchestrator** | `MCard_TDD` (root) | Root workspace | Cross-submodule `Makefile` orchestration (`make landing-up`, `make landing-test`, `make landing-seed`, `make status`), consensus gates, and sprint governance. |
 
-```
-                 ┌─► ERB-01 Ring Buffer & FSM ────────┐
-ERB-00 Modularize┤                                    ├─► ERB-02 ──► ERB-03 ──► ERB-04 ──► ERB-06
-                 └─► ERB-05 Device Profiles & Fidelity ┘    Membrane    Telemetry   Replay &    Conformance
-                                                               & Ergonomics & MCard     Sweeps      & Certification
-```
+---
 
-| Sprint | Code / Focus | Primary Artifact | Verification Gate | Status |
+## 🌐 Universal 4-Modality MCard Content Browser (`Program SMO`)
+
+Every MCard payload stored in `CanonicalTriadBackend` ([`server/mcard-api.mjs`](server/mcard-api.mjs)) is verified over its raw bytes before UTF-8 conversion, classified by [`server/mcard-modality.mjs`](server/mcard-modality.mjs) via `clm-kernel@0.0.10`, and projected by [`js/landing-page-mcard.js`](js/landing-page-mcard.js) and [`js/renderers/`](js/renderers/BaseRenderer.js):
+
+| Modality | Canonical MIME Families | Server & Browser Pipeline | Execution Isolation Contract |
+| :--- | :--- | :--- | :--- |
+| **1. `media`** (Static Media Files) | `image/*`, `audio/*`, `video/*`, `application/pdf`, `model/*`, `application/octet-stream` | Binary-safe `CanonicalTriadBackend.get(hash)` verifies digest over `rawBytes`. Streamed via `GET /api/mcard/:hash/raw` with `X-Content-Type-Options: nosniff`. Projected via `<img>`, `<audio controls>`, `<video controls>`, or sandboxed PDF `<iframe>`. | Zero script execution (`default-src 'none'; img-src 'self' data: blob:; media-src 'self' data: blob:`). |
+| **2. `document`** (Text & Structured Documents) | `text/markdown`, `text/plain`, `application/json`, `application/x-yaml`, `application/x-latex` | UTF-8 text projected via `renderPage()`, `MarkdownRenderer`, `TextRenderer`, `JsonRenderer`, and `LaTeXRenderer` with `[[hash]]` and `[[handle\|label]]` transclusion links. | HTML entities are escaped prior to transclusion link resolution. |
+| **3. `code`** (Source Code & CLM Descriptors) | `application/javascript`, `text/javascript`, `application/typescript`, `text/css`, `text/x-python`, `text/x-rust`, `text/x-sql`, `application/x-clm` | Classified by `TypeInterpreter` or CLM triad structural markers (`abstract_spec` / `concrete_impl` / `balanced_exp`). Projected via inert line-numbered `<pre class="mcard-code-body" data-modality="code" data-execution="inert">`. | **Inert Inspection Law (`INV-SMO-04`)**: Browsing a `code` MCard never executes the code payload. |
+| **4. `webapp`** (Executable Web Pages & Portals) | `text/html`, `text/uri-list`, `external-url: https://...` | Inline `text/html` cards render inside `<iframe class="mcard-webapp-frame" sandbox="allow-scripts allow-forms" referrerpolicy="no-referrer" srcdoc="...">`. External/local URLs are probed via `GET /api/mcard/probe-url` ([`server/mcard-probe-policy.mjs`](server/mcard-probe-policy.mjs)) and mounted via [`js/external-portal-membrane.js`](js/external-portal-membrane.js) (`live` / `snapshot` / `offline`). Supports `{ viewMode: 'source' }` to inspect raw HTML inertly as `code`. | **Membrane Isolation Law**: `allow-same-origin` is omitted from all untrusted `webapp` iframes; telemetry uses fail-closed `postMessage` validation (`mcard-portal-telemetry/v1`). |
+
+Detailed architecture guide: **[`docs/01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md`](docs/01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md)**.
+
+---
+
+## 🏆 Completed Sprint Programs
+
+### 1. Program SMO: Submodule Modularity & Universal MCard Browser ([`docs/sprints/01-architecture/`](docs/sprints/01-architecture/INDEX.md))
+
+| Sprint | Focus | Primary Artifacts | Verification Gate | Status |
 | :--- | :--- | :--- | :--- | :---: |
-| **[ERB-00](docs/sprints/08-testing/SPRINT-ERB-00-infrastructure-refactoring.md)** | Infrastructure Modularization | `js/harness/viewport-stage.js`, `js/harness/target-membrane.js`, `js/harness/lab-toolbar.js` | `npm run test:unit` + zero regression on `responsive-rotation-and-devices.spec.js` | ✅ Graduated |
-| **[ERB-01](docs/sprints/08-testing/SPRINT-ERB-01-ring-buffer-core.md)** | Ring Buffer Core & State Engine | `js/harness/event-ring-buffer.js`, `js/harness/recording-state-machine.js` | `node --test tests/unit/event-ring-buffer.test.mjs tests/unit/recording-state-machine.test.mjs` | ✅ Graduated |
-| **[ERB-05](docs/sprints/08-testing/SPRINT-ERB-05-device-capability-profiles.md)** | Device Capability Profiles & Fidelity Tiers | `js/device-registry.js` (schema v2), `js/harness/fidelity.js` | `node --test tests/unit/device-registry-v2.test.mjs tests/unit/fidelity.test.mjs` | ✅ Graduated |
-| **[ERB-02](docs/sprints/08-testing/SPRINT-ERB-02-membrane-normalization.md)** | Target Membrane & Touch Ergonomics | `js/harness/membrane-interceptor.js`, `js/harness/lab-probe-agent.js`, `js/harness/normalize-event.js` | `npx playwright test tests/features/responsive-capture.spec.js --project=features` | ✅ Graduated |
-| **[ERB-03](docs/sprints/08-testing/SPRINT-ERB-03-mcard-clm-persistence.md)** | Device Telemetry & MCard Pipeline | `js/harness/telemetry-collector.js`, `server/test-run-api.mjs`, `js/harness/test-run-schema.js` | `node --test tests/unit/test-run-schema.test.mjs tests/unit/test-run-api.test.mjs` | ✅ Graduated |
+| **[SMO-00](docs/sprints/01-architecture/00-submodule-modularity-and-organizational-program-charter.md)** | Program Charter & Invariants | `INV-SMO-01..05`, 4-Modality Matrix | Charter DoD & link verification | ✅ Graduated |
+| **[SMO-01](docs/sprints/01-architecture/sprint-smo01-submodule-topology-and-monorepo-duality.md)** | Submodule Topology & Binary-Safe Triad API | `server/mcard-api.mjs`, `server/mcard-modality.mjs`, `server/mcard-probe-policy.mjs` | `GET /api/mcard/:hash/raw` + Contract D (`<= 500` LOC) | ✅ Graduated |
+| **[SMO-02](docs/sprints/01-architecture/sprint-smo02-published-kernel-consensus-and-dependency-parity.md)** | Published `clm-kernel@0.0.10` Consensus | `package.json`, `package-lock.json`, `server/mcard-modality.mjs` | `node ../mcard-studio/scripts/check-kernel-version-consensus.mjs` | ✅ Graduated |
+| **[SMO-03](docs/sprints/01-architecture/sprint-smo03-four-estate-cross-boundary-contracts.md)** | Four-Estate Contracts & 4-Modality Membrane | `js/landing-page-mcard.js`, `js/renderers/EmbedRenderer.js`, `app-config.json` | `node --test tests/single-page-mcard.test.mjs` (24/24) | ✅ Graduated |
+| **[SMO-04](docs/sprints/01-architecture/sprint-smo04-documentation-hygiene-and-tier-reorganization.md)** | Documentation Hygiene & Tier Reorganization | `docs/01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md`, `docs/INDEX.md` | Zero loose root docs in `docs/` + 100% link resolution | ✅ Graduated |
+| **[SMO-05](docs/sprints/01-architecture/sprint-smo05-master-readme-alignment-and-verification.md)** | Master README Alignment & Verification | `README.md`, `docs/sprints/01-architecture/INDEX.md` | `npm run test:unit` (97/97) + full SMO gate battery | ✅ Graduated |
+
+### 2. Program ERB: Device-Sensitive Testing Infrastructure ([`docs/sprints/08-testing/`](docs/sprints/08-testing/INDEX.md))
+
+| Sprint | Focus | Primary Artifacts | Verification Gate | Status |
+| :--- | :--- | :--- | :--- | :---: |
+| **[ERB-00](docs/sprints/08-testing/SPRINT-ERB-00-infrastructure-refactoring.md)** | Infrastructure Modularization | `js/harness/viewport-stage.js`, `js/harness/target-membrane.js`, `js/harness/lab-toolbar.js` | `npm run test:unit` + rotation tests | ✅ Graduated |
+| **[ERB-01](docs/sprints/08-testing/SPRINT-ERB-01-ring-buffer-core.md)** | Ring Buffer Core & State Engine | `js/harness/event-ring-buffer.js`, `js/harness/recording-state-machine.js` | `node --test tests/unit/event-ring-buffer.test.mjs` | ✅ Graduated |
+| **[ERB-05](docs/sprints/08-testing/SPRINT-ERB-05-device-capability-profiles.md)** | Device Capability Profiles & Fidelity Tiers | `js/device-registry.js` (schema v2), `js/harness/fidelity.js` | `node --test tests/unit/device-registry-v2.test.mjs` | ✅ Graduated |
+| **[ERB-02](docs/sprints/08-testing/SPRINT-ERB-02-membrane-normalization.md)** | Target Membrane & Touch Ergonomics | `js/harness/membrane-interceptor.js`, `js/harness/lab-probe-agent.js`, `js/harness/normalize-event.js` | `tests/features/responsive-capture.spec.js` | ✅ Graduated |
+| **[ERB-03](docs/sprints/08-testing/SPRINT-ERB-03-mcard-clm-persistence.md)** | Device Telemetry & MCard Pipeline | `js/harness/telemetry-collector.js`, `server/test-run-api.mjs`, `js/harness/test-run-schema.js` | `tests/unit/test-run-api.test.mjs` | ✅ Graduated |
 | **[ERB-04](docs/sprints/08-testing/SPRINT-ERB-04-playwright-deterministic-replay.md)** | Playwright Replay & Systematic Sweeps | `scripts/playwright-replay-driver.mjs`, `tests/features/systematic-landing-test.spec.js` | `npm run test:responsive` and `npm run test:replay` | ✅ Graduated |
 | **[ERB-06](docs/sprints/08-testing/SPRINT-ERB-06-device-sensitive-conformance.md)** | Conformance Suite & Certification | `tests/conformance/checks/*.js`, `tests/features/device-conformance.spec.js` | `npm run test:conformance` (`urn:mcard:certification:responsive:v1`) | ✅ Graduated |
 
-**Verification Battery**: **73/73 unit tests passing**, **17/17 rotation/device tests passing**, **8/8 capture tests passing**, **4/4 replay tests passing**, **16/16 systematic multi-device sweeps passing**, **16/16 device conformance checks passing**, and **responsive certification `urn:mcard:certification:responsive:v1` minted**.
-
-Detailed guide available at: **[`docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md`](docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md)**. The [ERB sprint series index](docs/sprints/08-testing/INDEX.md) holds the master refactoring sequence and all invariants.
+Detailed testing guide: **[`docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md`](docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md)**.
 
 ---
 
-## 🚀 **Workbench Features**
+## 🔬 Device-Sensitive Dimensions (100% Certified)
 
-### 📱 **Responsive UI Lab & Viewport Stage (`responsive-lab.html`)**
-- **Direct Target Ingestion (`?target=<URL>`)**: Point the workbench to any local or external HTTP target.
-- **Dynamic 2D Geometry & Rotation (`INV-RVP-01`)**: Full-window responsive testing workbench with dual-axis orientation swapping. Clicking orientation toggles physically swaps target width and height while maintaining aspect ratios without distortion.
-- **Layout-Box Stage Containment (`INV-RVP-02`)**: Automatic scale factor $s = \min(1, W_{\text{available}} / w_{\text{target}}, H_{\text{available}} / h_{\text{target}})$ inside a dedicated `.viewport-scale-wrapper`. Even the largest desktop or rotated tablet viewports fit completely within the available stage space with zero window scrollbars.
-- **Declarative Device Registry (`INV-RVP-03`, `INV-DSF-02`)**: Built-in catalog of 8 devices (`js/device-registry.js`) across phones, tablets, and desktops, with schema v2 capability profiles (touch, pointer, mobile, hover, safe-area, pixelRatio) and persistent `localStorage` storage.
-- **Interactive Device Manager**: Add custom screen sizes with automated greatest-common-divisor (GCD) aspect ratio calculation, delete user-added devices, or reset to factory defaults.
-- **Direct Portal Navigation**: `index.html` streamlined to highlight the Responsive UI Lab as the primary choice with top-level automatic navigation (`window.self === window.top`).
-- **Zero-Dependency Guarantee (`INV-REF-01`)**: Pure vanilla JavaScript and native CSS variables (`--frame-target-width`, `--frame-target-height`, `--frame-scale-factor`).
-
-### **🏗️ Modular Architecture**
-- **MCard Manager**: Advanced card management with IndexedDB persistence, handle support (`@welcome`), and **Duplications** detection (v11+).
-- **Modular HTML**: `index.html` logic is fully modularized into dedicated ESM-ready scripts (`public/js/pwa-init.js`, `ui-inline-handlers.js`, etc.) while preserving external interfaces.
-- **Auth-Gated CSP**: Production-ready Content Security Policy that defaults to strict rules and only enables `unsafe-eval` (required for Pyodide) after secure authentication (HttpOnly cookie).
-- **Hybrid Execution**: Configurable CLM execution strategies (`auto`, `browser`, `server`) to balance performance and security.
-
-### **⚡ Hybrid CLM Execution**
-The system supports three execution modes for Cubical Logic Models:
-1. **Auto (Default)**: Intelligently selects the best runtime. Prefers local browser execution via Pyodide/WebWorkers for privacy and offline support, falling back to server execution if resources are constrained.
-2. **Browser (Local)**: Forces client-side execution using `mcard-js` and Pyodide. Fully offline-capable but requires `unsafe-eval` (auth-gated).
-3. **Server (Remote)**: Offloads execution to the `/api/clm/execute` endpoint. Useful for low-power devices or when strict CSP blocks WASM/eval.
-
-### **🧹 Automated Duplicate Management**
-- **Smart Detection**: Detects duplicate-type MCards (`{"type": "duplicate"}`) via `BrowserContentTypeDetector`.
-- **Batch Operations**: Quick removal of all duplicate entries to maintain a clean knowledge container.
-- **Sidebar Integration**: Real-time count of duplicates with a distinct UI badge.
-
-### **🗂️ Single-Page MCard Distillation & Portal Samples (EPIC-SMR / SMR-09)**
-- **Single-Page MCard**: `js/landing-page-mcard.js` distills the landing page itself into a self-describing MCard record, so the corpus supplier emits content-addressed data instead of bespoke payloads.
-- **External Portal Membrane**: `js/external-portal-membrane.js` isolates third-party portal embedding behind a membrane boundary, keeping the core page pure and the effect surface auditable.
-- **Sample Corpus**: `data/samples/` plus `scripts/seed-portal-samples.mjs` seed deterministic portal sample records for local development and tests.
-- **Server API**: `server/mcard-api.mjs` (ESM; replaces the legacy `server/mcard-api.js`) exposes the MCard endpoints used by the portal.
-- **Tests**: `tests/single-page-mcard.test.mjs` (node:test) and `tests/smoke/single-page-mcard.spec.js` (Playwright smoke).
+1. **Dynamic Geometry & Orientation Reflow (`INV-RVP-01`)**: Instant swapping of viewport width and height across the 8 built-in profiles in [`js/device-registry.js`](js/device-registry.js).
+2. **Declared Fidelity Tiers (`INV-DSF-01`, `INV-DSF-02`)**: Every run and report declares its fidelity tier (`T0` lab iframe, `T1`/`T2` Playwright context with DPR/touch/UA/CDP throttling, `T3` physical LAN device).
+3. **Horizontal Viewport Bleed (`INV-DEV-01`)**: Automated detection of horizontal overflow (`document.documentElement.scrollWidth <= window.innerWidth`).
+4. **Touch Target Ergonomics (`INV-DEV-02`)**: Interactive elements on coarse-pointer devices meet mobile tap size requirements ($\ge 44\text{px} \times 44\text{px}$).
+5. **Scale-Invariant Interaction Capture (`INV-ERB-01..05`, `INV-PRV-01`)**: Bounded in-memory ring buffer normalized to $[0.0, 1.0]$ with automatic credential/input redaction.
+6. **Frame Budget & Layout Stability (`INV-DEV-04`)**: Observation of frame latency ($16.6\text{ms}$ budget / $60\text{fps}$) and layout shift (CLS).
+7. **MCard Test Dataset Certification (`INV-ERB-04`)**: Content-addressed persistence of test runs into the SQLite Triad (`data/mcard-api.db`) with `clm-kernel@0.0.10` (`blake3`) hashing and `urn:mcard:certification:responsive:v1`.
 
 ---
 
-## 🧊 **CLM-Based Development Architecture**
+## 📦 Canonical 3-Table, 3-Column Triad SQLite Contract (`INV-510`)
 
-This project is built on the **Cubic Logic Model (CLM)** - 三套東西 (Three Sets) principle. Every component, test, and feature follows the CLM structure:
+`LandingPage` persists all MCards (both single-page portal cards and `data/samples/portal_samples.mcard.db`) using the canonical 3-table, 3-column Triad SQLite schema implemented in [`server/mcard-api.mjs`](server/mcard-api.mjs):
 
-### **Core Principle: mcard-js Integration**
+```sql
+CREATE TABLE IF NOT EXISTS card (
+  hash TEXT PRIMARY KEY NOT NULL,
+  content BLOB NOT NULL,
+  g_time TEXT NOT NULL
+);
 
-The entire project is **served and run through mcard-js**, providing:
+CREATE TABLE IF NOT EXISTS handle_registry (
+  handle TEXT PRIMARY KEY NOT NULL,
+  current_hash TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
 
-| Server | Port | Purpose |
-|--------|------|---------|
-| **Node WebSocket Server** | 3001 | HTTP + WebSocket + API endpoints (Configurable via .env) |
-| **Express Static Server** | 3001 | Serves all static files and CLM components |
-| **MCard Dev Server** | 4000 | Configurable dev server via `mcard-js` |
+CREATE TABLE IF NOT EXISTS handle_history (
+  handle TEXT NOT NULL,
+  previous_hash TEXT NOT NULL,
+  changed_at TEXT NOT NULL
+);
+```
+
+- **Content-Only Hash Law**: `card.hash = hex(H(content))` where algorithm `H` (`blake3` default, `sha256` legacy) is declared in coordinate `a` of `g_time = ALGORITHM|TIMESTAMP|LOCALE`.
+- **Append-Only G-Set (`INV-REF-03`)**: `DELETE /api/mcard/:hash` releases mutable handle bindings in `handle_registry` while retaining immutable card content in `card`.
+- **Deterministic 6-Sample Corpus**: [`scripts/seed-portal-samples.mjs`](scripts/seed-portal-samples.mjs) seeds [`data/samples/portal_samples.mcard.db`](data/samples/portal_samples.mcard.db), [`data/samples/portal_samples_manifest.yaml`](data/samples/portal_samples_manifest.yaml), and [`data/samples/portal_samples_manifest.json`](data/samples/portal_samples_manifest.json).
+
+---
+
+## 🛠️ Quick Start (Standalone & Monorepo Dual-Mode)
+
+### 1. From `LandingPage/` (Standalone Submodule Mode)
 
 ```bash
-# Start the unified server (HTTP + WebSocket + CLM APIs)
-npm run dev        # Starts ws-server.js on port 3001 (configured in .env)
+# Start the unified HTTP + WebSocket + MCard API server on port 3001
+npm run dev
 
-# Or run directly:
-node ws-server.js  # Reads PORT from .env (default 3001)
+# Run the complete unit + single-page MCard test suite (97 tests)
+npm run test:unit
+
+# Regenerate and verify the 6-sample portal corpus
+node scripts/seed-portal-samples.mjs
+
+# Run Playwright responsive, replay, and conformance suites
+npm run test:responsive
+npm run test:replay
+npm run test:conformance
 ```
 
-### **CLM Component Structure**
-
-Every CLM component follows the **Abstract → Concrete → Balanced** pattern:
-
-```yaml
-# Example from clm-registry.yaml
-- hash: "youtube-viewer"
-  name: "YouTube Video Viewer"
-  abstract:
-    context: "Video content presentation"
-    goal: "Embed and control YouTube playback"
-  concrete:
-    implementation: "components/youtube-viewer.html"
-    sandbox: "allow-scripts allow-same-origin"
-  balanced:
-    metrics_endpoint: "/metrics/youtube-viewer"
-    expected_load_time_ms: 800
-```
-
-### **CLM-Driven Testing**
-
-All tests are organized using CLM principles and executed via Playwright:
-
-| Test Category | Purpose | CLM Alignment |
-|---------------|---------|---------------|
-| **Smoke Tests** (`tests/smoke/`) | Fast navigation validation (~15s) | Abstract (goal verification) |
-| **Component Tests** (`tests/components/`) | Isolated component testing (~60s) | Concrete (implementation) |
-| **Feature Tests** (`tests/features/`) | Deep feature validation (~120s) | Balanced (metrics & outcomes) |
+### 2. From `MCard_TDD/` (Parent Monorepo Mode)
 
 ```bash
-# Run tests by CLM category
-npm run test:smoke       # Abstract - Does it load correctly?
-npm run test:components  # Concrete - Does the implementation work?
-npm run test:features    # Balanced - Does it meet performance metrics?
-
-# List all discovered tests across projects
-npx playwright test --list
-
-# Start interactive background test server (IDE test runner extension protocol)
-npx playwright test-server
-```
-
-> **Note on Test Architecture & Configuration:**
-> - **Playwright Version:** Uses `@playwright/test` `^1.57.0` (matching monorepo hoisted version `1.63.0`), enabling the JSON-RPC `test-server` command used by IDE test runners.
-> - **File Patterns:** [playwright.config.js](playwright.config.js) defines `testMatch: '**/*.spec.js'` to isolate browser end-to-end tests from standalone Vitest unit test suites (`tests/observability/*.test.js`).
-
-### **CLM Dashboard**
-
-The CLM Dashboard (`/archive/html/index-clm-dashboard.html`) provides:
-
-- **Registry Browser**: View all registered CLM components
-- **Component Isolation**: Each component runs in its own iframe
-- **Failure Containment**: Crashing components don't affect others
-- **Performance Metrics**: Real-time component load time monitoring
-
-### **Key CLM Endpoints**
-
-| Endpoint | Purpose |
-|----------|---------|
-| `GET /api/clm/registry` | Returns all registered CLM components |
-| `GET /api/clm/component/:id` | Returns specific component configuration |
-| `GET /api/clm/health/:id` | Health check for component |
-| `POST /api/clm/telemetry` | Receives component telemetry data |
-
----
-
-## 🧠 **AI Project Synthesis & Architectural Commentary**
-
-### **The Philosophy of Failure Containment**
-The PKC Landing Page isn't just a website; it's a **resilient execution environment**. By adopting the **Cubic Logic Model (CLM)**, the project moves away from monolithic web design toward a "Micro-Frontend of Functions." Each component is treated as a mathematical transformation `f(goal, process) → output`. Isolation via iframes ensures that the "blast radius" of any specific failure (e.g., a heavy 3D game or a buggy external integration) is strictly limited, preserving the integrity of the host container.
-
-### **Static-First, Decentralized-Always**
-The pivot from `libp2p` to a **native WebRTC serverless model** represents a critical realization: true decentralization requires removing even the "hidden" centralization of bootstrap nodes. By leveraging manual invitation exchanges (URL/QR), PKC establishes a trust-based, zero-infrastructure network that thrives on local connectivity without sacrificing privacy.
-
-### **The MCard Backbone**
-The integration of `mcard-js` transforms the browser from a simple viewer into a professional knowledge manager. The hybrid detection system in `BrowserContentTypeDetector.js` bridges the gap between structured JSON data and binary media, allowing the container to "understand" its contents rather than just "storing" them. This creates a foundation for **Semantic Knowledge Containers** where the data defines the UI.
-
-### **Evolutionary Trajectory**
-The system is currently transitioning from a **passive listener** (basic indexing) to an **active organizer** (as seen in the Duplications Category). Future phases involving CRDT-based state synchronization and Gossip protocols will further solidify PKC as a robust alternative to centralized cloud silos.
-
----
-
-## 🔄 **P2P Architecture Highlights**
-
-### **Serverless Design Principles**
-- ✅ **No Bootstrap Servers** - Uses STUN only for NAT traversal
-- ✅ **No Signaling Servers** - Manual invitation exchange via URL/QR
-- ✅ **No External Dependencies** - Pure browser WebRTC APIs
-- ✅ **Zero Infrastructure** - Works offline between local peers
-- ✅ **Privacy Preserving** - No central tracking or data collection
-
-### **Connection Flow**
-```
-1. Peer A → Create Invitation (generates offer + ICE candidates)
-2. Manual Exchange → Share invitation URL via QR code, messaging, email
-3. Peer B → Accept Invitation (generates answer)
-4. Manual Exchange → Send answer back to Peer A
-5. Peer A → Complete Connection (apply answer)
-6. ✅ Direct P2P connection established
-```
-
-### **Technical Specifications**
-- **Bundle Size**: 20KB (vs 500KB+ for libp2p alternatives)
-- **Connection Time**: 2-5 seconds (direct WebRTC)
-- **Message Latency**: 10-50ms between connected peers
-- **Max Peers**: 8 concurrent connections (recommended)
-- **Browser Support**: Chrome 56+, Firefox 44+, Safari 11+
-
----
-
-## 🎭 **3D Visualization & Theater**
-
-The project includes a high-performance 3D visualization engine for viewing complex data structures and models.
-
-### **Features**
-- **Interactive Theater**: A dedicated environment for 3D object interaction (`public/examples/THREEJS_ANIMEJS/Theater_Example.html`)
-- **Advanced Modeling**: High-fidelity representations including the **Causal Cone** (spacetime structure) and **PKC Box** within a Crystal Ball (nested transparency).
-- **Data-Driven Objects**: 3D objects defined in JSON files (`data/objects/`) for easy extensibility
-- **Real Satellite Textures**: Earth with 2K satellite imagery from Solar System Scope
-- **Modular ESM Architecture**: Cleanly separated logic for scenes, objects, animations, and UI with built-in cache management.
-- **Synthesized Audio**: Procedural MIDI-like music generated in real-time using Tone.js
-- **Offline Support**: All vendor libraries (Three.js, Anime.js, Tone.js) hosted locally in `/js/vendor/`
-- **Dynamic Lighting**: Interactive lighting presets (Neon, Sunset, Studio)
-- **High Performance**: Optimized using Three.js R147 with WebGL acceleration
-
-📁 **Project Structure**
-
-```
-LandingPage/
-├── index.html                         # Entry point (modularized)
-├── ws-server.js                       # Unified WebSocket + Static Backend
-├── js/                                # Core Application Logic
-│   ├── pkc-core.js                    # Module Loader
-│   ├── execution/                     # Execution Mode Managers
-│   ├── renderers/                     # CLM & UI Renderers
-│   └── modules/                       # Feature Modules (Markdown, P2P)
-├── public/                            # Static Assets & Runtime Scripts
-│   ├── js/                            # Modular App Scripts (ESM)
-│   │   ├── app-bootstrap.js           # App Init
-│   │   ├── mcard/                     # MCard Logical Layer
-│   │   └── ViewManager.js             # View Routing Logic
-│   ├── examples/                      # Interactive Demos (Games, Vis)
-│   └── data/                          # Data artifacts
-├── bmad/                              # BMAD Architecture components
-├── components/                        # HTML implementation of CLMs
-├── routes/                            # Server-side routes (if strictly needed)
-├── docs/                              # Project Documentation
-└── tests/                             # Playwright E2E Tests
-```
-
-### Organization Logic
-The structure follows a **"Static Core, Dynamic Modules"** philosophy:
-- **`js/`**: Contains the "System Code" - the unchanging logic that powers the container.
-- **`public/js/`**: Contains "Application Code" - the logic that defines specific behaviors and UI interactions.
-- **`public/examples/` & `data/`**: Content that is rendered by the system.
-- **`components/`**: Concrete HTML/JS implementations of Abstract CLM goals.
-
-### **Git Submodules**
-This project uses Git submodules to manage large external components.
-- **3DObjectViewer**: Located at `public/examples/3DGames/3DObjectViewer`. This is a standalone project maintained at `github.com/xlp0/3DObjectViewer` and included here to provide advanced 3D model viewing capabilities without bloating the main repository history.
-
----
-
-## 🛠️ **Quick Start**
-
-### **1. Basic Setup**
-```bash
-# Clone repository with submodules (recommended)
-git clone --recursive https://github.com/xlp0/LandingPage.git
-cd LandingPage
-
-# If you already cloned without --recursive:
-# git submodule update --init --recursive
-
-# Start MCard HTTP server with mcard-js integration (recommended)
-./start-mcard-server.sh
-
-# Or use Python HTTP server (basic features only)
-python3 -m http.server 8000 --bind 0.0.0.0
-
-# Or for local network access (all devices on WiFi)
-python3 -m http.server 8000 --bind 0.0.0.0
-```
-
-### **2. Access Application**
-- **Landing Page**: `http://localhost:4000` (with mcard-js) or `http://localhost:8000` (Python)
-- **MCard Manager**: `http://localhost:4000/index.html` - Main interface with Apps navigation
-- **Apps Navigation**: Click "Apps" in sidebar to access:
-  - Calendar, Map, 3D Viewer
-  - Music Visualizer V5
-  - Morphism Cube v1 & v2
-- **P2P Demo**: `http://localhost:8000/js/modules/p2p-serverless/example.html`
-- **Bali Adventure**: `http://localhost:8000/public/examples/games/play_ubud.html`
-- **Documentation**: `http://localhost:8000/pkc-docs-index.html`
-
-### **3. Test P2P (2 Devices)**
-1. Open P2P demo on two devices (same WiFi network)
-2. **Device 1**: Click "Create Invitation" → Copy invitation code
-3. **Device 2**: Click "Accept Invitation" → Paste code → Copy answer
-4. **Device 1**: Click "Complete Connection" → Paste answer
-5. ✅ **Connected!** Send messages between devices instantly
-
----
-
-## 🔧 **P2P Configuration**
-
-### **Application-level configuration (app-config.json)**
-The application reads runtime settings from `/app-config.json`. Use this file to configure WebRTC/P2P and other app knobs without changing code.
-
-Example:
-
-```json
-{
-  "wsHost": "192.168.1.139",
-  "wsPort": 3001,
-  "wsPath": "/ws/",
-  "p2p": {
-    "iceServers": [
-      { "urls": "stun:stun.l.google.com:19302" },
-      { "urls": "stun:stun1.l.google.com:19302" }
-    ]
-  }
-}
-```
-
-How it’s loaded:
-- `js/modules/p2p-serverless/config.js` fetches `/app-config.json` (no-cache) and resolves effective config via `resolveP2PConfig()`.
-- Precedence (highest first): module init overrides → `app-config.json` → built‑in defaults.
-- Add TURN servers here if your environment requires relaying.
-
-See also:
-- `js/modules/p2p-serverless/README.md` (module-level details)
-- `tests/README.md` (why config matters for e2e)
-
-### **Module Configuration** (`modules.json`)
-```json
-{
-  "modules": [
-    {
-      "id": "p2p-serverless",
-      "entry": "/js/modules/p2p-serverless/index.js",
-      "enabled": true,
-      "when": "webrtc",
-      "config": {
-        "iceServers": [ /* optional override; prefer app-config.json */ ],
-        "channelName": "pkc-p2p-discovery",
-        "invitationTTL": 300000
-      }
-    }
-  ]
-}
-```
-
-### **Capability Detection**
-- `webrtc`: WebRTC support (required for P2P)
-- `websocket`: WebSocket support (optional)
-- `storage.idb`: IndexedDB support (optional)
-
----
-
-## 🌐 **Server Options**
-
-### **Development Servers**
-```bash
-# Python (recommended for development)
-python3 -m http.server 8000 --bind 0.0.0.0
-
-# Node.js
-npx serve . -p 8000
-
-# PHP (built-in)
-php -S localhost:8000
-```
-
-### **Production Deployment**
-- **Static Hosting**: GitHub Pages, Netlify, Vercel, S3
-- **CDN**: Cloudflare, Fastly
-- **Traditional**: Nginx, Apache, IIS
-
-### **Local Network Access**
-```bash
-# Allow all network interfaces
-python3 -m http.server 8000 --bind 0.0.0.0
-
-# Access from other devices: http://YOUR_LOCAL_IP:8000
+make landing-up      # Start LandingPage server on port 3001
+make landing-test    # Run LandingPage unit and single-page MCard tests
+make landing-seed    # Seed and verify the 6-sample portal corpus
+make status          # Check health across clm, mcard-studio (:5320), and LandingPage (:3001)
 ```
 
 ---
 
-## 📖 **MCard Architecture & Usage**
+## 📚 Documentation Architecture & 12-Tier Categorized Directory
 
-### **Architecture Overhaul (v2)**
-The MCard system has been rebuilt to rely on the robust `mcard-js` library for core operations while upgrading specific browser behaviors:
-- **`MCardManager.js`**: Now orchestrated via `mcard-js`'s `CardCollection` and `IndexedDBEngine`, ensuring reliable persistence and querying.
-- **`BrowserContentTypeDetector.js`**: A hybrid detection system that combines library-standard MIME detection with a custom "Expanded Binary" detector for audio/video formats (MP4, FLAC, MKV, etc.) and specific CLM text patterns.
-- **Handle Support**: Native support for friendly names (`@welcome`, `@readme`) alongside content-addressed hashes.
-
-### **Demo MCard Imports (central configuration)**
-
-The MCard Manager ships with a small set of demo/default cards that are **loaded from static files** rather than being embedded (hard-coded) inside JavaScript.
-
-The single source of truth for *what gets imported* (manifest + directory scans) is:
-- `public/js/mcard/DemoMCardImportSources.js`
-
-By default, it imports from:
-- `public/data/demo/manifest.json` (curated demo items + their `@handle` names)
-- `public/data/` (recursive scan for additional content)
-- `public/assets/videos/` (video scan for default video MCards)
-
-This approach is intentionally preferred over keeping demo data as hard-coded strings/blobs in JavaScript because it:
-- Keeps **content separate from code** (easier review and iteration)
-- Avoids code churn when demo content changes
-- Makes it easy to add/replace demo content by dropping files into `public/` and adjusting the central import config
-- Works naturally with static hosting/CDNs and browser caching
-
-Overrides:
-- `MCARD_DEMO_IMPORT_SOURCES` (JSON array) can override the default sources.
-  - In localhost development, `DemoMCardImportSources.js` will attempt to read it from `/.env`.
-  - In production/static hosting, prefer setting it via `app-config.json` as `mcardDemoImportSources`.
-
-Notes:
-- Manifest paths are resolved under `/public/` (for example `data/demo/welcome.md` maps to `/public/data/demo/welcome.md`).
-- The demo includes a `@pkc-box-demo` asset using `.webp`. WebP is treated as an **image** in the UI; if the WebP is animated, it will **animate as an animated image** when rendered in the browser.
-
-### **P2P Communication**
-```javascript
-// Get P2P module
-const p2p = await window.pkc.modules['p2p-serverless'];
-
-// Create invitation
-const invitation = await p2p.createInvitation();
-console.log('Share this URL:', invitation.url);
-
-// Accept invitation (from another peer)
-await p2p.acceptInvitation(invitationUrl);
-
-// Send messages
-p2p.broadcast({ type: 'chat', message: 'Hello everyone!' });
-
-// Listen for messages
-p2p.onMessage(({ peerId, data }) => {
-  console.log('Message from', peerId, ':', data);
-});
-```
-
-### **Documentation Viewing**
-1. Navigate to `pkc-docs-index.html`
-2. Click any document card
-3. View rich markdown with LaTeX math and Mermaid diagrams
-4. Use "Back to Index" to return
-
----
-
-## 🧮 **LaTeX Math Support**
-
-Obsidian-compatible LaTeX syntax:
-
-### **Inline Math**
-```markdown
-Einstein's formula: $E = mc^2$
-```
-
-### **Display Math**
-```markdown
-$$
-\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right) \times V
-$$
-```
-
-### **Supported Features**
-- Greek letters: `$\alpha, \beta, \gamma$`
-- Fractions: `$\frac{a}{b}$`
-- Integrals: `$\int_0^\infty f(x) dx$`
-- Matrices: `$\begin{bmatrix} a & b \\ c & d \end{bmatrix}$`
-
----
-
-## 📊 **Mermaid Diagrams**
-
-All Mermaid diagram types supported:
-
-```mermaid
-graph TD
-    A[Start] --> B{Decision}
-    B -->|Yes| C[Process]
-    B -->|No| D[End]
-    C --> D
-```
-
----
-
-## 🔄 **P2P vs Traditional Systems**
-
-| Feature | PKC Serverless | Traditional P2P | Client-Server |
-|---------|----------------|-----------------|---------------|
-| **Server Dependencies** | ❌ Zero | ❌ Zero | ✅ Required |
-| **External Libraries** | ❌ Zero | ✅ Many | ✅ Many |
-| **Bundle Size** | 20KB | 500KB+ | N/A |
-| **Connection Setup** | Manual | DHT/Auto | N/A |
-| **Privacy** | ✅ High | ⚠️ Medium | ❌ Low |
-| **Offline Support** | ✅ Full | ✅ Full | ❌ None |
-| **Infrastructure Cost** | $0 | $0 | $$$ |
-| **Complexity** | Low | High | High |
-
----
-
-## 🌐 **Browser Compatibility**
-
-### **P2P Features**
-- ✅ Chrome/Edge 56+ (full support)
-- ✅ Firefox 44+ (full support)
-- ✅ Safari 11+ (full support)
-- ⚠️ Mobile Safari (works, some limitations)
-
-### **Documentation Viewer**
-- ✅ Chrome/Edge (recommended)
-- ✅ Firefox
-- ✅ Safari
-- ✅ Opera
-
----
-
-## 📚 **Documentation Architecture & 12-Tier Categorized Directory**
-
-All technical documentation has been completely reviewed, refactored, and aligned with the **Four-Estate Monorepo Architecture (`ULR-01`)** of `MCard_TDD`, the graduated **Program ERB**, and **pstack / BMAD** engineering principles (Diátaxis modes, STE clarity, and invariant contracts).
-
-See the [**Master Documentation Index (`docs/INDEX.md`)**](docs/INDEX.md) for full navigational hierarchy.
+See the **[Master Documentation Index (`docs/INDEX.md`)](docs/INDEX.md)** and **[Documentation Structure Guide (`docs/README.md`)](docs/README.md)** for complete navigation.
 
 | Tier | Category | Key Topics & Invariants | Entry Point |
 | :---: | :--- | :--- | :--- |
 | **00** | **Getting Started** | Developer onboarding, 5-minute setup, operational status, interactive lab usage guide | [docs/00-getting-started/](docs/00-getting-started/README.md) |
-| **01** | **Architecture** | Monorepo Four-Estate framework (`ULR-01`), 14 core system invariants (`INV-STU-*`, `INV-RVP-*`, `INV-ERB-*`), clean-room contracts | [docs/01-architecture/](docs/01-architecture/README.md) |
-| **02** | **Authentication** | Zitadel OIDC with PKCE, auth-gated CSP (`unsafe-eval` boundary), privacy redaction by construction (`INV-PRV-01`) | [docs/02-authentication/](docs/02-authentication/README.md) |
-| **03** | **Data Management** | Canonical SQLite Triad (`cards`, `handles`, `blobs`), `clm-kernel@0.0.9` consensus, single-page distillation (`SMR-09`), polymorphic rendering | [docs/03-data-management/](docs/03-data-management/README.md) |
-| **04** | **Networking** | WebRTC P2P data mesh, WebSocket signaling on port 3001, SSRF network membrane guards, cross-origin probe protocol | [docs/04-networking/](docs/04-networking/README.md) |
-| **05** | **State Management** | Global Redux Toolkit application store (auth, clm, rtcConnection) and deterministic 20-pair `RecordingStateMachine` (`INV-ERB-03`) | [docs/05-state-management/](docs/05-state-management/README.md) |
-| **06** | **Components** | Responsive Lab harness ES modules (`ViewportStage`, `TargetMembrane`, `LabToolbar`, `MembraneInterceptor`, `TelemetryCollector`), CLM Three Sets framework | [docs/06-components/](docs/06-components/README.md) |
-| **07** | **Deployment** | Containerized Node.js runtime, ArgoCD GitOps pipelines (`dev.pkc.pub`, `henry.pkc.pub`), Cloudflare R2 storage, pre-deploy CI gates | [docs/07-deployment/](docs/07-deployment/README.md) |
-| **08** | **Testing** | Device-sensitive testing infrastructure, Playwright replay driver, 16-device sweeps, 15-check conformance suite, Program ERB archive | [docs/08-testing/](docs/08-testing/README.md) |
-| **09** | **Performance** | In-target telemetry (16.6ms frame budget `INV-DEV-04`, CLS, bleed `INV-DEV-01`), Grafana Faro RUM, Lagrangian mechanics telemetry | [docs/09-performance/](docs/09-performance/README.md) |
-| **10** | **Project Management** | Agile methodology, BMAD agent roles (Winston, Amelia, John, Mary, Sally, Paige), sprint coordination, and epics (`EPIC-COL`, `EPIC-RVP`, `EPIC-STY`, `EPIC-SMR`) | [docs/10-project-management/](docs/10-project-management/README.md) |
-| **11** | **Standards** | Zero runtime npm dependencies (`INV-REF-01`), unified CSS token contracts (`tokens.css`, `semantic-tokens.css`), style gates (`sty_gate.py`), Penpot SSOT | [docs/11-standards/](docs/11-standards/README.md) |
+| **01** | **Architecture** | Four-Estate framework (`ULR-01`), [Universal 4-Modality MCard Browser](docs/01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md), system invariants | [docs/01-architecture/](docs/01-architecture/README.md) |
+| **02** | **Authentication** | Zitadel OIDC with PKCE, Google OAuth setup, auth-gated CSP, privacy redaction (`INV-PRV-01`) | [docs/02-authentication/](docs/02-authentication/README.md) |
+| **03** | **Data Management** | Canonical SQLite Triad (`card`, `handle_registry`, `handle_history`), `clm-kernel@0.0.10` consensus, 4-modality rendering | [docs/03-data-management/](docs/03-data-management/README.md) |
+| **04** | **Networking** | WebRTC P2P data mesh, WebSocket signaling on port 3001, SSRF network membrane guards | [docs/04-networking/](docs/04-networking/README.md) |
+| **05** | **State Management** | Global Redux Toolkit application store and deterministic 20-pair `RecordingStateMachine` (`INV-ERB-03`) | [docs/05-state-management/](docs/05-state-management/README.md) |
+| **06** | **Components** | Responsive Lab harness ES modules, CLM Three Sets framework, 3D Theater, and [Multiplayer Games](docs/06-components/games/CHESS_GAME_DOCUMENTATION.md) | [docs/06-components/](docs/06-components/README.md) |
+| **07** | **Deployment** | Containerized Node.js runtime, ArgoCD GitOps pipelines, Cloudflare R2 storage, pre-deploy CI gates | [docs/07-deployment/](docs/07-deployment/README.md) |
+| **08** | **Testing** | Device-sensitive testing infrastructure, Playwright replay driver, 16-device sweeps, conformance suite | [docs/08-testing/](docs/08-testing/README.md) |
+| **09** | **Performance** | In-target telemetry (16.6ms frame budget `INV-DEV-04`, CLS, bleed `INV-DEV-01`), Grafana Faro RUM | [docs/09-performance/](docs/09-performance/README.md) |
+| **10** | **Project Management** | Agile methodology, BMAD agent roles, sprint coordination, and epics | [docs/10-project-management/](docs/10-project-management/README.md) |
+| **11** | **Standards** | Unified CSS token contracts (`tokens.css`, `semantic-tokens.css`), style gates, clean-room contracts | [docs/11-standards/](docs/11-standards/README.md) |
 
-### **Specialized References & Sprint Archives**
-- 📖 [**Device-Sensitive Testing Infrastructure Guide**](docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md)
-- 🏆 [**Graduated Program ERB Sprints Archive (ERB-00..06)**](docs/sprints/08-testing/INDEX.md)
-- 🌟 [**Authoritative Functional Specifications Library**](docs/functionalities/README.md)
-
----
-
-## 🤝 **Contributing**
-
-### **P2P Module Development**
-1. The P2P system is modular and extensible
-2. See `js/modules/p2p-serverless/README.md` for API details
-3. Test changes using the provided example pages
-
-### **General Development**
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly (especially P2P functionality)
-5. Submit a pull request
-
----
-
-## 📊 **Project Stats**
-
-- **Lines of Code**: ~4,500+ lines (including docs + new game examples)
-- **Modules**: 3 active (markdown-renderer, net-gateway, p2p-serverless)
-- **P2P Bundle Size**: 20KB (uncompressed)
-- **Libraries**: Pure browser APIs (WebRTC, BroadcastChannel, etc.)
-- **Browser Support**: Modern browsers (2016+)
-- **Server Options**: 4+ (Python, Node.js, Nginx, IIS, static hosting)
-- **Documentation**: 1,800+ lines across 8 docs
-- **Automated Tests**: P2P Connectivity, Music Visualizer, Landing Page Features (Playwright)
-- **Last Updated**: January 2026
-
----
-
-## 🚀 **Live Demo**
-
-### **Quick Demo**
-```bash
-# Start server
-python3 -m http.server 8000 --bind 0.0.0.0
-
-# Access from any device on your network:
-# Landing Page: http://YOUR_LOCAL_IP:8000
-# P2P Demo: http://YOUR_LOCAL_IP:8000/js/modules/p2p-serverless/example.html
-# Bali Game: http://YOUR_LOCAL_IP:8000/public/examples/games/play_ubud.html
-```
-
-### **P2P Testing**
-1. Open demo on two devices (phone + computer)
-2. Connect using invitation codes
-3. Send messages between devices
-4. Experience true peer-to-peer communication!
-
----
-
-## 🔒 **Security & Privacy**
-
-### **P2P Security**
-- **Transport Encryption**: WebRTC DTLS encryption
-- **No Central Servers**: No single point of failure or tracking
-- **Manual Peer Verification**: Users control who they connect to
-- **Privacy-First**: No telemetry or external data collection
-
-### **Web Security**
-- **HTTPS Recommended**: Required for full WebRTC functionality
-- **CSP Headers**: Security headers configured in nginx
-- **No External Dependencies**: Reduces attack surface
-- **Static Content**: No server-side processing
-
----
-
-## 🧪 **Testing**
-
-The project includes a comprehensive Playwright E2E test suite.
-
-### Quick Start
-
-```bash
-# Start WebSocket server (required)
-node ws-server.js
-
-# Run all tests
-npx playwright test --project=chromium
-
-# Run CLM Dashboard tests only
-npx playwright test tests/test-clm-*.spec.cjs --project=chromium
-
-# View HTML report
-npx playwright show-report
-```
-
-### Test Coverage
-
-| Category | Tests | Description |
-|----------|-------|-------------|
-| CLM Dashboard | 18+ | Component loading, iframe isolation, performance |
-| Landing Page | 6 | PWA modal, sidebar, app views, chat panel |
-| Music Visualizer | 5+ | Audio playback, sync, timer display |
-
-### Documentation
-
-For detailed test documentation including:
-- Complete test file reference
-- Selector patterns and wait strategies
-- Recent fixes and technical details
-- Contribution guidelines
-
-See **[tests/TEST_DOCUMENTATION.md](tests/TEST_DOCUMENTATION.md)**
-
----
-
-## 📄 **License**
-
-This project is provided as-is for exploring PKC design concepts and serverless P2P communication.
-
----
-
-## 🎯 **Architecture Evolution**
-
-### **Phase 1: ✅ Complete**
-- Serverless P2P foundation
-- WebRTC connection management
-- Manual invitation exchange
-- Basic messaging
-- Documentation and testing
-
-### **Phase 2: Mesh Networking** (Future)
-- Multi-peer topologies
-- Gossip protocol routing
-- Automatic peer discovery
-- Network optimization
-
-### **Phase 3: State Synchronization** (Future)
-- CRDT integration
-- Shared document editing
-- Conflict resolution
-- Persistence layers
-
-### **Phase 4: Advanced Security** (Future)
-- End-to-end encryption
-- Peer authentication
-- Message signing
-- Rate limiting
-
----
-
-## 📦 **Neutral Dataset Supplier & Format-Level Contract (`INV-PKG-10`, `INV-PKG-11`)**
-
-> **Role**: Independent Corpus & Dataset Supplier (Contract Version `1.0.0`)  
-> **Invariants**: `INV-PKG-10` (Zero Engine/Runtime Coupling), `INV-PKG-11` (Format-Level G-Set SQLite Contract)
-
-`LandingPage` operates as an **independent corpus producer**. It declares zero runtime dependencies on `clm-kernel`, `mcard-studio`, or any consumer runtime. All emitted knowledge datasets (`*.mcard.db`) conform strictly to the neutral format-level SQLite specification:
-
-### **1. MCard G-Set SQLite Schema (`*.mcard.db`)**
-```sql
--- Core Content-Addressed MCard Table
-CREATE TABLE IF NOT EXISTS mcards (
-    hash TEXT PRIMARY KEY NOT NULL,        -- SHA-256 multihash
-    schema_version TEXT NOT NULL,          -- e.g. "1.0.0"
-    created_at INTEGER NOT NULL,           -- Unix timestamp (ms)
-    mime_type TEXT NOT NULL,               -- e.g. "text/markdown", "application/json"
-    author_did TEXT NOT NULL,              -- e.g. "did:key:z6Mku..."
-    payload_hash TEXT NOT NULL,            -- Hash of the raw blob
-    metadata_json TEXT,                    -- JSON string with metadata
-    sequence INTEGER NOT NULL DEFAULT 0,   -- Monotonic sequence number
-    uri TEXT                               -- Universal Resource Identifier
-);
-
--- Monotonic Append-Only Blobs Table
-CREATE TABLE IF NOT EXISTS blobs (
-    payload_hash TEXT PRIMARY KEY NOT NULL,
-    size_bytes INTEGER NOT NULL,
-    data BLOB NOT NULL
-);
-
--- Handle Registry (Mutable Pointers to Immutable Hashes)
-CREATE TABLE IF NOT EXISTS handle_registry (
-    handle TEXT PRIMARY KEY NOT NULL,
-    current_hash TEXT NOT NULL,
-    updated_at INTEGER NOT NULL
-);
-
--- Directed Relations / Edges
-CREATE TABLE IF NOT EXISTS relations (
-    source_hash TEXT NOT NULL,
-    predicate TEXT NOT NULL,
-    target_hash TEXT NOT NULL,
-    PRIMARY KEY (source_hash, predicate, target_hash)
-);
-```
-
-Consumers (such as `mcard-studio`, CLI tools, or external platforms) ingest emitted datasets using standard SQLite queries without importing `LandingPage` source code.
-
----
-
-## 🐛 **Recent Bug Fixes**
-
-### **October 2026**
-- **Responsive UI Lab & Portal Navigation Updates (`responsive-lab.html`, `index.html`, `ws-server.js`)**:
-  - Streamlined `index.html` to present Responsive UI Lab as the primary choice with top-level direct navigation (`window.self === window.top`) to bypass extra clicks while maintaining scrollability test compliance.
-  - Added `http://localhost:4321/` to `#public-site-selector` in `responsive-lab.html` for testing local Astro and frontend applications inside the iframe workbench.
-  - Added `http://localhost:4321` to allowed CORS origins in `ws-server.js`.
-  - Aligned `clm-kernel` dependency to published `0.0.9`.
-- **EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry (`responsive-lab.html`)**:
-  - Replaced legacy 1D width-only preset buttons with dynamic device registry (`js/device-registry.js`) and rendered preset ribbon.
-  - Implemented true 2D orientation swapping (Portrait $\leftrightarrow$ Landscape) with physical dimension exchange and smooth transitions (`INV-RVP-01`).
-  - Implemented layout-box stage containment (`.viewport-scale-wrapper`), scaling oversized viewports to fit the workbench with a 5% margin (`INV-RVP-02`).
-  - Fixed workbench stage inflation bug where `body { min-height: 100vh }` allowed tall viewports to push the body height beyond the window, leading to clipped frames in short viewports. Enforced strict `body { height: 100vh }`.
-  - Added Device Manager modal dialog with closed schema validation, custom viewport creation, deletion of user devices, and `localStorage` self-healing (`INV-RVP-03`).
-  - Added Playwright test suite `tests/features/responsive-rotation-and-devices.spec.js` (18 passing assertions, including small-window containment `RVP-T02c`).
-
-### **January 2026**
-- **Fixed Apps dropdown in CardTypes sidebar** - The Apps category dropdown was not responding to clicks. Root cause: `viewManager` singleton was created but not exposed to `window`, causing `window.viewManager.toggleSubmenu('apps')` to fail silently. Fix: Added `window.viewManager = viewManager;` in `public/js/ViewManager.js`.
-- **Removed Hardcoded WebSocket Port** - Replaced legacy hardcoded port `5321` in `ServerCLMRunner.js` with dynamic port detection (`window.location.port`), defaulting to `3000`. This ensures the client correctly connects to the actual server port (e.g., `3001` in dev) instead of failing to connect to a non-existent service.
-
-
----
-
-**Built with ❤️ for decentralized communication and personal knowledge management**
-
-**PKC Landing Page** - Where static meets dynamic, and centralized meets decentralized.
+### Specialized References & Sprint Archives
+- 📖 **[Universal 4-Modality MCard Browser Architecture](docs/01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md)**
+- 🏆 **[Graduated Program SMO Sprints Archive (`SMO-00..05`)](docs/sprints/01-architecture/INDEX.md)**
+- 🏆 **[Graduated Program ERB Sprints Archive (`ERB-00..06`)](docs/sprints/08-testing/INDEX.md)**
+- 📖 **[Device-Sensitive Testing Infrastructure Guide](docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md)**
+- 🌟 **[Authoritative Functional Specifications Library](docs/functionalities/README.md)**
+- 🧪 **[Playwright E2E Test Documentation](tests/TEST_DOCUMENTATION.md)**

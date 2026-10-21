@@ -1,6 +1,13 @@
 # Sprints Master Index
 
 - [**Active Sprints Pointer (`docs/sprints/_active/`)**](./_active/INDEX.md)
+- [**Program SMO: Submodule Modularity & Universal MCard Browser (`docs/sprints/01-architecture/`)**](./01-architecture/INDEX.md)
+  - [SMO-00: Program Charter: Submodule Modularity & Universal MCard Browser](./01-architecture/00-submodule-modularity-and-organizational-program-charter.md)
+  - [SMO-01: Submodule Topology, Monorepo Duality & Binary-Safe Triad API](./01-architecture/sprint-smo01-submodule-topology-and-monorepo-duality.md)
+  - [SMO-02: Published `clm-kernel@0.0.10` Consensus & 4-Modality TypeInterpreter](./01-architecture/sprint-smo02-published-kernel-consensus-and-dependency-parity.md)
+  - [SMO-03: Four-Estate Cross-Boundary Contracts & 4-Modality Browser Membrane](./01-architecture/sprint-smo03-four-estate-cross-boundary-contracts.md)
+  - [SMO-04: Documentation Hygiene & Tier Reorganization](./01-architecture/sprint-smo04-documentation-hygiene-and-tier-reorganization.md)
+  - [SMO-05: Master README Alignment & Full-Program Verification](./01-architecture/sprint-smo05-master-readme-alignment-and-verification.md)
 - [**Program ERB: Device-Sensitive Test Infrastructure (`docs/sprints/08-testing/`)**](./08-testing/INDEX.md)
   - [SPRINT-ERB-00: Infrastructure Modularization & Lab Refactor Baseline](./08-testing/SPRINT-ERB-00-infrastructure-refactoring.md)
   - [SPRINT-ERB-01: Bounded Event Ring Buffer & Recording State Machine](./08-testing/SPRINT-ERB-01-ring-buffer-core.md)

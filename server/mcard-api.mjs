@@ -5,13 +5,8 @@
  *   card.hash = hex(H(content)), where the algorithm H is named by coordinate *a*
  *   of `g_time` and `g_time = ALGORITHM|TIMESTAMP|LOCALE[|key=value...]`.
  *
- * The hash capability is provisioned by the published `clm-kernel` npm module —
- * LandingPage carries no cryptographic implementation of its own. The store is the
- * canonical 3-table, 3-column Triad schema (`card`, `handle_registry`,
- * `handle_history`); the legacy 4-table layout (`mcards`, `blobs`, `relations`) is
- * migrated in place, preserving each row's original digest and declaring `sha256`
- * in its `g_time`. Re-minting a record creates a new card plus a `handle_history`
- * transition — never an in-place rewrite.
+ * Hashing and 4-modality content classification (`media`, `document`, `code`, `webapp`)
+ * are provisioned by the published `clm-kernel@0.0.10` npm module.
  */
 import express from 'express';
 import path from 'node:path';
@@ -19,67 +14,26 @@ import fs from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import { computeHash } from 'clm-kernel';
 
-import dns from 'node:dns';
+import {
+  MODALITY_TYPES, classifyMCardContent, detectContentType, isBinaryContent, resolveModality, toRawBuffer,
+} from './mcard-modality.mjs';
+import {
+  DEFAULT_FIXTURE_ORIGINS, MANIFEST_APPROVED_ORIGINS, MAX_PROBE_REDIRECTS, PROBE_BUDGET_MS,
+  configureProbePolicy, evaluateFramingPolicy, executeProbeUrl, getProbePolicy,
+  isProhibitedHostOrIp, resetProbePolicy, validateExternalUrl, validateProbeHop,
+} from './mcard-probe-policy.mjs';
+
+export {
+  DEFAULT_FIXTURE_ORIGINS, MANIFEST_APPROVED_ORIGINS, MAX_PROBE_REDIRECTS, MODALITY_TYPES, PROBE_BUDGET_MS,
+  classifyMCardContent, configureProbePolicy, detectContentType, evaluateFramingPolicy, isBinaryContent,
+  isProhibitedHostOrIp, resetProbePolicy, resolveModality, toRawBuffer, validateExternalUrl, validateProbeHop,
+};
 
 const router = express.Router();
 
 export const LANDING_HANDLE = 'urn:mcard:content:landing_page';
 export const DEFAULT_ALGORITHM = 'blake3';
 export const LEGACY_ALGORITHM = 'sha256';
-export const PROBE_BUDGET_MS = 600;
-export const MAX_PROBE_REDIRECTS = 3;
-export const MANIFEST_APPROVED_ORIGINS = Object.freeze([
-  'https://example.gov',
-  'https://developer.mozilla.org',
-  'https://github.com',
-  'https://www.wikipedia.org',
-]);
-const SAFE_URL_SCHEMES = new Set(['http:', 'https:']);
-
-const defaultResolver = async (hostname) => {
-  const records = await dns.promises.lookup(hostname, { all: true, verbatim: true });
-  return records.map((r) => r.address);
-};
-
-let probePolicy = {
-  allowedOrigins: [...MANIFEST_APPROVED_ORIGINS],
-  allowedFixtureOrigins: [
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'http://localhost:4321',
-    'http://127.0.0.1:3000',
-    'http://127.0.0.1:3001',
-    'http://127.0.0.1:4321'
-  ],
-  embedderOrigin: '',
-  maxRedirects: MAX_PROBE_REDIRECTS,
-  resolver: defaultResolver,
-};
-
-/** Configure or override the server-side URL probe policy (used by tests and embedder configuration). */
-export function configureProbePolicy(overrides = {}) {
-  probePolicy = {
-    ...probePolicy,
-    ...overrides,
-    allowedOrigins: overrides.allowedOrigins ? [...overrides.allowedOrigins] : probePolicy.allowedOrigins,
-    allowedFixtureOrigins: overrides.allowedFixtureOrigins
-      ? [...overrides.allowedFixtureOrigins]
-      : probePolicy.allowedFixtureOrigins,
-  };
-  return probePolicy;
-}
-
-/** Reset probe policy to production defaults. */
-export function resetProbePolicy() {
-  probePolicy = {
-    allowedOrigins: [...MANIFEST_APPROVED_ORIGINS],
-    allowedFixtureOrigins: [],
-    embedderOrigin: '',
-    maxRedirects: MAX_PROBE_REDIRECTS,
-    resolver: defaultResolver,
-  };
-  return probePolicy;
-}
 
 let storage = null;
 let ready = false;
@@ -107,165 +61,20 @@ export function algorithmOf(gTime) {
   return algorithm || DEFAULT_ALGORITHM;
 }
 
-/** Deterministic bytes for a card body. */
+/** Deterministic bytes for a card body (preserving raw binary buffers without UTF-8 corruption). */
 function bytesOf(content) {
-  if (Buffer.isBuffer(content)) return content;
-  return Buffer.from(typeof content === 'string' ? content : JSON.stringify(content ?? ''), 'utf8');
+  return toRawBuffer(content);
 }
 
 /** `hex(H(content))` through the kernel's parameterised hash. */
 export function hashContent(content, algorithm = DEFAULT_ALGORITHM) {
-  return computeHash(algorithm, new Uint8Array(bytesOf(content)));
+  const buf = bytesOf(content);
+  return computeHash(algorithm, new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength));
 }
 
 /** Recompute a stored record's digest under the algorithm its `g_time` declares. */
 export function verifyRecord(hash, content, gTime) {
   return hashContent(content, algorithmOf(gTime)) === String(hash).toLowerCase();
-}
-
-/** Content-type detection with structural sniff fallback. */
-export function detectContentType(content) {
-  const text = typeof content === 'string' ? content : JSON.stringify(content ?? '');
-  // eslint-disable-next-line no-control-regex
-  if (/[\u0000-\u0008\u000E-\u001F]/.test(text)) return 'application/octet-stream';
-  const t = text.trimStart();
-  if (/^<(!doctype|html|head|body)\b/i.test(t)) return 'text/html';
-  if (/^<\?xml\b/i.test(t)) return 'application/xml';
-  if (/^[\[{]/.test(t)) {
-    try {
-      JSON.parse(t);
-      return 'application/json';
-    } catch {
-      /* not JSON */
-    }
-  }
-  if (/^#{1,6}\s+\S/m.test(t)) return 'text/markdown';
-  return 'text/plain';
-}
-
-/**
- * Classifies whether a hostname or IP literal falls in loopback, private RFC1918,
- * CGNAT, link-local, cloud metadata, or unspecified address ranges.
- */
-export function isProhibitedHostOrIp(rawHost, { allowLoopback = false } = {}) {
-  const host = String(rawHost ?? '').trim().toLowerCase().replace(/^\[|\]$/g, '');
-  if (!host) return { prohibited: true, reason: 'empty host' };
-  if (host === 'localhost' || host.endsWith('.localhost')) {
-    return allowLoopback ? { prohibited: false } : { prohibited: true, reason: `prohibited hostname '${host}'` };
-  }
-  if (host === 'metadata.google.internal') {
-    return { prohibited: true, reason: `prohibited hostname '${host}'` };
-  }
-  const v4Mapped = host.startsWith('::ffff:') ? host.slice(7) : null;
-  const candidateIp = v4Mapped || host;
-  const ipv4Match = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(candidateIp);
-  if (ipv4Match) {
-    const octets = ipv4Match.slice(1, 5).map(Number);
-    if (octets.some((o) => o < 0 || o > 255)) return { prohibited: true, reason: 'invalid IPv4 address' };
-    const [a, b] = octets;
-    if (a === 127) {
-      return allowLoopback ? { prohibited: false } : { prohibited: true, reason: 'loopback address is prohibited' };
-    }
-    if (a === 0) return { prohibited: true, reason: 'unspecified address is prohibited' };
-    if (a === 10) return { prohibited: true, reason: 'private RFC1918 10.0.0.0/8 address is prohibited' };
-    if (a === 172 && b >= 16 && b <= 31) return { prohibited: true, reason: 'private RFC1918 172.16.0.0/12 address is prohibited' };
-    if (a === 192 && b === 168) return { prohibited: true, reason: 'private RFC1918 192.168.0.0/16 address is prohibited' };
-    if (a === 169 && b === 254) return { prohibited: true, reason: 'link-local / cloud metadata address is prohibited' };
-    if (a === 100 && b >= 64 && b <= 127) return { prohibited: true, reason: 'CGNAT 100.64.0.0/10 address is prohibited' };
-    if (a >= 224) return { prohibited: true, reason: 'multicast/reserved IPv4 address is prohibited' };
-    return { prohibited: false };
-  }
-  if (host.includes(':')) {
-    if (host === '::1' || host === '0:0:0:0:0:0:0:1') {
-      return allowLoopback ? { prohibited: false } : { prohibited: true, reason: 'IPv6 loopback is prohibited' };
-    }
-    if (host === '::' || host === '0:0:0:0:0:0:0:0') return { prohibited: true, reason: 'IPv6 unspecified is prohibited' };
-    if (/^fe[89ab][0-9a-f]:/.test(host)) return { prohibited: true, reason: 'IPv6 link-local is prohibited' };
-    if (/^f[cd][0-9a-f]{2}:/.test(host)) return { prohibited: true, reason: 'IPv6 unique-local is prohibited' };
-  }
-  return { prohibited: false };
-}
-
-/**
- * Rejects anything that is not an absolute http(s) URL without credentials or
- * prohibited private/loopback/link-local/metadata host literals.
- * Returns `{ ok: true, url, origin, hostname }` or `{ ok: false, reason }`.
- */
-export function validateExternalUrl(raw, { allowLoopback = false } = {}) {
-  if (typeof raw !== 'string' || raw.trim() === '') {
-    return { ok: false, reason: 'url must be a non-empty string' };
-  }
-  let parsed;
-  try {
-    parsed = new URL(raw.trim());
-  } catch {
-    return { ok: false, reason: 'url is malformed' };
-  }
-  if (!SAFE_URL_SCHEMES.has(parsed.protocol)) {
-    return { ok: false, reason: `url scheme '${parsed.protocol}' is not allowed` };
-  }
-  if (parsed.username || parsed.password) {
-    return { ok: false, reason: 'url credentials are not allowed' };
-  }
-  const hostCheck = isProhibitedHostOrIp(parsed.hostname, { allowLoopback });
-  if (hostCheck.prohibited) {
-    return { ok: false, reason: hostCheck.reason };
-  }
-  return { ok: true, url: parsed.toString(), origin: parsed.origin, hostname: parsed.hostname };
-}
-
-/**
- * Evaluates X-Frame-Options and CSP frame-ancestors headers against the configured
- * embedding origin (DoD-ULR-05-07).
- */
-export function evaluateFramingPolicy({ xFrameOptions = '', csp = '', targetOrigin = '', embedderOrigin = '' } = {}) {
-  const xfo = String(xFrameOptions ?? '').trim().toLowerCase();
-  const cspText = String(csp ?? '').trim();
-  const match = /(?:^|;)\s*frame-ancestors\s+([^;]+)/i.exec(cspText);
-  const directive = match ? match[1].trim() : null;
-  const hasFrameAncestors = Boolean(directive);
-  const normTarget = String(targetOrigin ?? '').trim().toLowerCase();
-  const normEmbedder = String(embedderOrigin ?? '').trim().toLowerCase();
-
-  let blocked = false;
-  if (hasFrameAncestors) {
-    const tokens = directive.split(/\s+/).map((t) => t.toLowerCase()).filter(Boolean);
-    if (tokens.includes("'none'")) {
-      blocked = true;
-    } else if (!normEmbedder) {
-      blocked = !tokens.includes('*');
-    } else {
-      let embedderProtocol = '';
-      try {
-        embedderProtocol = new URL(normEmbedder).protocol.toLowerCase();
-      } catch {
-        embedderProtocol = '';
-      }
-      const allowed = tokens.some((token) => {
-        if (token === '*') return true;
-        if (token === "'self'") return Boolean(normTarget) && normEmbedder === normTarget;
-        if (embedderProtocol && token === embedderProtocol) return true;
-        return token === normEmbedder;
-      });
-      blocked = !allowed;
-    }
-  } else if (xfo.includes('deny')) {
-    blocked = true;
-  } else if (xfo.includes('sameorigin')) {
-    blocked = !normEmbedder || !normTarget || normEmbedder !== normTarget;
-  }
-
-  return {
-    blocked,
-    frameable: !blocked,
-    verdict: blocked ? 'blocked' : 'frameable',
-    evidence: {
-      xFrameOptions: xfo || null,
-      frameAncestors: hasFrameAncestors,
-      frameAncestorsDirective: directive,
-      embedderOrigin: normEmbedder || null,
-    },
-  };
 }
 
 const TRIAD_DDL = `
@@ -306,7 +115,6 @@ export class CanonicalTriadBackend {
     this.migrated = this.migrateLegacyTables();
   }
 
-  /** Tables present before this backend opened the file. */
   tables() {
     return this.db
       .prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")
@@ -314,18 +122,11 @@ export class CanonicalTriadBackend {
       .map((row) => row.name);
   }
 
-  /**
-   * Migrate the legacy 4-table layout into the Triad, preserving every digest.
-   * A migrated row keeps the digest it was written with and declares `sha256` in
-   * its `g_time`; nothing is re-hashed in place.
-   */
   migrateLegacyTables() {
     const tables = this.tables();
     if (!tables.includes('mcards')) return { cards: 0, handles: 0 };
 
-    const cards = this.db
-      .prepare('SELECT hash, created_at, payload_hash FROM mcards')
-      .all();
+    const cards = this.db.prepare('SELECT hash, created_at, payload_hash FROM mcards').all();
     const blobs = new Map(
       this.db
         .prepare('SELECT payload_hash, data FROM blobs')
@@ -334,9 +135,7 @@ export class CanonicalTriadBackend {
     );
 
     let migratedCards = 0;
-    const insertCard = this.db.prepare(
-      'INSERT OR IGNORE INTO card (hash, content, g_time) VALUES (?, ?, ?)'
-    );
+    const insertCard = this.db.prepare('INSERT OR IGNORE INTO card (hash, content, g_time) VALUES (?, ?, ?)');
     for (const row of cards) {
       const blob = blobs.get(row.payload_hash);
       if (blob === undefined) continue;
@@ -364,16 +163,15 @@ export class CanonicalTriadBackend {
     return { cards: migratedCards, handles: migratedHandles };
   }
 
-  /** Append-only insert. Returns false when the hash already exists. */
+  /** Append-only insert. Preserves raw bytes for binary media and UTF-8 bytes for text. */
   put(content, { algorithm = DEFAULT_ALGORITHM, gTime = null } = {}) {
-    const hash = hashContent(content, algorithm);
+    const rawBytes = bytesOf(content);
+    const hash = hashContent(rawBytes, algorithm);
     const exists = this.db.prepare('SELECT 1 FROM card WHERE hash = ?').get(hash);
     if (exists) return { hash, gTime: this.gTimeOf(hash), inserted: false };
 
     const stamp = gTime || formatGTime(algorithm);
-    this.db
-      .prepare('INSERT INTO card (hash, content, g_time) VALUES (?, ?, ?)')
-      .run(hash, bytesOf(content), stamp);
+    this.db.prepare('INSERT INTO card (hash, content, g_time) VALUES (?, ?, ?)').run(hash, rawBytes, stamp);
     return { hash, gTime: stamp, inserted: true };
   }
 
@@ -382,20 +180,31 @@ export class CanonicalTriadBackend {
     return row ? row.g_time : null;
   }
 
-  get(hash) {
+  /** Binary-safe retrieval: verifies digest over raw bytes before decoding text or classifying modality. */
+  get(hash, options = {}) {
     const row = this.db.prepare('SELECT hash, content, g_time FROM card WHERE hash = ?').get(hash);
     if (!row) return null;
-    const content = Buffer.isBuffer(row.content)
-      ? row.content.toString('utf8')
-      : new TextDecoder().decode(row.content);
+    const rawBytes = Buffer.isBuffer(row.content) ? row.content : Buffer.from(row.content);
+    const verified = verifyRecord(row.hash, rawBytes, row.g_time);
+    const classification = classifyMCardContent(rawBytes, options);
+    const content = classification.isBinary
+      ? rawBytes.toString('base64')
+      : rawBytes.toString('utf8');
+
     return {
       hash: row.hash,
       content,
+      ...(classification.isBinary ? { contentBase64: content } : {}),
+      rawBytes,
+      isBinary: classification.isBinary,
       gTime: row.g_time,
       algorithm: algorithmOf(row.g_time),
-      verified: verifyRecord(row.hash, content, row.g_time),
-      mimeType: detectContentType(content),
-      size: Buffer.byteLength(content, 'utf8'),
+      verified,
+      mimeType: classification.mimeType,
+      category: classification.category,
+      universe: classification.universe,
+      modality: classification.modality,
+      size: rawBytes.byteLength,
     };
   }
 
@@ -414,18 +223,11 @@ export class CanonicalTriadBackend {
       .map((row) => this.get(row.hash));
   }
 
-  /** Current binding of a handle, or null. */
   resolveHandle(handle) {
-    const row = this.db
-      .prepare('SELECT current_hash FROM handle_registry WHERE handle = ?')
-      .get(handle);
+    const row = this.db.prepare('SELECT current_hash FROM handle_registry WHERE handle = ?').get(handle);
     return row ? row.current_hash : null;
   }
 
-  /**
-   * Bind a handle to a hash. Re-binding records the prior hash in `handle_history`
-   * so the revision chain is auditable and nothing is silently overwritten.
-   */
   bindHandle(handle, hash) {
     if (!this.has(hash)) throw new Error(`cannot bind ${handle}: card ${hash} is not stored`);
     const previous = this.resolveHandle(handle);
@@ -447,20 +249,13 @@ export class CanonicalTriadBackend {
     return { handle, hash, changed: true, previousHash: previous };
   }
 
-  /** Revision chain for a handle, oldest first. */
   handleHistory(handle) {
     return this.db
-      .prepare(
-        'SELECT previous_hash, changed_at FROM handle_history WHERE handle = ? ORDER BY changed_at ASC'
-      )
+      .prepare('SELECT previous_hash, changed_at FROM handle_history WHERE handle = ? ORDER BY changed_at ASC')
       .all(handle)
       .map((row) => ({ previousHash: row.previous_hash, changedAt: row.changed_at }));
   }
 
-  /**
-   * Lists handles matching prefix with wildcard escaping.
-   * Order: newest updated_at first.
-   */
   listHandles(prefix = '') {
     const escaped = String(prefix).replace(/([%_\\])/g, '\\$1');
     const pattern = `${escaped}%`;
@@ -476,7 +271,6 @@ export class CanonicalTriadBackend {
       }));
   }
 
-  /** Release every handle bound to a hash. Cards are never deleted (G-Set, INV-REF-03). */
   releaseHandles(hash) {
     const rows = this.db.prepare('SELECT handle FROM handle_registry WHERE current_hash = ?').all(hash);
     const handles = rows.map((row) => row.handle);
@@ -497,11 +291,19 @@ export class CanonicalTriadBackend {
 
 function cardView(card, { preview = null } = {}) {
   const content = card.content ?? '';
+  const contentType = card.mimeType || detectContentType(content);
+  const modality = card.modality || resolveModality(contentType, { binary: Boolean(card.isBinary) });
   return {
     hash: card.hash,
     uri: `urn:mcard:card:${card.hash}`,
+    rawUrl: `/api/mcard/${card.hash}/raw`,
     size: card.size ?? Buffer.byteLength(content, 'utf8'),
-    contentType: card.mimeType || detectContentType(content),
+    contentType,
+    category: card.category || modality,
+    universe: card.universe || 'U0',
+    modality,
+    isBinary: Boolean(card.isBinary),
+    ...(card.contentBase64 ? { contentBase64: card.contentBase64 } : {}),
     content: preview ? content.slice(0, preview) : content,
     gTime: card.gTime,
     algorithm: card.algorithm,
@@ -530,22 +332,25 @@ function ensureReady(res) {
   return true;
 }
 
-/** POST / — store a card body; content-only hash under the declared algorithm. */
+/** POST / — store a card body (UTF-8 text or base64 binary); content-only hash under the declared algorithm. */
 router.post('/', async (req, res) => {
   if (!ensureReady(res)) return;
   try {
-    const { content, metadata, algorithm = DEFAULT_ALGORITHM } = req.body ?? {};
-    if (content === undefined) return res.status(400).json({ error: 'content is required' });
+    const { content, contentBase64, filename = '', mimeType = '', metadata, algorithm = DEFAULT_ALGORITHM } = req.body ?? {};
+    if (content === undefined && contentBase64 === undefined) {
+      return res.status(400).json({ error: 'content or contentBase64 is required' });
+    }
     if (algorithm !== DEFAULT_ALGORITHM && algorithm !== LEGACY_ALGORITHM) {
       return res.status(400).json({ error: `algorithm '${algorithm}' is not supported` });
     }
 
-    const { hash, gTime, inserted } = storage.put(content, { algorithm });
+    const payload = contentBase64 !== undefined ? Buffer.from(String(contentBase64), 'base64') : content;
+    const { hash, gTime, inserted } = storage.put(payload, { algorithm });
     const handle = metadata?.handle;
     if (handle) storage.bindHandle(handle, hash);
     sequence += inserted ? 1 : 0;
 
-    const card = storage.get(hash);
+    const card = storage.get(hash, { filename: filename || metadata?.filename || handle || '', mimeHint: mimeType });
     return res.status(inserted ? 201 : 200).json({ ...cardView(card), inserted, gTime });
   } catch (e) {
     return res.status(500).json({ error: String(e.message ?? e) });
@@ -561,11 +366,7 @@ router.get('/landing', (req, res) => {
   return res.json({ handle: LANDING_HANDLE, bound: true, ...cardView(card) });
 });
 
-/**
- * PUT /landing — set the single active page (inline body or external URL).
- * Unsafe schemes (`javascript:`, `data:`) and malformed payloads are rejected with
- * HTTP 400 and mutate nothing.
- */
+/** PUT /landing — set the single active page (inline body or external URL). */
 router.put('/landing', (req, res) => {
   if (!ensureReady(res)) return;
   const { content, url } = req.body ?? {};
@@ -592,128 +393,10 @@ router.put('/landing', (req, res) => {
   });
 });
 
-/**
- * Validates a probe hop against URL syntax, credential prohibition, origin allowlist,
- * and resolved-address public-IP checks (DoD-ULR-05-04).
- */
-export async function validateProbeHop(rawUrl, policy = probePolicy) {
-  let parsedOrigin = '';
-  try {
-    parsedOrigin = new URL(String(rawUrl ?? '').trim()).origin;
-  } catch {
-    /* handled by validateExternalUrl */
-  }
-  const isFixtureOrigin = Boolean(parsedOrigin) && policy.allowedFixtureOrigins.includes(parsedOrigin);
-  const urlCheck = validateExternalUrl(rawUrl, { allowLoopback: isFixtureOrigin });
-  if (!urlCheck.ok) return urlCheck;
-
-  if (!isFixtureOrigin && !policy.allowedOrigins.includes(urlCheck.origin)) {
-    return { ok: false, reason: `origin '${urlCheck.origin}' is not in the manifest-approved allowlist` };
-  }
-
-  if (!isFixtureOrigin) {
-    let resolved;
-    try {
-      resolved = await policy.resolver(urlCheck.hostname);
-    } catch {
-      return { ok: false, reason: `DNS resolution failed for '${urlCheck.hostname}'` };
-    }
-    if (!Array.isArray(resolved) || resolved.length === 0) {
-      return { ok: false, reason: `no DNS records resolved for '${urlCheck.hostname}'` };
-    }
-    for (const addr of resolved) {
-      const addrCheck = isProhibitedHostOrIp(addr, { allowLoopback: false });
-      if (addrCheck.prohibited) {
-        return { ok: false, reason: `resolved address '${addr}' is prohibited: ${addrCheck.reason}` };
-      }
-    }
-  }
-
-  return { ok: true, url: urlCheck.url, origin: urlCheck.origin, hostname: urlCheck.hostname, isFixtureOrigin };
-}
-
-/**
- * GET /probe-url?url= — framing verdict for an external page.
- * `frameable` | `blocked` | `unreachable`, decided inside the configured budget.
- * Tests point this at local fixtures; no live third-party request is required.
- */
+/** GET /probe-url?url= — framing verdict for an external page (`frameable` | `blocked` | `unreachable`). */
 router.get('/probe-url', async (req, res) => {
-  const initial = await validateProbeHop(req.query.url, probePolicy);
-  if (!initial.ok) {
-    return res.status(400).json({ error: initial.reason, frameable: false, verdict: 'unreachable' });
-  }
-
-  const embedderOrigin = String(req.query.embedderOrigin ?? probePolicy.embedderOrigin ?? '').trim();
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), PROBE_BUDGET_MS);
-  try {
-    let currentUrl = initial.url;
-    let currentOrigin = initial.origin;
-
-    for (let hop = 0; hop <= probePolicy.maxRedirects; hop += 1) {
-      const response = await fetch(currentUrl, {
-        method: 'GET',
-        redirect: 'manual',
-        signal: controller.signal,
-        headers: { 'user-agent': 'MCard-LandingPage-Probe/1.0' },
-      });
-      await response.body?.cancel?.().catch(() => {});
-
-      if (response.status >= 300 && response.status < 400) {
-        const location = response.headers.get('location');
-        if (!location) {
-          return res.status(400).json({ error: 'redirect missing location header', frameable: false, verdict: 'unreachable' });
-        }
-        if (hop === probePolicy.maxRedirects) {
-          return res.status(400).json({ error: 'redirect limit exceeded', frameable: false, verdict: 'unreachable' });
-        }
-        let nextUrl;
-        try {
-          nextUrl = new URL(location, currentUrl).toString();
-        } catch {
-          return res.status(400).json({ error: 'redirect location is malformed', frameable: false, verdict: 'unreachable' });
-        }
-        const nextHop = await validateProbeHop(nextUrl, probePolicy);
-        if (!nextHop.ok) {
-          return res.status(400).json({
-            error: `redirect rejected: ${nextHop.reason}`,
-            blockedRedirect: nextUrl,
-            frameable: false,
-            verdict: 'unreachable',
-          });
-        }
-        currentUrl = nextHop.url;
-        currentOrigin = nextHop.origin;
-        continue;
-      }
-
-      const framing = evaluateFramingPolicy({
-        xFrameOptions: response.headers.get('x-frame-options') || '',
-        csp: response.headers.get('content-security-policy') || '',
-        targetOrigin: currentOrigin,
-        embedderOrigin,
-      });
-      return res.json({
-        url: currentUrl,
-        status: response.status,
-        frameable: framing.frameable,
-        verdict: framing.verdict,
-        evidence: framing.evidence,
-        budgetMs: PROBE_BUDGET_MS,
-      });
-    }
-    return res.status(400).json({ error: 'redirect limit exceeded', frameable: false, verdict: 'unreachable' });
-  } catch (e) {
-    return res.json({
-      url: initial.url,
-      frameable: false,
-      verdict: 'unreachable',
-      evidence: { reason: e.name === 'AbortError' ? 'budget exceeded' : String(e.message ?? e) },
-      budgetMs: PROBE_BUDGET_MS,
-    });
-  } finally {
-    clearTimeout(timer);
-  }
+  const { statusHttp, body } = await executeProbeUrl(req.query.url, req.query.embedderOrigin);
+  return res.status(statusHttp).json(body);
 });
 
 /** GET / — paged listing, newest first. */
@@ -751,20 +434,39 @@ router.get('/search', (req, res) => {
   res.json({ cards: matches.map((c) => cardView(c, { preview: 200 })), count: matches.length });
 });
 
+/** GET /:hash/raw — stream raw verified bytes for static media and binary MCards (SMO-01). */
+router.get('/:hash/raw', (req, res) => {
+  if (!ensureReady(res)) return;
+  const card = storage.get(req.params.hash.toLowerCase(), {
+    filename: String(req.query.filename ?? ''),
+    mimeHint: String(req.query.mimeType ?? ''),
+  });
+  if (!card) return res.status(404).json({ error: 'Card not found' });
+  if (!card.verified) return res.status(422).json({ error: 'Card digest verification failed' });
+
+  res.setHeader('Content-Type', card.mimeType || 'application/octet-stream');
+  res.setHeader('Content-Length', String(card.rawBytes.byteLength));
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'none'; img-src 'self' data: blob:; media-src 'self' data: blob:; style-src 'unsafe-inline'"
+  );
+  return res.status(200).send(card.rawBytes);
+});
+
 /** GET /:hash — single card, with its digest re-verified under its declared algorithm. */
 router.get('/:hash', (req, res) => {
   if (!ensureReady(res)) return;
-  const card = storage.get(req.params.hash.toLowerCase());
+  const card = storage.get(req.params.hash.toLowerCase(), {
+    filename: String(req.query.filename ?? ''),
+    mimeHint: String(req.query.mimeType ?? ''),
+  });
   if (!card) return res.status(404).json({ error: 'Card not found' });
   return res.json(cardView(card));
 });
 
-/**
- * DELETE /:hash — releases handle mappings for a card.
- *
- * The card row itself is retained: the schema is a G-Set and its `card` table is
- * append-only (INV-REF-03). Returns the handles that were released.
- */
+/** DELETE /:hash — releases handle mappings for a card (G-Set append-only, INV-REF-03). */
 router.delete('/:hash', (req, res) => {
   if (!ensureReady(res)) return;
   const hex = req.params.hash.toLowerCase();

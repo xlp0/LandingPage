@@ -190,7 +190,7 @@ export class InteractionRecorder {
       },
       lab: {
         commit: '6f9a53a',
-        clmKernel: '0.0.9'
+        clmKernel: '0.0.10'
       },
       metrics: {
         startedAt: this.startedAt || new Date().toISOString(),

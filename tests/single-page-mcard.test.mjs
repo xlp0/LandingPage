@@ -31,6 +31,7 @@ import mcardRoutes, {
   evaluateFramingPolicy,
   formatGTime,
   hashContent,
+  initMCardAPI,
   isProhibitedHostOrIp,
   resetProbePolicy,
   validateProbeHop,
@@ -39,11 +40,14 @@ import mcardRoutes, {
 import {
   PILL_ID,
   buildDeepLink,
+  classifyCardModality,
   mountSinglePageMCard,
   parseSwitchIntent,
   renderPage,
   renderPill,
 } from '../js/landing-page-mcard.js';
+import { classifyMCardModality } from '../server/mcard-modality.mjs';
+import { EmbedRenderer } from '../js/renderers/EmbedRenderer.js';
 import {
   MEMBRANE_STATES,
   PROBE_VERDICTS,
@@ -878,4 +882,159 @@ test('DoD-ULR-05-07 (SCN-ULR-05-E): CSP frame-ancestors and X-Frame-Options are 
     await new Promise((resolve) => fixtures.close(resolve));
   }
 });
+
+test('DoD-SMO-01: binary media round-trip verifies rawBytes digest and streams via GET /api/mcard/:hash/raw with nosniff', async () => {
+  // Construct a synthetic PNG payload with non-UTF-8 bytes (0x89, 0xff, 0xfe, 0x00)
+  const pngBytes = new Uint8Array([
+    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+    0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52,
+    0xff, 0xfe, 0xfd, 0x80, 0x00, 0x49, 0x45, 0x4e, 0x44,
+  ]);
+  const b64 = Buffer.from(pngBytes).toString('base64');
+  const store = await initMCardAPI(tempDb('smo01.db'));
+
+  try {
+    await withServer(async (base) => {
+      const postRes = await fetch(`${base}/api/mcard`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ contentBase64: b64, handle: 'urn:mcard:test:png_sample' }),
+      });
+      assert.equal(postRes.status, 201);
+      const created = await postRes.json();
+      assert.equal(created.verified, true, 'binary PNG digest must verify on rawBytes without UTF-8 replacement corruption');
+      assert.equal(created.contentType, 'image/png');
+      assert.equal(created.modality, 'media');
+      assert.equal(created.isBinary, true);
+      assert.equal(created.rawUrl, `/api/mcard/${created.hash}/raw`);
+
+      const getRes = await fetch(`${base}/api/mcard/${created.hash}`);
+      assert.equal(getRes.status, 200);
+      const metadata = await getRes.json();
+      assert.equal(metadata.verified, true);
+      assert.equal(metadata.contentType, 'image/png');
+      assert.equal(metadata.modality, 'media');
+      assert.equal(metadata.contentBase64, b64);
+
+      const rawRes = await fetch(`${base}/api/mcard/${created.hash}/raw`);
+      assert.equal(rawRes.status, 200);
+      assert.equal(rawRes.headers.get('x-content-type-options'), 'nosniff');
+      assert.match(rawRes.headers.get('content-type') ?? '', /^image\/png/);
+      const rawBuf = new Uint8Array(await rawRes.arrayBuffer());
+      assert.deepEqual(rawBuf, pngBytes, 'GET /api/mcard/:hash/raw must stream exact byte-for-byte payload');
+    });
+  } finally {
+    store.close();
+  }
+});
+
+test('DoD-SMO-02: classifyMCardModality delegates to clm-kernel@0.0.10 TypeInterpreter across all 4 modalities', () => {
+  const pngBytes = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x01]);
+  const mediaPng = classifyMCardModality(pngBytes);
+  assert.equal(mediaPng.modality, 'media');
+  assert.equal(mediaPng.contentType, 'image/png');
+  assert.equal(mediaPng.isBinary, true);
+
+  const mdDoc = classifyMCardModality('# Universal MCard Browser\n\nParagraph with [[urn:mcard:sample]].');
+  assert.equal(mdDoc.modality, 'document');
+  assert.equal(mdDoc.contentType, 'text/markdown');
+  assert.equal(mdDoc.rendererType, 'markdown');
+
+  const jsonDoc = classifyMCardModality(JSON.stringify({ schema: 'mcard/v1', items: [1, 2, 3] }));
+  assert.equal(jsonDoc.modality, 'document');
+  assert.equal(jsonDoc.contentType, 'application/json');
+
+  const clmSpec = classifyMCardModality('abstract_spec:\n  goal: verify\nconcrete_impl:\n  module: test\nbalanced_exp:\n  cases: []\n');
+  assert.equal(clmSpec.modality, 'code');
+  assert.equal(clmSpec.contentType, 'application/x-clm');
+  assert.equal(clmSpec.rendererType, 'clm');
+
+  const jsCode = classifyMCardModality('export function add(a, b) {\n  return a + b;\n}\n', { filename: 'math.js' });
+  assert.equal(jsCode.modality, 'code');
+  assert.equal(jsCode.rendererType, 'code');
+
+  const htmlWebapp = classifyMCardModality('<!DOCTYPE html><html><body><h1>Interactive App</h1></body></html>');
+  assert.equal(htmlWebapp.modality, 'webapp');
+  assert.equal(htmlWebapp.contentType, 'text/html');
+  assert.equal(htmlWebapp.rendererType, 'html');
+
+  const portalWebapp = classifyMCardModality('external-url: https://pkc.pub/portal');
+  assert.equal(portalWebapp.modality, 'webapp');
+  assert.equal(portalWebapp.contentType, 'text/uri-list');
+  assert.equal(portalWebapp.rendererType, 'portal');
+});
+
+test('DoD-SMO-03: renderPage projects all 4 modalities with execution isolation and EmbedRenderer enforces sandbox', async () => {
+  const gTime = formatGTime('blake3');
+  const hash = 'b'.repeat(64);
+
+  // Modality 1: media (image/png)
+  const mediaHtml = renderPage({ hash, contentType: 'image/png', modality: 'media', isBinary: true, gTime });
+  assert.match(mediaHtml, /data-modality="media"/);
+  assert.match(mediaHtml, /<img src="\/api\/mcard\/b{64}\/raw"/);
+  assert.doesNotMatch(mediaHtml, /<script/i);
+
+  // Modality 2: document (text/markdown with [[hash]] transclusion)
+  const docHtml = renderPage({
+    hash,
+    contentType: 'text/markdown',
+    modality: 'document',
+    content: '# Civic Charter\nSee [[urn:mcard:sample:hero|Hero Sample]] <script>alert(1)</script>',
+    gTime,
+  });
+  assert.match(docHtml, /data-modality="document"/);
+  assert.match(docHtml, /# Civic Charter/);
+  assert.match(docHtml, /data-mcard-ref="urn:mcard:sample:hero"/);
+  assert.doesNotMatch(docHtml, /<script>alert\(1\)<\/script>/, 'document renderer must escape script tags');
+
+  // Modality 3: code (inert inspection — browsing code never executes it)
+  const codeHtml = renderPage({
+    hash,
+    contentType: 'application/javascript',
+    modality: 'code',
+    content: 'console.log("<script>evil()</script>");\nexport const x = 42;',
+    gTime,
+  });
+  assert.match(codeHtml, /data-modality="code"/);
+  assert.match(codeHtml, /data-execution="inert"/);
+  assert.match(codeHtml, /data-line="1"/);
+  assert.match(codeHtml, /data-line="2"/);
+  assert.doesNotMatch(codeHtml, /<script>evil\(\)<\/script>/);
+
+  // Modality 4: webapp (sandboxed iframe srcdoc without allow-same-origin; never raw host.innerHTML injection)
+  const webappCard = {
+    hash,
+    contentType: 'text/html',
+    modality: 'webapp',
+    content: '<!DOCTYPE html><html><body><script>window.parent.hacked = true;</script><h1>App</h1></body></html>',
+    gTime,
+  };
+  const webappHtml = renderPage(webappCard);
+  assert.match(webappHtml, /data-modality="webapp"/);
+  assert.match(webappHtml, /<iframe class="mcard-webapp-frame" sandbox="allow-scripts allow-forms" referrerpolicy="no-referrer"/);
+  assert.doesNotMatch(webappHtml, /allow-same-origin/);
+  assert.doesNotMatch(webappHtml, /<script>window\.parent\.hacked/, 'raw <script> must never be injected directly into host DOM');
+
+  // Modality 4 source view mode switches to inert code projection
+  const webappSourceHtml = renderPage(webappCard, { viewMode: 'source' });
+  assert.match(webappSourceHtml, /data-modality="code"/);
+  assert.match(webappSourceHtml, /data-execution="inert"/);
+
+  // EmbedRenderer hardens iframe with sandbox="allow-scripts allow-forms" and rejects unsafe protocols
+  const embedRenderer = new EmbedRenderer();
+  const safeEmbed = await embedRenderer.render(JSON.stringify({ title: 'Demo', url: 'https://example.com/embed' }));
+  assert.match(safeEmbed, /sandbox="allow-scripts allow-forms"/);
+  assert.match(safeEmbed, /referrerpolicy="no-referrer"/);
+  await assert.rejects(
+    () => embedRenderer.render(JSON.stringify({ title: 'XSS', url: 'javascript:alert(1)' })),
+    /Unsafe embed URL protocol/
+  );
+
+  // Server Module Line Budget (Contract D <= 500 lines)
+  for (const rel of ['server/mcard-api.mjs', 'server/mcard-modality.mjs', 'server/mcard-probe-policy.mjs']) {
+    const lines = fs.readFileSync(path.join(REPO_ROOT, 'LandingPage', rel), 'utf8').split('\n').length;
+    assert.ok(lines <= 500, `${rel} is ${lines} lines (budget: 500)`);
+  }
+});
+
 

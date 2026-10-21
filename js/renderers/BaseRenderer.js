@@ -50,9 +50,12 @@ export class BaseRenderer {
    * @returns {string}
    */
   sanitizeHtml(html) {
-    const div = document.createElement('div');
-    div.textContent = html;
-    return div.innerHTML;
+    if (typeof document !== 'undefined' && typeof document.createElement === 'function') {
+      const div = document.createElement('div');
+      div.textContent = html;
+      return div.innerHTML;
+    }
+    return this.escapeHtml(html);
   }
   
   /**
@@ -61,9 +64,18 @@ export class BaseRenderer {
    * @returns {string}
    */
   escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    if (typeof document !== 'undefined' && typeof document.createElement === 'function') {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    return String(text ?? '').replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+    })[char]);
   }
 }
 

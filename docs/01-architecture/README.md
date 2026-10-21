@@ -21,7 +21,7 @@ Under the `ULR-01` architectural census, the `MCard_TDD` monorepo is partitioned
        └────────┬────────┘      └────────┬────────┘
                 │                        │
                 └───────────┬────────────┘
-                            │ (consumes clm-kernel@0.0.9)
+                            │ (consumes clm-kernel@0.0.10)
                    ┌────────▼────────┐
                    │  LandingPage/   │
                    │ Estate 4: Sub 3 │
@@ -52,7 +52,7 @@ A static-first, modular testing workbench for certifying the device-sensitive fu
 ### 2. Single-Page MCard Distillation (`SMR-09`)
 - Emits the landing page as an immutable, content-addressed MCard (`urn:mcard:content:landing_page`) via `js/landing-page-mcard.js`.
 - Hosts the 6-sample portal database (`data/samples/portal_samples.mcard.db`) on the canonical 3-table SQLite schema (`cards`, `handles`, `blobs`).
-- Consumes published `clm-kernel@0.0.9` with zero duplicate local hash providers.
+- Consumes published `clm-kernel@0.0.10` with zero duplicate local hash providers.
 
 ### 3. SSRF-Guarded External Portal Membrane
 - Enforces strict network-level SSRF guards (`js/external-portal-membrane.js`, `server/mcard-api.mjs`):
@@ -65,6 +65,7 @@ A static-first, modular testing workbench for certifying the device-sensitive fu
 
 ## 📚 Documents in This Section
 
+- **[UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md](UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md)** — Canonical architecture specification for the Universal 4-Modality MCard Content Browser.
 - **[landing-page-architecture.md](landing-page-architecture.md)** — Architectural blueprint of the landing page and test workbench.
 - **[MCARD_MODULAR_ARCHITECTURE.md](MCARD_MODULAR_ARCHITECTURE.md)** — MCard distillation, canonical Triad storage, and handle resolution.
 - **[CUBIC-LOGIC-MODEL.md](CUBIC-LOGIC-MODEL.md)** — Three Sets (三套東西) theory: Abstract, Concrete, Balanced.

@@ -19,6 +19,12 @@
       "desc": "Local App Target (http://localhost:4321/) - Iframe Compatible"
     },
     {
+      "url": "http://127.0.0.1:5320/",
+      "label": "MCard Studio Workbench (http://127.0.0.1:5320/) - Iframe Compatible",
+      "status": "allowed",
+      "desc": "Local MCard Studio Workbench Target (http://127.0.0.1:5320/) - Iframe Compatible"
+    },
+    {
       "url": "http://127.0.0.1:3001/tests/fixtures/probe-target.html",
       "label": "Cross-Origin Probe Target (127.0.0.1) - Iframe Compatible",
       "status": "allowed",

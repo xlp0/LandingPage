@@ -34,14 +34,27 @@ export class EmbedRenderer extends BaseRenderer {
         </div>`;
       }
 
+      let parsedUrl;
+      try {
+        parsedUrl = new URL(url, 'http://localhost');
+      } catch {
+        throw new Error('Invalid embed URL');
+      }
+      if ((parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') || parsedUrl.username || parsedUrl.password) {
+        throw new Error('Unsafe embed URL protocol or embedded credentials');
+      }
+
       return `
         <div class="embed-content" style="display: flex; flex-direction: column; height: 100%; width: 100%;">
           <div class="embed-body" style="flex: 1; min-height: 0;">
             <iframe 
               src="${this.escapeHtml(url)}" 
+              title="${title}"
+              sandbox="allow-scripts allow-forms"
+              referrerpolicy="no-referrer"
               frameborder="0" 
-              width="${width}" 
-              height="${height}" 
+              width="${this.escapeHtml(String(width))}" 
+              height="${this.escapeHtml(String(height))}" 
               allowfullscreen="true" 
               mozallowfullscreen="true" 
               webkitallowfullscreen="true"

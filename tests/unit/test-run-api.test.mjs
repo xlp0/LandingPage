@@ -44,7 +44,7 @@ function createValidRun(overrides = {}) {
       emulated: ['viewport'],
       notEmulated: ['pixelRatio', 'hasTouch', 'pointer', 'hover', 'isMobile', 'safeAreaInsets']
     },
-    lab: { commit: '6f9a53a', clmKernel: '0.0.9' },
+    lab: { commit: '6f9a53a', clmKernel: '0.0.10' },
     metrics: {
       startedAt: '2026-10-20T08:40:00.000Z',
       activeDurationMs: 4500,
