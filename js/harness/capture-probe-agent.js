@@ -7,7 +7,7 @@ import { createTelemetryReceiver } from '../external-portal-membrane.js';
 
 export class CaptureProbeAgentSource {
   constructor(options = {}) {
-    this.iframe = options.iframe || document.getElementById('mission-control-iframe');
+    this.iframe = options.iframe || (typeof document !== 'undefined' ? document.getElementById('mission-control-iframe') : null);
     this.allowedOrigins = options.allowedOrigins || [];
     this.targetOrigin = options.targetOrigin || '';
     this.connected = false;
@@ -19,20 +19,55 @@ export class CaptureProbeAgentSource {
     this._rejectReasons = {};
     this._currentNonce = null;
     this._receiver = null;
+    this._pingTimer = null;
     this._onMessageBound = this._handleMessage.bind(this);
+    this._onIframeLoadBound = this.pingProbe.bind(this);
 
     if (typeof window !== 'undefined') {
       window.addEventListener('message', this._onMessageBound);
     }
+
+    if (this.iframe) {
+      this.iframe.addEventListener('load', this._onIframeLoadBound);
+    }
+
+    // Proactively ping probe until connection is acknowledged
+    this.pingProbe();
+    this._startPingInterval();
   }
 
   get kind() {
     return this.connected ? 'probe-agent' : 'unavailable';
   }
 
+  pingProbe() {
+    if (this.connected) return;
+    const targetWin = this.iframe?.contentWindow;
+    if (targetWin) {
+      try {
+        targetWin.postMessage({ schema: 'lab-capture/v1', type: 'lab:ping' }, '*');
+      } catch {}
+    }
+  }
+
+  _startPingInterval() {
+    if (this._pingTimer) clearInterval(this._pingTimer);
+    let attempts = 0;
+    this._pingTimer = setInterval(() => {
+      if (this.connected || attempts++ >= 30) {
+        clearInterval(this._pingTimer);
+        this._pingTimer = null;
+        return;
+      }
+      this.pingProbe();
+    }, 500);
+  }
+
   attach(onEvent) {
     this._onEvent = onEvent;
-    this._armProbe();
+    if (this.connected) {
+      this._armProbe();
+    }
   }
 
   _armProbe() {
@@ -58,9 +93,9 @@ export class CaptureProbeAgentSource {
       }
     });
 
-    if (expectedWin && this.targetOrigin) {
+    if (expectedWin) {
       try {
-        expectedWin.postMessage({ type: 'lab:arm', nonce: this._currentNonce }, this.targetOrigin);
+        expectedWin.postMessage({ type: 'lab:arm', nonce: this._currentNonce }, '*');
       } catch (err) {
         console.warn('[CaptureProbeAgentSource] arm postMessage failed:', err);
       }
@@ -73,8 +108,10 @@ export class CaptureProbeAgentSource {
 
     // Handshake hello from probe
     if (data.schema === 'lab-capture/v1' && data.type === 'lab:hello') {
-      const sourceMatch = event.source === this.iframe?.contentWindow;
-      const originMatch = !this.allowedOrigins.length || this.allowedOrigins.includes(event.origin);
+      const sourceMatch = !this.iframe?.contentWindow || event.source === this.iframe?.contentWindow;
+      const originMatch = !this.allowedOrigins.length ||
+        this.allowedOrigins.includes(event.origin) ||
+        (this.targetOrigin && event.origin === this.targetOrigin);
 
       if (!sourceMatch) {
         this._rejected++;
@@ -91,7 +128,21 @@ export class CaptureProbeAgentSource {
       this.targetOrigin = event.origin;
       this.connected = true;
       this.reason = null;
-      this._armProbe();
+
+      if (this._pingTimer) {
+        clearInterval(this._pingTimer);
+        this._pingTimer = null;
+      }
+
+      // Send ack back to probe
+      try {
+        event.source?.postMessage?.({ schema: 'lab-capture/v1', type: 'lab:ack' }, '*');
+      } catch {}
+
+      if (this._onEvent) {
+        this._armProbe();
+      }
+
       if (typeof this._onStatusChange === 'function') {
         this._onStatusChange(this.kind);
       }
@@ -106,9 +157,9 @@ export class CaptureProbeAgentSource {
 
   detach() {
     this._onEvent = null;
-    if (this.iframe?.contentWindow && this.targetOrigin) {
+    if (this.iframe?.contentWindow) {
       try {
-        this.iframe.contentWindow.postMessage({ type: 'lab:disarm' }, this.targetOrigin);
+        this.iframe.contentWindow.postMessage({ type: 'lab:disarm' }, '*');
       } catch {}
     }
     this._receiver?.revokeNonce();
@@ -123,6 +174,13 @@ export class CaptureProbeAgentSource {
   }
 
   destroy() {
+    if (this._pingTimer) {
+      clearInterval(this._pingTimer);
+      this._pingTimer = null;
+    }
+    if (this.iframe) {
+      this.iframe.removeEventListener('load', this._onIframeLoadBound);
+    }
     this.detach();
     if (typeof window !== 'undefined') {
       window.removeEventListener('message', this._onMessageBound);
