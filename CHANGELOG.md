@@ -4,6 +4,9 @@ All notable changes to the PKC Landing Page are documented in this file. The for
 
 ## [Unreleased]
 
+### Documentation
+- **EPIC-KX consumer boundary**: Recorded that LandingPage remains pinned to published `clm-kernel@0.0.10`; the root-owned sync plan does not add a LandingPage sync provider or change the dependency pin. The generated `clm-registry.yaml` projection includes the proposed KX sprint records.
+
 ## [0.3.0] — 2026-10-21
 
 ### Completed & Graduated — Program SMO (Submodule Modularity, Universal MCard Content Browser, and Organizational Alignment)

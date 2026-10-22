@@ -18,6 +18,8 @@
 | **3. Portal & Lab** | `LandingPage/` | `pkc-landing-page-monorepo` | Universal 4-Modality MCard Content Browser, Single-Page MCard host (`urn:mcard:content:landing_page`), and Responsive Test Workbench on port `3001`. |
 | **4. Orchestrator** | `MCard_TDD` (root) | Root workspace | Cross-submodule `Makefile` orchestration (`make landing-up`, `make landing-test`, `make landing-seed`, `make status`), consensus gates, and sprint governance. |
 
+> **Kernel sync roadmap:** LandingPage remains an exact consumer of published `clm-kernel@0.0.10`. The umbrella-root EPIC-KX plan proposes a backward-compatible, tri-runtime sync API; this repository does not implement a separate sync engine or advance its pin independently. Any move to `0.0.11` is approval-gated and coordinated with `mcard-studio`.
+
 ---
 
 ## 🌐 Universal 4-Modality MCard Content Browser (`Program SMO`)
