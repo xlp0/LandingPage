@@ -9,7 +9,7 @@ All notable changes to the PKC Landing Page are documented in this file. The for
 
 ### Changed
 - **Penpot Navigation Flow & Display Registry Projection (`index.html`, `js/nav.js`, `design/landing-navigation.penpot`, `clm-registry.yaml`)**: Synchronized the Penpot navigation flow graph digest (`7fc5562f37de5880c28963dfbfeb7b976cafb6feb6e8698078528a9d63a41fb4`) and refreshed `clm-registry.yaml` to project the `EPIC-KX` (`KX-01`..`KX-07`) sprint records.
-- **EPIC-KX Consumer Lockstep Boundary**: Verified that `LandingPage` remains exact-pinned to published `clm-kernel@0.0.10` in lockstep with `mcard-studio` (`scripts/ci/check_kx_release_artifacts.py`).
+- **Published `clm-kernel@0.0.11` Dependency Advance & Lockstep Consensus**: Advanced exact dependency pin for `clm-kernel` from `0.0.10` to published `0.0.11` in `package.json` and `package-lock.json` in lockstep with `mcard-studio` and `MCard_TDD` consensus gates (`scripts/ci/check_kx_release_artifacts.py`, `check-kernel-version-consensus.mjs`). Verified 100% green across unit test suite (97/97 tests).
 
 ## [0.3.0] — 2026-10-21
 

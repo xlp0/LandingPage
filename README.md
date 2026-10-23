@@ -4,7 +4,7 @@
 
 `LandingPage` is **Estate 3** of the `MCard_TDD` four-estate workspace. It serves two tightly integrated roles:
 
-1. **Universal 4-Modality MCard Content Browser**: A modular, execution-isolated browser for all content stored in the **MCard Canonical Triad SQLite Dataset Engine** (`card`, `handle_registry`, `handle_history`), powered by the published **`clm-kernel@0.0.10`** npm package (`computeHash`, `TypeInterpreter`, `detectMime`, `isBinary`). Every MCard is classified and projected across four universal modalities (`media`, `document`, `code`, `webapp`).
+1. **Universal 4-Modality MCard Content Browser**: A modular, execution-isolated browser for all content stored in the **MCard Canonical Triad SQLite Dataset Engine** (`card`, `handle_registry`, `handle_history`), powered by the published **`clm-kernel@0.0.11`** npm package (`computeHash`, `TypeInterpreter`, `detectMime`, `isBinary`). Every MCard is classified and projected across four universal modalities (`media`, `document`, `code`, `webapp`).
 2. **Device-Sensitive Responsive Test Workbench**: A static-first testing and telemetry harness (`responsive-lab.html`) with a direct URL typing omnibar (`normalizeInputUrl` in [`js/harness/lab-toolbar.js`](js/harness/lab-toolbar.js)) for certifying chosen web targets across viewport geometry, orientation swap, pixel density, touch ergonomics, scale-invariant interaction capture (`[0.0, 1.0]`), and deterministic Playwright replay.
 
 ---
@@ -13,18 +13,18 @@
 
 | Estate | Submodule / Path | Published Package | Primary Responsibility |
 | :--- | :--- | :--- | :--- |
-| **1. Kernel** | `clm/` | `clm-kernel@0.0.10` | Zero-dependency cryptographic hashing (`blake3`, `sha256`), `g_time` stamping, and `TypeInterpreter` / `detectMime` / `isBinary` judgment. |
+| **1. Kernel** | `clm/` | `clm-kernel@0.0.11` | Zero-dependency cryptographic hashing (`blake3`, `sha256`), `g_time` stamping, and `TypeInterpreter` / `detectMime` / `isBinary` judgment. |
 | **2. Studio** | `mcard-studio/` | `mcard-studio@0.2.9` | 9-Viewlet browser IDE and workbench on port `5320` for authoring, inspecting, and certifying MCards. |
 | **3. Portal & Lab** | `LandingPage/` | `pkc-landing-page-monorepo` | Universal 4-Modality MCard Content Browser, Single-Page MCard host (`urn:mcard:content:landing_page`), and Responsive Test Workbench on port `3001`. |
 | **4. Orchestrator** | `MCard_TDD` (root) | Root workspace | Cross-submodule `Makefile` orchestration (`make landing-up`, `make landing-test`, `make landing-seed`, `make status`), consensus gates, and sprint governance. |
 
-> **Kernel sync & lockstep consumer boundary (`EPIC-KX`):** LandingPage remains an exact consumer of published `clm-kernel@0.0.10` in lockstep with `mcard-studio` (`check_kx_release_artifacts.py`). The umbrella-root `EPIC-KX` program implements the additive, tri-runtime `SyncContract v1` in `clm/`; this repository does not implement a separate sync engine or advance its pin independently before live three-registry publication of `0.0.11` is approved.
+> **Kernel sync & lockstep consumer boundary (`EPIC-KX`):** LandingPage is an exact consumer of published `clm-kernel@0.0.11` in lockstep with `mcard-studio` (`check_kx_release_artifacts.py`). The umbrella-root `EPIC-KX` program implements the additive, tri-runtime `SyncContract v1` in `clm/` (published live across npm, PyPI, and crates.io at `0.0.11`, with active workspace development at `0.0.12`).
 
 ---
 
 ## 🌐 Universal 4-Modality MCard Content Browser (`Program SMO`)
 
-Every MCard payload stored in `CanonicalTriadBackend` ([`server/mcard-api.mjs`](server/mcard-api.mjs)) is verified over its raw bytes before UTF-8 conversion, classified by [`server/mcard-modality.mjs`](server/mcard-modality.mjs) via `clm-kernel@0.0.10`, and projected by [`js/landing-page-mcard.js`](js/landing-page-mcard.js) and [`js/renderers/`](js/renderers/BaseRenderer.js):
+Every MCard payload stored in `CanonicalTriadBackend` ([`server/mcard-api.mjs`](server/mcard-api.mjs)) is verified over its raw bytes before UTF-8 conversion, classified by [`server/mcard-modality.mjs`](server/mcard-modality.mjs) via `clm-kernel@0.0.11`, and projected by [`js/landing-page-mcard.js`](js/landing-page-mcard.js) and [`js/renderers/`](js/renderers/BaseRenderer.js):
 
 | Modality | Canonical MIME Families | Server & Browser Pipeline | Execution Isolation Contract |
 | :--- | :--- | :--- | :--- |
@@ -74,7 +74,7 @@ Detailed testing guide: **[`docs/08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCT
 4. **Touch Target Ergonomics (`INV-DEV-02`)**: Interactive elements on coarse-pointer devices meet mobile tap size requirements ($\ge 44\text{px} \times 44\text{px}$).
 5. **Scale-Invariant Interaction Capture (`INV-ERB-01..05`, `INV-PRV-01`)**: Bounded in-memory ring buffer normalized to $[0.0, 1.0]$ with automatic credential/input redaction.
 6. **Frame Budget & Layout Stability (`INV-DEV-04`)**: Observation of frame latency ($16.6\text{ms}$ budget / $60\text{fps}$) and layout shift (CLS).
-7. **MCard Test Dataset Certification (`INV-ERB-04`)**: Content-addressed persistence of test runs into the SQLite Triad (`data/mcard-api.db`) with `clm-kernel@0.0.10` (`blake3`) hashing and `urn:mcard:certification:responsive:v1`.
+7. **MCard Test Dataset Certification (`INV-ERB-04`)**: Content-addressed persistence of test runs into the SQLite Triad (`data/mcard-api.db`) with `clm-kernel@0.0.11` (`blake3`) hashing and `urn:mcard:certification:responsive:v1`.
 
 ---
 
@@ -148,7 +148,7 @@ See the **[Master Documentation Index (`docs/INDEX.md`)](docs/INDEX.md)** and **
 | **00** | **Getting Started** | Developer onboarding, 5-minute setup, operational status, interactive lab usage guide | [docs/00-getting-started/](docs/00-getting-started/README.md) |
 | **01** | **Architecture** | Four-Estate framework (`ULR-01`), [Universal 4-Modality MCard Browser](docs/01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md), system invariants | [docs/01-architecture/](docs/01-architecture/README.md) |
 | **02** | **Authentication** | Zitadel OIDC with PKCE, Google OAuth setup, auth-gated CSP, privacy redaction (`INV-PRV-01`) | [docs/02-authentication/](docs/02-authentication/README.md) |
-| **03** | **Data Management** | Canonical SQLite Triad (`card`, `handle_registry`, `handle_history`), `clm-kernel@0.0.10` consensus, 4-modality rendering | [docs/03-data-management/](docs/03-data-management/README.md) |
+| **03** | **Data Management** | Canonical SQLite Triad (`card`, `handle_registry`, `handle_history`), `clm-kernel@0.0.11` consensus, 4-modality rendering | [docs/03-data-management/](docs/03-data-management/README.md) |
 | **04** | **Networking** | WebRTC P2P data mesh, WebSocket signaling on port 3001, SSRF network membrane guards | [docs/04-networking/](docs/04-networking/README.md) |
 | **05** | **State Management** | Global Redux Toolkit application store and deterministic 20-pair `RecordingStateMachine` (`INV-ERB-03`) | [docs/05-state-management/](docs/05-state-management/README.md) |
 | **06** | **Components** | Responsive Lab harness ES modules, CLM Three Sets framework, 3D Theater, and [Multiplayer Games](docs/06-components/games/CHESS_GAME_DOCUMENTATION.md) | [docs/06-components/](docs/06-components/README.md) |
