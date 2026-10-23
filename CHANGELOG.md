@@ -4,8 +4,12 @@ All notable changes to the PKC Landing Page are documented in this file. The for
 
 ## [Unreleased]
 
-### Documentation
-- **EPIC-KX consumer boundary**: Recorded that LandingPage remains pinned to published `clm-kernel@0.0.10`; the root-owned sync plan does not add a LandingPage sync provider or change the dependency pin. The generated `clm-registry.yaml` projection includes the proposed KX sprint records.
+### Added
+- **Responsive UI Lab Omnibar & Target Switching (`responsive-lab.html`, `js/harness/lab-toolbar.js`)**: Added direct URL typing omnibar with `normalizeInputUrl` and preset target switching coordinated via `TargetMembrane` (`INV-STU-01`, `INV-STU-02`).
+
+### Changed
+- **Penpot Navigation Flow & Display Registry Projection (`index.html`, `js/nav.js`, `design/landing-navigation.penpot`, `clm-registry.yaml`)**: Synchronized the Penpot navigation flow graph digest (`7fc5562f37de5880c28963dfbfeb7b976cafb6feb6e8698078528a9d63a41fb4`) and refreshed `clm-registry.yaml` to project the `EPIC-KX` (`KX-01`..`KX-07`) sprint records.
+- **EPIC-KX Consumer Lockstep Boundary**: Verified that `LandingPage` remains exact-pinned to published `clm-kernel@0.0.10` in lockstep with `mcard-studio` (`scripts/ci/check_kx_release_artifacts.py`).
 
 ## [0.3.0] — 2026-10-21
 

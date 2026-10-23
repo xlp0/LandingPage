@@ -5,7 +5,7 @@
 `LandingPage` is **Estate 3** of the `MCard_TDD` four-estate workspace. It serves two tightly integrated roles:
 
 1. **Universal 4-Modality MCard Content Browser**: A modular, execution-isolated browser for all content stored in the **MCard Canonical Triad SQLite Dataset Engine** (`card`, `handle_registry`, `handle_history`), powered by the published **`clm-kernel@0.0.10`** npm package (`computeHash`, `TypeInterpreter`, `detectMime`, `isBinary`). Every MCard is classified and projected across four universal modalities (`media`, `document`, `code`, `webapp`).
-2. **Device-Sensitive Responsive Test Workbench**: A static-first testing and telemetry harness (`responsive-lab.html`) for certifying chosen web targets across viewport geometry, orientation swap, pixel density, touch ergonomics, scale-invariant interaction capture (`[0.0, 1.0]`), and deterministic Playwright replay.
+2. **Device-Sensitive Responsive Test Workbench**: A static-first testing and telemetry harness (`responsive-lab.html`) with a direct URL typing omnibar (`normalizeInputUrl` in [`js/harness/lab-toolbar.js`](js/harness/lab-toolbar.js)) for certifying chosen web targets across viewport geometry, orientation swap, pixel density, touch ergonomics, scale-invariant interaction capture (`[0.0, 1.0]`), and deterministic Playwright replay.
 
 ---
 
@@ -18,7 +18,7 @@
 | **3. Portal & Lab** | `LandingPage/` | `pkc-landing-page-monorepo` | Universal 4-Modality MCard Content Browser, Single-Page MCard host (`urn:mcard:content:landing_page`), and Responsive Test Workbench on port `3001`. |
 | **4. Orchestrator** | `MCard_TDD` (root) | Root workspace | Cross-submodule `Makefile` orchestration (`make landing-up`, `make landing-test`, `make landing-seed`, `make status`), consensus gates, and sprint governance. |
 
-> **Kernel sync roadmap:** LandingPage remains an exact consumer of published `clm-kernel@0.0.10`. The umbrella-root EPIC-KX plan proposes a backward-compatible, tri-runtime sync API; this repository does not implement a separate sync engine or advance its pin independently. Any move to `0.0.11` is approval-gated and coordinated with `mcard-studio`.
+> **Kernel sync & lockstep consumer boundary (`EPIC-KX`):** LandingPage remains an exact consumer of published `clm-kernel@0.0.10` in lockstep with `mcard-studio` (`check_kx_release_artifacts.py`). The umbrella-root `EPIC-KX` program implements the additive, tri-runtime `SyncContract v1` in `clm/`; this repository does not implement a separate sync engine or advance its pin independently before live three-registry publication of `0.0.11` is approved.
 
 ---
 

@@ -1,29 +1,113 @@
 /**
  * Lab Toolbar Controller
  * Populates target selector from app-config.json, updates diagnostics indicators,
- * and coordinates target switching via TargetMembrane (INV-STU-01, INV-STU-02).
+ * manages direct URL typing omnibar, and coordinates target switching via TargetMembrane (INV-STU-01, INV-STU-02).
  */
+
+export function normalizeInputUrl(raw) {
+  if (!raw || typeof raw !== 'string') return 'app.html';
+  const trimmed = raw.trim();
+  if (!trimmed) return 'app.html';
+
+  // Already qualified with scheme (http:, https:, data:, blob:, file:, etc.)
+  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) {
+    return trimmed;
+  }
+  // Protocol-relative URL
+  if (trimmed.startsWith('//')) {
+    return `http:${trimmed}`;
+  }
+  // Relative paths or file paths (.html, .htm, ./, ../, /)
+  if (/\.html?([?#].*)?$/i.test(trimmed) || trimmed.startsWith('./') || trimmed.startsWith('../') || trimmed.startsWith('/')) {
+    return trimmed;
+  }
+  // If localhost, loopback IP, or domain with port/path (without scheme)
+  if (/^(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?(\/.*)?$/i.test(trimmed) ||
+      /^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/i.test(trimmed)) {
+    return `http://${trimmed}`;
+  }
+  return trimmed;
+}
 
 export async function initLabToolbar(options = {}) {
   const {
     membrane,
-    siteSelector = document.getElementById('public-site-selector'),
-    loadIframeBtn = document.getElementById('btn-load-in-iframe'),
-    popoutBtn = document.getElementById('mission-control-popout-btn'),
-    corsBlockAlert = document.getElementById('cors-block-alert'),
-    corsBlockReason = document.getElementById('cors-block-reason'),
-    corsBlockTargetName = document.getElementById('cors-block-target-name'),
-    corsStatusPill = document.getElementById('cors-status-pill'),
+    urlInput = (typeof document !== 'undefined' ? document.getElementById('target-url-input') : null),
+    clearUrlBtn = (typeof document !== 'undefined' ? document.getElementById('btn-clear-target-url') : null),
+    siteSelector = (typeof document !== 'undefined' ? document.getElementById('public-site-selector') : null),
+    loadIframeBtn = (typeof document !== 'undefined' ? document.getElementById('btn-load-in-iframe') : null),
+    popoutBtn = (typeof document !== 'undefined' ? document.getElementById('mission-control-popout-btn') : null),
+    corsBlockAlert = (typeof document !== 'undefined' ? document.getElementById('cors-block-alert') : null),
+    corsBlockReason = (typeof document !== 'undefined' ? document.getElementById('cors-block-reason') : null),
+    corsBlockTargetName = (typeof document !== 'undefined' ? document.getElementById('cors-block-target-name') : null),
+    corsStatusPill = (typeof document !== 'undefined' ? document.getElementById('cors-status-pill') : null),
     configUrl = '/app-config.json'
   } = options;
 
+  function findOptionIndex(url) {
+    if (!siteSelector) return -1;
+    for (let i = 0; i < siteSelector.options.length; i++) {
+      if (siteSelector.options[i].value === url) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  function ensureOptionExists(url, label = null) {
+    if (!siteSelector) return -1;
+    const existing = findOptionIndex(url);
+    if (existing >= 0) return existing;
+
+    const opt = document.createElement('option');
+    opt.value = url;
+    opt.textContent = label || (url.startsWith('http') ? url : `Custom Target (${url})`);
+    opt.setAttribute('data-status', 'allowed');
+    opt.setAttribute('data-desc', `Custom Target URL (${url})`);
+    siteSelector.insertBefore(opt, siteSelector.firstChild);
+    return 0;
+  }
+
+  function updateClearBtnVisibility() {
+    if (!clearUrlBtn) return;
+    if (urlInput && urlInput.value.trim().length > 0) {
+      clearUrlBtn.style.display = 'inline-flex';
+    } else {
+      clearUrlBtn.style.display = 'none';
+    }
+  }
+
+  function updateActiveChips(currentUrl) {
+    if (typeof document === 'undefined') return;
+    const chips = document.querySelectorAll('.target-chip');
+    chips.forEach(chip => {
+      const chipUrl = chip.getAttribute('data-url');
+      if (!chipUrl) return;
+      const isMatch = (chipUrl === currentUrl) ||
+        (chipUrl === currentUrl.replace(/\/$/, '')) ||
+        (`${chipUrl}/` === currentUrl);
+      if (isMatch) {
+        chip.classList.add('active');
+      } else {
+        chip.classList.remove('active');
+      }
+    });
+  }
+
   function updateSiteSelection() {
-    if (!siteSelector) return;
-    const selectedOption = siteSelector.options[siteSelector.selectedIndex];
-    const url = selectedOption ? selectedOption.value : 'app.html';
+    const membraneTarget = membrane?.getTarget();
+    const current = membraneTarget?.raw ||
+      (siteSelector && siteSelector.selectedIndex >= 0 ? siteSelector.options[siteSelector.selectedIndex]?.value : (urlInput?.value || 'app.html'));
+
+    const selectedOption = siteSelector && siteSelector.selectedIndex >= 0 ? siteSelector.options[siteSelector.selectedIndex] : null;
     const status = selectedOption?.getAttribute('data-status');
     const reason = selectedOption?.getAttribute('data-reason') || '';
-    const name = selectedOption?.text.split(' - ')[0] || url;
+    const name = selectedOption?.text?.split(' - ')[0] || current;
+
+    if (urlInput && !urlInput.matches(':focus') && current) {
+      urlInput.value = current;
+      updateClearBtnVisibility();
+    }
 
     if (status === 'blocked') {
       if (corsBlockAlert) corsBlockAlert.style.display = 'flex';
@@ -36,10 +120,54 @@ export async function initLabToolbar(options = {}) {
     } else {
       if (corsBlockAlert) corsBlockAlert.style.display = 'none';
       if (corsStatusPill) {
-        corsStatusPill.textContent = '● Controlled Viewport Active (Iframe Compatible)';
+        if (membraneTarget?.sameOrigin) {
+          corsStatusPill.textContent = '● Controlled Viewport Active (Same-Origin Target)';
+        } else if (membraneTarget) {
+          corsStatusPill.textContent = '● Controlled Viewport Active (Cross-Origin Target)';
+        } else {
+          corsStatusPill.textContent = '● Controlled Viewport Active (Iframe Compatible)';
+        }
         corsStatusPill.style.color = 'var(--badge-success-text)';
       }
     }
+
+    updateActiveChips(current);
+  }
+
+  function applyTarget(rawUrl, cause = 'user-input') {
+    const normalized = normalizeInputUrl(rawUrl);
+    if (urlInput && urlInput.value !== normalized) {
+      urlInput.value = normalized;
+    }
+    updateClearBtnVisibility();
+
+    if (siteSelector) {
+      const idx = ensureOptionExists(normalized);
+      if (idx >= 0) {
+        siteSelector.selectedIndex = idx;
+      }
+    }
+
+    if (membrane) {
+      try {
+        membrane.bindTarget(normalized, cause);
+      } catch (err) {
+        console.error('[lab-toolbar] bindTarget failed:', err);
+      }
+    }
+
+    if (typeof window !== 'undefined' && window.history?.replaceState) {
+      try {
+        const curUrl = new URL(window.location.href);
+        curUrl.searchParams.set('target', normalized);
+        window.history.replaceState(null, '', curUrl.toString());
+      } catch {
+        // ignore history state errors
+      }
+    }
+
+    updateSiteSelection();
+    updateActiveChips(normalized);
   }
 
   // Fetch targets from config if available
@@ -103,38 +231,72 @@ export async function initLabToolbar(options = {}) {
     membrane.bindTarget(initialTarget, initialCause);
   }
 
-  siteSelector?.addEventListener('change', updateSiteSelection);
-  updateSiteSelection();
+  // Set input value initially
+  if (urlInput) {
+    urlInput.value = initialTarget;
+    updateClearBtnVisibility();
+  }
+
+  // Event Listeners
+  urlInput?.addEventListener('input', () => {
+    updateClearBtnVisibility();
+  });
+
+  urlInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      applyTarget(urlInput.value, 'url-input-enter');
+    } else if (e.key === 'Escape') {
+      urlInput.value = '';
+      updateClearBtnVisibility();
+    }
+  });
+
+  clearUrlBtn?.addEventListener('click', () => {
+    if (urlInput) {
+      urlInput.value = '';
+      urlInput.focus();
+      updateClearBtnVisibility();
+    }
+  });
 
   loadIframeBtn?.addEventListener('click', () => {
-    if (!siteSelector) return;
-    const selectedOption = siteSelector.options[siteSelector.selectedIndex];
-    const url = selectedOption ? selectedOption.value : 'app.html';
-    if (membrane) {
-      membrane.bindTarget(url, 'load-button');
-    }
-    updateSiteSelection();
+    const targetVal = urlInput && urlInput.value.trim() ? urlInput.value : (siteSelector?.value || 'app.html');
+    applyTarget(targetVal, 'load-button');
   });
 
+  siteSelector?.addEventListener('change', () => {
+    if (siteSelector.selectedIndex >= 0) {
+      const selectedVal = siteSelector.options[siteSelector.selectedIndex].value;
+      applyTarget(selectedVal, 'dropdown-select');
+    }
+  });
+
+  // Bind preset chip clicks
+  if (typeof document !== 'undefined') {
+    const chips = document.querySelectorAll('.target-chip');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const u = chip.getAttribute('data-url');
+        if (u) {
+          applyTarget(u, 'preset-chip');
+        }
+      });
+    });
+  }
+
   popoutBtn?.addEventListener('click', () => {
-    const current = membrane?.getTarget()?.url || siteSelector?.value || 'app.html';
+    const current = membrane?.getTarget()?.url || urlInput?.value || siteSelector?.value || 'app.html';
     window.open(current, '_blank');
   });
+
+  updateSiteSelection();
 
   return {
     updateSiteSelection,
     getTarget: () => membrane?.getTarget(),
     setTarget: (url, cause = 'custom') => {
-      if (siteSelector) {
-        for (let i = 0; i < siteSelector.options.length; i++) {
-          if (siteSelector.options[i].value === url) {
-            siteSelector.selectedIndex = i;
-            break;
-          }
-        }
-      }
-      membrane?.bindTarget(url, cause);
-      updateSiteSelection();
+      applyTarget(url, cause);
     }
   };
 }
