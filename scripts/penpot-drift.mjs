@@ -1,16 +1,9 @@
 #!/usr/bin/env node
-/**
- * penpot-drift.mjs
- * Sprint CDO-15: Deliverable DV-CDO-15-05
- * Compares the Penpot navigation graph with the live unit routes and artifacts,
- * reporting drifted, unbound, unmapped, and broken link cases (INV-CDO-11, INV-CDO-12, INV-CDO-13).
- */
-
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { extractNavigationGraph } from './penpot-nav.mjs';
 import { sha256 } from './penpot-zip.mjs';
-import { resolveUnitDir, DEFAULT_ROUTES, getRouteContent } from './penpot-init.mjs';
+import { resolveUnitDir, DEFAULT_ROUTES, readRouteWithoutGeneratedNav } from './penpot-init.mjs';
 
 export function checkNavigationDrift(unitDir, options = {}) {
   const resolvedUnit = resolveUnitDir(unitDir);
@@ -51,7 +44,6 @@ export function checkNavigationDrift(unitDir, options = {}) {
   const frameMap = new Map();
   const handleMap = new Map();
 
-  // 1. Check each frame in the graph
   for (const f of graph.frames) {
     frameMap.set(f.id, f);
     const clm = f.pluginData?.clm;
@@ -67,7 +59,6 @@ export function checkNavigationDrift(unitDir, options = {}) {
 
     handleMap.set(clm.handle, f);
 
-    // Resolve route file from handle
     let relRoute = clm.handle.replace(/^mcard:route:/, '');
     if (relRoute.startsWith('/')) relRoute = relRoute.slice(1);
     const routeDiskPath = path.join(resolvedUnit, relRoute);
@@ -81,7 +72,7 @@ export function checkNavigationDrift(unitDir, options = {}) {
         reason: `Route file does not exist on disk for handle ${clm.handle}`,
       });
     } else {
-      const diskContent = getRouteContent(routeDiskPath);
+      const diskContent = readRouteWithoutGeneratedNav(routeDiskPath);
       const actualHash = sha256(diskContent);
       if (clm.hash && clm.hash !== actualHash) {
         drifted.push({
@@ -97,7 +88,6 @@ export function checkNavigationDrift(unitDir, options = {}) {
     }
   }
 
-  // 2. Check for routes present in the unit but unmapped in the graph
   const expectedRoutes = options.routes || DEFAULT_ROUTES;
   for (const exp of expectedRoutes) {
     if (!handleMap.has(exp.handle)) {
@@ -110,7 +100,6 @@ export function checkNavigationDrift(unitDir, options = {}) {
     }
   }
 
-  // 3. Check interaction edges for broken destinations
   for (const inter of graph.interactions) {
     if (!inter.destination || !frameMap.has(inter.destination)) {
       brokenEdges.push({
@@ -121,7 +110,6 @@ export function checkNavigationDrift(unitDir, options = {}) {
     }
   }
 
-  // 4. Check rendered navigation artifacts against graph
   const navJsPath = path.join(resolvedUnit, 'js', 'nav.js');
   if (fs.existsSync(navJsPath)) {
     const navJsContent = fs.readFileSync(navJsPath, 'utf8');
@@ -152,7 +140,6 @@ export function checkNavigationDrift(unitDir, options = {}) {
   const totalDrift = unbound.length + drifted.length + unmapped.length + brokenEdges.length + driftedArtifacts.length;
   const isClean = totalDrift === 0;
 
-  // Evolution record representation (DV-CDO-15-05 AC E2)
   const evolutionMCard = {
     handle: `mcard:evolution:navigation-drift:${Date.now()}`,
     unit: path.basename(resolvedUnit),
@@ -189,8 +176,12 @@ export function checkNavigationDrift(unitDir, options = {}) {
 
 if (process.argv[1] && process.argv[1].endsWith('penpot-drift.mjs')) {
   const args = process.argv.slice(2);
+  if (args.includes('--help') || args.includes('-h')) {
+    console.log('Usage: node penpot-drift.mjs [--json] [unitDir]');
+    process.exit(0);
+  }
   const asJson = args.includes('--json');
-  const unitDir = args.find(a => !a.startsWith('-')) || 'LandingPage';
+  const unitDir = args.find(a => !a.startsWith('-'));
 
   try {
     const res = checkNavigationDrift(unitDir);

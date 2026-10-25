@@ -1948,133 +1948,116 @@ sprints:
         - vcard:sprint-407:update_docs_architecture_code_migration_to_clm_md
         - vcard:sprint-407:graduate_sprints_403_407_into_the_12_aspect_deployment_architect
       state: sealed
-  - handle: urn:pcard:sprint:KX-00
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CLA-CUBICAL-LAGRANGIAN-CORDIS-MODULARITY
     card_type: mcard
     archetype: specification_mcard
-    code: KX-00
-    title: 'Program Charter: EPIC-KX KX-00 - Backward-Compatible Tri-Runtime MCard Sync'
+    code: 00-PROGRAM-CHARTER-EPIC-CLA-CUBICAL-LAGRANGIAN-CORDIS-MODULARITY
+    title: Program charter for EPIC-CLA cubical Lagrangian architecture and clm-kernel 0.0.13 modularity
     dod:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:pcard:sprint:KX-01
+  - handle: urn:pcard:sprint:CLA-01
     card_type: pcard
     archetype: ClmTriadManifest
-    code: KX-01
-    title: 'Sprint Specification: KX-01 - Compatibility Census and Sync Baseline'
+    code: CLA-01
+    title: Sprint CLA-01 Lagrangian and Axiomatic Design baseline and clm-kernel 0.0.13 consensus
     dod:
       total: 8
       vcard_refs:
-        - vcard:kx-01:dod_kx_01_01_census_covers_every_in_scope_behavior_and_test_unit
-        - vcard:kx-01:dod_kx_01_02_js_exports_python_public_exports_rust_public_module
-        - vcard:kx-01:dod_kx_01_03_repository_base_commits_submodule_pointers_and_inte
-        - vcard:kx-01:dod_kx_01_04_baseline_workload_records_total_cas_and_workspace_c
-        - vcard:kx-01:dod_kx_01_05_the_validator_rejects_missing_behavior_wrong_classi
-        - vcard:kx-01:dod_kx_01_06_no_kx_runtime_sync_module_is_introduced_in_this_inv
-        - vcard:kx-01:dod_kx_01_07_both_consumers_remain_exact_pinned_to_the_same_publ
-        - vcard:kx-01:dod_kx_01_08_root_dod_testability_finds_all_kx_01_items_and_zero
+        - vcard:cla-01:dod_cla_01_01_clm_tools_release_bump_version_py_confirms_100_sem
+        - vcard:cla-01:dod_cla_01_02_mcard_studio_scripts_config_kernel_version_consens
+        - vcard:cla-01:dod_cla_01_03_both_mcard_studio_package_json_and_landingpage_pac
+        - vcard:cla-01:dod_cla_01_04_scripts_orc_paths_py_py_resolves_estate_paths_from
+        - vcard:cla-01:dod_cla_01_05_scripts_ci_check_software_lagrangian_py_computes_s
+        - vcard:cla-01:dod_cla_01_06_scripts_ci_check_software_lagrangian_py_passes_its
+        - vcard:cla-01:dod_cla_01_07_docs_sprints_active_evidence_cla_01_lagrangian_bas
+        - vcard:cla-01:dod_cla_01_08_all_epic_cla_sprint_manifests_encode_into_registry
       state: sealed
-  - handle: urn:pcard:sprint:KX-02
+  - handle: urn:pcard:sprint:CLA-02
     card_type: pcard
     archetype: ClmTriadManifest
-    code: KX-02
-    title: 'Sprint Specification: KX-02 - Versioned Sync Contract and Additive Runtime APIs'
+    code: CLA-02
+    title: Sprint CLA-02 Multi-scale Petri-CLM knowledge codec and clm 0.0.13 compactness
     dod:
       total: 8
       vcard_refs:
-        - vcard:kx-02:dod_kx_02_01_all_three_runtimes_expose_the_additive_v1_sync_api_
-        - vcard:kx-02:dod_kx_02_02_js_package_exports_add_only_sync_and_root_and_exist
-        - vcard:kx-02:dod_kx_02_03_golden_transfer_record_transition_and_replay_vector
-        - vcard:kx-02:dod_kx_02_04_petri_guards_and_transfer_conservation_hold_includi
-        - vcard:kx-02:dod_kx_02_05_existing_kernel_syncfilesystems_lineage_and_merkle_
-        - vcard:kx-02:dod_kx_02_06_js_ts_python_and_rust_all_match_the_language_neutra
-        - vcard:kx-02:dod_kx_02_07_the_sync_browser_import_adds_no_node_only_dependenc
-        - vcard:kx-02:dod_kx_02_08_studio_and_landingpage_remain_on_exact_published_0_
+        - vcard:cla-02:dod_cla_02_01_clm_kernel_clm_js_core_src_fractal_ts_contains_zer
+        - vcard:cla-02:dod_cla_02_02_fractalorder_supports_token_fiber_collection_unit_
+        - vcard:cla-02:dod_cla_02_03_encodeknowledgetriad_and_projectfractalpetrinet_in
+        - vcard:cla-02:dod_cla_02_04_clm_kernel_clm_js_core_src_layer0_storage_node_sql
+        - vcard:cla-02:dod_cla_02_05_clm_tools_guards_check_kernel_contract_py_measures
+        - vcard:cla-02:dod_cla_02_06_clm_tools_guards_check_organizational_topology_py_
+        - vcard:cla-02:dod_cla_02_07_clm_kernel_clm_js_core_builds_cleanly_npm_run_buil
+        - vcard:cla-02:dod_cla_02_08_python_and_rust_sync_and_layer1_suites_in_clm_pass
       state: sealed
-  - handle: urn:pcard:sprint:KX-03
+  - handle: urn:pcard:sprint:CLA-03
     card_type: pcard
     archetype: ClmTriadManifest
-    code: KX-03
-    title: 'Sprint Specification: KX-03 - Tri-Runtime Ports and Cordis Lifecycle'
+    code: CLA-03
+    title: Sprint CLA-03 Studio dead repository exclusion and sync bridge collapse
     dod:
       total: 8
       vcard_refs:
-        - vcard:kx-03:dod_kx_03_01_one_registersyncservice_publishes_mcard_sync_with_z
-        - vcard:kx-03:dod_kx_03_02_registration_is_idempotent_and_disposal_leaves_zero
-        - vcard:kx-03:dod_kx_03_03_kernel_sync_modules_across_js_ts_python_and_rust_ar
-        - vcard:kx-03:dod_kx_03_04_a_fake_frame_transport_drives_push_and_pull_and_a_f
-        - vcard:kx-03:dod_kx_03_05_the_existing_indexeddb_backend_factory_remains_a_th
-        - vcard:kx-03:dod_kx_03_06_studio_server_and_client_contexts_register_mcard_sy
-        - vcard:kx-03:dod_kx_03_07_a_missing_sync_service_produces_a_typed_error_from_
-        - vcard:kx-03:dod_kx_03_08_the_browser_sync_entry_imports_only_its_declared_su
+        - vcard:cla-03:dod_cla_03_01_mcard_studio_src_server_servermemoryrepository_ts_
+        - vcard:cla-03:dod_cla_03_02_orphaned_legacy_tests_servermemoryrepository_test_
+        - vcard:cla-03:dod_cla_03_03_mcard_studio_src_core_sync_kernelsyncbridge_ts_is_
+        - vcard:cla-03:dod_cla_03_04_mcard_studio_src_pages_api_dispatch_ts_and_mcard_s
+        - vcard:cla-03:dod_cla_03_05_mcard_studio_scripts_check_history_boundary_mjs_an
+        - vcard:cla-03:dod_cla_03_06_mcard_studio_scripts_check_workspace_sync_integrit
+        - vcard:cla-03:dod_cla_03_07_mcard_studio_scripts_check_kernel_version_consensu
+        - vcard:cla-03:dod_cla_03_08_the_full_mcard_studio_vitest_unit_suite_runs_to_co
       state: sealed
-  - handle: urn:pcard:sprint:KX-04
+  - handle: urn:pcard:sprint:CLA-04
     card_type: pcard
     archetype: ClmTriadManifest
-    code: KX-04
-    title: 'Sprint Specification: KX-04 - Petri Parity and Failure Recovery'
+    code: CLA-04
+    title: Sprint CLA-04 Cordis functional composition and clm-kernel substitution in Studio
     dod:
       total: 8
       vcard_refs:
-        - vcard:kx-04:dod_kx_04_01_one_kernel_mutation_gate_uses_existing_fnd_types_an
-        - vcard:kx-04:dod_kx_04_02_every_verb_enforces_its_guard_and_invalid_payloads_
-        - vcard:kx-04:dod_kx_04_03_incidence_matrices_prove_each_declared_p_invariant_
-        - vcard:kx-04:dod_kx_04_04_local_failure_injection_leaves_records_bindings_tra
-        - vcard:kx-04:dod_kx_04_05_remote_crash_replay_and_rejected_retry_semantics_ar
-        - vcard:kx-04:dod_kx_04_06_studio_mutation_retire_and_reconcile_paths_delegate
-        - vcard:kx-04:dod_kx_04_07_ts_python_and_rust_produce_identical_canonical_vect
-        - vcard:kx-04:dod_kx_04_08_only_sync_is_added_as_a_js_package_subpath_and_the_
+        - vcard:cla-04:dod_cla_04_01_mcard_studio_src_server_workspaceconflictservice_t
+        - vcard:cla-04:dod_cla_04_02_mcard_studio_src_core_files_workspacehandlepair_ts
+        - vcard:cla-04:dod_cla_04_03_mcard_studio_src_fiber_disposable_ts_composes_disp
+        - vcard:cla-04:dod_cla_04_04_mcard_studio_src_stores_lagrangian_ts_starts_from_
+        - vcard:cla-04:dod_cla_04_05_mcard_studio_tests_unit_stores_lagrangianreducer_t
+        - vcard:cla-04:dod_cla_04_06_mcard_studio_scripts_check_workspace_sync_integrit
+        - vcard:cla-04:dod_cla_04_07_mcard_studio_scripts_check_loc_budgets_mjs_exits_0
+        - vcard:cla-04:dod_cla_04_08_the_full_mcard_studio_vitest_suite_passes_with_zer
       state: sealed
-  - handle: urn:pcard:sprint:KX-05
+  - handle: urn:pcard:sprint:CLA-05
     card_type: pcard
     archetype: ClmTriadManifest
-    code: KX-05
-    title: 'Sprint Specification: KX-05 - Tri-Runtime Conformance and Backward Compatibility'
+    code: CLA-05
+    title: Sprint CLA-05 LandingPage kernel delegation and shim subtraction
     dod:
       total: 8
       vcard_refs:
-        - vcard:kx-05:dod_kx_05_01_the_api_snapshot_records_existing_js_python_and_rus
-        - vcard:kx-05:dod_kx_05_02_legacy_import_and_call_fixtures_pass_unchanged_in_a
-        - vcard:kx-05:dod_kx_05_03_all_canonical_record_and_transition_fixtures_match_
-        - vcard:kx-05:dod_kx_05_04_all_8_synccontract_v1_feature_matrix_rows_pass_in_j
-        - vcard:kx-05:dod_kx_05_05_petri_state_receipt_hashes_error_categories_and_fai
-        - vcard:kx-05:dod_kx_05_06_existing_storage_schemas_and_root_subpath_and_ffi_e
-        - vcard:kx-05:dod_kx_05_07_sync_benchmark_report_compares_raw_samples_framed_b
-        - vcard:kx-05:dod_kx_05_08_studio_and_landingpage_remain_exact_pinned_to_publi
+        - vcard:cla-05:dod_cla_05_01_landingpage_scripts_penpot_drift_mjs_and_landingpa
+        - vcard:cla-05:dod_cla_05_02_zero_byte_landingpage_routes_auth_mjs_and_stale_la
+        - vcard:cla-05:dod_cla_05_03_throw_only_server_built_in_shims_in_landingpage_pu
+        - vcard:cla-05:dod_cla_05_04_landingpage_package_json_declares_ajv_explicitly_i
+        - vcard:cla-05:dod_cla_05_05_landingpage_server_mcard_api_mjs_and_landingpage_s
+        - vcard:cla-05:dod_cla_05_06_npm_prefix_landingpage_run_build_mcard_regenerates
+        - vcard:cla-05:dod_cla_05_07_venv_bin_python_scripts_ci_check_landingpage_retir
+        - vcard:cla-05:dod_cla_05_08_the_full_landingpage_unit_test_suite_npm_prefix_la
       state: sealed
-  - handle: urn:pcard:sprint:KX-06
+  - handle: urn:pcard:sprint:CLA-06
     card_type: pcard
     archetype: ClmTriadManifest
-    code: KX-06
-    title: 'Sprint Specification: KX-06 - Coordinated Kernel Release and Consumer Lockstep'
+    code: CLA-06
+    title: Sprint CLA-06 Software Lagrangian delta audit and four-estate certification
     dod:
       total: 8
       vcard_refs:
-        - vcard:kx-06:dod_kx_06_01_js_python_and_rust_release_artifacts_and_manifests_
-        - vcard:kx-06:dod_kx_06_02_all_artifact_contents_pass_0_0_10_api_compatibility
-        - vcard:kx-06:dod_kx_06_03_no_external_registry_upload_occurs_without_explicit
-        - vcard:kx-06:dod_kx_06_04_registry_and_consumer_lockstep_gate_verifies_consis
-        - vcard:kx-06:dod_kx_06_05_root_and_studio_consensus_guards_verify_that_mcard_
-        - vcard:kx-06:dod_kx_06_06_the_10_compatibility_fixture_and_isolated_11_prefli
-        - vcard:kx-06:dod_kx_06_07_partial_registry_publication_consumer_pin_skew_and_
-        - vcard:kx-06:dod_kx_06_08_docs_sprints_active_evidence_kx_06_release_witness_
-      state: sealed
-  - handle: urn:pcard:sprint:KX-07
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: KX-07
-    title: 'Sprint Specification: KX-07 - Studio Adapter and Flux Migration'
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:kx-07:dod_kx_07_01_both_consumers_remain_in_exact_lockstep_on_the_cons
-        - vcard:kx-07:dod_kx_07_02_all_mcard_mutation_and_retire_components_call_typed
-        - vcard:kx-07:dod_kx_07_03_mcard_ui_views_use_typed_capability_ports_and_raw_h
-        - vcard:kx-07:dod_kx_07_04_the_flux_boundary_guard_rejects_planted_component_r
-        - vcard:kx-07:dod_kx_07_05_mcardprojectionadapter_ts_owns_authoritative_mcard_
-        - vcard:kx-07:dod_kx_07_06_outbox_entries_persist_through_kernel_vfs_storage_a
-        - vcard:kx-07:dod_kx_07_07_editor_drafts_default_to_memory_only_staging_outsid
-        - vcard:kx-07:dod_kx_07_08_studio_unit_tests_playwright_e2e_sync_suite_client_
+        - vcard:cla-06:dod_cla_06_01_scripts_ci_check_software_lagrangian_py_compare_ge
+        - vcard:cla-06:dod_cla_06_02_docs_sprints_active_evidence_cla_06_lagrangian_del
+        - vcard:cla-06:dod_cla_06_03_scripts_ci_verify_cla_baldwin_witness_mjs_evaluate
+        - vcard:cla-06:dod_cla_06_04_clm_passes_compactness_topology_causal_alignment_a
+        - vcard:cla-06:dod_cla_06_05_mcard_studio_passes_check_kernel_version_consensus
+        - vcard:cla-06:dod_cla_06_06_landingpage_passes_build_mcard_test_unit_and_check
+        - vcard:cla-06:dod_cla_06_07_all_48_dods_across_cla_01_through_cla_06_pass_scri
+        - vcard:cla-06:dod_cla_06_08_scripts_orc_encode_sprint_py_scripts_orc_sync_disp
       state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CAS
     card_type: mcard
@@ -3178,6 +3161,134 @@ sprints:
         - vcard:py-06:every_removal_is_recorded_each_test_whose_behaviour_changed_name
         - vcard:py-06:the_schema_is_in_one_place_exactly_one_regular_file_named_mcard_
         - vcard:py-06:no_declaration_survives_check_schema_conformance_py_passes_with_
+      state: sealed
+  - handle: urn:pcard:sprint:KX-00
+    card_type: mcard
+    archetype: specification_mcard
+    code: KX-00
+    title: 'Program Charter: EPIC-KX KX-00 - Backward-Compatible Tri-Runtime MCard Sync'
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:KX-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: KX-01
+    title: 'Sprint Specification: KX-01 - Compatibility Census and Sync Baseline'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:kx-01:dod_kx_01_01_census_covers_every_in_scope_behavior_and_test_unit
+        - vcard:kx-01:dod_kx_01_02_js_exports_python_public_exports_rust_public_module
+        - vcard:kx-01:dod_kx_01_03_repository_base_commits_submodule_pointers_and_inte
+        - vcard:kx-01:dod_kx_01_04_baseline_workload_records_total_cas_and_workspace_c
+        - vcard:kx-01:dod_kx_01_05_the_validator_rejects_missing_behavior_wrong_classi
+        - vcard:kx-01:dod_kx_01_06_no_kx_runtime_sync_module_is_introduced_in_this_inv
+        - vcard:kx-01:dod_kx_01_07_both_consumers_remain_exact_pinned_to_the_same_publ
+        - vcard:kx-01:dod_kx_01_08_root_dod_testability_finds_all_kx_01_items_and_zero
+      state: sealed
+  - handle: urn:pcard:sprint:KX-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: KX-02
+    title: 'Sprint Specification: KX-02 - Versioned Sync Contract and Additive Runtime APIs'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:kx-02:dod_kx_02_01_all_three_runtimes_expose_the_additive_v1_sync_api_
+        - vcard:kx-02:dod_kx_02_02_js_package_exports_add_only_sync_and_root_and_exist
+        - vcard:kx-02:dod_kx_02_03_golden_transfer_record_transition_and_replay_vector
+        - vcard:kx-02:dod_kx_02_04_petri_guards_and_transfer_conservation_hold_includi
+        - vcard:kx-02:dod_kx_02_05_existing_kernel_syncfilesystems_lineage_and_merkle_
+        - vcard:kx-02:dod_kx_02_06_js_ts_python_and_rust_all_match_the_language_neutra
+        - vcard:kx-02:dod_kx_02_07_the_sync_browser_import_adds_no_node_only_dependenc
+        - vcard:kx-02:dod_kx_02_08_studio_and_landingpage_remain_on_exact_published_0_
+      state: sealed
+  - handle: urn:pcard:sprint:KX-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: KX-03
+    title: 'Sprint Specification: KX-03 - Tri-Runtime Ports and Cordis Lifecycle'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:kx-03:dod_kx_03_01_one_registersyncservice_publishes_mcard_sync_with_z
+        - vcard:kx-03:dod_kx_03_02_registration_is_idempotent_and_disposal_leaves_zero
+        - vcard:kx-03:dod_kx_03_03_kernel_sync_modules_across_js_ts_python_and_rust_ar
+        - vcard:kx-03:dod_kx_03_04_a_fake_frame_transport_drives_push_and_pull_and_a_f
+        - vcard:kx-03:dod_kx_03_05_the_existing_indexeddb_backend_factory_remains_a_th
+        - vcard:kx-03:dod_kx_03_06_studio_server_and_client_contexts_register_mcard_sy
+        - vcard:kx-03:dod_kx_03_07_a_missing_sync_service_produces_a_typed_error_from_
+        - vcard:kx-03:dod_kx_03_08_the_browser_sync_entry_imports_only_its_declared_su
+      state: sealed
+  - handle: urn:pcard:sprint:KX-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: KX-04
+    title: 'Sprint Specification: KX-04 - Petri Parity and Failure Recovery'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:kx-04:dod_kx_04_01_one_kernel_mutation_gate_uses_existing_fnd_types_an
+        - vcard:kx-04:dod_kx_04_02_every_verb_enforces_its_guard_and_invalid_payloads_
+        - vcard:kx-04:dod_kx_04_03_incidence_matrices_prove_each_declared_p_invariant_
+        - vcard:kx-04:dod_kx_04_04_local_failure_injection_leaves_records_bindings_tra
+        - vcard:kx-04:dod_kx_04_05_remote_crash_replay_and_rejected_retry_semantics_ar
+        - vcard:kx-04:dod_kx_04_06_studio_mutation_retire_and_reconcile_paths_delegate
+        - vcard:kx-04:dod_kx_04_07_ts_python_and_rust_produce_identical_canonical_vect
+        - vcard:kx-04:dod_kx_04_08_only_sync_is_added_as_a_js_package_subpath_and_the_
+      state: sealed
+  - handle: urn:pcard:sprint:KX-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: KX-05
+    title: 'Sprint Specification: KX-05 - Tri-Runtime Conformance and Backward Compatibility'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:kx-05:dod_kx_05_01_the_api_snapshot_records_existing_js_python_and_rus
+        - vcard:kx-05:dod_kx_05_02_legacy_import_and_call_fixtures_pass_unchanged_in_a
+        - vcard:kx-05:dod_kx_05_03_all_canonical_record_and_transition_fixtures_match_
+        - vcard:kx-05:dod_kx_05_04_all_8_synccontract_v1_feature_matrix_rows_pass_in_j
+        - vcard:kx-05:dod_kx_05_05_petri_state_receipt_hashes_error_categories_and_fai
+        - vcard:kx-05:dod_kx_05_06_existing_storage_schemas_and_root_subpath_and_ffi_e
+        - vcard:kx-05:dod_kx_05_07_sync_benchmark_report_compares_raw_samples_framed_b
+        - vcard:kx-05:dod_kx_05_08_studio_and_landingpage_remain_exact_pinned_to_publi
+      state: sealed
+  - handle: urn:pcard:sprint:KX-06
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: KX-06
+    title: 'Sprint Specification: KX-06 - Coordinated Kernel Release and Consumer Lockstep'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:kx-06:dod_kx_06_01_js_python_and_rust_release_artifacts_and_manifests_
+        - vcard:kx-06:dod_kx_06_02_all_artifact_contents_pass_0_0_10_api_compatibility
+        - vcard:kx-06:dod_kx_06_03_no_external_registry_upload_occurs_without_explicit
+        - vcard:kx-06:dod_kx_06_04_registry_and_consumer_lockstep_gate_verifies_consis
+        - vcard:kx-06:dod_kx_06_05_root_and_studio_consensus_guards_verify_that_mcard_
+        - vcard:kx-06:dod_kx_06_06_the_10_compatibility_fixture_and_isolated_11_prefli
+        - vcard:kx-06:dod_kx_06_07_partial_registry_publication_consumer_pin_skew_and_
+        - vcard:kx-06:dod_kx_06_08_docs_sprints_programs_kx_evidence_kx_06_release_wit
+      state: sealed
+  - handle: urn:pcard:sprint:KX-07
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: KX-07
+    title: 'Sprint Specification: KX-07 - Studio Adapter and Flux Migration'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:kx-07:dod_kx_07_01_both_consumers_remain_in_exact_lockstep_on_the_cons
+        - vcard:kx-07:dod_kx_07_02_all_mcard_mutation_and_retire_components_call_typed
+        - vcard:kx-07:dod_kx_07_03_mcard_ui_views_use_typed_capability_ports_and_raw_h
+        - vcard:kx-07:dod_kx_07_04_the_flux_boundary_guard_rejects_planted_component_r
+        - vcard:kx-07:dod_kx_07_05_mcardprojectionadapter_ts_owns_authoritative_mcard_
+        - vcard:kx-07:dod_kx_07_06_outbox_entries_persist_through_kernel_vfs_storage_a
+        - vcard:kx-07:dod_kx_07_07_editor_drafts_default_to_memory_only_staging_outsid
+        - vcard:kx-07:dod_kx_07_08_studio_unit_tests_playwright_e2e_sync_suite_client_
       state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-LCLM-LAYER0-CAS-FIRST
     card_type: mcard
@@ -5492,9 +5603,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: 766f4e1e8c26169966f847d465ffe3564162bdbdd9d6337eec5c1a85c02a0f5c
-  projection_sha256: a58104013b014e6fba7d160d4ef45e50a58f318956f122bb591234c661e2a3b5
-  kernel_version: 0.0.12
-  landing_page_commit: fc4d7ec428aa61850ffaca45c9481ac5a8ac2eaa
-  sprint_count: 257
+  source_sha256: bc9a50b8fb119cf11b0a4c273debd6027a94864b4c508d947d7626eb61c53dde
+  projection_sha256: e5aa65212cc56390f12cf46afdc3c7c9b360e06fbc83595137f9f575b23f37b3
+  kernel_version: 0.0.13
+  landing_page_commit: 045db8d419ba7a88f991572015aa30cff061c63f
+  sprint_count: 264
   unresolved_trace_refs: 0

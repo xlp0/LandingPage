@@ -1,13 +1,3 @@
-/**
- * MCard REST API — canonical Triad SQLite dataset engine for LandingPage.
- *
- * One record law (EPIC-CAS L6, INV-510):
- *   card.hash = hex(H(content)), where the algorithm H is named by coordinate *a*
- *   of `g_time` and `g_time = ALGORITHM|TIMESTAMP|LOCALE[|key=value...]`.
- *
- * Hashing and 4-modality content classification (`media`, `document`, `code`, `webapp`)
- * are provisioned by the published `clm-kernel@0.0.10` npm module.
- */
 import express from 'express';
 import path from 'node:path';
 import fs from 'node:fs';
@@ -31,6 +21,7 @@ export {
 
 const router = express.Router();
 
+export const KERNEL_PROVENANCE = 'clm-kernel@0.0.12';
 export const LANDING_HANDLE = 'urn:mcard:content:landing_page';
 export const DEFAULT_ALGORITHM = 'blake3';
 export const LEGACY_ALGORITHM = 'sha256';
@@ -40,39 +31,32 @@ let ready = false;
 let dbPath = null;
 let sequence = 0;
 
-/** ISO-8601 timestamp for coordinate *b* of `g_time`. */
 function nowIso() {
   return new Date().toISOString();
 }
 
-/** Locale for coordinate *c* of `g_time`. */
 function currentLocale() {
   return process.env.CLM_LOCALE || Intl.DateTimeFormat().resolvedOptions().locale || 'en-US';
 }
 
-/** `ALGORITHM|TIMESTAMP|LOCALE` — the normative pipe form. */
 export function formatGTime(algorithm = DEFAULT_ALGORITHM, timestamp = nowIso(), locale = currentLocale()) {
   return `${algorithm}|${timestamp}|${locale}`;
 }
 
-/** Coordinate *a* of a `g_time` value; defaults to blake3 for a malformed value. */
 export function algorithmOf(gTime) {
   const algorithm = String(gTime ?? '').split('|')[0].trim().toLowerCase();
   return algorithm || DEFAULT_ALGORITHM;
 }
 
-/** Deterministic bytes for a card body (preserving raw binary buffers without UTF-8 corruption). */
 function bytesOf(content) {
   return toRawBuffer(content);
 }
 
-/** `hex(H(content))` through the kernel's parameterised hash. */
 export function hashContent(content, algorithm = DEFAULT_ALGORITHM) {
   const buf = bytesOf(content);
   return computeHash(algorithm, new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength));
 }
 
-/** Recompute a stored record's digest under the algorithm its `g_time` declares. */
 export function verifyRecord(hash, content, gTime) {
   return hashContent(content, algorithmOf(gTime)) === String(hash).toLowerCase();
 }
@@ -103,7 +87,6 @@ const TRIAD_DDL = `
     ON handle_history (handle, changed_at);
 `;
 
-/** Canonical 3-table, 3-column Triad store (INV-510, `schema/mcard_schema.sql`). */
 export class CanonicalTriadBackend {
   constructor(filename) {
     this.filename = filename;
@@ -163,7 +146,6 @@ export class CanonicalTriadBackend {
     return { cards: migratedCards, handles: migratedHandles };
   }
 
-  /** Append-only insert. Preserves raw bytes for binary media and UTF-8 bytes for text. */
   put(content, { algorithm = DEFAULT_ALGORITHM, gTime = null } = {}) {
     const rawBytes = bytesOf(content);
     const hash = hashContent(rawBytes, algorithm);
@@ -180,7 +162,6 @@ export class CanonicalTriadBackend {
     return row ? row.g_time : null;
   }
 
-  /** Binary-safe retrieval: verifies digest over raw bytes before decoding text or classifying modality. */
   get(hash, options = {}) {
     const row = this.db.prepare('SELECT hash, content, g_time FROM card WHERE hash = ?').get(hash);
     if (!row) return null;
@@ -284,7 +265,6 @@ export class CanonicalTriadBackend {
     try {
       this.db.close();
     } catch {
-      /* already closed */
     }
   }
 }
@@ -311,7 +291,6 @@ function cardView(card, { preview = null } = {}) {
   };
 }
 
-/** Initializes the canonical Triad store. */
 export async function initMCardAPI(dbFile = path.join(process.cwd(), 'data', 'mcard-api.db')) {
   storage = new CanonicalTriadBackend(dbFile);
   ready = true;
@@ -332,7 +311,6 @@ function ensureReady(res) {
   return true;
 }
 
-/** POST / — store a card body (UTF-8 text or base64 binary); content-only hash under the declared algorithm. */
 router.post('/', async (req, res) => {
   if (!ensureReady(res)) return;
   try {
@@ -357,7 +335,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-/** GET /landing — the single active page record. Declared before /:hash. */
 router.get('/landing', (req, res) => {
   if (!ensureReady(res)) return;
   const hash = storage.resolveHandle(LANDING_HANDLE);
@@ -366,7 +343,6 @@ router.get('/landing', (req, res) => {
   return res.json({ handle: LANDING_HANDLE, bound: true, ...cardView(card) });
 });
 
-/** PUT /landing — set the single active page (inline body or external URL). */
 router.put('/landing', (req, res) => {
   if (!ensureReady(res)) return;
   const { content, url } = req.body ?? {};
@@ -393,13 +369,11 @@ router.put('/landing', (req, res) => {
   });
 });
 
-/** GET /probe-url?url= — framing verdict for an external page (`frameable` | `blocked` | `unreachable`). */
 router.get('/probe-url', async (req, res) => {
   const { statusHttp, body } = await executeProbeUrl(req.query.url, req.query.embedderOrigin);
   return res.status(statusHttp).json(body);
 });
 
-/** GET / — paged listing, newest first. */
 router.get('/', (req, res) => {
   if (!ensureReady(res)) return;
   const page = Math.max(1, parseInt(req.query.page ?? '1', 10) || 1);
@@ -414,7 +388,6 @@ router.get('/', (req, res) => {
   });
 });
 
-/** GET /stats — store statistics. */
 router.get('/stats', (req, res) => {
   if (!ensureReady(res)) return;
   res.json({
@@ -426,7 +399,6 @@ router.get('/stats', (req, res) => {
   });
 });
 
-/** GET /search?hashPrefix= — find cards by hash prefix. */
 router.get('/search', (req, res) => {
   if (!ensureReady(res)) return;
   const prefix = String(req.query.hashPrefix ?? '').toLowerCase();
@@ -434,7 +406,6 @@ router.get('/search', (req, res) => {
   res.json({ cards: matches.map((c) => cardView(c, { preview: 200 })), count: matches.length });
 });
 
-/** GET /:hash/raw — stream raw verified bytes for static media and binary MCards (SMO-01). */
 router.get('/:hash/raw', (req, res) => {
   if (!ensureReady(res)) return;
   const card = storage.get(req.params.hash.toLowerCase(), {
@@ -455,7 +426,6 @@ router.get('/:hash/raw', (req, res) => {
   return res.status(200).send(card.rawBytes);
 });
 
-/** GET /:hash — single card, with its digest re-verified under its declared algorithm. */
 router.get('/:hash', (req, res) => {
   if (!ensureReady(res)) return;
   const card = storage.get(req.params.hash.toLowerCase(), {
@@ -466,7 +436,6 @@ router.get('/:hash', (req, res) => {
   return res.json(cardView(card));
 });
 
-/** DELETE /:hash — releases handle mappings for a card (G-Set append-only, INV-REF-03). */
 router.delete('/:hash', (req, res) => {
   if (!ensureReady(res)) return;
   const hex = req.params.hash.toLowerCase();

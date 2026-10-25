@@ -5,11 +5,15 @@ All notable changes to the PKC Landing Page are documented in this file. The for
 ## [Unreleased]
 
 ### Added
+- **Kernel Provenance Export & Explicit `ajv` Dev Dependency (`CLA-05`)**: Exported `KERNEL_PROVENANCE = 'clm-kernel@0.0.12'` from `server/mcard-api.mjs` and `server/mcard-modality.mjs`, and declared `ajv` (`^8.17.1`) explicitly in `package.json` `devDependencies` for standalone schema validation.
 - **Responsive UI Lab Omnibar & Target Switching (`responsive-lab.html`, `js/harness/lab-toolbar.js`)**: Added direct URL typing omnibar with `normalizeInputUrl` and preset target switching coordinated via `TargetMembrane` (`INV-STU-01`, `INV-STU-02`).
 
 ### Changed
-- **Penpot Navigation Flow & Display Registry Projection (`index.html`, `js/nav.js`, `design/landing-navigation.penpot`, `clm-registry.yaml`)**: Synchronized the Penpot navigation flow graph digest (`7fc5562f37de5880c28963dfbfeb7b976cafb6feb6e8698078528a9d63a41fb4`) and refreshed `clm-registry.yaml` to project the `EPIC-KX` (`KX-01`..`KX-07`) sprint records.
-- **Published `clm-kernel@0.0.11` Dependency Advance & Lockstep Consensus**: Advanced exact dependency pin for `clm-kernel` from `0.0.10` to published `0.0.11` in `package.json` and `package-lock.json` in lockstep with `mcard-studio` and `MCard_TDD` consensus gates (`scripts/ci/check_kx_release_artifacts.py`, `check-kernel-version-consensus.mjs`). Verified 100% green across unit test suite (97/97 tests).
+- **Published `clm-kernel@0.0.12` Dependency Advance & Bundler Shim Subtraction (`CLA-01`, `CLA-05`)**:
+  - Exact-pinned `clm-kernel` to published `"0.0.12"` in `package.json` and `package-lock.json` in lockstep with `mcard-studio` (`check_kx_release_artifacts.py`, `check-kernel-version-consensus.mjs`), and rebuilt `public/js/vendor/mcard-bundle.js`.
+  - Replaced 7 disk shim files (`public/js/mcard-kernel/node-shims/{dgram,fs,http,https,module,url,zlib}.js`) with an inline esbuild `node-noop` virtual plugin in `scripts/build-mcard-bundle.js`, and retired zero-byte `routes/auth.mjs` plus stale `public/js/vendor/mcard-js.bundle.js.map` (`-128` non-kernel LOC: `8,036` to `7,908`).
+  - Anchored `scripts/penpot-init.mjs` and `scripts/penpot-drift.mjs` to `SELF_UNIT_DIR` so `node LandingPage/scripts/penpot-drift.mjs` resolves HTML routes regardless of caller working directory, and refreshed `clm-registry.yaml` for `EPIC-CLA` (`CLA-01`..`CLA-06`). Verified 97/97 unit tests (`npm run test:unit`).
+- **Penpot Navigation Flow & Display Registry Projection (`index.html`, `js/nav.js`, `design/landing-navigation.penpot`, `clm-registry.yaml`)**: Synchronized the Penpot navigation flow graph digest and refreshed `clm-registry.yaml` to project the `EPIC-KX` (`KX-01`..`KX-07`) and `EPIC-CLA` (`CLA-01`..`CLA-06`) sprint records.
 
 ## [0.3.0] — 2026-10-21
 
