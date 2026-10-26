@@ -1948,116 +1948,99 @@ sprints:
         - vcard:sprint-407:update_docs_architecture_code_migration_to_clm_md
         - vcard:sprint-407:graduate_sprints_403_407_into_the_12_aspect_deployment_architect
       state: sealed
-  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CLA-CUBICAL-LAGRANGIAN-CORDIS-MODULARITY
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CLB-SQLITE-INGEST-PETRI-READINESS-AND-ZERO-ENTROPY
     card_type: mcard
     archetype: specification_mcard
-    code: 00-PROGRAM-CHARTER-EPIC-CLA-CUBICAL-LAGRANGIAN-CORDIS-MODULARITY
-    title: Program charter for EPIC-CLA cubical Lagrangian architecture and clm-kernel 0.0.13 modularity
+    code: 00-PROGRAM-CHARTER-EPIC-CLB-SQLITE-INGEST-PETRI-READINESS-AND-ZERO-ENTROPY
+    title: Program charter for EPIC-CLB SQLite ingest closure, Petri readiness net, and zero residual entropy
     dod:
       total: 0
       vcard_refs: []
       state: specification
-  - handle: urn:pcard:sprint:CLA-01
+  - handle: urn:pcard:sprint:CLB-01
     card_type: pcard
     archetype: ClmTriadManifest
-    code: CLA-01
-    title: Sprint CLA-01 Lagrangian and Axiomatic Design baseline and clm-kernel 0.0.13 consensus
+    code: CLB-01
+    title: Sprint CLB-01 EPIC-CLA graduation, savepoint release, and single-process storage owner
     dod:
       total: 8
       vcard_refs:
-        - vcard:cla-01:dod_cla_01_01_clm_tools_release_bump_version_py_confirms_100_sem
-        - vcard:cla-01:dod_cla_01_02_mcard_studio_scripts_config_kernel_version_consens
-        - vcard:cla-01:dod_cla_01_03_both_mcard_studio_package_json_and_landingpage_pac
-        - vcard:cla-01:dod_cla_01_04_scripts_orc_paths_py_py_resolves_estate_paths_from
-        - vcard:cla-01:dod_cla_01_05_scripts_ci_check_software_lagrangian_py_computes_s
-        - vcard:cla-01:dod_cla_01_06_scripts_ci_check_software_lagrangian_py_passes_its
-        - vcard:cla-01:dod_cla_01_07_docs_sprints_active_evidence_cla_01_lagrangian_bas
-        - vcard:cla-01:dod_cla_01_08_all_epic_cla_sprint_manifests_encode_into_registry
+        - vcard:clb-01:dod_clb_01_01_docs_sprints_programs_cla_readme_md_and_evidence_c
+        - vcard:clb-01:dod_clb_01_02_registry_handle_moves_json_records_epic_cla_handle
+        - vcard:clb-01:dod_clb_01_03_docs_sprints_active_evidence_clb_01_lagrangian_bas
+        - vcard:clb-01:dod_clb_01_04_mcard_studio_src_edge_sync_durablesynccommitadapte
+        - vcard:clb-01:dod_clb_01_05_failed_guarded_mutations_in_workspacehandleservice
+        - vcard:clb-01:dod_clb_01_06_mcard_studio_src_server_serverconfig_js_exports_re
+        - vcard:clb-01:dod_clb_01_07_mcard_studio_src_server_cordisserver_ts_transition
+        - vcard:clb-01:dod_clb_01_08_importing_mcard_studio_src_config_pathsconfig_js_a
       state: sealed
-  - handle: urn:pcard:sprint:CLA-02
+  - handle: urn:pcard:sprint:CLB-02
     card_type: pcard
     archetype: ClmTriadManifest
-    code: CLA-02
-    title: Sprint CLA-02 Multi-scale Petri-CLM knowledge codec and clm 0.0.13 compactness
+    code: CLB-02
+    title: Sprint CLB-02 Ingest provenance, manifest sync, Playwright convergence, and MCS-01 graduation
     dod:
       total: 8
       vcard_refs:
-        - vcard:cla-02:dod_cla_02_01_clm_kernel_clm_js_core_src_fractal_ts_contains_zer
-        - vcard:cla-02:dod_cla_02_02_fractalorder_supports_token_fiber_collection_unit_
-        - vcard:cla-02:dod_cla_02_03_encodeknowledgetriad_and_projectfractalpetrinet_in
-        - vcard:cla-02:dod_cla_02_04_clm_kernel_clm_js_core_src_layer0_storage_node_sql
-        - vcard:cla-02:dod_cla_02_05_clm_tools_guards_check_kernel_contract_py_measures
-        - vcard:cla-02:dod_cla_02_06_clm_tools_guards_check_organizational_topology_py_
-        - vcard:cla-02:dod_cla_02_07_clm_kernel_clm_js_core_builds_cleanly_npm_run_buil
-        - vcard:cla-02:dod_cla_02_08_python_and_rust_sync_and_layer1_suites_in_clm_pass
+        - vcard:clb-02:dod_clb_02_01_git_c_mcard_studio_ls_files_workspace_lists_exactl
+        - vcard:clb-02:dod_clb_02_02_seedassetsdirectorymanifest_in_mcard_studio_src_se
+        - vcard:clb-02:dod_clb_02_03_applysourceupdate_in_mcard_studio_src_server_filei
+        - vcard:clb-02:dod_clb_02_04_ingestfilechange_and_ingestdirectory_in_mcard_stud
+        - vcard:clb-02:dod_clb_02_05_source_authored_create_update_and_tombstone_operat
+        - vcard:clb-02:dod_clb_02_06_mcard_studio_passes_its_chromium_playwright_versio
+        - vcard:clb-02:dod_clb_02_07_mcard_studio_docs_sprints_02_storage_vfs_sprint_mc
+        - vcard:clb-02:dod_clb_02_08_npm_prefix_mcard_studio_run_check_gates_standalone
       state: sealed
-  - handle: urn:pcard:sprint:CLA-03
+  - handle: urn:pcard:sprint:CLB-03
     card_type: pcard
     archetype: ClmTriadManifest
-    code: CLA-03
-    title: Sprint CLA-03 Studio dead repository exclusion and sync bridge collapse
+    code: CLB-03
+    title: Sprint CLB-03 Conserved Petri readiness net and pure sync planner
     dod:
       total: 8
       vcard_refs:
-        - vcard:cla-03:dod_cla_03_01_mcard_studio_src_server_servermemoryrepository_ts_
-        - vcard:cla-03:dod_cla_03_02_orphaned_legacy_tests_servermemoryrepository_test_
-        - vcard:cla-03:dod_cla_03_03_mcard_studio_src_core_sync_kernelsyncbridge_ts_is_
-        - vcard:cla-03:dod_cla_03_04_mcard_studio_src_pages_api_dispatch_ts_and_mcard_s
-        - vcard:cla-03:dod_cla_03_05_mcard_studio_scripts_check_history_boundary_mjs_an
-        - vcard:cla-03:dod_cla_03_06_mcard_studio_scripts_check_workspace_sync_integrit
-        - vcard:cla-03:dod_cla_03_07_mcard_studio_scripts_check_kernel_version_consensu
-        - vcard:cla-03:dod_cla_03_08_the_full_mcard_studio_vitest_unit_suite_runs_to_co
+        - vcard:clb-03:dod_clb_03_01_mcard_studio_src_core_ingest_readinesspetrinet_ts_
+        - vcard:clb-03:dod_clb_03_02_firereadinesstransition_and_projectreadinessmarkin
+        - vcard:clb-03:dod_clb_03_03_composing_derivereadinessmarking_with_projectreadi
+        - vcard:clb-03:dod_clb_03_04_mcard_studio_src_core_ingest_planingest_ts_exports
+        - vcard:clb-03:dod_clb_03_05_both_mcard_studio_src_core_ingest_planingest_ts_an
+        - vcard:clb-03:dod_clb_03_06_mcard_studio_scripts_check_hardcoded_paths_mjs_inv
+        - vcard:clb-03:dod_clb_03_07_both_mcard_studio_src_core_ingest_planingest_ts_an
+        - vcard:clb-03:dod_clb_03_08_mcard_studio_passes_typescript_typechecking_tsc_no
       state: sealed
-  - handle: urn:pcard:sprint:CLA-04
+  - handle: urn:pcard:sprint:CLB-04
     card_type: pcard
     archetype: ClmTriadManifest
-    code: CLA-04
-    title: Sprint CLA-04 Cordis functional composition and clm-kernel substitution in Studio
+    code: CLB-04
+    title: Sprint CLB-04 Baldwin Substituting server and sync type discipline
     dod:
       total: 8
       vcard_refs:
-        - vcard:cla-04:dod_cla_04_01_mcard_studio_src_server_workspaceconflictservice_t
-        - vcard:cla-04:dod_cla_04_02_mcard_studio_src_core_files_workspacehandlepair_ts
-        - vcard:cla-04:dod_cla_04_03_mcard_studio_src_fiber_disposable_ts_composes_disp
-        - vcard:cla-04:dod_cla_04_04_mcard_studio_src_stores_lagrangian_ts_starts_from_
-        - vcard:cla-04:dod_cla_04_05_mcard_studio_tests_unit_stores_lagrangianreducer_t
-        - vcard:cla-04:dod_cla_04_06_mcard_studio_scripts_check_workspace_sync_integrit
-        - vcard:cla-04:dod_cla_04_07_mcard_studio_scripts_check_loc_budgets_mjs_exits_0
-        - vcard:cla-04:dod_cla_04_08_the_full_mcard_studio_vitest_suite_passes_with_zer
+        - vcard:clb-04:dod_clb_04_01_mcard_studio_src_server_cordisserver_ts_and_mcard_
+        - vcard:clb-04:dod_clb_04_02_mcard_studio_src_server_workspacehandlehelpers_ts_
+        - vcard:clb-04:dod_clb_04_03_mcard_studio_src_server_workspacesyncservice_ts_ch
+        - vcard:clb-04:dod_clb_04_04_mcard_studio_src_core_sync_versionlineage_ts_extra
+        - vcard:clb-04:dod_clb_04_05_scripts_ci_check_software_lagrangian_py_json_repor
+        - vcard:clb-04:dod_clb_04_06_scripts_ci_check_software_lagrangian_py_json_repor
+        - vcard:clb-04:dod_clb_04_07_mcard_studio_passes_tsc_noemit_with_zero_type_erro
+        - vcard:clb-04:dod_clb_04_08_full_mcard_studio_vitest_suite_passes_100_of_unit_
       state: sealed
-  - handle: urn:pcard:sprint:CLA-05
+  - handle: urn:pcard:sprint:CLB-05
     card_type: pcard
     archetype: ClmTriadManifest
-    code: CLA-05
-    title: Sprint CLA-05 LandingPage kernel delegation and shim subtraction
+    code: CLB-05
+    title: Sprint CLB-05 Zero-entropy Software Lagrangian delta and four-estate certification
     dod:
       total: 8
       vcard_refs:
-        - vcard:cla-05:dod_cla_05_01_landingpage_scripts_penpot_drift_mjs_and_landingpa
-        - vcard:cla-05:dod_cla_05_02_zero_byte_landingpage_routes_auth_mjs_and_stale_la
-        - vcard:cla-05:dod_cla_05_03_throw_only_server_built_in_shims_in_landingpage_pu
-        - vcard:cla-05:dod_cla_05_04_landingpage_package_json_declares_ajv_explicitly_i
-        - vcard:cla-05:dod_cla_05_05_landingpage_server_mcard_api_mjs_and_landingpage_s
-        - vcard:cla-05:dod_cla_05_06_npm_prefix_landingpage_run_build_mcard_regenerates
-        - vcard:cla-05:dod_cla_05_07_venv_bin_python_scripts_ci_check_landingpage_retir
-        - vcard:cla-05:dod_cla_05_08_the_full_landingpage_unit_test_suite_npm_prefix_la
-      state: sealed
-  - handle: urn:pcard:sprint:CLA-06
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: CLA-06
-    title: Sprint CLA-06 Software Lagrangian delta audit and four-estate certification
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:cla-06:dod_cla_06_01_scripts_ci_check_software_lagrangian_py_compare_ge
-        - vcard:cla-06:dod_cla_06_02_docs_sprints_active_evidence_cla_06_lagrangian_del
-        - vcard:cla-06:dod_cla_06_03_scripts_ci_verify_cla_baldwin_witness_mjs_evaluate
-        - vcard:cla-06:dod_cla_06_04_clm_passes_compactness_topology_causal_alignment_a
-        - vcard:cla-06:dod_cla_06_05_mcard_studio_passes_check_kernel_version_consensus
-        - vcard:cla-06:dod_cla_06_06_landingpage_passes_build_mcard_test_unit_and_check
-        - vcard:cla-06:dod_cla_06_07_all_48_dods_across_cla_01_through_cla_06_pass_scri
-        - vcard:cla-06:dod_cla_06_08_scripts_orc_encode_sprint_py_scripts_orc_sync_disp
+        - vcard:clb-05:dod_clb_05_01_scripts_ci_check_software_lagrangian_py_compare_ge
+        - vcard:clb-05:dod_clb_05_02_docs_sprints_active_evidence_clb_05_lagrangian_del
+        - vcard:clb-05:dod_clb_05_03_scripts_ci_verify_clb_baldwin_witness_mjs_evaluate
+        - vcard:clb-05:dod_clb_05_04_clm_passes_all_32_architectural_boundary_gates_mak
+        - vcard:clb-05:dod_clb_05_05_mcard_studio_passes_npm_prefix_mcard_studio_run_ch
+        - vcard:clb-05:dod_clb_05_06_landingpage_passes_npm_prefix_landingpage_run_test
+        - vcard:clb-05:dod_clb_05_07_all_40_dods_across_clb_01_through_clb_05_pass_scri
+        - vcard:clb-05:dod_clb_05_08_scripts_orc_encode_sprint_py_scripts_orc_sync_disp
       state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CAS
     card_type: mcard
@@ -2533,6 +2516,117 @@ sprints:
         - vcard:cdo-16:retrospective_committed
         - vcard:cdo-16:program_archived_tracker_updated_tagged
         - vcard:cdo-16:triad_card_clm_clm_cdo_16_certification_yaml_clm_clm_cdo_16_cert
+      state: sealed
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CLA-CUBICAL-LAGRANGIAN-CORDIS-MODULARITY
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-CLA-CUBICAL-LAGRANGIAN-CORDIS-MODULARITY
+    title: Program charter for EPIC-CLA cubical Lagrangian architecture and clm-kernel 0.0.13 modularity
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:CLA-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLA-01
+    title: Sprint CLA-01 Lagrangian and Axiomatic Design baseline and clm-kernel 0.0.13 consensus
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:cla-01:dod_cla_01_01_clm_tools_release_bump_version_py_confirms_100_sem
+        - vcard:cla-01:dod_cla_01_02_mcard_studio_scripts_config_kernel_version_consens
+        - vcard:cla-01:dod_cla_01_03_both_mcard_studio_package_json_and_landingpage_pac
+        - vcard:cla-01:dod_cla_01_04_scripts_orc_paths_py_py_resolves_estate_paths_from
+        - vcard:cla-01:dod_cla_01_05_scripts_ci_check_software_lagrangian_py_computes_s
+        - vcard:cla-01:dod_cla_01_06_scripts_ci_check_software_lagrangian_py_passes_its
+        - vcard:cla-01:dod_cla_01_07_docs_sprints_programs_cla_evidence_cla_01_lagrangi
+        - vcard:cla-01:dod_cla_01_08_all_epic_cla_sprint_manifests_encode_into_registry
+      state: sealed
+  - handle: urn:pcard:sprint:CLA-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLA-02
+    title: Sprint CLA-02 Multi-scale Petri-CLM knowledge codec and clm 0.0.13 compactness
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:cla-02:dod_cla_02_01_clm_kernel_clm_js_core_src_fractal_ts_contains_zer
+        - vcard:cla-02:dod_cla_02_02_fractalorder_supports_token_fiber_collection_unit_
+        - vcard:cla-02:dod_cla_02_03_encodeknowledgetriad_and_projectfractalpetrinet_in
+        - vcard:cla-02:dod_cla_02_04_clm_kernel_clm_js_core_src_layer0_storage_node_sql
+        - vcard:cla-02:dod_cla_02_05_clm_tools_guards_check_kernel_contract_py_measures
+        - vcard:cla-02:dod_cla_02_06_clm_tools_guards_check_organizational_topology_py_
+        - vcard:cla-02:dod_cla_02_07_clm_kernel_clm_js_core_builds_cleanly_npm_run_buil
+        - vcard:cla-02:dod_cla_02_08_python_and_rust_sync_and_layer1_suites_in_clm_pass
+      state: sealed
+  - handle: urn:pcard:sprint:CLA-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLA-03
+    title: Sprint CLA-03 Studio dead repository exclusion and sync bridge collapse
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:cla-03:dod_cla_03_01_mcard_studio_src_server_servermemoryrepository_ts_
+        - vcard:cla-03:dod_cla_03_02_orphaned_legacy_tests_servermemoryrepository_test_
+        - vcard:cla-03:dod_cla_03_03_mcard_studio_src_core_sync_kernelsyncbridge_ts_is_
+        - vcard:cla-03:dod_cla_03_04_mcard_studio_src_pages_api_dispatch_ts_and_mcard_s
+        - vcard:cla-03:dod_cla_03_05_mcard_studio_scripts_check_history_boundary_mjs_an
+        - vcard:cla-03:dod_cla_03_06_mcard_studio_scripts_check_workspace_sync_integrit
+        - vcard:cla-03:dod_cla_03_07_mcard_studio_scripts_check_kernel_version_consensu
+        - vcard:cla-03:dod_cla_03_08_the_full_mcard_studio_vitest_unit_suite_runs_to_co
+      state: sealed
+  - handle: urn:pcard:sprint:CLA-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLA-04
+    title: Sprint CLA-04 Cordis functional composition and clm-kernel substitution in Studio
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:cla-04:dod_cla_04_01_mcard_studio_src_server_workspaceconflictservice_t
+        - vcard:cla-04:dod_cla_04_02_mcard_studio_src_core_files_workspacehandlepair_ts
+        - vcard:cla-04:dod_cla_04_03_mcard_studio_src_fiber_disposable_ts_composes_disp
+        - vcard:cla-04:dod_cla_04_04_mcard_studio_src_stores_lagrangian_ts_starts_from_
+        - vcard:cla-04:dod_cla_04_05_mcard_studio_tests_unit_stores_lagrangianreducer_t
+        - vcard:cla-04:dod_cla_04_06_mcard_studio_scripts_check_workspace_sync_integrit
+        - vcard:cla-04:dod_cla_04_07_mcard_studio_scripts_check_loc_budgets_mjs_exits_0
+        - vcard:cla-04:dod_cla_04_08_the_full_mcard_studio_vitest_suite_passes_with_zer
+      state: sealed
+  - handle: urn:pcard:sprint:CLA-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLA-05
+    title: Sprint CLA-05 LandingPage kernel delegation and shim subtraction
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:cla-05:dod_cla_05_01_landingpage_scripts_penpot_drift_mjs_and_landingpa
+        - vcard:cla-05:dod_cla_05_02_zero_byte_landingpage_routes_auth_mjs_and_stale_la
+        - vcard:cla-05:dod_cla_05_03_throw_only_server_built_in_shims_in_landingpage_pu
+        - vcard:cla-05:dod_cla_05_04_landingpage_package_json_declares_ajv_explicitly_i
+        - vcard:cla-05:dod_cla_05_05_landingpage_server_mcard_api_mjs_and_landingpage_s
+        - vcard:cla-05:dod_cla_05_06_npm_prefix_landingpage_run_build_mcard_regenerates
+        - vcard:cla-05:dod_cla_05_07_venv_bin_python_scripts_ci_check_landingpage_retir
+        - vcard:cla-05:dod_cla_05_08_the_full_landingpage_unit_test_suite_npm_prefix_la
+      state: sealed
+  - handle: urn:pcard:sprint:CLA-06
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLA-06
+    title: Sprint CLA-06 Software Lagrangian delta audit and four-estate certification
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:cla-06:dod_cla_06_01_scripts_ci_check_software_lagrangian_py_compare_ge
+        - vcard:cla-06:dod_cla_06_02_docs_sprints_programs_cla_evidence_cla_06_lagrangi
+        - vcard:cla-06:dod_cla_06_03_scripts_ci_verify_cla_baldwin_witness_mjs_evaluate
+        - vcard:cla-06:dod_cla_06_04_clm_passes_compactness_topology_causal_alignment_a
+        - vcard:cla-06:dod_cla_06_05_mcard_studio_passes_check_kernel_version_consensus
+        - vcard:cla-06:dod_cla_06_06_landingpage_passes_build_mcard_test_unit_and_check
+        - vcard:cla-06:dod_cla_06_07_all_48_dods_across_cla_01_through_cla_06_pass_scri
+        - vcard:cla-06:dod_cla_06_08_scripts_orc_encode_sprint_py_scripts_orc_sync_disp
       state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-COL
     card_type: mcard
@@ -5603,9 +5697,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: bc9a50b8fb119cf11b0a4c273debd6027a94864b4c508d947d7626eb61c53dde
-  projection_sha256: e5aa65212cc56390f12cf46afdc3c7c9b360e06fbc83595137f9f575b23f37b3
+  source_sha256: 6924e914b46ed6cbaee8c34c7d7c88887429935f8c5056da8a90b224ad40589b
+  projection_sha256: 5198c634a7d9f3548412d099b5969558dc69bff122336153d361a1c8e822b3e4
   kernel_version: 0.0.13
-  landing_page_commit: 045db8d419ba7a88f991572015aa30cff061c63f
-  sprint_count: 264
+  landing_page_commit: 0f17e2e2616c35e7c9ed948fa9306b688a9cdcba
+  sprint_count: 270
   unresolved_trace_refs: 0
