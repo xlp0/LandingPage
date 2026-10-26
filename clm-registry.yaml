@@ -1968,10 +1968,10 @@ sprints:
         - vcard:clc-01:dod_clc_01_01_docs_sprints_programs_clb_readme_md_and_evidence_c
         - vcard:clc-01:dod_clc_01_02_registry_handle_moves_json_records_epic_clb_handle
         - vcard:clc-01:dod_clc_01_03_docs_sprints_active_evidence_clc_01_lagrangian_bas
-        - vcard:clc-01:dod_clc_01_04_clm_src_clm_kernel_sync_openpetrinet_ts_defines_op
-        - vcard:clc-01:dod_clc_01_05_clm_src_clm_kernel_sync_openpetrinet_ts_exports_co
+        - vcard:clc-01:dod_clc_01_04_clm_kernel_clm_js_core_src_layer2_sync_openpetrine
+        - vcard:clc-01:dod_clc_01_05_clm_kernel_clm_js_core_src_layer2_sync_openpetrine
         - vcard:clc-01:dod_clc_01_06_composeopenpetrinets_preserves_linear_p_invariants
-        - vcard:clc-01:dod_clc_01_07_clm_src_clm_kernel_sync_index_ts_re_exports_openpe
+        - vcard:clc-01:dod_clc_01_07_clm_kernel_clm_js_core_src_layer2_sync_index_ts_re
         - vcard:clc-01:dod_clc_01_08_typescript_symbol_coverage_for_clm_remains_above_t
       state: sealed
   - handle: urn:pcard:sprint:CLC-02
@@ -5791,9 +5791,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: e806f0cf18ad2f18c1576ab36d0a1745f95a35e9a51520d35e726a31a7ab4044
-  projection_sha256: e6eda19fe846541c67609acf424bd584e33f12be54666388426c70e94db741c1
+  source_sha256: bb1efe78a788b8b8eaee30fb8437319dcb7f0dae2c9f92cc37cdaf9fd754602d
+  projection_sha256: d1441e7f2211c8a39cd39a26a3ab48a73c251555a14049a107dc088cd0ce5e63
   kernel_version: 0.0.13
-  landing_page_commit: de8adfedfacf73eb66edad5d21cf742391d0bd60
+  landing_page_commit: 9c03c5c4a4a3630867aead237d74489d9a300d86
   sprint_count: 276
   unresolved_trace_refs: 0
