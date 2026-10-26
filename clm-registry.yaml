@@ -1952,7 +1952,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: 00-PROGRAM-CHARTER-EPIC-CLC-CUBICAL-LAGRANGIAN-CALCULUS-AND-COHOMOLOGICAL-MESH
-    title: Program charter for EPIC-CLC Cubical Lagrangian Calculus, Cohomological Mesh Consistency, and Open Monoidal Petri Runtime
+    title: Program charter for EPIC-CLC cubical Lagrangian calculus, cohomological mesh consistency, and knowledge-carrying runtime oracles
     dod:
       total: 0
       vcard_refs: []
@@ -1978,69 +1978,86 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CLC-02
-    title: Sprint CLC-02 Sheaf Cohomology mesh consistency and obstruction detector
+    title: Sprint CLC-02 Knowledge-carrying formal runtime bridge and Open Petri pullback hardening
     dod:
       total: 8
       vcard_refs:
-        - vcard:clc-02:dod_clc_02_01_clm_src_clm_kernel_sync_sheafcohomology_ts_defines
-        - vcard:clc-02:dod_clc_02_02_clm_src_clm_kernel_sync_sheafcohomology_ts_exports
-        - vcard:clc-02:dod_clc_02_03_clm_src_clm_kernel_sync_sheafcohomology_ts_exports
-        - vcard:clc-02:dod_clc_02_04_calculatecohomologyh1_detects_non_zero_obstruction
-        - vcard:clc-02:dod_clc_02_05_clm_src_clm_kernel_sync_sheafcohomology_ts_exports
-        - vcard:clc-02:dod_clc_02_06_clm_src_clm_kernel_sync_index_ts_re_exports_sheaf_
-        - vcard:clc-02:dod_clc_02_07_regression_tests_verify_sheaf_cohomology_evaluatio
-        - vcard:clc-02:dod_clc_02_08_typescript_symbol_coverage_for_clm_satisfies_bound
+        - vcard:clc-02:dod_clc_02_01_clm_schema_runtime_types_json_clm_schema_runtime_r
+        - vcard:clc-02:dod_clc_02_02_clm_kernel_clm_py_core_clm_layer1_runtimes_base_py
+        - vcard:clc-02:dod_clc_02_03_clm_kernel_clm_js_core_src_formalwitness_ts_clm_ke
+        - vcard:clc-02:dod_clc_02_04_clm_tools_formal_leancubed_py_removes_b_dummy_lean
+        - vcard:clc-02:dod_clc_02_05_clm_kernel_clm_js_core_src_layer2_sync_openpetripu
+        - vcard:clc-02:dod_clc_02_06_clm_formal_lean_openpetripullback_lean_proves_cosp
+        - vcard:clc-02:dod_clc_02_07_clm_kernel_clm_rust_core_src_polyglot_runtime_scri
+        - vcard:clc-02:dod_clc_02_08_every_new_subprocess_site_in_clm_kernel_clm_js_cor
       state: sealed
   - handle: urn:pcard:sprint:CLC-03
     card_type: pcard
     archetype: ClmTriadManifest
     code: CLC-03
-    title: Sprint CLC-03 Studio Open Monoidal Petri composition and Cordis gluing
+    title: Sprint CLC-03 Cellular sheaf cohomology, Hodge Sheaf Laplacian, and Julia spectral oracle
     dod:
       total: 8
       vcard_refs:
-        - vcard:clc-03:dod_clc_03_01_mcard_studio_src_core_sync_studiopetriboundary_ts_
-        - vcard:clc-03:dod_clc_03_02_mcard_studio_src_core_sync_studiopetriboundary_ts_
-        - vcard:clc-03:dod_clc_03_03_mcard_studio_src_core_sync_studiopetriboundary_ts_
-        - vcard:clc-03:dod_clc_03_04_the_composed_studio_runtime_net_satisfies_linear_p
-        - vcard:clc-03:dod_clc_03_05_transition_firing_in_the_composed_net_prevents_sql
-        - vcard:clc-03:dod_clc_03_06_mcard_studio_src_core_sync_index_ts_re_exports_cre
-        - vcard:clc-03:dod_clc_03_07_vitest_unit_test_suite_passes_with_100_assertion_c
-        - vcard:clc-03:dod_clc_03_08_zero_as_any_type_escapes_exist_in_mcard_studio_src
+        - vcard:clc-03:dod_clc_03_01_clm_kernel_clm_js_core_src_layer2_sync_sheafcohomo
+        - vcard:clc-03:dod_clc_03_02_clm_formal_lean_coboundaryexactness_lean_proves_co
+        - vcard:clc-03:dod_clc_03_03_clm_kernel_clm_js_core_src_layer2_sync_sheafcohomo
+        - vcard:clc-03:dod_clc_03_04_clm_kernel_clm_js_core_src_layer2_sync_sheafspectr
+        - vcard:clc-03:dod_clc_03_05_clm_formal_julia_sheaf_laplacian_oracle_jl_execute
+        - vcard:clc-03:dod_clc_03_06_clm_kernel_clm_rust_core_src_sheaf_rs_implements_m
+        - vcard:clc-03:dod_clc_03_07_clm_kernel_clm_js_core_src_layer2_sync_index_ts_re
+        - vcard:clc-03:dod_clc_03_08_make_c_clm_check_boundaries_passes_all_32_gates_in
       state: sealed
   - handle: urn:pcard:sprint:CLC-04
     card_type: pcard
     archetype: ClmTriadManifest
     code: CLC-04
-    title: Sprint CLC-04 Tri-runtime categorical bisimulation and AST equivalence
+    title: Sprint CLC-04 Studio catalyst Open Petri composition, Cordis gluing, and TLA+ model checking
     dod:
       total: 8
       vcard_refs:
-        - vcard:clc-04:dod_clc_04_01_clm_src_clm_kernel_eval_astbisimulation_ts_defines
-        - vcard:clc-04:dod_clc_04_02_clm_src_clm_kernel_eval_astbisimulation_ts_exports
-        - vcard:clc-04:dod_clc_04_03_clm_src_clm_kernel_eval_astbisimulation_ts_verifie
-        - vcard:clc-04:dod_clc_04_04_clm_src_clm_kernel_eval_index_ts_re_exports_astcat
-        - vcard:clc-04:dod_clc_04_05_scripts_ci_check_tri_runtime_bisimulation_py_execu
-        - vcard:clc-04:dod_clc_04_06_tests_ci_test_tri_runtime_bisimulation_py_validate
-        - vcard:clc-04:dod_clc_04_07_the_tri_runtime_bisimulation_checker_enforces_inv_
-        - vcard:clc-04:dod_clc_04_08_python_and_typescript_implementations_adhere_to_25
+        - vcard:clc-04:dod_clc_04_01_mcard_studio_src_core_sync_studiopetriboundary_ts_
+        - vcard:clc-04:dod_clc_04_02_mcard_studio_src_core_sync_studiopetriboundary_ts_
+        - vcard:clc-04:dod_clc_04_03_the_composed_6_place_studio_net_preserves_both_ind
+        - vcard:clc-04:dod_clc_04_04_clm_formal_tla_studioreadinessingest_tla_and_clm_f
+        - vcard:clc-04:dod_clc_04_05_exhaustive_state_space_bfs_in_mcard_studio_tests_m
+        - vcard:clc-04:dod_clc_04_06_mcard_studio_src_core_sync_index_ts_re_exports_cre
+        - vcard:clc-04:dod_clc_04_07_existing_readiness_regression_tests_in_mcard_studi
+        - vcard:clc-04:dod_clc_04_08_mcard_studio_passes_strict_typescript_typechecking
       state: sealed
   - handle: urn:pcard:sprint:CLC-05
     card_type: pcard
     archetype: ClmTriadManifest
     code: CLC-05
-    title: Sprint CLC-05 Unified static-runtime Lagrangian and four-estate certification
+    title: Sprint CLC-05 Bialgebraic tri-runtime operational bisimulation and Coq ITree equivalence
     dod:
       total: 8
       vcard_refs:
-        - vcard:clc-05:dod_clc_05_01_scripts_ci_check_unified_lagrangian_py_computes_to
-        - vcard:clc-05:dod_clc_05_02_docs_sprints_active_evidence_clc_05_lagrangian_del
-        - vcard:clc-05:dod_clc_05_03_docs_sprints_active_evidence_clc_05_baldwin_witnes
-        - vcard:clc-05:dod_clc_05_04_make_check_estate_passes_100_across_all_four_gover
-        - vcard:clc-05:dod_clc_05_05_all_submodules_clm_mcard_studio_landingpage_have_c
-        - vcard:clc-05:dod_clc_05_06_total_non_kernel_consumer_loc_remains_strictly_bel
-        - vcard:clc-05:dod_clc_05_07_the_four_estate_graduation_certificate_evidence_cl
-        - vcard:clc-05:dod_clc_05_08_docs_sprints_active_readme_md_and_docs_sprints_rea
+        - vcard:clc-05:dod_clc_05_01_clm_kernel_clm_js_core_src_layer2_bisimulation_ts_
+        - vcard:clc-05:dod_clc_05_02_clm_formal_coq_clmbisimulation_v_compiles_via_coqr
+        - vcard:clc-05:dod_clc_05_03_bisimulation_ts_integrates_with_clm_kernel_clm_js_
+        - vcard:clc-05:dod_clc_05_04_clm_kernel_clm_rust_core_src_invariants_equivalenc
+        - vcard:clc-05:dod_clc_05_05_scripts_ci_check_tri_runtime_bisimulation_py_resol
+        - vcard:clc-05:dod_clc_05_06_tests_ci_test_tri_runtime_bisimulation_py_injects_
+        - vcard:clc-05:dod_clc_05_07_scripts_ci_check_tri_runtime_bisimulation_py_stric
+        - vcard:clc-05:dod_clc_05_08_scripts_ci_check_tri_runtime_bisimulation_py_passe
+      state: sealed
+  - handle: urn:pcard:sprint:CLC-06
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLC-06
+    title: Sprint CLC-06 Discrete variational Lagrangian, runtime epiplexity, and four-estate certification
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:clc-06:dod_clc_06_01_scripts_ci_check_unified_lagrangian_py_resolves_pa
+        - vcard:clc-06:dod_clc_06_02_clm_formal_lean_discreteactioncoercivity_lean_prov
+        - vcard:clc-06:dod_clc_06_03_docs_sprints_active_evidence_clc_06_lagrangian_del
+        - vcard:clc-06:dod_clc_06_04_docs_sprints_active_evidence_clc_06_baldwin_witnes
+        - vcard:clc-06:dod_clc_06_05_make_check_estate_and_node_scripts_ci_check_hardco
+        - vcard:clc-06:dod_clc_06_06_all_three_submodules_clm_mcard_studio_landingpage_
+        - vcard:clc-06:dod_clc_06_07_evidence_clc_graduation_json_records_48_of_48_veri
+        - vcard:clc-06:dod_clc_06_08_docs_sprints_programs_clc_readme_md_docs_sprints_a
       state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CAS
     card_type: mcard
@@ -5791,9 +5808,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: bb1efe78a788b8b8eaee30fb8437319dcb7f0dae2c9f92cc37cdaf9fd754602d
-  projection_sha256: d1441e7f2211c8a39cd39a26a3ab48a73c251555a14049a107dc088cd0ce5e63
+  source_sha256: a6f138dde93d23ad8fedaa35c2d320622524eb3f793cd9efcdc250ebbed30242
+  projection_sha256: 5c35275a66b21209f1f1e1295994da0b5fff88ca0fa20bf39af44c6df4af8fde
   kernel_version: 0.0.13
-  landing_page_commit: 9c03c5c4a4a3630867aead237d74489d9a300d86
-  sprint_count: 276
+  landing_page_commit: 325c5aac3b6d34a98f7e5a60b421e7017514d99c
+  sprint_count: 277
   unresolved_trace_refs: 0
