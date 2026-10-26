@@ -13,7 +13,9 @@ All notable changes to the PKC Landing Page are documented in this file. The for
   - Exact-pinned `clm-kernel` to published `"0.0.12"` in `package.json` and `package-lock.json` in lockstep with `mcard-studio` (`check_kx_release_artifacts.py`, `check-kernel-version-consensus.mjs`), and rebuilt `public/js/vendor/mcard-bundle.js`.
   - Replaced 7 disk shim files (`public/js/mcard-kernel/node-shims/{dgram,fs,http,https,module,url,zlib}.js`) with an inline esbuild `node-noop` virtual plugin in `scripts/build-mcard-bundle.js`, and retired zero-byte `routes/auth.mjs` plus stale `public/js/vendor/mcard-js.bundle.js.map` (`-128` non-kernel LOC: `8,036` to `7,908`).
   - Anchored `scripts/penpot-init.mjs` and `scripts/penpot-drift.mjs` to `SELF_UNIT_DIR` so `node LandingPage/scripts/penpot-drift.mjs` resolves HTML routes regardless of caller working directory, and refreshed `clm-registry.yaml` for `EPIC-CLA` (`CLA-01`..`CLA-06`). Verified 97/97 unit tests (`npm run test:unit`).
-- **Penpot Navigation Flow & Display Registry Projection (`index.html`, `js/nav.js`, `design/landing-navigation.penpot`, `clm-registry.yaml`)**: Synchronized the Penpot navigation flow graph digest and refreshed `clm-registry.yaml` to project the `EPIC-KX` (`KX-01`..`KX-07`) and `EPIC-CLA` (`CLA-01`..`CLA-06`) sprint records.
+- **Penpot Navigation Flow & Display Registry Projection (`index.html`, `js/nav.js`, `design/landing-navigation.penpot`, `clm-registry.yaml`) (`CLC-06`)**:
+  - Synchronized Penpot navigation flow graph archive digest (`e4d0e5fd...`) in `js/nav.js` and `design/landing-navigation.penpot`.
+  - Refreshed `clm-registry.yaml` to project the `EPIC-CLC` (`CLC-01`..`CLC-06`) sprint records with verified zero penpot drift (`node LandingPage/scripts/penpot-drift.mjs`). Verified 97/97 unit tests (`npm run test:unit`).
 
 ## [0.3.0] — 2026-10-21
 
