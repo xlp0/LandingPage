@@ -1948,100 +1948,6 @@ sprints:
         - vcard:sprint-407:update_docs_architecture_code_migration_to_clm_md
         - vcard:sprint-407:graduate_sprints_403_407_into_the_12_aspect_deployment_architect
       state: sealed
-  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CLB-SQLITE-INGEST-PETRI-READINESS-AND-ZERO-ENTROPY
-    card_type: mcard
-    archetype: specification_mcard
-    code: 00-PROGRAM-CHARTER-EPIC-CLB-SQLITE-INGEST-PETRI-READINESS-AND-ZERO-ENTROPY
-    title: Program charter for EPIC-CLB SQLite ingest closure, Petri readiness net, and zero residual entropy
-    dod:
-      total: 0
-      vcard_refs: []
-      state: specification
-  - handle: urn:pcard:sprint:CLB-01
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: CLB-01
-    title: Sprint CLB-01 EPIC-CLA graduation, savepoint release, and single-process storage owner
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:clb-01:dod_clb_01_01_docs_sprints_programs_cla_readme_md_and_evidence_c
-        - vcard:clb-01:dod_clb_01_02_registry_handle_moves_json_records_epic_cla_handle
-        - vcard:clb-01:dod_clb_01_03_docs_sprints_active_evidence_clb_01_lagrangian_bas
-        - vcard:clb-01:dod_clb_01_04_mcard_studio_src_edge_sync_durablesynccommitadapte
-        - vcard:clb-01:dod_clb_01_05_failed_guarded_mutations_in_workspacehandleservice
-        - vcard:clb-01:dod_clb_01_06_mcard_studio_src_server_serverconfig_js_exports_re
-        - vcard:clb-01:dod_clb_01_07_mcard_studio_src_server_cordisserver_ts_transition
-        - vcard:clb-01:dod_clb_01_08_importing_mcard_studio_src_config_pathsconfig_js_a
-      state: sealed
-  - handle: urn:pcard:sprint:CLB-02
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: CLB-02
-    title: Sprint CLB-02 Ingest provenance, manifest sync, Playwright convergence, and MCS-01 graduation
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:clb-02:dod_clb_02_01_git_c_mcard_studio_ls_files_workspace_lists_exactl
-        - vcard:clb-02:dod_clb_02_02_seedassetsdirectorymanifest_in_mcard_studio_src_se
-        - vcard:clb-02:dod_clb_02_03_applysourceupdate_in_mcard_studio_src_server_filei
-        - vcard:clb-02:dod_clb_02_04_ingestfilechange_and_ingestdirectory_in_mcard_stud
-        - vcard:clb-02:dod_clb_02_05_source_authored_create_update_and_tombstone_operat
-        - vcard:clb-02:dod_clb_02_06_mcard_studio_passes_its_chromium_playwright_versio
-        - vcard:clb-02:dod_clb_02_07_mcard_studio_docs_sprints_02_storage_vfs_sprint_mc
-        - vcard:clb-02:dod_clb_02_08_npm_prefix_mcard_studio_run_check_gates_standalone
-      state: sealed
-  - handle: urn:pcard:sprint:CLB-03
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: CLB-03
-    title: Sprint CLB-03 Conserved Petri readiness net and pure sync planner
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:clb-03:dod_clb_03_01_mcard_studio_src_core_ingest_readinesspetrinet_ts_
-        - vcard:clb-03:dod_clb_03_02_firereadinesstransition_and_projectreadinessmarkin
-        - vcard:clb-03:dod_clb_03_03_composing_derivereadinessmarking_with_projectreadi
-        - vcard:clb-03:dod_clb_03_04_mcard_studio_src_core_ingest_planingest_ts_exports
-        - vcard:clb-03:dod_clb_03_05_both_mcard_studio_src_core_ingest_planingest_ts_an
-        - vcard:clb-03:dod_clb_03_06_mcard_studio_scripts_check_hardcoded_paths_mjs_inv
-        - vcard:clb-03:dod_clb_03_07_both_mcard_studio_src_core_ingest_planingest_ts_an
-        - vcard:clb-03:dod_clb_03_08_mcard_studio_passes_typescript_typechecking_tsc_no
-      state: sealed
-  - handle: urn:pcard:sprint:CLB-04
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: CLB-04
-    title: Sprint CLB-04 Baldwin Substituting server and sync type discipline
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:clb-04:dod_clb_04_01_mcard_studio_src_server_cordisserver_ts_and_mcard_
-        - vcard:clb-04:dod_clb_04_02_mcard_studio_src_server_workspacehandlehelpers_ts_
-        - vcard:clb-04:dod_clb_04_03_mcard_studio_src_server_workspacesyncservice_ts_ch
-        - vcard:clb-04:dod_clb_04_04_mcard_studio_src_core_sync_versionlineage_ts_extra
-        - vcard:clb-04:dod_clb_04_05_scripts_ci_check_software_lagrangian_py_json_repor
-        - vcard:clb-04:dod_clb_04_06_scripts_ci_check_software_lagrangian_py_json_repor
-        - vcard:clb-04:dod_clb_04_07_mcard_studio_passes_tsc_noemit_with_zero_type_erro
-        - vcard:clb-04:dod_clb_04_08_full_mcard_studio_vitest_suite_passes_100_of_unit_
-      state: sealed
-  - handle: urn:pcard:sprint:CLB-05
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: CLB-05
-    title: Sprint CLB-05 Zero-entropy Software Lagrangian delta and four-estate certification
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:clb-05:dod_clb_05_01_scripts_ci_check_software_lagrangian_py_compare_ge
-        - vcard:clb-05:dod_clb_05_02_docs_sprints_active_evidence_clb_05_lagrangian_del
-        - vcard:clb-05:dod_clb_05_03_scripts_ci_verify_clb_baldwin_witness_mjs_evaluate
-        - vcard:clb-05:dod_clb_05_04_clm_passes_all_32_architectural_boundary_gates_mak
-        - vcard:clb-05:dod_clb_05_05_mcard_studio_passes_npm_prefix_mcard_studio_run_ch
-        - vcard:clb-05:dod_clb_05_06_landingpage_passes_npm_prefix_landingpage_run_test
-        - vcard:clb-05:dod_clb_05_07_all_40_dods_across_clb_01_through_clb_05_pass_scri
-        - vcard:clb-05:dod_clb_05_08_scripts_orc_encode_sprint_py_scripts_orc_sync_disp
-      state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CAS
     card_type: mcard
     archetype: specification_mcard
@@ -2627,6 +2533,100 @@ sprints:
         - vcard:cla-06:dod_cla_06_06_landingpage_passes_build_mcard_test_unit_and_check
         - vcard:cla-06:dod_cla_06_07_all_48_dods_across_cla_01_through_cla_06_pass_scri
         - vcard:cla-06:dod_cla_06_08_scripts_orc_encode_sprint_py_scripts_orc_sync_disp
+      state: sealed
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CLB-SQLITE-INGEST-PETRI-READINESS-AND-ZERO-ENTROPY
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-CLB-SQLITE-INGEST-PETRI-READINESS-AND-ZERO-ENTROPY
+    title: Program charter for EPIC-CLB SQLite ingest closure, Petri readiness net, and zero residual entropy
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:CLB-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLB-01
+    title: Sprint CLB-01 EPIC-CLA graduation, savepoint release, and single-process storage owner
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:clb-01:dod_clb_01_01_docs_sprints_programs_cla_readme_md_and_evidence_c
+        - vcard:clb-01:dod_clb_01_02_registry_handle_moves_json_records_epic_cla_handle
+        - vcard:clb-01:dod_clb_01_03_docs_sprints_active_evidence_clb_01_lagrangian_bas
+        - vcard:clb-01:dod_clb_01_04_mcard_studio_src_edge_sync_durablesynccommitadapte
+        - vcard:clb-01:dod_clb_01_05_failed_guarded_mutations_in_workspacehandleservice
+        - vcard:clb-01:dod_clb_01_06_mcard_studio_src_server_serverconfig_js_exports_re
+        - vcard:clb-01:dod_clb_01_07_mcard_studio_src_server_cordisserver_ts_transition
+        - vcard:clb-01:dod_clb_01_08_importing_mcard_studio_src_config_pathsconfig_js_a
+      state: sealed
+  - handle: urn:pcard:sprint:CLB-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLB-02
+    title: Sprint CLB-02 Ingest provenance, manifest sync, Playwright convergence, and MCS-01 graduation
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:clb-02:dod_clb_02_01_git_c_mcard_studio_ls_files_workspace_lists_exactl
+        - vcard:clb-02:dod_clb_02_02_seedassetsdirectorymanifest_in_mcard_studio_src_se
+        - vcard:clb-02:dod_clb_02_03_applysourceupdate_in_mcard_studio_src_server_filei
+        - vcard:clb-02:dod_clb_02_04_ingestfilechange_and_ingestdirectory_in_mcard_stud
+        - vcard:clb-02:dod_clb_02_05_source_authored_create_update_and_tombstone_operat
+        - vcard:clb-02:dod_clb_02_06_mcard_studio_passes_its_chromium_playwright_versio
+        - vcard:clb-02:dod_clb_02_07_mcard_studio_docs_sprints_02_storage_vfs_sprint_mc
+        - vcard:clb-02:dod_clb_02_08_npm_prefix_mcard_studio_run_check_gates_standalone
+      state: sealed
+  - handle: urn:pcard:sprint:CLB-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLB-03
+    title: Sprint CLB-03 Conserved Petri readiness net and pure sync planner
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:clb-03:dod_clb_03_01_mcard_studio_src_core_ingest_readinesspetrinet_ts_
+        - vcard:clb-03:dod_clb_03_02_firereadinesstransition_and_projectreadinessmarkin
+        - vcard:clb-03:dod_clb_03_03_composing_derivereadinessmarking_with_projectreadi
+        - vcard:clb-03:dod_clb_03_04_mcard_studio_src_core_ingest_planingest_ts_exports
+        - vcard:clb-03:dod_clb_03_05_both_mcard_studio_src_core_ingest_planingest_ts_an
+        - vcard:clb-03:dod_clb_03_06_mcard_studio_scripts_check_hardcoded_paths_mjs_inv
+        - vcard:clb-03:dod_clb_03_07_both_mcard_studio_src_core_ingest_planingest_ts_an
+        - vcard:clb-03:dod_clb_03_08_mcard_studio_passes_typescript_typechecking_tsc_no
+      state: sealed
+  - handle: urn:pcard:sprint:CLB-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLB-04
+    title: Sprint CLB-04 Baldwin Substituting server and sync type discipline
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:clb-04:dod_clb_04_01_mcard_studio_src_server_cordisserver_ts_and_mcard_
+        - vcard:clb-04:dod_clb_04_02_mcard_studio_src_server_workspacehandlehelpers_ts_
+        - vcard:clb-04:dod_clb_04_03_mcard_studio_src_server_workspacesyncservice_ts_ch
+        - vcard:clb-04:dod_clb_04_04_mcard_studio_src_core_sync_versionlineage_ts_extra
+        - vcard:clb-04:dod_clb_04_05_scripts_ci_check_software_lagrangian_py_json_repor
+        - vcard:clb-04:dod_clb_04_06_scripts_ci_check_software_lagrangian_py_json_repor
+        - vcard:clb-04:dod_clb_04_07_mcard_studio_passes_tsc_noemit_with_zero_type_erro
+        - vcard:clb-04:dod_clb_04_08_full_mcard_studio_vitest_suite_passes_100_of_unit_
+      state: sealed
+  - handle: urn:pcard:sprint:CLB-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLB-05
+    title: Sprint CLB-05 Zero-entropy Software Lagrangian delta and four-estate certification
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:clb-05:dod_clb_05_01_scripts_ci_check_software_lagrangian_py_compare_ge
+        - vcard:clb-05:dod_clb_05_02_docs_sprints_active_evidence_clb_05_lagrangian_del
+        - vcard:clb-05:dod_clb_05_03_scripts_ci_verify_clb_baldwin_witness_mjs_evaluate
+        - vcard:clb-05:dod_clb_05_04_clm_passes_all_32_architectural_boundary_gates_mak
+        - vcard:clb-05:dod_clb_05_05_mcard_studio_passes_npm_prefix_mcard_studio_run_ch
+        - vcard:clb-05:dod_clb_05_06_landingpage_passes_npm_prefix_landingpage_run_test
+        - vcard:clb-05:dod_clb_05_07_all_40_dods_across_clb_01_through_clb_05_pass_scri
+        - vcard:clb-05:dod_clb_05_08_scripts_orc_encode_sprint_py_scripts_orc_sync_disp
       state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-COL
     card_type: mcard
@@ -5697,9 +5697,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: 6924e914b46ed6cbaee8c34c7d7c88887429935f8c5056da8a90b224ad40589b
-  projection_sha256: 5198c634a7d9f3548412d099b5969558dc69bff122336153d361a1c8e822b3e4
+  source_sha256: 3ec293df79a89b94eaf63753fbf7d5053ea80d06addcfcb452997886c34ff7c8
+  projection_sha256: abe59f5fa88b0ba2dd9f127a8a272e0479d17a69db49c91f62ddc481cb9069f1
   kernel_version: 0.0.13
-  landing_page_commit: 0f17e2e2616c35e7c9ed948fa9306b688a9cdcba
+  landing_page_commit: 9bcb01599a29e0c1cfa13740a5f341bee51ec1ea
   sprint_count: 270
   unresolved_trace_refs: 0
