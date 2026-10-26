@@ -1948,6 +1948,100 @@ sprints:
         - vcard:sprint-407:update_docs_architecture_code_migration_to_clm_md
         - vcard:sprint-407:graduate_sprints_403_407_into_the_12_aspect_deployment_architect
       state: sealed
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CLC-CUBICAL-LAGRANGIAN-CALCULUS-AND-COHOMOLOGICAL-MESH
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-CLC-CUBICAL-LAGRANGIAN-CALCULUS-AND-COHOMOLOGICAL-MESH
+    title: Program charter for EPIC-CLC Cubical Lagrangian Calculus, Cohomological Mesh Consistency, and Open Monoidal Petri Runtime
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:CLC-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLC-01
+    title: Sprint CLC-01 Open Monoidal Petri composition algebra and dynamical action baseline
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:clc-01:dod_clc_01_01_docs_sprints_programs_clb_readme_md_and_evidence_c
+        - vcard:clc-01:dod_clc_01_02_registry_handle_moves_json_records_epic_clb_handle
+        - vcard:clc-01:dod_clc_01_03_docs_sprints_active_evidence_clc_01_lagrangian_bas
+        - vcard:clc-01:dod_clc_01_04_clm_src_clm_kernel_sync_openpetrinet_ts_defines_op
+        - vcard:clc-01:dod_clc_01_05_clm_src_clm_kernel_sync_openpetrinet_ts_exports_co
+        - vcard:clc-01:dod_clc_01_06_composeopenpetrinets_preserves_linear_p_invariants
+        - vcard:clc-01:dod_clc_01_07_clm_src_clm_kernel_sync_index_ts_re_exports_openpe
+        - vcard:clc-01:dod_clc_01_08_typescript_symbol_coverage_for_clm_remains_above_t
+      state: sealed
+  - handle: urn:pcard:sprint:CLC-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLC-02
+    title: Sprint CLC-02 Sheaf Cohomology mesh consistency and obstruction detector
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:clc-02:dod_clc_02_01_clm_src_clm_kernel_sync_sheafcohomology_ts_defines
+        - vcard:clc-02:dod_clc_02_02_clm_src_clm_kernel_sync_sheafcohomology_ts_exports
+        - vcard:clc-02:dod_clc_02_03_clm_src_clm_kernel_sync_sheafcohomology_ts_exports
+        - vcard:clc-02:dod_clc_02_04_calculatecohomologyh1_detects_non_zero_obstruction
+        - vcard:clc-02:dod_clc_02_05_clm_src_clm_kernel_sync_sheafcohomology_ts_exports
+        - vcard:clc-02:dod_clc_02_06_clm_src_clm_kernel_sync_index_ts_re_exports_sheaf_
+        - vcard:clc-02:dod_clc_02_07_regression_tests_verify_sheaf_cohomology_evaluatio
+        - vcard:clc-02:dod_clc_02_08_typescript_symbol_coverage_for_clm_satisfies_bound
+      state: sealed
+  - handle: urn:pcard:sprint:CLC-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLC-03
+    title: Sprint CLC-03 Studio Open Monoidal Petri composition and Cordis gluing
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:clc-03:dod_clc_03_01_mcard_studio_src_core_sync_studiopetriboundary_ts_
+        - vcard:clc-03:dod_clc_03_02_mcard_studio_src_core_sync_studiopetriboundary_ts_
+        - vcard:clc-03:dod_clc_03_03_mcard_studio_src_core_sync_studiopetriboundary_ts_
+        - vcard:clc-03:dod_clc_03_04_the_composed_studio_runtime_net_satisfies_linear_p
+        - vcard:clc-03:dod_clc_03_05_transition_firing_in_the_composed_net_prevents_sql
+        - vcard:clc-03:dod_clc_03_06_mcard_studio_src_core_sync_index_ts_re_exports_cre
+        - vcard:clc-03:dod_clc_03_07_vitest_unit_test_suite_passes_with_100_assertion_c
+        - vcard:clc-03:dod_clc_03_08_zero_as_any_type_escapes_exist_in_mcard_studio_src
+      state: sealed
+  - handle: urn:pcard:sprint:CLC-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLC-04
+    title: Sprint CLC-04 Tri-runtime categorical bisimulation and AST equivalence
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:clc-04:dod_clc_04_01_clm_src_clm_kernel_eval_astbisimulation_ts_defines
+        - vcard:clc-04:dod_clc_04_02_clm_src_clm_kernel_eval_astbisimulation_ts_exports
+        - vcard:clc-04:dod_clc_04_03_clm_src_clm_kernel_eval_astbisimulation_ts_verifie
+        - vcard:clc-04:dod_clc_04_04_clm_src_clm_kernel_eval_index_ts_re_exports_astcat
+        - vcard:clc-04:dod_clc_04_05_scripts_ci_check_tri_runtime_bisimulation_py_execu
+        - vcard:clc-04:dod_clc_04_06_tests_ci_test_tri_runtime_bisimulation_py_validate
+        - vcard:clc-04:dod_clc_04_07_the_tri_runtime_bisimulation_checker_enforces_inv_
+        - vcard:clc-04:dod_clc_04_08_python_and_typescript_implementations_adhere_to_25
+      state: sealed
+  - handle: urn:pcard:sprint:CLC-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: CLC-05
+    title: Sprint CLC-05 Unified static-runtime Lagrangian and four-estate certification
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:clc-05:dod_clc_05_01_scripts_ci_check_unified_lagrangian_py_computes_to
+        - vcard:clc-05:dod_clc_05_02_docs_sprints_active_evidence_clc_05_lagrangian_del
+        - vcard:clc-05:dod_clc_05_03_docs_sprints_active_evidence_clc_05_baldwin_witnes
+        - vcard:clc-05:dod_clc_05_04_make_check_estate_passes_100_across_all_four_gover
+        - vcard:clc-05:dod_clc_05_05_all_submodules_clm_mcard_studio_landingpage_have_c
+        - vcard:clc-05:dod_clc_05_06_total_non_kernel_consumer_loc_remains_strictly_bel
+        - vcard:clc-05:dod_clc_05_07_the_four_estate_graduation_certificate_evidence_cl
+        - vcard:clc-05:dod_clc_05_08_docs_sprints_active_readme_md_and_docs_sprints_rea
+      state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CAS
     card_type: mcard
     archetype: specification_mcard
@@ -5697,9 +5791,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: 3ec293df79a89b94eaf63753fbf7d5053ea80d06addcfcb452997886c34ff7c8
-  projection_sha256: abe59f5fa88b0ba2dd9f127a8a272e0479d17a69db49c91f62ddc481cb9069f1
+  source_sha256: e806f0cf18ad2f18c1576ab36d0a1745f95a35e9a51520d35e726a31a7ab4044
+  projection_sha256: e6eda19fe846541c67609acf424bd584e33f12be54666388426c70e94db741c1
   kernel_version: 0.0.13
-  landing_page_commit: 9bcb01599a29e0c1cfa13740a5f341bee51ec1ea
-  sprint_count: 270
+  landing_page_commit: de8adfedfacf73eb66edad5d21cf742391d0bd60
+  sprint_count: 276
   unresolved_trace_refs: 0
