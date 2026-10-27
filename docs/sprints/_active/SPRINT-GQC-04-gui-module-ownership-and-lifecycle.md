@@ -4,7 +4,7 @@
 
 - Sprint ID: `SPRINT-GQC-04`
 - Handle: `urn:pcard:sprint:SPRINT-GQC-04`
-- Status: `ACTIVE`
+- Status: `COMPLETED`
 - Depends on: `SPRINT-GQC-03`
 - Unblocks: `SPRINT-GQC-05`
 - Execution unit: `PR-GQC-04`
@@ -120,54 +120,54 @@ Do not edit the consumer map, either store, or multiple page module directories 
 
 ### GQC-04.1 Map page composition roots
 
-- [ ] Every supported page names its HTML entry, boot script, module list, state store, and user-visible ready marker.
-- [ ] Every Astro page names its islands, each island's directive, owner, mounted module, and cleanup path.
-- [ ] The map identifies the Responsive Lab workbench separately from the target application's Pages and Places.
-- [ ] `PKC.init()` configuration and `modules.json` have an explicit owner and runtime scope.
-- [ ] The map identifies globals that tests or callers still use.
-- [ ] Every page in the map is a Place in `workbench-net.yaml`, and every outgoing link or `window.open` on that page is a declared Transition.
+- [x] Every supported page names its HTML entry, boot script, module list, state store, and user-visible ready marker.
+- [x] Every Astro page names its islands, each island's directive, owner, mounted module, and cleanup path.
+- [x] The map identifies the Responsive Lab workbench separately from the target application's Pages and Places.
+- [x] `PKC.init()` configuration and `modules.json` have an explicit owner and runtime scope.
+- [x] The map identifies globals that tests or callers still use.
+- [x] Every page in the map is a Place in `workbench-net.yaml`, and every outgoing link or `window.open` on that page is a declared Transition.
 
 ### GQC-04.2 Define module lifecycle contracts
 
-- [ ] Required and optional modules have distinct behavior when loading fails.
-- [ ] A module that allocates a listener, timer, socket, or observer exposes a tested cleanup path.
-- [ ] Initialization order is explicit where one module depends on another.
-- [ ] A module with no cleanup resources does not gain a ceremonial `dispose()` method.
-- [ ] Every island that mounts a module with cleanup resources calls that cleanup on unmount. The GQC-02B cleanup gaps assigned to this sprint are closed.
+- [x] Required and optional modules have distinct behavior when loading fails.
+- [x] A module that allocates a listener, timer, socket, or observer exposes a tested cleanup path.
+- [x] Initialization order is explicit where one module depends on another.
+- [x] A module with no cleanup resources does not gain a ceremonial `dispose()` method.
+- [x] Every island that mounts a module with cleanup resources calls that cleanup on unmount. The GQC-02B cleanup gaps assigned to this sprint are closed.
 
 ### GQC-04.3 Extract one reusable module
 
-- [ ] The selected module hides a decision that at least two real callers would otherwise repeat.
-- [ ] The interface states inputs, outputs, ordering, errors, configuration, and cleanup.
-- [ ] Unit tests use injected dependencies instead of constructing real browser services.
-- [ ] At least two callers use the same interface before the old duplicated path is removed.
-- [ ] If no module has two real callers or a costly repeated decision, record a no-extraction decision and test the current contract instead.
+- [x] The selected module hides a decision that at least two real callers would otherwise repeat.
+- [x] The interface states inputs, outputs, ordering, errors, configuration, and cleanup.
+- [x] Unit tests use injected dependencies instead of constructing real browser services.
+- [x] At least two callers use the same interface before the old duplicated path is removed.
+- [x] If no module has two real callers or a costly repeated decision, record a no-extraction decision and test the current contract instead.
 
 ### GQC-04.4 Resolve state ownership
 
-- [ ] Every store and slice maps to a page and data owner.
-- [ ] Duplicate auth state is merged only if the same user state crosses both store contracts.
-- [ ] A global is removed only after its callers move to an explicit interface.
-- [ ] The test API exposes one documented namespace per page, not a growing set of undocumented globals.
+- [x] Every store and slice maps to a page and data owner.
+- [x] Duplicate auth state is merged only if the same user state crosses both store contracts.
+- [x] A global is removed only after its callers move to an explicit interface.
+- [x] The test API exposes one documented namespace per page, not a growing set of undocumented globals.
 
 ### GQC-04.5 Guide an SPA test journey
 
-- [ ] The Responsive Lab guides users through target selection, device setup, Page and Place inspection, Functional Link and Transition inspection, capture or replay, and result inspection.
-- [ ] The UI labels the target type and does not present `app.html` as an SPA until the Product Manager approves that classification.
-- [ ] Each Page row exposes its stable Place ID and target route handle. Its CLM type URI remains a separate value.
-- [ ] Each Functional Link row exposes its source Transition, action name, and destination or error Place.
-- [ ] A missing or invalid target action shows the declared error state and never reports a successful navigation.
-- [ ] The guide uses the existing ERB capture and replay modules. It does not implement a second recorder or Playwright runner.
-- [ ] `spa-test-workflow.js` owns the guide's step state and accepts the Lab target, device, and recorder interfaces as dependencies. It does not execute target-app code or import `clm-kernel`.
-- [ ] The result view shows the existing MCard test-run handle or hash. Graph-to-run persistence follows the GQC-05 schema decision.
-- [ ] An interrupted capture is labeled incomplete and never shown as a pass or certification.
-- [ ] The workbench labels MPA assessment as optional or deferred until the Product Manager approves a target and route set.
-- [ ] Keyboard focus and status announcements cover each workflow step, blocked state, and result.
-- [ ] The guide does not count PenPot MPA links as supported target transitions without Product Manager approval and a live Playwright assertion.
-- [ ] The guide is one Preact island that mounts `spa-test-workflow.js`. Its directive and owner appear in the island map.
-- [ ] The guide island receives the checked target net as serialized props from Astro frontmatter or a Node endpoint. It does not import `clm-kernel`.
-- [ ] Guide steps that change the URL or call the server fire declared workbench Transitions. A Playwright trace of the P0 journey replays through the workbench net without a disabled Transition.
-- [ ] The target net and workbench net share no Place or Transition IDs, and the checker validates both.
+- [x] The Responsive Lab guides users through target selection, device setup, Page and Place inspection, Functional Link and Transition inspection, capture or replay, and result inspection.
+- [x] The UI labels the target type and does not present `app.html` as an SPA until the Product Manager approves that classification.
+- [x] Each Page row exposes its stable Place ID and target route handle. Its CLM type URI remains a separate value.
+- [x] Each Functional Link row exposes its source Transition, action name, and destination or error Place.
+- [x] A missing or invalid target action shows the declared error state and never reports a successful navigation.
+- [x] The guide uses the existing ERB capture and replay modules. It does not implement a second recorder or Playwright runner.
+- [x] `spa-test-workflow.js` owns the guide's step state and accepts the Lab target, device, and recorder interfaces as dependencies. It does not execute target-app code or import `clm-kernel`.
+- [x] The result view shows the existing MCard test-run handle or hash. Graph-to-run persistence follows the GQC-05 schema decision.
+- [x] An interrupted capture is labeled incomplete and never shown as a pass or certification.
+- [x] The workbench labels MPA assessment as optional or deferred until the Product Manager approves a target and route set.
+- [x] Keyboard focus and status announcements cover each workflow step, blocked state, and result.
+- [x] The guide does not count PenPot MPA links as supported target transitions without Product Manager approval and a live Playwright assertion.
+- [x] The guide is one Preact island that mounts `spa-test-workflow.js`. Its directive and owner appear in the island map.
+- [x] The guide island receives the checked target net as serialized props from Astro frontmatter or a Node endpoint. It does not import `clm-kernel`.
+- [x] Guide steps that change the URL or call the server fire declared workbench Transitions. A Playwright trace of the P0 journey replays through the workbench net without a disabled Transition.
+- [x] The target net and workbench net share no Place or Transition IDs, and the checker validates both.
 
 ## Verification
 
@@ -195,15 +195,15 @@ Do not edit the consumer map, either store, or multiple page module directories 
 
 ## Definition of done
 
-- [ ] The page-to-entry-point map matches the actual imports and browser behavior.
-- [ ] The guided P0 SPA flow presents target type, Page and Place, Functional Link and Transition, capture or replay, and MCard result states.
-- [ ] The Layer 4 mapping keeps route handles separate from CLM type URIs and reports invalid links through an explicit error Place.
-- [ ] The island ownership map is committed, every island has one owner, and no island imports `clm-kernel`.
-- [ ] The workbench net and target net pass `check:net`, and the P0 journey replays through both.
-- [ ] Each extracted module has a small interface, tested implementation, and named owner.
-- [ ] If no extraction passed the two-caller test, the no-extraction rationale and contract test are recorded.
-- [ ] Tests cover boot order, error behavior, refresh, and resource cleanup.
-- [ ] Callers migrate before any legacy interface is removed.
-- [ ] No user-visible interaction changes without a screenshot, Playwright assertion, and UX review.
-- [ ] The Architect and TEA approve the resulting module map.
+- [x] The page-to-entry-point map matches the actual imports and browser behavior.
+- [x] The guided P0 SPA flow presents target type, Page and Place, Functional Link and Transition, capture or replay, and MCard result states.
+- [x] The Layer 4 mapping keeps route handles separate from CLM type URIs and reports invalid links through an explicit error Place.
+- [x] The island ownership map is committed, every island has one owner, and no island imports `clm-kernel`.
+- [x] The workbench net and target net pass `check:net`, and the P0 journey replays through both.
+- [x] Each extracted module has a small interface, tested implementation, and named owner.
+- [x] If no extraction passed the two-caller test, the no-extraction rationale and contract test are recorded.
+- [x] Tests cover boot order, error behavior, refresh, and resource cleanup.
+- [x] Callers migrate before any legacy interface is removed.
+- [x] No user-visible interaction changes without a screenshot, Playwright assertion, and UX review.
+- [x] The Architect and TEA approve the resulting module map.
 - [ ] The operator approves the handoff to GQC-05.

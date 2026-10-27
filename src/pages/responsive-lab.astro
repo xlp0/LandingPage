@@ -1,4 +1,6 @@
 ---
+import path from 'node:path';
+import { Layer4TrellisNavigationNet } from 'clm-kernel';
 import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
 import TargetToolbarIsland from '../islands/TargetToolbarIsland.jsx';
 import DevicePresetsIsland from '../islands/DevicePresetsIsland.jsx';
@@ -6,6 +8,81 @@ import ViewportStageIsland from '../islands/ViewportStageIsland.jsx';
 import RecordingRibbonIsland from '../islands/RecordingRibbonIsland.jsx';
 import ConformancePanelIsland from '../islands/ConformancePanelIsland.jsx';
 import MCardResultIsland from '../islands/MCardResultIsland.jsx';
+import SpaTestWorkflow from '../islands/SpaTestWorkflow.jsx';
+import { loadNetEnvelope, validateNetEnvelope } from '../../scripts/check-net.mjs';
+import { assertDisjointNetIds, serializeTargetNetEnvelope } from '../../js/harness/spa-test-workflow.js';
+
+const workbenchEnvelope = loadNetEnvelope(path.resolve(process.cwd(), 'src/net/workbench-net.yaml'));
+const spaTargetEnvelope = loadNetEnvelope(path.resolve(process.cwd(), 'tests/fixtures/spa-test-target.graph.json'));
+
+const workbenchValidation = validateNetEnvelope(workbenchEnvelope, {
+  filePath: 'src/net/workbench-net.yaml',
+  currentSprint: 'SPRINT-GQC-04'
+});
+if (!workbenchValidation.valid) {
+  throw new Error(`Invalid workbench net: ${workbenchValidation.violations.map((v) => v.message).join('; ')}`);
+}
+
+const spaTargetValidation = validateNetEnvelope(spaTargetEnvelope, {
+  filePath: 'tests/fixtures/spa-test-target.graph.json',
+  currentSprint: 'SPRINT-GQC-04'
+});
+if (!spaTargetValidation.valid) {
+  throw new Error(`Invalid SPA target net: ${spaTargetValidation.violations.map((v) => v.message).join('; ')}`);
+}
+
+assertDisjointNetIds(workbenchEnvelope, spaTargetEnvelope);
+
+const layer4Net = new Layer4TrellisNavigationNet();
+for (const place of spaTargetEnvelope.topology.places) {
+  const binding = spaTargetEnvelope.bindings.places[place.id];
+  layer4Net.registerViewPlace(place.id, binding.clmTypeUri, {
+    role: binding.entry ? 'Entry' : 'Intermediate'
+  });
+}
+for (const transition of spaTargetEnvelope.topology.transitions) {
+  const binding = spaTargetEnvelope.bindings.transitions[transition.id];
+  const destBinding = spaTargetEnvelope.bindings.places[binding.toPlaceId];
+  if (destBinding?.kind !== 'error' && binding.kind === 'client-route') {
+    layer4Net.registerHyperlink(binding.fromPlaceId, binding.linkId, binding.toPlaceId);
+  }
+}
+
+const validSession = layer4Net.startSession(spaTargetEnvelope.entryPlaceId, 'gqc04-ssr-valid');
+const validStep = layer4Net.clickHyperlink(
+  validSession.marking,
+  'p_spa_overview',
+  'link_spa_open_details',
+  validSession.sessionToken
+);
+
+const trapSession = layer4Net.startSession(spaTargetEnvelope.entryPlaceId, 'gqc04-ssr-trap');
+const trapStep = layer4Net.clickHyperlink(
+  trapSession.marking,
+  'p_spa_overview',
+  'link_spa_invalid_unmapped',
+  trapSession.sessionToken
+);
+
+if (!validStep.navigated || validStep.trappedToErrorModal || validStep.currentViewPlaceId !== 'p_spa_details') {
+  throw new Error('Layer 4 validation failed for SPA transition link_spa_open_details');
+}
+if (trapStep.navigated || !trapStep.trappedToErrorModal) {
+  throw new Error('Layer 4 validation failed to trap invalid SPA link link_spa_invalid_unmapped');
+}
+
+const targetNets = {
+  '/tests/fixtures/spa-test-target.html': serializeTargetNetEnvelope(spaTargetEnvelope, {
+    targetUrl: '/tests/fixtures/spa-test-target.html',
+    targetType: 'spa',
+    layer4Verification: {
+      facade: 'Layer4TrellisNavigationNet',
+      committedPlaceId: validStep.currentViewPlaceId,
+      invalidLinkTrapped: trapStep.trappedToErrorModal,
+      errorModalPlaceId: trapStep.currentViewPlaceId
+    }
+  })
+};
 ---
 <WorkbenchLayout title="GovTech OS - Responsive UI Lab (Full-Window Viewport Workbench)" dataTheme="dark" bodyClass="lab-booting">
   <Fragment slot="head">
@@ -455,6 +532,8 @@ import MCardResultIsland from '../islands/MCardResultIsland.jsx';
 
     .lab-workspace-container.arrangement-vertical .workbench-controls-dock {
       width: 100%;
+      max-height: 44vh;
+      overflow-y: auto;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
@@ -909,6 +988,188 @@ import MCardResultIsland from '../islands/MCardResultIsland.jsx';
       word-break: break-all;
       text-align: right;
     }
+
+    .spa-workflow-card {
+      background: var(--overlay-faint);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0.65rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      width: 100%;
+    }
+
+    .spa-workflow-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .spa-workflow-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin: 0;
+    }
+
+    .spa-workflow-deferred-badge {
+      font-size: 0.62rem;
+      padding: 0.12rem 0.45rem;
+    }
+
+    .spa-workflow-live-status {
+      font-size: 0.68rem;
+      color: var(--color-text-secondary);
+      line-height: 1.35;
+    }
+
+    .spa-workflow-live-error {
+      font-size: 0.7rem;
+      color: var(--badge-danger-text);
+      background: var(--badge-danger-bg);
+      border: 1px solid var(--badge-danger-border);
+      border-radius: 6px;
+      padding: 0.35rem 0.5rem;
+      line-height: 1.35;
+    }
+
+    .spa-workflow-warnings {
+      font-size: 0.68rem;
+      color: var(--color-text-primary);
+      background: var(--overlay-soft);
+      border: 1px solid var(--border-strong);
+      border-radius: 6px;
+      padding: 0.35rem 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .spa-workflow-warnings-title {
+      font-weight: 600;
+    }
+
+    .spa-workflow-tablist {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }
+
+    .spa-workflow-tab {
+      background: var(--panel);
+      border: 1px solid var(--border-strong);
+      color: var(--color-text-secondary);
+      border-radius: 5px;
+      padding: 0.22rem 0.45rem;
+      font-size: 0.68rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .spa-workflow-tab.active {
+      background: var(--badge-info-bg);
+      border-color: var(--color-primary);
+      color: var(--badge-info-text);
+    }
+
+    .spa-workflow-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      padding-top: 0.15rem;
+    }
+
+    .spa-workflow-panel[hidden] {
+      display: none;
+    }
+
+    .spa-workflow-meta-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      font-size: 0.7rem;
+    }
+
+    .spa-workflow-kv {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.4rem;
+    }
+
+    .spa-workflow-k {
+      color: var(--color-text-muted);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .spa-workflow-v {
+      color: var(--color-text-primary);
+      text-align: right;
+      word-break: break-word;
+    }
+
+    .spa-workflow-note {
+      font-size: 0.68rem;
+      color: var(--color-text-muted);
+      line-height: 1.35;
+      margin: 0;
+    }
+
+    .spa-workflow-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+
+    .spa-workflow-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+    }
+
+    .spa-workflow-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.66rem;
+    }
+
+    .spa-workflow-table th,
+    .spa-workflow-table td {
+      padding: 0.25rem 0.35rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-faint);
+      vertical-align: top;
+      white-space: nowrap;
+    }
+
+    .spa-workflow-table th {
+      color: var(--color-text-muted);
+      font-weight: 600;
+      background: var(--panel-deep);
+    }
+
+    .spa-workflow-incomplete-banner {
+      background: var(--badge-danger-bg);
+      border: 1px solid var(--badge-danger-border);
+      color: var(--badge-danger-text);
+      border-radius: 6px;
+      padding: 0.3rem 0.45rem;
+      font-size: 0.68rem;
+      font-weight: 600;
+    }
+
+    .spa-workflow-evidence-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      border-top: 1px solid var(--border-faint);
+      padding-top: 0.3rem;
+    }
   </style>
   </Fragment>
   <header class="lab-navbar">
@@ -966,6 +1227,8 @@ import MCardResultIsland from '../islands/MCardResultIsland.jsx';
       <DevicePresetsIsland client:load />
 
       <TargetToolbarIsland client:load />
+
+      <SpaTestWorkflow client:load targetNets={targetNets} />
 
       <div class="toolbar-group" id="conformance-panel-group">
         <details id="conformance-disclosure" class="lab-disclosure">

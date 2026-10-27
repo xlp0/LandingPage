@@ -612,82 +612,82 @@ Each live lane uses an isolated checkout at the PR head. Drive the actual web UI
 
 **Files.**
 
-- [ ] Edit `src/pages/responsive-lab.astro`, the Lab islands named in the island map, and the assigned `js/harness/` composition for the guided SPA workflow.
-- [ ] Create `src/islands/SpaTestWorkflow.jsx`, the guide island that mounts `spa-test-workflow.js`.
-- [ ] Edit `src/pages/app.astro` and its islands only for regions the ownership map assigns.
-- [ ] Edit `src/net/workbench-net.yaml` to add guide Places and Transitions and any `app.html` Transitions moved into islands.
-- [ ] Create `js/harness/spa-test-workflow.js` for the guided step state, with unit tests in `tests/unit/spa-test-workflow.test.mjs`.
-- [ ] Edit `js/app-entry.js`, `js/cubical-core.js`, and `js/pkc-core.js` only if the consumer map assigns them to that workflow.
-- [ ] Edit `modules.json` only after the consumer map names its runtime role.
-- [ ] Edit at most one exact module entry, and only if `evidence/GQC-00-consumer-map.md` shows a repeatable seam worth extracting.
-- [ ] Create or update `tests/unit/pkc-lifecycle.test.mjs` and `tests/features/spa-test-workbench.spec.js`.
-- [ ] Update the owning architecture spec in the same PR.
-- [ ] Append approved module-ownership decisions to `docs/sprints/_active/DECISIONS.tsv`.
+- [x] Edit `src/pages/responsive-lab.astro`, the Lab islands named in the island map, and the assigned `js/harness/` composition for the guided SPA workflow.
+- [x] Create `src/islands/SpaTestWorkflow.jsx`, the guide island that mounts `spa-test-workflow.js`.
+- [x] Edit `src/pages/app.astro` and its islands only for regions the ownership map assigns.
+- [x] Edit `src/net/workbench-net.yaml` to add guide Places and Transitions and any `app.html` Transitions moved into islands.
+- [x] Create `js/harness/spa-test-workflow.js` for the guided step state, with unit tests in `tests/unit/spa-test-workflow.test.mjs`.
+- [x] Edit `js/app-entry.js`, `js/cubical-core.js`, and `js/pkc-core.js` only if the consumer map assigns them to that workflow.
+- [x] Edit `modules.json` only after the consumer map names its runtime role.
+- [x] Edit at most one exact module entry, and only if `evidence/GQC-00-consumer-map.md` shows a repeatable seam worth extracting.
+- [x] Create or update `tests/unit/pkc-lifecycle.test.mjs` and `tests/features/spa-test-workbench.spec.js`.
+- [x] Update the owning architecture spec in the same PR.
+- [x] Append approved module-ownership decisions to `docs/sprints/_active/DECISIONS.tsv`.
 
 **Build.**
 
-- [ ] Map each page composition root to its UI modules, module descriptors, stores, global accessors, and lifecycle events.
-- [ ] Resolve the difference between `PKC.init()` module lists and `modules.json` by documenting which entry point owns each page.
-- [ ] Define module startup failure and cleanup behavior from observed consumers. Add no generic plugin bus or wrapper without a second real consumer.
-- [ ] Guide the user through target selection, device setup, target Pages and Places, Functional Links and Transitions, capture or replay, and MCard result inspection.
-- [ ] Keep workflow step state in `spa-test-workflow.js`; inject the Lab target, device, and recorder interfaces instead of importing kernel or target-app code.
-- [ ] Display target type, route handle, Page ID, Place ID, and CLM type URI as distinct values.
-- [ ] Use the existing ERB target membrane, recorder, replay, and device modules. Add no second recorder or browser driver.
-- [ ] Keep process persistence behind the GQC-05 MCard contract. Do not add a new store or modify `responsive_test_run:v1`.
-- [ ] Show a clear error Place or unavailable state for missing views, invalid links, blocked origins, and targets without a capture agent.
-- [ ] Refactor one selected composition seam only when two real callers share behavior. If no seam qualifies, keep the current shape and add a contract test.
-- [ ] Do not merge `js/redux/` and `js/store/` until call sites and data ownership prove the stores overlap.
-- [ ] Migrate callers before removing any global or legacy module contract.
-- [ ] Commit the island ownership map: each island's Place, directive, owner, mounted module, and cleanup path. Close the cleanup gaps `PR-GQC-02B.2` assigned to this PR.
-- [ ] Load and check the target net in Astro page frontmatter or a Node endpoint, and pass it to the guide island as serialized props. Import no `clm-kernel` code into an island.
-- [ ] Keep the workbench net and the target net separate. They share no IDs and pass the same checker.
+- [x] Map each page composition root to its UI modules, module descriptors, stores, global accessors, and lifecycle events.
+- [x] Resolve the difference between `PKC.init()` module lists and `modules.json` by documenting which entry point owns each page.
+- [x] Define module startup failure and cleanup behavior from observed consumers. Add no generic plugin bus or wrapper without a second real consumer.
+- [x] Guide the user through target selection, device setup, target Pages and Places, Functional Links and Transitions, capture or replay, and MCard result inspection.
+- [x] Keep workflow step state in `spa-test-workflow.js`; inject the Lab target, device, and recorder interfaces instead of importing kernel or target-app code.
+- [x] Display target type, route handle, Page ID, Place ID, and CLM type URI as distinct values.
+- [x] Use the existing ERB target membrane, recorder, replay, and device modules. Add no second recorder or browser driver.
+- [x] Keep process persistence behind the GQC-05 MCard contract. Do not add a new store or modify `responsive_test_run:v1`.
+- [x] Show a clear error Place or unavailable state for missing views, invalid links, blocked origins, and targets without a capture agent.
+- [x] Refactor one selected composition seam only when two real callers share behavior. If no seam qualifies, keep the current shape and add a contract test.
+- [x] Do not merge `js/redux/` and `js/store/` until call sites and data ownership prove the stores overlap.
+- [x] Migrate callers before removing any global or legacy module contract.
+- [x] Commit the island ownership map: each island's Place, directive, owner, mounted module, and cleanup path. Close the cleanup gaps `PR-GQC-02B.2` assigned to this PR.
+- [x] Load and check the target net in Astro page frontmatter or a Node endpoint, and pass it to the guide island as serialized props. Import no `clm-kernel` code into an island.
+- [x] Keep the workbench net and the target net separate. They share no IDs and pass the same checker.
 
 **You see.**
 
-- [ ] The Responsive Lab shows the P0 SPA guide and makes each workflow step visible.
-- [ ] An optional module failure leaves unrelated page controls usable and reports a visible or logged error with a stable owner.
-- [ ] A target SPA link changes the declared Place without a document reload. Playwright drives and verifies the actual link.
-- [ ] The result view shows the saved MCard run handle or hash without claiming that an unpersisted net was stored.
-- [ ] An interrupted capture is visible as incomplete, never as a passing run or certification.
+- [x] The Responsive Lab shows the P0 SPA guide and makes each workflow step visible.
+- [x] An optional module failure leaves unrelated page controls usable and reports a visible or logged error with a stable owner.
+- [x] A target SPA link changes the declared Place without a document reload. Playwright drives and verifies the actual link.
+- [x] The result view shows the saved MCard run handle or hash without claiming that an unpersisted net was stored.
+- [x] An interrupted capture is visible as incomplete, never as a passing run or certification.
 
 **Verify, unit.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Test module registration, initialization order, error handling, and cleanup with injected test modules. Run `npm run test:unit`.
-- [ ] Run `npm run test:smoke` and the approved module lifecycle specs.
-- [ ] Run `npm run check:net`, `npm run build` with net parity, and the island import check. Replay the P0 journey trace through both nets.
+- [x] Test module registration, initialization order, error handling, and cleanup with injected test modules. Run `npm run test:unit`.
+- [x] Run `npm run test:smoke` and the approved module lifecycle specs.
+- [x] Run `npm run check:net`, `npm run build` with net parity, and the island import check. Replay the P0 journey trace through both nets.
 
 **Verify, live.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked. Ten lanes on `the model recorded in the run header` at the PR head, per the boot recipe.
 
-- [ ] Lane 1. Regression lane against trunk. Open the Responsive Lab on trunk and head. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-1.png`. Pass when existing device and recording controls remain available.
-- [ ] Lane 2. Start the guide with the deterministic SPA fixture. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-2.png`. Pass when the target type, first Page and Place, and optional MPA status are visible.
-- [ ] Lane 3. Choose a device and orientation. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-3.png`. Pass when the viewport changes without losing the selected Place.
-- [ ] Lane 4. Follow a declared Functional Link and its Transition. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-4.png`. Pass when the destination Place appears without replacing the SPA document.
-- [ ] Lane 5. Follow an invalid or missing link. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-5.png`. Pass when the error Place and recovery action are visible.
-- [ ] Lane 6. Capture and save the SPA journey. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-6.png`. Pass when the workbench shows the saved MCard handle or hash.
-- [ ] Lane 7. Replay the saved journey. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-7.png`. Pass when the final Place and recorded result agree.
-- [ ] Lane 8. Reload the Lab after a module starts a listener. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-8.png`. Pass when the page does not duplicate the listener's visible effect.
-- [ ] Lane 9. Complete the guided flow by keyboard. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-9.png`. Pass when focus order, status announcements, and recovery controls work.
-- [ ] Lane 10. Fail an optional module in an isolated fixture. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-10.png`. Pass when unrelated guide controls remain usable and the failure has an owner.
+- [x] Lane 1. Regression lane against trunk. Open the Responsive Lab on trunk and head. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-1.png`. Pass when existing device and recording controls remain available.
+- [x] Lane 2. Start the guide with the deterministic SPA fixture. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-2.png`. Pass when the target type, first Page and Place, and optional MPA status are visible.
+- [x] Lane 3. Choose a device and orientation. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-3.png`. Pass when the viewport changes without losing the selected Place.
+- [x] Lane 4. Follow a declared Functional Link and its Transition. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-4.png`. Pass when the destination Place appears without replacing the SPA document.
+- [x] Lane 5. Follow an invalid or missing link. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-5.png`. Pass when the error Place and recovery action are visible.
+- [x] Lane 6. Capture and save the SPA journey. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-6.png`. Pass when the workbench shows the saved MCard handle or hash.
+- [x] Lane 7. Replay the saved journey. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-7.png`. Pass when the final Place and recorded result agree.
+- [x] Lane 8. Reload the Lab after a module starts a listener. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-8.png`. Pass when the page does not duplicate the listener's visible effect.
+- [x] Lane 9. Complete the guided flow by keyboard. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-9.png`. Pass when focus order, status announcements, and recovery controls work.
+- [x] Lane 10. Fail an optional module in an isolated fixture. Save `/tmp/swarm-PR-GQC-04/worker-1/lane-10.png`. Pass when unrelated guide controls remain usable and the failure has an owner.
 
 **Verify, perf.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Metric. P75 common Lab page-ready time and head-only guide-step initialization time.
-- [ ] Probe. Run ten interleaved trunk and head boots for the common Lab shell. Measure the new guide steps on head only because trunk lacks the guided workflow.
-- [ ] Baseline. Use the GQC-00 workbench values. Set an approved absolute budget for new guide work or keep its timing advisory.
-- [ ] Rule. If TEA and the Product Manager ratify a blocking regression budget in GQC-00, fail only on the paired common-page regression. Do not compare new guide work to an unlike trunk path.
+- [x] Metric. P75 common Lab page-ready time and head-only guide-step initialization time.
+- [x] Probe. Run ten interleaved trunk and head boots for the common Lab shell. Measure the new guide steps on head only because trunk lacks the guided workflow.
+- [x] Baseline. Use the GQC-00 workbench values. Set an approved absolute budget for new guide work or keep its timing advisory.
+- [x] Rule. If TEA and the Product Manager ratify a blocking regression budget in GQC-00, fail only on the paired common-page regression. Do not compare new guide work to an unlike trunk path.
 
 **Review gate.** The operator reviews before merge.
 
-- [ ] Copy before and after screenshots for the affected page into the review packet.
-- [ ] Record a 30 to 60 second video of the changed startup or failure state.
-- [ ] Post the screenshots and video in chat. Stop at merge-ready and wait for the operator's review.
+- [x] Copy before and after screenshots for the affected page into the review packet.
+- [x] Record a 30 to 60 second video of the changed startup or failure state.
+- [x] Post the screenshots and video in chat. Stop at merge-ready and wait for the operator's review.
 
 **Merge.**
 
-- [ ] Record the clean verdict at the exact head SHA.
-- [ ] Attach module ownership, startup, and cleanup test results.
-- [ ] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
-- [ ] Append `PR-GQC-04` to the stack after `PR-GQC-03`. Wait for operator landing.
+- [x] Record the clean verdict at the exact head SHA.
+- [x] Attach module ownership, startup, and cleanup test results.
+- [x] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
+- [x] Append `PR-GQC-04` to the stack after `PR-GQC-03`. Wait for operator landing.
 
 ## Integrate MCard process data and verify package ownership (PR-GQC-05)
 

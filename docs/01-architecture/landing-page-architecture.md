@@ -81,3 +81,42 @@ Rather than functioning as an unconstrained web portal or an ad-hoc demo collect
 2. **Hash Purity**: `LandingPage` owns no local hash provider. All content-addressing (MCard hashes, test-run hashes, canonical JSON IDs) delegates directly to `clm-kernel`.
 3. **Retired Surfaces**: Legacy experimental multi-card surfaces have been retired and logged in `retired-islands.yaml`. Any resurrection of retired components is rejected by CI.
 4. **Visual Navigation SSOT (`INV-CDO-11`)**: Visual navigation is authored in `design/landing-navigation.penpot`. The generation scripts (`scripts/penpot-nav.mjs`, `scripts/penpot-render.mjs`) compile the Penpot archive into `index.html` and `js/nav.js`, with automated drift detection (`scripts/penpot-drift.mjs`).
+
+---
+
+## 5. Page composition and store ownership (`SPRINT-GQC-04`)
+
+`LandingPage` serves six Astro-hosted workbench Places declared in `src/net/workbench-net.yaml` through `@astrojs/node` middleware mounted in `ws-server.js`, while tombstoned static files such as `pkc-docs-index.html` fall through to Express static hosting. Astro's client router remains disabled so page transitions execute as full document navigations verified by `scripts/check-net.mjs`.
+
+| Page Entry | Astro Source | Workbench Place | Host Mode | Runtime owner and store |
+| :--- | :--- | :--- | :--- | :--- |
+| `responsive-lab.html` | `src/pages/responsive-lab.astro` | `p_page_responsive_lab` | `astro-islands` (7 Preact islands) | `js/harness/lab-runtime.js` singleton (`window.__lab`, including `window.__lab.workflow`) |
+| `index.html` | `src/pages/index.astro` | `p_page_index`, `p_view_index_mcard_viewer` | `astro-wrapped` | Redirects `/` to `/responsive-lab.html`. mounts `js/landing-page-mcard.js` and `js/nav.js` at `?noredirect=1` |
+| `app.html` | `src/pages/app.astro` | `p_page_app` | `astro-wrapped` | `public/js/app-bootstrap.js` and `MCardManager` (`window.mcardManager`). classified as `webapp` pending Product Manager review |
+| `sprint-registry.html` | `src/pages/sprint-registry.astro` | `p_page_sprint_registry` | `astro-wrapped` | Inline `/api/clm/registry` projection owned by Scrum Master |
+| `fiber-inspector.html` | `src/pages/fiber-inspector.astro` | `p_page_fiber_inspector` | `astro-wrapped` | `public/js/fibers/registry.js` diagnostic harness owned by Architect |
+| `fiber-conformance.html` | `src/pages/fiber-conformance.astro` | `p_page_fiber_conformance` | `astro-wrapped` | `public/js/fibers/registry.js` conformance harness owned by Architect |
+
+Two legacy Redux stores remain intentionally separate because zero active workbench pages share user state across them:
+1. `js/redux/store.js` (`clm`, `auth`, `ui`, and `navigation` slices on `window.__REDUX_STORE__`) is imported only by `js/renderers/index.js` for CLM component isolation.
+2. `js/store/store.js` (`auth`, `music`, and `room` slices) is imported only by `js/modules/auth-manager.js`, `js/modules/webrtc-dashboard/index.html`, and standalone music demos under `public/examples/Music/`.
+
+Standalone browser capability descriptors in `modules.json` (`markdown-renderer`, `net-gateway`, `p2p-serverless`, and `tic-tac-toe-p2p`) carry explicit `owner` and `required` metadata enforced by `PKC.init()` and `PKC.stop()` in `js/pkc-core.js`.
+
+---
+
+## 6. Responsive Lab island map and dual-net boundary (`SPRINT-GQC-04`)
+
+`src/pages/responsive-lab.astro` validates `src/net/workbench-net.yaml` and `tests/fixtures/spa-test-target.graph.json` in Node frontmatter using `scripts/check-net.mjs`, `assertDisjointNetIds()`, and `Layer4TrellisNavigationNet` from `clm-kernel`, then passes plain JSON `targetNets` props to `SpaTestWorkflow`. Browser islands never import `clm-kernel` or Node `crypto`.
+
+| Island | Source File | Directive | Mounted Vanilla Module | BMAD Owner |
+| :--- | :--- | :--- | :--- | :--- |
+| `TargetToolbarIsland` | `src/islands/TargetToolbarIsland.jsx` | `client:load` | `js/harness/lab-toolbar.js`, `js/harness/target-membrane.js` | Architect and Dev |
+| `DevicePresetsIsland` | `src/islands/DevicePresetsIsland.jsx` | `client:load` | `js/harness/device-presets-ui.js`, `js/device-registry.js` | UX Designer and Dev |
+| `ViewportStageIsland` | `src/islands/ViewportStageIsland.jsx` | `client:only="preact"` | `js/harness/viewport-stage.js`, `#mission-control-iframe` | Architect and TEA |
+| `RecordingRibbonIsland` | `src/islands/RecordingRibbonIsland.jsx` | `client:load` | `js/harness/recording-ribbon.js`, `js/harness/recorder.js` | TEA and Dev |
+| `SpaTestWorkflow` | `src/islands/SpaTestWorkflow.jsx` | `client:load` | `js/harness/spa-test-workflow.js` | Product Manager, Architect, TEA, and UX Designer |
+| `ConformancePanelIsland` | `src/islands/ConformancePanelIsland.jsx` | `client:visible` | `js/harness/conformance-panel.js` | TEA and UX Designer |
+| `MCardResultIsland` | `src/islands/MCardResultIsland.jsx` | `client:visible` | `runtime.recorder.lastSavedRun`, `runtime.subscribeSavedRun` | Product Manager and Dev |
+
+Full ownership details, bundle byte budgets, lifecycle leak counters, and paired cold-load measurements live in `docs/sprints/_active/evidence/GQC-04-module-and-island-ownership.md`.

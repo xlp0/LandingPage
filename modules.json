@@ -2,25 +2,37 @@
   "modules": [
     {
       "id": "markdown-renderer",
+      "owner": "Product Manager",
+      "required": false,
       "entry": "/js/modules/markdown-renderer/index.js",
       "enabled": true
     },
     {
       "id": "net-gateway",
+      "owner": "Architect",
+      "required": false,
       "entry": "/js/modules/net-gateway/index.js",
       "enabled": true,
       "when": "websocket",
-      "config": { "wsUrl": "ws://localhost:3000/ws/" }
+      "config": {
+        "wsUrl": "ws://localhost:3000/ws/"
+      }
     },
     {
       "id": "p2p-serverless",
+      "owner": "Architect",
+      "required": false,
       "entry": "/js/modules/p2p-serverless/index.js",
       "enabled": true,
       "when": "webrtc",
       "config": {
         "iceServers": [
-          { "urls": "stun:stun.l.google.com:19302" },
-          { "urls": "stun:stun1.l.google.com:19302" }
+          {
+            "urls": "stun:stun.l.google.com:19302"
+          },
+          {
+            "urls": "stun:stun1.l.google.com:19302"
+          }
         ],
         "channelName": "pkc-p2p-discovery",
         "invitationTTL": 300000,
@@ -29,13 +41,19 @@
     },
     {
       "id": "tic-tac-toe-p2p",
+      "owner": "Product Manager",
+      "required": false,
       "entry": "/js/modules/tic-tac-toe-p2p/index.js",
       "enabled": true,
       "when": "webrtc",
       "config": {
         "iceServers": [
-          { "urls": "stun:stun.l.google.com:19302" },
-          { "urls": "stun:stun1.l.google.com:19302" }
+          {
+            "urls": "stun:stun.l.google.com:19302"
+          },
+          {
+            "urls": "stun:stun1.l.google.com:19302"
+          }
         ]
       }
     }

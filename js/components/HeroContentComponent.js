@@ -3,11 +3,12 @@ import { CubicalComponent } from '../cubical-core.js';
 export class HeroContentComponent extends CubicalComponent {
     constructor() {
         super('main-hero', 'max-w-4xl mx-auto px-8 py-16 text-center relative z-10');
+        this._envTimer = null;
     }
 
     mount() {
         this.element.setAttribute('data-anime', 'main-content');
-        
+
         this.element.innerHTML = `
             <p id="pkc-title-text" class="text-xl md:text-2xl font-semibold mb-4 opacity-0 translate-y-8" data-anime="env-title"></p>
             <h1 class="text-4xl md:text-5xl font-bold mb-4 opacity-0 translate-y-8" data-anime="title">PKC Landing Page</h1>
@@ -28,13 +29,12 @@ export class HeroContentComponent extends CubicalComponent {
     }
 
     initAnimations() {
-        // Need to wait for DOM insertion or call this manually after mount
-        if (window.anime) {
+        if (typeof window !== 'undefined' && window.anime) {
             const tl = anime.timeline({
                 easing: 'easeOutExpo',
                 duration: 800
             });
-            
+
             tl.add({
                 targets: '[data-anime="env-title"]',
                 opacity: [0, 1],
@@ -60,9 +60,8 @@ export class HeroContentComponent extends CubicalComponent {
                 duration: 600
             }, '-=400');
 
-            // Button hover effects
             const buttons = this.element.querySelectorAll('[data-anime="buttons"] a');
-            buttons.forEach(button => {
+            buttons.forEach((button) => {
                 button.addEventListener('mouseenter', () => {
                     anime({
                         targets: button,
@@ -83,25 +82,34 @@ export class HeroContentComponent extends CubicalComponent {
         }
     }
 
-    async startEnvWatcher() {
+    startEnvWatcher() {
         const updateEnvTitle = async () => {
+            if (typeof fetch !== 'function') return;
             try {
                 const response = await fetch('/api/env', { cache: 'no-cache' });
-                if (response.ok) {
+                if (response && response.ok) {
                     const env = await response.json();
-                    if (env.PKC_Title_Text) {
+                    if (env.PKC_Title_Text && this.element) {
                         const titleEl = this.element.querySelector('#pkc-title-text');
                         if (titleEl && titleEl.textContent !== env.PKC_Title_Text) {
                             titleEl.textContent = env.PKC_Title_Text;
                         }
                     }
                 }
-            } catch (err) {
-                // Silent fail or fallback
-            }
+            } catch {}
         };
-        
-        updateEnvTitle();
-        setInterval(updateEnvTitle, 2000);
+
+        void updateEnvTitle();
+        if (this._envTimer) {
+            clearInterval(this._envTimer);
+        }
+        this._envTimer = setInterval(updateEnvTitle, 2000);
+    }
+
+    destroy() {
+        if (this._envTimer) {
+            clearInterval(this._envTimer);
+            this._envTimer = null;
+        }
     }
 }

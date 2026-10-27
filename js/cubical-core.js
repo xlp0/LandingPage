@@ -1,8 +1,3 @@
-/**
- * Cubical Core
- * A minimal component system based on "Divs as Components"
- */
-
 export class CubicalComponent {
     constructor(id, className = '') {
         this.id = id;
@@ -11,10 +6,6 @@ export class CubicalComponent {
         this.state = {};
     }
 
-    /**
-     * Renders the component as a DIV
-     * @returns {HTMLElement} The component's root DIV
-     */
     render() {
         if (!this.element) {
             this.element = document.createElement('div');
@@ -27,29 +18,14 @@ export class CubicalComponent {
         return this.element;
     }
 
-    /**
-     * Logic to execute when the component is mounted (content injection)
-     * Override this in subclasses
-     */
-    mount() {
-        // Default implementation: do nothing
-    }
+    mount() {}
 
-    /**
-     * Update the component's state and optionally re-render specific parts
-     * @param {Object} newState 
-     */
     setState(newState) {
         this.state = { ...this.state, ...newState };
         this.update();
     }
 
-    /**
-     * Update logic - override to update DOM based on state
-     */
-    update() {
-        // Default implementation
-    }
+    update() {}
 }
 
 export class CubicalApp {
@@ -61,19 +37,18 @@ export class CubicalApp {
         this.components = new Map();
     }
 
-    /**
-     * Add a component to the single container
-     * @param {CubicalComponent} component 
-     */
     addComponent(component) {
-        this.components.set(component.hash, component);
+        const key = component.id ?? component.hash;
+        this.components.set(key, component);
         this.root.appendChild(component.render());
     }
 
-    /**
-     * Clear the container
-     */
     clear() {
+        for (const component of this.components.values()) {
+            if (typeof component?.destroy === 'function') {
+                component.destroy();
+            }
+        }
         this.root.innerHTML = '';
         this.components.clear();
     }

@@ -1,11 +1,6 @@
-/**
- * Lab Test API Controller (SPRINT-ERB-00 §5.3, SPRINT-ERB-05 R6, SPRINT-ERB-02 R6)
- * Consolidates workbench testing interfaces onto window.__lab.
- */
-
 import { resolveFidelity } from './fidelity.js';
 
-export function installLabApi({ stage, membrane, registry, recorder }) {
+export function installLabApi({ stage, membrane, registry, recorder, workflow = null }) {
   const api = {
     version: 1,
     geometry: {
@@ -75,7 +70,35 @@ export function installLabApi({ stage, membrane, registry, recorder }) {
       source() {
         return recorder?.source;
       }
-    }
+    },
+    workflow: workflow
+      ? {
+          state() {
+            return workflow.getState();
+          },
+          setStep(stepId) {
+            return workflow.setStep(stepId);
+          },
+          targetTrace() {
+            return workflow.getTargetTrace();
+          },
+          clearTargetTrace() {
+            return workflow.clearTargetTrace();
+          },
+          syncTargetDom() {
+            return workflow.syncTargetDom();
+          },
+          reportModuleFailure(failure) {
+            return workflow.reportModuleFailure(failure);
+          },
+          loadOptionalModules(descriptors, options) {
+            return workflow.loadOptionalModules(descriptors, options);
+          },
+          metrics() {
+            return workflow.getMetrics();
+          }
+        }
+      : null
   };
 
   if (typeof window !== 'undefined') {

@@ -215,7 +215,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     expect(netDoc?.bindings?.places?.p_page_responsive_lab?.migrationState).toBe('astro-islands');
 
     const islandFiles = collectFiles(path.join(REPO_ROOT, 'src/islands'), (f) => /\.(jsx|js|mjs|ts|tsx)$/.test(f));
-    expect(islandFiles.length).toBe(6);
+    expect(islandFiles.length).toBe(7);
     for (const file of islandFiles) {
       const src = fs.readFileSync(file, 'utf8');
       expect(src, `${path.basename(file)} must not reference clm-kernel`).not.toContain('clm-kernel');
@@ -228,7 +228,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     }
 
     const clientBundles = collectFiles(path.join(REPO_ROOT, 'dist/client/_astro'), (f) => f.endsWith('.js'));
-    expect(clientBundles.length).toBeGreaterThanOrEqual(6);
+    expect(clientBundles.length).toBeGreaterThanOrEqual(7);
     for (const bundle of clientBundles) {
       const code = fs.readFileSync(bundle, 'utf8');
       expect(code, `${path.basename(bundle)} must not bundle clm-kernel`).not.toContain('clm-kernel');
@@ -237,7 +237,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     const { page } = isolatedLabPage;
     await workbench.open({ targetPath: SPA_FIXTURE_PATH });
     const islandCount = await page.locator('astro-island').count();
-    expect(islandCount).toBe(6);
+    expect(islandCount).toBe(7);
 
     const staticOutsideIslands = await page.evaluate(() => {
       const header = document.querySelector('header.lab-navbar');
@@ -500,6 +500,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     expect(coldNames.some((n) => n.includes('DevicePresetsIsland'))).toBe(true);
     expect(coldNames.some((n) => n.includes('RecordingRibbonIsland'))).toBe(true);
     expect(coldNames.some((n) => n.includes('ViewportStageIsland'))).toBe(true);
+    expect(coldNames.some((n) => n.includes('SpaTestWorkflow'))).toBe(true);
     expect(coldNames.some((n) => n.includes('ConformancePanelIsland'))).toBe(false);
     expect(coldNames.some((n) => n.includes('MCardResultIsland'))).toBe(false);
     expect(downloadedScripts.every((entry) => entry.status === 200 && !entry.hasClmKernel)).toBe(true);
@@ -533,7 +534,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     await context.close();
   });
 
-  test('GQC-02B-E2E-04: mounting and unmounting all 6 islands 50 times across target and page changes returns listener, observer, and timer counts to baseline', async ({
+  test('GQC-02B-E2E-04: mounting and unmounting all 7 islands 50 times across target and page changes returns listener, observer, and timer counts to baseline', async ({
     browser
   }) => {
     const context = await browser.newContext({ viewport: { width: 1440, height: 960 } });
@@ -548,7 +549,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     await expect.poll(() =>
       page.evaluate(() => {
         const islands = [...document.querySelectorAll('astro-island')];
-        const allHydrated = islands.length === 6 && islands.every((el) => !el.hasAttribute('ssr'));
+        const allHydrated = islands.length === 7 && islands.every((el) => !el.hasAttribute('ssr'));
         const toolbarReady = document.getElementById('pane-url-bar')?.getAttribute('data-toolbar-ready') === 'true';
         return allHydrated && toolbarReady;
       })
@@ -620,7 +621,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     await expect.poll(() =>
       page.evaluate(() => {
         const islands = [...document.querySelectorAll('astro-island')];
-        const allHydrated = islands.length === 6 && islands.every((el) => !el.hasAttribute('ssr'));
+        const allHydrated = islands.length === 7 && islands.every((el) => !el.hasAttribute('ssr'));
         const toolbarReady = document.getElementById('pane-url-bar')?.getAttribute('data-toolbar-ready') === 'true';
         return allHydrated && toolbarReady;
       })

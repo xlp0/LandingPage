@@ -1,11 +1,6 @@
-/**
- * Conformance Diagnostics Panel (SPRINT-ERB-06 §4 Sally, §6.2)
- * Read-only panel displaying pass/fail/skip counts and per-check results for the active device.
- */
-
 export function initConformancePanel({ getTarget, getDevice, getOrientation }) {
-  const container = document.getElementById('conformance-details');
-  const badge = document.getElementById('conformance-status-badge');
+  const container = typeof document !== 'undefined' ? document.getElementById('conformance-details') : null;
+  const badge = typeof document !== 'undefined' ? document.getElementById('conformance-status-badge') : null;
 
   if (!container || !badge) return null;
 
@@ -93,14 +88,18 @@ export function initConformancePanel({ getTarget, getDevice, getOrientation }) {
     }
   }
 
-  window.addEventListener('lab:viewport-change', refresh);
-  window.addEventListener('lab:target-changed', refresh);
+  if (typeof document !== 'undefined') {
+    document.addEventListener('lab:viewport-change', refresh);
+    document.addEventListener('lab:target-change', refresh);
+  }
 
   refresh();
 
   function destroy() {
-    window.removeEventListener('lab:viewport-change', refresh);
-    window.removeEventListener('lab:target-changed', refresh);
+    if (typeof document !== 'undefined') {
+      document.removeEventListener('lab:viewport-change', refresh);
+      document.removeEventListener('lab:target-change', refresh);
+    }
   }
 
   return { refresh, destroy };

@@ -6,7 +6,7 @@ import { createCaptureSource } from './membrane-interceptor.js';
 import { InteractionRecorder } from './recorder.js';
 import { resolveFidelity } from './fidelity.js';
 
-const REQUIRED_BOOT_PARTICIPANTS = ['stage', 'toolbar', 'presets', 'ribbon'];
+const REQUIRED_BOOT_PARTICIPANTS = ['stage', 'toolbar', 'presets', 'ribbon', 'workflow'];
 let singletonRuntime = null;
 
 function unregisterLocalServiceWorkers() {
@@ -36,6 +36,7 @@ function createLabRuntimeInstance() {
   let activePresetsUI = null;
   let activeToolbar = null;
   let activeRibbon = null;
+  let activeWorkflow = null;
   let stageAttached = false;
   let sameOriginLoadCleanup = null;
 
@@ -162,13 +163,45 @@ function createLabRuntimeInstance() {
     onTargetChange: (detail) => updateCaptureSource(detail)
   });
 
+  function recoverTarget() {
+    return activeToolbar ? activeToolbar.recoverToDefaultTarget() : membrane.recoverToDefault();
+  }
+
+  function selectTarget(url, cause = 'workflow-select') {
+    if (activeToolbar) {
+      activeToolbar.setTarget(url, cause);
+      return membrane.getTarget();
+    }
+    return membrane.bindTarget(url, cause);
+  }
+
+  function selectDevicePreset(deviceId) {
+    if (!deviceId) {
+      stage.setViewportSize(100, 100, '%', 'Full (100%)', null, 'preset');
+      activePresetsUI?.markActiveChip(null);
+      return null;
+    }
+    const device = registry.getById(deviceId);
+    if (!device) return null;
+    if (activePresetsUI) {
+      activePresetsUI.applyDevicePreset(device);
+      return device;
+    }
+    const geom = stage.getGeometry();
+    const isLandscape = geom.internalOrientation === 'horizontal';
+    const w = isLandscape ? device.height : device.width;
+    const h = isLandscape ? device.width : device.height;
+    stage.setViewportSize(w, h, 'px', device.name, device.id, 'preset');
+    return device;
+  }
+
   function syncLabApi() {
-    const api = installLabApi({ stage, membrane, registry, recorder });
+    const api = installLabApi({ stage, membrane, registry, recorder, workflow: activeWorkflow });
     api.policy = {
       placeId: () => membrane.getPolicyPlaceId(),
       trace: () => membrane.getPolicyTrace(),
       clearTrace: () => membrane.clearPolicyTrace(),
-      recover: () => (activeToolbar ? activeToolbar.recoverToDefaultTarget() : membrane.recoverToDefault())
+      recover: () => recoverTarget()
     };
     return api;
   }
@@ -261,11 +294,24 @@ function createLabRuntimeInstance() {
     }
   }
 
+  function attachWorkflow(workflow) {
+    activeWorkflow = workflow;
+    syncLabApi();
+  }
+
+  function detachWorkflow(workflow) {
+    if (activeWorkflow === workflow) {
+      activeWorkflow = null;
+      syncLabApi();
+    }
+  }
+
   function attachStageSurface(iframeEl) {
     stageAttached = true;
     stage.rebind();
     membrane.setIframe(iframeEl);
     activeToolbar?.updateSiteSelection();
+    activeWorkflow?.syncTargetDom?.();
     stage.applyGeometry('boot');
     syncLabApi();
   }
@@ -288,12 +334,14 @@ function createLabRuntimeInstance() {
       } catch {}
     }
     stageAttached = false;
+    activeWorkflow?.destroy?.();
     stage.destroy();
     membrane.destroy();
     recorder.destroy();
     activePresetsUI = null;
     activeToolbar = null;
     activeRibbon = null;
+    activeWorkflow = null;
   }
 
   return {
@@ -303,6 +351,9 @@ function createLabRuntimeInstance() {
     recorder,
     getActiveDevice,
     getFidelity,
+    selectTarget,
+    recoverTarget,
+    selectDevicePreset,
     updateCaptureSource,
     markBootParticipant,
     attachPresetsUI,
@@ -311,6 +362,8 @@ function createLabRuntimeInstance() {
     detachToolbar,
     attachCaptureRibbon,
     detachCaptureRibbon,
+    attachWorkflow,
+    detachWorkflow,
     attachStageSurface,
     detachStageSurface,
     destroy
