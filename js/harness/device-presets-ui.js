@@ -19,14 +19,23 @@ export function initDevicePresetsUI(options = {}) {
   const {
     registry,
     stage,
-    presetsContainer = document.getElementById('device-presets-container'),
-    managerModal = document.getElementById('device-manager-modal'),
-    managerList = document.getElementById('device-manager-list'),
-    deviceForm = document.getElementById('device-form'),
-    deviceFormError = document.getElementById('device-form-error')
+    presetsContainer = typeof document !== 'undefined' ? document.getElementById('device-presets-container') : null,
+    managerModal = typeof document !== 'undefined' ? document.getElementById('device-manager-modal') : null,
+    managerList = typeof document !== 'undefined' ? document.getElementById('device-manager-list') : null,
+    deviceForm = typeof document !== 'undefined' ? document.getElementById('device-form') : null,
+    deviceFormError = typeof document !== 'undefined' ? document.getElementById('device-form-error') : null
   } = options;
 
-  let activeChipId = 'btn-size-full';
+  let activeChipId = stage?.getGeometry?.()?.deviceId
+    ? chipIdFor({ id: stage.getGeometry().deviceId })
+    : 'btn-size-full';
+  const cleanupFns = [];
+
+  function listen(target, eventName, handler) {
+    if (!target) return;
+    target.addEventListener(eventName, handler);
+    cleanupFns.push(() => target.removeEventListener(eventName, handler));
+  }
 
   function markActiveChip(deviceId) {
     activeChipId = deviceId ? chipIdFor({ id: deviceId }) : null;
@@ -70,7 +79,6 @@ export function initDevicePresetsUI(options = {}) {
       presetsContainer.appendChild(btn);
     }
 
-    // the Full (100%) affordance is relative, so it is not a device
     const full = document.createElement('button');
     full.type = 'button';
     full.id = 'btn-size-full';
@@ -140,20 +148,21 @@ export function initDevicePresetsUI(options = {}) {
     if (deviceFormError) deviceFormError.textContent = '';
   }
 
-  // Bind modal triggers
-  document.getElementById('btn-open-device-manager')?.addEventListener('click', openDeviceManager);
-  document.getElementById('btn-close-modal')?.addEventListener('click', closeDeviceManager);
-  document.getElementById('btn-close-modal-footer')?.addEventListener('click', closeDeviceManager);
-  managerModal?.addEventListener('click', (e) => {
+  if (typeof document !== 'undefined') {
+    listen(document.getElementById('btn-open-device-manager'), 'click', openDeviceManager);
+    listen(document.getElementById('btn-close-modal'), 'click', closeDeviceManager);
+    listen(document.getElementById('btn-close-modal-footer'), 'click', closeDeviceManager);
+    listen(document, 'keydown', (e) => {
+      if (e.key === 'Escape' && managerModal?.classList.contains('open')) closeDeviceManager();
+    });
+    listen(document.getElementById('btn-reset-devices'), 'click', () => registry?.resetToDefaults());
+  }
+
+  listen(managerModal, 'click', (e) => {
     if (e.target === managerModal) closeDeviceManager();
   });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && managerModal?.classList.contains('open')) closeDeviceManager();
-  });
 
-  document.getElementById('btn-reset-devices')?.addEventListener('click', () => registry?.resetToDefaults());
-
-  deviceForm?.addEventListener('submit', (e) => {
+  listen(deviceForm, 'submit', (e) => {
     e.preventDefault();
     const nameEl = document.getElementById('input-device-name');
     const catEl = document.getElementById('select-device-category');
@@ -177,11 +186,21 @@ export function initDevicePresetsUI(options = {}) {
   });
 
   if (registry) {
-    registry.subscribe((event) => {
+    const unsub = registry.subscribe((event) => {
       renderPresets();
       renderManagerList();
       if (event === 'reset') markActiveChip(null);
     });
+    cleanupFns.push(unsub);
+  }
+
+  function destroy() {
+    while (cleanupFns.length > 0) {
+      const fn = cleanupFns.pop();
+      try {
+        fn();
+      } catch {}
+    }
   }
 
   return {
@@ -190,6 +209,7 @@ export function initDevicePresetsUI(options = {}) {
     openDeviceManager,
     closeDeviceManager,
     markActiveChip,
-    applyDevicePreset
+    applyDevicePreset,
+    destroy
   };
 }

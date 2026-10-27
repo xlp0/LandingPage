@@ -330,7 +330,7 @@ bindings:
       routeHandle: mcard:route:/responsive-lab.html
       clmTypeUri: clm://type/view/workbench/responsive-lab
       mcardHash: null
-      migrationState: astro-wrapped
+      migrationState: astro-islands
       entry: false
       deepLinkEntry: true
       owner: Product Manager and TEA

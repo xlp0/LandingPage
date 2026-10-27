@@ -31,7 +31,7 @@ export class CaptureProbeAgentSource {
       this.iframe.addEventListener('load', this._onIframeLoadBound);
     }
 
-    // Proactively ping probe until connection is acknowledged
+    this._ensureReceiver(null);
     this.pingProbe();
     this._startPingInterval();
   }
@@ -70,13 +70,11 @@ export class CaptureProbeAgentSource {
     }
   }
 
-  _armProbe() {
-    this._currentNonce = `nonce_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+  _ensureReceiver(nonce = null) {
     const expectedWin = this.iframe?.contentWindow;
-
     this._receiver = createTelemetryReceiver({
       expectedSource: expectedWin,
-      expectedNonce: this._currentNonce,
+      expectedNonce: nonce,
       expectedOrigin: this.targetOrigin || null,
       schema: 'lab-capture/v1',
       allowedTypes: ['lab:ready', 'lab:event', 'lab:final-state'],
@@ -92,6 +90,12 @@ export class CaptureProbeAgentSource {
         this._rejectReasons[r] = (this._rejectReasons[r] || 0) + 1;
       }
     });
+    return expectedWin;
+  }
+
+  _armProbe() {
+    this._currentNonce = `nonce_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    const expectedWin = this._ensureReceiver(this._currentNonce);
 
     if (expectedWin) {
       try {
@@ -141,6 +145,8 @@ export class CaptureProbeAgentSource {
 
       if (this._onEvent) {
         this._armProbe();
+      } else {
+        this._ensureReceiver(null);
       }
 
       if (typeof this._onStatusChange === 'function') {
@@ -182,6 +188,7 @@ export class CaptureProbeAgentSource {
       this.iframe.removeEventListener('load', this._onIframeLoadBound);
     }
     this.detach();
+    this._receiver = null;
     if (typeof window !== 'undefined') {
       window.removeEventListener('message', this._onMessageBound);
     }

@@ -1,5 +1,11 @@
 ---
 import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
+import TargetToolbarIsland from '../islands/TargetToolbarIsland.jsx';
+import DevicePresetsIsland from '../islands/DevicePresetsIsland.jsx';
+import ViewportStageIsland from '../islands/ViewportStageIsland.jsx';
+import RecordingRibbonIsland from '../islands/RecordingRibbonIsland.jsx';
+import ConformancePanelIsland from '../islands/ConformancePanelIsland.jsx';
+import MCardResultIsland from '../islands/MCardResultIsland.jsx';
 ---
 <WorkbenchLayout title="GovTech OS - Responsive UI Lab (Full-Window Viewport Workbench)" dataTheme="dark" bodyClass="lab-booting">
   <Fragment slot="head">
@@ -845,6 +851,64 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       font-size: 0.75rem;
       min-height: 1rem;
     }
+
+    .lab-disclosure {
+      width: 100%;
+    }
+
+    .lab-disclosure-summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.25rem 0.35rem;
+      border-radius: 6px;
+      border: 1px solid var(--border-subtle);
+      background: var(--overlay-faint);
+      user-select: none;
+    }
+
+    .lab-disclosure-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .lab-disclosure-body {
+      margin-top: 0.35rem;
+      font-size: 0.72rem;
+      line-height: 1.4;
+      background: var(--overlay-faint);
+      padding: 0.45rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .mcard-result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      padding: 0.12rem 0;
+      border-bottom: 1px solid var(--border-faint);
+    }
+
+    .mcard-result-row:last-child {
+      border-bottom: none;
+    }
+
+    .mcard-result-key {
+      color: var(--color-text-muted);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .mcard-result-val {
+      color: var(--color-text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      word-break: break-all;
+      text-align: right;
+    }
   </style>
   </Fragment>
   <header class="lab-navbar">
@@ -861,7 +925,6 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
     </div>
 
     <div class="lab-nav-right">
-      
       <div class="arrangement-toggle-group" style="display: flex; gap: 0.25rem; background: var(--color-scrim); padding: 0.2rem; border-radius: 8px; border: 1px solid var(--color-border);">
         <span style="font-size: 0.72rem; color: var(--color-text-muted); align-self: center; margin: 0 0.35rem; font-weight: 500;">Arrangement:</span>
         <button id="btn-arrange-horizontal" class="toolbar-btn arrangement-btn active" data-arrangement="horizontal" title="Horizontal arrangement (Controls in left sidebar, canvas beside)">
@@ -881,7 +944,6 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
     </div>
   </header>
 
-  
   <aside class="real-estate-banner" id="cors-notice-banner">
     <div>
       <span class="real-estate-tag">🖥️ Full-Window Real-Estate</span>
@@ -893,158 +955,44 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
     </div>
   </aside>
 
-  
   <div class="lab-recording-strip" id="lab-recording-strip" style="background: var(--panel-deep-strong); border-bottom: 1px solid var(--border-subtle); padding: 0.5rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; z-index: 50;">
-    <div id="lab-recording-bar" style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;"></div>
+    <div id="lab-recording-bar" style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+      <RecordingRibbonIsland client:load />
+    </div>
   </div>
 
-  
   <div class="lab-workspace-container arrangement-horizontal" id="lab-workspace-container">
-    
     <aside class="workbench-controls-dock" id="workbench-controls-dock">
-      
-      <div class="workbench-toolbar" id="controlled-size-controller">
-        
-        <div class="toolbar-group">
-          <span class="group-label">Workbench Arrangement:</span>
-          <div class="toolbar-group-row">
-            <button id="btn-arrange-horizontal-dock" class="toolbar-btn arrangement-btn active" data-arrangement="horizontal" title="Horizontal arrangement (Left Sidebar + Canvas)">
-              <span>☲ Horizontal (Side-by-Side)</span>
-            </button>
-            <button id="btn-arrange-vertical-dock" class="toolbar-btn arrangement-btn" data-arrangement="vertical" title="Vertical arrangement (Stacked Topbar + Canvas)">
-              <span>☰ Vertical (Stacked)</span>
-            </button>
-          </div>
-        </div>
+      <DevicePresetsIsland client:load />
 
-        
-        <div class="toolbar-group">
-          <span class="group-label">Viewport Orientation:</span>
-          <div class="toolbar-group-row">
-            <button id="btn-orient-vertical" class="toolbar-btn orientation-btn-primary active" data-orientation="vertical" title="Switch to Vertical (Portrait) layout">
-              <span>↕ Vertical (Portrait)</span>
-            </button>
-            <button id="btn-orient-horizontal" class="toolbar-btn orientation-btn-primary" data-orientation="horizontal" title="Switch to Horizontal (Landscape) layout">
-              <span>↔ Horizontal (Landscape)</span>
-            </button>
-          </div>
-        </div>
+      <TargetToolbarIsland client:load />
 
-        
-        <div class="toolbar-group">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-            <span class="group-label">Dimension Presets:</span>
-            <button id="btn-open-device-manager" class="toolbar-btn" title="Open Device Preset Manager" aria-label="Open Device Preset Manager">
-              <span>⚙️ Manage</span>
-            </button>
-          </div>
-          <div id="device-presets-container" class="toolbar-group-row preset-chips-scroll" role="group" aria-label="Device dimension presets">
-            
-          </div>
-        </div>
-
-        
-        <div class="toolbar-group">
-          <span class="group-label">Custom Geometry:</span>
-          <div class="custom-dim-form" style="display: grid; grid-template-columns: auto 1fr auto 1fr auto; gap: 0.25rem; align-items: center;">
-            <label for="controlled-width-input" style="font-size: 0.72rem; color: var(--color-text-muted);">W:</label>
-            <input id="controlled-width-input" type="number" class="dim-input" value="393" min="100" max="7680" aria-label="Width in pixels" />
-            <label for="controlled-height-input" style="font-size: 0.72rem; color: var(--color-text-muted);">H:</label>
-            <input id="controlled-height-input" type="number" class="dim-input" value="852" min="100" max="7680" aria-label="Height in pixels" />
-            <button id="btn-apply-custom-dim" type="button" class="toolbar-btn" style="padding: 0.2rem 0.5rem;">Apply</button>
-          </div>
-          <div style="display: flex; gap: 0.5rem; margin-top: 0.35rem;">
-            <button id="btn-rotate-viewport" type="button" class="toolbar-btn" style="flex: 1;" title="Swap Width and Height (90° Rotation)">🔄 Rotate (90°)</button>
-            <button id="btn-scale-toggle" type="button" class="toolbar-btn" title="Toggle between 100% Actual Size and Fit-to-Screen">🔍 Fit: Auto</button>
-          </div>
-        </div>
-
-        
-        <div class="toolbar-group" id="conformance-panel-group">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+      <div class="toolbar-group" id="conformance-panel-group">
+        <details id="conformance-disclosure" class="lab-disclosure">
+          <summary class="lab-disclosure-summary">
             <span class="group-label">Conformance:</span>
             <span id="conformance-status-badge" class="footer-status-pill" style="font-size: 0.7rem; color: var(--color-text-muted);">Standby</span>
-          </div>
-          <div id="conformance-details" style="font-size: 0.72rem; line-height: 1.4; background: var(--panel-surface, rgba(0,0,0,0.1)); padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border);">
-            
-          </div>
-        </div>
+          </summary>
+          <ConformancePanelIsland client:visible />
+        </details>
       </div>
 
-      
-      <div class="url-selector-strip" id="pane-url-bar">
-        <div class="target-omnibar-header">
-          <label for="target-url-input" class="group-label" style="font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 0.35rem;">
-            <span>🌐 Test Target URL:</span>
-          </label>
-          <span class="target-omnibar-hint" style="font-size: 0.68rem; color: var(--color-text-muted);">Type URL &amp; press Enter</span>
-        </div>
-        <div class="target-url-input-wrap">
-          <span class="target-url-icon" aria-hidden="true">🔗</span>
-          <input 
-            type="text" 
-            id="target-url-input" 
-            class="target-url-input" 
-            placeholder="Type target URL or path (e.g. app.html, http://localhost:5320)..." 
-            autocomplete="off" 
-            spellcheck="false" 
-            aria-label="Test Target URL input"
-          />
-          <button type="button" id="btn-clear-target-url" class="url-clear-btn" title="Clear target URL" aria-label="Clear URL">✕</button>
-          <button id="btn-load-in-iframe" class="toolbar-btn load-target-btn" title="Load target into viewport (Enter)">
-            <span>▶ Load Target</span>
-          </button>
-        </div>
-        <div class="target-presets-row">
-          <div class="preset-dropdown-wrap">
-            <span class="preset-label" style="font-size: 0.7rem; color: var(--color-text-muted); font-weight: 500;">Presets:</span>
-            <select id="public-site-selector" class="target-url-select" aria-label="Select target website to test iframe compatibility"></select>
-          </div>
-          <div class="target-quick-chips" id="target-quick-chips" aria-label="Quick launch targets">
-            <button type="button" class="target-chip" data-url="app.html" title="Local App Target">⚡ app.html</button>
-            <button type="button" class="target-chip" data-url="index.html" title="GovTech OS Portal">⚡ index.html</button>
-            <button type="button" class="target-chip" data-url="http://localhost:4321/" title="Local Astro / Web App">:4321</button>
-            <button type="button" class="target-chip" data-url="http://127.0.0.1:5320/" title="MCard Studio Workbench">:5320 Studio</button>
-          </div>
-        </div>
-        <div class="target-status-row">
-          <span id="cors-status-pill" class="footer-status-pill" style="margin-top: 0.15rem; width: 100%; justify-content: center;">● Controlled Viewport Active (Iframe Compatible)</span>
-        </div>
+      <div class="toolbar-group" id="mcard-result-panel-group">
+        <details id="mcard-result-disclosure" class="lab-disclosure">
+          <summary class="lab-disclosure-summary">
+            <span class="group-label">MCard Run Result:</span>
+            <span id="mcard-result-summary-badge" class="footer-status-pill" style="font-size: 0.7rem; color: var(--color-text-muted);">Idle</span>
+          </summary>
+          <MCardResultIsland client:visible />
+        </details>
       </div>
     </aside>
 
-    
     <main class="lab-stage-container" id="lab-stage-container">
-      
-      <div class="cors-alert-toast" id="cors-block-alert" style="display: none;">
-        <span style="font-size: 1.1rem; line-height: 1;">⚠️</span>
-        <div id="cors-block-alert-content">
-          <strong>Browser Sandbox Boundary:</strong> <span id="cors-block-target-name">GitHub</span> enforces <code id="cors-block-reason">X-Frame-Options: DENY</code>. 
-          Standard web applications cannot embed this site or trigger native browser tab splitting. In Desktop mode (Tauri), native multi-webview isolation bypasses this restriction.
-        </div>
-      </div>
-
-      
-      <div class="viewport-scale-wrapper" id="viewport-scale-wrapper">
-        <div class="viewport-frame orientation-horizontal" id="controlled-panel-frame" style="--frame-target-width: 100%; --frame-target-height: 100%;">
-          <div class="viewport-frame-bar">
-            <div class="frame-controls-dots">
-              <span class="dot dot-red"></span>
-              <span class="dot dot-yellow"></span>
-              <span class="dot dot-green"></span>
-              <span style="font-weight: 600; color: var(--color-text-primary); margin-left: 0.5rem;">Responsive Iframe Surface</span>
-            </div>
-            <span class="frame-dimension-pill" id="controlled-frame-dim">100% × 100% • ↔ Horizontal (Landscape)</span>
-          </div>
-          <div class="viewport-iframe-wrapper">
-            <iframe id="mission-control-iframe" title="Responsive UI Lab Test Frame" loading="lazy" class="viewport-iframe"></iframe>
-          </div>
-        </div>
-      </div>
+      <ViewportStageIsland client:only="preact" />
     </main>
   </div>
 
-  
   <div class="device-manager-backdrop" id="device-manager-modal" role="dialog" aria-modal="true" aria-labelledby="device-manager-title">
     <div class="device-manager-modal">
       <div class="dm-header">
@@ -1078,9 +1026,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
 
       <div class="dm-error" id="device-form-error" role="alert" aria-live="polite"></div>
 
-      <div class="dm-list" id="device-manager-list" role="list">
-        
-      </div>
+      <div class="dm-list" id="device-manager-list" role="list"></div>
 
       <div class="dm-actions">
         <button id="btn-reset-devices" class="toolbar-btn" type="button">↺ Reset All to Defaults</button>
@@ -1089,7 +1035,6 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
     </div>
   </div>
 
-  
   <footer class="lab-footer">
     <div style="display: flex; align-items: center; gap: 1rem;">
       <span id="controlled-panel-status">● Viewport: Full (100%) • ↔ Horizontal (Landscape) • [☲ Side-by-Side Arrangement]</span>
@@ -1100,81 +1045,4 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       <span>INV-CDO-20 &amp; INV-CDO-21 Certified</span>
     </div>
   </footer>
-
-  <script is:inline type="module">
-    import { DeviceRegistry } from './js/device-registry.js';
-    import { createViewportStage } from './js/harness/viewport-stage.js';
-    import { createTargetMembrane } from './js/harness/target-membrane.js';
-    import { initLabToolbar } from './js/harness/lab-toolbar.js';
-    import { initDevicePresetsUI } from './js/harness/device-presets-ui.js';
-    import { installLabApi } from './js/harness/lab-api.js';
-    import { createCaptureSource } from './js/harness/membrane-interceptor.js';
-    import { InteractionRecorder } from './js/harness/recorder.js';
-    import { initRecordingRibbon } from './js/harness/recording-ribbon.js';
-    import { resolveFidelity } from './js/harness/fidelity.js';
-    import { initConformancePanel } from './js/harness/conformance-panel.js';
-
-    const registry = new DeviceRegistry();
-    let presetsUI = null;
-
-    const stage = createViewportStage({
-      onPresetDeactivate: () => presetsUI?.markActiveChip(null)
-    });
-
-    presetsUI = initDevicePresetsUI({ registry, stage });
-    presetsUI.renderPresets();
-
-    const recorder = new InteractionRecorder();
-
-    function updateCaptureSource(targetDetail) {
-      const source = createCaptureSource(targetDetail, {
-        iframe: document.getElementById('mission-control-iframe'),
-        getDeviceProfile: () => {
-          const id = stage.getGeometry().deviceId;
-          return id ? registry.getById(id) : null;
-        },
-        getViewport: () => stage.getGeometry()
-      });
-      recorder.setSource(source);
-    }
-
-    const membrane = createTargetMembrane({
-      onTargetChange: (detail) => updateCaptureSource(detail)
-    });
-
-    await initLabToolbar({ membrane });
-    updateCaptureSource(membrane.getTarget());
-
-    stage.applyGeometry('boot');
-
-    initRecordingRibbon({
-      recorder,
-      getFidelity: () => {
-        const geom = stage.getGeometry();
-        const activeDevice = geom.deviceId ? registry.getById(geom.deviceId) : null;
-        return resolveFidelity(activeDevice, 'lab-iframe');
-      },
-      getTarget: () => membrane.getTarget(),
-      getDevice: () => {
-        const geom = stage.getGeometry();
-        return geom.deviceId ? registry.getById(geom.deviceId) : null;
-      },
-      getOrientation: () => stage.getGeometry().orientation
-    });
-
-    initConformancePanel({
-      getTarget: () => membrane.getTarget(),
-      getDevice: () => {
-        const geom = stage.getGeometry();
-        return geom.deviceId ? registry.getById(geom.deviceId) : null;
-      },
-      getOrientation: () => stage.getGeometry().orientation
-    });
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => document.body.classList.remove('lab-booting'));
-    });
-
-    installLabApi({ stage, membrane, registry, recorder });
-  </script>
 </WorkbenchLayout>

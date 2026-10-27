@@ -18,7 +18,6 @@ export class InteractionRecorder {
     this.lastSavedRun = null;
     this._listeners = new Set();
 
-    // Push pause / resume marker events into buffer
     this.fsm.onTransition((from, to, action) => {
       if (action === 'pause') {
         this._recordInternalEvent({ type: 'pause' });
@@ -28,22 +27,23 @@ export class InteractionRecorder {
       this._emitChange('state', to);
     });
 
-    // Listen to parent viewport changes
-    if (typeof document !== 'undefined') {
-      document.addEventListener('lab:viewport-change', (e) => {
-        if (!this.fsm.canAccept()) return;
-        const d = e.detail;
-        const type = d.cause === 'rotate' ? 'orientation_change' : 'viewport_change';
-        this._recordInternalEvent({
-          type,
-          viewport: {
-            w: d.width,
-            h: d.height,
-            scale: d.scale,
-            orientation: d.orientation
-          }
-        });
+    this._onViewportChange = (e) => {
+      if (!this.fsm.canAccept()) return;
+      const d = e.detail;
+      const type = d.cause === 'rotate' ? 'orientation_change' : 'viewport_change';
+      this._recordInternalEvent({
+        type,
+        viewport: {
+          w: d.width,
+          h: d.height,
+          scale: d.scale,
+          orientation: d.orientation
+        }
       });
+    };
+
+    if (typeof document !== 'undefined') {
+      document.addEventListener('lab:viewport-change', this._onViewportChange);
     }
 
     if (this.source) {
@@ -54,7 +54,11 @@ export class InteractionRecorder {
   setSource(source) {
     if (this.source) {
       try {
-        this.source.detach();
+        if (this.source !== source && typeof this.source.destroy === 'function') {
+          this.source.destroy();
+        } else {
+          this.source.detach();
+        }
       } catch {}
     }
     this.source = source;
@@ -264,5 +268,22 @@ export class InteractionRecorder {
         l(type, data);
       } catch {}
     }
+  }
+
+  destroy() {
+    if (typeof document !== 'undefined' && this._onViewportChange) {
+      document.removeEventListener('lab:viewport-change', this._onViewportChange);
+    }
+    if (this.source) {
+      try {
+        if (typeof this.source.destroy === 'function') {
+          this.source.destroy();
+        } else {
+          this.source.detach();
+        }
+      } catch {}
+      this.source = null;
+    }
+    this._listeners.clear();
   }
 }

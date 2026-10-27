@@ -21,7 +21,6 @@ export function resolveTarget(raw, baseHref = (typeof window !== 'undefined' ? w
     throw Object.assign(new Error('url is malformed'), { status: 400 });
   }
 
-  // assertSafeUrl checks http/https scheme and absence of credentials
   return assertSafeUrl(resolved);
 }
 
@@ -29,13 +28,20 @@ export function resolveTarget(raw, baseHref = (typeof window !== 'undefined' ? w
  * Creates the target membrane managing the iframe and target-change events.
  */
 export function createTargetMembrane(options = {}) {
-  const {
-    iframe = (typeof document !== 'undefined' ? document.getElementById('mission-control-iframe') : null),
-    baseHref = (typeof window !== 'undefined' ? window.location.href : 'http://localhost/'),
-    onTargetChange = null
-  } = options;
+  const explicitIframe = Object.prototype.hasOwnProperty.call(options, 'iframe');
+  let activeIframe = explicitIframe
+    ? options.iframe
+    : (typeof document !== 'undefined' ? document.getElementById('mission-control-iframe') : null);
+  const baseHref = options.baseHref || (typeof window !== 'undefined' ? window.location.href : 'http://localhost/');
+  const onTargetChange = options.onTargetChange || null;
 
   let currentTargetDetail = null;
+
+  function resolveIframeElement() {
+    if (explicitIframe) return activeIframe;
+    if (activeIframe && activeIframe.isConnected !== false) return activeIframe;
+    return typeof document !== 'undefined' ? document.getElementById('mission-control-iframe') : null;
+  }
 
   function getTarget() {
     return currentTargetDetail ? { ...currentTargetDetail } : null;
@@ -54,8 +60,8 @@ export function createTargetMembrane(options = {}) {
       cause
     };
 
+    const iframe = resolveIframeElement();
     if (iframe) {
-      // Keep attribute in sync for selectors/assertions and navigate frame
       iframe.setAttribute('src', target);
       iframe.src = target;
     }
@@ -71,9 +77,30 @@ export function createTargetMembrane(options = {}) {
     return currentTargetDetail;
   }
 
+  function setIframe(nextIframe) {
+    activeIframe = nextIframe || null;
+    if (activeIframe && currentTargetDetail?.raw) {
+      if (activeIframe.getAttribute('src') !== currentTargetDetail.raw) {
+        activeIframe.setAttribute('src', currentTargetDetail.raw);
+        activeIframe.src = currentTargetDetail.raw;
+      }
+      if (typeof onTargetChange === 'function') {
+        onTargetChange(currentTargetDetail);
+      }
+    }
+  }
+
+  function destroy() {
+    if (!explicitIframe) {
+      activeIframe = null;
+    }
+  }
+
   return {
     resolveTarget: (raw) => resolveTarget(raw, baseHref),
     bindTarget,
-    getTarget
+    getTarget,
+    setIframe,
+    destroy
   };
 }

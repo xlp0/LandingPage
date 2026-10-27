@@ -96,8 +96,12 @@ export function initConformancePanel({ getTarget, getDevice, getOrientation }) {
   window.addEventListener('lab:viewport-change', refresh);
   window.addEventListener('lab:target-changed', refresh);
 
-  // Initial load
   refresh();
 
-  return { refresh };
+  function destroy() {
+    window.removeEventListener('lab:viewport-change', refresh);
+    window.removeEventListener('lab:target-changed', refresh);
+  }
+
+  return { refresh, destroy };
 }

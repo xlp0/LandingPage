@@ -461,65 +461,65 @@ Each live lane uses an isolated checkout at the PR head. Drive the actual web UI
 
 **Files.**
 
-- [ ] Create `src/islands/*.jsx`, one island per interactive Lab region.
-- [ ] Edit `src/pages/responsive-lab.astro`.
-- [ ] Edit `js/harness/` files only to expose an existing cleanup path an island needs. Do not change behavior.
-- [ ] Create `tests/features/responsive-lab-islands.spec.js` and `evidence/GQC-02B-island-map.md`.
-- [ ] Do not edit `server/`, `routes/`, `app-config.json`, CORS or CSP rules, capture message checks, or `responsive_test_run:v1`.
+- [x] Create `src/islands/*.jsx`, one island per interactive Lab region.
+- [x] Edit `src/pages/responsive-lab.astro`.
+- [x] Edit `js/harness/` files only to expose an existing cleanup path an island needs. Do not change behavior.
+- [x] Create `tests/features/responsive-lab-islands.spec.js` and `evidence/GQC-02B-island-map.md`.
+- [x] Do not edit `server/`, `routes/`, `app-config.json`, CORS or CSP rules, capture message checks, or `responsive_test_run:v1`.
 
 **Build.**
 
-- [ ] Write a characterization test for each Lab region before converting it: target toolbar and URL omnibar, device presets, viewport stage, recording ribbon, conformance panel, and MCard result.
-- [ ] Convert each region to one Preact island that mounts the existing module in an effect and calls its cleanup on unmount.
-- [ ] Use `client:only="preact"` for regions that need `window` or the iframe at mount. Justify every other directive.
-- [ ] Keep `window.__lab`, each module's public interface, and the `data-*` hooks tests use.
-- [ ] Import no `clm-kernel` code into any island.
-- [ ] Leave Astro's client router off.
-- [ ] Record each island's directive, owner, mount cost, and cleanup path, or the cleanup gap and its owning sprint.
+- [x] Write a characterization test for each Lab region before converting it: target toolbar and URL omnibar, device presets, viewport stage, recording ribbon, conformance panel, and MCard result.
+- [x] Convert each region to one Preact island that mounts the existing module in an effect and calls its cleanup on unmount.
+- [x] Use `client:only="preact"` for regions that need `window` or the iframe at mount. Justify every other directive.
+- [x] Keep `window.__lab`, each module's public interface, and the `data-*` hooks tests use.
+- [x] Import no `clm-kernel` code into any island.
+- [x] Leave Astro's client router off.
+- [x] Record each island's directive, owner, mount cost, and cleanup path, or the cleanup gap and its owning sprint.
 
 **You see.**
 
-- [ ] The Lab looks and behaves as it did after `PR-GQC-02B.1`.
-- [ ] Regions below the first viewport hydrate when reached if their directive is `client:visible` or `client:idle`.
+- [x] The Lab looks and behaves as it did after `PR-GQC-02B.1`.
+- [x] Regions below the first viewport hydrate when reached if their directive is `client:visible` or `client:idle`.
 
 **Verify, unit.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Run `npm run build` with net parity and `npm run check:net`.
-- [ ] Run an import check that fails if any file under `src/islands/` or the client bundle resolves `clm-kernel`.
-- [ ] Run `npx playwright test tests/features/responsive-lab-islands.spec.js --project=features`.
+- [x] Run `npm run build` with net parity and `npm run check:net`.
+- [x] Run an import check that fails if any file under `src/islands/` or the client bundle resolves `clm-kernel`.
+- [x] Run `npx playwright test tests/features/responsive-lab-islands.spec.js --project=features`.
 
 **Verify, live.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked. Ten lanes on `the model recorded in the run header` at the PR head, per the boot recipe.
 
-- [ ] Lane 1. Regression lane against trunk. Open the Lab on trunk and head. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-1.png`. Pass when the default target and controls match.
-- [ ] Lane 2. Enter an approved target in the omnibar island. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-2.png`. Pass when the iframe loads it.
-- [ ] Lane 3. Apply and rotate a device preset. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-3.png`. Pass when the viewport matches the device registry.
-- [ ] Lane 4. Resize the viewport stage. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-4.png`. Pass when the frame scales as on trunk.
-- [ ] Lane 5. Record and save a journey from the recording ribbon. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-5.png`. Pass when the save succeeds and the trace fires the declared server-call Transitions.
-- [ ] Lane 6. Run the conformance panel. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-6.png`. Pass when results match trunk for the same target and device.
-- [ ] Lane 7. Inspect the MCard result island. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-7.png`. Pass when it shows the stored handle or hash.
-- [ ] Lane 8. Mount and unmount each island 50 times through target and page changes. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-8.png`. Pass when listener and timer counts return to the starting count, or the gap matches the island map.
-- [ ] Lane 9. Load the Lab cold. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-9.png` of the network log. Pass when only `client:load` and `client:only` bundles download before interaction and none contains `clm-kernel`.
-- [ ] Lane 10. Complete the P0 journey by keyboard. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-10.png`. Pass when focus order matches trunk.
+- [x] Lane 1. Regression lane against trunk. Open the Lab on trunk and head. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-1.png`. Pass when the default target and controls match.
+- [x] Lane 2. Enter an approved target in the omnibar island. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-2.png`. Pass when the iframe loads it.
+- [x] Lane 3. Apply and rotate a device preset. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-3.png`. Pass when the viewport matches the device registry.
+- [x] Lane 4. Resize the viewport stage. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-4.png`. Pass when the frame scales as on trunk.
+- [x] Lane 5. Record and save a journey from the recording ribbon. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-5.png`. Pass when the save succeeds and the trace fires the declared server-call Transitions.
+- [x] Lane 6. Run the conformance panel. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-6.png`. Pass when results match trunk for the same target and device.
+- [x] Lane 7. Inspect the MCard result island. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-7.png`. Pass when it shows the stored handle or hash.
+- [x] Lane 8. Mount and unmount each island 50 times through target and page changes. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-8.png`. Pass when listener and timer counts return to the starting count, or the gap matches the island map.
+- [x] Lane 9. Load the Lab cold. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-9.png` of the network log. Pass when only `client:load` and `client:only` bundles download before interaction and none contains `clm-kernel`.
+- [x] Lane 10. Complete the P0 journey by keyboard. Save `/tmp/swarm-PR-GQC-02B.2/worker-1/lane-10.png`. Pass when focus order matches trunk.
 
 **Verify, perf.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Metric. P75 Lab navigation-to-ready time, hydration time per island, and client JavaScript bytes for the Lab Place.
-- [ ] Probe. Run ten interleaved trunk and head Lab loads. Mark hydration complete from a test-only init script.
-- [ ] Baseline. Use the `PR-GQC-02B.1` head and the GQC-00 pre-Astro baseline.
-- [ ] Rule. If TEA and the Product Manager ratified a blocking budget in GQC-00, fail if p75 ready time regresses by more than 10 percent and 100 ms. Otherwise report the result only. Report per-island hydration as a diagnostic.
+- [x] Metric. P75 Lab navigation-to-ready time, hydration time per island, and client JavaScript bytes for the Lab Place.
+- [x] Probe. Run ten interleaved trunk and head Lab loads. Mark hydration complete from a test-only init script.
+- [x] Baseline. Use the `PR-GQC-02B.1` head and the GQC-00 pre-Astro baseline.
+- [x] Rule. If TEA and the Product Manager ratified a blocking budget in GQC-00, fail if p75 ready time regresses by more than 10 percent and 100 ms. Otherwise report the result only. Report per-island hydration as a diagnostic.
 
 **Review gate.** The operator reviews before merge.
 
-- [ ] Copy trunk and head Lab screenshots and the island map into the review packet.
-- [ ] Record a 30 to 60 second video of the P0 journey with the islands. Save it with the PR evidence.
-- [ ] Post the screenshots and video in chat. Stop at merge-ready and wait for the operator's review.
+- [x] Copy trunk and head Lab screenshots and the island map into the review packet.
+- [x] Record a 30 to 60 second video of the P0 journey with the islands. Save it with the PR evidence.
+- [x] Post the screenshots and video in chat. Stop at merge-ready and wait for the operator's review.
 
 **Merge.**
 
-- [ ] Record the clean verdict at the exact head SHA.
-- [ ] Attach the island map, the import check, the cleanup counts, and the ten live-lane results.
-- [ ] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
-- [ ] Append `PR-GQC-02B.2` to the stack after `PR-GQC-02B.1`. Wait for operator landing.
+- [x] Record the clean verdict at the exact head SHA.
+- [x] Attach the island map, the import check, the cleanup counts, and the ten live-lane results.
+- [x] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
+- [x] Append `PR-GQC-02B.2` to the stack after `PR-GQC-02B.1`. Wait for operator landing.
 
 ## Enforce target configuration and capture policy (PR-GQC-03)
 

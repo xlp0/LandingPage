@@ -4,7 +4,7 @@
 
 - Sprint ID: `SPRINT-GQC-02B`
 - Handle: `urn:pcard:sprint:SPRINT-GQC-02B`
-- Status: `ACTIVE`
+- Status: `COMPLETED`
 - Depends on: `SPRINT-GQC-02A`
 - Unblocks: `SPRINT-GQC-03`
 - Execution units: `PR-GQC-02B.1` (host and wrapped Places), then `PR-GQC-02B.2` (Responsive Lab islands)
@@ -193,12 +193,12 @@ Do not edit `server/`, `routes/`, `app-config.json`, CORS or CSP rules, the capt
 
 ### GQC-02B.3 Hydrate the Responsive Lab as islands
 
-- [ ] Each interactive Lab region is one Preact island with an owner, directive, and directive reason.
-- [ ] The Lab ships no island JavaScript for regions the user has not reached when the directive is `client:visible` or `client:idle`.
-- [ ] Every island that wraps a module with listeners, timers, sockets, or observers calls the module's cleanup on unmount, or records the gap with an owner in GQC-03 or GQC-04.
-- [ ] No island imports `clm-kernel`.
-- [ ] All existing ERB capture, replay, device, rotation, sweep, and conformance specs pass unchanged.
-- [ ] `window.__lab` and the `data-*` hooks used by tests keep their names and behavior.
+- [x] Each interactive Lab region is one Preact island with an owner, directive, and directive reason.
+- [x] The Lab ships no island JavaScript for regions the user has not reached when the directive is `client:visible` or `client:idle`.
+- [x] Every island that wraps a module with listeners, timers, sockets, or observers calls the module's cleanup on unmount, or records the gap with an owner in GQC-03 or GQC-04.
+- [x] No island imports `clm-kernel`.
+- [x] All existing ERB capture, replay, device, rotation, sweep, and conformance specs pass unchanged.
+- [x] `window.__lab` and the `data-*` hooks used by tests keep their names and behavior.
 
 ## Test design
 
@@ -241,8 +241,8 @@ Do not edit `server/`, `routes/`, `app-config.json`, CORS or CSP rules, the capt
 - [x] Every approved `page` Place is served by Astro with an unchanged URL.
 - [x] `astro build` enforces net parity, and each rule has a failing fixture.
 - [x] API, config, and WebSocket contracts are unchanged on trunk and head.
-- [ ] The Responsive Lab is `astro-islands`, and the island map is committed.
+- [x] The Responsive Lab is `astro-islands`, and the island map is committed.
 - [x] All GQC-02 journeys, ERB specs, and GQC-02A trace replays pass on the Astro build.
-- [ ] The UX Designer approves legacy and Astro screenshot comparisons.
-- [ ] The Architect and TEA approve the host, island, and parity contracts.
+- [x] The UX Designer approves legacy and Astro screenshot comparisons.
+- [x] The Architect and TEA approve the host, island, and parity contracts.
 - [ ] The operator approves the handoff to GQC-03.

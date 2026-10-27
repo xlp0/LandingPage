@@ -61,13 +61,22 @@ export function initRecordingRibbon(options = {}) {
   const copyBtn = ribbon.querySelector('#btn-copy-handle');
   const downloadLink = ribbon.querySelector('#btn-download-json');
 
+  const cleanupFns = [];
+  let copyResetTimer = null;
+  let activeBlobUrl = null;
+
+  function listen(target, eventName, handler) {
+    if (!target) return;
+    target.addEventListener(eventName, handler);
+    cleanupFns.push(() => target.removeEventListener(eventName, handler));
+  }
+
   function updateUI() {
     if (!recorder) return;
     const stats = recorder.stats();
     const state = stats.state;
     const sourceKind = recorder.source?.kind || 'unavailable';
 
-    // Source pill
     if (sourcePill) {
       sourcePill.textContent = `Source: ${sourceKind}`;
       if (sourceKind === 'unavailable') {
@@ -80,7 +89,6 @@ export function initRecordingRibbon(options = {}) {
       }
     }
 
-    // Buttons
     if (sourceKind === 'unavailable') {
       btnStart.disabled = true;
       btnStart.title = recorder.source?.reason || 'Recording unavailable';
@@ -106,7 +114,6 @@ export function initRecordingRibbon(options = {}) {
       btnStop.style.display = 'inline-flex';
     }
 
-    // Counters
     if (eventCount) eventCount.textContent = `${stats.size || 0} ev`;
     if (dropCount) {
       if (stats.dropped > 0) {
@@ -126,7 +133,6 @@ export function initRecordingRibbon(options = {}) {
       }
     }
 
-    // Fidelity badge
     const fidelity = getFidelity();
     if (fidelityBadge) {
       fidelityBadge.textContent = `T${fidelity.tier} · ${fidelity.tier === 0 ? 'viewport only' : 'emulated'}`;
@@ -136,23 +142,32 @@ export function initRecordingRibbon(options = {}) {
     }
   }
 
-  btnStart?.addEventListener('click', () => {
+  listen(btnStart, 'click', () => {
     if (savedPill) savedPill.style.display = 'none';
     recorder?.start();
     updateUI();
   });
 
-  btnPause?.addEventListener('click', () => {
+  listen(btnPause, 'click', () => {
     recorder?.pause();
     updateUI();
   });
 
-  btnResume?.addEventListener('click', () => {
+  listen(btnResume, 'click', () => {
     recorder?.resume();
     updateUI();
   });
 
-  btnStop?.addEventListener('click', async () => {
+  listen(savedLabel, 'click', () => {
+    if (!recorder?.lastSavedRun) return;
+    const disclosure = typeof document !== 'undefined' ? document.getElementById('mcard-result-disclosure') : null;
+    if (disclosure) {
+      disclosure.open = true;
+      disclosure.scrollIntoView({ block: 'nearest' });
+    }
+  });
+
+  listen(btnStop, 'click', async () => {
     recorder?.stop();
     updateUI();
 
@@ -181,7 +196,11 @@ export function initRecordingRibbon(options = {}) {
             copyBtn.onclick = () => {
               navigator.clipboard?.writeText(saveResult.data.handle);
               copyBtn.textContent = '✓';
-              setTimeout(() => (copyBtn.textContent = '📋'), 1500);
+              if (copyResetTimer) clearTimeout(copyResetTimer);
+              copyResetTimer = setTimeout(() => {
+                copyBtn.textContent = '📋';
+                copyResetTimer = null;
+              }, 1500);
             };
           }
           if (downloadLink) downloadLink.style.display = 'none';
@@ -195,8 +214,12 @@ export function initRecordingRibbon(options = {}) {
           if (copyBtn) copyBtn.style.display = 'none';
           if (downloadLink && saveResult?.run) {
             downloadLink.style.display = 'inline';
+            if (activeBlobUrl) {
+              URL.revokeObjectURL(activeBlobUrl);
+            }
             const blob = new Blob([JSON.stringify(saveResult.run, null, 2)], { type: 'application/json' });
-            downloadLink.href = URL.createObjectURL(blob);
+            activeBlobUrl = URL.createObjectURL(blob);
+            downloadLink.href = activeBlobUrl;
           }
         }
       }
@@ -205,13 +228,36 @@ export function initRecordingRibbon(options = {}) {
     }
   });
 
-  recorder?.onChange(() => updateUI());
+  if (recorder) {
+    const unsub = recorder.onChange(() => updateUI());
+    cleanupFns.push(unsub);
+  }
   if (typeof document !== 'undefined') {
-    document.addEventListener('lab:viewport-change', updateUI);
-    document.addEventListener('lab:target-change', updateUI);
+    listen(document, 'lab:viewport-change', updateUI);
+    listen(document, 'lab:target-change', updateUI);
   }
 
   updateUI();
 
-  return { updateUI };
+  function destroy() {
+    if (copyResetTimer) {
+      clearTimeout(copyResetTimer);
+      copyResetTimer = null;
+    }
+    if (activeBlobUrl) {
+      URL.revokeObjectURL(activeBlobUrl);
+      activeBlobUrl = null;
+    }
+    if (copyBtn) {
+      copyBtn.onclick = null;
+    }
+    while (cleanupFns.length > 0) {
+      const fn = cleanupFns.pop();
+      try {
+        fn();
+      } catch {}
+    }
+  }
+
+  return { updateUI, destroy };
 }
