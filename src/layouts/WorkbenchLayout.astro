@@ -1,0 +1,40 @@
+---
+const {
+  title,
+  lang = 'en',
+  dir,
+  dataTheme,
+  dataLattice,
+  bodyClass,
+  viewport = 'width=device-width, initial-scale=1.0'
+} = Astro.props;
+const isDev = import.meta.env.DEV;
+---
+<!DOCTYPE html>
+<html lang={lang} dir={dir} data-lattice={dataLattice} data-theme={dataTheme}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content={viewport} />
+    <meta name="x-gqc-host" content="astro" />
+    <title>{title}</title>
+    {isDev && (
+      <script is:inline>
+        if (
+          typeof window !== 'undefined' &&
+          'serviceWorker' in navigator &&
+          (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ) {
+          navigator.serviceWorker.getRegistrations().then((registrations) => {
+            for (const registration of registrations) {
+              registration.unregister();
+            }
+          });
+        }
+      </script>
+    )}
+    <slot name="head" />
+  </head>
+  <body class={bodyClass}>
+    <slot />
+  </body>
+</html>

@@ -1,12 +1,11 @@
-<!doctype html>
-<html lang="en" data-theme="dark">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CLM Sprint Registry — SSoT Display Projection</title>
-  <link rel="stylesheet" href="/public/css/tokens.css" />
+---
+import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
+---
+<WorkbenchLayout title={'CLM Sprint Registry \u2014 SSoT Display Projection'} dataTheme="dark" viewport="width=device-width, initial-scale=1">
+  <Fragment slot="head">
+    <link rel="stylesheet" href="/public/css/tokens.css" />
   <link rel="stylesheet" href="/public/css/semantic-tokens.css" />
-  <style>
+  <style is:inline>
     :root {
       --reg-bg: var(--color-background-primary, #0f172a);
       --reg-card-bg: var(--color-surface, #1e293b);
@@ -120,8 +119,7 @@
       color: var(--reg-muted);
     }
   </style>
-</head>
-<body>
+  </Fragment>
   <header>
     <h1>CLM Sprint Registry</h1>
     <p class="subtitle">Live browser projection of SSoT sprint manifests and DoD sealing contracts.</p>
@@ -132,7 +130,7 @@
     <div id="sprint-grid" class="grid"></div>
   </main>
 
-  <script type="module">
+  <script is:inline type="module">
     async function loadRegistry() {
       const statusEl = document.getElementById('registry-status');
       const gridEl = document.getElementById('sprint-grid');
@@ -176,5 +174,4 @@
 
     window.addEventListener('DOMContentLoaded', loadRegistry);
   </script>
-</body>
-</html>
+</WorkbenchLayout>

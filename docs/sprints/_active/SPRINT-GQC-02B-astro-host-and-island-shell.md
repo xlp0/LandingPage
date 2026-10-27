@@ -177,19 +177,19 @@ Do not edit `server/`, `routes/`, `app-config.json`, CORS or CSP rules, the capt
 
 ### GQC-02B.1 Serve every approved Place from Astro
 
-- [ ] `npm run build` produces the Astro build and every workspace package build.
-- [ ] `npm start` serves pages through the Astro handler and keeps every `/api/*`, `/app-config.json`, `/health`, and WebSocket response unchanged, proven by contract tests on trunk and head.
-- [ ] Every approved `page` Place is `astro-wrapped` or `astro-islands`, and its URL is unchanged.
-- [ ] `?target=`, `?noredirect`, and the `index.html` redirect behave as on trunk.
-- [ ] A Place's legacy `.html` file is deleted only after its parity spec passes.
-- [ ] Dev mode unregisters localhost service workers and sends no-store HTML. Production service-worker behavior is unchanged.
+- [x] `npm run build` produces the Astro build and every workspace package build.
+- [x] `npm start` serves pages through the Astro handler and keeps every `/api/*`, `/app-config.json`, `/health`, and WebSocket response unchanged, proven by contract tests on trunk and head.
+- [x] Every approved `page` Place is `astro-wrapped` or `astro-islands`, and its URL is unchanged.
+- [x] `?target=`, `?noredirect`, and the `index.html` redirect behave as on trunk.
+- [x] A Place's legacy `.html` file is deleted only after its parity spec passes.
+- [x] Dev mode unregisters localhost service workers and sends no-store HTML. Production service-worker behavior is unchanged.
 
 ### GQC-02B.2 Enforce net parity at build time
 
-- [ ] `astro build` fails for each parity rule, proven by one failing fixture per rule.
-- [ ] The built HTML of every Place contains only internal links declared as Transitions from that Place.
-- [ ] Every Astro endpoint or Action has a server-call binding or a `not-ui-reachable` mark.
-- [ ] The build report lists declared Transitions that no page triggers.
+- [x] `astro build` fails for each parity rule, proven by one failing fixture per rule.
+- [x] The built HTML of every Place contains only internal links declared as Transitions from that Place.
+- [x] Every Astro endpoint or Action has a server-call binding or a `not-ui-reachable` mark.
+- [x] The build report lists declared Transitions that no page triggers.
 
 ### GQC-02B.3 Hydrate the Responsive Lab as islands
 
@@ -238,11 +238,11 @@ Do not edit `server/`, `routes/`, `app-config.json`, CORS or CSP rules, the capt
 
 ## Definition of done
 
-- [ ] Every approved `page` Place is served by Astro with an unchanged URL.
-- [ ] `astro build` enforces net parity, and each rule has a failing fixture.
-- [ ] API, config, and WebSocket contracts are unchanged on trunk and head.
+- [x] Every approved `page` Place is served by Astro with an unchanged URL.
+- [x] `astro build` enforces net parity, and each rule has a failing fixture.
+- [x] API, config, and WebSocket contracts are unchanged on trunk and head.
 - [ ] The Responsive Lab is `astro-islands`, and the island map is committed.
-- [ ] All GQC-02 journeys, ERB specs, and GQC-02A trace replays pass on the Astro build.
+- [x] All GQC-02 journeys, ERB specs, and GQC-02A trace replays pass on the Astro build.
 - [ ] The UX Designer approves legacy and Astro screenshot comparisons.
 - [ ] The Architect and TEA approve the host, island, and parity contracts.
 - [ ] The operator approves the handoff to GQC-03.

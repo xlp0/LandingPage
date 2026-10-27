@@ -316,7 +316,7 @@ bindings:
       routeHandle: mcard:route:/index.html
       clmTypeUri: clm://type/view/workbench/landing-portal
       mcardHash: null
-      migrationState: legacy-static
+      migrationState: astro-wrapped
       entry: true
       deepLinkEntry: true
       owner: Product Manager and UX Designer
@@ -330,7 +330,7 @@ bindings:
       routeHandle: mcard:route:/responsive-lab.html
       clmTypeUri: clm://type/view/workbench/responsive-lab
       mcardHash: null
-      migrationState: legacy-static
+      migrationState: astro-wrapped
       entry: false
       deepLinkEntry: true
       owner: Product Manager and TEA
@@ -344,7 +344,7 @@ bindings:
       routeHandle: mcard:route:/app.html
       clmTypeUri: clm://type/view/legacy/mission-control
       mcardHash: null
-      migrationState: legacy-static
+      migrationState: astro-wrapped
       entry: false
       deepLinkEntry: true
       owner: Product Manager
@@ -358,7 +358,7 @@ bindings:
       routeHandle: mcard:route:/sprint-registry.html
       clmTypeUri: clm://type/view/diagnostic/sprint-registry
       mcardHash: null
-      migrationState: legacy-static
+      migrationState: astro-wrapped
       entry: false
       deepLinkEntry: true
       owner: Scrum Master
@@ -372,7 +372,7 @@ bindings:
       routeHandle: mcard:route:/fiber-inspector.html
       clmTypeUri: clm://type/view/diagnostic/fiber-inspector
       mcardHash: null
-      migrationState: legacy-static
+      migrationState: astro-wrapped
       entry: false
       deepLinkEntry: true
       owner: Architect
@@ -386,7 +386,7 @@ bindings:
       routeHandle: mcard:route:/fiber-conformance.html
       clmTypeUri: clm://type/view/diagnostic/fiber-conformance
       mcardHash: null
-      migrationState: legacy-static
+      migrationState: astro-wrapped
       entry: false
       deepLinkEntry: true
       owner: Architect

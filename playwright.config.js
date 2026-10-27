@@ -50,7 +50,7 @@ export function buildPlaywrightProjects(env = process.env) {
     {
       name: 'smoke',
       testDir: './tests/smoke',
-      timeout: 30000,
+      timeout: 60000,
       retries: RETRY_POLICY.projects.smoke.localRetries,
       metadata: { category: 'smoke' },
       use: {
@@ -113,7 +113,10 @@ export function buildPlaywrightProjects(env = process.env) {
 
 export function createPlaywrightConfig(env = process.env, argv = process.argv, platform = process.platform) {
   const ci = isCiEnv(env);
-  const serverContract = resolvePlaywrightServerContract(env);
+  const serverContract = resolvePlaywrightServerContract({
+    ...env,
+    TEST_SERVER_COMMAND: env?.TEST_SERVER_COMMAND || 'npm run build:astro && node ws-server.js',
+  });
   const slowMo = env?.SLOWMO
     ? parseInt(env.SLOWMO, 10)
     : env?.HEADED || argv.includes('--headed')

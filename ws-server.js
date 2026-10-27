@@ -8,7 +8,8 @@ import { WebSocketServer } from 'ws';
 import http from 'http';
 import cors from 'cors';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import fsSync from 'fs';
+import { fileURLToPath, pathToFileURL } from 'url';
 import dotenv from 'dotenv';
 
 // ESM equivalent of __dirname
@@ -77,8 +78,8 @@ app.use('/api/test-runs', express.json({ limit: '2mb' }), createTestRunRouter({ 
 console.log('[Server] ✅ Test-Runs API enabled at /api/test-runs');
 
 // Parse JSON bodies
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use('/api', express.json());
+app.use('/api', express.urlencoded({ extended: true }));
 
 // Add cache control headers and permissive CSP
 app.use((req, res, next) => {
@@ -128,6 +129,17 @@ app.use((req, res, next) => {
 
 // Serve public folder for CSS, JS, and other assets - moved before root static middleware
 // Serve public folder for CSS, JS, and other assets - moved before root static middleware
+process.env.ASTRO_NODE_AUTOSTART = 'disabled';
+const astroClientDir = path.join(__dirname, 'dist', 'client');
+const astroServerEntry = path.join(__dirname, 'dist', 'server', 'entry.mjs');
+if (fsSync.existsSync(astroClientDir)) {
+    app.use(express.static(astroClientDir));
+}
+if (fsSync.existsSync(astroServerEntry)) {
+    const { handler: astroSsrHandler } = await import(pathToFileURL(astroServerEntry).href);
+    app.use(astroSsrHandler);
+}
+
 import serveIndex from 'serve-index';
 
 // Enable directory listing for public folder
@@ -387,7 +399,7 @@ setInterval(() => {
     if (roomRegistry.getRoomCount() > 0) {
         broadcastRoomList();
     }
-}, 5000);
+}, 5000).unref();
 
 // Auto-start if run directly
 const isDirectRun = Boolean(process.argv[1] && (

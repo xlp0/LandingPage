@@ -1,17 +1,14 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GovTech OS - Responsive UI Lab (Full-Window Viewport Workbench)</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+---
+import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
+---
+<WorkbenchLayout title="GovTech OS - Responsive UI Lab (Full-Window Viewport Workbench)" dataTheme="dark" bodyClass="lab-booting">
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/public/css/semantic-tokens.css">
 
-  <style>
+  <style is:inline>
     * {
       box-sizing: border-box;
       margin: 0;
@@ -22,18 +19,14 @@
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--color-bg);
       color: var(--color-text-primary);
-      /* height, not min-height: the workbench is window-sized, so the stage
-         reports the space actually available. With min-height the stage's
-         content could inflate the body past the viewport, and the containment
-         math would then measure a stage that had already grown to fit the very
-         device it was supposed to bound (INV-RVP-02). */
+      
       height: 100vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
-    /* Top Navigation Bar */
+    
     .lab-navbar {
       height: 60px;
       background: var(--color-surface);
@@ -130,8 +123,7 @@
     }
 
     .nav-action-link.primary {
-      /* a primary-painted surface carries its own foreground: --color-text-primary
-         is white in high-contrast, and this background is yellow there (1.07:1) */
+      
       background: linear-gradient(135deg, var(--color-primary-hover), var(--color-primary-hover));
       border: 1px solid var(--color-primary);
       color: var(--color-on-primary);
@@ -142,7 +134,7 @@
       box-shadow: 0 0 12px var(--badge-info-border);
     }
 
-    /* Real-Estate Notice Banner */
+    
     .real-estate-banner {
       background: linear-gradient(90deg, var(--panel-strong), var(--panel-deep-strong));
       border-bottom: 1px solid var(--border-subtle);
@@ -168,7 +160,7 @@
       font-size: 0.72rem;
     }
 
-    /* Workbench Controls Strip */
+    
     .workbench-toolbar {
       background: var(--panel-deep-strong);
       border-bottom: 1px solid var(--border-subtle);
@@ -197,7 +189,7 @@
       letter-spacing: 0.04em;
     }
 
-    /* Presets and orientation buttons */
+    
     .toolbar-btn {
       background: var(--panel);
       border: 1px solid var(--border-strong);
@@ -235,7 +227,7 @@
       box-shadow: 0 0 10px var(--badge-info-bg-strong);
     }
 
-    /* Custom dimensions form */
+    
     .custom-dim-form {
       display: flex;
       align-items: center;
@@ -258,7 +250,7 @@
       text-align: center;
     }
 
-    /* URL selection strip & Interactive Omnibar */
+    
     .url-selector-strip {
       background: var(--panel-deep-strong);
       border-bottom: 1px solid var(--border-subtle);
@@ -439,7 +431,7 @@
       width: 100%;
     }
 
-    /* Full-Window Stage & Workspace Layouts */
+    
     .lab-workspace-container {
       flex: 1;
       min-height: 0;
@@ -450,7 +442,7 @@
       height: calc(100vh - 60px - 34px - 38px);
     }
 
-    /* Stacked (Vertical) Layout Arrangement */
+    
     .lab-workspace-container.arrangement-vertical {
       flex-direction: column;
     }
@@ -470,7 +462,7 @@
       padding: 1.25rem 1.5rem;
     }
 
-    /* Side-by-Side (Horizontal) Layout Arrangement */
+    
     .lab-workspace-container.arrangement-horizontal {
       flex-direction: row;
     }
@@ -532,7 +524,7 @@
       padding: 1.5rem;
     }
 
-    /* Full-Window Stage Area */
+    
     .lab-stage-container {
       flex: 1;
       min-height: 0;
@@ -547,17 +539,12 @@
       position: relative;
     }
 
-    /* Controlled Viewport Frame — RVP-01: both axes are real geometry.
-       The frame is driven by --frame-target-width/height; an orientation class
-       no longer fakes a dimension via min-height. */
+    
     .viewport-frame {
       flex: none;
       width: var(--frame-target-width, 100%);
       height: var(--frame-target-height, 100%);
-      /* No max-width here: the wrapper is the scaled size, so a percentage cap
-         would clamp the frame to the scaled box and the transform would shrink
-         it a second time. The wrapper bounds the layout; the transform scales
-         the paint. */
+      
       background: var(--panel-abyss);
       border: 1px solid var(--border-strong);
       border-radius: 12px;
@@ -572,9 +559,7 @@
                   height var(--motion-duration-slow) var(--motion-ease);
     }
 
-    /* RVP-04: the wrapper lays out at the SCALED size. A transform alone paints
-       smaller but still lays out (w, h), so the stage would keep overflowing —
-       the very thing the scaling exists to prevent. */
+    
     .viewport-scale-wrapper {
       width: calc(var(--frame-target-width, 100%) * var(--frame-scale-factor, 1));
       height: calc(var(--frame-target-height, 100%) * var(--frame-scale-factor, 1));
@@ -587,16 +572,13 @@
                   height var(--motion-duration-slow) var(--motion-ease);
     }
 
-    /* Boot: no transition until the first geometry is committed, so the frame
-       does not animate into its initial state. Anything measuring the frame
-       early would otherwise see a box mid-flight. */
+    
     body.lab-booting .viewport-frame,
     body.lab-booting .viewport-scale-wrapper {
       transition: none;
     }
 
-    /* Orientation carries colour only — the dimensions come from the geometry
-       state, so these classes cannot disagree with it. */
+    
     .viewport-frame.orientation-vertical {
       border-color: var(--badge-success-border);
       box-shadow: 0 25px 50px -12px var(--shadow-panel), 0 0 20px var(--color-success-surface);
@@ -665,7 +647,7 @@
       display: block;
     }
 
-    /* Sandbox Alert */
+    
     .cors-alert-toast {
       background: var(--badge-danger-bg);
       border: 1px solid var(--badge-danger-border);
@@ -681,7 +663,7 @@
       max-width: 900px;
     }
 
-    /* Footer Status Bar */
+    
     .lab-footer {
       height: 38px;
       background: var(--panel-deep-strong);
@@ -700,9 +682,7 @@
       font-weight: 600;
       color: var(--badge-success-text);
     }
-    /* ── RVP-03: device preset ribbon and Device Manager ──────────────────
-       Every colour below is a token (INV-RVP-06): no literal is permitted in
-       this block, and the style gate enforces that. */
+    
     .preset-chips-scroll {
       display: flex;
       flex-wrap: wrap;
@@ -866,10 +846,7 @@
       min-height: 1rem;
     }
   </style>
-</head>
-
-<body class="lab-booting">
-  <!-- Top Navigation Bar -->
+  </Fragment>
   <header class="lab-navbar">
     <div class="lab-nav-left">
       <a href="/" class="back-home-btn" id="btn-back-home" title="Return to GovTech OS Portal">
@@ -884,7 +861,7 @@
     </div>
 
     <div class="lab-nav-right">
-      <!-- Layout Arrangement Switcher in Navbar -->
+      
       <div class="arrangement-toggle-group" style="display: flex; gap: 0.25rem; background: var(--color-scrim); padding: 0.2rem; border-radius: 8px; border: 1px solid var(--color-border);">
         <span style="font-size: 0.72rem; color: var(--color-text-muted); align-self: center; margin: 0 0.35rem; font-weight: 500;">Arrangement:</span>
         <button id="btn-arrange-horizontal" class="toolbar-btn arrangement-btn active" data-arrangement="horizontal" title="Horizontal arrangement (Controls in left sidebar, canvas beside)">
@@ -904,7 +881,7 @@
     </div>
   </header>
 
-  <!-- Real-Estate Maximizer Banner -->
+  
   <aside class="real-estate-banner" id="cors-notice-banner">
     <div>
       <span class="real-estate-tag">🖥️ Full-Window Real-Estate</span>
@@ -916,18 +893,18 @@
     </div>
   </aside>
 
-  <!-- Top Recording & Telemetry Ribbon Strip (Prominent & Always Visible) -->
+  
   <div class="lab-recording-strip" id="lab-recording-strip" style="background: var(--panel-deep-strong); border-bottom: 1px solid var(--border-subtle); padding: 0.5rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; z-index: 50;">
     <div id="lab-recording-bar" style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;"></div>
   </div>
 
-  <!-- Dual-Arrangement Workspace Container -->
+  
   <div class="lab-workspace-container arrangement-horizontal" id="lab-workspace-container">
-    <!-- Workbench Controls Dock (Sidebar in Horizontal arrangement, Topbar in Vertical arrangement) -->
+    
     <aside class="workbench-controls-dock" id="workbench-controls-dock">
-      <!-- Interactive Workbench Controls Toolbar -->
+      
       <div class="workbench-toolbar" id="controlled-size-controller">
-        <!-- Arrangement Controls in Dock -->
+        
         <div class="toolbar-group">
           <span class="group-label">Workbench Arrangement:</span>
           <div class="toolbar-group-row">
@@ -940,7 +917,7 @@
           </div>
         </div>
 
-        <!-- Viewport Orientation Controls -->
+        
         <div class="toolbar-group">
           <span class="group-label">Viewport Orientation:</span>
           <div class="toolbar-group-row">
@@ -953,9 +930,7 @@
           </div>
         </div>
 
-        <!-- Dimension Presets — RVP-03: rendered from the device registry.
-             The built-in chips keep their #btn-size-* ids because
-             presentation-lattice.spec.js asserts on #btn-size-desktop. -->
+        
         <div class="toolbar-group">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
             <span class="group-label">Dimension Presets:</span>
@@ -964,11 +939,11 @@
             </button>
           </div>
           <div id="device-presets-container" class="toolbar-group-row preset-chips-scroll" role="group" aria-label="Device dimension presets">
-            <!-- rendered by the registry subscriber -->
+            
           </div>
         </div>
 
-        <!-- Custom Geometry — RVP-04: dual-axis, with Fit-to-Screen and Rotate -->
+        
         <div class="toolbar-group">
           <span class="group-label">Custom Geometry:</span>
           <div class="custom-dim-form" style="display: grid; grid-template-columns: auto 1fr auto 1fr auto; gap: 0.25rem; align-items: center;">
@@ -984,19 +959,19 @@
           </div>
         </div>
 
-        <!-- Conformance Diagnostics Panel (SPRINT-ERB-06 R7) -->
+        
         <div class="toolbar-group" id="conformance-panel-group">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
             <span class="group-label">Conformance:</span>
             <span id="conformance-status-badge" class="footer-status-pill" style="font-size: 0.7rem; color: var(--color-text-muted);">Standby</span>
           </div>
           <div id="conformance-details" style="font-size: 0.72rem; line-height: 1.4; background: var(--panel-surface, rgba(0,0,0,0.1)); padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border);">
-            <!-- Rendered by conformance-panel.js -->
+            
           </div>
         </div>
       </div>
 
-      <!-- Target URL Omnibar & Sandbox Diagnostics Strip -->
+      
       <div class="url-selector-strip" id="pane-url-bar">
         <div class="target-omnibar-header">
           <label for="target-url-input" class="group-label" style="font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 0.35rem;">
@@ -1038,9 +1013,9 @@
       </div>
     </aside>
 
-    <!-- Full-Window Stage Area -->
+    
     <main class="lab-stage-container" id="lab-stage-container">
-      <!-- Sandbox Boundary Warning (dynamic) -->
+      
       <div class="cors-alert-toast" id="cors-block-alert" style="display: none;">
         <span style="font-size: 1.1rem; line-height: 1;">⚠️</span>
         <div id="cors-block-alert-content">
@@ -1049,8 +1024,7 @@
         </div>
       </div>
 
-      <!-- Viewport Frame Stage — RVP-04: the wrapper is sized to the SCALED
-           dimensions so the stage lays out what it actually sees. -->
+      
       <div class="viewport-scale-wrapper" id="viewport-scale-wrapper">
         <div class="viewport-frame orientation-horizontal" id="controlled-panel-frame" style="--frame-target-width: 100%; --frame-target-height: 100%;">
           <div class="viewport-frame-bar">
@@ -1070,9 +1044,7 @@
     </main>
   </div>
 
-  <!-- RVP-03: Device Preset Manager. The ids below are the contract RVP-05's
-       suite drives; the attribute name on each delete control is
-       data-delete-device="<slug>". -->
+  
   <div class="device-manager-backdrop" id="device-manager-modal" role="dialog" aria-modal="true" aria-labelledby="device-manager-title">
     <div class="device-manager-modal">
       <div class="dm-header">
@@ -1107,7 +1079,7 @@
       <div class="dm-error" id="device-form-error" role="alert" aria-live="polite"></div>
 
       <div class="dm-list" id="device-manager-list" role="list">
-        <!-- rendered from the registry -->
+        
       </div>
 
       <div class="dm-actions">
@@ -1117,7 +1089,7 @@
     </div>
   </div>
 
-  <!-- Bottom Status Bar -->
+  
   <footer class="lab-footer">
     <div style="display: flex; align-items: center; gap: 1rem;">
       <span id="controlled-panel-status">● Viewport: Full (100%) • ↔ Horizontal (Landscape) • [☲ Side-by-Side Arrangement]</span>
@@ -1129,7 +1101,7 @@
     </div>
   </footer>
 
-  <script type="module">
+  <script is:inline type="module">
     import { DeviceRegistry } from './js/device-registry.js';
     import { createViewportStage } from './js/harness/viewport-stage.js';
     import { createTargetMembrane } from './js/harness/target-membrane.js';
@@ -1199,13 +1171,10 @@
       getOrientation: () => stage.getGeometry().orientation
     });
 
-    // commit initial geometry with transitions off, then enable them
     requestAnimationFrame(() => {
       requestAnimationFrame(() => document.body.classList.remove('lab-booting'));
     });
 
     installLabApi({ stage, membrane, registry, recorder });
   </script>
-</body>
-
-</html>
+</WorkbenchLayout>

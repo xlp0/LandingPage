@@ -43,15 +43,18 @@
     "install-browsers": "playwright install",
     "report": "playwright show-report",
     "ws-server": "node ws-server.js",
-    "dev": "node ws-server.js",
+    "dev": "node -e \"import('node:child_process').then(({spawn})=>{const a=spawn(process.execPath,['ws-server.js'],{stdio:'inherit'});const b=spawn(process.execPath,['./node_modules/astro/bin/astro.mjs','dev','--port',process.env.ASTRO_PORT||'4322'],{stdio:'inherit'});let stopping=false;const stop=(code=0)=>{if(stopping)return;stopping=true;a.kill('SIGTERM');b.kill('SIGTERM');setTimeout(()=>process.exit(code),150).unref();};process.on('SIGINT',()=>stop(0));process.on('SIGTERM',()=>stop(0));a.on('exit',(c)=>stop(c??0));b.on('exit',(c)=>stop(c??0));})\"",
     "build:mcard": "node scripts/build-mcard-bundle.js",
     "build:charts": "node scripts/build-chart-bundles.js",
-    "build": "npm run build --workspaces",
+    "build": "npm run build:astro && npm run build:packages",
     "publish:all": "npm publish --workspaces",
     "version:major": "npm version major --workspaces",
     "version:minor": "npm version minor --workspaces",
     "version:patch": "npm version patch --workspaces",
-    "test:smoke:cross-browser": "PW_CROSS_BROWSER=1 playwright test --project=smoke-firefox --project=smoke-webkit"
+    "test:smoke:cross-browser": "PW_CROSS_BROWSER=1 playwright test --project=smoke-firefox --project=smoke-webkit",
+    "build:astro": "astro build",
+    "build:packages": "(cd packages/core && node build.js) && (cd packages/markdown-renderer && node build.js)",
+    "start": "node ws-server.js"
   },
   "repository": {
     "type": "git",
@@ -71,9 +74,12 @@
     "esbuild": "^0.27.1"
   },
   "dependencies": {
+    "@astrojs/node": "11.1.9",
+    "@astrojs/preact": "6.1.1",
     "@mlc-ai/web-llm": "^0.2.80",
     "@reduxjs/toolkit": "^1.9.7",
     "animejs": "^4.2.2",
+    "astro": "7.4.2",
     "axios": "^1.6.0",
     "better-sqlite3": "^12.5.0",
     "clm-kernel": "0.0.12",
@@ -84,6 +90,7 @@
     "js-yaml": "^4.1.0",
     "katex": "^0.16.25",
     "mathjax": "^4.0.0",
+    "preact": "11.1.0",
     "redux": "^5.0.1",
     "serve-index": "^1.9.1",
     "three": "^0.182.0",

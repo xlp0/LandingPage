@@ -1,13 +1,13 @@
-<!DOCTYPE html>
-<html lang="en" data-lattice="web:desktop:portrait:en-US:dark:balanced" data-theme="dark">
+---
+import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
+---
+<WorkbenchLayout title="MCard Manager" dataLattice="web:desktop:portrait:en-US:dark:balanced" dataTheme="dark">
+  <Fragment slot="head">
+    <link rel="stylesheet" href="/public/css/semantic-tokens.css">
+  
+  
 
-<head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="/public/css/semantic-tokens.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MCard Manager</title>
-
-  <!-- PWA Meta Tags -->
+  
   <meta name="description" content="Content-addressable card management system with local-first storage">
   <meta name="theme-color" content="#007acc">
   <meta name="mobile-web-app-capable" content="yes">
@@ -15,40 +15,37 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="MCard Manager">
 
-  <!-- PWA Manifest -->
+  
   <link rel="manifest" href="/public/manifest.json">
   <link rel="icon" type="image/svg+xml" href="/public/icon.svg">
   <link rel="apple-touch-icon" href="/public/icon.svg">
 
-  <!-- Performance Optimization: Resource Hints -->
-  <!-- Preconnect to CDN origins for faster loading -->
+  
+  
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 
-  <!-- Preload critical CSS -->
+  
   <link rel="preload" href="/public/css/mcard-manager.css" as="style">
 
-  <!-- Preload critical JavaScript -->
+  
   <link rel="preload" href="/public/js/app-bootstrap.js" as="script" crossorigin>
 
-  <!-- Define process.env for browser compatibility -->
-  <script src="/public/js/env-shim.js"></script>
+  
+  <script is:inline src="/public/js/env-shim.js"></script>
 
-  <!-- Auto-generate Import Map based on current URL -->
-  <script src="/public/js/importmap-init.js"></script>
+  
+  <script is:inline src="/public/js/importmap-init.js"></script>
 
-  <!-- Lucide Icons - Self-Hosted -->
-  <script src="/public/vendor/lucide/lucide.min.js"></script>
-  <!-- js-yaml Library for CLM Parsing -->
-  <script src="/public/vendor/js-yaml.min.js"></script>
-  <!-- MCard Manager CSS -->
+  
+  <script is:inline src="/public/vendor/lucide/lucide.min.js"></script>
+  
+  <script is:inline src="/public/vendor/js-yaml.min.js"></script>
+  
   <link rel="stylesheet" href="/public/css/mcard-manager.css">
-  <!-- Content Renderers CSS -->
+  
   <link rel="stylesheet" href="/public/css/content-renderers.css">
-</head>
-
-<body>
-  <!-- Offline Indicator -->
+  </Fragment>
   <div id="offline-indicator" style="
     display: none;
     position: fixed;
@@ -98,7 +95,7 @@
       <input type="file" id="fileInput" multiple style="display: none;">
     </div>
 
-    <!-- Full-Width Calendar View -->
+    
     <div class="calendar-view" id="calendarView" style="display: none;">
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('calendar')">
@@ -109,7 +106,7 @@
           <i data-lucide="calendar" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
           Public Calendar
         </h2>
-        <div style="width: 120px;"></div> <!-- Spacer for centering -->
+        <div style="width: 120px;"></div> 
       </div>
       <div class="calendar-container" id="calendarContainer">
         <iframe id="calendarFrame"
@@ -119,7 +116,7 @@
       </div>
     </div>
 
-    <!-- Full-Width Map View -->
+    
     <div class="calendar-view" id="mapView" style="display: none;">
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('map')">
@@ -130,7 +127,7 @@
           <i data-lucide="map-pin" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
           Map
         </h2>
-        <div style="width: 120px;"></div> <!-- Spacer for centering -->
+        <div style="width: 120px;"></div> 
       </div>
       <div class="calendar-container" id="mapContainer">
         <iframe id="mapFrame" data-src="/public/examples/location-map.html"
@@ -139,7 +136,7 @@
       </div>
     </div>
 
-    <!-- Full-Width 3D Viewer -->
+    
     <div class="calendar-view" id="threeDView" style="display: none;">
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('threeD')">
@@ -150,7 +147,7 @@
           <i data-lucide="box" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
           3D Theater
         </h2>
-        <div style="width: 120px;"></div> <!-- Spacer for centering -->
+        <div style="width: 120px;"></div> 
       </div>
       <div class="calendar-container" id="threeDContainer">
         <iframe id="threeDFrame" data-src="/public/examples/THREEJS_ANIMEJS/Theater_Example.html"
@@ -159,7 +156,7 @@
       </div>
     </div>
 
-    <!-- Full-Width Music Visualizer -->
+    
     <div class="calendar-view" id="musicView" style="display: none;">
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('music')">
@@ -170,7 +167,7 @@
           <i data-lucide="music" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
           Music Visualizer V5
         </h2>
-        <div style="width: 120px;"></div> <!-- Spacer for centering -->
+        <div style="width: 120px;"></div> 
       </div>
       <div class="calendar-container" id="musicContainer">
         <iframe id="musicFrame" data-src="/public/examples/Music/SyncedMusicVisualizerV5.html"
@@ -179,7 +176,7 @@
       </div>
     </div>
 
-    <!-- Full-Width Dashboard -->
+    
     <div class="calendar-view" id="dashboardView" style="display: none;">
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('dashboard')">
@@ -191,7 +188,7 @@
             style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
           Dashboard
         </h2>
-        <div style="width: 120px;"></div> <!-- Spacer for centering -->
+        <div style="width: 120px;"></div> 
       </div>
       <div class="calendar-container" id="dashboardContainer">
         <iframe id="dashboardFrame"
@@ -201,7 +198,7 @@
       </div>
     </div>
 
-    <!-- Full-Width Morphism Cube v1 -->
+    
     <div class="calendar-view" id="morphismV1View" style="display: none;">
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('morphismV1')">
@@ -212,7 +209,7 @@
           <i data-lucide="cube" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
           Morphism Cube v1
         </h2>
-        <div style="width: 120px;"></div> <!-- Spacer for centering -->
+        <div style="width: 120px;"></div> 
       </div>
       <div class="calendar-container" id="morphismV1Container">
         <iframe id="morphismV1Frame" data-src="/public/examples/3DGames/MorphismCube/Morphism_FirstTry.html"
@@ -221,7 +218,7 @@
       </div>
     </div>
 
-    <!-- Full-Width Morphism Cube v2 -->
+    
     <div class="calendar-view" id="morphismV2View" style="display: none;">
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('morphismV2')">
@@ -232,7 +229,7 @@
           <i data-lucide="box" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
           Morphism Cube v2
         </h2>
-        <div style="width: 120px;"></div> <!-- Spacer for centering -->
+        <div style="width: 120px;"></div> 
       </div>
       <div class="calendar-container" id="morphismV2Container">
         <iframe id="morphismV2Frame" data-src="/public/examples/3DGames/MorphismCube/Morphism_SecondTry.html"
@@ -241,7 +238,7 @@
       </div>
     </div>
 
-    <!-- Full-Width Monopoly Game -->
+    
     <div class="calendar-view" id="monopolyView" style="display: none;">
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('monopoly')">
@@ -252,7 +249,7 @@
           <i data-lucide="dice-5" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
           Monopoly
         </h2>
-        <div style="width: 120px;"></div> <!-- Spacer for centering -->
+        <div style="width: 120px;"></div> 
       </div>
       <div class="calendar-container" id="monopolyContainer">
         <iframe id="monopolyFrame" data-src="/public/examples/games/monopoly.html"
@@ -261,7 +258,7 @@
       </div>
     </div>
 
-    <!-- Full-Width Authenticated Monopoly Game -->
+    
     <div class="calendar-view" id="monopolyAuthView" style="display: none;">
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('monopoly-auth')">
@@ -293,7 +290,7 @@
       </div>
     </div>
 
-    <!-- Full-Width Authenticated Chess Game -->
+    
     <div class="calendar-view" id="chessAuthView" style="display: none;">
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('chess-auth')">
@@ -325,7 +322,7 @@
       </div>
     </div>
 
-    <!-- Full-Width Authenticated Go Game -->
+    
     <div class="calendar-view" id="goAuthView" style="display: none;">
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('go-auth')">
@@ -358,7 +355,7 @@
     </div>
 
     <div class="main-content">
-      <!-- Left Sidebar: File Types -->
+      
       <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
           <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -369,11 +366,11 @@
           </div>
         </div>
         <div class="type-list" id="typeList">
-          <!-- Card types will be populated here -->
+          
         </div>
       </div>
 
-      <!-- Middle Column: MCard List -->
+      
       <div class="middle-column">
         <div class="mobile-back-btn" onclick="navigateBack()">
           <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
@@ -399,7 +396,7 @@
               <i data-lucide="filter" style="width: 16px; height: 16px;"></i>
             </button>
           </div>
-          <!-- Search Filters Dropdown -->
+          
           <div class="search-filters" id="searchFilters" style="display: none;">
             <div class="filter-section">
               <label class="filter-label">Filter by:</label>
@@ -458,7 +455,7 @@
         </div>
       </div>
 
-      <!-- Right Column: Viewer -->
+      
       <div class="viewer-column">
         <div class="mobile-back-btn" onclick="navigateBack()">
           <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
@@ -489,7 +486,7 @@
         </div>
       </div>
 
-      <!-- Chat Panel -->
+      
       <div class="chat-panel hidden" id="chatPanel">
         <div class="chat-header">
           <h3>
@@ -519,7 +516,7 @@
         </div>
       </div>
 
-      <!-- Edit Panel -->
+      
       <div class="chat-panel hidden" id="editPanel">
         <div class="chat-header">
           <h3 id="editPanelTitle">
@@ -532,7 +529,7 @@
           </button>
         </div>
         <div class="chat-messages" style="padding: 16px;">
-          <!-- Handle Name Input -->
+          
           <div style="margin-bottom: 16px;">
             <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: var(--color-text-primary);">
               <i data-lucide="tag"
@@ -546,7 +543,7 @@
             </p>
           </div>
 
-          <!-- Content Editor -->
+          
           <div style="margin-bottom: 16px;">
             <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: var(--color-text-primary);">
               <i data-lucide="file-text"
@@ -557,7 +554,7 @@
               style="width: 100%; min-height: 300px; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 13px; line-height: 1.6; resize: vertical;"></textarea>
           </div>
 
-          <!-- Action Buttons -->
+          
           <div style="display: flex; gap: 8px; justify-content: flex-end;">
             <button class="btn btn-secondary" onclick="closeEditPanel()" style="font-size: 14px; padding: 10px 20px;">
               <i data-lucide="x" style="width: 14px; height: 14px;"></i>
@@ -573,7 +570,7 @@
     </div>
   </div>
 
-  <!-- Modal for viewing card details -->
+  
   <div class="modal" id="cardModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -581,37 +578,35 @@
         <button class="close-btn" onclick="closeModal()">×</button>
       </div>
       <div class="modal-body" id="modalBody">
-        <!-- Content will be populated here -->
+        
       </div>
     </div>
   </div>
 
-  <!-- Toast notification -->
+  
   <div class="toast" id="toast">
     <span id="toastIcon">✓</span>
     <span id="toastMessage">Success!</span>
   </div>
 
-  <!-- Sidebar collapse functionality -->
-  <script src="/public/js/ui-inline-handlers.js"></script>
+  
+  <script is:inline src="/public/js/ui-inline-handlers.js"></script>
 
-  <!-- Performance Monitoring -->
-  <script src="/public/js/performance-monitor.js"></script>
+  
+  <script is:inline src="/public/js/performance-monitor.js"></script>
 
-  <!-- Lazy Iframe Loader (loads default dashboard after page load) -->
-  <script src="/public/js/lazy-iframe-loader.js"></script>
+  
+  <script is:inline src="/public/js/lazy-iframe-loader.js"></script>
 
-  <!-- MCard Manager JavaScript (Application Bootstrap) -->
-  <script type="module" src="/public/js/app-bootstrap.js?v=18"></script>
+  
+  <script is:inline type="module" src="/public/js/app-bootstrap.js?v=18"></script>
 
-  <!-- Data-driven View Manager (must load before pwa-init.js) -->
-  <script src="/public/js/ViewManager.js"></script>
+  
+  <script is:inline src="/public/js/ViewManager.js"></script>
 
-  <!-- PWA Install Modal UI Generator -->
-  <script src="/public/js/PWAInstallModal.js"></script>
+  
+  <script is:inline src="/public/js/PWAInstallModal.js"></script>
 
-  <!-- PWA Manager (orchestrates PWA functionality, auto-initializes) -->
-  <script src="/public/js/PWAManager.js"></script>
-</body>
-
-</html>
+  
+  <script is:inline src="/public/js/PWAManager.js"></script>
+</WorkbenchLayout>

@@ -1,0 +1,529 @@
+---
+import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
+---
+<WorkbenchLayout title="GovTech Platform | Mission Control">
+  <Fragment slot="head">
+    <meta name="description" content="GovTech Operating System - Computational Trinitarianism">
+  
+  <script is:inline>
+    if (window.self === window.top && !window.location.search.includes('noredirect')) {
+      window.location.replace('responsive-lab.html');
+    }
+  </script>
+  <link rel="stylesheet" href="./public/css/semantic-tokens.css">
+  <style is:inline>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-image: radial-gradient(circle at top right, var(--color-bg-subtle) 0%, var(--color-bg) 100%);
+      transition: background-color var(--motion-duration-normal) ease, color var(--motion-duration-normal) ease;
+    }
+
+    .top-controls {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 50;
+    }
+
+    .control-btn {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-primary);
+      padding: 0.4rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      backdrop-filter: blur(var(--blur-surface));
+      transition: all var(--motion-duration-fast) ease;
+    }
+
+    .control-btn:hover {
+      background: var(--color-surface-hover);
+      border-color: var(--color-border-hover);
+    }
+
+    .faro-badge {
+      font-size: 0.75rem;
+      padding: 0.3rem 0.65rem;
+      border-radius: 9999px;
+      background: var(--badge-success-bg);
+      border: 1px solid var(--badge-success-border);
+      color: var(--badge-success-text);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .faro-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-success);
+      box-shadow: 0 0 6px var(--color-success);
+    }
+
+    .container {
+      text-align: center;
+      padding: 2rem;
+      max-width: 800px;
+      width: 100%;
+      min-height: 1180px;
+      animation: fadeIn var(--motion-duration-slow) ease-out;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      background: var(--gradient-text-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+    }
+
+    p.subtitle {
+      font-size: 1.25rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 3rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      margin-top: 2rem;
+    }
+
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      padding: 2rem;
+      text-decoration: none;
+      color: var(--color-text-primary);
+      transition: all var(--motion-duration-normal) var(--motion-ease);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(var(--blur-surface));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--color-border-hover);
+      background: var(--color-surface-hover);
+    }
+
+    .card h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--color-text-primary);
+    }
+
+    .card p {
+      color: var(--color-text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .icon {
+      margin-bottom: 1rem;
+      width: 48px;
+      height: 48px;
+      color: var(--color-primary);
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 2rem;
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+    }
+
+    a.primary-action {
+      background: var(--color-primary);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background var(--motion-duration-fast);
+      display: inline-block;
+      margin-top: 2rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    a.primary-action:hover {
+      background: var(--color-primary-hover);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 640px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 1.5rem;
+      }
+    }
+  
+    
+    .penpot-nav-bar {
+      position: absolute;
+      top: 4.5rem;
+      left: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      backdrop-filter: blur(var(--blur-surface));
+      z-index: 60;
+      font-size: 0.85rem;
+    }
+    .penpot-nav-title {
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .penpot-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .penpot-nav-link {
+      color: var(--color-text-primary);
+      text-decoration: none;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      transition: background 150ms ease, color 150ms ease;
+    }
+    .penpot-nav-link:hover {
+      background: var(--color-surface-hover);
+      color: var(--color-info);
+    }
+    .penpot-nav-link-active {
+      background: var(--badge-info-bg-strong);
+      color: var(--badge-info-text);
+      font-weight: 600;
+    }
+
+  </style>
+  </Fragment>
+  <nav class="penpot-nav-bar" id="penpot-site-nav" aria-label="Penpot Navigation Flow" data-graph-hash="7fc5562f37de5880c28963dfbfeb7b976cafb6feb6e8698078528a9d63a41fb4">
+    <span class="penpot-nav-title">🎨 Flow: main-nav</span>
+    <div class="penpot-nav-links">
+      <a class="penpot-nav-link penpot-nav-link-active" href="index.html" data-penpot-frame="d7570000-0000-8000-8000-000000000011" data-penpot-handle="mcard:route:/index.html">Home</a>
+      <a class="penpot-nav-link" href="app.html" data-penpot-frame="d7570000-0000-8000-8000-000000000012" data-penpot-handle="mcard:route:/app.html">Mission Control</a>
+      <a class="penpot-nav-link" href="responsive-lab.html" data-penpot-frame="d7570000-0000-8000-8000-000000000013" data-penpot-handle="mcard:route:/responsive-lab.html">Responsive UI Lab</a>
+    </div>
+  </nav>
+  
+
+  <div class="top-controls">
+    <div class="faro-badge" id="faro-status-badge" title="Grafana Faro Observability Connected">
+      <span class="faro-pulse"></span>
+      <span>Faro RUM</span>
+    </div>
+    
+    
+    <a class="control-btn" id="responsive-ui-lab-btn" href="responsive-lab.html" title="Open Responsive UI Lab (Full-Window Viewport & Orientation Workbench)">
+      <span id="sidepane-icon">📐</span>
+      <span id="sidepane-label">Responsive UI Lab</span>
+    </a>
+    <button class="control-btn" id="mission-control-sidepane-btn" style="display: none;" aria-hidden="true" title="Side Pane Alias"></button>
+
+    <button class="control-btn" id="theme-toggle-btn" title="Toggle Display Theme (Dark / Light / High-Contrast)">
+      <span id="theme-icon">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+    <button class="control-btn" id="power-toggle-btn" title="Toggle Energy Saving Mode">
+      <span id="power-icon">⚡</span>
+      <span id="power-label">Normal</span>
+    </button>
+  </div>
+
+  <div class="container">
+    <h1>GovTech OS</h1>
+    <p class="subtitle">Computational Trinitarianism</p>
+
+    <div class="card-grid" style="max-width: 580px; margin: 2rem auto;">
+      
+      <div id="responsive-ui-lab-card" class="card" style="cursor: pointer; width: 100%;">
+        <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 6h16M4 12h16m-7 6h7M7 17l-3-3 3-3" />
+        </svg>
+        <h2>Responsive UI Lab</h2>
+        <p>Dedicated full-window workbench maximizing screen real-estate to test various sized windows in vertical (portrait) or horizontal (landscape) orientations with live iframe layout reflow.</p>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.75rem;">
+          <a id="responsive-ui-lab-fullpage-link" href="responsive-lab.html" class="split-launch-btn" title="Open Responsive UI Lab in dedicated full-window workbench">
+            <span>⧉ Open Full-Window Lab</span>
+          </a>
+          <button id="responsive-ui-lab-sidepane-trigger" style="display: none;" aria-hidden="true"></button>
+          <button id="mission-control-sidepane-trigger" style="display: none;" aria-hidden="true"></button>
+        </div>
+        <div style="display: flex; gap: 0.35rem; margin-top: 0.75rem; flex-wrap: wrap; justify-content: center;">
+          <span style="font-size: 0.7rem; background: var(--badge-success-bg); color: var(--badge-success-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">↕ Vertical (Portrait)</span>
+          <span style="font-size: 0.7rem; background: var(--badge-info-bg); color: var(--badge-info-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">↔ Horizontal (Landscape)</span>
+          <span style="font-size: 0.7rem; background: var(--badge-info-bg); color: var(--badge-info-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">🖥️ Full-Window Real-Estate</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 2rem; opacity: 0.7;">
+      <p style="font-size: 0.9rem; color: var(--color-text-secondary);">Status: <span style="color: var(--color-online);">● Online</span> | Ver:
+        0.1.0-alpha</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    &copy; 2026 GovTech Research Group
+  </div>
+
+  <script is:inline>
+    async function loadConfig() {
+      try {
+        const response = await fetch('/api/env');
+        if (response.ok) {
+          const env = await response.json();
+          if (env.MCARD_STUDIO_URL) {
+            const mcardLink = document.getElementById('mcard-studio-link');
+            if (mcardLink) {
+              mcardLink.href = env.MCARD_STUDIO_URL;
+              console.log('[Landing Page] MCard Studio link set to:', env.MCARD_STUDIO_URL);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('[Landing Page] Failed to load dynamic environment variables:', error);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', loadConfig);
+  </script>
+
+  <script is:inline type="module">
+    import { PresentationController } from './js/runtime/presentation-controller.js';
+    import { FaroDeploymentUnitCollector } from './js/telemetry/faro-collector.js';
+    import { DeploymentUnitInspector } from './js/runtime/deployment-inspector.js';
+    import { LeastActionNavigator } from './js/runtime/least-action-navigator.js';
+
+    let faro;
+    const presentation = new PresentationController({
+      onStateChange: (state) => {
+        updateControlUI(state);
+        if (faro) faro.setLatticeCoordinate(state);
+      }
+    });
+
+    faro = new FaroDeploymentUnitCollector({
+      appName: 'landing-page-deployment-unit',
+      appVersion: '1.0.0'
+    });
+    faro.setLatticeCoordinate({
+      theme: presentation.currentTheme,
+      powerMode: presentation.currentPowerMode
+    });
+
+    const inspector = new DeploymentUnitInspector();
+    const leastActionNavigator = new LeastActionNavigator();
+    leastActionNavigator.mount();
+
+    window.__faro_collector = faro;
+    window.__presentation_controller = presentation;
+    window.__deployment_inspector = inspector;
+    window.__least_action_navigator = leastActionNavigator;
+
+    function openMissionControlSplit(e) {
+      if (e) e.preventDefault();
+      const targetUrl = 'app.html';
+      const win = window.open(targetUrl, 'GovTechMissionControl', 'noopener,noreferrer');
+      if (win) {
+        win.focus();
+        if (window.BroadcastChannel) {
+          const channel = new BroadcastChannel('govtech-mission-control-sync');
+          channel.postMessage({
+            type: 'SPLIT_TAB_LAUNCHED',
+            source: 'MetaPortal',
+            targetUrl: targetUrl,
+            crossOriginSafe: true,
+            timestamp: Date.now()
+          });
+        }
+        console.log('[Mission Control] Multi-tab split pane launched (CORS & frame-ancestors safe)');
+      }
+    }
+    window.__open_mission_control_split = openMissionControlSplit;
+
+    function updateControlUI(state) {
+      const themeLabel = document.getElementById('theme-label');
+      const themeIcon = document.getElementById('theme-icon');
+      const powerLabel = document.getElementById('power-label');
+      const powerIcon = document.getElementById('power-icon');
+
+      if (themeLabel && themeIcon) {
+        if (state.theme === 'light') {
+          themeLabel.textContent = 'Light';
+          themeIcon.textContent = '☀️';
+        } else if (state.theme === 'high-contrast') {
+          themeLabel.textContent = 'Contrast';
+          themeIcon.textContent = '👁️';
+        } else {
+          themeLabel.textContent = 'Dark';
+          themeIcon.textContent = '🌙';
+        }
+      }
+
+      if (powerLabel && powerIcon) {
+        if (state.powerMode === 'energy-saving') {
+          powerLabel.textContent = 'Eco';
+          powerIcon.textContent = '🔋';
+        } else {
+          powerLabel.textContent = 'Normal';
+          powerIcon.textContent = '⚡';
+        }
+      }
+    }
+
+    document.getElementById('theme-toggle-btn')?.addEventListener('click', () => {
+      presentation.toggleTheme();
+    });
+
+    document.getElementById('power-toggle-btn')?.addEventListener('click', () => {
+      presentation.toggleEnergySaving();
+    });
+
+    document.getElementById('deployment-inspector-btn')?.addEventListener('click', () => {
+      inspector.open();
+    });
+
+    document.getElementById('deployment-inspector-card')?.addEventListener('click', () => {
+      inspector.open();
+    });
+
+    document.getElementById('least-action-btn')?.addEventListener('click', () => {
+      leastActionNavigator.open();
+    });
+
+    document.getElementById('fibration-observability-btn')?.addEventListener('click', () => {
+      leastActionNavigator.open(null, 'fibration');
+    });
+
+    document.getElementById('least-action-card')?.addEventListener('click', () => {
+      leastActionNavigator.open();
+    });
+
+    function openResponsiveUILab() {
+      window.location.href = 'responsive-lab.html';
+    }
+
+    window.__open_responsive_ui_lab = openResponsiveUILab;
+    window.__open_mission_side_pane = openResponsiveUILab;
+
+    document.getElementById('mission-control-sidepane-btn')?.addEventListener('click', openResponsiveUILab);
+    document.getElementById('responsive-ui-lab-sidepane-trigger')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openResponsiveUILab();
+    });
+    document.getElementById('mission-control-sidepane-trigger')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openResponsiveUILab();
+    });
+
+    document.getElementById('mission-control-btn')?.addEventListener('click', openMissionControlSplit);
+    document.getElementById('mission-control-split-btn')?.addEventListener('click', openMissionControlSplit);
+    document.getElementById('mission-control-link')?.addEventListener('click', openMissionControlSplit);
+    document.getElementById('mission-control-card')?.addEventListener('click', (e) => {
+      if (e.target.closest('#mission-control-link')) return;
+      openMissionControlSplit();
+    });
+
+    document.getElementById('responsive-ui-lab-card')?.addEventListener('click', (e) => {
+      if (e.target.closest('#responsive-ui-lab-fullpage-link')) return;
+      openResponsiveUILab();
+    });
+
+    updateControlUI({ theme: presentation.currentTheme, powerMode: presentation.currentPowerMode });
+  </script>
+  <script is:inline type="module" src="js/nav.js"></script>
+
+  
+  <section id="single-page-mcard-host" class="mcard-page-host"
+           data-handle="urn:mcard:content:landing_page"
+           aria-label="Active LandingPage MCard"></section>
+  <div id="mcard-sovereign-pill-mount"></div>
+  <script is:inline type="module">
+    import { mountSinglePageMCard } from './js/landing-page-mcard.js';
+    import { createMembrane } from './js/external-portal-membrane.js';
+    import { createApiClient } from './js/landing-page-mcard.js';
+
+    const api = createApiClient('');
+    const membrane = createMembrane({ probe: (url) => api.probe(url) });
+
+    const samples = await fetch('./data/samples/portal_samples_manifest.json')
+      .then((response) => (response.ok ? response.json() : { samples: [] }))
+      .then((manifest) => manifest.samples.map(({ handle, label }) => ({ handle, label })))
+      .catch(() => []);
+
+    mountSinglePageMCard({
+      api,
+      samples,
+      onExternalUrl: async (url) => {
+        const resolved = await membrane.resolve(url);
+        document.getElementById('single-page-mcard-host').innerHTML = resolved.html;
+      },
+    }).catch((error) => console.warn('[SMR-09] single-page MCard host:', error.message));
+  </script>
+</WorkbenchLayout>

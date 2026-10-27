@@ -45,7 +45,7 @@ The 10 percent and 100 ms values are provisional regression guards, not a requir
   - [x] `PR-GQC-01` follows `PR-GQC-00`.
   - [x] `PR-GQC-02` follows `PR-GQC-01`.
   - [x] `PR-GQC-02A` follows `PR-GQC-02`.
-  - [ ] `PR-GQC-02B.1` follows `PR-GQC-02A`.
+  - [x] `PR-GQC-02B.1` follows `PR-GQC-02A`.
   - [ ] `PR-GQC-02B.2` follows `PR-GQC-02B.1`.
   - [ ] `PR-GQC-03` follows `PR-GQC-02B.2`.
   - [ ] `PR-GQC-04` follows `PR-GQC-03`.
@@ -386,74 +386,74 @@ Each live lane uses an isolated checkout at the PR head. Drive the actual web UI
 
 **Files.**
 
-- [ ] Edit `package.json` and `package-lock.json` to pin Astro, `@astrojs/node`, `@astrojs/preact`, and `preact` to exact versions.
-- [ ] Create `astro.config.mjs` with the middleware adapter, `build.format: 'file'`, a dedicated `publicDir`, and the dev proxy.
-- [ ] Create `src/layouts/WorkbenchLayout.astro` and one `src/pages/*.astro` file per migrated Place.
-- [ ] Create `src/integrations/net-parity.mjs`.
-- [ ] Edit `src/net/workbench-net.yaml` for migration-state bindings only.
-- [ ] Edit `ws-server.js` only to mount `dist/client/` and the Astro handler, and to remove a legacy static path after its consumers move.
-- [ ] Edit `playwright.config.js` for the `webServer` command only.
-- [ ] Delete a legacy root `.html` file only after parity.
-- [ ] Create `tests/unit/net-parity.test.mjs`, `tests/features/astro-host-parity.spec.js`, and `evidence/GQC-02B-url-inventory.md`.
-- [ ] Append approved version, mount, and port decisions to `docs/sprints/_active/DECISIONS.tsv`.
-- [ ] Do not edit `server/`, `routes/`, `app-config.json`, CORS or CSP rules, capture message checks, or `responsive_test_run:v1`.
+- [x] Edit `package.json` and `package-lock.json` to pin Astro, `@astrojs/node`, `@astrojs/preact`, and `preact` to exact versions.
+- [x] Create `astro.config.mjs` with the middleware adapter, `build.format: 'file'`, a dedicated `publicDir`, and the dev proxy.
+- [x] Create `src/layouts/WorkbenchLayout.astro` and one `src/pages/*.astro` file per migrated Place.
+- [x] Create `src/integrations/net-parity.mjs`.
+- [x] Edit `src/net/workbench-net.yaml` for migration-state bindings only.
+- [x] Edit `ws-server.js` only to mount `dist/client/` and the Astro handler, and to remove a legacy static path after its consumers move.
+- [x] Edit `playwright.config.js` for the `webServer` command only.
+- [x] Delete a legacy root `.html` file only after parity.
+- [x] Create `tests/unit/net-parity.test.mjs`, `tests/features/astro-host-parity.spec.js`, and `evidence/GQC-02B-url-inventory.md`.
+- [x] Append approved version, mount, and port decisions to `docs/sprints/_active/DECISIONS.tsv`.
+- [x] Do not edit `server/`, `routes/`, `app-config.json`, CORS or CSP rules, capture message checks, or `responsive_test_run:v1`.
 
 **Build.**
 
-- [ ] Mount the `dist/client/` static directory and then the Astro handler after the API routers and security middleware and before the legacy root static mount at `ws-server.js:138`.
-- [ ] Prove the handler calls `next()` for `/health`, `/api/rooms`, `/api/env`, `/api/config`, and `/app-config.json`, which register later. Add no Astro catch-all page until that test passes.
-- [ ] Keep the Express static mounts for `public/` and `js/` until every consumer moves. Record each referenced `/public/...` and `/js/...` URL.
-- [ ] Unregister service workers on `localhost` and `127.0.0.1` in development, and send `no-store` for development HTML.
-- [ ] Migrate approved `page` Places to `astro-wrapped`, starting with `index` and `responsive-lab`. Keep `app.html` `astro-wrapped`.
-- [ ] Run net parity in `astro build`: every route has a Place, every migrated Place has a route, and every internal `href` in built HTML is a declared Transition trigger.
-- [ ] Keep `npm run build` running the existing workspace builds.
-- [ ] Switch the Playwright `webServer` command to the production topology, then run every GQC-01 characterization spec, every GQC-02 journey, and the GQC-02A trace replay.
+- [x] Mount the `dist/client/` static directory and then the Astro handler after the API routers and security middleware and before the legacy root static mount at `ws-server.js:138`.
+- [x] Prove the handler calls `next()` for `/health`, `/api/rooms`, `/api/env`, `/api/config`, and `/app-config.json`, which register later. Add no Astro catch-all page until that test passes.
+- [x] Keep the Express static mounts for `public/` and `js/` until every consumer moves. Record each referenced `/public/...` and `/js/...` URL.
+- [x] Unregister service workers on `localhost` and `127.0.0.1` in development, and send `no-store` for development HTML.
+- [x] Migrate approved `page` Places to `astro-wrapped`, starting with `index` and `responsive-lab`. Keep `app.html` `astro-wrapped`.
+- [x] Run net parity in `astro build`: every route has a Place, every migrated Place has a route, and every internal `href` in built HTML is a declared Transition trigger.
+- [x] Keep `npm run build` running the existing workspace builds.
+- [x] Switch the Playwright `webServer` command to the production topology, then run every GQC-01 characterization spec, every GQC-02 journey, and the GQC-02A trace replay.
 
 **You see.**
 
-- [ ] Every public URL loads the same page, title, and landmark as on trunk.
-- [ ] `npm run dev` serves pages from `astro dev` and APIs from Express through the proxy.
-- [ ] `npm start` serves pages and APIs on one port.
+- [x] Every public URL loads the same page, title, and landmark as on trunk.
+- [x] `npm run dev` serves pages from `astro dev` and APIs from Express through the proxy.
+- [x] `npm start` serves pages and APIs on one port.
 
 **Verify, unit.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Run `npm run build`. Net parity passes.
-- [ ] Run `node --test tests/unit/net-parity.test.mjs`. It fails on an unbound route, an unrouted migrated Place, and an undeclared internal `href`.
-- [ ] Run `npm run check:net` and `npm run test:unit`.
-- [ ] Run `npx playwright test tests/features/astro-host-parity.spec.js --project=features`.
+- [x] Run `npm run build`. Net parity passes.
+- [x] Run `node --test tests/unit/net-parity.test.mjs`. It fails on an unbound route, an unrouted migrated Place, and an undeclared internal `href`.
+- [x] Run `npm run check:net` and `npm run test:unit`.
+- [x] Run `npx playwright test tests/features/astro-host-parity.spec.js --project=features`.
 
 **Verify, live.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked. Ten lanes on `the model recorded in the run header` at the PR head, per the boot recipe.
 
-- [ ] Lane 1. Regression lane against trunk. Open `/` on trunk and head. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-1.png`. Pass when both redirect to the same Lab state.
-- [ ] Lane 2. Open `/?noredirect`. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-2.png`. Pass when the MCard viewer view matches trunk.
-- [ ] Lane 3. Open `/responsive-lab.html`. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-3.png`. Pass when the URL, title, and landmark match the characterization record.
-- [ ] Lane 4. Request `/health`, `/api/config`, `/api/env`, and `/app-config.json` from the Astro-served origin. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-4.png` of the response log. Pass when each body and status matches trunk.
-- [ ] Lane 5. Open a WebSocket room from an Astro-served page. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-5.png`. Pass when the room connects as on trunk.
-- [ ] Lane 6. Load each migrated page and record the network log. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-6.png`. Pass when no `/public/...` or `/js/...` asset returns 404.
-- [ ] Lane 7. Open a game from `app.html` and follow its link back to `/`. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-7.png`. Pass when behavior matches trunk and the trace replays through the net.
-- [ ] Lane 8. Run `npm run dev` and open the Lab on `localhost`. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-8.png`. Pass when APIs answer through the proxy and no service worker is registered.
-- [ ] Lane 9. Run the GQC-02 P0 journey on the production topology. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-9.png`. Pass when the journey passes unchanged and its trace replays cleanly.
-- [ ] Lane 10. Request an unknown path. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-10.png`. Pass when the status and body match trunk, proving the handler fell through.
+- [x] Lane 1. Regression lane against trunk. Open `/` on trunk and head. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-1.png`. Pass when both redirect to the same Lab state.
+- [x] Lane 2. Open `/?noredirect`. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-2.png`. Pass when the MCard viewer view matches trunk.
+- [x] Lane 3. Open `/responsive-lab.html`. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-3.png`. Pass when the URL, title, and landmark match the characterization record.
+- [x] Lane 4. Request `/health`, `/api/config`, `/api/env`, and `/app-config.json` from the Astro-served origin. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-4.png` of the response log. Pass when each body and status matches trunk.
+- [x] Lane 5. Open a WebSocket room from an Astro-served page. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-5.png`. Pass when the room connects as on trunk.
+- [x] Lane 6. Load each migrated page and record the network log. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-6.png`. Pass when no `/public/...` or `/js/...` asset returns 404.
+- [x] Lane 7. Open a game from `app.html` and follow its link back to `/`. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-7.png`. Pass when behavior matches trunk and the trace replays through the net.
+- [x] Lane 8. Run `npm run dev` and open the Lab on `localhost`. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-8.png`. Pass when APIs answer through the proxy and no service worker is registered.
+- [x] Lane 9. Run the GQC-02 P0 journey on the production topology. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-9.png`. Pass when the journey passes unchanged and its trace replays cleanly.
+- [x] Lane 10. Request an unknown path. Save `/tmp/swarm-PR-GQC-02B.1/worker-1/lane-10.png`. Pass when the status and body matches trunk, proving the handler fell through.
 
 **Verify, perf.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Metric. P75 time to first byte and navigation-to-ready for `/responsive-lab.html` and `/`. Client JavaScript bytes per migrated Place.
-- [ ] Probe. Run ten interleaved trunk and head loads with the same browser, viewport, and cache mode. Read bytes from the Astro build output and the network log.
-- [ ] Baseline. Use the GQC-00 pre-Astro baseline for the same URLs.
-- [ ] Rule. If TEA and the Product Manager ratified a blocking budget in GQC-00, fail if p75 ready time regresses by more than 10 percent and 100 ms. Otherwise report the result only. Report bytes as a diagnostic.
+- [x] Metric. P75 time to first byte and navigation-to-ready for `/responsive-lab.html` and `/`. Client JavaScript bytes per migrated Place.
+- [x] Probe. Run ten interleaved trunk and head loads with the same browser, viewport, and cache mode. Read bytes from the Astro build output and the network log.
+- [x] Baseline. Use the GQC-00 pre-Astro baseline for the same URLs.
+- [x] Rule. If TEA and the Product Manager ratified a blocking budget in GQC-00, fail if p75 ready time regresses by more than 10 percent and 100 ms. Otherwise report the result only. Report bytes as a diagnostic.
 
 **Review gate.** The operator reviews before merge.
 
-- [ ] Copy trunk and head screenshots of `/`, `/?noredirect`, `/responsive-lab.html`, and `/app.html` into the review packet side by side.
-- [ ] Record a 30 to 60 second video of the P0 journey on the Astro host. Save it with the PR evidence.
-- [ ] Post the screenshots and video in chat. Stop at merge-ready and wait for the operator's review.
+- [x] Copy trunk and head screenshots of `/`, `/?noredirect`, `/responsive-lab.html`, and `/app.html` into the review packet side by side.
+- [x] Record a 30 to 60 second video of the P0 journey on the Astro host. Save it with the PR evidence.
+- [x] Post the screenshots and video in chat. Stop at merge-ready and wait for the operator's review.
 
 **Merge.**
 
-- [ ] Record the clean verdict at the exact head SHA.
-- [ ] Attach the net-parity output, the URL inventory, the handler fall-through test, and the ten live-lane results.
-- [ ] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
-- [ ] Append `PR-GQC-02B.1` to the stack after `PR-GQC-02A`. Wait for operator landing.
+- [x] Record the clean verdict at the exact head SHA.
+- [x] Attach the net-parity output, the URL inventory, the handler fall-through test, and the ten live-lane results.
+- [x] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
+- [x] Append `PR-GQC-02B.1` to the stack after `PR-GQC-02A`. Wait for operator landing.
 
 ## Hydrate the Responsive Lab as Preact islands (PR-GQC-02B.2)
 

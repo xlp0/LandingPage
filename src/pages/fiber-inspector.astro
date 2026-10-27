@@ -1,10 +1,9 @@
-<!doctype html>
-<html lang="en" dir="ltr">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Fiber Inspector — the correctness panel</title>
-<style>
+---
+import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
+---
+<WorkbenchLayout title={'Fiber Inspector \u2014 the correctness panel'} dir="ltr" viewport="width=device-width, initial-scale=1">
+  <Fragment slot="head">
+    <style is:inline>
   :root { --fg: #111; --bg: #fff; --line: #767676; --muted: #555; --warn: #7a4200; --ok: #0a7d2e; }
   html[data-theme="dark"] { --fg: #f2f2f2; --bg: #101014; --line: #9a9aa2; --muted: #b9b9c0; --warn: #ffb454; --ok: #6ee7b7; }
   html[data-theme="high-contrast"] { --fg: #000; --bg: #fff; --line: #000; --muted: #000;
@@ -25,9 +24,8 @@
   .disabled { color: var(--muted); }
   code { font-family: ui-monospace, monospace; font-size: 12px; }
 </style>
-</head>
-<body>
-<main id="inspector" role="main">
+  </Fragment>
+  <main id="inspector" role="main">
   <h1>Fiber Inspector</h1>
   <p class="note">
     A view over the <strong>marking</strong>, not over a list. Places are the lifecycle
@@ -38,7 +36,7 @@
   <div id="panel-status" data-ready="false"></div>
 </main>
 
-<script type="module">
+<script is:inline type="module">
 import { FiberRegistry } from './public/js/fibers/registry.js';
 import { MCard } from './public/js/mcard-kernel/compat.js';
 
@@ -82,8 +80,6 @@ async function main() {
   await new Promise((r) => setTimeout(r, 50));
 
   const registry = new FiberRegistry(data.registry, { ctx: root, ordering: data.ordering });
-  // Exercise the declared kinds so the panel shows a real marking rather than an
-  // empty one. A panel over nothing proves nothing.
   for (const f of data.registry.fibers) {
     const entry = data.taxonomy.kinds.find((k) => k.kind === f.kind);
     if (!entry) continue;
@@ -99,18 +95,15 @@ async function main() {
   const report = registry.inspectorReport();
   const marking = report.marking;
 
-  // ── the marking ────────────────────────────────────────────────────────────
   const placeChips = Object.entries(marking.places).map(([place, tokens]) =>
     `<span class="place" data-empty="${tokens.length === 0}" data-place="${esc(place)}">` +
     `${esc(place)} · ${tokens.length}</span>`).join('');
 
-  // ── enabled transitions ────────────────────────────────────────────────────
   const enabledRows = report.enabledTransitions.map((t) =>
     `<tr data-transition="${esc(t.transition)}"><td><code>${esc(t.transition)}</code></td>` +
     `<td class="${t.enabled ? 'enabled' : 'disabled'}">${t.enabled ? 'enabled' : 'disabled'}</td>` +
-    `<td><code>${esc(t.guard ?? '—')}</code></td></tr>`).join('');
+    `<td><code>${esc(t.guard ?? '\u2014')}</code></td></tr>`).join('');
 
-  // ── the typing: the triples ────────────────────────────────────────────────
   const tripleRows = lint.hoare_triples.map((t) =>
     `<tr data-triple="${esc(t.id)}"><td><code>${esc(t.id)}</code></td>` +
     `<td><code>${esc(t.transition)}</code></td>` +
@@ -125,16 +118,15 @@ async function main() {
          <tr><th>verdict</th><td>${esc(verifier.verdict)}</td></tr>
          <tr><th>simplicity</th><td>${esc(verifier.simplicity)}</td></tr>
        </tbody></table>`
-    : '<p class="note">no verifier declared — trust has nowhere to rest (INV-CDO-27)</p>';
+    : '<p class="note">no verifier declared \u2014 trust has nowhere to rest (INV-CDO-27)</p>';
 
-  // ── the fiber set, with never-exercised marked ─────────────────────────────
   const fiberRows = report.fibers.map((f) =>
     `<tr data-kind="${esc(f.kind)}"><td><code>${esc(f.kind)}</code></td>` +
     `<td>${esc(f.payload_shape)}</td>` +
     `<td>${f.exercised ? 'exercised' : '<span class="unwitnessed">unwitnessed</span>'}</td>` +
     `<td>${f.mountCount}</td>` +
     `<td>${f.coeffectsSatisfied ? 'satisfied' : '<span class="unwitnessed">unresolved</span>'}</td>` +
-    `<td>${esc(f.budget?.archetype ?? '—')}</td></tr>`).join('');
+    `<td>${esc(f.budget?.archetype ?? '\u2014')}</td></tr>`).join('');
 
   const census = witness.baldwin_census?.counted ?? {};
   const censusRows = Object.entries(census).map(([op, n]) =>
@@ -146,8 +138,8 @@ async function main() {
     section('Marking', `<div>${placeChips}</div>`,
       `total tokens: ${marking.total} · non-empty: ${marking.nonEmpty.join(', ') || 'none'}`),
     section('Enabled transitions', `<table><thead><tr><th>transition</th><th>state</th><th>guard</th></tr></thead><tbody>${enabledRows}</tbody></table>`,
-      'a guard that fails shows as a <em>disabled</em> transition, not as a failure — the net simply has no enabled move'),
-    section('The typing — Hoare triples', `<table><thead><tr><th>triple</th><th>transition</th><th>status</th><th>V<sub>pre</sub></th><th>V<sub>post</sub></th></tr></thead><tbody>${tripleRows}</tbody></table>`,
+      'a guard that fails shows as a <em>disabled</em> transition, not as a failure \u2014 the net simply has no enabled move'),
+    section('The typing \u2014 Hoare triples', `<table><thead><tr><th>triple</th><th>transition</th><th>status</th><th>V<sub>pre</sub></th><th>V<sub>post</sub></th></tr></thead><tbody>${tripleRows}</tbody></table>`,
       `${lint.hoare_triples.length} triples · ${lint.unwitnessed_triples} unwitnessed · each is the type of a transition in the fiber net`),
     section('Verifier', verifierBlock, 'trust rests here, never on the adapter\u2019s own logic'),
     section('Fiber set', `<table><thead><tr><th>kind</th><th>shape</th><th>state</th><th>mounts</th><th>coeffects</th><th>budget</th></tr></thead><tbody>${fiberRows}</tbody></table>`,
@@ -175,5 +167,4 @@ main().catch((e) => {
   status.textContent = String(e.message ?? e);
 });
 </script>
-</body>
-</html>
+</WorkbenchLayout>
