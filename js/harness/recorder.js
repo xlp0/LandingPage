@@ -6,6 +6,7 @@
 
 import { EventRingBuffer } from './event-ring-buffer.js';
 import { RecordingStateMachine } from './recording-state-machine.js';
+import { UnavailableCaptureSource } from './capture-probe-agent.js';
 import { TEST_RUN_SCHEMA, targetSlug } from './test-run-schema.js';
 
 export class InteractionRecorder {
@@ -13,6 +14,10 @@ export class InteractionRecorder {
     this.buffer = new EventRingBuffer({ capacity: options.capacity || 2048 });
     this.fsm = new RecordingStateMachine({ now: options.now });
     this.source = options.source || null;
+    this._sourceEpoch = 0;
+    this._boundTargetUrl = null;
+    this._recordedTargetUrl = null;
+    this._recordedCaptureSourceKind = null;
     this.undersizedTaps = 0;
     this.startedAt = null;
     this.lastSavedRun = null;
@@ -51,31 +56,72 @@ export class InteractionRecorder {
     }
   }
 
-  setSource(source) {
-    if (this.source) {
+  setSource(source, options = {}) {
+    const nextTargetUrl = options.targetUrl || null;
+    const activeTargetUrl = this._recordedTargetUrl || this._boundTargetUrl;
+    if (
+      (this.fsm.state === 'RECORDING' || this.fsm.state === 'PAUSED') &&
+      activeTargetUrl &&
+      nextTargetUrl &&
+      nextTargetUrl !== activeTargetUrl
+    ) {
+      this._recordedTargetUrl = activeTargetUrl;
+      this.fsm.stop();
+    }
+    this._boundTargetUrl = nextTargetUrl;
+
+    const previous = this.source;
+    this._sourceEpoch += 1;
+
+    if (previous && previous !== source) {
       try {
-        if (this.source !== source && typeof this.source.destroy === 'function') {
-          this.source.destroy();
-        } else {
-          this.source.detach();
+        if (typeof previous.destroy === 'function') {
+          previous.destroy();
+        } else if (typeof previous.detach === 'function') {
+          previous.detach();
         }
       } catch {}
     }
+
     this.source = source;
+    const activeEpoch = this._sourceEpoch;
+
     if (this.source) {
-      this.source._onStatusChange = (status) => {
-        this._emitChange('source', status);
+      this.source._onStatusChange = (status, meta) => {
+        if (activeEpoch !== this._sourceEpoch) return;
+        this._emitChange('source', status, meta);
       };
     }
+
     if (this.source && this.fsm.canAccept()) {
-      this._bindSource(this.source);
+      this._bindSource(this.source, activeEpoch);
     }
+
     this._emitChange('source', this.source?.kind);
   }
 
-  _bindSource(source) {
+  invalidateActiveCapture(reason = 'Target policy invalidated active capture') {
+    if (this.fsm.state === 'RECORDING' || this.fsm.state === 'PAUSED') {
+      this.fsm.stop();
+    }
+    this.setSource(new UnavailableCaptureSource({
+      reason,
+      policyState: 'capture-unavailable'
+    }));
+    this._emitChange('invalidated', { reason });
+  }
+
+  _bindSource(source, boundEpoch = this._sourceEpoch) {
+    if (source.kind === 'probe-agent' || source.kind === 'same-origin') {
+      this._recordedCaptureSourceKind = source.kind;
+    }
     source.attach((event) => {
+      if (boundEpoch !== this._sourceEpoch || this.source !== source) return;
       if (!this.fsm.canAccept()) return;
+
+      if (source.kind === 'probe-agent' || source.kind === 'same-origin') {
+        this._recordedCaptureSourceKind = source.kind;
+      }
 
       if (event.ergonomics?.undersized) {
         this.undersizedTaps++;
@@ -100,14 +146,16 @@ export class InteractionRecorder {
     this._emitChange('event', stamped);
   }
 
-  start() {
+  start(options = {}) {
     if (this.fsm.state === 'FINALIZED') {
       this.reset();
     }
     this.startedAt = new Date().toISOString();
+    this._recordedTargetUrl = options.targetUrl || this._boundTargetUrl || this._recordedTargetUrl || null;
+    this._recordedCaptureSourceKind = this.source?.kind === 'probe-agent' ? 'probe-agent' : 'same-origin';
     this.fsm.start();
     if (this.source) {
-      this._bindSource(this.source);
+      this._bindSource(this.source, this._sourceEpoch);
     }
   }
 
@@ -129,6 +177,8 @@ export class InteractionRecorder {
     this.buffer.clear();
     this.undersizedTaps = 0;
     this.startedAt = null;
+    this._recordedTargetUrl = null;
+    this._recordedCaptureSourceKind = null;
     this.lastSavedRun = null;
     this._emitChange('reset', null);
   }
@@ -157,8 +207,8 @@ export class InteractionRecorder {
       ...(ev.ergonomics ? { ergonomics: ev.ergonomics } : {})
     }));
 
-    const rawUrl = target.url || target.raw || 'http://localhost:3001/app.html';
-    const slug = target.slug || targetSlug(rawUrl);
+    const rawUrl = this._recordedTargetUrl || target?.url || target?.raw || 'http://localhost:3001/app.html';
+    const slug = target?.slug || targetSlug(rawUrl);
 
     const safeDevice = device || {
       id: 'desktop-fhd',
@@ -175,6 +225,9 @@ export class InteractionRecorder {
     };
 
     const stats = this.stats();
+    const resolvedCaptureKind =
+      this._recordedCaptureSourceKind ||
+      (this.source?.kind === 'probe-agent' ? 'probe-agent' : 'same-origin');
 
     return {
       schema: TEST_RUN_SCHEMA,
@@ -183,7 +236,7 @@ export class InteractionRecorder {
         url: rawUrl,
         slug
       },
-      captureSource: this.source?.kind === 'probe-agent' ? 'probe-agent' : 'same-origin',
+      captureSource: resolvedCaptureKind,
       device: safeDevice,
       orientation: orientation === 'horizontal' ? 'landscape' : (orientation === 'landscape' ? 'landscape' : 'portrait'),
       fidelity: {
@@ -193,7 +246,7 @@ export class InteractionRecorder {
         notEmulated: Array.isArray(fidelity.notEmulated) ? fidelity.notEmulated : []
       },
       lab: {
-        commit: '6f9a53a',
+        commit: '424022c',
         clmKernel: '0.0.10'
       },
       metrics: {
@@ -262,10 +315,10 @@ export class InteractionRecorder {
     return () => this._listeners.delete(listener);
   }
 
-  _emitChange(type, data) {
+  _emitChange(type, data, meta) {
     for (const l of this._listeners) {
       try {
-        l(type, data);
+        l(type, data, meta);
       } catch {}
     }
   }
@@ -274,6 +327,7 @@ export class InteractionRecorder {
     if (typeof document !== 'undefined' && this._onViewportChange) {
       document.removeEventListener('lab:viewport-change', this._onViewportChange);
     }
+    this._sourceEpoch += 1;
     if (this.source) {
       try {
         if (typeof this.source.destroy === 'function') {

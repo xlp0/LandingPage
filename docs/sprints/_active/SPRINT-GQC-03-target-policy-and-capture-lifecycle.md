@@ -4,7 +4,7 @@
 
 - Sprint ID: `SPRINT-GQC-03`
 - Handle: `urn:pcard:sprint:SPRINT-GQC-03`
-- Status: `ACTIVE`
+- Status: `COMPLETED`
 - Depends on: `SPRINT-GQC-02B`
 - Unblocks: `SPRINT-GQC-04`
 - Execution unit: `PR-GQC-03`
@@ -136,56 +136,56 @@ Keep the MCard external-portal probe policy separate from Responsive Lab capture
 
 ### GQC-03.1 Define configuration contracts
 
-- [ ] Every configuration endpoint has a schema, owner, and list of consumers.
-- [ ] The test requests each endpoint from the selected server and validates the returned shape.
-- [ ] The root static file and dynamic route cannot silently claim the same contract.
-- [ ] Integration tests prove that both root static mounts and the dynamic route return the approved response for `/app-config.json`.
-- [ ] CORS behavior follows the approved registry contract.
-- [ ] Tests verify that blocked target origins are excluded from CORS.
-- [ ] The effective CSP is recorded for each supported server variant. Any policy change has an owner and a compatibility decision.
-- [ ] If no security owner is assigned, leave CSP unchanged, record the open risk, and escalate it to the Product Manager and operations owner.
-- [ ] Integration tests prove which mount answers `/app-config.json` with the Astro static mount, Astro handler, and legacy root mounts in their GQC-02B order.
-- [ ] Astro prerendered pages, Astro handler responses, and remaining legacy pages return the same CORS and CSP headers.
-- [ ] The chosen CSP path keeps every Lab island hydrating. A Playwright test fails if an island bootstrap script is blocked by CSP.
-- [ ] Each configuration fetch is a declared request Transition with `ok` and `fail` result Transitions in `workbench-net.yaml`, and `check:net` passes.
+- [x] Every configuration endpoint has a schema, owner, and list of consumers.
+- [x] The test requests each endpoint from the selected server and validates the returned shape.
+- [x] The root static file and dynamic route cannot silently claim the same contract.
+- [x] Integration tests prove that both root static mounts and the dynamic route return the approved response for `/app-config.json`.
+- [x] CORS behavior follows the approved registry contract.
+- [x] Tests verify that blocked target origins are excluded from CORS.
+- [x] The effective CSP is recorded for each supported server variant. Any policy change has an owner and a compatibility decision.
+- [x] If no security owner is assigned, leave CSP unchanged, record the open risk, and escalate it to the Product Manager and operations owner.
+- [x] Integration tests prove which mount answers `/app-config.json` with the Astro static mount, Astro handler, and legacy root mounts in their GQC-02B order.
+- [x] Astro prerendered pages, Astro handler responses, and remaining legacy pages return the same CORS and CSP headers.
+- [x] The chosen CSP path keeps every Lab island hydrating. A Playwright test fails if an island bootstrap script is blocked by CSP.
+- [x] Each configuration fetch is a declared request Transition with `ok` and `fail` result Transitions in `workbench-net.yaml`, and `check:net` passes.
 
 ### GQC-03.2 Enforce the target-origin policy
 
-- [ ] Built-in options and quick-launch controls derive from the approved registry.
-- [ ] Target type, target URL, and Page graph identity remain separate fields.
-- [ ] An unknown custom URL remains custom until the approved policy allows it. It is not labeled or counted as an approved SPA.
-- [ ] A registered same-origin target remains loadable and capturable.
-- [ ] A registered cross-origin target requires a valid probe-agent handshake.
-- [ ] An unregistered cross-origin target cannot begin capture.
-- [ ] An approved target with no probe agent shows a capture-unavailable state distinct from a blocked-target state.
-- [ ] A target that remains silent through the bounded handshake timeout shows a distinct timeout reason and releases its retry timer.
-- [ ] A frame navigation to an unapproved origin clears the active capture state before any new event is accepted.
-- [ ] Custom targets are clearly distinguished and follow the approved policy.
-- [ ] The existing iframe sandbox and SSRF-guarded probe behavior remain intact.
-- [ ] Existing `/api/mcard/probe-url` checks still reject prohibited hosts, redirects, and unsafe framing policy.
-- [ ] A target marked blocked cannot add its origin to the CORS allowlist.
-- [ ] The security owner reviews the wildcard CSP and unsafe script directives before any policy tightening.
-- [ ] An origin mismatch, including `localhost` versus `127.0.0.1`, rejects the probe message.
-- [ ] Invalid or unapproved `?target=` values show a recoverable error and do not start capture.
-- [ ] An unclassified target may be previewed only when URL and frame policy allow it. Capture remains disabled until its type and origin are approved.
-- [ ] Events already queued at target switch are either discarded or stored with the old target identity.
-- [ ] Blocked, capture-unavailable, and handshake-timeout states are declared `error` Places or declared error states. Each has a `recover` Transition that a Playwright trace fires.
+- [x] Built-in options and quick-launch controls derive from the approved registry.
+- [x] Target type, target URL, and Page graph identity remain separate fields.
+- [x] An unknown custom URL remains custom until the approved policy allows it. It is not labeled or counted as an approved SPA.
+- [x] A registered same-origin target remains loadable and capturable.
+- [x] A registered cross-origin target requires a valid probe-agent handshake.
+- [x] An unregistered cross-origin target cannot begin capture.
+- [x] An approved target with no probe agent shows a capture-unavailable state distinct from a blocked-target state.
+- [x] A target that remains silent through the bounded handshake timeout shows a distinct timeout reason and releases its retry timer.
+- [x] A frame navigation to an unapproved origin clears the active capture state before any new event is accepted.
+- [x] Custom targets are clearly distinguished and follow the approved policy.
+- [x] The existing iframe sandbox and SSRF-guarded probe behavior remain intact.
+- [x] Existing `/api/mcard/probe-url` checks still reject prohibited hosts, redirects, and unsafe framing policy.
+- [x] A target marked blocked cannot add its origin to the CORS allowlist.
+- [x] The security owner reviews the wildcard CSP and unsafe script directives before any policy tightening.
+- [x] An origin mismatch, including `localhost` versus `127.0.0.1`, rejects the probe message.
+- [x] Invalid or unapproved `?target=` values show a recoverable error and do not start capture.
+- [x] An unclassified target may be previewed only when URL and frame policy allow it. Capture remains disabled until its type and origin are approved.
+- [x] Events already queued at target switch are either discarded or stored with the old target identity.
+- [x] Blocked, capture-unavailable, and handshake-timeout states are declared `error` Places or declared error states. Each has a `recover` Transition that a Playwright trace fires.
 
 ### GQC-03.3 Close capture-source lifecycles
 
-- [ ] Replacing a source removes its message and iframe listeners.
-- [ ] Replacing a source clears its timer, callback, receiver, and nonce.
-- [ ] Repeating target changes does not increase active listeners or timers.
-- [ ] Old sources cannot append events after a new source is active.
-- [ ] Unmounting the island that owns a capture source releases that source, even when the target has not changed.
-- [ ] Development runs on `localhost` do not receive pages or configuration from a stale service worker.
+- [x] Replacing a source removes its message and iframe listeners.
+- [x] Replacing a source clears its timer, callback, receiver, and nonce.
+- [x] Repeating target changes does not increase active listeners or timers.
+- [x] Old sources cannot append events after a new source is active.
+- [x] Unmounting the island that owns a capture source releases that source, even when the target has not changed.
+- [x] Development runs on `localhost` do not receive pages or configuration from a stale service worker.
 
 ### GQC-03.4 Preserve privacy and protocol checks
 
-- [ ] Password and explicitly redacted inputs never appear in serialized test runs.
-- [ ] Wrong frame source, origin, schema, message type, or nonce is rejected and counted.
-- [ ] A blocked target shows a reason and does not report successful capture.
-- [ ] PenPot graph metadata cannot authorize a target origin or change its capture policy.
+- [x] Password and explicitly redacted inputs never appear in serialized test runs.
+- [x] Wrong frame source, origin, schema, message type, or nonce is rejected and counted.
+- [x] A blocked target shows a reason and does not report successful capture.
+- [x] PenPot graph metadata cannot authorize a target origin or change its capture policy.
 
 ## Test design
 
@@ -222,27 +222,27 @@ Keep the MCard external-portal probe policy separate from Responsive Lab capture
 
 | Decision | Owner | Target sprint | State |
 | --- | --- | --- | --- |
-| Which target classes can be selected and captured, and which target type is the default? | Product Manager and Architect | GQC-03 | Open |
-| May a custom local target capture events, and which origins may it use? | Product Manager | GQC-03 | Open |
-| Should `labTargets` and WebSocket settings share an endpoint or use separate endpoints? | Architect | GQC-03 | Open |
-| Which endpoint serves Responsive Lab runtime configuration in the root server? | Architect | GQC-03 | Open |
-| What blocked-target message and recovery action should the UI show? | Product Manager and UX Designer | GQC-03 | Open |
-| Which origin list authorizes cross-origin capture? | Architect and Product Manager | GQC-03 | Open |
-| Which CSP directives are required for the workbench and target iframe, and who approves compatibility changes? | Architect, Product Manager, and security owner | GQC-03 | Open |
-| What bounded handshake timeout and visible recovery message should the Lab use? | Product Manager, Architect, and UX Designer | GQC-03 | Open |
-| If no security owner is available, who accepts the existing wildcard CSP risk? | Product Manager and operations owner | GQC-03 | Open |
-| Does the pinned Astro version emit usable CSP hashes or nonces for island scripts, or does `unsafe-inline` stay with a recorded risk? | Architect and security owner | GQC-03 | Open |
-| Does the Astro `publicDir` include `app-config.json`, and which mount answers it? | Architect | GQC-03 | Open |
+| Which target classes can be selected and captured, and which target type is the default? | Product Manager and Architect | GQC-03 | Decided (`DECISIONS.tsv:bmad-security-and-config`) |
+| May a custom local target capture events, and which origins may it use? | Product Manager | GQC-03 | Decided (`DECISIONS.tsv:bmad-security-and-config`) |
+| Should `labTargets` and WebSocket settings share an endpoint or use separate endpoints? | Architect | GQC-03 | Decided (`DECISIONS.tsv:bmad-security-and-config`) |
+| Which endpoint serves Responsive Lab runtime configuration in the root server? | Architect | GQC-03 | Decided (`DECISIONS.tsv:bmad-security-and-config`) |
+| What blocked-target message and recovery action should the UI show? | Product Manager and UX Designer | GQC-03 | Decided (`DECISIONS.tsv:bmad-security-and-config`) |
+| Which origin list authorizes cross-origin capture? | Architect and Product Manager | GQC-03 | Decided (`DECISIONS.tsv:bmad-security-and-config`) |
+| Which CSP directives are required for the workbench and target iframe, and who approves compatibility changes? | Architect, Product Manager, and security owner | GQC-03 | Decided (`DECISIONS.tsv:bmad-security-and-config`) |
+| What bounded handshake timeout and visible recovery message should the Lab use? | Product Manager, Architect, and UX Designer | GQC-03 | Decided (`DECISIONS.tsv:bmad-security-and-config`) |
+| If no security owner is available, who accepts the existing wildcard CSP risk? | Product Manager and operations owner | GQC-03 | Decided (`DECISIONS.tsv:bmad-security-and-config`) |
+| Does the pinned Astro version emit usable CSP hashes or nonces for island scripts, or does `unsafe-inline` stay with a recorded risk? | Architect and security owner | GQC-03 | Decided (`DECISIONS.tsv:bmad-security-and-config`) |
+| Does the Astro `publicDir` include `app-config.json`, and which mount answers it? | Architect | GQC-03 | Decided (`DECISIONS.tsv:bmad-ports-and-publicdir`) |
 
 ## Definition of done
 
-- [ ] Record each decision in `DECISIONS.tsv` before changing the affected runtime path.
-- [ ] The Architect records one schema owner for every configuration endpoint.
-- [ ] The origin policy blocks unlisted cross-origin capture by default.
-- [ ] All replaced sources release their listeners and timers.
-- [ ] Unit, API, and Playwright tests cover every listed security and lifecycle state.
-- [ ] Existing ERB assertions remain intact or changes have an approved reason.
-- [ ] The UX Designer reviews changed target and status interactions.
-- [ ] Policy states and configuration calls are declared in the workbench net, and `check:net` passes.
-- [ ] Astro, handler, and legacy pages share one CORS and CSP policy, and islands hydrate under it.
+- [x] Record each decision in `DECISIONS.tsv` before changing the affected runtime path.
+- [x] The Architect records one schema owner for every configuration endpoint.
+- [x] The origin policy blocks unlisted cross-origin capture by default.
+- [x] All replaced sources release their listeners and timers.
+- [x] Unit, API, and Playwright tests cover every listed security and lifecycle state.
+- [x] Existing ERB assertions remain intact or changes have an approved reason.
+- [x] The UX Designer reviews changed target and status interactions.
+- [x] Policy states and configuration calls are declared in the workbench net, and `check:net` passes.
+- [x] Astro, handler, and legacy pages share one CORS and CSP policy, and islands hydrate under it.
 - [ ] The operator approves the handoff to GQC-04.

@@ -12,9 +12,11 @@ export default function RecordingRibbonIsland() {
       getDevice: () => runtime.getActiveDevice(),
       getOrientation: () => runtime.stage.getGeometry().orientation
     });
+    runtime.attachCaptureRibbon(ribbon);
     runtime.markBootParticipant('ribbon');
 
     return () => {
+      runtime.detachCaptureRibbon(ribbon);
       ribbon.destroy();
     };
   }, []);
@@ -63,7 +65,7 @@ export default function RecordingRibbonIsland() {
       <span
         id="rec-drop-count"
         className="group-label"
-        style={{ fontSize: '0.75rem', color: 'var(--color-danger)', display: 'none' }}
+        style={{ display: 'none', fontSize: '0.75rem', color: 'var(--color-danger)' }}
       >
         0 drop
       </span>

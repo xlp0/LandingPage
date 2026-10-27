@@ -74,6 +74,21 @@ topology:
     - id: p_error_get_fiber_conformance_harness
       initialTokens: 0
       description: Recoverable error state for GET /public/conformance/harness-data.json on fiber-conformance.html
+    - id: p_pending_probe_handshake
+      initialTokens: 0
+      description: In-flight postMessage probe handshake state from p_page_responsive_lab
+    - id: p_error_target_blocked
+      initialTokens: 0
+      description: Recoverable blocked-target policy state on responsive-lab.html
+    - id: p_error_capture_unavailable
+      initialTokens: 0
+      description: Recoverable capture-unavailable policy state on responsive-lab.html
+    - id: p_error_handshake_timeout
+      initialTokens: 0
+      description: Recoverable 5000ms probe handshake timeout state on responsive-lab.html
+    - id: p_error_target_unapproved
+      initialTokens: 0
+      description: Recoverable unapproved or malformed custom target state on responsive-lab.html
   transitions:
     - id: t_redirect_index_to_lab
       inputs:
@@ -303,6 +318,61 @@ topology:
         - p_error_get_fiber_conformance_harness
       outputs:
         - p_page_fiber_conformance
+    - id: t_req_probe_handshake
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_pending_probe_handshake
+    - id: t_ok_probe_handshake
+      inputs:
+        - p_pending_probe_handshake
+      outputs:
+        - p_page_responsive_lab
+    - id: t_fail_probe_handshake_unavailable
+      inputs:
+        - p_pending_probe_handshake
+      outputs:
+        - p_error_capture_unavailable
+    - id: t_fail_probe_handshake_timeout
+      inputs:
+        - p_pending_probe_handshake
+      outputs:
+        - p_error_handshake_timeout
+    - id: t_recover_handshake_timeout
+      inputs:
+        - p_error_handshake_timeout
+      outputs:
+        - p_page_responsive_lab
+    - id: t_enter_target_blocked
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_error_target_blocked
+    - id: t_recover_target_blocked
+      inputs:
+        - p_error_target_blocked
+      outputs:
+        - p_page_responsive_lab
+    - id: t_enter_capture_unavailable
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_error_capture_unavailable
+    - id: t_recover_capture_unavailable
+      inputs:
+        - p_error_capture_unavailable
+      outputs:
+        - p_page_responsive_lab
+    - id: t_enter_target_unapproved
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_error_target_unapproved
+    - id: t_recover_target_unapproved
+      inputs:
+        - p_error_target_unapproved
+      outputs:
+        - p_page_responsive_lab
 bindings:
   places:
     p_page_index:
@@ -604,6 +674,70 @@ bindings:
       entry: false
       deepLinkEntry: false
       owner: Architect
+    p_pending_probe_handshake:
+      kind: pending
+      surface: workbench
+      pageId: pending_probe_handshake
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:pending:probe_handshake
+      clmTypeUri: clm://type/view/workbench/pending/probe-handshake
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Architect and TEA
+    p_error_target_blocked:
+      kind: error
+      surface: workbench
+      pageId: error_target_blocked
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:error:target_blocked
+      clmTypeUri: clm://type/view/workbench/error/target-blocked
+      mcardHash: null
+      errorPresentation: 'Visible #cors-block-alert banner, #target-policy-status badge, and #btn-target-recover button'
+      entry: false
+      deepLinkEntry: false
+      owner: Product Manager and UX Designer
+    p_error_capture_unavailable:
+      kind: error
+      surface: workbench
+      pageId: error_capture_unavailable
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:error:capture_unavailable
+      clmTypeUri: clm://type/view/workbench/error/capture-unavailable
+      mcardHash: null
+      errorPresentation: 'Visible #target-policy-status badge, disabled #btn-rec-start, and #btn-target-recover button'
+      entry: false
+      deepLinkEntry: false
+      owner: Product Manager, Architect, and UX Designer
+    p_error_handshake_timeout:
+      kind: error
+      surface: workbench
+      pageId: error_handshake_timeout
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:error:handshake_timeout
+      clmTypeUri: clm://type/view/workbench/error/handshake-timeout
+      mcardHash: null
+      errorPresentation: 'Visible #target-policy-status 5000ms timeout notice, disabled #btn-rec-start, and #btn-target-recover button'
+      entry: false
+      deepLinkEntry: false
+      owner: Product Manager, Architect, and UX Designer
+    p_error_target_unapproved:
+      kind: error
+      surface: workbench
+      pageId: error_target_unapproved
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:error:target_unapproved
+      clmTypeUri: clm://type/view/workbench/error/target-unapproved
+      mcardHash: null
+      errorPresentation: 'Visible #target-policy-status rejection notice, disabled #btn-rec-start, and #btn-target-recover button'
+      entry: false
+      deepLinkEntry: false
+      owner: Product Manager and Security Owner
   transitions:
     t_redirect_index_to_lab:
       kind: redirect
@@ -1103,6 +1237,112 @@ bindings:
       trigger: Reload or reset fiber-conformance.html to /fiber-conformance.html from p_error_get_fiber_conformance_harness
       ownerPage: fiber-conformance.html
       owner: Architect
+    t_req_probe_handshake:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_probe_handshake
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_pending_probe_handshake
+      trigger: postMessage lab:ping handshake request in js/harness/capture-probe-agent.js
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_ok_probe_handshake:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_probe_handshake
+      fromPlaceId: p_pending_probe_handshake
+      toPlaceId: p_page_responsive_lab
+      trigger: Approved-origin postMessage lab:hello handshake in js/harness/capture-probe-agent.js
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_fail_probe_handshake_unavailable:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_probe_handshake_unavailable
+      fromPlaceId: p_pending_probe_handshake
+      toPlaceId: p_error_capture_unavailable
+      trigger: Probe handshake rejected or invalidated in js/harness/capture-probe-agent.js
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_fail_probe_handshake_timeout:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_probe_handshake_timeout
+      fromPlaceId: p_pending_probe_handshake
+      toPlaceId: p_error_handshake_timeout
+      trigger: 5000ms bounded probe handshake timeout in js/harness/capture-probe-agent.js
+      ownerPage: responsive-lab.html
+      owner: Product Manager, Architect, and UX Designer
+    t_recover_handshake_timeout:
+      kind: recover
+      surface: workbench
+      linkId: recover_handshake_timeout
+      fromPlaceId: p_error_handshake_timeout
+      toPlaceId: p_page_responsive_lab
+      route: /responsive-lab.html
+      trigger: 'Click #btn-target-recover or select approved target on responsive-lab.html'
+      ownerPage: responsive-lab.html
+      owner: Product Manager and UX Designer
+    t_enter_target_blocked:
+      kind: client-route
+      surface: workbench
+      linkId: enter_target_blocked
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_error_target_blocked
+      route: /responsive-lab.html
+      trigger: Select status=blocked target in js/harness/target-membrane.js
+      ownerPage: responsive-lab.html
+      owner: Product Manager and UX Designer
+    t_recover_target_blocked:
+      kind: recover
+      surface: workbench
+      linkId: recover_target_blocked
+      fromPlaceId: p_error_target_blocked
+      toPlaceId: p_page_responsive_lab
+      route: /responsive-lab.html
+      trigger: 'Click #btn-target-recover or select approved target on responsive-lab.html'
+      ownerPage: responsive-lab.html
+      owner: Product Manager and UX Designer
+    t_enter_capture_unavailable:
+      kind: client-route
+      surface: workbench
+      linkId: enter_capture_unavailable
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_error_capture_unavailable
+      route: /responsive-lab.html
+      trigger: Select undecided target or capture-unavailable source in js/harness/target-membrane.js
+      ownerPage: responsive-lab.html
+      owner: Product Manager, Architect, and UX Designer
+    t_recover_capture_unavailable:
+      kind: recover
+      surface: workbench
+      linkId: recover_capture_unavailable
+      fromPlaceId: p_error_capture_unavailable
+      toPlaceId: p_page_responsive_lab
+      route: /responsive-lab.html
+      trigger: 'Click #btn-target-recover or select approved target on responsive-lab.html'
+      ownerPage: responsive-lab.html
+      owner: Product Manager and UX Designer
+    t_enter_target_unapproved:
+      kind: client-route
+      surface: workbench
+      linkId: enter_target_unapproved
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_error_target_unapproved
+      route: /responsive-lab.html
+      trigger: Enter unapproved custom or malformed target URL in js/harness/target-membrane.js
+      ownerPage: responsive-lab.html
+      owner: Product Manager and Security Owner
+    t_recover_target_unapproved:
+      kind: recover
+      surface: workbench
+      linkId: recover_target_unapproved
+      fromPlaceId: p_error_target_unapproved
+      toPlaceId: p_page_responsive_lab
+      route: /responsive-lab.html
+      trigger: 'Click #btn-target-recover or select approved target on responsive-lab.html'
+      ownerPage: responsive-lab.html
+      owner: Product Manager and UX Designer
   staticJsonAssets:
     - httpMethod: GET
       httpPath: /data/samples/portal_samples_manifest.json
@@ -1127,25 +1367,25 @@ bindings:
   nonUiEndpoints:
     - httpMethod: GET
       httpPath: /health
-      source: ws-server.js:321
+      source: ws-server.js:216
       status: not-ui-reachable
       owner: Architect
       reason: Infrastructure readiness endpoint for Playwright webServer and probes
     - httpMethod: GET
       httpPath: /api/rooms
-      source: ws-server.js:335
+      source: ws-server.js:228
       status: not-ui-reachable
       owner: Architect
       reason: Room registry inspection route with zero approved workbench callers
     - httpMethod: GET
       httpPath: /api/config
-      source: ws-server.js:351
+      source: ws-server.js:246
       status: not-ui-reachable
       owner: Architect
       reason: Called only by standalone developer harness js/modules/webrtc-dashboard/config.js:7
     - httpMethod: WS
       httpPath: /ws/
-      source: ws-server.js:141
+      source: ws-server.js:188
       status: not-ui-reachable
       owner: Product Manager and Architect
       reason: WebSocket signaling used only by unmounted net-gateway and undecided P2P demos

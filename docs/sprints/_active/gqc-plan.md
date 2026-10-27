@@ -527,84 +527,84 @@ Each live lane uses an isolated checkout at the PR head. Drive the actual web UI
 
 **Files.**
 
-- [ ] Edit `app-config.json`, `ws-server.js`, and `playwright.config.js`.
-- [ ] Edit `astro.config.mjs` only for `publicDir`, CSP, and dev proxy header settings.
-- [ ] Edit `js/harness/lab-toolbar.js`, `target-membrane.js`, `membrane-interceptor.js`, `capture-probe-agent.js`, and `recorder.js`.
-- [ ] Edit the Responsive Lab composition in `src/pages/responsive-lab.astro` and its islands only for registry-derived chips, target status, and capture-source ownership.
-- [ ] Edit `src/net/workbench-net.yaml` to declare configuration calls, the probe handshake, and policy error Places.
-- [ ] Add unit and Playwright cases under `tests/unit/` and `tests/features/`.
-- [ ] Keep `server/mcard-probe-policy.mjs`, `tests/single-page-mcard.test.mjs`, `js/harness/lab-probe-agent.js`, and `tests/fixtures/probe-target*.html` read-only inputs. If this PR needs to change one, stop for a separate review-gated file boundary.
-- [ ] Append approved target-policy and endpoint decisions to `docs/sprints/_active/DECISIONS.tsv`.
-- [ ] In `playwright.config.js`, edit only the test-server settings. Preserve the matcher and project membership owned by GQC-01.
+- [x] Edit `app-config.json`, `ws-server.js`, and `playwright.config.js`.
+- [x] Edit `astro.config.mjs` only for `publicDir`, CSP, and dev proxy header settings.
+- [x] Edit `js/harness/lab-toolbar.js`, `target-membrane.js`, `membrane-interceptor.js`, `capture-probe-agent.js`, and `recorder.js`.
+- [x] Edit the Responsive Lab composition in `src/pages/responsive-lab.astro` and its islands only for registry-derived chips, target status, and capture-source ownership.
+- [x] Edit `src/net/workbench-net.yaml` to declare configuration calls, the probe handshake, and policy error Places.
+- [x] Add unit and Playwright cases under `tests/unit/` and `tests/features/`.
+- [x] Keep `server/mcard-probe-policy.mjs`, `tests/single-page-mcard.test.mjs`, `js/harness/lab-probe-agent.js`, and `tests/fixtures/probe-target*.html` read-only inputs. If this PR needs to change one, stop for a separate review-gated file boundary.
+- [x] Append approved target-policy and endpoint decisions to `docs/sprints/_active/DECISIONS.tsv`.
+- [x] In `playwright.config.js`, edit only the test-server settings. Preserve the matcher and project membership owned by GQC-01.
 
 **Build.**
 
-- [ ] Define and test the actual contract for `app-config.json`, `/app-config.json`, and runtime WebSocket configuration. Choose one schema owner for each endpoint.
-- [ ] Record product and architecture decisions for target types, custom capture, approved origins, endpoint shape, and blocked-target recovery before changing the affected runtime path.
-- [ ] Resolve the `/app-config.json` route shadow across both root static mounts and exclude targets marked blocked from the CORS allowlist.
-- [ ] Record the effective CORS and CSP headers for each server variant. Require security-owner approval before changing broad CSP directives.
-- [ ] Pass the approved target-origin policy into capture setup. Reject unregistered cross-origin capture by default.
-- [ ] Render built-in target chips and target types from the declared registry. Keep custom targets distinct from approved SPA, MPA, MCard `webapp`, and probe targets.
-- [ ] Preserve the MCard external-portal SSRF and frameability checks. Do not reuse portal compatibility as capture authorization.
-- [ ] Keep the target application URL separate from its Page and Place graph and CLM type URI.
-- [ ] Keep target navigation behind `target-membrane.js`. Preserve the existing iframe sandbox and MCard URL safety checks.
-- [ ] Treat a target without a probe agent as capture-unavailable. Reject origin mismatches between `localhost` and `127.0.0.1`.
-- [ ] Bound silent-agent retries. Clear capture state after iframe navigation and require a new approved-origin handshake before accepting events.
-- [ ] Fence in-flight events during target switch so they remain attached to the old run or are discarded.
-- [ ] Reject malformed or unapproved `?target=` values before capture starts.
-- [ ] Destroy replaced capture sources and prove that listeners, intervals, and nonces do not survive a target change.
-- [ ] Record which mount answers `/app-config.json` with the Astro static mount, Astro handler, and legacy root mounts in their `PR-GQC-02B.1` order.
-- [ ] Choose a CSP path for Astro island bootstrap scripts: emitted hashes or nonces applied by Express, or `unsafe-inline` kept with a recorded risk and owner. Apply the same CORS and CSP headers to Astro and legacy pages.
-- [ ] Release a capture source when the island that owns it unmounts.
-- [ ] Declare every configuration call and the probe handshake as request and result Transitions, and declare blocked, unavailable, and timeout states with a `recover` Transition.
+- [x] Define and test the actual contract for `app-config.json`, `/app-config.json`, and runtime WebSocket configuration. Choose one schema owner for each endpoint.
+- [x] Record product and architecture decisions for target types, custom capture, approved origins, endpoint shape, and blocked-target recovery before changing the affected runtime path.
+- [x] Resolve the `/app-config.json` route shadow across both root static mounts and exclude targets marked blocked from the CORS allowlist.
+- [x] Record the effective CORS and CSP headers for each server variant. Require security-owner approval before changing broad CSP directives.
+- [x] Pass the approved target-origin policy into capture setup. Reject unregistered cross-origin capture by default.
+- [x] Render built-in target chips and target types from the declared registry. Keep custom targets distinct from approved SPA, MPA, MCard `webapp`, and probe targets.
+- [x] Preserve the MCard external-portal SSRF and frameability checks. Do not reuse portal compatibility as capture authorization.
+- [x] Keep the target application URL separate from its Page and Place graph and CLM type URI.
+- [x] Keep target navigation behind `target-membrane.js`. Preserve the existing iframe sandbox and MCard URL safety checks.
+- [x] Treat a target without a probe agent as capture-unavailable. Reject origin mismatches between `localhost` and `127.0.0.1`.
+- [x] Bound silent-agent retries. Clear capture state after iframe navigation and require a new approved-origin handshake before accepting events.
+- [x] Fence in-flight events during target switch so they remain attached to the old run or are discarded.
+- [x] Reject malformed or unapproved `?target=` values before capture starts.
+- [x] Destroy replaced capture sources and prove that listeners, intervals, and nonces do not survive a target change.
+- [x] Record which mount answers `/app-config.json` with the Astro static mount, Astro handler, and legacy root mounts in their `PR-GQC-02B.1` order.
+- [x] Choose a CSP path for Astro island bootstrap scripts: emitted hashes or nonces applied by Express, or `unsafe-inline` kept with a recorded risk and owner. Apply the same CORS and CSP headers to Astro and legacy pages.
+- [x] Release a capture source when the island that owns it unmounts.
+- [x] Declare every configuration call and the probe handshake as request and result Transitions, and declare blocked, unavailable, and timeout states with a `recover` Transition.
 
 **You see.**
 
-- [ ] An approved target loads and displays its capture state.
-- [ ] The selected target's type is visible and distinct from its Page and Place graph.
-- [ ] A blocked target displays an explicit reason and cannot start cross-origin capture.
-- [ ] An approved but uninstrumented target displays capture-unavailable, not a successful capture.
+- [x] An approved target loads and displays its capture state.
+- [x] The selected target's type is visible and distinct from its Page and Place graph.
+- [x] A blocked target displays an explicit reason and cannot start cross-origin capture.
+- [x] An approved but uninstrumented target displays capture-unavailable, not a successful capture.
 
 **Verify, unit.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Test endpoint schemas, allowed-origin decisions, forged message rejection, stale nonce rejection, and capture-source cleanup. Run `npm run test:unit`.
-- [ ] Run `npx playwright test tests/features/responsive-capture.spec.js --project=features`.
-- [ ] Run `node --test tests/single-page-mcard.test.mjs` to confirm the separate MCard external-portal SSRF and framing policy remains unchanged.
-- [ ] Run `npm run check:net` and `npm run build` with net parity.
-- [ ] Run a Playwright check that fails on any CSP violation during Lab island hydration.
+- [x] Test endpoint schemas, allowed-origin decisions, forged message rejection, stale nonce rejection, and capture-source cleanup. Run `npm run test:unit`.
+- [x] Run `npx playwright test tests/features/responsive-capture.spec.js --project=features`.
+- [x] Run `node --test tests/single-page-mcard.test.mjs` to confirm the separate MCard external-portal SSRF and framing policy remains unchanged.
+- [x] Run `npm run check:net` and `npm run build` with net parity.
+- [x] Run a Playwright check that fails on any CSP violation during Lab island hydration.
 
 **Verify, live.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked. Ten lanes on `the model recorded in the run header` at the PR head, per the boot recipe.
 
-- [ ] Lane 1. Regression lane against trunk. Load the approved local SPA target on trunk and head. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-1.png`. Pass when the same target type and visible entry view load.
-- [ ] Lane 2. Select an approved same-origin SPA target. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-2.png`. Pass when its URL, target type, and capture status match the registry.
-- [ ] Lane 3. Select `tests/fixtures/probe-target.html`, which loads `js/harness/lab-probe-agent.js`. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-3.png`. Pass when the handshake completes for the expected frame and exact origin.
-- [ ] Lane 4. Select `tests/fixtures/probe-target-noagent.html`. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-4.png`. Pass when capture is unavailable and the reason differs from a frame-policy block.
-- [ ] Lane 5. Send a forged `lab:hello` message from a different frame. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-5.png`. Pass when the recorder rejects and counts it.
-- [ ] Lane 6. Change the iframe origin during recording, then send a stale nonce and a wrong-loopback-origin message. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-6.png`. Pass when capture stops and no event is attributed to the new target.
-- [ ] Lane 7. Switch targets 50 times. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-7.png`. Pass when old listeners and intervals return to the starting count.
-- [ ] Lane 8. Select a target blocked by frame policy. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-8.png`. Pass when the blocked state remains visible, capture does not start, its origin is absent from CORS, and the effective CSP is recorded.
-- [ ] Lane 9. Record a password field interaction in a fixture. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-9.png`. Pass when the value is redacted in the saved run.
-- [ ] Lane 10. Reload the Responsive Lab with a malformed or unapproved `?target=` value. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-10.png`. Pass when the URL does not start capture and the user can recover.
+- [x] Lane 1. Regression lane against trunk. Load the approved local SPA target on trunk and head. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-1.png`. Pass when the same target type and visible entry view load.
+- [x] Lane 2. Select an approved same-origin SPA target. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-2.png`. Pass when its URL, target type, and capture status match the registry.
+- [x] Lane 3. Select `tests/fixtures/probe-target.html`, which loads `js/harness/lab-probe-agent.js`. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-3.png`. Pass when the handshake completes for the expected frame and exact origin.
+- [x] Lane 4. Select `tests/fixtures/probe-target-noagent.html`. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-4.png`. Pass when capture is unavailable and the reason differs from a frame-policy block.
+- [x] Lane 5. Send a forged `lab:hello` message from a different frame. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-5.png`. Pass when the recorder rejects and counts it.
+- [x] Lane 6. Change the iframe origin during recording, then send a stale nonce and a wrong-loopback-origin message. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-6.png`. Pass when capture stops and no event is attributed to the new target.
+- [x] Lane 7. Switch targets 50 times. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-7.png`. Pass when old listeners and intervals return to the starting count.
+- [x] Lane 8. Select a target blocked by frame policy. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-8.png`. Pass when the blocked state remains visible, capture does not start, its origin is absent from CORS, and the effective CSP is recorded.
+- [x] Lane 9. Record a password field interaction in a fixture. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-9.png`. Pass when the value is redacted in the saved run.
+- [x] Lane 10. Reload the Responsive Lab with a malformed or unapproved `?target=` value. Save `/tmp/swarm-PR-GQC-03/worker-1/lane-10.png`. Pass when the URL does not start capture and the user can recover.
 
 **Verify, perf.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Metric. P75 target-selection-to-ready time and p95 message-to-capture processing time.
-- [ ] Probe. Run ten interleaved trunk and head target changes with the same target fixture and browser.
-- [ ] Baseline. Record trunk values and the target origin, URL, browser, cache mode, and message count.
-- [ ] Rule. If TEA and the Product Manager ratify a blocking budget in GQC-00, fail if p75 target-ready time regresses by more than 10 percent and 100 ms. Otherwise report the result only. Record added validation work separately.
+- [x] Metric. P75 target-selection-to-ready time and p95 message-to-capture processing time.
+- [x] Probe. Run ten interleaved trunk and head target changes with the same target fixture and browser.
+- [x] Baseline. Record trunk values and the target origin, URL, browser, cache mode, and message count.
+- [x] Rule. If TEA and the Product Manager ratify a blocking budget in GQC-00, fail if p75 target-ready time regresses by more than 10 percent and 100 ms. Otherwise report the result only. Record added validation work separately.
 
 **Review gate.** The operator reviews before merge.
 
-- [ ] Copy the approved-target and blocked-target screenshots into the review packet.
-- [ ] Record a 30 to 60 second video of target selection and rejection. Save it with the PR evidence.
-- [ ] Post the screenshots and video in chat. Stop at merge-ready and wait for the operator's review.
+- [x] Copy the approved-target and blocked-target screenshots into the review packet.
+- [x] Record a 30 to 60 second video of target selection and rejection. Save it with the PR evidence.
+- [x] Post the screenshots and video in chat. Stop at merge-ready and wait for the operator's review.
 
 **Merge.**
 
-- [ ] Record the clean verdict at the exact head SHA.
-- [ ] Attach the endpoint contract tests and the origin-policy test results.
-- [ ] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
-- [ ] Append `PR-GQC-03` to the stack after `PR-GQC-02B.2`. Wait for operator landing.
+- [x] Record the clean verdict at the exact head SHA.
+- [x] Attach the endpoint contract tests and the origin-policy test results.
+- [x] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
+- [x] Append `PR-GQC-03` to the stack after `PR-GQC-02B.2`. Wait for operator landing.
 
 ## Build the guided SPA test window and define module ownership (PR-GQC-04)
 

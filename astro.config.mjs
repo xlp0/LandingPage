@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import node from '@astrojs/node';
 import preact from '@astrojs/preact';
 import { netParityIntegration } from './src/integrations/net-parity.mjs';
+import { buildContentSecurityPolicy } from './js/harness/target-membrane.js';
 
 const astroPublicUrl = new URL('./.cache/astro-public', import.meta.url);
 fs.mkdirSync(astroPublicUrl, { recursive: true });
@@ -71,7 +72,8 @@ export default defineConfig({
   server: {
     port: Number(process.env.ASTRO_PORT || 4322),
     headers: {
-      'Cache-Control': 'no-store'
+      'Cache-Control': 'no-store',
+      'Content-Security-Policy': buildContentSecurityPolicy()
     }
   },
   vite: {

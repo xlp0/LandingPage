@@ -295,14 +295,14 @@ test('attachWorkbenchNetTracer derives FIFO server calls, popup promotions, open
   const coverage = computeTransitionCoverage(workbenchNet, {
     replayedTraces: [{ ...replay, asserted: true }]
   });
-  assert.equal(coverage.declared, 45);
+  assert.equal(coverage.declared, 56);
   assert.equal(coverage.fired, 9);
   assert.equal(coverage.asserted, 9);
   assert.equal(coverage.policy, 'ADVISORY');
   assert.equal(coverage.blocking, false);
 
   const md = formatNetCoverageMarkdown([
-    { filePath: 'src/net/workbench-net.yaml', placeCount: 23, coverage }
+    { filePath: 'src/net/workbench-net.yaml', placeCount: 28, coverage }
   ]);
   assert.match(md, /ADVISORY/);
   assert.equal(md.includes('\u2014'), false);
@@ -316,4 +316,89 @@ test('attachWorkbenchNetTracer derives FIFO server calls, popup promotions, open
   assert.equal(rejected.reason, 'undeclared-transition');
 
   tracer.detach();
+});
+
+test('GQC-03-UNIT-06 replays blocked-target, capture-unavailable, handshake-timeout, and custom-unapproved traces through error Places and recover Transitions', async () => {
+  const workbenchNet = loadNetEnvelope(WORKBENCH_NET_PATH);
+  const policyRecoveryTrace = {
+    traceId: 'gqc03-policy-error-and-recover',
+    entryPlaceId: 'p_page_responsive_lab',
+    events: [
+      {
+        transitionId: 't_req_get_app_config',
+        fromPlaceId: 'p_page_responsive_lab',
+        toPlaceId: 'p_pending_get_app_config',
+        at: '2026-10-28T05:00:00.000Z'
+      },
+      {
+        transitionId: 't_ok_get_app_config',
+        fromPlaceId: 'p_pending_get_app_config',
+        toPlaceId: 'p_page_responsive_lab',
+        at: '2026-10-28T05:00:00.010Z'
+      },
+      {
+        transitionId: 't_enter_target_blocked',
+        fromPlaceId: 'p_page_responsive_lab',
+        toPlaceId: 'p_error_target_blocked',
+        at: '2026-10-28T05:00:00.020Z'
+      },
+      {
+        transitionId: 't_recover_target_blocked',
+        fromPlaceId: 'p_error_target_blocked',
+        toPlaceId: 'p_page_responsive_lab',
+        at: '2026-10-28T05:00:00.030Z'
+      },
+      {
+        transitionId: 't_req_probe_handshake',
+        fromPlaceId: 'p_page_responsive_lab',
+        toPlaceId: 'p_pending_probe_handshake',
+        at: '2026-10-28T05:00:00.040Z'
+      },
+      {
+        transitionId: 't_fail_probe_handshake_timeout',
+        fromPlaceId: 'p_pending_probe_handshake',
+        toPlaceId: 'p_error_handshake_timeout',
+        at: '2026-10-28T05:00:05.040Z'
+      },
+      {
+        transitionId: 't_recover_handshake_timeout',
+        fromPlaceId: 'p_error_handshake_timeout',
+        toPlaceId: 'p_page_responsive_lab',
+        at: '2026-10-28T05:00:05.050Z'
+      },
+      {
+        transitionId: 't_enter_capture_unavailable',
+        fromPlaceId: 'p_page_responsive_lab',
+        toPlaceId: 'p_error_capture_unavailable',
+        at: '2026-10-28T05:00:05.060Z'
+      },
+      {
+        transitionId: 't_recover_capture_unavailable',
+        fromPlaceId: 'p_error_capture_unavailable',
+        toPlaceId: 'p_page_responsive_lab',
+        at: '2026-10-28T05:00:05.070Z'
+      },
+      {
+        transitionId: 't_enter_target_unapproved',
+        fromPlaceId: 'p_page_responsive_lab',
+        toPlaceId: 'p_error_target_unapproved',
+        at: '2026-10-28T05:00:05.080Z'
+      },
+      {
+        transitionId: 't_recover_target_unapproved',
+        fromPlaceId: 'p_error_target_unapproved',
+        toPlaceId: 'p_page_responsive_lab',
+        at: '2026-10-28T05:00:05.090Z'
+      }
+    ]
+  };
+
+  const replay = await replayNetTrace(workbenchNet, policyRecoveryTrace);
+  assert.equal(replay.ok, true);
+  assert.equal(replay.finalPlaceId, 'p_page_responsive_lab');
+  assert.equal(replay.finalMarking.p_page_responsive_lab, 1);
+  assert.equal(replay.finalMarking.p_error_target_blocked, 0);
+  assert.equal(replay.finalMarking.p_error_handshake_timeout, 0);
+  assert.equal(replay.finalMarking.p_error_capture_unavailable, 0);
+  assert.equal(replay.finalMarking.p_error_target_unapproved, 0);
 });

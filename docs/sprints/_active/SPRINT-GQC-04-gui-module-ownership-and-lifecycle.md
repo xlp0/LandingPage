@@ -4,7 +4,7 @@
 
 - Sprint ID: `SPRINT-GQC-04`
 - Handle: `urn:pcard:sprint:SPRINT-GQC-04`
-- Status: `STAGED`
+- Status: `ACTIVE`
 - Depends on: `SPRINT-GQC-03`
 - Unblocks: `SPRINT-GQC-05`
 - Execution unit: `PR-GQC-04`

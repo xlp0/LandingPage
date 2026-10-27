@@ -68,6 +68,33 @@ export default function TargetToolbarIsland() {
           <span>▶ Load Target</span>
         </button>
       </div>
+      <div
+        className="target-policy-meta"
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.35rem', flexWrap: 'wrap' }}
+      >
+        <span id="target-type-badge" data-testid="target-type-badge" className="lab-badge">
+          Type: webapp
+        </span>
+        <span
+          id="target-policy-status"
+          data-testid="target-policy-status"
+          role="status"
+          aria-live="polite"
+          data-policy-state="approved-same-origin"
+          className="lab-badge"
+        >
+          Policy: Approved (Same-Origin)
+        </span>
+        <button
+          type="button"
+          id="btn-target-recover"
+          data-testid="btn-target-recover"
+          className="toolbar-btn"
+          style={{ display: 'none', fontSize: '0.7rem', padding: '0.2rem 0.55rem' }}
+        >
+          ↺ Reset to Default Target
+        </button>
+      </div>
       <div className="target-presets-row">
         <div className="preset-dropdown-wrap">
           <span className="preset-label" style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>
@@ -79,26 +106,15 @@ export default function TargetToolbarIsland() {
             aria-label="Select target website to test iframe compatibility"
           />
         </div>
-        <div className="target-quick-chips" id="target-quick-chips" aria-label="Quick launch targets">
-          <button type="button" className="target-chip" data-url="app.html" title="Local App Target">
-            ⚡ app.html
-          </button>
-          <button type="button" className="target-chip" data-url="index.html" title="GovTech OS Portal">
-            ⚡ index.html
-          </button>
-          <button type="button" className="target-chip" data-url="http://localhost:4321/" title="Local Astro / Web App">
-            :4321
-          </button>
-          <button type="button" className="target-chip" data-url="http://127.0.0.1:5320/" title="MCard Studio Workbench">
-            :5320 Studio
-          </button>
-        </div>
+        <div className="target-quick-chips" id="target-quick-chips" aria-label="Quick launch targets" />
       </div>
-      <div className="target-status-row">
+      <div className="target-status-row" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
         <span
           id="cors-status-pill"
+          role="status"
+          aria-live="polite"
           className="footer-status-pill"
-          style={{ marginTop: '0.15rem', width: '100%', justifyContent: 'center' }}
+          style={{ marginTop: '0.05rem', width: '100%', justifyContent: 'center' }}
         >
           ● Controlled Viewport Active (Iframe Compatible)
         </span>

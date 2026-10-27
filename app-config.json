@@ -1,59 +1,129 @@
 {
+  "schema": "urn:gqc:lab-config:v1",
+  "owner": "Architect and Product Manager",
+  "defaultTargetId": "local-ui-app",
+  "p2p": {
+    "iceServers": [
+      {
+        "urls": "stun:stun.l.google.com:19302"
+      }
+    ]
+  },
   "labTargets": [
     {
+      "id": "local-ui-app",
       "url": "app.html",
       "label": "Local UI Target (app.html) - Iframe Compatible",
+      "chipLabel": "⚡ app.html",
+      "targetType": "webapp",
       "status": "allowed",
+      "quickLaunch": true,
       "desc": "Local Responsive UI Target (Iframe Compatible)"
     },
     {
+      "id": "spa-test-target",
+      "url": "/tests/fixtures/spa-test-target.html",
+      "label": "SPA Test Fixture (/tests/fixtures/spa-test-target.html) - Iframe Compatible",
+      "chipLabel": "🧭 SPA Fixture",
+      "targetType": "spa",
+      "status": "allowed",
+      "quickLaunch": true,
+      "desc": "Deterministic SPA Test Fixture (Iframe Compatible)"
+    },
+    {
+      "id": "govtech-portal-index",
       "url": "index.html",
       "label": "GovTech OS Portal (index.html) - Iframe Compatible",
+      "chipLabel": "⚡ index.html",
+      "targetType": "mpa-candidate",
       "status": "allowed",
+      "quickLaunch": true,
       "desc": "GovTech OS Portal Page (Iframe Compatible)"
     },
     {
+      "id": "probe-fixture-same-origin",
+      "url": "/tests/fixtures/probe-target.html",
+      "label": "Same-Origin Probe Target (/tests/fixtures/probe-target.html)",
+      "targetType": "probe-fixture",
+      "status": "allowed",
+      "quickLaunch": false,
+      "desc": "Same-Origin Probe Target Fixture"
+    },
+    {
+      "id": "pkc-docs-index",
+      "url": "pkc-docs-index.html",
+      "label": "PKC Documentation Portal (pkc-docs-index.html) - Preview Only",
+      "targetType": "undecided",
+      "status": "allowed",
+      "quickLaunch": false,
+      "reason": "Target architecture undecided; capture disabled pending product classification",
+      "desc": "Legacy Documentation Index (Undecided Target Class)"
+    },
+    {
+      "id": "local-astro-4321",
       "url": "http://localhost:4321/",
       "label": "Local App (http://localhost:4321/) - Iframe Compatible",
+      "chipLabel": ":4321",
+      "targetType": "webapp",
       "status": "allowed",
+      "quickLaunch": true,
       "desc": "Local App Target (http://localhost:4321/) - Iframe Compatible"
     },
     {
+      "id": "mcard-studio-5320",
       "url": "http://127.0.0.1:5320/",
       "label": "MCard Studio Workbench (http://127.0.0.1:5320/) - Iframe Compatible",
+      "chipLabel": ":5320 Studio",
+      "targetType": "webapp",
       "status": "allowed",
+      "quickLaunch": true,
       "desc": "Local MCard Studio Workbench Target (http://127.0.0.1:5320/) - Iframe Compatible"
     },
     {
+      "id": "probe-fixture-cross-origin",
       "url": "http://127.0.0.1:3001/tests/fixtures/probe-target.html",
       "label": "Cross-Origin Probe Target (127.0.0.1) - Iframe Compatible",
+      "targetType": "probe-fixture",
       "status": "allowed",
+      "quickLaunch": false,
       "desc": "Cross-Origin Probe Target with Agent"
     },
     {
+      "id": "probe-noagent-cross-origin",
       "url": "http://127.0.0.1:3001/tests/fixtures/probe-target-noagent.html",
       "label": "Cross-Origin Target No Agent (127.0.0.1)",
+      "targetType": "probe-fixture",
       "status": "allowed",
+      "quickLaunch": false,
       "desc": "Cross-Origin Target Without Agent"
     },
     {
+      "id": "blocked-github",
       "url": "https://github.com",
       "label": "GitHub (https://github.com) - Blocked (X-Frame-Options: DENY)",
+      "targetType": "blocked",
       "status": "blocked",
+      "quickLaunch": false,
       "reason": "X-Frame-Options: DENY",
       "desc": "GitHub blocks embedded iframe rendering via X-Frame-Options: DENY"
     },
     {
+      "id": "blocked-google",
       "url": "https://www.google.com",
       "label": "Google (https://www.google.com) - Blocked (SAMEORIGIN)",
+      "targetType": "blocked",
       "status": "blocked",
+      "quickLaunch": false,
       "reason": "X-Frame-Options: SAMEORIGIN",
       "desc": "Google blocks third-party iframe embedding via X-Frame-Options: SAMEORIGIN"
     },
     {
+      "id": "blocked-mdn",
       "url": "https://developer.mozilla.org",
       "label": "MDN Web Docs - Blocked (CSP frame-ancestors: 'none')",
+      "targetType": "blocked",
       "status": "blocked",
+      "quickLaunch": false,
       "reason": "CSP frame-ancestors: 'none'",
       "desc": "MDN Web Docs blocks iframing via Content-Security-Policy: frame-ancestors 'none'"
     }

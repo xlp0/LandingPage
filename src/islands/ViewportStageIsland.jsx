@@ -14,16 +14,26 @@ export default function ViewportStageIsland() {
     };
   }, []);
 
+  function handleRecoverClick() {
+    window.__lab?.policy?.recover?.();
+  }
+
   return (
     <>
-      <div className="cors-alert-toast" id="cors-block-alert" style={{ display: 'none' }}>
+      <div className="cors-alert-toast" id="cors-block-alert" role="alert" aria-live="assertive" style={{ display: 'none' }}>
         <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>⚠️</span>
-        <div id="cors-block-alert-content">
+        <div id="cors-block-alert-content" style={{ flex: 1 }}>
           <strong>Browser Sandbox Boundary:</strong> <span id="cors-block-target-name">GitHub</span> enforces{' '}
-          <code id="cors-block-reason">X-Frame-Options: DENY</code>. Standard web applications cannot embed this site or
-          trigger native browser tab splitting. In Desktop mode (Tauri), native multi-webview isolation bypasses this
-          restriction.
+          <code id="cors-block-reason">X-Frame-Options: DENY</code>. Capture is disabled for blocked targets.
         </div>
+        <button
+          type="button"
+          id="btn-cors-alert-recover"
+          className="toolbar-btn"
+          onClick={handleRecoverClick}
+        >
+          ↺ Reset to Default Target
+        </button>
       </div>
 
       <div className="viewport-scale-wrapper" id="viewport-scale-wrapper" data-island="viewport-stage">
