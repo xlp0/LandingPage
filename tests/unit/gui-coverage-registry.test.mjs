@@ -523,9 +523,19 @@ export function validateGuiCoverageRegistry(registry, { rootDir = ROOT_DIR, chec
         errors.push(`External surface "${id}" must declare an http(s) externalUrl`);
       }
     } else {
+      const rootPageAstro =
+        typeof surface.pagePath === 'string' &&
+        !surface.pagePath.includes('/') &&
+        surface.pagePath.endsWith('.html')
+          ? path.join(rootDir, 'src', 'pages', `${surface.pagePath.slice(0, -5)}.astro`)
+          : null;
       if (typeof surface.pagePath !== 'string' || !surface.pagePath.trim()) {
         errors.push(`Surface "${id}" is missing pagePath`);
-      } else if (checkDiskFiles && !fs.existsSync(path.join(rootDir, surface.pagePath))) {
+      } else if (
+        checkDiskFiles &&
+        !fs.existsSync(path.join(rootDir, surface.pagePath)) &&
+        !(rootPageAstro && fs.existsSync(rootPageAstro))
+      ) {
         errors.push(`Surface "${id}" pagePath does not exist on disk ("${surface.pagePath}")`);
       }
     }
@@ -619,7 +629,15 @@ export function validateGuiCoverageRegistry(registry, { rootDir = ROOT_DIR, chec
         errors.push(`Covered journey "${jid}" is missing command`);
       }
       if (checkDiskFiles) {
-        if (journey.pagePath && !fs.existsSync(path.join(rootDir, journey.pagePath))) {
+        const journeyRootAstro =
+          journey.pagePath && !journey.pagePath.includes('/') && journey.pagePath.endsWith('.html')
+            ? path.join(rootDir, 'src', 'pages', `${journey.pagePath.slice(0, -5)}.astro`)
+            : null;
+        if (
+          journey.pagePath &&
+          !fs.existsSync(path.join(rootDir, journey.pagePath)) &&
+          !(journeyRootAstro && fs.existsSync(journeyRootAstro))
+        ) {
           errors.push(`Journey "${jid}" pagePath does not exist on disk ("${journey.pagePath}")`);
         }
         if (journey.specPath && !fs.existsSync(path.join(rootDir, journey.specPath))) {

@@ -40,6 +40,7 @@ Thumbs.db
 # Cache directories
 .cache/
 .parcel-cache/
+.astro/
 
 # Build outputs (if any build process is added)
 dist/

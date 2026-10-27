@@ -45,7 +45,8 @@ export const ALLOWED_TRANSITION_KINDS = new Set([
 
 export const ALLOWED_MIGRATION_STATES = new Set([
   'legacy-static',
-  'astro-island'
+  'astro-wrapped',
+  'astro-islands'
 ]);
 
 function parseSprintRank(sprintId) {
@@ -342,7 +343,7 @@ export function validateNetEnvelope(
         fail(
           placeId,
           'conflated-place-identifiers',
-          `Page Place "${placeId}" must declare migrationState as legacy-static or astro-island`
+          `Page Place "${placeId}" must declare migrationState as legacy-static, astro-wrapped, or astro-islands`
         );
       }
       if (binding.route) {
