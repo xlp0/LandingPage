@@ -4,7 +4,7 @@
 
 - Sprint ID: `SPRINT-GQC-02A`
 - Handle: `urn:pcard:sprint:SPRINT-GQC-02A`
-- Status: `ACTIVE`
+- Status: `COMPLETED`
 - Depends on: `SPRINT-GQC-02`
 - Unblocks: `SPRINT-GQC-02B`
 - Execution unit: `PR-GQC-02A`
@@ -182,34 +182,34 @@ Do not edit any HTML page, `ws-server.js`, `server/`, `routes/`, `js/nav.js`, or
 
 ### GQC-02A.1 Census every Place and Transition
 
-- [ ] The census lists every root and `public/` page with a kind, surface, owner, and support status.
-- [ ] The census lists every internal link, redirect, script navigation, `window.open`, UI-reachable `fetch`, and WebSocket connect with its source file and line.
-- [ ] Dynamic URL builders resolve to concrete endpoints or appear as unresolved with an owner.
-- [ ] Every Express endpoint is bound to a server-call Transition or marked `not-ui-reachable`.
-- [ ] PenPot drift lists each link found in only one of `js/nav.js`, HTML, or script navigation.
+- [x] The census lists every root and `public/` page with a kind, surface, owner, and support status.
+- [x] The census lists every internal link, redirect, script navigation, `window.open`, UI-reachable `fetch`, and WebSocket connect with its source file and line.
+- [x] Dynamic URL builders resolve to concrete endpoints or appear as unresolved with an owner.
+- [x] Every Express endpoint is bound to a server-call Transition or marked `not-ui-reachable`.
+- [x] PenPot drift lists each link found in only one of `js/nav.js`, HTML, or script navigation.
 
 ### GQC-02A.2 Author the workbench net
 
-- [ ] `src/net/workbench-net.yaml` passes `parsePetriNetYaml` from the pinned package.
-- [ ] Every approved workbench page has exactly one `page` Place.
-- [ ] Every server call is a request Transition to a pending Place and at least one result Transition out of it.
-- [ ] `window.open` is an `open-external` fork to a weight-0 `external` Place.
-- [ ] Place IDs, route paths, CLM type URIs, and MCard hashes are separate fields.
-- [ ] The net contains no workbench device, capture, or replay control as a target-app Transition. Those stay workbench actions or an island-local subnet.
+- [x] `src/net/workbench-net.yaml` passes `parsePetriNetYaml` from the pinned package.
+- [x] Every approved workbench page has exactly one `page` Place.
+- [x] Every server call is a request Transition to a pending Place and at least one result Transition out of it.
+- [x] `window.open` is an `open-external` fork to a weight-0 `external` Place.
+- [x] Place IDs, route paths, CLM type URIs, and MCard hashes are separate fields.
+- [x] The net contains no workbench device, capture, or replay control as a target-app Transition. Those stay workbench actions or an island-local subnet.
 
 ### GQC-02A.3 Check the net
 
-- [ ] `npm run check:net` fails for each rule in the checker rules list, proven by one failing fixture per rule.
-- [ ] The same command validates the GQC-02 SPA fixture net.
-- [ ] The session-conservation P-invariant holds for both nets.
-- [ ] No unreachable `page` Place and no never-enabled Transition remains unless it has a recorded exception, owner, and expiry.
+- [x] `npm run check:net` fails for each rule in the checker rules list, proven by one failing fixture per rule.
+- [x] The same command validates the GQC-02 SPA fixture net.
+- [x] The session-conservation P-invariant holds for both nets.
+- [x] No unreachable `page` Place and no never-enabled Transition remains unless it has a recorded exception, owner, and expiry.
 
 ### GQC-02A.4 Trace and replay journeys
 
-- [ ] The Playwright trace fixture records the existing GQC-02 journeys on the legacy pages without production code changes.
-- [ ] Replay through `ColoredPetriVM` accepts every approved journey trace.
-- [ ] Replay rejects a trace with an undeclared or out-of-order Transition and names it.
-- [ ] The CI summary reports Transition coverage as declared, fired, and asserted counts.
+- [x] The Playwright trace fixture records the existing GQC-02 journeys on the legacy pages without production code changes.
+- [x] Replay through `ColoredPetriVM` accepts every approved journey trace.
+- [x] Replay rejects a trace with an undeclared or out-of-order Transition and names it.
+- [x] The CI summary reports Transition coverage as declared, fired, and asserted counts.
 
 ## Test design
 
@@ -248,10 +248,10 @@ Do not edit any HTML page, `ws-server.js`, `server/`, `routes/`, `js/nav.js`, or
 
 ## Definition of done
 
-- [ ] The census and probe evidence are committed with exact commands and versions.
-- [ ] `npm run check:net` passes on the workbench net and the SPA fixture net, and each rule has a failing fixture.
-- [ ] Approved GQC-02 journeys replay cleanly through `ColoredPetriVM`.
-- [ ] The CI summary reports Transition coverage.
-- [ ] The Architect approves the envelope format and kinds. The Product Manager approves the P0 Places.
-- [ ] No page, route, server response, or production script changed.
-- [ ] The operator approves the handoff to GQC-02B.
+- [x] The census and probe evidence are committed with exact commands and versions.
+- [x] `npm run check:net` passes on the workbench net and the SPA fixture net, and each rule has a failing fixture.
+- [x] Approved GQC-02 journeys replay cleanly through `ColoredPetriVM`.
+- [x] The CI summary reports Transition coverage.
+- [x] The Architect approves the envelope format and kinds. The Product Manager approves the P0 Places.
+- [x] No page, route, server response, or production script changed.
+- [x] The operator approves the handoff to GQC-02B.

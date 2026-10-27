@@ -28,6 +28,7 @@
     "test": "playwright test",
     "test:unit": "node --test 'tests/unit/**/*.test.*' 'tests/observability/**/*.test.*' tests/single-page-mcard.test.mjs",
     "check:playwright-discovery": "node scripts/check-playwright-discovery.mjs",
+    "check:net": "node scripts/check-net.mjs",
     "test:responsive": "playwright test tests/features/systematic-landing-test.spec.js --project=features",
     "test:replay": "playwright test tests/features/responsive-replay.spec.js --project=features",
     "test:conformance": "playwright test tests/features/device-conformance.spec.js --project=features",

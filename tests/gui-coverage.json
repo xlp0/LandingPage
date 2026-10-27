@@ -38,7 +38,9 @@
       "status": "active",
       "approvalStatus": "approved",
       "primaryJourneyId": "workbench-lab-shell",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md"
+      "docPath": "docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md",
+      "workbenchPlaceId": "p_page_responsive_lab",
+      "sourceRef": "src/net/workbench-net.yaml"
     },
     {
       "surfaceId": "workbench-landing-portal",
@@ -55,7 +57,9 @@
       "status": "active",
       "approvalStatus": "approved",
       "primaryJourneyId": "workbench-entry-redirect",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md"
+      "docPath": "docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md",
+      "workbenchPlaceId": "p_page_index",
+      "sourceRef": "src/net/workbench-net.yaml"
     },
     {
       "surfaceId": "workbench-legacy-mission-control",
@@ -73,7 +77,9 @@
       "approvalStatus": "tombstoned-unclassified",
       "targetSprint": "SPRINT-GQC-03",
       "primaryJourneyId": "legacy-mission-control-characterization",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md",
+      "workbenchPlaceId": "p_page_app",
+      "sourceRef": "src/net/workbench-net.yaml"
     },
     {
       "surfaceId": "workbench-fiber-conformance",
@@ -90,7 +96,9 @@
       "status": "active",
       "approvalStatus": "tombstoned-internal",
       "primaryJourneyId": "diagnostic-fiber-conformance",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md",
+      "workbenchPlaceId": "p_page_fiber_conformance",
+      "sourceRef": "src/net/workbench-net.yaml"
     },
     {
       "surfaceId": "workbench-fiber-inspector",
@@ -107,7 +115,9 @@
       "status": "active",
       "approvalStatus": "tombstoned-internal",
       "primaryJourneyId": "diagnostic-fiber-inspector",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md",
+      "workbenchPlaceId": "p_page_fiber_inspector",
+      "sourceRef": "src/net/workbench-net.yaml"
     },
     {
       "surfaceId": "workbench-sprint-registry",
@@ -124,7 +134,9 @@
       "status": "active",
       "approvalStatus": "tombstoned-internal",
       "primaryJourneyId": "diagnostic-sprint-registry",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md",
+      "workbenchPlaceId": "p_page_sprint_registry",
+      "sourceRef": "src/net/workbench-net.yaml"
     },
     {
       "surfaceId": "workbench-pkc-docs-index",
@@ -141,7 +153,8 @@
       "status": "active",
       "approvalStatus": "tombstoned-legacy-catalog",
       "primaryJourneyId": "legacy-pkc-docs-catalog",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md",
+      "workbenchPlaceId": null
     }
   ],
   "targetSurfaces": [
@@ -414,8 +427,13 @@
       ],
       "sourceKind": "fixture-graph-manifest",
       "sourceRef": "tests/fixtures/spa-test-target.graph.json",
-      "workbenchPlaceId": null,
-      "workbenchTransitionIds": [],
+      "workbenchPlaceId": "p_page_responsive_lab",
+      "workbenchTransitionIds": [
+        "t_req_get_app_config",
+        "t_ok_get_app_config",
+        "t_req_post_test_runs",
+        "t_ok_post_test_runs"
+      ],
       "priority": "P0",
       "inP0SpaDenominator": true,
       "optional": false,
@@ -456,8 +474,13 @@
       ],
       "sourceKind": "fixture-graph-manifest",
       "sourceRef": "tests/fixtures/spa-test-target.graph.json",
-      "workbenchPlaceId": null,
-      "workbenchTransitionIds": [],
+      "workbenchPlaceId": "p_page_responsive_lab",
+      "workbenchTransitionIds": [
+        "t_req_get_app_config",
+        "t_ok_get_app_config",
+        "t_req_post_test_runs",
+        "t_ok_post_test_runs"
+      ],
       "priority": "P0",
       "inP0SpaDenominator": true,
       "optional": false,
@@ -488,15 +511,28 @@
       "targetType": "workbench",
       "targetHandle": "mcard:route:/responsive-lab.html",
       "pageId": "page_workbench_responsive_lab",
-      "placeId": null,
-      "functionalLinkId": null,
-      "transitionId": null,
-      "firing_sequence": [],
-      "sourceKind": "pending-workbench-net",
+      "placeId": "p_page_responsive_lab",
+      "functionalLinkId": "call_req_get_app_config",
+      "transitionId": "t_req_get_app_config",
+      "firing_sequence": [
+        "t_req_get_app_config",
+        "t_ok_get_app_config",
+        "t_req_post_test_runs",
+        "t_ok_post_test_runs",
+        "t_req_get_conformance_latest",
+        "t_ok_get_conformance_latest"
+      ],
+      "sourceKind": "existing-mcard-contract",
       "sourceRef": "src/net/workbench-net.yaml",
-      "sourcePendingSprint": "SPRINT-GQC-02A",
-      "workbenchPlaceId": null,
-      "workbenchTransitionIds": [],
+      "workbenchPlaceId": "p_page_responsive_lab",
+      "workbenchTransitionIds": [
+        "t_req_get_app_config",
+        "t_ok_get_app_config",
+        "t_req_post_test_runs",
+        "t_ok_post_test_runs",
+        "t_req_get_conformance_latest",
+        "t_ok_get_conformance_latest"
+      ],
       "priority": "P0",
       "inP0SpaDenominator": false,
       "optional": false,
@@ -524,15 +560,22 @@
       "targetType": "workbench",
       "targetHandle": "mcard:route:/index.html",
       "pageId": "page_workbench_landing_portal",
-      "placeId": null,
-      "functionalLinkId": null,
-      "transitionId": null,
-      "firing_sequence": [],
-      "sourceKind": "pending-workbench-net",
+      "placeId": "p_page_index",
+      "functionalLinkId": "redirect_index_to_lab",
+      "transitionId": "t_redirect_index_to_lab",
+      "firing_sequence": [
+        "t_redirect_index_to_lab",
+        "t_req_get_app_config",
+        "t_ok_get_app_config"
+      ],
+      "sourceKind": "existing-mcard-contract",
       "sourceRef": "src/net/workbench-net.yaml",
-      "sourcePendingSprint": "SPRINT-GQC-02A",
-      "workbenchPlaceId": null,
-      "workbenchTransitionIds": [],
+      "workbenchPlaceId": "p_page_index",
+      "workbenchTransitionIds": [
+        "t_redirect_index_to_lab",
+        "t_req_get_app_config",
+        "t_ok_get_app_config"
+      ],
       "priority": "P0",
       "inP0SpaDenominator": false,
       "optional": false,
@@ -566,8 +609,18 @@
       ],
       "sourceKind": "generated-penpot-module",
       "sourceRef": "js/nav.js",
-      "workbenchPlaceId": null,
-      "workbenchTransitionIds": [],
+      "workbenchPlaceId": "p_view_index_mcard_viewer",
+      "workbenchTransitionIds": [
+        "t_req_get_env",
+        "t_ok_get_env",
+        "t_req_get_mcard_landing",
+        "t_ok_get_mcard_landing",
+        "t_req_get_clm_program_artifact",
+        "t_ok_get_clm_program_artifact",
+        "t_link_viewer_to_lab",
+        "t_req_get_app_config",
+        "t_ok_get_app_config"
+      ],
       "priority": "P1",
       "inP0SpaDenominator": false,
       "optional": false,
@@ -589,15 +642,28 @@
       "targetType": "workbench",
       "targetHandle": "mcard:route:/index.html",
       "pageId": "page_workbench_mcard_viewer",
-      "placeId": null,
-      "functionalLinkId": null,
-      "transitionId": null,
-      "firing_sequence": [],
-      "sourceKind": "pending-workbench-net",
+      "placeId": "p_view_index_mcard_viewer",
+      "functionalLinkId": "call_req_get_mcard_landing",
+      "transitionId": "t_req_get_mcard_landing",
+      "firing_sequence": [
+        "t_req_get_env",
+        "t_ok_get_env",
+        "t_req_get_mcard_landing",
+        "t_ok_get_mcard_landing",
+        "t_req_get_clm_program_artifact",
+        "t_ok_get_clm_program_artifact"
+      ],
+      "sourceKind": "existing-mcard-contract",
       "sourceRef": "src/net/workbench-net.yaml",
-      "sourcePendingSprint": "SPRINT-GQC-02A",
-      "workbenchPlaceId": null,
-      "workbenchTransitionIds": [],
+      "workbenchPlaceId": "p_view_index_mcard_viewer",
+      "workbenchTransitionIds": [
+        "t_req_get_env",
+        "t_ok_get_env",
+        "t_req_get_mcard_landing",
+        "t_ok_get_mcard_landing",
+        "t_req_get_clm_program_artifact",
+        "t_ok_get_clm_program_artifact"
+      ],
       "priority": "P1",
       "inP0SpaDenominator": false,
       "optional": false,
@@ -631,8 +697,15 @@
       ],
       "sourceKind": "existing-mcard-contract",
       "sourceRef": "js/harness/test-run-schema.js",
-      "workbenchPlaceId": null,
-      "workbenchTransitionIds": [],
+      "workbenchPlaceId": "p_page_responsive_lab",
+      "workbenchTransitionIds": [
+        "t_req_get_app_config",
+        "t_ok_get_app_config",
+        "t_req_post_test_runs",
+        "t_ok_post_test_runs",
+        "t_req_get_conformance_latest",
+        "t_ok_get_conformance_latest"
+      ],
       "priority": "P1",
       "inP0SpaDenominator": false,
       "optional": false,
@@ -658,15 +731,20 @@
       "targetType": "internal-diagnostic",
       "targetHandle": "mcard:route:/fiber-conformance.html",
       "pageId": "page_diag_fiber_conformance",
-      "placeId": null,
-      "functionalLinkId": null,
-      "transitionId": null,
-      "firing_sequence": [],
-      "sourceKind": "pending-workbench-net",
+      "placeId": "p_page_fiber_conformance",
+      "functionalLinkId": "call_req_get_fiber_conformance_harness",
+      "transitionId": "t_req_get_fiber_conformance_harness",
+      "firing_sequence": [
+        "t_req_get_fiber_conformance_harness",
+        "t_ok_get_fiber_conformance_harness"
+      ],
+      "sourceKind": "existing-mcard-contract",
       "sourceRef": "src/net/workbench-net.yaml",
-      "sourcePendingSprint": "SPRINT-GQC-02A",
-      "workbenchPlaceId": null,
-      "workbenchTransitionIds": [],
+      "workbenchPlaceId": "p_page_fiber_conformance",
+      "workbenchTransitionIds": [
+        "t_req_get_fiber_conformance_harness",
+        "t_ok_get_fiber_conformance_harness"
+      ],
       "priority": "P2",
       "inP0SpaDenominator": false,
       "optional": false,
@@ -691,15 +769,20 @@
       "targetType": "internal-diagnostic",
       "targetHandle": "mcard:route:/fiber-inspector.html",
       "pageId": "page_diag_fiber_inspector",
-      "placeId": null,
-      "functionalLinkId": null,
-      "transitionId": null,
-      "firing_sequence": [],
-      "sourceKind": "pending-workbench-net",
+      "placeId": "p_page_fiber_inspector",
+      "functionalLinkId": "call_req_get_fiber_inspector_harness",
+      "transitionId": "t_req_get_fiber_inspector_harness",
+      "firing_sequence": [
+        "t_req_get_fiber_inspector_harness",
+        "t_ok_get_fiber_inspector_harness"
+      ],
+      "sourceKind": "existing-mcard-contract",
       "sourceRef": "src/net/workbench-net.yaml",
-      "sourcePendingSprint": "SPRINT-GQC-02A",
-      "workbenchPlaceId": null,
-      "workbenchTransitionIds": [],
+      "workbenchPlaceId": "p_page_fiber_inspector",
+      "workbenchTransitionIds": [
+        "t_req_get_fiber_inspector_harness",
+        "t_ok_get_fiber_inspector_harness"
+      ],
       "priority": "P2",
       "inP0SpaDenominator": false,
       "optional": false,
@@ -724,15 +807,20 @@
       "targetType": "internal-diagnostic",
       "targetHandle": "mcard:route:/sprint-registry.html",
       "pageId": "page_diag_sprint_registry",
-      "placeId": null,
-      "functionalLinkId": null,
-      "transitionId": null,
-      "firing_sequence": [],
-      "sourceKind": "pending-workbench-net",
+      "placeId": "p_page_sprint_registry",
+      "functionalLinkId": "call_req_get_clm_registry",
+      "transitionId": "t_req_get_clm_registry",
+      "firing_sequence": [
+        "t_req_get_clm_registry",
+        "t_ok_get_clm_registry"
+      ],
+      "sourceKind": "existing-mcard-contract",
       "sourceRef": "src/net/workbench-net.yaml",
-      "sourcePendingSprint": "SPRINT-GQC-02A",
-      "workbenchPlaceId": null,
-      "workbenchTransitionIds": [],
+      "workbenchPlaceId": "p_page_sprint_registry",
+      "workbenchTransitionIds": [
+        "t_req_get_clm_registry",
+        "t_ok_get_clm_registry"
+      ],
       "priority": "P2",
       "inP0SpaDenominator": false,
       "optional": false,
@@ -761,9 +849,8 @@
       "functionalLinkId": null,
       "transitionId": null,
       "firing_sequence": [],
-      "sourceKind": "pending-workbench-net",
-      "sourceRef": "src/net/workbench-net.yaml",
-      "sourcePendingSprint": "SPRINT-GQC-02A",
+      "sourceKind": "undecided",
+      "sourceRef": null,
       "workbenchPlaceId": null,
       "workbenchTransitionIds": [],
       "priority": "P2",
@@ -797,7 +884,7 @@
       "firing_sequence": [],
       "sourceKind": "undecided",
       "sourceRef": null,
-      "workbenchPlaceId": null,
+      "workbenchPlaceId": "p_page_app",
       "workbenchTransitionIds": [],
       "priority": "P2",
       "inP0SpaDenominator": false,

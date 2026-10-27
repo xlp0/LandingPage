@@ -1,0 +1,1259 @@
+schema: urn:gqc:net-envelope:v1
+netId: landingpage-workbench-net
+targetHandle: mcard:workbench:landing-page
+entryPlaceId: p_page_index
+topology:
+  name: landingpage-workbench-net
+  places:
+    - id: p_page_index
+      initialTokens: 1
+      description: Workbench root entry route that redirects top-level requests to Responsive UI Lab
+    - id: p_page_responsive_lab
+      initialTokens: 0
+      description: Primary P0 Responsive UI Lab full-window viewport workbench
+    - id: p_page_app
+      initialTokens: 0
+      description: Legacy Mission Control MCard Manager host page
+    - id: p_page_sprint_registry
+      initialTokens: 0
+      description: Internal CLM sprint registry catalog page
+    - id: p_page_fiber_inspector
+      initialTokens: 0
+      description: Internal fiber correctness and marking inspector page
+    - id: p_page_fiber_conformance
+      initialTokens: 0
+      description: Internal fiber conformance harness page
+    - id: p_view_index_mcard_viewer
+      initialTokens: 0
+      description: Single-page 4-modality MCard viewer mode on index.html?noredirect=1
+    - id: p_external_games
+      initialTokens: 0
+      description: External game popup windows launched from app.html via window.open
+    - id: p_pending_get_app_config
+      initialTokens: 0
+      description: In-flight pending state for GET /app-config.json from p_page_responsive_lab
+    - id: p_pending_post_test_runs
+      initialTokens: 0
+      description: In-flight pending state for POST /api/test-runs from p_page_responsive_lab
+    - id: p_error_post_test_runs
+      initialTokens: 0
+      description: Recoverable error state for POST /api/test-runs on responsive-lab.html
+    - id: p_pending_get_conformance_latest
+      initialTokens: 0
+      description: In-flight pending state for GET /api/test-runs/conformance/latest from p_page_responsive_lab
+    - id: p_pending_get_env
+      initialTokens: 0
+      description: In-flight pending state for GET /api/env from p_view_index_mcard_viewer
+    - id: p_pending_get_mcard_landing
+      initialTokens: 0
+      description: In-flight pending state for GET /api/mcard/landing from p_view_index_mcard_viewer
+    - id: p_pending_put_mcard_landing
+      initialTokens: 0
+      description: In-flight pending state for PUT /api/mcard/landing from p_view_index_mcard_viewer
+    - id: p_error_put_mcard_landing
+      initialTokens: 0
+      description: Recoverable error state for PUT /api/mcard/landing on index.html
+    - id: p_pending_get_clm_program_artifact
+      initialTokens: 0
+      description: In-flight pending state for GET /api/clm/program-artifact from p_view_index_mcard_viewer
+    - id: p_pending_get_clm_registry
+      initialTokens: 0
+      description: In-flight pending state for GET /api/clm/registry from p_page_sprint_registry
+    - id: p_error_get_clm_registry
+      initialTokens: 0
+      description: Recoverable error state for GET /api/clm/registry on sprint-registry.html
+    - id: p_pending_get_fiber_inspector_harness
+      initialTokens: 0
+      description: In-flight pending state for GET /public/conformance/harness-data.json from p_page_fiber_inspector
+    - id: p_error_get_fiber_inspector_harness
+      initialTokens: 0
+      description: Recoverable error state for GET /public/conformance/harness-data.json on fiber-inspector.html
+    - id: p_pending_get_fiber_conformance_harness
+      initialTokens: 0
+      description: In-flight pending state for GET /public/conformance/harness-data.json from p_page_fiber_conformance
+    - id: p_error_get_fiber_conformance_harness
+      initialTokens: 0
+      description: Recoverable error state for GET /public/conformance/harness-data.json on fiber-conformance.html
+  transitions:
+    - id: t_redirect_index_to_lab
+      inputs:
+        - p_page_index
+      outputs:
+        - p_page_responsive_lab
+    - id: t_link_lab_to_index
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_page_index
+    - id: t_link_lab_to_app
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_page_app
+    - id: t_link_app_to_index
+      inputs:
+        - p_page_app
+      outputs:
+        - p_page_index
+    - id: t_link_viewer_to_index
+      inputs:
+        - p_view_index_mcard_viewer
+      outputs:
+        - p_page_index
+    - id: t_link_viewer_to_app
+      inputs:
+        - p_view_index_mcard_viewer
+      outputs:
+        - p_page_app
+    - id: t_link_viewer_to_lab
+      inputs:
+        - p_view_index_mcard_viewer
+      outputs:
+        - p_page_responsive_lab
+    - id: t_open_external_monopoly
+      inputs:
+        - p_page_app
+      outputs:
+        - p_page_app
+        - p_external_games
+    - id: t_open_external_chess
+      inputs:
+        - p_page_app
+      outputs:
+        - p_page_app
+        - p_external_games
+    - id: t_open_external_go
+      inputs:
+        - p_page_app
+      outputs:
+        - p_page_app
+        - p_external_games
+    - id: t_req_get_app_config
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_pending_get_app_config
+    - id: t_ok_get_app_config
+      inputs:
+        - p_pending_get_app_config
+      outputs:
+        - p_page_responsive_lab
+    - id: t_fail_get_app_config
+      inputs:
+        - p_pending_get_app_config
+      outputs:
+        - p_page_responsive_lab
+    - id: t_req_post_test_runs
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_pending_post_test_runs
+    - id: t_ok_post_test_runs
+      inputs:
+        - p_pending_post_test_runs
+      outputs:
+        - p_page_responsive_lab
+    - id: t_fail_post_test_runs
+      inputs:
+        - p_pending_post_test_runs
+      outputs:
+        - p_error_post_test_runs
+    - id: t_recover_post_test_runs
+      inputs:
+        - p_error_post_test_runs
+      outputs:
+        - p_page_responsive_lab
+    - id: t_req_get_conformance_latest
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_pending_get_conformance_latest
+    - id: t_ok_get_conformance_latest
+      inputs:
+        - p_pending_get_conformance_latest
+      outputs:
+        - p_page_responsive_lab
+    - id: t_fail_get_conformance_latest
+      inputs:
+        - p_pending_get_conformance_latest
+      outputs:
+        - p_page_responsive_lab
+    - id: t_req_get_env
+      inputs:
+        - p_view_index_mcard_viewer
+      outputs:
+        - p_pending_get_env
+    - id: t_ok_get_env
+      inputs:
+        - p_pending_get_env
+      outputs:
+        - p_view_index_mcard_viewer
+    - id: t_fail_get_env
+      inputs:
+        - p_pending_get_env
+      outputs:
+        - p_view_index_mcard_viewer
+    - id: t_req_get_mcard_landing
+      inputs:
+        - p_view_index_mcard_viewer
+      outputs:
+        - p_pending_get_mcard_landing
+    - id: t_ok_get_mcard_landing
+      inputs:
+        - p_pending_get_mcard_landing
+      outputs:
+        - p_view_index_mcard_viewer
+    - id: t_fail_get_mcard_landing
+      inputs:
+        - p_pending_get_mcard_landing
+      outputs:
+        - p_view_index_mcard_viewer
+    - id: t_req_put_mcard_landing
+      inputs:
+        - p_view_index_mcard_viewer
+      outputs:
+        - p_pending_put_mcard_landing
+    - id: t_ok_put_mcard_landing
+      inputs:
+        - p_pending_put_mcard_landing
+      outputs:
+        - p_view_index_mcard_viewer
+    - id: t_fail_put_mcard_landing
+      inputs:
+        - p_pending_put_mcard_landing
+      outputs:
+        - p_error_put_mcard_landing
+    - id: t_recover_put_mcard_landing
+      inputs:
+        - p_error_put_mcard_landing
+      outputs:
+        - p_view_index_mcard_viewer
+    - id: t_req_get_clm_program_artifact
+      inputs:
+        - p_view_index_mcard_viewer
+      outputs:
+        - p_pending_get_clm_program_artifact
+    - id: t_ok_get_clm_program_artifact
+      inputs:
+        - p_pending_get_clm_program_artifact
+      outputs:
+        - p_view_index_mcard_viewer
+    - id: t_fail_get_clm_program_artifact
+      inputs:
+        - p_pending_get_clm_program_artifact
+      outputs:
+        - p_view_index_mcard_viewer
+    - id: t_req_get_clm_registry
+      inputs:
+        - p_page_sprint_registry
+      outputs:
+        - p_pending_get_clm_registry
+    - id: t_ok_get_clm_registry
+      inputs:
+        - p_pending_get_clm_registry
+      outputs:
+        - p_page_sprint_registry
+    - id: t_fail_get_clm_registry
+      inputs:
+        - p_pending_get_clm_registry
+      outputs:
+        - p_error_get_clm_registry
+    - id: t_recover_get_clm_registry
+      inputs:
+        - p_error_get_clm_registry
+      outputs:
+        - p_page_sprint_registry
+    - id: t_req_get_fiber_inspector_harness
+      inputs:
+        - p_page_fiber_inspector
+      outputs:
+        - p_pending_get_fiber_inspector_harness
+    - id: t_ok_get_fiber_inspector_harness
+      inputs:
+        - p_pending_get_fiber_inspector_harness
+      outputs:
+        - p_page_fiber_inspector
+    - id: t_fail_get_fiber_inspector_harness
+      inputs:
+        - p_pending_get_fiber_inspector_harness
+      outputs:
+        - p_error_get_fiber_inspector_harness
+    - id: t_recover_get_fiber_inspector_harness
+      inputs:
+        - p_error_get_fiber_inspector_harness
+      outputs:
+        - p_page_fiber_inspector
+    - id: t_req_get_fiber_conformance_harness
+      inputs:
+        - p_page_fiber_conformance
+      outputs:
+        - p_pending_get_fiber_conformance_harness
+    - id: t_ok_get_fiber_conformance_harness
+      inputs:
+        - p_pending_get_fiber_conformance_harness
+      outputs:
+        - p_page_fiber_conformance
+    - id: t_fail_get_fiber_conformance_harness
+      inputs:
+        - p_pending_get_fiber_conformance_harness
+      outputs:
+        - p_error_get_fiber_conformance_harness
+    - id: t_recover_get_fiber_conformance_harness
+      inputs:
+        - p_error_get_fiber_conformance_harness
+      outputs:
+        - p_page_fiber_conformance
+bindings:
+  places:
+    p_page_index:
+      kind: page
+      surface: workbench
+      pageId: page_workbench_index
+      pagePath: index.html
+      route: /
+      routeAliases:
+        - /index.html
+      routeHandle: mcard:route:/index.html
+      clmTypeUri: clm://type/view/workbench/landing-portal
+      mcardHash: null
+      migrationState: legacy-static
+      entry: true
+      deepLinkEntry: true
+      owner: Product Manager and UX Designer
+    p_page_responsive_lab:
+      kind: page
+      surface: workbench
+      pageId: page_workbench_responsive_lab
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeAliases: []
+      routeHandle: mcard:route:/responsive-lab.html
+      clmTypeUri: clm://type/view/workbench/responsive-lab
+      mcardHash: null
+      migrationState: legacy-static
+      entry: false
+      deepLinkEntry: true
+      owner: Product Manager and TEA
+    p_page_app:
+      kind: page
+      surface: workbench
+      pageId: page_workbench_app
+      pagePath: app.html
+      route: /app.html
+      routeAliases: []
+      routeHandle: mcard:route:/app.html
+      clmTypeUri: clm://type/view/legacy/mission-control
+      mcardHash: null
+      migrationState: legacy-static
+      entry: false
+      deepLinkEntry: true
+      owner: Product Manager
+    p_page_sprint_registry:
+      kind: page
+      surface: workbench
+      pageId: page_diag_sprint_registry
+      pagePath: sprint-registry.html
+      route: /sprint-registry.html
+      routeAliases: []
+      routeHandle: mcard:route:/sprint-registry.html
+      clmTypeUri: clm://type/view/diagnostic/sprint-registry
+      mcardHash: null
+      migrationState: legacy-static
+      entry: false
+      deepLinkEntry: true
+      owner: Scrum Master
+    p_page_fiber_inspector:
+      kind: page
+      surface: workbench
+      pageId: page_diag_fiber_inspector
+      pagePath: fiber-inspector.html
+      route: /fiber-inspector.html
+      routeAliases: []
+      routeHandle: mcard:route:/fiber-inspector.html
+      clmTypeUri: clm://type/view/diagnostic/fiber-inspector
+      mcardHash: null
+      migrationState: legacy-static
+      entry: false
+      deepLinkEntry: true
+      owner: Architect
+    p_page_fiber_conformance:
+      kind: page
+      surface: workbench
+      pageId: page_diag_fiber_conformance
+      pagePath: fiber-conformance.html
+      route: /fiber-conformance.html
+      routeAliases: []
+      routeHandle: mcard:route:/fiber-conformance.html
+      clmTypeUri: clm://type/view/diagnostic/fiber-conformance
+      mcardHash: null
+      migrationState: legacy-static
+      entry: false
+      deepLinkEntry: true
+      owner: Architect
+    p_view_index_mcard_viewer:
+      kind: view
+      surface: workbench
+      pageId: page_workbench_mcard_viewer
+      pagePath: index.html
+      route: /index.html?noredirect=1
+      routeAliases:
+        - /?noredirect=1
+      queryFlag: noredirect
+      routeHandle: mcard:route:/index.html?noredirect=1
+      clmTypeUri: clm://type/view/workbench/mcard-viewer
+      mcardHash: null
+      entry: false
+      deepLinkEntry: true
+      owner: Product Manager and UX Designer
+    p_external_games:
+      kind: external
+      surface: workbench
+      pageId: page_external_games
+      pagePath: public/examples/games
+      route: /public/examples/games/*
+      routeAliases: []
+      routePrefix: /public/examples/games/
+      routeHandle: mcard:external:/public/examples/games
+      clmTypeUri: clm://type/view/external/games
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Product Manager
+    p_pending_get_app_config:
+      kind: pending
+      surface: workbench
+      pageId: pending_get_app_config
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:pending:get_app_config
+      clmTypeUri: clm://type/view/workbench/pending/get-app-config
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Product Manager and TEA
+    p_pending_post_test_runs:
+      kind: pending
+      surface: workbench
+      pageId: pending_post_test_runs
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:pending:post_test_runs
+      clmTypeUri: clm://type/view/workbench/pending/post-test-runs
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Product Manager and TEA
+    p_error_post_test_runs:
+      kind: error
+      surface: workbench
+      pageId: error_post_test_runs
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:error:post_test_runs
+      clmTypeUri: clm://type/view/workbench/error/post-test-runs
+      mcardHash: null
+      errorPresentation: 'Visible #rec-saved-pill badge showing Offline and #btn-download-json fallback link'
+      entry: false
+      deepLinkEntry: false
+      owner: Product Manager and TEA
+    p_pending_get_conformance_latest:
+      kind: pending
+      surface: workbench
+      pageId: pending_get_conformance_latest
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:pending:get_conformance_latest
+      clmTypeUri: clm://type/view/workbench/pending/get-conformance-latest
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Product Manager and TEA
+    p_pending_get_env:
+      kind: pending
+      surface: workbench
+      pageId: pending_get_env
+      pagePath: index.html
+      route: /index.html?noredirect=1
+      routeHandle: mcard:pending:get_env
+      clmTypeUri: clm://type/view/workbench/pending/get-env
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Product Manager and UX Designer
+    p_pending_get_mcard_landing:
+      kind: pending
+      surface: workbench
+      pageId: pending_get_mcard_landing
+      pagePath: index.html
+      route: /index.html?noredirect=1
+      routeHandle: mcard:pending:get_mcard_landing
+      clmTypeUri: clm://type/view/workbench/pending/get-mcard-landing
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Product Manager
+    p_pending_put_mcard_landing:
+      kind: pending
+      surface: workbench
+      pageId: pending_put_mcard_landing
+      pagePath: index.html
+      route: /index.html?noredirect=1
+      routeHandle: mcard:pending:put_mcard_landing
+      clmTypeUri: clm://type/view/workbench/pending/put-mcard-landing
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Product Manager
+    p_error_put_mcard_landing:
+      kind: error
+      surface: workbench
+      pageId: error_put_mcard_landing
+      pagePath: index.html
+      route: /index.html?noredirect=1
+      routeHandle: mcard:error:put_mcard_landing
+      clmTypeUri: clm://type/view/workbench/error/put-mcard-landing
+      mcardHash: null
+      errorPresentation: Visible error banner inside Sovereign HUD pill on index.html?noredirect=1
+      entry: false
+      deepLinkEntry: false
+      owner: Product Manager
+    p_pending_get_clm_program_artifact:
+      kind: pending
+      surface: workbench
+      pageId: pending_get_clm_program_artifact
+      pagePath: index.html
+      route: /index.html?noredirect=1
+      routeHandle: mcard:pending:get_clm_program_artifact
+      clmTypeUri: clm://type/view/workbench/pending/get-clm-program-artifact
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Architect
+    p_pending_get_clm_registry:
+      kind: pending
+      surface: workbench
+      pageId: pending_get_clm_registry
+      pagePath: sprint-registry.html
+      route: /sprint-registry.html
+      routeHandle: mcard:pending:get_clm_registry
+      clmTypeUri: clm://type/view/workbench/pending/get-clm-registry
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Scrum Master
+    p_error_get_clm_registry:
+      kind: error
+      surface: workbench
+      pageId: error_get_clm_registry
+      pagePath: sprint-registry.html
+      route: /sprint-registry.html
+      routeHandle: mcard:error:get_clm_registry
+      clmTypeUri: clm://type/view/workbench/error/get-clm-registry
+      mcardHash: null
+      errorPresentation: Status message error banner in sprint-registry.html
+      entry: false
+      deepLinkEntry: false
+      owner: Scrum Master
+    p_pending_get_fiber_inspector_harness:
+      kind: pending
+      surface: workbench
+      pageId: pending_get_fiber_inspector_harness
+      pagePath: fiber-inspector.html
+      route: /fiber-inspector.html
+      routeHandle: mcard:pending:get_fiber_inspector_harness
+      clmTypeUri: clm://type/view/workbench/pending/get-fiber-inspector-harness
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Architect
+    p_error_get_fiber_inspector_harness:
+      kind: error
+      surface: workbench
+      pageId: error_get_fiber_inspector_harness
+      pagePath: fiber-inspector.html
+      route: /fiber-inspector.html
+      routeHandle: mcard:error:get_fiber_inspector_harness
+      clmTypeUri: clm://type/view/workbench/error/get-fiber-inspector-harness
+      mcardHash: null
+      errorPresentation: Inspector load failure state in fiber-inspector.html
+      entry: false
+      deepLinkEntry: false
+      owner: Architect
+    p_pending_get_fiber_conformance_harness:
+      kind: pending
+      surface: workbench
+      pageId: pending_get_fiber_conformance_harness
+      pagePath: fiber-conformance.html
+      route: /fiber-conformance.html
+      routeHandle: mcard:pending:get_fiber_conformance_harness
+      clmTypeUri: clm://type/view/workbench/pending/get-fiber-conformance-harness
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Architect
+    p_error_get_fiber_conformance_harness:
+      kind: error
+      surface: workbench
+      pageId: error_get_fiber_conformance_harness
+      pagePath: fiber-conformance.html
+      route: /fiber-conformance.html
+      routeHandle: mcard:error:get_fiber_conformance_harness
+      clmTypeUri: clm://type/view/workbench/error/get-fiber-conformance-harness
+      mcardHash: null
+      errorPresentation: Conformance harness load failure state in fiber-conformance.html
+      entry: false
+      deepLinkEntry: false
+      owner: Architect
+  transitions:
+    t_redirect_index_to_lab:
+      kind: redirect
+      surface: workbench
+      linkId: redirect_index_to_lab
+      fromPlaceId: p_page_index
+      toPlaceId: p_page_responsive_lab
+      route: /responsive-lab.html
+      triggerHref: responsive-lab.html
+      trigger: window.location.replace("responsive-lab.html") at index.html:13
+      ownerPage: index.html
+      owner: Product Manager and UX Designer
+    t_link_lab_to_index:
+      kind: link
+      surface: workbench
+      linkId: link_lab_to_index
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_page_index
+      route: /
+      triggerHref: /
+      trigger: click a#btn-back-home[href="/"] at responsive-lab.html:875
+      ownerPage: responsive-lab.html
+      owner: Product Manager and TEA
+    t_link_lab_to_app:
+      kind: link
+      surface: workbench
+      linkId: link_lab_to_app
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_page_app
+      route: /app.html
+      triggerHref: app.html
+      trigger: click a#btn-nav-mission-control[href="app.html"] at responsive-lab.html:898
+      ownerPage: responsive-lab.html
+      owner: Product Manager and TEA
+    t_link_app_to_index:
+      kind: link
+      surface: workbench
+      linkId: link_app_to_index
+      fromPlaceId: p_page_app
+      toPlaceId: p_page_index
+      route: /
+      triggerHref: /
+      trigger: click button.header-btn onclick window.location.href="/" at app.html:76
+      ownerPage: app.html
+      owner: Product Manager
+    t_link_viewer_to_index:
+      kind: link
+      surface: workbench
+      linkId: link_viewer_to_index
+      fromPlaceId: p_view_index_mcard_viewer
+      toPlaceId: p_page_index
+      route: /index.html
+      triggerHref: index.html
+      trigger: click a.penpot-nav-link[href="index.html"] at index.html:279
+      ownerPage: index.html
+      owner: Product Manager and UX Designer
+    t_link_viewer_to_app:
+      kind: link
+      surface: workbench
+      linkId: link_viewer_to_app
+      fromPlaceId: p_view_index_mcard_viewer
+      toPlaceId: p_page_app
+      route: /app.html
+      triggerHref: app.html
+      trigger: click a.penpot-nav-link[href="app.html"] at index.html:280
+      ownerPage: index.html
+      owner: Product Manager and UX Designer
+    t_link_viewer_to_lab:
+      kind: link
+      surface: workbench
+      linkId: link_viewer_to_lab
+      fromPlaceId: p_view_index_mcard_viewer
+      toPlaceId: p_page_responsive_lab
+      route: /responsive-lab.html
+      triggerHref: responsive-lab.html
+      trigger: click a[href="responsive-lab.html"] at index.html:281,293,323 or openResponsiveUILab at index.html:482
+      ownerPage: index.html
+      owner: Product Manager and UX Designer
+    t_open_external_monopoly:
+      kind: open-external
+      surface: workbench
+      linkId: open_external_monopoly
+      fromPlaceId: p_page_app
+      toPlaceId: p_page_app
+      externalPlaceId: p_external_games
+      route: /public/examples/games/monopoly-auth.html
+      triggerHref: /public/examples/games/monopoly-auth.html
+      trigger: window.open("/public/examples/games/monopoly-auth.html", "_blank") at app.html:284
+      ownerPage: app.html
+      owner: Product Manager
+    t_open_external_chess:
+      kind: open-external
+      surface: workbench
+      linkId: open_external_chess
+      fromPlaceId: p_page_app
+      toPlaceId: p_page_app
+      externalPlaceId: p_external_games
+      route: /public/examples/games/chess-auth.html
+      triggerHref: /public/examples/games/chess-auth.html
+      trigger: window.open("/public/examples/games/chess-auth.html", "_blank") at app.html:316
+      ownerPage: app.html
+      owner: Product Manager
+    t_open_external_go:
+      kind: open-external
+      surface: workbench
+      linkId: open_external_go
+      fromPlaceId: p_page_app
+      toPlaceId: p_page_app
+      externalPlaceId: p_external_games
+      route: /public/examples/games/go-auth.html
+      triggerHref: /public/examples/games/go-auth.html
+      trigger: window.open("/public/examples/games/go-auth.html", "_blank") at app.html:348
+      ownerPage: app.html
+      owner: Product Manager
+    t_req_get_app_config:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_get_app_config
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_pending_get_app_config
+      httpMethod: GET
+      httpPath: /app-config.json
+      trigger: fetch("/app-config.json") in js/harness/lab-toolbar.js:175
+      ownerPage: responsive-lab.html
+      owner: Product Manager and TEA
+    t_ok_get_app_config:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_get_app_config
+      fromPlaceId: p_pending_get_app_config
+      toPlaceId: p_page_responsive_lab
+      httpMethod: GET
+      httpPath: /app-config.json
+      trigger: HTTP 2xx response for GET /app-config.json
+      ownerPage: responsive-lab.html
+      owner: Product Manager and TEA
+    t_fail_get_app_config:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_get_app_config
+      fromPlaceId: p_pending_get_app_config
+      toPlaceId: p_page_responsive_lab
+      httpMethod: GET
+      httpPath: /app-config.json
+      trigger: HTTP 4xx/5xx or network failure for GET /app-config.json
+      ownerPage: responsive-lab.html
+      owner: Product Manager and TEA
+      errorPresentation: Console warning and fallback target selector options on responsive-lab.html
+    t_req_post_test_runs:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_post_test_runs
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_pending_post_test_runs
+      httpMethod: POST
+      httpPath: /api/test-runs
+      trigger: 'fetch("/api/test-runs", { method: "POST" }) in js/harness/recorder.js:219'
+      ownerPage: responsive-lab.html
+      owner: Product Manager and TEA
+    t_ok_post_test_runs:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_post_test_runs
+      fromPlaceId: p_pending_post_test_runs
+      toPlaceId: p_page_responsive_lab
+      httpMethod: POST
+      httpPath: /api/test-runs
+      trigger: HTTP 2xx response for POST /api/test-runs
+      ownerPage: responsive-lab.html
+      owner: Product Manager and TEA
+    t_fail_post_test_runs:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_post_test_runs
+      fromPlaceId: p_pending_post_test_runs
+      toPlaceId: p_error_post_test_runs
+      httpMethod: POST
+      httpPath: /api/test-runs
+      trigger: HTTP 4xx/5xx or network failure for POST /api/test-runs
+      ownerPage: responsive-lab.html
+      owner: Product Manager and TEA
+    t_recover_post_test_runs:
+      kind: recover
+      surface: workbench
+      linkId: recover_post_test_runs
+      fromPlaceId: p_error_post_test_runs
+      toPlaceId: p_page_responsive_lab
+      route: /responsive-lab.html
+      trigger: Reload or reset responsive-lab.html to /responsive-lab.html from p_error_post_test_runs
+      ownerPage: responsive-lab.html
+      owner: Product Manager and TEA
+    t_req_get_conformance_latest:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_get_conformance_latest
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_pending_get_conformance_latest
+      httpMethod: GET
+      httpPath: /api/test-runs/conformance/latest
+      trigger: fetch("/api/test-runs/conformance/latest?target=...") in js/harness/conformance-panel.js:25
+      ownerPage: responsive-lab.html
+      owner: Product Manager and TEA
+    t_ok_get_conformance_latest:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_get_conformance_latest
+      fromPlaceId: p_pending_get_conformance_latest
+      toPlaceId: p_page_responsive_lab
+      httpMethod: GET
+      httpPath: /api/test-runs/conformance/latest
+      trigger: HTTP 2xx response for GET /api/test-runs/conformance/latest
+      ownerPage: responsive-lab.html
+      owner: Product Manager and TEA
+    t_fail_get_conformance_latest:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_get_conformance_latest
+      fromPlaceId: p_pending_get_conformance_latest
+      toPlaceId: p_page_responsive_lab
+      httpMethod: GET
+      httpPath: /api/test-runs/conformance/latest
+      trigger: HTTP 4xx/5xx or network failure for GET /api/test-runs/conformance/latest
+      ownerPage: responsive-lab.html
+      owner: Product Manager and TEA
+      errorPresentation: '#conformance-status-badge fallback state on responsive-lab.html'
+    t_req_get_env:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_get_env
+      fromPlaceId: p_view_index_mcard_viewer
+      toPlaceId: p_pending_get_env
+      httpMethod: GET
+      httpPath: /api/env
+      trigger: fetch("/api/env") in index.html:351
+      ownerPage: index.html
+      owner: Product Manager and UX Designer
+    t_ok_get_env:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_get_env
+      fromPlaceId: p_pending_get_env
+      toPlaceId: p_view_index_mcard_viewer
+      httpMethod: GET
+      httpPath: /api/env
+      trigger: HTTP 2xx response for GET /api/env
+      ownerPage: index.html
+      owner: Product Manager and UX Designer
+    t_fail_get_env:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_get_env
+      fromPlaceId: p_pending_get_env
+      toPlaceId: p_view_index_mcard_viewer
+      httpMethod: GET
+      httpPath: /api/env
+      trigger: HTTP 4xx/5xx or network failure for GET /api/env
+      ownerPage: index.html
+      owner: Product Manager and UX Designer
+      errorPresentation: Default environment flags fallback on index.html?noredirect=1
+    t_req_get_mcard_landing:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_get_mcard_landing
+      fromPlaceId: p_view_index_mcard_viewer
+      toPlaceId: p_pending_get_mcard_landing
+      httpMethod: GET
+      httpPath: /api/mcard/landing
+      trigger: api.landing() GET /api/mcard/landing in js/landing-page-mcard.js:176,199
+      ownerPage: index.html
+      owner: Product Manager
+    t_ok_get_mcard_landing:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_get_mcard_landing
+      fromPlaceId: p_pending_get_mcard_landing
+      toPlaceId: p_view_index_mcard_viewer
+      httpMethod: GET
+      httpPath: /api/mcard/landing
+      trigger: HTTP 2xx response for GET /api/mcard/landing
+      ownerPage: index.html
+      owner: Product Manager
+    t_fail_get_mcard_landing:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_get_mcard_landing
+      fromPlaceId: p_pending_get_mcard_landing
+      toPlaceId: p_view_index_mcard_viewer
+      httpMethod: GET
+      httpPath: /api/mcard/landing
+      trigger: HTTP 4xx/5xx or network failure for GET /api/mcard/landing
+      ownerPage: index.html
+      owner: Product Manager
+      errorPresentation: 'Fallback sample card state in #single-page-mcard-host when HTTP 404 or offline'
+    t_req_put_mcard_landing:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_put_mcard_landing
+      fromPlaceId: p_view_index_mcard_viewer
+      toPlaceId: p_pending_put_mcard_landing
+      httpMethod: PUT
+      httpPath: /api/mcard/landing
+      trigger: api.setLanding() PUT /api/mcard/landing in js/landing-page-mcard.js:177,216
+      ownerPage: index.html
+      owner: Product Manager
+    t_ok_put_mcard_landing:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_put_mcard_landing
+      fromPlaceId: p_pending_put_mcard_landing
+      toPlaceId: p_view_index_mcard_viewer
+      httpMethod: PUT
+      httpPath: /api/mcard/landing
+      trigger: HTTP 2xx response for PUT /api/mcard/landing
+      ownerPage: index.html
+      owner: Product Manager
+    t_fail_put_mcard_landing:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_put_mcard_landing
+      fromPlaceId: p_pending_put_mcard_landing
+      toPlaceId: p_error_put_mcard_landing
+      httpMethod: PUT
+      httpPath: /api/mcard/landing
+      trigger: HTTP 4xx/5xx or network failure for PUT /api/mcard/landing
+      ownerPage: index.html
+      owner: Product Manager
+    t_recover_put_mcard_landing:
+      kind: recover
+      surface: workbench
+      linkId: recover_put_mcard_landing
+      fromPlaceId: p_error_put_mcard_landing
+      toPlaceId: p_view_index_mcard_viewer
+      route: /index.html?noredirect=1
+      trigger: Reload or reset index.html to /index.html?noredirect=1 from p_error_put_mcard_landing
+      ownerPage: index.html
+      owner: Product Manager
+    t_req_get_clm_program_artifact:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_get_clm_program_artifact
+      fromPlaceId: p_view_index_mcard_viewer
+      toPlaceId: p_pending_get_clm_program_artifact
+      httpMethod: GET
+      httpPath: /api/clm/program-artifact
+      trigger: fetch("/api/clm/program-artifact?...") in js/observability/fibration-dashboard.js:157
+      ownerPage: index.html
+      owner: Architect
+    t_ok_get_clm_program_artifact:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_get_clm_program_artifact
+      fromPlaceId: p_pending_get_clm_program_artifact
+      toPlaceId: p_view_index_mcard_viewer
+      httpMethod: GET
+      httpPath: /api/clm/program-artifact
+      trigger: HTTP 2xx response for GET /api/clm/program-artifact
+      ownerPage: index.html
+      owner: Architect
+    t_fail_get_clm_program_artifact:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_get_clm_program_artifact
+      fromPlaceId: p_pending_get_clm_program_artifact
+      toPlaceId: p_view_index_mcard_viewer
+      httpMethod: GET
+      httpPath: /api/clm/program-artifact
+      trigger: HTTP 4xx/5xx or network failure for GET /api/clm/program-artifact
+      ownerPage: index.html
+      owner: Architect
+      errorPresentation: Empty fibration units fallback in DeploymentUnitInspector on index.html?noredirect=1
+    t_req_get_clm_registry:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_get_clm_registry
+      fromPlaceId: p_page_sprint_registry
+      toPlaceId: p_pending_get_clm_registry
+      httpMethod: GET
+      httpPath: /api/clm/registry
+      trigger: fetch("/api/clm/registry") in sprint-registry.html:140
+      ownerPage: sprint-registry.html
+      owner: Scrum Master
+    t_ok_get_clm_registry:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_get_clm_registry
+      fromPlaceId: p_pending_get_clm_registry
+      toPlaceId: p_page_sprint_registry
+      httpMethod: GET
+      httpPath: /api/clm/registry
+      trigger: HTTP 2xx response for GET /api/clm/registry
+      ownerPage: sprint-registry.html
+      owner: Scrum Master
+    t_fail_get_clm_registry:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_get_clm_registry
+      fromPlaceId: p_pending_get_clm_registry
+      toPlaceId: p_error_get_clm_registry
+      httpMethod: GET
+      httpPath: /api/clm/registry
+      trigger: HTTP 4xx/5xx or network failure for GET /api/clm/registry
+      ownerPage: sprint-registry.html
+      owner: Scrum Master
+    t_recover_get_clm_registry:
+      kind: recover
+      surface: workbench
+      linkId: recover_get_clm_registry
+      fromPlaceId: p_error_get_clm_registry
+      toPlaceId: p_page_sprint_registry
+      route: /sprint-registry.html
+      trigger: Reload or reset sprint-registry.html to /sprint-registry.html from p_error_get_clm_registry
+      ownerPage: sprint-registry.html
+      owner: Scrum Master
+    t_req_get_fiber_inspector_harness:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_get_fiber_inspector_harness
+      fromPlaceId: p_page_fiber_inspector
+      toPlaceId: p_pending_get_fiber_inspector_harness
+      httpMethod: GET
+      httpPath: /public/conformance/harness-data.json
+      trigger: fetch("./public/conformance/harness-data.json") gating JSON in fiber-inspector.html:72
+      ownerPage: fiber-inspector.html
+      owner: Architect
+    t_ok_get_fiber_inspector_harness:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_get_fiber_inspector_harness
+      fromPlaceId: p_pending_get_fiber_inspector_harness
+      toPlaceId: p_page_fiber_inspector
+      httpMethod: GET
+      httpPath: /public/conformance/harness-data.json
+      trigger: HTTP 2xx response for GET /public/conformance/harness-data.json
+      ownerPage: fiber-inspector.html
+      owner: Architect
+    t_fail_get_fiber_inspector_harness:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_get_fiber_inspector_harness
+      fromPlaceId: p_pending_get_fiber_inspector_harness
+      toPlaceId: p_error_get_fiber_inspector_harness
+      httpMethod: GET
+      httpPath: /public/conformance/harness-data.json
+      trigger: HTTP 4xx/5xx or network failure for GET /public/conformance/harness-data.json
+      ownerPage: fiber-inspector.html
+      owner: Architect
+    t_recover_get_fiber_inspector_harness:
+      kind: recover
+      surface: workbench
+      linkId: recover_get_fiber_inspector_harness
+      fromPlaceId: p_error_get_fiber_inspector_harness
+      toPlaceId: p_page_fiber_inspector
+      route: /fiber-inspector.html
+      trigger: Reload or reset fiber-inspector.html to /fiber-inspector.html from p_error_get_fiber_inspector_harness
+      ownerPage: fiber-inspector.html
+      owner: Architect
+    t_req_get_fiber_conformance_harness:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_get_fiber_conformance_harness
+      fromPlaceId: p_page_fiber_conformance
+      toPlaceId: p_pending_get_fiber_conformance_harness
+      httpMethod: GET
+      httpPath: /public/conformance/harness-data.json
+      trigger: fetch("./public/conformance/harness-data.json") gating JSON in fiber-conformance.html:144
+      ownerPage: fiber-conformance.html
+      owner: Architect
+    t_ok_get_fiber_conformance_harness:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_get_fiber_conformance_harness
+      fromPlaceId: p_pending_get_fiber_conformance_harness
+      toPlaceId: p_page_fiber_conformance
+      httpMethod: GET
+      httpPath: /public/conformance/harness-data.json
+      trigger: HTTP 2xx response for GET /public/conformance/harness-data.json
+      ownerPage: fiber-conformance.html
+      owner: Architect
+    t_fail_get_fiber_conformance_harness:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_get_fiber_conformance_harness
+      fromPlaceId: p_pending_get_fiber_conformance_harness
+      toPlaceId: p_error_get_fiber_conformance_harness
+      httpMethod: GET
+      httpPath: /public/conformance/harness-data.json
+      trigger: HTTP 4xx/5xx or network failure for GET /public/conformance/harness-data.json
+      ownerPage: fiber-conformance.html
+      owner: Architect
+    t_recover_get_fiber_conformance_harness:
+      kind: recover
+      surface: workbench
+      linkId: recover_get_fiber_conformance_harness
+      fromPlaceId: p_error_get_fiber_conformance_harness
+      toPlaceId: p_page_fiber_conformance
+      route: /fiber-conformance.html
+      trigger: Reload or reset fiber-conformance.html to /fiber-conformance.html from p_error_get_fiber_conformance_harness
+      ownerPage: fiber-conformance.html
+      owner: Architect
+  staticJsonAssets:
+    - httpMethod: GET
+      httpPath: /data/samples/portal_samples_manifest.json
+      ownerPage: index.html
+      reason: Static sample fallback manifest loaded alongside GET /api/mcard/landing
+    - httpMethod: GET
+      httpPath: /public/config/app-views.json
+      ownerPage: app.html
+      reason: Static view layout manifest under public/config
+    - httpMethod: GET
+      httpPath: /public/config/pwa-config.json
+      ownerPage: app.html
+      reason: Static PWA manifest config under public/config
+    - httpMethod: GET
+      httpPath: /public/conformance/unit-lint.json
+      ownerPage: fiber-inspector.html
+      reason: Auxiliary static lint snapshot fetched alongside gating harness-data.json
+    - httpMethod: GET
+      httpPath: /public/conformance/witness.json
+      ownerPage: fiber-inspector.html
+      reason: Auxiliary static witness snapshot fetched alongside gating harness-data.json
+  nonUiEndpoints:
+    - httpMethod: GET
+      httpPath: /health
+      source: ws-server.js:321
+      status: not-ui-reachable
+      owner: Architect
+      reason: Infrastructure readiness endpoint for Playwright webServer and probes
+    - httpMethod: GET
+      httpPath: /api/rooms
+      source: ws-server.js:335
+      status: not-ui-reachable
+      owner: Architect
+      reason: Room registry inspection route with zero approved workbench callers
+    - httpMethod: GET
+      httpPath: /api/config
+      source: ws-server.js:351
+      status: not-ui-reachable
+      owner: Architect
+      reason: Called only by standalone developer harness js/modules/webrtc-dashboard/config.js:7
+    - httpMethod: WS
+      httpPath: /ws/
+      source: ws-server.js:141
+      status: not-ui-reachable
+      owner: Product Manager and Architect
+      reason: WebSocket signaling used only by unmounted net-gateway and undecided P2P demos
+    - httpMethod: GET
+      httpPath: /api/test-runs
+      source: server/test-run-api.mjs:298
+      status: not-ui-reachable
+      owner: TEA
+      reason: Programmatic test-run list endpoint for CLI and unit harnesses
+    - httpMethod: GET
+      httpPath: /api/test-runs/:hash
+      source: server/test-run-api.mjs:341
+      status: not-ui-reachable
+      owner: TEA
+      reason: Programmatic test-run lookup endpoint for playwright-replay-driver.mjs
+    - httpMethod: GET
+      httpPath: /api/test-runs/latest/history
+      source: server/test-run-api.mjs:268
+      status: not-ui-reachable
+      owner: TEA
+      reason: Programmatic test-run history endpoint with zero browser callers
+    - httpMethod: GET
+      httpPath: /api/test-runs/conformance/diff
+      source: server/test-run-api.mjs:157
+      status: not-ui-reachable
+      owner: TEA
+      reason: Programmatic conformance diff endpoint with zero browser callers
+    - httpMethod: POST
+      httpPath: /api/auth/token
+      source: routes/auth.js:38
+      status: not-ui-reachable
+      owner: Product Manager and Security Owner
+      reason: Zitadel OAuth token exchange belongs to undecided auth capability
+    - httpMethod: POST
+      httpPath: /api/auth/refresh
+      source: routes/auth.js:126
+      status: not-ui-reachable
+      owner: Product Manager and Security Owner
+      reason: Zitadel OAuth refresh belongs to undecided auth capability
+    - httpMethod: POST
+      httpPath: /api/auth/logout
+      source: routes/auth.js:175
+      status: not-ui-reachable
+      owner: Product Manager and Security Owner
+      reason: Zitadel OAuth logout belongs to undecided auth capability
+    - httpMethod: GET
+      httpPath: /api/clm/component/:id
+      source: routes/clm.js:63
+      status: not-ui-reachable
+      owner: Architect
+      reason: CLM component lookup route with zero approved workbench callers
+    - httpMethod: GET
+      httpPath: /api/clm/health/:componentId
+      source: routes/clm.js:99
+      status: not-ui-reachable
+      owner: Architect
+      reason: CLM component health route with zero approved workbench callers
+    - httpMethod: POST
+      httpPath: /api/clm/telemetry
+      source: routes/clm.js:116
+      status: not-ui-reachable
+      owner: Architect
+      reason: Called only by js/clm-iframe-loader.js:285 which has zero root page importers
+    - httpMethod: POST
+      httpPath: /api/mcard
+      source: server/mcard-api.mjs:314
+      status: not-ui-reachable
+      owner: Architect
+      reason: Programmatic MCard write endpoint; app.html persists locally via IndexedDB
+    - httpMethod: GET
+      httpPath: /api/mcard
+      source: server/mcard-api.mjs:377
+      status: not-ui-reachable
+      owner: Architect
+      reason: Programmatic MCard list endpoint with zero browser fetch callers
+    - httpMethod: GET
+      httpPath: /api/mcard/probe-url
+      source: server/mcard-api.mjs:372
+      status: not-ui-reachable
+      owner: Product Manager
+      reason: Defined on createApiClient at js/landing-page-mcard.js:178 with zero UI callers
+    - httpMethod: GET
+      httpPath: /api/mcard/stats
+      source: server/mcard-api.mjs:391
+      status: not-ui-reachable
+      owner: Product Manager
+      reason: Defined on createApiClient at js/landing-page-mcard.js:179 with zero UI callers
+    - httpMethod: GET
+      httpPath: /api/mcard/search
+      source: server/mcard-api.mjs:402
+      status: not-ui-reachable
+      owner: Architect
+      reason: Programmatic MCard search endpoint with zero browser fetch callers
+    - httpMethod: GET
+      httpPath: /api/mcard/:hash/raw
+      source: server/mcard-api.mjs:409
+      status: not-ui-reachable
+      owner: Product Manager
+      reason: Used only as passive media or download URL in js/landing-page-mcard.js:70
+    - httpMethod: GET
+      httpPath: /api/mcard/:hash
+      source: server/mcard-api.mjs:429
+      status: not-ui-reachable
+      owner: Architect
+      reason: Programmatic MCard get-by-hash endpoint with zero browser fetch callers
+    - httpMethod: DELETE
+      httpPath: /api/mcard/:hash
+      source: server/mcard-api.mjs:439
+      status: not-ui-reachable
+      owner: Architect
+      reason: Programmatic MCard delete endpoint with zero browser fetch callers

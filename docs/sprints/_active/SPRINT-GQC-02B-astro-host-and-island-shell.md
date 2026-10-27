@@ -4,7 +4,7 @@
 
 - Sprint ID: `SPRINT-GQC-02B`
 - Handle: `urn:pcard:sprint:SPRINT-GQC-02B`
-- Status: `STAGED`
+- Status: `ACTIVE`
 - Depends on: `SPRINT-GQC-02A`
 - Unblocks: `SPRINT-GQC-03`
 - Execution units: `PR-GQC-02B.1` (host and wrapped Places), then `PR-GQC-02B.2` (Responsive Lab islands)

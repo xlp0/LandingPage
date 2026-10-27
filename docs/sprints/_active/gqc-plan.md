@@ -44,7 +44,7 @@ The 10 percent and 100 ms values are provisional regression guards, not a requir
   - [x] `PR-GQC-00` branches from `main`.
   - [x] `PR-GQC-01` follows `PR-GQC-00`.
   - [x] `PR-GQC-02` follows `PR-GQC-01`.
-  - [ ] `PR-GQC-02A` follows `PR-GQC-02`.
+  - [x] `PR-GQC-02A` follows `PR-GQC-02`.
   - [ ] `PR-GQC-02B.1` follows `PR-GQC-02A`.
   - [ ] `PR-GQC-02B.2` follows `PR-GQC-02B.1`.
   - [ ] `PR-GQC-03` follows `PR-GQC-02B.2`.
@@ -316,69 +316,69 @@ Each live lane uses an isolated checkout at the PR head. Drive the actual web UI
 
 **Files.**
 
-- [ ] Create `src/net/workbench-net.yaml` with `topology` and `bindings` sections.
-- [ ] Create `scripts/check-net.mjs` and add `check:net` to `package.json`.
-- [ ] Create `tests/unit/check-net.test.mjs` and `tests/unit/net-trace-replay.test.mjs`.
-- [ ] Create `tests/fixtures/net-trace.js`, the Playwright trace recorder.
-- [ ] Edit `tests/fixtures/spa-test-target.graph.json` only if `PR-GQC-02` did not already use the envelope shape.
-- [ ] Edit `tests/gui-coverage.json` only to fill workbench Place and Transition IDs on existing workbench rows.
-- [ ] Edit `.github/workflows/playwright-quality.yml` only for the net check and the Transition coverage summary.
-- [ ] Create `docs/sprints/_active/evidence/GQC-02A-layer1-probe.md` and `evidence/GQC-02A-place-transition-census.md`.
-- [ ] Append approved Place, Transition, and envelope decisions to `docs/sprints/_active/DECISIONS.tsv`.
-- [ ] Do not edit any HTML page, `ws-server.js`, `server/`, `routes/`, `js/nav.js`, or `design/landing-navigation.penpot`.
+- [x] Create `src/net/workbench-net.yaml` with `topology` and `bindings` sections.
+- [x] Create `scripts/check-net.mjs` and add `check:net` to `package.json`.
+- [x] Create `tests/unit/check-net.test.mjs` and `tests/unit/net-trace-replay.test.mjs`.
+- [x] Create `tests/fixtures/net-trace.js`, the Playwright trace recorder.
+- [x] Edit `tests/fixtures/spa-test-target.graph.json` only if `PR-GQC-02` did not already use the envelope shape.
+- [x] Edit `tests/gui-coverage.json` only to fill workbench Place and Transition IDs on existing workbench rows.
+- [x] Edit `.github/workflows/playwright-quality.yml` only for the net check and the Transition coverage summary.
+- [x] Create `docs/sprints/_active/evidence/GQC-02A-layer1-probe.md` and `evidence/GQC-02A-place-transition-census.md`.
+- [x] Append approved Place, Transition, and envelope decisions to `docs/sprints/_active/DECISIONS.tsv`.
+- [x] Do not edit any HTML page, `ws-server.js`, `server/`, `routes/`, `js/nav.js`, or `design/landing-navigation.penpot`.
 
 **Build.**
 
-- [ ] Rerun the Layer 1 probe after `npm ci` and commit its command, lockfile version, and output.
-- [ ] Census every root and `public/` page, internal link, script navigation, redirect, `window.open`, UI-reachable `fetch`, and WebSocket connect. Resolve dynamic URL builders or mark them unresolved.
-- [ ] Compare observed links with the PenPot-generated `js/nav.js` graph. Record drift. Do not copy `NAVIGATION_ROUTES` by hand.
-- [ ] Put only Product Manager-approved Places in the topology. List undecided pages in the census.
-- [ ] Model each server call as `server-call-request` into a `pending` Place and `ok` or `fail` out of it. Never use a self-loop; its incidence column is zero.
-- [ ] Make `check-net.mjs` pass `topology` to `parsePetriNetYaml` unchanged, then enforce the rules the kernel does not: unique IDs, complete bindings, kinds, request and result pairs, the session P-invariant against `IncidenceMatrix.fromTopology(topology).d`, reachability from the entry and deep-link entries, and enabled Transitions.
-- [ ] Validate the GQC-02 fixture net through the same code path.
-- [ ] Record traces from Playwright `framenavigated`, `request`, and `response` events. Replay each trace through `ColoredPetriVM` from its entry Place and fail on the first disabled Transition. Add no production instrumentation.
-- [ ] Report Transition coverage as an advisory number.
+- [x] Rerun the Layer 1 probe after `npm ci` and commit its command, lockfile version, and output.
+- [x] Census every root and `public/` page, internal link, script navigation, redirect, `window.open`, UI-reachable `fetch`, and WebSocket connect. Resolve dynamic URL builders or mark them unresolved.
+- [x] Compare observed links with the PenPot-generated `js/nav.js` graph. Record drift. Do not copy `NAVIGATION_ROUTES` by hand.
+- [x] Put only Product Manager-approved Places in the topology. List undecided pages in the census.
+- [x] Model each server call as `server-call-request` into a `pending` Place and `ok` or `fail` out of it. Never use a self-loop; its incidence column is zero.
+- [x] Make `check-net.mjs` pass `topology` to `parsePetriNetYaml` unchanged, then enforce the rules the kernel does not: unique IDs, complete bindings, kinds, request and result pairs, the session P-invariant against `IncidenceMatrix.fromTopology(topology).d`, reachability from the entry and deep-link entries, and enabled Transitions.
+- [x] Validate the GQC-02 fixture net through the same code path.
+- [x] Record traces from Playwright `framenavigated`, `request`, and `response` events. Replay each trace through `ColoredPetriVM` from its entry Place and fail on the first disabled Transition. Add no production instrumentation.
+- [x] Report Transition coverage as an advisory number.
 
 **You see.**
 
-- [ ] Nothing changes in the product UI.
-- [ ] CI shows a net check result and a Transition coverage summary.
-- [ ] A failing replay names the trace, the event index, and the disabled Transition.
+- [x] Nothing changes in the product UI.
+- [x] CI shows a net check result and a Transition coverage summary.
+- [x] A failing replay names the trace, the event index, and the disabled Transition.
 
 **Verify, unit.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Run `npm run check:net` on the workbench net and the fixture net.
-- [ ] Run `node --test tests/unit/check-net.test.mjs tests/unit/net-trace-replay.test.mjs`. The tests cover a duplicate Place ID, a dangling binding, a self-loop server call, a broken session invariant, an unreachable page, and a disabled firing.
-- [ ] Run `npm run test:unit`.
+- [x] Run `npm run check:net` on the workbench net and the fixture net.
+- [x] Run `node --test tests/unit/check-net.test.mjs tests/unit/net-trace-replay.test.mjs`. The tests cover a duplicate Place ID, a dangling binding, a self-loop server call, a broken session invariant, an unreachable page, and a disabled firing.
+- [x] Run `npm run test:unit`.
 
 **Verify, live.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked. Ten lanes on `the model recorded in the run header` at the PR head, per the boot recipe.
 
-- [ ] Lane 1. Regression lane against trunk. Open `/` and the Responsive Lab on trunk and head. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-1.png`. Pass when both show the same workbench state.
-- [ ] Lane 2. Open `/` with the trace recorder. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-2.png`. Pass when the trace fires the declared `redirect` Transition into the Lab Place and replays cleanly.
-- [ ] Lane 3. Follow the Lab link to `app.html`. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-3.png`. Pass when the trace fires the declared `link` Transition and replays cleanly.
-- [ ] Lane 4. Trigger the `app.html` navigation back to `/`. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-4.png`. Pass when the trace fires the declared Transition and lands in the Lab Place after the redirect.
-- [ ] Lane 5. Open one game from `app.html`. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-5.png`. Pass when the trace fires `open-external`, the source page stays open, and replay keeps one session token on the source Place.
-- [ ] Lane 6. Save a test run from the Lab. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-6.png`. Pass when the trace fires the `POST /api/test-runs` request Transition and its `ok` result.
-- [ ] Lane 7. Intercept `POST /api/test-runs` to fail, then recover. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-7.png`. Pass when the trace fires `fail`, the visible error matches the declared error Place, and `recover` replays cleanly.
-- [ ] Lane 8. Open `/app.html` directly. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-8.png`. Pass when replay starts from the declared deep-link entry.
-- [ ] Lane 9. Follow a link to a page the census marks undecided. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-9.png`. Pass when the recorder reports an unmapped navigation by URL instead of dropping it.
-- [ ] Lane 10. Activate the Lab-to-`app.html` link by keyboard in a fresh context. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-10.png`. Pass when the trace matches the mouse trace from lane 3 and contains no events from another test.
+- [x] Lane 1. Regression lane against trunk. Open `/` and the Responsive Lab on trunk and head. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-1.png`. Pass when both show the same workbench state.
+- [x] Lane 2. Open `/` with the trace recorder. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-2.png`. Pass when the trace fires the declared `redirect` Transition into the Lab Place and replays cleanly.
+- [x] Lane 3. Follow the Lab link to `app.html`. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-3.png`. Pass when the trace fires the declared `link` Transition and replays cleanly.
+- [x] Lane 4. Trigger the `app.html` navigation back to `/`. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-4.png`. Pass when the trace fires the declared Transition and lands in the Lab Place after the redirect.
+- [x] Lane 5. Open one game from `app.html`. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-5.png`. Pass when the trace fires `open-external`, the source page stays open, and replay keeps one session token on the source Place.
+- [x] Lane 6. Save a test run from the Lab. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-6.png`. Pass when the trace fires the `POST /api/test-runs` request Transition and its `ok` result.
+- [x] Lane 7. Intercept `POST /api/test-runs` to fail, then recover. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-7.png`. Pass when the trace fires `fail`, the visible error matches the declared error Place, and `recover` replays cleanly.
+- [x] Lane 8. Open `/app.html` directly. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-8.png`. Pass when replay starts from the declared deep-link entry.
+- [x] Lane 9. Follow a link to a page the census marks undecided. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-9.png`. Pass when the recorder reports an unmapped navigation by URL instead of dropping it.
+- [x] Lane 10. Activate the Lab-to-`app.html` link by keyboard in a fresh context. Save `/tmp/swarm-PR-GQC-02A/worker-1/lane-10.png`. Pass when the trace matches the mouse trace from lane 3 and contains no events from another test.
 
 **Verify, perf.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Metric. P75 Lab navigation-to-ready time on trunk and head, and `check:net` wall time on head.
-- [ ] Probe. Run ten interleaved trunk and head Lab loads without the trace recorder. Run ten head journeys with and without the recorder.
-- [ ] Baseline. Use the GQC-00 trunk Lab baseline. Product code is unchanged, so trunk and head should match within spread.
-- [ ] Rule. Report recorder overhead separately. A trunk-to-head regression in this PR is a measurement defect to explain, not a product regression.
+- [x] Metric. P75 Lab navigation-to-ready time on trunk and head, and `check:net` wall time on head.
+- [x] Probe. Run ten interleaved trunk and head Lab loads without the trace recorder. Run ten head journeys with and without the recorder.
+- [x] Baseline. Use the GQC-00 trunk Lab baseline. Product code is unchanged, so trunk and head should match within spread.
+- [x] Rule. Report recorder overhead separately. A trunk-to-head regression in this PR is a measurement defect to explain, not a product regression.
 
 **Review gate.** None. PR-GQC-02A adds a net, a checker, and test fixtures without changing product pages.
 
 **Merge.**
 
-- [ ] Record the clean verdict at the exact head SHA.
-- [ ] Attach the `check:net` output, the replay results, the census, and the ten live-lane results.
-- [ ] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
-- [ ] Append `PR-GQC-02A` to the stack after `PR-GQC-02`. Wait for operator landing.
+- [x] Record the clean verdict at the exact head SHA.
+- [x] Attach the `check:net` output, the replay results, the census, and the ten live-lane results.
+- [x] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
+- [x] Append `PR-GQC-02A` to the stack after `PR-GQC-02`. Wait for operator landing.
 
 ## Run LandingPage on Astro inside Express (PR-GQC-02B.1)
 

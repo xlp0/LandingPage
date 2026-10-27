@@ -42,6 +42,9 @@ jobs:
       - name: Check Playwright discovery and project partitioning
         run: npm run check:playwright-discovery
 
+      - name: Check Layer 1 site and fixture nets
+        run: npm run check:net
+
       - name: Run Node unit and observability tests
         run: npm run test:unit
 
@@ -73,6 +76,10 @@ jobs:
             process.exit(1);
           }
           EOF
+
+      - name: Publish Layer 1 Transition coverage summary
+        if: always()
+        run: node scripts/check-net.mjs --markdown --write-step-summary
 
   smoke-and-components:
     name: Stage 2 Smoke and Components
