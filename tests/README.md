@@ -21,10 +21,18 @@ This directory holds unit, observability, smoke, component, and feature tests fo
 | `npm run test:unit` | Runs `node --test` across `tests/*.test.*`, `tests/unit/**/*.test.*`, and `tests/observability/**/*.test.*` |
 | `npm run test:smoke` | Runs `--project=smoke` (11 spec files, 30 tests) |
 | `npm run test:components` | Runs `--project=components` (14 spec files, 18 tests) |
-| `npm run test:features` | Runs `--project=features` (17 spec files, 557 tests) |
+| `npm run test:features` | Runs `--project=features` (19 spec files, 563 tests) |
 | `npm run test:smoke:cross-browser` | Runs `smoke`, `smoke-firefox`, and `smoke-webkit` when `PW_CROSS_BROWSER=1` |
 | `npm test` | Runs all three default Playwright category projects once per spec file |
 | `npm run report` | Opens the HTML report from `playwright-report/` |
+
+## GUI Coverage Registry and Reusable Fixtures
+
+- `tests/gui-coverage.json` tracks supported workbench surfaces, target surfaces, and journey traceability without duplicating route graphs.
+- `tests/unit/gui-coverage-registry.test.mjs` validates the registry, checks `tests/fixtures/spa-test-target.graph.json` through `clm-kernel/layer1` (`parsePetriNetYaml`, `IncidenceMatrix`, and `ColoredPetriVM`), and formats the CI step summary.
+- `tests/fixtures/app-fixtures.js` provides isolated browser cleanup, external boundary stubs, an isolated Canonical Triad SQLite persistence harness, and the public Responsive Lab workbench helper.
+- `tests/fixtures/spa-test-target.html` and `tests/fixtures/spa-test-target.graph.json` define the deterministic same-origin SPA target and its Layer 1 Petri-net envelope (`p_spa_overview`, `p_spa_details`, and `p_spa_missing_transition`).
+- `tests/features/spa-workbench-journey.spec.js` and `tests/features/spa-failure-recovery.spec.js` exercise the P0 SPA capture, device rotation, MCard persistence, deterministic replay, error recovery, and keyboard-only workflows.
 
 ## Port and Server Contract
 

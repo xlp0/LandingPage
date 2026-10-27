@@ -4,7 +4,7 @@
 
 - Sprint ID: `SPRINT-GQC-02`
 - Handle: `urn:pcard:sprint:SPRINT-GQC-02`
-- Status: `ACTIVE`
+- Status: `COMPLETED`
 - Depends on: `SPRINT-GQC-01`
 - Unblocks: `SPRINT-GQC-02A`
 - Execution unit: `PR-GQC-02`
@@ -19,7 +19,7 @@ The test suite must distinguish product support from file presence. A file under
 
 Use the [MCard_TDD design contract](./INDEX.md#mcard_tdd-design-contract). The coverage registry is a test index, not a second route graph. It references Page and Place identities and Functional Link and Transition identities from an approved MCard or generated navigation source.
 
-This sprint also fixes the shape that the rest of the program uses for nets. The fixture graph uses the LandingPage envelope defined in [GQC-02A](./SPRINT-GQC-02A-layer1-site-net-and-transition-census.md#file-format): a `topology` section that `clm-kernel/layer1` `parsePetriNetYaml` accepts, and a `bindings` section for kinds, routes, and owners. Each journey is written as a firing sequence of Transition IDs, so GQC-02A can replay it through `ColoredPetriVM`.
+This sprint also fixes the shape that the rest of the program uses for nets. The fixture graph uses the LandingPage envelope defined in [GQC-02A](./SPRINT-GQC-02A-layer1-site-net-and-transition-census.md#file-format) with a `topology` section that `clm-kernel/layer1` `parsePetriNetYaml` accepts, and a `bindings` section for kinds, routes, and owners. Each journey is written as a firing sequence of Transition IDs, so GQC-02A can replay it through `ColoredPetriVM`.
 
 Journeys are written against URLs, roles, labels, and network contracts only. They must pass unchanged when GQC-02B moves pages to Astro. A journey that needs a rewrite after the Astro switch is a defect in the journey or in the migration.
 
@@ -114,51 +114,51 @@ The P0 SPA test journey follows the user's stated product direction. The Product
 
 ### GQC-02.1 Create the GUI coverage registry
 
-- [ ] Each supported journey has a unique ID and one accountable owner.
-- [ ] Each registry row names the target type, target handle, test file, test level, priority, command, and observable outcome.
-- [ ] SPA coverage rows identify the target Page, its Place, the Functional Link, its Transition, and the source reference.
-- [ ] A source reference identifies a fixture graph manifest, a generated LandingPage graph, or an existing MCard. It does not require a persisted `NetMCard` before GQC-05.
-- [ ] GQC-02 may reference a fixture graph manifest or generated graph. GQC-05 owns persisted `NetMCard` references.
-- [ ] The registry is a test index over its declared source. It does not define a second canonical application graph.
-- [ ] Place and Transition IDs are unique within their target and graph scope. The registry rejects duplicate IDs within that scope.
-- [ ] MPA and PenPot rows remain optional and do not count as P0 SPA coverage.
-- [ ] Rows describe the current `responsive_test_run:v1` receipt path without adding a graph field to that closed schema.
-- [ ] Undecided journeys stay marked undecided rather than counting as covered.
-- [ ] A unit check fails when a supported row points to a missing target, Place, Transition, source reference, page, or spec.
-- [ ] `.github/workflows/playwright-quality.yml` publishes the registry result in its job summary.
-- [ ] Each approved journey row has a `firing_sequence` of Transition IDs that exist in its declared source net.
-- [ ] Workbench rows carry empty workbench Place and Transition columns that GQC-02A fills. The registry check treats them as pending, not missing.
+- [x] Each supported journey has a unique ID and one accountable owner.
+- [x] Each registry row names the target type, target handle, test file, test level, priority, command, and observable outcome.
+- [x] SPA coverage rows identify the target Page, its Place, the Functional Link, its Transition, and the source reference.
+- [x] A source reference identifies a fixture graph manifest, a generated LandingPage graph, or an existing MCard. It does not require a persisted `NetMCard` before GQC-05.
+- [x] GQC-02 may reference a fixture graph manifest or generated graph. GQC-05 owns persisted `NetMCard` references.
+- [x] The registry is a test index over its declared source. It does not define a second canonical application graph.
+- [x] Place and Transition IDs are unique within their target and graph scope. The registry rejects duplicate IDs within that scope.
+- [x] MPA and PenPot rows remain optional and do not count as P0 SPA coverage.
+- [x] Rows describe the current `responsive_test_run:v1` receipt path without adding a graph field to that closed schema.
+- [x] Undecided journeys stay marked undecided rather than counting as covered.
+- [x] A unit check fails when a supported row points to a missing target, Place, Transition, source reference, page, or spec.
+- [x] `.github/workflows/playwright-quality.yml` publishes the registry result in its job summary.
+- [x] Each approved journey row has a `firing_sequence` of Transition IDs that exist in its declared source net.
+- [x] Workbench rows carry empty workbench Place and Transition columns that GQC-02A fills. The registry check treats them as pending, not missing.
 
 ### GQC-02.2 Add reusable fixtures
 
-- [ ] A fixture creates isolated browser state and cleans it after each test.
-- [ ] `spa-test-target.html` changes between at least two user-visible views without replacing its browser document.
-- [ ] The fixture exposes at least one declared functional link and one invalid or unavailable action.
-- [ ] The graph manifest names an error Place and defines how an invalid action reaches it.
-- [ ] Persistence tests use temporary data and never touch `data/mcard-api.db`.
-- [ ] A second test can use the fixture without copying setup or cleanup code.
-- [ ] Fixtures expose a narrow interface and do not hide the action under test.
-- [ ] `spa-test-target.graph.json` has `topology` and `bindings` sections. `parsePetriNetYaml` accepts its `topology` section in a unit test.
-- [ ] The fixture net declares its invalid action as a Transition into the error Place and one `recover` Transition back to a view Place.
+- [x] A fixture creates isolated browser state and cleans it after each test.
+- [x] `spa-test-target.html` changes between at least two user-visible views without replacing its browser document.
+- [x] The fixture exposes at least one declared functional link and one invalid or unavailable action.
+- [x] The graph manifest names an error Place and defines how an invalid action reaches it.
+- [x] Persistence tests use temporary data and never touch `data/mcard-api.db`.
+- [x] A second test can use the fixture without copying setup or cleanup code.
+- [x] Fixtures expose a narrow interface and do not hide the action under test.
+- [x] `spa-test-target.graph.json` has `topology` and `bindings` sections. `parsePetriNetYaml` accepts its `topology` section in a unit test.
+- [x] The fixture net declares its invalid action as a Transition into the error Place and one `recover` Transition back to a view Place.
 
 ### GQC-02.3 Add risk-based Playwright journeys
 
-- [ ] P0 covers target selection, device setup, a real SPA link action, capture or replay, and visible MCard result inspection.
-- [ ] Tests distinguish workbench controls from target-app Places and Transitions.
-- [ ] LandingPage's PenPot navigation tests remain a separate regression journey.
-- [ ] Authentication, collaboration, WebLLM, and offline journeys stay undecided until the Product Manager approves them.
-- [ ] External targets use the existing preflight or an intercepted local fixture.
-- [ ] Tests assert visible user results, server responses, or persisted MCard outcomes.
-- [ ] New tests use bounded, state-based waits rather than arbitrary fixed delays.
-- [ ] Journeys select by URL, role, label, or stable ID only. They make no assumption about how a page is served, so they can run unchanged against the GQC-02B Astro host.
+- [x] P0 covers target selection, device setup, a real SPA link action, capture or replay, and visible MCard result inspection.
+- [x] Tests distinguish workbench controls from target-app Places and Transitions.
+- [x] LandingPage's PenPot navigation tests remain a separate regression journey.
+- [x] Authentication, collaboration, WebLLM, and offline journeys stay undecided until the Product Manager approves them.
+- [x] External targets use the existing preflight or an intercepted local fixture.
+- [x] Tests assert visible user results, server responses, or persisted MCard outcomes.
+- [x] New tests use bounded, state-based waits rather than arbitrary fixed delays.
+- [x] Journeys select by URL, role, label, or stable ID only. They make no assumption about how a page is served, so they can run unchanged against the GQC-02B Astro host.
 
 ### GQC-02.4 Record gaps instead of hiding them
 
-- [ ] Every uncovered approved journey has an owner and a planned sprint.
-- [ ] Every unsupported page has an explicit status and is excluded from the coverage denominator.
-- [ ] The P0 denominator includes only approved SPA target journeys and the workbench steps that support them.
-- [ ] A PenPot design edge does not count as a passing runtime Transition without a Playwright assertion against the target.
-- [ ] CI reports the coverage registry result with the suite artifacts.
+- [x] Every uncovered approved journey has an owner and a planned sprint.
+- [x] Every unsupported page has an explicit status and is excluded from the coverage denominator.
+- [x] The P0 denominator includes only approved SPA target journeys and the workbench steps that support them.
+- [x] A PenPot design edge does not count as a passing runtime Transition without a Playwright assertion against the target.
+- [x] CI reports the coverage registry result with the suite artifacts.
 
 ## Non-goals
 
@@ -172,13 +172,13 @@ The P0 SPA test journey follows the user's stated product direction. The Product
 
 ## Definition of done
 
-- [ ] The Product Manager approves target classes and any product surfaces beyond the user-approved P0 SPA journey. Other rows may stay undecided.
-- [ ] Every P0 journey has a passing Playwright spec or an explicit blocker and owner.
-- [ ] Every registry row points to an existing test or a documented gap.
-- [ ] Page and Place traceability and Functional Link and Transition traceability pass the registry test without mutating `responsive_test_run:v1`.
-- [ ] Fixtures isolate browser state, server state, and temporary data.
-- [ ] Existing device and conformance helpers are reused where their contracts fit.
-- [ ] CI publishes the registry result with Playwright artifacts.
-- [ ] The fixture net uses the GQC-02A envelope shape, and every P0 journey has a firing sequence.
-- [ ] TEA signs off on test-level selection and remaining risks.
-- [ ] The operator approves the handoff to GQC-02A.
+- [x] The Product Manager approves target classes and any product surfaces beyond the user-approved P0 SPA journey. Other rows may stay undecided.
+- [x] Every P0 journey has a passing Playwright spec or an explicit blocker and owner.
+- [x] Every registry row points to an existing test or a documented gap.
+- [x] Page and Place traceability and Functional Link and Transition traceability pass the registry test without mutating `responsive_test_run:v1`.
+- [x] Fixtures isolate browser state, server state, and temporary data.
+- [x] Existing device and conformance helpers are reused where their contracts fit.
+- [x] CI publishes the registry result with Playwright artifacts.
+- [x] The fixture net uses the GQC-02A envelope shape, and every P0 journey has a firing sequence.
+- [x] TEA signs off on test-level selection and remaining risks.
+- [x] The operator approves the handoff to GQC-02A.

@@ -1,0 +1,150 @@
+{
+  "schema": "urn:gqc:net-envelope:v1",
+  "netId": "spa-test-target-net",
+  "targetHandle": "mcard:target:/tests/fixtures/spa-test-target.html",
+  "entryPlaceId": "p_spa_overview",
+  "topology": {
+    "name": "spa-test-target-net",
+    "places": [
+      {
+        "id": "p_spa_overview",
+        "initialTokens": 1,
+        "description": "SPA fixture overview landing view"
+      },
+      {
+        "id": "p_spa_details",
+        "initialTokens": 0,
+        "description": "SPA fixture service details view"
+      },
+      {
+        "id": "p_spa_missing_transition",
+        "initialTokens": 0,
+        "description": "Declared error state when an unmapped functional link is activated"
+      }
+    ],
+    "transitions": [
+      {
+        "id": "t_spa_open_details",
+        "inputs": [
+          "p_spa_overview"
+        ],
+        "outputs": [
+          "p_spa_details"
+        ]
+      },
+      {
+        "id": "t_spa_back_overview",
+        "inputs": [
+          "p_spa_details"
+        ],
+        "outputs": [
+          "p_spa_overview"
+        ]
+      },
+      {
+        "id": "t_spa_invalid_unmapped",
+        "inputs": [
+          "p_spa_overview"
+        ],
+        "outputs": [
+          "p_spa_missing_transition"
+        ]
+      },
+      {
+        "id": "t_spa_recover_overview",
+        "inputs": [
+          "p_spa_missing_transition"
+        ],
+        "outputs": [
+          "p_spa_overview"
+        ]
+      }
+    ]
+  },
+  "bindings": {
+    "places": {
+      "p_spa_overview": {
+        "kind": "view",
+        "surface": "target",
+        "pageId": "page_spa_overview",
+        "pagePath": "tests/fixtures/spa-test-target.html",
+        "route": "/tests/fixtures/spa-test-target.html#overview",
+        "routeHandle": "mcard:target:/tests/fixtures/spa-test-target.html#overview",
+        "clmTypeUri": "clm://type/view/target/spa-overview",
+        "entry": true,
+        "deepLinkEntry": true,
+        "owner": "Product Manager and TEA"
+      },
+      "p_spa_details": {
+        "kind": "view",
+        "surface": "target",
+        "pageId": "page_spa_details",
+        "pagePath": "tests/fixtures/spa-test-target.html",
+        "route": "/tests/fixtures/spa-test-target.html#details",
+        "routeHandle": "mcard:target:/tests/fixtures/spa-test-target.html#details",
+        "clmTypeUri": "clm://type/view/target/spa-details",
+        "entry": false,
+        "deepLinkEntry": true,
+        "owner": "Product Manager and TEA"
+      },
+      "p_spa_missing_transition": {
+        "kind": "error",
+        "surface": "target",
+        "pageId": "page_spa_missing_transition",
+        "pagePath": "tests/fixtures/spa-test-target.html",
+        "route": "/tests/fixtures/spa-test-target.html#missing-transition",
+        "routeHandle": "mcard:target:/tests/fixtures/spa-test-target.html#missing-transition",
+        "clmTypeUri": "clm://type/view/target/spa-missing-transition",
+        "entry": false,
+        "deepLinkEntry": false,
+        "owner": "Product Manager, Architect, and UX Designer"
+      }
+    },
+    "transitions": {
+      "t_spa_open_details": {
+        "kind": "client-route",
+        "surface": "target",
+        "linkId": "link_spa_open_details",
+        "fromPlaceId": "p_spa_overview",
+        "toPlaceId": "p_spa_details",
+        "route": "/tests/fixtures/spa-test-target.html#details",
+        "trigger": "click button[data-link-id=\"link_spa_open_details\"] (Open Service Details)",
+        "ownerPage": "tests/fixtures/spa-test-target.html",
+        "owner": "Product Manager and TEA"
+      },
+      "t_spa_back_overview": {
+        "kind": "client-route",
+        "surface": "target",
+        "linkId": "link_spa_back_overview",
+        "fromPlaceId": "p_spa_details",
+        "toPlaceId": "p_spa_overview",
+        "route": "/tests/fixtures/spa-test-target.html#overview",
+        "trigger": "click button[data-link-id=\"link_spa_back_overview\"] (Back to Overview)",
+        "ownerPage": "tests/fixtures/spa-test-target.html",
+        "owner": "Product Manager and TEA"
+      },
+      "t_spa_invalid_unmapped": {
+        "kind": "client-route",
+        "surface": "target",
+        "linkId": "link_spa_invalid_unmapped",
+        "fromPlaceId": "p_spa_overview",
+        "toPlaceId": "p_spa_missing_transition",
+        "route": "/tests/fixtures/spa-test-target.html#missing-transition",
+        "trigger": "click button[data-link-id=\"link_spa_invalid_unmapped\"] (Open Unmapped Audit Route)",
+        "ownerPage": "tests/fixtures/spa-test-target.html",
+        "owner": "Product Manager, Architect, and UX Designer"
+      },
+      "t_spa_recover_overview": {
+        "kind": "recover",
+        "surface": "target",
+        "linkId": "link_spa_recover_overview",
+        "fromPlaceId": "p_spa_missing_transition",
+        "toPlaceId": "p_spa_overview",
+        "route": "/tests/fixtures/spa-test-target.html#overview",
+        "trigger": "click button[data-link-id=\"link_spa_recover_overview\"] (Recover to Overview)",
+        "ownerPage": "tests/fixtures/spa-test-target.html",
+        "owner": "Product Manager, Architect, and UX Designer"
+      }
+    }
+  }
+}

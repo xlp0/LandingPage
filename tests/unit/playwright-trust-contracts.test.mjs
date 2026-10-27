@@ -76,11 +76,23 @@ test('GQC-01-UNIT-01 configured Playwright projects partition specs cleanly, enf
   const { projectResults, verdict } = await runPlaywrightDiscovery({ cwd: ROOT_DIR });
   assert.equal(verdict.ok, true, verdict.failures.join('; '));
 
+  const countSpecFiles = (relDir) =>
+    fs.readdirSync(path.join(ROOT_DIR, relDir)).filter((file) => file.endsWith('.spec.js')).length;
+  const expectedSmokeFiles = countSpecFiles('tests/smoke');
+  const expectedComponentFiles = countSpecFiles('tests/components');
+  const expectedFeatureFiles = countSpecFiles('tests/features');
+
   const byName = new Map(projectResults.map((entry) => [entry.project, entry]));
-  assert.equal(byName.get('smoke')?.fileCount, 11);
-  assert.equal(byName.get('components')?.fileCount, 14);
-  assert.equal(byName.get('features')?.fileCount, 17);
-  assert.equal(verdict.uniqueCategoryFiles, 42);
+  assert.ok(expectedSmokeFiles >= 11);
+  assert.ok(expectedComponentFiles >= 14);
+  assert.ok(expectedFeatureFiles >= 17);
+  assert.equal(byName.get('smoke')?.fileCount, expectedSmokeFiles);
+  assert.equal(byName.get('components')?.fileCount, expectedComponentFiles);
+  assert.equal(byName.get('features')?.fileCount, expectedFeatureFiles);
+  assert.equal(
+    verdict.uniqueCategoryFiles,
+    expectedSmokeFiles + expectedComponentFiles + expectedFeatureFiles
+  );
 
   for (const dir of ['tests/components', 'tests/smoke']) {
     const cjsLeftovers = fs

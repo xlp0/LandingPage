@@ -43,7 +43,7 @@ The 10 percent and 100 ms values are provisional regression guards, not a requir
 - [ ] Follow this dependency graph. A child starts only after its parent is verified in the stack.
   - [x] `PR-GQC-00` branches from `main`.
   - [x] `PR-GQC-01` follows `PR-GQC-00`.
-  - [ ] `PR-GQC-02` follows `PR-GQC-01`.
+  - [x] `PR-GQC-02` follows `PR-GQC-01`.
   - [ ] `PR-GQC-02A` follows `PR-GQC-02`.
   - [ ] `PR-GQC-02B.1` follows `PR-GQC-02A`.
   - [ ] `PR-GQC-02B.2` follows `PR-GQC-02B.1`.
@@ -244,71 +244,71 @@ Each live lane uses an isolated checkout at the PR head. Drive the actual web UI
 
 **Files.**
 
-- [ ] Edit `tests/gui-coverage.json` with separate workbench and target-app records.
-- [ ] Edit `tests/unit/gui-coverage-registry.test.mjs` only to add new registry invariants.
-- [ ] Create `tests/fixtures/app-fixtures.js` for stable page setup, test data, and cleanup.
-- [ ] Create `tests/fixtures/spa-test-target.html` and its test-only source `tests/fixtures/spa-test-target.graph.json` in the GQC-02A envelope shape: a `topology` section that `parsePetriNetYaml` accepts and a `bindings` section.
-- [ ] Create approved journey specs under `tests/features/`. Do not add a new Playwright project in this PR.
-- [ ] Edit existing feature specs only for an approved coverage gap or shared fixture.
-- [ ] Edit `.github/workflows/playwright-quality.yml` only to publish the coverage registry result.
-- [ ] Edit `tests/README.md` with the verified test map.
-- [ ] Append approved journey-scope decisions to `docs/sprints/_active/DECISIONS.tsv`.
+- [x] Edit `tests/gui-coverage.json` with separate workbench and target-app records.
+- [x] Edit `tests/unit/gui-coverage-registry.test.mjs` only to add new registry invariants.
+- [x] Create `tests/fixtures/app-fixtures.js` for stable page setup, test data, and cleanup.
+- [x] Create `tests/fixtures/spa-test-target.html` and its test-only source `tests/fixtures/spa-test-target.graph.json` in the GQC-02A envelope shape: a `topology` section that `parsePetriNetYaml` accepts and a `bindings` section.
+- [x] Create approved journey specs under `tests/features/`. Do not add a new Playwright project in this PR.
+- [x] Edit existing feature specs only for an approved coverage gap or shared fixture.
+- [x] Edit `.github/workflows/playwright-quality.yml` only to publish the coverage registry result.
+- [x] Edit `tests/README.md` with the verified test map.
+- [x] Append approved journey-scope decisions to `docs/sprints/_active/DECISIONS.tsv`.
 
 **Build.**
 
-- [ ] Use one coverage row per supported journey. Include the workbench or target surface, target type, target handle, Page ID, Place ID, Functional Link ID, Transition ID, source kind and source reference, priority, test owner, test layer, command, and evidence.
-- [ ] Let GQC-02 rows reference the fixture graph manifest or an existing generated graph. GQC-05 owns persisted `NetMCard` references.
-- [ ] Scope Page and Transition ID uniqueness to the target handle and source graph. Reject duplicate IDs within that scope.
-- [ ] Treat the registry as a test index over its declared source. Do not copy the generated LandingPage navigation graph into another canonical registry.
-- [ ] Keep PenPot MPA rows optional and outside the P0 SPA coverage denominator.
-- [ ] Add shared fixtures only for repeated setup or cleanup. Add a page object only when multiple journeys share meaningful behavior.
-- [ ] Add Playwright journeys for selecting an approved local SPA, applying a device profile, following a functional link, recording or replaying the path, and inspecting the MCard result.
-- [ ] Assert that the SPA fixture changes its visible view without replacing the browser document.
-- [ ] Keep LandingPage PenPot navigation and MCard rendering as separate regression journeys, not as proof of target-SPA coverage.
-- [ ] Keep unit tests for pure logic, API tests for route contracts, and Playwright for behavior users observe.
-- [ ] Stub external identity, model, and third-party services. Do not require production credentials or public network availability.
-- [ ] Record each approved journey as a `firing_sequence` of Transition IDs. A server call is a request and result pair.
-- [ ] Write journeys against URLs, roles, labels, and network contracts only, so they run unchanged on the Astro host in `PR-GQC-02B.1`.
+- [x] Use one coverage row per supported journey. Include the workbench or target surface, target type, target handle, Page ID, Place ID, Functional Link ID, Transition ID, source kind and source reference, priority, test owner, test layer, command, and evidence.
+- [x] Let GQC-02 rows reference the fixture graph manifest or an existing generated graph. GQC-05 owns persisted `NetMCard` references.
+- [x] Scope Page and Transition ID uniqueness to the target handle and source graph. Reject duplicate IDs within that scope.
+- [x] Treat the registry as a test index over its declared source. Do not copy the generated LandingPage navigation graph into another canonical registry.
+- [x] Keep PenPot MPA rows optional and outside the P0 SPA coverage denominator.
+- [x] Add shared fixtures only for repeated setup or cleanup. Add a page object only when multiple journeys share meaningful behavior.
+- [x] Add Playwright journeys for selecting an approved local SPA, applying a device profile, following a functional link, recording or replaying the path, and inspecting the MCard result.
+- [x] Assert that the SPA fixture changes its visible view without replacing the browser document.
+- [x] Keep LandingPage PenPot navigation and MCard rendering as separate regression journeys, not as proof of target-SPA coverage.
+- [x] Keep unit tests for pure logic, API tests for route contracts, and Playwright for behavior users observe.
+- [x] Stub external identity, model, and third-party services. Do not require production credentials or public network availability.
+- [x] Record each approved journey as a `firing_sequence` of Transition IDs. A server call is a request and result pair.
+- [x] Write journeys against URLs, roles, labels, and network contracts only, so they run unchanged on the Astro host in `PR-GQC-02B.1`.
 
 **You see.**
 
-- [ ] The coverage registry distinguishes workbench, SPA target, optional MPA target, MCard `webapp`, internal, missing, and undecided rows.
-- [ ] A failing target journey names the Page, Place, Functional Link, Transition, and visible outcome, not a private helper implementation.
-- [ ] The local SPA fixture exercises a real browser action while keeping the document alive.
+- [x] The coverage registry distinguishes workbench, SPA target, optional MPA target, MCard `webapp`, internal, missing, and undecided rows.
+- [x] A failing target journey names the Page, Place, Functional Link, Transition, and visible outcome, not a private helper implementation.
+- [x] The local SPA fixture exercises a real browser action while keeping the document alive.
 
 **Verify, unit.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Test that every supported coverage row resolves to an existing spec, command, target, and fixture or graph source. Run `node --test tests/unit/gui-coverage-registry.test.mjs`.
-- [ ] Run the shared fixture tests and `npm run test:unit`.
+- [x] Test that every supported coverage row resolves to an existing spec, command, target, and fixture or graph source. Run `node --test tests/unit/gui-coverage-registry.test.mjs`.
+- [x] Run the shared fixture tests and `npm run test:unit`.
 
 **Verify, live.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked. Ten lanes on `the model recorded in the run header` at the PR head, per the boot recipe.
 
-- [ ] Lane 1. Regression lane against trunk. Open the approved workbench entry on trunk and head. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-1.png`. Pass when the same workbench state appears.
-- [ ] Lane 2. Load the deterministic SPA fixture through the existing Responsive Lab controls. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-2.png`. Pass when the fixture appears in the iframe. Do not require the future guide or target-type label.
-- [ ] Lane 3. Observe the fixture's first and second views. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-3.png`. Pass when each visible view maps to a Page and Place ID in the test-only graph manifest.
-- [ ] Lane 4. Follow one Functional Link in the fixture. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-4.png`. Pass when the destination view appears without a document reload and matches its declared Transition.
-- [ ] Lane 5. Apply and rotate a built-in device profile. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-5.png`. Pass when the viewport matches the device registry and the current view remains visible.
-- [ ] Lane 6. Record the functional link action and save the test run. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-6.png`. Pass when the user sees the stored MCard handle or hash; do not require a persisted `NetMCard` before GQC-05.
-- [ ] Lane 7. Replay the same journey. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-7.png`. Pass when the visible destination and recorded Transition agree.
-- [ ] Lane 8. Follow a fixture link with no declared destination. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-8.png`. Pass when the workbench reports a missing Transition and shows its error Place without claiming capture authorization.
-- [ ] Lane 9. Complete target selection, device setup, and capture by keyboard. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-9.png`. Pass when focus order and result status are usable.
-- [ ] Lane 10. Run the SPA journey in a fresh context. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-10.png`. Pass when storage, dialogs, and network requests do not leak from another test.
+- [x] Lane 1. Regression lane against trunk. Open the approved workbench entry on trunk and head. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-1.png`. Pass when the same workbench state appears.
+- [x] Lane 2. Load the deterministic SPA fixture through the existing Responsive Lab controls. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-2.png`. Pass when the fixture appears in the iframe. Do not require the future guide or target-type label.
+- [x] Lane 3. Observe the fixture's first and second views. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-3.png`. Pass when each visible view maps to a Page and Place ID in the test-only graph manifest.
+- [x] Lane 4. Follow one Functional Link in the fixture. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-4.png`. Pass when the destination view appears without a document reload and matches its declared Transition.
+- [x] Lane 5. Apply and rotate a built-in device profile. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-5.png`. Pass when the viewport matches the device registry and the current view remains visible.
+- [x] Lane 6. Record the functional link action and save the test run. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-6.png`. Pass when the user sees the stored MCard handle or hash; do not require a persisted `NetMCard` before GQC-05.
+- [x] Lane 7. Replay the same journey. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-7.png`. Pass when the visible destination and recorded Transition agree.
+- [x] Lane 8. Follow a fixture link with no declared destination. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-8.png`. Pass when the workbench reports a missing Transition and shows its error Place without claiming capture authorization.
+- [x] Lane 9. Complete target selection, device setup, and capture by keyboard. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-9.png`. Pass when focus order and result status are usable.
+- [x] Lane 10. Run the SPA journey in a fresh context. Save `/tmp/swarm-PR-GQC-02/worker-1/lane-10.png`. Pass when storage, dialogs, and network requests do not leak from another test.
 
 **Verify, perf.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Metric. P75 workbench navigation-to-ready time on trunk and head. Record new fixture load and transition times as separate head-only diagnostics.
-- [ ] Probe. Run ten interleaved trunk and head journeys for the common Lab route with the same browser, viewport, and cache mode. Run ten fixture samples on head only.
-- [ ] Baseline. Use the GQC-00 trunk workbench baseline. The SPA fixture does not exist on trunk, so its measurements need an approved absolute budget or stay advisory.
-- [ ] Rule. If TEA and the Product Manager ratify a blocking budget in GQC-00, fail only on a paired, like-for-like workbench regression. Do not compare the head-only fixture to an unlike trunk scenario. Report fixture timing and journey wall time separately.
+- [x] Metric. P75 workbench navigation-to-ready time on trunk and head. Record new fixture load and transition times as separate head-only diagnostics.
+- [x] Probe. Run ten interleaved trunk and head journeys for the common Lab route with the same browser, viewport, and cache mode. Run ten fixture samples on head only.
+- [x] Baseline. Use the GQC-00 trunk workbench baseline. The SPA fixture does not exist on trunk, so its measurements need an approved absolute budget or stay advisory.
+- [x] Rule. If TEA and the Product Manager ratify a blocking budget in GQC-00, fail only on a paired, like-for-like workbench regression. Do not compare the head-only fixture to an unlike trunk scenario. Report fixture timing and journey wall time separately.
 
 **Review gate.** None. PR-GQC-02 adds test fixtures and assertions without changing product interactions.
 
 **Merge.**
 
-- [ ] Record the clean verdict at the exact head SHA.
-- [ ] Attach the coverage registry check and the ten live-lane results.
-- [ ] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
-- [ ] Append `PR-GQC-02` to the stack after `PR-GQC-01`. Wait for operator landing.
+- [x] Record the clean verdict at the exact head SHA.
+- [x] Attach the coverage registry check and the ten live-lane results.
+- [x] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
+- [x] Append `PR-GQC-02` to the stack after `PR-GQC-01`. Wait for operator landing.
 
 ## Census Places and Transitions and author the Layer 1 site net (PR-GQC-02A)
 

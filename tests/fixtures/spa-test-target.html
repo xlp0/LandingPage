@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deterministic SPA Test Target</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      min-height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      overflow-x: hidden;
+    }
+    .spa-shell {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .spa-header {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .spa-header h1 {
+      margin: 0;
+      font-size: 1.15rem;
+      line-height: 1.3;
+    }
+    .spa-telemetry {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+    }
+    .spa-pill {
+      background: #0f172a;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      padding: 0.25rem 0.5rem;
+      overflow-wrap: anywhere;
+    }
+    .spa-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .spa-card h2 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+    .spa-card p {
+      margin: 0;
+      line-height: 1.5;
+      color: #cbd5e1;
+      font-size: 0.92rem;
+    }
+    .spa-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .spa-btn {
+      min-height: 48px;
+      min-width: 148px;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #60a5fa;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .spa-btn:focus-visible {
+      outline: 3px solid #facc15;
+      outline-offset: 2px;
+    }
+    .spa-btn.secondary {
+      background: #334155;
+      border-color: #64748b;
+    }
+    .spa-btn.warning {
+      background: #7c2d12;
+      border-color: #fb923c;
+    }
+    .spa-alert {
+      background: #450a0a;
+      border: 1px solid #f87171;
+      border-radius: 8px;
+      padding: 0.85rem;
+      color: #fecaca;
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <div class="spa-shell">
+    <header class="spa-header" role="banner">
+      <h1>Citizen Service SPA Target</h1>
+      <div class="spa-telemetry" role="status" aria-live="polite">
+        <span class="spa-pill">Page: <strong id="spa-active-page" data-testid="spa-active-page">page_spa_overview</strong></span>
+        <span class="spa-pill">Place: <strong id="spa-active-place" data-testid="spa-active-place">p_spa_overview</strong></span>
+        <span class="spa-pill">Transition: <strong id="spa-last-transition" data-testid="spa-last-transition">none</strong></span>
+        <span class="spa-pill" aria-label="Document boot nonce">Boot: <code id="spa-boot-nonce">initializing</code></span>
+      </div>
+    </header>
+
+    <main
+      id="spa-app-root"
+      data-testid="spa-app-root"
+      data-page-id="page_spa_overview"
+      data-place-id="p_spa_overview"
+      data-last-transition-id="none"
+      data-transition-count="0"
+      data-boot-nonce=""
+    >
+      <section class="spa-card" id="spa-view-panel">
+        <h2 id="spa-view-heading" data-testid="spa-view-heading">Citizen Service Overview</h2>
+        <p id="spa-view-body" data-testid="spa-view-body">
+          Select a declared functional link to switch views inside a single browser document without reloading.
+        </p>
+        <div id="spa-error-slot"></div>
+        <nav class="spa-actions" aria-label="SPA view actions" id="spa-actions"></nav>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    const bootNonce = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID()
+      : `nonce_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+
+    window.__spaBootNonce = bootNonce;
+
+    const VIEWS = {
+      p_spa_overview: {
+        pageId: 'page_spa_overview',
+        placeId: 'p_spa_overview',
+        hash: '#overview',
+        heading: 'Citizen Service Overview',
+        body: 'Select a declared functional link to switch views inside a single browser document without reloading.',
+        errorMessage: null,
+        actions: [
+          {
+            id: 'btn-spa-open-details',
+            testId: 'btn-open-details',
+            linkId: 'link_spa_open_details',
+            transitionId: 't_spa_open_details',
+            toPlaceId: 'p_spa_details',
+            label: 'Open Service Details',
+            variant: 'primary'
+          },
+          {
+            id: 'btn-spa-invalid-unmapped',
+            testId: 'btn-invalid-unmapped',
+            linkId: 'link_spa_invalid_unmapped',
+            transitionId: 't_spa_invalid_unmapped',
+            toPlaceId: 'p_spa_missing_transition',
+            label: 'Open Unmapped Audit Route',
+            variant: 'warning'
+          }
+        ]
+      },
+      p_spa_details: {
+        pageId: 'page_spa_details',
+        placeId: 'p_spa_details',
+        hash: '#details',
+        heading: 'Service Details Specification',
+        body: 'Active single-document details view with verified session conservation and touch-ready controls.',
+        errorMessage: null,
+        actions: [
+          {
+            id: 'btn-spa-back-overview',
+            testId: 'btn-back-overview',
+            linkId: 'link_spa_back_overview',
+            transitionId: 't_spa_back_overview',
+            toPlaceId: 'p_spa_overview',
+            label: 'Back to Overview',
+            variant: 'secondary'
+          }
+        ]
+      },
+      p_spa_missing_transition: {
+        pageId: 'page_spa_missing_transition',
+        placeId: 'p_spa_missing_transition',
+        hash: '#missing-transition',
+        heading: 'Missing Transition Destination',
+        body: 'The requested functional link has no mapped destination view in spa-test-target-net.',
+        errorMessage: 'Missing Transition destination: link_spa_invalid_unmapped fired t_spa_invalid_unmapped into error Place p_spa_missing_transition. Capture authorization is not claimed.',
+        actions: [
+          {
+            id: 'btn-spa-recover-overview',
+            testId: 'btn-recover-overview',
+            linkId: 'link_spa_recover_overview',
+            transitionId: 't_spa_recover_overview',
+            toPlaceId: 'p_spa_overview',
+            label: 'Recover to Overview',
+            variant: 'primary'
+          }
+        ]
+      }
+    };
+
+    const HASH_TO_PLACE = {
+      '#overview': 'p_spa_overview',
+      '#details': 'p_spa_details',
+      '#missing-transition': 'p_spa_missing_transition'
+    };
+
+    const appRoot = document.getElementById('spa-app-root');
+    const pageEl = document.getElementById('spa-active-page');
+    const placeEl = document.getElementById('spa-active-place');
+    const transEl = document.getElementById('spa-last-transition');
+    const bootEl = document.getElementById('spa-boot-nonce');
+    const headingEl = document.getElementById('spa-view-heading');
+    const bodyEl = document.getElementById('spa-view-body');
+    const errorSlot = document.getElementById('spa-error-slot');
+    const actionsEl = document.getElementById('spa-actions');
+
+    let transitionCount = 0;
+
+    appRoot.setAttribute('data-boot-nonce', bootNonce);
+    bootEl.textContent = bootNonce.slice(0, 12);
+
+    function renderPlace(placeId, transitionId = 'none', { pushHash = false } = {}) {
+      const view = VIEWS[placeId] || VIEWS.p_spa_overview;
+      if (transitionId !== 'none') {
+        transitionCount += 1;
+      }
+
+      appRoot.setAttribute('data-page-id', view.pageId);
+      appRoot.setAttribute('data-place-id', view.placeId);
+      appRoot.setAttribute('data-last-transition-id', transitionId);
+      appRoot.setAttribute('data-transition-count', String(transitionCount));
+
+      pageEl.textContent = view.pageId;
+      placeEl.textContent = view.placeId;
+      transEl.textContent = transitionId;
+      headingEl.textContent = view.heading;
+      bodyEl.textContent = view.body;
+
+      errorSlot.replaceChildren();
+      if (view.errorMessage) {
+        const alertBox = document.createElement('div');
+        alertBox.id = 'spa-error-alert';
+        alertBox.className = 'spa-alert';
+        alertBox.setAttribute('role', 'alert');
+        alertBox.setAttribute('data-testid', 'spa-error-alert');
+        alertBox.textContent = view.errorMessage;
+        errorSlot.appendChild(alertBox);
+      }
+
+      actionsEl.replaceChildren();
+      for (const action of view.actions) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.id = action.id;
+        btn.className = action.variant === 'primary'
+          ? 'spa-btn'
+          : `spa-btn ${action.variant}`;
+        btn.setAttribute('data-testid', action.testId);
+        btn.setAttribute('data-link-id', action.linkId);
+        btn.setAttribute('data-transition-id', action.transitionId);
+        btn.setAttribute('aria-label', action.label);
+        btn.textContent = action.label;
+        btn.addEventListener('click', () => {
+          renderPlace(action.toPlaceId, action.transitionId, { pushHash: true });
+        });
+        actionsEl.appendChild(btn);
+      }
+
+      if (pushHash && window.location.hash !== view.hash) {
+        window.history.pushState({ placeId: view.placeId, transitionId }, '', view.hash);
+      }
+    }
+
+    window.addEventListener('popstate', () => {
+      const targetPlace = HASH_TO_PLACE[window.location.hash] || 'p_spa_overview';
+      renderPlace(targetPlace, 'popstate_sync', { pushHash: false });
+    });
+
+    const initialPlace = HASH_TO_PLACE[window.location.hash] || 'p_spa_overview';
+    renderPlace(initialPlace, 'none', { pushHash: false });
+  </script>
+</body>
+</html>
