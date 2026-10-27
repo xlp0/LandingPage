@@ -1,19 +1,24 @@
 import { spawnSync } from 'node:child_process';
+import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 export const REQUIRED_PROJECTS = Object.freeze(['smoke', 'components', 'features']);
 
-export const KNOWN_ZERO_TEST_EXCEPTIONS = Object.freeze({
-  components: Object.freeze({
-    owner: 'SPRINT-GQC-01',
-    reason:
-      'playwright.config.js matches "**/*.spec.js" while 14 component specs use ".spec.cjs". SPRINT-GQC-01 restores component discovery and removes this exception.'
-  })
+export const KNOWN_ZERO_TEST_EXCEPTIONS = Object.freeze({});
+
+export const APPROVED_CROSS_BROWSER_REPEATS = Object.freeze({
+  'smoke-firefox': 'smoke',
+  'smoke-webkit': 'smoke',
 });
 
 export function countPlaywrightTests(report) {
   if (!report || typeof report !== 'object') {
-    return { testCount: 0, fileCount: 0, fatalErrors: ['Invalid JSON output from Playwright --list'] };
+    return {
+      testCount: 0,
+      fileCount: 0,
+      files: [],
+      fatalErrors: ['Invalid JSON output from Playwright --list'],
+    };
   }
 
   const files = new Set();
@@ -56,7 +61,26 @@ export function countPlaywrightTests(report) {
     }
   }
 
-  return { testCount, fileCount: files.size, fatalErrors };
+  const sortedFiles = [...files].sort();
+  return { testCount, fileCount: sortedFiles.length, files: sortedFiles, fatalErrors };
+}
+
+export async function loadConfiguredProjects({
+  cwd = process.cwd(),
+  configPath = path.join(cwd, 'playwright.config.js'),
+} = {}) {
+  const resolved = path.resolve(cwd, configPath);
+  const configUrl = `${pathToFileURL(resolved).href}?t=${Date.now()}`;
+  const mod = await import(configUrl);
+  const config = mod?.default ?? mod;
+  const projects = Array.isArray(config?.projects) ? config.projects : [];
+  return projects.map((project) => ({
+    name: String(project?.name || '').trim(),
+    repeatsCategory:
+      project?.metadata?.repeatsCategory ||
+      APPROVED_CROSS_BROWSER_REPEATS[project?.name] ||
+      null,
+  }));
 }
 
 export function evaluateDiscoveryResults(
@@ -64,13 +88,17 @@ export function evaluateDiscoveryResults(
   {
     requiredProjects = REQUIRED_PROJECTS,
     exceptions = KNOWN_ZERO_TEST_EXCEPTIONS,
-    allowExceptions = true
+    allowExceptions = false,
+    approvedCrossBrowserRepeats = APPROVED_CROSS_BROWSER_REPEATS,
   } = {}
 ) {
   const summaries = [];
   const warnings = [];
   const failures = [];
   const seen = new Set();
+  const categoryFileOwners = new Map();
+  let uniqueCategoryFiles = 0;
+  let crossBrowserRepeatFiles = 0;
 
   for (const item of projectResults) {
     const project = item?.project;
@@ -78,12 +106,18 @@ export function evaluateDiscoveryResults(
       failures.push('Playwright discovery entry is missing a project name.');
       continue;
     }
+    if (seen.has(project)) {
+      failures.push(`Duplicate Playwright project name "${project}" in configuration`);
+      continue;
+    }
     seen.add(project);
 
+    const files = Array.isArray(item.files) ? item.files : [];
     const testCount = Number(item.testCount ?? 0);
-    const fileCount = Number(item.fileCount ?? 0);
+    const fileCount = Number(item.fileCount ?? files.length);
     const exitCode = Number(item.exitCode ?? 1);
     const fatalErrors = Array.isArray(item.fatalErrors) ? item.fatalErrors : [];
+    const repeatsCategory = item.repeatsCategory || approvedCrossBrowserRepeats[project] || null;
 
     if (fatalErrors.length > 0) {
       failures.push(`${project} encountered a fatal discovery error (${fatalErrors.join(', ')})`);
@@ -91,15 +125,22 @@ export function evaluateDiscoveryResults(
     }
 
     if (testCount <= 0 || fileCount <= 0) {
-      const exception = allowExceptions && exceptions && Object.hasOwn(exceptions, project) ? exceptions[project] : null;
+      const exception =
+        allowExceptions && exceptions && Object.hasOwn(exceptions, project)
+          ? exceptions[project]
+          : null;
       if (exception) {
-        summaries.push(`${project}: ${testCount} tests in ${fileCount} files (exception owned by ${exception.owner})`);
+        summaries.push(
+          `${project} discovered ${testCount} tests in ${fileCount} files (exception owned by ${exception.owner})`
+        );
         warnings.push(
           `WARNING [${exception.owner}] Project "${project}" discovered 0 tests in 0 files. ${exception.reason}`
         );
       } else {
-        summaries.push(`${project}: ${testCount} tests in ${fileCount} files`);
-        failures.push(`${project} discovered ${testCount} tests in ${fileCount} files and has no approved exception`);
+        summaries.push(`${project} discovered ${testCount} tests in ${fileCount} files`);
+        failures.push(
+          `${project} discovered ${testCount} tests in ${fileCount} files and has no approved exception`
+        );
       }
       continue;
     }
@@ -109,7 +150,25 @@ export function evaluateDiscoveryResults(
       continue;
     }
 
-    summaries.push(`${project}: ${testCount} tests in ${fileCount} files`);
+    if (repeatsCategory) {
+      crossBrowserRepeatFiles += fileCount;
+      summaries.push(
+        `${project} discovered ${testCount} tests in ${fileCount} files (cross-browser repeat of ${repeatsCategory})`
+      );
+    } else {
+      uniqueCategoryFiles += fileCount;
+      summaries.push(`${project} discovered ${testCount} tests in ${fileCount} files`);
+      for (const specFile of files) {
+        const existingOwner = categoryFileOwners.get(specFile);
+        if (existingOwner && existingOwner !== project) {
+          failures.push(
+            `Spec file "${specFile}" is claimed by multiple category projects ("${existingOwner}" and "${project}")`
+          );
+        } else {
+          categoryFileOwners.set(specFile, project);
+        }
+      }
+    }
   }
 
   for (const required of requiredProjects) {
@@ -120,25 +179,47 @@ export function evaluateDiscoveryResults(
 
   return {
     ok: failures.length === 0,
+    uniqueCategoryFiles,
+    crossBrowserRepeatFiles,
     summaries,
     warnings,
-    failures
+    failures,
   };
 }
 
-export function runPlaywrightDiscovery({
+export async function runPlaywrightDiscovery({
   cwd = process.cwd(),
-  projects = REQUIRED_PROJECTS,
-  allowExceptions = true
+  configPath = path.join(cwd, 'playwright.config.js'),
+  projects = null,
+  allowExceptions = false,
 } = {}) {
+  const configured = projects
+    ? projects.map((p) => (typeof p === 'string' ? { name: p, repeatsCategory: APPROVED_CROSS_BROWSER_REPEATS[p] || null } : p))
+    : await loadConfiguredProjects({ cwd, configPath });
+
+  if (configured.length === 0) {
+    return {
+      projectResults: [],
+      verdict: {
+        ok: false,
+        uniqueCategoryFiles: 0,
+        crossBrowserRepeatFiles: 0,
+        summaries: [],
+        warnings: [],
+        failures: [`No Playwright projects configured in ${configPath}`],
+      },
+    };
+  }
+
   const projectResults = [];
 
-  for (const project of projects) {
-    const proc = spawnSync(
-      'npx',
-      ['playwright', 'test', '--list', `--project=${project}`, '--reporter=json'],
-      { cwd, encoding: 'utf8' }
-    );
+  for (const entry of configured) {
+    const project = entry.name;
+    const args = ['playwright', 'test', '--list', `--project=${project}`, '--reporter=json'];
+    if (configPath && path.resolve(cwd, configPath) !== path.join(cwd, 'playwright.config.js')) {
+      args.push(`--config=${configPath}`);
+    }
+    const proc = spawnSync('npx', args, { cwd, encoding: 'utf8' });
 
     let parsed = null;
     try {
@@ -147,32 +228,40 @@ export function runPlaywrightDiscovery({
       parsed = null;
     }
 
-    const { testCount, fileCount, fatalErrors } = countPlaywrightTests(parsed);
+    const { testCount, fileCount, files, fatalErrors } = countPlaywrightTests(parsed);
     if (!parsed && proc.stderr) {
       fatalErrors.push(proc.stderr.trim().split('\n')[0]);
     }
 
     projectResults.push({
       project,
+      repeatsCategory: entry.repeatsCategory,
       testCount,
       fileCount,
+      files,
       exitCode: proc.status ?? 1,
-      fatalErrors
+      fatalErrors,
     });
   }
 
   return {
     projectResults,
-    verdict: evaluateDiscoveryResults(projectResults, { allowExceptions })
+    verdict: evaluateDiscoveryResults(projectResults, {
+      requiredProjects: projects ? [] : REQUIRED_PROJECTS,
+      allowExceptions,
+    }),
   };
 }
 
 const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isMain) {
-  const { verdict } = runPlaywrightDiscovery();
+  const { verdict } = await runPlaywrightDiscovery();
   for (const line of verdict.summaries) {
     console.log(line);
   }
+  console.log(
+    `Category files total ${verdict.uniqueCategoryFiles} unique and ${verdict.crossBrowserRepeatFiles} cross-browser repeats`
+  );
   for (const warning of verdict.warnings) {
     console.warn(warning);
   }

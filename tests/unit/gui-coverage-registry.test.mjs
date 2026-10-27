@@ -344,42 +344,53 @@ test('validator rejects workbench/target conflation, app.html SPA promotion, mca
   assert.ok(res4.errors.some((e) => e.includes('excluded from P0 SPA denominator')));
 });
 
-test('Playwright discovery evaluator fails when smoke or features are empty or when exceptions are disabled', () => {
-  const baseline = [
-    { project: 'smoke', testCount: 16, fileCount: 3, exitCode: 0, fatalErrors: [] },
-    { project: 'components', testCount: 0, fileCount: 0, exitCode: 1, fatalErrors: [] },
-    { project: 'features', testCount: 557, fileCount: 17, exitCode: 0, fatalErrors: [] }
+test('Playwright discovery evaluator enforces non-empty category projects, zero exceptions, and zero category overlap', () => {
+  assert.deepEqual(KNOWN_ZERO_TEST_EXCEPTIONS, {});
+
+  const healthy = [
+    { project: 'smoke', testCount: 30, fileCount: 11, files: ['smoke/a.spec.js'], exitCode: 0, fatalErrors: [] },
+    { project: 'components', testCount: 18, fileCount: 14, files: ['components/b.spec.js'], exitCode: 0, fatalErrors: [] },
+    { project: 'features', testCount: 557, fileCount: 17, files: ['features/c.spec.js'], exitCode: 0, fatalErrors: [] }
   ];
 
-  const okWithException = evaluateDiscoveryResults(baseline);
-  assert.equal(okWithException.ok, true);
-  assert.equal(okWithException.warnings.length, 1);
-  assert.match(okWithException.warnings[0], /SPRINT-GQC-01/);
-  assert.equal(KNOWN_ZERO_TEST_EXCEPTIONS.components.owner, 'SPRINT-GQC-01');
+  const okVerdict = evaluateDiscoveryResults(healthy);
+  assert.equal(okVerdict.ok, true);
+  assert.equal(okVerdict.warnings.length, 0);
+  assert.equal(okVerdict.uniqueCategoryFiles, 42);
 
-  const failWithoutExceptions = evaluateDiscoveryResults(baseline, { allowExceptions: false });
-  assert.equal(failWithoutExceptions.ok, false);
-  assert.ok(failWithoutExceptions.failures.some((f) => f.includes('components')));
-
-  const emptySmoke = [
-    { project: 'smoke', testCount: 0, fileCount: 0, exitCode: 1, fatalErrors: [] },
-    baseline[1],
-    baseline[2]
+  const emptyComponents = [
+    healthy[0],
+    { project: 'components', testCount: 0, fileCount: 0, files: [], exitCode: 1, fatalErrors: [] },
+    healthy[2]
   ];
-  assert.equal(evaluateDiscoveryResults(emptySmoke).ok, false);
+  const failedComponents = evaluateDiscoveryResults(emptyComponents);
+  assert.equal(failedComponents.ok, false);
+  assert.ok(failedComponents.failures.some((f) => f.includes('components')));
 
-  const emptyFeatures = [
-    baseline[0],
-    baseline[1],
-    { project: 'features', testCount: 0, fileCount: 0, exitCode: 1, fatalErrors: [] }
+  const overlappingCategories = [
+    healthy[0],
+    { project: 'components', testCount: 18, fileCount: 1, files: ['smoke/a.spec.js'], exitCode: 0, fatalErrors: [] },
+    healthy[2]
   ];
-  assert.equal(evaluateDiscoveryResults(emptyFeatures).ok, false);
+  const overlapVerdict = evaluateDiscoveryResults(overlappingCategories);
+  assert.equal(overlapVerdict.ok, false);
+  assert.ok(overlapVerdict.failures.some((f) => f.includes('claimed by multiple category projects')));
 
-  const unknownEmpty = [
-    ...baseline,
-    { project: 'unknown-project', testCount: 0, fileCount: 0, exitCode: 1, fatalErrors: [] }
+  const withCrossBrowserRepeat = [
+    ...healthy,
+    {
+      project: 'smoke-firefox',
+      repeatsCategory: 'smoke',
+      testCount: 30,
+      fileCount: 11,
+      files: ['smoke/a.spec.js'],
+      exitCode: 0,
+      fatalErrors: []
+    }
   ];
-  assert.equal(evaluateDiscoveryResults(unknownEmpty).ok, false);
+  const repeatVerdict = evaluateDiscoveryResults(withCrossBrowserRepeat);
+  assert.equal(repeatVerdict.ok, true);
+  assert.equal(repeatVerdict.crossBrowserRepeatFiles, 11);
 
   const parsedCounts = countPlaywrightTests({
     suites: [
@@ -390,5 +401,10 @@ test('Playwright discovery evaluator fails when smoke or features are empty or w
     ],
     errors: [{ message: 'Error: No tests found' }]
   });
-  assert.deepEqual(parsedCounts, { testCount: 2, fileCount: 1, fatalErrors: [] });
+  assert.deepEqual(parsedCounts, {
+    testCount: 2,
+    fileCount: 1,
+    files: ['smoke/a.spec.js'],
+    fatalErrors: []
+  });
 });

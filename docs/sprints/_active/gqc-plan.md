@@ -41,8 +41,8 @@ The 10 percent and 100 ms values are provisional regression guards, not a requir
 
 - [ ] Spawn one owner per PR. Each owner returns its code-ready head, test output, live-lane screenshots, performance measurements, and open risks.
 - [ ] Follow this dependency graph. A child starts only after its parent is verified in the stack.
-  - [ ] `PR-GQC-00` branches from `main`.
-  - [ ] `PR-GQC-01` follows `PR-GQC-00`.
+  - [x] `PR-GQC-00` branches from `main`.
+  - [x] `PR-GQC-01` follows `PR-GQC-00`.
   - [ ] `PR-GQC-02` follows `PR-GQC-01`.
   - [ ] `PR-GQC-02A` follows `PR-GQC-02`.
   - [ ] `PR-GQC-02B.1` follows `PR-GQC-02A`.
@@ -175,68 +175,68 @@ Each live lane uses an isolated checkout at the PR head. Drive the actual web UI
 
 **Files.**
 
-- [ ] Edit `playwright.config.js` and `package.json`.
-- [ ] Edit `.github/workflows/clm-test-all-components.yml` and expand `.github/workflows/playwright-quality.yml` from the GQC-00 discovery guard to the full quality gate.
-- [ ] Migrate or explicitly match `tests/components/*.spec.cjs` and their CommonJS helpers.
-- [ ] Edit `tests/fixtures/test-config.js`, `tests/fixtures/clm-helpers.js`, and the component specs to use the configured base URL and module format.
-- [ ] Limit GQC-01 fixture edits to existing helpers and configuration. GQC-02 owns the new SPA fixture and graph manifest.
-- [ ] Include `tests/smoke/clm-dashboard.spec.cjs` and the observed `tests/observability/*.test.js` files in the suite-ownership decision.
-- [ ] Resolve the Darwin-only snapshot baseline before an Ubuntu CI job depends on it.
-- [ ] Edit `tests/TEST_DOCUMENTATION.md` and `tests/README.md`.
-- [ ] Append approved browser, retry, or deployment-policy decisions to `docs/sprints/_active/DECISIONS.tsv`.
-- [ ] Add root-page characterization specs under `tests/smoke/`, one per root page in the GQC-00 inventory.
+- [x] Edit `playwright.config.js` and `package.json`.
+- [x] Edit `.github/workflows/clm-test-all-components.yml` and expand `.github/workflows/playwright-quality.yml` from the GQC-00 discovery guard to the full quality gate.
+- [x] Migrate or explicitly match `tests/components/*.spec.cjs` and their CommonJS helpers.
+- [x] Edit `tests/fixtures/test-config.js`, `tests/fixtures/clm-helpers.js`, and the component specs to use the configured base URL and module format.
+- [x] Limit GQC-01 fixture edits to existing helpers and configuration. GQC-02 owns the new SPA fixture and graph manifest.
+- [x] Include `tests/smoke/clm-dashboard.spec.cjs` and the observed `tests/observability/*.test.js` files in the suite-ownership decision.
+- [x] Resolve the Darwin-only snapshot baseline before an Ubuntu CI job depends on it.
+- [x] Edit `tests/TEST_DOCUMENTATION.md` and `tests/README.md`.
+- [x] Append approved browser, retry, or deployment-policy decisions to `docs/sprints/_active/DECISIONS.tsv`.
+- [x] Add root-page characterization specs under `tests/smoke/`, one per root page in the GQC-00 inventory.
 
 **Build.**
 
-- [ ] Make each Playwright project discover its intended tests. Add a zero-test guard to the CI command.
-- [ ] Align component and smoke specs, helpers, server port, Node version, snapshot OS policy, and CI path filters. Remove false-green `continue-on-error` handling from the test job.
-- [ ] Make the discovery guard enumerate every configured project. A new unassigned project fails the guard.
-- [ ] Set `reuseExistingServer` to false in CI. Local reuse requires an explicit developer choice.
-- [ ] Ensure each spec belongs to one category project. Keep cross-browser repeats only when the approved matrix names them.
-- [ ] Add failure screenshots, traces, and a report artifact. Keep deterministic specs at zero retries and document any isolated retry policy.
-- [ ] Characterize the stale `landing-page.spec.js` against the GQC-00-approved redirect or `?noredirect` journey. Do not change the product redirect in this PR.
-- [ ] Keep the existing deployment policy unchanged until the product and operations owners decide whether test failures block deployment.
-- [ ] Put the Playwright `webServer` command, URL, and readiness probe behind one named contract with a documented default, so `PR-GQC-02B.1` changes only the command.
-- [ ] Record the Express port and the planned `astro dev` port in the port decision.
-- [ ] Characterize each root page by status, title, one landmark, and outgoing same-origin links, selected by role, label, or stable ID. These specs are the Astro migration oracle.
+- [x] Make each Playwright project discover its intended tests. Add a zero-test guard to the CI command.
+- [x] Align component and smoke specs, helpers, server port, Node version, snapshot OS policy, and CI path filters. Remove false-green `continue-on-error` handling from the test job.
+- [x] Make the discovery guard enumerate every configured project. A new unassigned project fails the guard.
+- [x] Set `reuseExistingServer` to false in CI. Local reuse requires an explicit developer choice.
+- [x] Ensure each spec belongs to one category project. Keep cross-browser repeats only when the approved matrix names them.
+- [x] Add failure screenshots, traces, and a report artifact. Keep deterministic specs at zero retries and document any isolated retry policy.
+- [x] Characterize the stale `landing-page.spec.js` against the GQC-00-approved redirect or `?noredirect` journey. Do not change the product redirect in this PR.
+- [x] Keep the existing deployment policy unchanged until the product and operations owners decide whether test failures block deployment.
+- [x] Put the Playwright `webServer` command, URL, and readiness probe behind one named contract with a documented default, so `PR-GQC-02B.1` changes only the command.
+- [x] Record the Express port and the planned `astro dev` port in the port decision.
+- [x] Characterize each root page by status, title, one landmark, and outgoing same-origin links, selected by role, label, or stable ID. These specs are the Astro migration oracle.
 
 **You see.**
 
-- [ ] `npx playwright test --list --project=components` lists the component suite instead of returning zero tests.
-- [ ] A failed component test fails its CI job and preserves a report, screenshot, and trace.
+- [x] `npx playwright test --list --project=components` lists the component suite instead of returning zero tests.
+- [x] A failed component test fails its CI job and preserves a report, screenshot, and trace.
 
 **Verify, unit.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Test that every configured project discovers at least one intended spec and that `test:unit` includes all supported Node test files. Run `npm run test:unit` and `npx playwright test --list --project=components`.
+- [x] Test that every configured project discovers at least one intended spec and that `test:unit` includes all supported Node test files. Run `npm run test:unit` and `npx playwright test --list --project=components`.
 
 **Verify, live.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked. Ten lanes on `the model recorded in the run header` at the PR head, per the boot recipe.
 
-- [ ] Lane 1. Regression lane against trunk. Run the approved workbench entry journey on trunk and head. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-1.png`. Pass when the same approved workbench state is visible on both.
-- [ ] Lane 2. Run the component project. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-2.png`. Pass when all declared component specs are discovered and the report shows no zero-test project.
-- [ ] Lane 3. Run the feature project. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-3.png`. Pass when each declared file appears in its owning project and deliberate cross-browser repeats are reported separately.
-- [ ] Lane 4. Run the smoke project. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-4.png`. Pass when it discovers all approved smoke specs, including the resolved `clm-dashboard.spec.cjs` owner.
-- [ ] Lane 5. Submit a deliberately failing temporary test in a disposable CI run or worktree, never in the PR diff. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-5.png`. Pass when the job fails and uploads artifacts.
-- [ ] Lane 6. Run the suite with no pre-existing server on the configured port. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-6.png`. Pass when Playwright starts its own server and reaches the landing page.
-- [ ] Lane 7. Hold the configured test port with a foreign or stale LandingPage server. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-7.png`. Pass when CI fails before tests can pass against the wrong build.
-- [ ] Lane 8. Run one component test twice with separate test data. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-8.png`. Pass when the second run does not reuse state from the first.
-- [ ] Lane 9. Run the smoke subset in each approved browser project. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-9.png`. Pass when each browser reaches the same primary page state.
-- [ ] Lane 10. Run the documented local test commands from a clean checkout. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-10.png`. Pass when every command starts the documented server and runs the named project.
+- [x] Lane 1. Regression lane against trunk. Run the approved workbench entry journey on trunk and head. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-1.png`. Pass when the same approved workbench state is visible on both.
+- [x] Lane 2. Run the component project. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-2.png`. Pass when all declared component specs are discovered and the report shows no zero-test project.
+- [x] Lane 3. Run the feature project. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-3.png`. Pass when each declared file appears in its owning project and deliberate cross-browser repeats are reported separately.
+- [x] Lane 4. Run the smoke project. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-4.png`. Pass when it discovers all approved smoke specs, including the resolved `clm-dashboard.spec.cjs` owner.
+- [x] Lane 5. Submit a deliberately failing temporary test in a disposable CI run or worktree, never in the PR diff. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-5.png`. Pass when the job fails and uploads artifacts.
+- [x] Lane 6. Run the suite with no pre-existing server on the configured port. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-6.png`. Pass when Playwright starts its own server and reaches the landing page.
+- [x] Lane 7. Hold the configured test port with a foreign or stale LandingPage server. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-7.png`. Pass when CI fails before tests can pass against the wrong build.
+- [x] Lane 8. Run one component test twice with separate test data. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-8.png`. Pass when the second run does not reuse state from the first.
+- [x] Lane 9. Run the smoke subset in each approved browser project. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-9.png`. Pass when each browser reaches the same primary page state.
+- [x] Lane 10. Run the documented local test commands from a clean checkout. Save `/tmp/swarm-PR-GQC-01/worker-1/lane-10.png`. Pass when every command starts the documented server and runs the named project.
 
 **Verify, perf.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Metric. Cold landing-page navigation-to-ready time while the configured Playwright project starts its server.
-- [ ] Probe. Run ten interleaved trunk and head browser navigations with the same Node and browser versions, viewport, and cache mode.
-- [ ] Baseline. Use the GQC-00 trunk measurements and record the test server startup time separately.
-- [ ] Rule. If TEA and the Product Manager ratify a blocking budget in GQC-00, fail if p75 navigation-to-ready regresses by more than 10 percent and 100 ms. Otherwise report the result only. Do not count test discovery time as user page load time.
+- [x] Metric. Cold landing-page navigation-to-ready time while the configured Playwright project starts its server.
+- [x] Probe. Run ten interleaved trunk and head browser navigations with the same Node and browser versions, viewport, and cache mode.
+- [x] Baseline. Use the GQC-00 trunk measurements and record the test server startup time separately.
+- [x] Rule. If TEA and the Product Manager ratify a blocking budget in GQC-00, fail if p75 navigation-to-ready regresses by more than 10 percent and 100 ms. Otherwise report the result only. Do not count test discovery time as user page load time.
 
 **Review gate.** None. PR-GQC-01 changes test discovery and CI reporting without changing product interactions.
 
 **Merge.**
 
-- [ ] Record the clean verdict at the exact head SHA.
-- [ ] Attach project discovery counts and the intentional failing-job artifact.
-- [ ] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
-- [ ] Append `PR-GQC-01` to the stack after `PR-GQC-00`. Wait for operator landing.
+- [x] Record the clean verdict at the exact head SHA.
+- [x] Attach project discovery counts and the intentional failing-job artifact.
+- [x] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
+- [x] Append `PR-GQC-01` to the stack after `PR-GQC-00`. Wait for operator landing.
 
 ## Define the P0 SPA journeys and test seams (PR-GQC-02)
 

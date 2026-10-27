@@ -1,116 +1,71 @@
-/**
- * Smoke Tests: Apps Menu Navigation
- * 
- * Fast validation of Apps menu and view switching.
- * Focus: Menu opens, views can be opened and closed.
- * 
- * @category smoke
- * @timeout 30000
- */
-
 import { test, expect } from '@playwright/test';
+import { stubExternalComponentRequests } from '../fixtures/clm-helpers.js';
+import { APP_PAGE_PATH } from '../fixtures/test-config.js';
 
-const PORT = process.env.PORT || 3001;
-const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}/index.html`;
+test.describe('Apps Menu Smoke Tests', () => {
+  test.beforeEach(async ({ page }) => {
+    await stubExternalComponentRequests(page);
+    await page.goto(APP_PAGE_PATH);
+    await expect(page.locator('.container')).toBeVisible();
+    await page.waitForFunction(() => Boolean(window.viewManager?.initialized));
+  });
 
-test.describe('Apps Menu - Smoke Tests', () => {
+  test('ViewManager registers expected app views and collapsible sidebar', async ({ page }) => {
+    const registeredViews = await page.evaluate(() => [...window.viewManager.views.keys()]);
+    expect(registeredViews).toEqual(
+      expect.arrayContaining(['music', 'map', 'threeD', 'monopoly-auth'])
+    );
 
-    test.beforeEach(async ({ page }) => {
-        await page.goto(BASE_URL);
+    const sidebar = page.locator('#sidebar');
+    const collapseBtn = page.locator('#collapseBtn');
+    await expect(sidebar).toBeVisible();
+    await collapseBtn.click();
+    await expect(sidebar).toHaveClass(/collapsed/);
+    await collapseBtn.click();
+    await expect(sidebar).not.toHaveClass(/collapsed/);
+  });
 
-        // Handle PWA modal if it appears - wait longer and ensure it's fully gone
-        const modalDismissBtn = page.locator('#modal-dismiss-btn');
-        try {
-            await modalDismissBtn.waitFor({ state: 'visible', timeout: 8000 });
-            await modalDismissBtn.click();
-            // Wait for backdrop to fully hide
-            await page.locator('#pwa-install-backdrop').waitFor({ state: 'hidden', timeout: 5000 });
-            // Extra wait for any animations
-            await page.waitForTimeout(500);
-        } catch (e) {
-            // Modal didn't appear
-        }
+  test('Music Visualizer view can be opened and closed', async ({ page }) => {
+    await page.evaluate(() => window.viewManager.show('music'));
 
-        // Ensure main container is ready
-        await expect(page.locator('.container')).toBeVisible();
-    });
+    const musicView = page.locator('#musicView');
+    await expect(musicView).toBeVisible();
 
-    test('Apps submenu contains expected items', async ({ page }) => {
-        const appsHeader = page.locator('.apps-header');
-        await appsHeader.click();
+    await musicView.locator('button.header-btn', { hasText: 'Close' }).click();
+    await expect(musicView).toBeHidden();
+    await expect(page.locator('.main-content')).toBeVisible();
+  });
 
-        const appsSubmenu = page.locator('#appsSubmenu');
-        await expect(appsSubmenu).toBeVisible();
+  test('Map view can be opened and closed', async ({ page }) => {
+    await page.evaluate(() => window.viewManager.show('map'));
 
-        // Verify key app items exist
-        await expect(appsSubmenu.locator('.app-item[title="Music Visualizer"]')).toBeVisible();
-        await expect(appsSubmenu.locator('.app-item[title="Map"]')).toBeVisible();
-        await expect(appsSubmenu.locator('.app-item[title="3D Viewer"]')).toBeVisible();
-    });
+    const mapView = page.locator('#mapView');
+    await expect(mapView).toBeVisible();
 
-    test('Music Visualizer view can be opened and closed', async ({ page }) => {
-        const appsHeader = page.locator('.apps-header');
-        await appsHeader.click();
+    await mapView.locator('button.header-btn', { hasText: 'Close' }).click();
+    await expect(mapView).toBeHidden();
+    await expect(page.locator('.main-content')).toBeVisible();
+  });
 
-        const musicItem = page.locator('.app-item[title="Music Visualizer"]');
-        await musicItem.click();
+  test('3D Viewer can be opened and closed', async ({ page }) => {
+    await page.evaluate(() => window.viewManager.show('threeD'));
 
-        const musicView = page.locator('#musicView');
-        await expect(musicView).toBeVisible();
+    const viewerView = page.locator('#threeDView');
+    await expect(viewerView).toBeVisible();
 
-        // Close the view
-        const closeBtn = musicView.locator('button.header-btn', { hasText: 'Close' });
-        await closeBtn.click();
-        await expect(musicView).toBeHidden();
-    });
+    await viewerView.locator('button.header-btn', { hasText: 'Close' }).click();
+    await expect(viewerView).toBeHidden();
+    await expect(page.locator('.main-content')).toBeVisible();
+  });
 
-    test('Map view can be opened and closed', async ({ page }) => {
-        const appsHeader = page.locator('.apps-header');
-        await appsHeader.click();
+  test('Monopoly view can be opened and closed', async ({ page }) => {
+    await page.evaluate(() => window.viewManager.show('monopoly-auth'));
 
-        const mapItem = page.locator('.app-item[title="Map"]');
-        await mapItem.click();
+    const monopolyView = page.locator('#monopolyAuthView');
+    await expect(monopolyView).toBeVisible();
 
-        const mapView = page.locator('#mapView');
-        await expect(mapView).toBeVisible();
-
-        const closeBtn = mapView.locator('button.header-btn', { hasText: 'Close' });
-        await closeBtn.click();
-        await expect(mapView).toBeHidden();
-    });
-
-    test('3D Viewer can be opened and closed', async ({ page }) => {
-        const appsHeader = page.locator('.apps-header');
-        await appsHeader.click();
-
-        const viewerItem = page.locator('.app-item[title="3D Viewer"]');
-        await viewerItem.click();
-
-        const viewerView = page.locator('#threeDView');
-        await expect(viewerView).toBeVisible();
-
-        const closeBtn = viewerView.locator('button.header-btn', { hasText: 'Close' });
-        await closeBtn.click();
-        await expect(viewerView).toBeHidden();
-    });
-
-    test('Monopoly view can be opened and closed', async ({ page }) => {
-        const appsHeader = page.locator('.apps-header');
-        await appsHeader.click();
-
-        const appsSubmenu = page.locator('#appsSubmenu');
-        await expect(appsSubmenu).toBeVisible();
-
-        const monopolyItem = page.locator('.app-item[title="Monopoly"]');
-        await expect(monopolyItem).toBeVisible();
-        await monopolyItem.click();
-
-        const monopolyView = page.locator('#monopolyView');
-        await expect(monopolyView).toBeVisible();
-
-        const closeBtn = monopolyView.locator('button.header-btn', { hasText: 'Close' });
-        await closeBtn.click();
-        await expect(monopolyView).toBeHidden();
-    });
-
+    await monopolyView.locator('button.header-btn', { hasText: 'Close' }).click();
+    await expect(monopolyView).toBeHidden();
+    await expect(page.locator('.main-content')).toBeVisible();
+  });
 });

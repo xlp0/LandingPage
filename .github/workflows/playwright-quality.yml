@@ -1,4 +1,4 @@
-name: Playwright Quality Preflight
+name: Playwright Quality Gate
 
 on:
   push:
@@ -9,18 +9,28 @@ on:
     branches:
       - main
       - develop
+  schedule:
+    - cron: '0 3 * * *'
   workflow_dispatch:
+    inputs:
+      cross_browser:
+        description: 'Run cross-browser smoke suite (Firefox and WebKit)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 jobs:
-  discovery-and-unit-preflight:
-    name: Discovery Guard and Unit Suite (Node 24)
+  discovery-and-unit:
+    name: Stage 1 Discovery and Unit Contracts
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js 24
+      - name: Setup Node.js 24
         uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -29,8 +39,135 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Verify Playwright project discovery guard
+      - name: Check Playwright discovery and project partitioning
         run: npm run check:playwright-discovery
 
-      - name: Run unit test suite
+      - name: Run Node unit and observability tests
         run: npm run test:unit
+
+  smoke-and-components:
+    name: Stage 2 Smoke and Components
+    needs: discovery-and-unit
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run smoke project
+        run: npm run test:smoke
+        env:
+          CI: '1'
+
+      - name: Upload smoke artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-smoke-artifacts
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+
+      - name: Run components project
+        run: npm run test:components
+        env:
+          CI: '1'
+
+      - name: Upload components artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-components-artifacts
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+
+  features:
+    name: Stage 3 Features
+    needs: smoke-and-components
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run features project
+        run: npm run test:features
+        env:
+          CI: '1'
+
+      - name: Upload features artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-features-artifacts
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+
+  cross-browser-smoke:
+    name: Scheduled Cross-Browser Smoke
+    needs: discovery-and-unit
+    if: ${{ github.event_name == 'schedule' || inputs.cross_browser == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium, Firefox, and WebKit
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Check cross-browser project discovery
+        run: npm run check:playwright-discovery
+        env:
+          PW_CROSS_BROWSER: '1'
+
+      - name: Run cross-browser smoke suite
+        run: npm run test:smoke:cross-browser
+        env:
+          CI: '1'
+          PW_CROSS_BROWSER: '1'
+
+      - name: Upload cross-browser smoke artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-cross-browser-smoke-artifacts
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14

@@ -484,7 +484,8 @@
       "additionalSpecPaths": [
         "tests/features/responsive-capture.spec.js",
         "tests/features/responsive-replay.spec.js",
-        "tests/features/device-conformance.spec.js"
+        "tests/features/device-conformance.spec.js",
+        "tests/smoke/root-responsive-lab.spec.js"
       ],
       "playwrightProject": "features",
       "docPath": "docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md"
@@ -503,7 +504,10 @@
       "pagePath": "index.html",
       "specPath": "tests/smoke/landing-page.spec.js",
       "playwrightProject": "smoke",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md"
+      "docPath": "docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md",
+      "additionalSpecPaths": [
+        "tests/smoke/root-index.spec.js"
+      ]
     },
     {
       "journeyId": "single-page-mcard-viewer",
@@ -559,7 +563,8 @@
       "additionalSpecPaths": [
         "tests/features/chat-panel.spec.js",
         "tests/features/new-text-card.spec.js",
-        "tests/features/presentation-lattice.spec.js"
+        "tests/features/presentation-lattice.spec.js",
+        "tests/smoke/root-app.spec.js"
       ],
       "playwrightProject": "smoke",
       "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
@@ -577,7 +582,10 @@
       "pagePath": "fiber-conformance.html",
       "specPath": "tests/features/fiber-conformance.spec.js",
       "playwrightProject": "features",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md",
+      "additionalSpecPaths": [
+        "tests/smoke/root-fiber-conformance.spec.js"
+      ]
     },
     {
       "journeyId": "diagnostic-fiber-inspector",
@@ -592,7 +600,10 @@
       "pagePath": "fiber-inspector.html",
       "specPath": "tests/features/fiber-inspector.spec.js",
       "playwrightProject": "features",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md",
+      "additionalSpecPaths": [
+        "tests/smoke/root-fiber-inspector.spec.js"
+      ]
     },
     {
       "journeyId": "diagnostic-sprint-registry",
@@ -607,7 +618,10 @@
       "pagePath": "sprint-registry.html",
       "specPath": "tests/features/sprint-registry.spec.js",
       "playwrightProject": "features",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md",
+      "additionalSpecPaths": [
+        "tests/smoke/root-sprint-registry.spec.js"
+      ]
     },
     {
       "journeyId": "legacy-pkc-docs-catalog",
@@ -622,7 +636,8 @@
       "pagePath": "pkc-docs-index.html",
       "specPath": "tests/features/layout-freeze.spec.js",
       "additionalSpecPaths": [
-        "tests/features/style-audit.spec.js"
+        "tests/features/style-audit.spec.js",
+        "tests/smoke/root-pkc-docs-index.spec.js"
       ],
       "playwrightProject": "features",
       "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"

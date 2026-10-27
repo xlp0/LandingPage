@@ -4,7 +4,7 @@
 
 - Sprint ID: `SPRINT-GQC-01`
 - Handle: `urn:pcard:sprint:SPRINT-GQC-01`
-- Status: `ACTIVE`
+- Status: `COMPLETED`
 - Depends on: `SPRINT-GQC-00`
 - Unblocks: `SPRINT-GQC-02`
 - Execution unit: `PR-GQC-01`
@@ -94,61 +94,61 @@ The suite is also the migration oracle for the Astro host. GQC-02B replaces how 
 
 ### GQC-01.1 Choose and prove one test module format
 
-- [ ] Run one component spec with its current helper under the CI Node version.
-- [ ] Choose either discoverable CJS specs with valid CJS helpers or ESM specs with ESM helpers.
-- [ ] Preserve the existing test assertions during the format change.
-- [ ] Record the failing parent run and passing head run.
+- [x] Run one component spec with its current helper under the CI Node version.
+- [x] Choose either discoverable CJS specs with valid CJS helpers or ESM specs with ESM helpers.
+- [x] Preserve the existing test assertions during the format change.
+- [x] Record the failing parent run and passing head run.
 
 ### GQC-01.2 Repair project discovery and partition
 
-- [ ] `npx playwright test --list --project=components` lists the 14 intended component spec files.
-- [ ] `npx playwright test --list --project=smoke` lists the intended smoke files, including the resolved owner of `clm-dashboard.spec.cjs`.
-- [ ] `npx playwright test --list --project=features` lists the intended feature files.
-- [ ] Each discovered spec belongs to one category project unless the approved browser matrix explicitly repeats it.
-- [ ] The unfiltered command does not silently rerun category tests through the catch-all project.
-- [ ] The discovery guard reads all configured project names. A new project with no intended specs fails until it is assigned.
-- [ ] A zero-test project exits non-zero and names the project in its error.
-- [ ] The known GQC-00 component exception is removed once component discovery passes.
+- [x] `npx playwright test --list --project=components` lists the 14 intended component spec files.
+- [x] `npx playwright test --list --project=smoke` lists the intended smoke files, including the resolved owner of `clm-dashboard.spec.cjs`.
+- [x] `npx playwright test --list --project=features` lists the intended feature files.
+- [x] Each discovered spec belongs to one category project unless the approved browser matrix explicitly repeats it.
+- [x] The unfiltered command does not silently rerun category tests through the catch-all project.
+- [x] The discovery guard reads all configured project names. A new project with no intended specs fails until it is assigned.
+- [x] A zero-test project exits non-zero and names the project in its error.
+- [x] The known GQC-00 component exception is removed once component discovery passes.
 
 ### GQC-01.3 Make server and test configuration explicit
 
-- [ ] Specs use `baseURL` or a shared URL helper instead of literal `localhost` ports.
-- [ ] `tests/fixtures/test-config.js` uses the configured base URL and does not hardcode port 3000.
-- [ ] Local and CI runs use the same documented Node version.
-- [ ] CI sets `reuseExistingServer` to false.
-- [ ] A process holding the configured test port causes a clear startup failure in CI.
-- [ ] Test data and temporary SQLite files do not write to a developer or production database.
-- [ ] The landing smoke assertion follows the approved redirect or `?noredirect` behavior and does not expect the removed `MCard Manager` UI.
-- [ ] The Playwright server command, URL, and readiness probe come from one named contract. Changing that contract is the only edit GQC-02B needs to run the suite against Astro.
-- [ ] The port decision names both the Express port and the planned `astro dev` port.
+- [x] Specs use `baseURL` or a shared URL helper instead of literal `localhost` ports.
+- [x] `tests/fixtures/test-config.js` uses the configured base URL and does not hardcode port 3000.
+- [x] Local and CI runs use the same documented Node version.
+- [x] CI sets `reuseExistingServer` to false.
+- [x] A process holding the configured test port causes a clear startup failure in CI.
+- [x] Test data and temporary SQLite files do not write to a developer or production database.
+- [x] The landing smoke assertion follows the approved redirect or `?noredirect` behavior and does not expect the removed `MCard Manager` UI.
+- [x] The Playwright server command, URL, and readiness probe come from one named contract. Changing that contract is the only edit GQC-02B needs to run the suite against Astro.
+- [x] The port decision names both the Express port and the planned `astro dev` port.
 
 ### GQC-01.6 Characterize root pages as the migration oracle
 
-- [ ] Each root HTML page from the GQC-00 census has one characterization spec.
-- [ ] Each spec asserts the HTTP status, document title, one stable landmark, and the set of outgoing same-origin links.
-- [ ] The `/` redirect and `/?noredirect` behavior have separate assertions.
-- [ ] Specs select by role, label, or stable ID. They do not select by markup that Astro may restructure, such as wrapper `div` depth.
-- [ ] The spec list matches the root Place list that GQC-02A imports.
+- [x] Each root HTML page from the GQC-00 census has one characterization spec.
+- [x] Each spec asserts the HTTP status, document title, one stable landmark, and the set of outgoing same-origin links.
+- [x] The `/` redirect and `/?noredirect` behavior have separate assertions.
+- [x] Specs select by role, label, or stable ID. They do not select by markup that Astro may restructure, such as wrapper `div` depth.
+- [x] The spec list matches the root Place list that GQC-02A imports.
 
 ### GQC-01.4 Add useful CI evidence
 
-- [ ] Unit, smoke, component, and feature jobs run the command their docs name.
-- [ ] An assertion failure fails its job.
-- [ ] Failure screenshots and traces are attached to the CI run.
-- [ ] HTML or JUnit output is retained as a build artifact.
-- [ ] Snapshot baselines use an approved OS and browser policy.
-- [ ] CI runs only snapshots with a matching baseline or records an explicit platform-specific skip and owner.
-- [ ] An intentional failing-test probe runs only in a disposable worktree or isolated CI check. It never enters the PR diff or trunk.
-- [ ] Triage failures exposed by newly discovered tests. Fix harness defects in this sprint. Assign product defects to an owner and preserve their failing evidence without weakening the gate.
+- [x] Unit, smoke, component, and feature jobs run the command their docs name.
+- [x] An assertion failure fails its job.
+- [x] Failure screenshots and traces are attached to the CI run.
+- [x] HTML or JUnit output is retained as a build artifact.
+- [x] Snapshot baselines use an approved OS and browser policy.
+- [x] CI runs only snapshots with a matching baseline or records an explicit platform-specific skip and owner.
+- [x] An intentional failing-test probe runs only in a disposable worktree or isolated CI check. It never enters the PR diff or trunk.
+- [x] Triage failures exposed by newly discovered tests. Fix harness defects in this sprint. Assign product defects to an owner and preserve their failing evidence without weakening the gate.
 
 ### GQC-01.5 Classify retries and update test guides
 
-- [ ] Every retry-enabled spec has a reason and an owner.
-- [ ] Deterministic tests run with zero retries.
-- [ ] Global and per-project retry counts do not silently compound. Reports show the effective attempt count.
-- [ ] The approved browser matrix names a minimum pull-request set and any scheduled coverage, even if both use Chromium.
-- [ ] `npm run test:unit` includes every maintained Node test file or documents each intentionally excluded file.
-- [ ] Both test guides list commands that exist in `package.json`.
+- [x] Every retry-enabled spec has a reason and an owner.
+- [x] Deterministic tests run with zero retries.
+- [x] Global and per-project retry counts do not silently compound. Reports show the effective attempt count.
+- [x] The approved browser matrix names a minimum pull-request set and any scheduled coverage, even if both use Chromium.
+- [x] `npm run test:unit` includes every maintained Node test file or documents each intentionally excluded file.
+- [x] Both test guides list commands that exist in `package.json`.
 
 ## Test design
 
@@ -194,15 +194,15 @@ The `tests/fixtures/` scope in this sprint covers existing helpers and test conf
 
 ## Definition of done
 
-- [ ] Every Playwright project has an explicit test set and a non-zero discovery guard.
-- [ ] All 14 component specs are discovered and run under the chosen module format.
-- [ ] `tests/smoke/clm-dashboard.spec.cjs` has an explicit owner and test-project assignment.
-- [ ] Category-project counts distinguish unique spec files from deliberate cross-browser repeats.
-- [ ] CI reports real failures and stores the agreed artifacts.
-- [ ] Local and CI commands use the same base URL contract.
-- [ ] The `tests/observability/*.test.js` files run under `npm run test:unit` or have an explicit exclusion owner.
-- [ ] The current deployment decision remains unchanged unless a separate approval exists.
-- [ ] Both test guides match the verified commands and project layout.
-- [ ] The server command contract and root-page characterization specs are ready for GQC-02B to reuse unchanged.
-- [ ] TEA records suite counts, retries, and remaining flake risks.
-- [ ] The operator approves the handoff to GQC-02.
+- [x] Every Playwright project has an explicit test set and a non-zero discovery guard.
+- [x] All 14 component specs are discovered and run under the chosen module format.
+- [x] `tests/smoke/clm-dashboard.spec.cjs` has an explicit owner and test-project assignment.
+- [x] Category-project counts distinguish unique spec files from deliberate cross-browser repeats.
+- [x] CI reports real failures and stores the agreed artifacts.
+- [x] Local and CI commands use the same base URL contract.
+- [x] The `tests/observability/*.test.js` files run under `npm run test:unit` or have an explicit exclusion owner.
+- [x] The current deployment decision remains unchanged unless a separate approval exists.
+- [x] Both test guides match the verified commands and project layout.
+- [x] The server command contract and root-page characterization specs are ready for GQC-02B to reuse unchanged.
+- [x] TEA records suite counts, retries, and remaining flake risks.
+- [x] The operator approves the handoff to GQC-02.

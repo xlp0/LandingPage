@@ -1,84 +1,47 @@
-/**
- * Smoke Tests: Landing Page Navigation
- * 
- * Fast validation of core landing page functionality.
- * Focus: Page loads, elements visible, basic navigation works.
- * 
- * @category smoke
- * @timeout 30000
- */
-
 import { test, expect } from '@playwright/test';
+import { LANDING_PAGE_PATH, RESPONSIVE_LAB_PATH } from '../fixtures/test-config.js';
 
-const PORT = process.env.PORT || 3001;
-const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}/index.html`;
-
-test.describe('Landing Page - Smoke Tests', () => {
-
-    test.beforeEach(async ({ page }) => {
-        await page.goto(BASE_URL);
-
-        // Handle PWA modal if it appears - wait for it and ensure fully dismissed
-        const modalDismissBtn = page.locator('#modal-dismiss-btn');
-        const backdrop = page.locator('#pwa-install-backdrop');
-
-        try {
-            await modalDismissBtn.waitFor({ state: 'visible', timeout: 8000 });
-            await modalDismissBtn.click();
-            // Wait for backdrop to be completely hidden
-            await backdrop.waitFor({ state: 'hidden', timeout: 5000 });
-            // Extra wait for animation completion
-            await page.waitForTimeout(500);
-        } catch (e) {
-            // Modal didn't appear, but ensure backdrop is hidden anyway
-            try {
-                await backdrop.waitFor({ state: 'hidden', timeout: 2000 });
-            } catch (e2) {
-                // Backdrop also not present, continue
-            }
-        }
-
-        // Ensure container is ready before proceeding
-        await expect(page.locator('.container')).toBeVisible();
+test.describe('Landing Page Smoke Tests', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addLocatorHandler(page.locator('#modal-dismiss-btn'), async (button) => {
+      await button.click();
     });
+  });
 
-    test('Page loads with correct title', async ({ page }) => {
-        await expect(page).toHaveTitle('MCard Manager');
-    });
+  test('Default landing entry redirects to Responsive UI Lab', async ({ page }) => {
+    await page.goto(LANDING_PAGE_PATH);
+    await expect(page).toHaveURL(new RegExp(`${RESPONSIVE_LAB_PATH}$`));
+    await expect(page).toHaveTitle('GovTech OS - Responsive UI Lab (Full-Window Viewport Workbench)');
+    await expect(page.getByRole('main')).toHaveAttribute('id', 'lab-stage-container');
+  });
 
-    test('Header elements are visible', async ({ page }) => {
-        await expect(page.locator('h1')).toHaveText('MCard Manager');
-        await expect(page.getByTitle('Back to Landing Page')).toBeVisible();
-        await expect(page.getByText('Upload', { exact: true })).toBeVisible();
-        await expect(page.getByText('New Text', { exact: true })).toBeVisible();
-        await expect(page.getByText('Chat', { exact: true })).toBeVisible();
-    });
+  test('Portal mode loads with Mission Control title when noredirect is set', async ({ page }) => {
+    await page.goto(`${LANDING_PAGE_PATH}?noredirect=1`);
+    await expect(page).toHaveTitle('GovTech Platform | Mission Control');
+  });
 
-    test('Sidebar is visible and collapsible', async ({ page }) => {
-        const sidebar = page.locator('#sidebar');
-        await expect(sidebar).toBeVisible();
+  test('Portal mode displays Penpot navigation landmarks and links', async ({ page }) => {
+    await page.goto(`${LANDING_PAGE_PATH}?noredirect=1`);
+    const nav = page.getByRole('navigation', { name: 'Penpot Navigation Flow' });
+    await expect(nav).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Home' })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Mission Control' })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Responsive UI Lab' })).toBeVisible();
+  });
 
-        // Collapse
-        const collapseBtn = page.locator('#collapseBtn');
-        await collapseBtn.click();
-        await expect(sidebar).toHaveClass(/collapsed/);
+  test('Portal mode displays single-page MCard host and Sovereign HUD pill', async ({ page }) => {
+    await page.goto(`${LANDING_PAGE_PATH}?noredirect=1`);
+    const host = page.getByRole('region', { name: 'Active LandingPage MCard' });
+    await expect(host).toBeVisible();
+    await expect(host).toHaveAttribute('id', 'single-page-mcard-host');
+    await expect(page.locator('#mcard-sovereign-pill')).toBeVisible();
+  });
 
-        // Expand
-        await collapseBtn.click();
-        await expect(sidebar).not.toHaveClass(/collapsed/);
-    });
-
-    test('Apps menu opens', async ({ page }) => {
-        const appsHeader = page.locator('.apps-header');
-        await appsHeader.click();
-
-        const appsSubmenu = page.locator('#appsSubmenu');
-        await expect(appsSubmenu).toBeVisible();
-    });
-
-    test('Main content container is visible', async ({ page }) => {
-        await expect(page.locator('.container')).toBeVisible();
-        await expect(page.locator('.main-content')).toBeVisible();
-    });
-
+  test('Portal navigation link transitions to Responsive UI Lab', async ({ page }) => {
+    await page.goto(`${LANDING_PAGE_PATH}?noredirect=1`);
+    const nav = page.getByRole('navigation', { name: 'Penpot Navigation Flow' });
+    await nav.getByRole('link', { name: 'Responsive UI Lab' }).click();
+    await expect(page).toHaveURL(new RegExp(`${RESPONSIVE_LAB_PATH}$`));
+    await expect(page.locator('#lab-stage-container')).toBeVisible();
+  });
 });
