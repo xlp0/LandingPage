@@ -1,8 +1,8 @@
 # Active sprint index
 
-## Staged program GQC
+## Active program GQC
 
-**Status: STAGED.** Program GQC is ready for operator review. This staging does not authorize source-code changes. Start implementation only after the operator approves `gqc-plan.md`.
+**Status: ACTIVE.** Operator approved sequential execution of Program GQC (`GQC-00` through `GQC-07`) after the BMAD advisory review recorded in `DECISIONS.tsv`.
 
 Program GQC makes the Responsive UI Lab a guided, SPA-first test workbench. Its P0 journey is to select and load a single-page application, choose a device and viewport, test functional links, record or replay a journey, and inspect the MCard result. Playwright trust, target policy, module ownership, measured performance, and documentation checks support that journey.
 
@@ -74,7 +74,7 @@ These are planning-time observations from the local system date 2026-10-27. `DEC
 | Performance docs and conformance check | Frame guidance differs at 16.6 ms, 20 ms, and 25 ms | GQC-06 |
 | README, functionality specs, and setup guides | Current ports, kernel versions, commands, and local links disagree | GQC-07 |
 | `package.json` and the repository root | No `astro` dependency, no `astro.config.*`, and no `src/` tree. `dev` runs `node ws-server.js` | GQC-00, GQC-02B |
-| Root HTML pages and `public/` | 7 root pages and 17 HTML pages under `public/`. Express serves `public/` at `/public` and `/`, and the repository root at `/` | GQC-00, GQC-02A, GQC-02B |
+| Root HTML pages, `public/`, and `components/` | 7 root pages, 27 HTML pages under `public/`, and 17 HTML fragments under `components/`. Express serves `public/` at `/public` and `/`, and the repository root at `/` | GQC-00, GQC-02A, GQC-02B |
 | Page links and script navigation | `index.html` links to `app.html` and the Lab; two `location` calls in `index.html`, one in `app.html`; three `window.open` calls in `app.html` | GQC-02A |
 | Express routes | About 30 routes under `/api/mcard`, `/api/test-runs`, `/api/clm`, and `/api/auth`, plus `/health`, `/api/rooms`, `/api/env`, `/api/config`, and `/app-config.json` | GQC-02A, GQC-02B, GQC-05 |
 | Layer 1 planning probe | `parsePetriNetYaml` accepted a sample site net, dropped unknown fields but kept `binding`, accepted duplicate Place IDs, and rejected dangling arcs. The all-ones P-invariant held. A disabled firing threw. A self-loop produced a zero incidence column | GQC-02A |
