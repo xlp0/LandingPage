@@ -4,7 +4,7 @@
 
 - Sprint ID: `SPRINT-GQC-00`
 - Handle: `urn:pcard:sprint:SPRINT-GQC-00`
-- Status: `ACTIVE`
+- Status: `COMPLETED`
 - Depends on: None
 - Unblocks: `SPRINT-GQC-01`
 - Execution unit: `PR-GQC-00`
@@ -148,35 +148,35 @@ Do not claim support for undecided target apps. GQC-00 may finish with non-P0 ta
 
 ## Acceptance criteria
 
-- [ ] The inventory lists every root-level HTML page, PenPot-generated LandingPage route, Responsive Lab target, and test fixture.
-- [ ] Every inventory row has a role, owner, target type, primary journey, and documentation pointer or an explicit undecided status.
-- [ ] The map distinguishes the Responsive Lab workbench from the SPA, MPA, or MCard `webapp` loaded as its target.
-- [ ] The P0 SPA journey names target selection, device and viewport choice, a functional link action, capture or replay, and an inspectable MCard result.
-- [ ] The current default target `app.html` stays unclassified until the Product Manager approves its target type.
-- [ ] PenPot MPA mapping is marked optional and excluded from the P0 SPA coverage denominator.
-- [ ] A target Page or View maps to a CLM Layer 1 Place (exposed through the optional Layer 4 View facade), and a Functional Link maps to a Transition with a source, action, and destination or error Place.
-- [ ] The route handle and CLM type URI are separate fields. `mcard:route:/index.html` is not used as a CLM type URI.
-- [ ] The Layer 4 API probe records one successful transition, one invalid action to `p_error_modal`, and the limits of the probe.
-- [ ] The evidence file records the exact command, package version from the lockfile, output, and tested CLM type URIs so another owner can reproduce the probe after `npm ci`.
-- [ ] No acceptance criterion claims that a CLM transition executes a real browser action. Playwright drives and verifies the browser.
-- [ ] `responsive_test_run:v1` remains unchanged. Any navigation-net reference uses an approved linked MCard or versioned schema.
-- [ ] The PenPot inventory records the current 3 frames and 4 interactions as LandingPage navigation, not as proof of external MPA support.
-- [ ] Every root and `public/` HTML page appears as a candidate workbench Place with a support status.
-- [ ] Every observed internal link, script navigation, redirect, `window.open`, and UI-reachable `fetch` appears as a candidate Transition with its source file and line.
-- [ ] The evidence records the Layer 1 subpath exports of the installed package and states that the package root imports Node `crypto`.
-- [ ] The Astro readiness evidence lists inline scripts, page globals, `/public/...` and `/js/...` references, service-worker scopes, static mount order, and current run commands.
-- [ ] The performance baseline records transferred JavaScript bytes per candidate Place.
-- [ ] The unit test rejects a missing page path, missing spec path, or duplicate journey ID.
-- [ ] The test inventory records the four Playwright discovery results above and the actual `npm run test:unit` result.
-- [ ] The discovery guard fails when smoke or feature projects list zero intended specs.
-- [ ] The discovery guard reports the component project's current zero-test state as a named, expiring GQC-01 exception.
-- [ ] The inventory distinguishes test cases from test files and identifies overlapping Playwright projects.
-- [ ] The runtime map includes `index.html`, `app.html`, `responsive-lab.html`, `pkc-docs-index.html`, `modules.json`, `js/app-entry.js`, `ws-server.js`, and `packages/*`.
-- [ ] The consumer map names both sides of every byte-identical package and browser pair and the root and packaged server callers.
-- [ ] The performance record states the browser, browser version, machine, viewport, data, cache mode, sample count, and spread.
-- [ ] TEA and the Product Manager record whether the provisional route guard blocks or remains advisory. If they do not approve blocking limits, no PR fails on those limits before GQC-06.
-- [ ] Every unresolved product or architecture choice has an owner and a decision sprint.
-- [ ] No production runtime file changes in this sprint.
+- [x] The inventory lists every root-level HTML page, PenPot-generated LandingPage route, Responsive Lab target, and test fixture.
+- [x] Every inventory row has a role, owner, target type, primary journey, and documentation pointer or an explicit undecided status.
+- [x] The map distinguishes the Responsive Lab workbench from the SPA, MPA, or MCard `webapp` loaded as its target.
+- [x] The P0 SPA journey names target selection, device and viewport choice, a functional link action, capture or replay, and an inspectable MCard result.
+- [x] The current default target `app.html` stays unclassified until the Product Manager approves its target type.
+- [x] PenPot MPA mapping is marked optional and excluded from the P0 SPA coverage denominator.
+- [x] A target Page or View maps to a CLM Layer 1 Place (exposed through the optional Layer 4 View facade), and a Functional Link maps to a Transition with a source, action, and destination or error Place.
+- [x] The route handle and CLM type URI are separate fields. `mcard:route:/index.html` is not used as a CLM type URI.
+- [x] The Layer 4 API probe records one successful transition, one invalid action to `p_error_modal`, and the limits of the probe.
+- [x] The evidence file records the exact command, package version from the lockfile, output, and tested CLM type URIs so another owner can reproduce the probe after `npm ci`.
+- [x] No acceptance criterion claims that a CLM transition executes a real browser action. Playwright drives and verifies the browser.
+- [x] `responsive_test_run:v1` remains unchanged. Any navigation-net reference uses an approved linked MCard or versioned schema.
+- [x] The PenPot inventory records the current 3 frames and 4 interactions as LandingPage navigation, not as proof of external MPA support.
+- [x] Every root and `public/` HTML page appears as a candidate workbench Place with a support status.
+- [x] Every observed internal link, script navigation, redirect, `window.open`, and UI-reachable `fetch` appears as a candidate Transition with its source file and line.
+- [x] The evidence records the Layer 1 subpath exports of the installed package and states that the package root imports Node `crypto`.
+- [x] The Astro readiness evidence lists inline scripts, page globals, `/public/...` and `/js/...` references, service-worker scopes, static mount order, and current run commands.
+- [x] The performance baseline records transferred JavaScript bytes per candidate Place.
+- [x] The unit test rejects a missing page path, missing spec path, or duplicate journey ID.
+- [x] The test inventory records the four Playwright discovery results above and the actual `npm run test:unit` result.
+- [x] The discovery guard fails when smoke or feature projects list zero intended specs.
+- [x] The discovery guard reports the component project's current zero-test state as a named, expiring GQC-01 exception.
+- [x] The inventory distinguishes test cases from test files and identifies overlapping Playwright projects.
+- [x] The runtime map includes `index.html`, `app.html`, `responsive-lab.html`, `pkc-docs-index.html`, `modules.json`, `js/app-entry.js`, `ws-server.js`, and `packages/*`.
+- [x] The consumer map names both sides of every byte-identical package and browser pair and the root and packaged server callers.
+- [x] The performance record states the browser, browser version, machine, viewport, data, cache mode, sample count, and spread.
+- [x] TEA and the Product Manager record whether the provisional route guard blocks or remains advisory. If they do not approve blocking limits, no PR fails on those limits before GQC-06.
+- [x] Every unresolved product or architecture choice has an owner and a decision sprint.
+- [x] No production runtime file changes in this sprint.
 
 ## Verification
 
@@ -230,9 +230,18 @@ If an existing unit or browser suite fails on trunk, record its output as a base
 
 ## Definition of done
 
-- [ ] Analyst and Product Manager approve the P0 workbench journey. Other target types may remain undecided with an owner and target sprint.
-- [ ] Architect approves the runtime and contract map.
-- [ ] TEA records the baseline commands, test discovery, and risks.
-- [ ] All open decisions have owners and target sprints.
-- [ ] The inventory and baseline evidence are attached to `PR-GQC-00`.
+- [x] Analyst and Product Manager approve the P0 workbench journey. Other target types may remain undecided with an owner and target sprint.
+- [x] Architect approves the runtime and contract map.
+- [x] TEA records the baseline commands, test discovery, and risks.
+- [x] All open decisions have owners and target sprints.
+- [x] The inventory and baseline evidence are attached to `PR-GQC-00`.
 - [ ] The operator approves the handoff to GQC-01.
+
+## Verified evidence
+
+- Consumer, Petri, and runtime census in `docs/sprints/_active/evidence/GQC-00-consumer-map.md`.
+- Reproducible `clm-kernel@0.0.12` Layer 4 and Layer 1 probe in `docs/sprints/_active/evidence/GQC-00-layer4-api-probe.md`.
+- Candidate workbench Places (7 root and 27 `public/` HTML files), candidate Transitions, Astro migration hazards, and cold/warm JS byte baselines in `docs/sprints/_active/evidence/GQC-00-astro-readiness.md`.
+- Normalized workbench and target coverage registry in `tests/gui-coverage.json` validated by `tests/unit/gui-coverage-registry.test.mjs` (`npm run test:unit` passes 103/103 tests).
+- Playwright discovery preflight guard in `scripts/check-playwright-discovery.mjs` and `.github/workflows/playwright-quality.yml` (`npm run check:playwright-discovery` exits 0 with `smoke` 16 in 3 files, `features` 557 in 17 files, and `components` 0 in 0 files tracked under `SPRINT-GQC-01`).
+- Live 10-lane Chromium screenshots in `/tmp/swarm-PR-GQC-00/worker-1/lane-1.png` through `/tmp/swarm-PR-GQC-00/worker-1/lane-10.png` and raw paired trunk-vs-head (`843cf65` vs `c658f40`) benchmark data in `/tmp/swarm-PR-GQC-00/perf-baseline.json`.

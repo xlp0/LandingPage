@@ -99,75 +99,75 @@ Each live lane uses an isolated checkout at the PR head. Drive the actual web UI
 
 **Files.**
 
-- [ ] Create `docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md`.
-- [ ] Create `docs/sprints/_active/evidence/GQC-00-consumer-map.md` with module, caller, package, page, test, and documentation paths.
-- [ ] Create `tests/gui-coverage.json` with distinct workbench and target-app records, target type, journey owner, and priority.
-- [ ] Create `tests/unit/gui-coverage-registry.test.mjs` for the coverage registry contract.
-- [ ] Edit `package.json` to add `check:playwright-discovery`.
-- [ ] Create `scripts/check-playwright-discovery.mjs`.
-- [ ] Create `.github/workflows/playwright-quality.yml` for the discovery preflight.
-- [ ] Record the deterministic SPA fixture contract for GQC-02. Do not treat `app.html` as an SPA without Product Manager approval.
-- [ ] Create `docs/sprints/_active/evidence/GQC-00-astro-readiness.md` with the public URL space, static mounts, service workers, and workbench Place and Transition candidates.
-- [ ] Append GQC-00 decisions to `docs/sprints/_active/DECISIONS.tsv`.
-- [ ] Do not edit graduated SMO or ERB sprint documents.
+- [x] Create `docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md`.
+- [x] Create `docs/sprints/_active/evidence/GQC-00-consumer-map.md` with module, caller, package, page, test, and documentation paths.
+- [x] Create `tests/gui-coverage.json` with distinct workbench and target-app records, target type, journey owner, and priority.
+- [x] Create `tests/unit/gui-coverage-registry.test.mjs` for the coverage registry contract.
+- [x] Edit `package.json` to add `check:playwright-discovery`.
+- [x] Create `scripts/check-playwright-discovery.mjs`.
+- [x] Create `.github/workflows/playwright-quality.yml` for the discovery preflight.
+- [x] Record the deterministic SPA fixture contract for GQC-02. Do not treat `app.html` as an SPA without Product Manager approval.
+- [x] Create `docs/sprints/_active/evidence/GQC-00-astro-readiness.md` with the public URL space, static mounts, service workers, and workbench Place and Transition candidates.
+- [x] Append GQC-00 decisions to `docs/sprints/_active/DECISIONS.tsv`.
+- [x] Do not edit graduated SMO or ERB sprint documents.
 
 **Build.**
 
-- [ ] Record every root HTML entry, generated route, Responsive Lab target, target type, module entry, API surface, and current test owner in the GQC-00 inventory.
-- [ ] Classify each surface as workbench, SPA target, MPA candidate, MCard `webapp`, probe fixture, internal diagnostic, or undecided.
-- [ ] Write the exact module and package callers into `docs/sprints/_active/evidence/GQC-00-consumer-map.md`. Label observed facts separately from hypotheses.
-- [ ] Map each approved target Page or View to a Place ID and each Functional Link to a Transition ID. Record route handles separately from CLM type URIs.
-- [ ] Record the Layer 4 API probe, its successful CLM view type, its invalid-link error Place, and the unverified browser and persistence boundaries.
-- [ ] Map the P0 SPA journey to existing or proposed unit, integration, and Playwright tests. Keep the optional MPA path outside the P0 denominator.
-- [ ] Record that `responsive_test_run:v1` is closed and has no navigation-net reference. Do not add a new top-level field.
-- [ ] Record current test discovery, runtime, browser, and performance baselines without changing application behavior.
-- [ ] Add no new browser spec until the Product Manager approves that journey as supported.
-- [ ] Fail the discovery guard if smoke or feature projects lose all intended specs. Allow the component project's known zero-test result only as an explicit, expiring exception owned by GQC-01.
-- [ ] Have TEA and the Product Manager record whether provisional performance limits block later PRs or remain advisory. GQC-00 cannot approve a blocking limit on its own.
-- [ ] Record Astro readiness: no `astro` dependency or `src/` tree today, every public URL that pages and tests reference, the order of the Express static mounts, and the registered service workers.
-- [ ] Record workbench Place and Transition candidates for GQC-02A: each root page, each internal link, script navigation, `window.open`, and UI-reachable server call.
-- [ ] Record the pre-Astro performance baseline that GQC-02B and GQC-06 compare against.
+- [x] Record every root HTML entry, generated route, Responsive Lab target, target type, module entry, API surface, and current test owner in the GQC-00 inventory.
+- [x] Classify each surface as workbench, SPA target, MPA candidate, MCard `webapp`, probe fixture, internal diagnostic, or undecided.
+- [x] Write the exact module and package callers into `docs/sprints/_active/evidence/GQC-00-consumer-map.md`. Label observed facts separately from hypotheses.
+- [x] Map each approved target Page or View to a Place ID and each Functional Link to a Transition ID. Record route handles separately from CLM type URIs.
+- [x] Record the Layer 4 API probe, its successful CLM view type, its invalid-link error Place, and the unverified browser and persistence boundaries.
+- [x] Map the P0 SPA journey to existing or proposed unit, integration, and Playwright tests. Keep the optional MPA path outside the P0 denominator.
+- [x] Record that `responsive_test_run:v1` is closed and has no navigation-net reference. Do not add a new top-level field.
+- [x] Record current test discovery, runtime, browser, and performance baselines without changing application behavior.
+- [x] Add no new browser spec until the Product Manager approves that journey as supported.
+- [x] Fail the discovery guard if smoke or feature projects lose all intended specs. Allow the component project's known zero-test result only as an explicit, expiring exception owned by GQC-01.
+- [x] Have TEA and the Product Manager record whether provisional performance limits block later PRs or remain advisory. GQC-00 cannot approve a blocking limit on its own.
+- [x] Record Astro readiness: no `astro` dependency or `src/` tree today, every public URL that pages and tests reference, the order of the Express static mounts, and the registered service workers.
+- [x] Record workbench Place and Transition candidates for GQC-02A: each root page, each internal link, script navigation, `window.open`, and UI-reachable server call.
+- [x] Record the pre-Astro performance baseline that GQC-02B and GQC-06 compare against.
 
 **You see.**
 
-- [ ] The coverage inventory labels workbench pages and target applications separately. The product owner approves support decisions.
-- [ ] The baseline report records the exact command, exit status, discovered test count, browser version, server port, and missing coverage.
-- [ ] The P0 SPA journey is visible in the approved inventory. MPA assessment is labeled optional or deferred.
+- [x] The coverage inventory labels workbench pages and target applications separately. The product owner approves support decisions.
+- [x] The baseline report records the exact command, exit status, discovered test count, browser version, server port, and missing coverage.
+- [x] The P0 SPA journey is visible in the approved inventory. MPA assessment is labeled optional or deferred.
 
 **Verify, unit.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Test the coverage registry schema and assert that each declared test path exists. Run `node --test tests/unit/gui-coverage-registry.test.mjs`.
-- [ ] Run `npm run check:playwright-discovery`. It passes only when smoke and feature projects remain non-empty and the component exception is reported by name.
-- [ ] Record the component project's current non-zero discovery exit as a baseline finding. GQC-00 does not count that command as a passing test gate.
+- [x] Test the coverage registry schema and assert that each declared test path exists. Run `node --test tests/unit/gui-coverage-registry.test.mjs`.
+- [x] Run `npm run check:playwright-discovery`. It passes only when smoke and feature projects remain non-empty and the component exception is reported by name.
+- [x] Record the component project's current non-zero discovery exit as a baseline finding. GQC-00 does not count that command as a passing test gate.
 
 **Verify, live.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked. Ten lanes on `the model recorded in the run header` at the PR head, per the boot recipe.
 
-- [ ] Lane 1. Regression lane against trunk. Open the top-level entry on trunk and head. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-1.png`. Pass when both reach the approved workbench entry and the redirect result is recorded.
-- [ ] Lane 2. Open `responsive-lab.html`. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-2.png`. Pass when the user can identify the workbench and its target selector.
-- [ ] Lane 3. Load the current `app.html` default target. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-3.png`. Pass when the app loads and its target type remains unclassified unless approved.
-- [ ] Lane 4. Open `index.html?noredirect`. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-4.png`. Pass when the single-page MCard viewer is recorded separately from SPA-target support.
-- [ ] Lane 5. Open the PenPot navigation on LandingPage. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-5.png`. Pass when the generated graph hash and 3 LandingPage frames are visible.
-- [ ] Lane 6. Open the fiber inspector. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-6.png`. Pass when it is classified as an internal diagnostic or its approved role is recorded.
-- [ ] Lane 7. Open `pkc-docs-index.html`. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-7.png`. Pass when it is included in the inventory with an explicit support status.
-- [ ] Lane 8. Load each Product Manager-approved workbench route in a fresh context. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-8.png`. Pass when each route reaches its declared visible state.
-- [ ] Lane 9. Open the Lab in portrait and landscape contexts. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-9.png`. Pass when the viewport remains usable and the approved overflow check passes.
-- [ ] Lane 10. Reload the Lab with `?target=app.html`. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-10.png`. Pass when the target remains unclassified rather than being presented as an approved SPA.
+- [x] Lane 1. Regression lane against trunk. Open the top-level entry on trunk and head. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-1.png`. Pass when both reach the approved workbench entry and the redirect result is recorded.
+- [x] Lane 2. Open `responsive-lab.html`. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-2.png`. Pass when the user can identify the workbench and its target selector.
+- [x] Lane 3. Load the current `app.html` default target. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-3.png`. Pass when the app loads and its target type remains unclassified unless approved.
+- [x] Lane 4. Open `index.html?noredirect`. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-4.png`. Pass when the single-page MCard viewer is recorded separately from SPA-target support.
+- [x] Lane 5. Open the PenPot navigation on LandingPage. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-5.png`. Pass when the generated graph hash and 3 LandingPage frames are visible.
+- [x] Lane 6. Open the fiber inspector. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-6.png`. Pass when it is classified as an internal diagnostic or its approved role is recorded.
+- [x] Lane 7. Open `pkc-docs-index.html`. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-7.png`. Pass when it is included in the inventory with an explicit support status.
+- [x] Lane 8. Load each Product Manager-approved workbench route in a fresh context. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-8.png`. Pass when each route reaches its declared visible state.
+- [x] Lane 9. Open the Lab in portrait and landscape contexts. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-9.png`. Pass when the viewport remains usable and the approved overflow check passes.
+- [x] Lane 10. Reload the Lab with `?target=app.html`. Save `/tmp/swarm-PR-GQC-00/worker-1/lane-10.png`. Pass when the target remains unclassified rather than being presented as an approved SPA.
 
 **Verify, perf.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Metric. Cold navigation-to-ready time for the Responsive Lab and each approved workbench route. Do not substitute `app.html` for a missing SPA fixture.
-- [ ] Probe. Run ten interleaved trunk and head Playwright navigations with the same browser, viewport, data, and cache mode.
-- [ ] Baseline. Record trunk median, p75, browser version, viewport, cache mode, and test data in the GQC-00 evidence. Record that no target-SPA baseline exists until a deterministic fixture is available.
-- [ ] Rule. If TEA and the Product Manager ratify a blocking limit in GQC-00, fail when p75 regresses by more than 10 percent and 100 ms. Otherwise report the result only.
+- [x] Metric. Cold navigation-to-ready time for the Responsive Lab and each approved workbench route. Do not substitute `app.html` for a missing SPA fixture.
+- [x] Probe. Run ten interleaved trunk and head Playwright navigations with the same browser, viewport, data, and cache mode.
+- [x] Baseline. Record trunk median, p75, browser version, viewport, cache mode, and test data in the GQC-00 evidence. Record that no target-SPA baseline exists until a deterministic fixture is available.
+- [x] Rule. If TEA and the Product Manager ratify a blocking limit in GQC-00, fail when p75 regresses by more than 10 percent and 100 ms. Otherwise report the result only.
 
 **Review gate.** None. PR-GQC-00 adds a coverage registry and baseline evidence without changing a user interaction.
 
 **Merge.**
 
-- [ ] Record the clean verdict at the exact head SHA.
-- [ ] Record the test list, characterization results, and performance measurements.
-- [ ] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
-- [ ] Append `PR-GQC-00` as the stack root. Do not land it without the operator's approval.
+- [x] Record the clean verdict at the exact head SHA.
+- [x] Record the test list, characterization results, and performance measurements.
+- [x] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
+- [x] Append `PR-GQC-00` as the stack root. Do not land it without the operator's approval.
 
 ## Restore Playwright discovery and CI signal for the SPA workbench (PR-GQC-01)
 
