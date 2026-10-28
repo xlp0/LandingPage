@@ -16,6 +16,7 @@ successor_submodule: mcard-studio
 islands:
   - id: responsive-lab
     artifact: responsive-lab.html
+    source: src/pages/responsive-lab.astro  # served at /responsive-lab.html; migrated by c7b78c6 (GQC-02B)
     successor: "mcard-studio: pcard:render/viewport-lab (ResponsiveViewportLabViewlet)"
     invariant: INV-SMR-06
     load_bearing: true
@@ -50,6 +51,7 @@ islands:
 
   - id: fiber-conformance
     artifact: fiber-conformance.html
+    source: src/pages/fiber-conformance.astro  # served at /fiber-conformance.html; migrated by c7b78c6 (GQC-02B)
     successor: "mcard-studio: pcard:render/petri-inspector (PetriConformanceViewlet)"
     invariant: INV-SMR-07
     load_bearing: true
@@ -74,6 +76,7 @@ islands:
 
   - id: fiber-inspector
     artifact: fiber-inspector.html
+    source: src/pages/fiber-inspector.astro  # served at /fiber-inspector.html; migrated by c7b78c6 (GQC-02B)
     successor: "mcard-studio: pcard:render/petri-inspector (PetriConformanceViewlet)"
     invariant: INV-SMR-07
     load_bearing: true
@@ -96,6 +99,7 @@ islands:
 
   - id: sprint-registry
     artifact: sprint-registry.html
+    source: src/pages/sprint-registry.astro  # served at /sprint-registry.html; migrated by c7b78c6 (GQC-02B)
     successor: "mcard-studio: pcard:render/sprint-governance (SprintGovernanceViewlet)"
     invariant: INV-SMR-07
     load_bearing: true
@@ -114,6 +118,7 @@ islands:
 
   - id: app
     artifact: app.html
+    source: src/pages/app.astro  # served at /app.html; migrated by c7b78c6 (GQC-02B)
     successor: "mcard-studio: the Dockview spatial workbench"
     invariant: INV-SMR-01
     load_bearing: true

@@ -5953,9 +5953,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: 3e8b7243c94ebb01740aded742a0b08bc7830cac08bdb122fd5c1523b7b2ea88
+  source_sha256: 53ccd5f3205909720a14cc8b702b1c58a389d943dfa2f2af16c3e37d8dda29a5
   projection_sha256: af8e0259963d77e5bb7bbcb7c299037a93b4a2cad8f8d5d3bc51bd2cd410ed04
   kernel_version: 0.0.14
-  landing_page_commit: 9563b9fc34a9d430b1a505b12f5ae7475e2c70c0
+  landing_page_commit: f6fecd55c4b2628794673373aa73c10eb830703f
   sprint_count: 286
   unresolved_trace_refs: 0
