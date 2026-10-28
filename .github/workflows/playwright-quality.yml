@@ -45,6 +45,12 @@ jobs:
       - name: Check Layer 1 site and fixture nets
         run: npm run check:net
 
+      - name: Check workspace package-source parity and UI server calls
+        run: node scripts/check-package-source-parity.mjs
+
+      - name: Check living documentation links, scripts, net IDs, and generated net docs
+        run: npm run docs:check
+
       - name: Build Astro host and workspace packages
         run: npm run build
 

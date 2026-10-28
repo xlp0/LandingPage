@@ -354,8 +354,8 @@ setTimeout(() => {
 ## 📚 Related Documentation
 
 - [CLM Implementation Guide](./clm-implementation-guide.md) - Original hash-based CLM
-- [Cubical HTML Architecture](./cubical-html-architecture.md) - Core concepts
-- [Component Documentation](./components/) - Individual component specs
+- [Cubical HTML Architecture](../01-architecture/CUBIC-LOGIC-MODEL.md) - Core concepts
+- [Component Documentation](./README.md) - Individual component specs
 
 ## 🤝 Contributing
 

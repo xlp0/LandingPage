@@ -264,7 +264,7 @@ docker-compose restart
 
 ### Resources
 - [mcard-js GitHub](https://github.com/xlp0/mcard-js)
-- [Documentation](docs/03-data-management/)
+- [Documentation](./README.md)
 - [Setup Guide](MCARD-JS-SETUP.md)
 - [Handle Filter Guide](mcard-handles-filter.md)
 

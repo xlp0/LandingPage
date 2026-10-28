@@ -1,7 +1,13 @@
 # Real-Time Multiplayer Board Games
 
-> **Location**: [`LandingPage/docs/functionalities/05-REALTIME-MULTIPLAYER-BOARD-GAMES.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/05-REALTIME-MULTIPLAYER-BOARD-GAMES.md)  
-> **Source Directories**: [`js/modules/tic-tac-toe-p2p/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/tic-tac-toe-p2p/), [`public/examples/games/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/examples/games/), [`docs/Dungeons and Dragons/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/Dungeons%20and%20Dragons/)  
+| Field | Value |
+| --- | --- |
+| Audience | Engineers, architects, and QA reviewers consulting capability-level reference architecture |
+| BMAD Owner | Developer (`bmad-agent-dev`) |
+| Classification | Maintained Capability Reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts |
+| Operational Guide | [../06-components/README.md](../06-components/README.md) |
+> **Location**: [`LandingPage/docs/functionalities/05-REALTIME-MULTIPLAYER-BOARD-GAMES.md`](./05-REALTIME-MULTIPLAYER-BOARD-GAMES.md)  
+> **Source Directories**: [`js/modules/tic-tac-toe-p2p/`](../../js/modules/tic-tac-toe-p2p/README.md), [`public/examples/games/`](../../public/examples/games), [`docs/Dungeons and Dragons/`](../06-components/games/dungeons-and-dragons)  
 > **Status**: Comprehensive Functional Specification
 
 ---
@@ -39,9 +45,9 @@ graph TD
 
 ## 2. Distributed Turn-Based Engine (`tic-tac-toe-p2p/`)
 
-Located at [`js/modules/tic-tac-toe-p2p/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/tic-tac-toe-p2p/):
+Located at [`js/modules/tic-tac-toe-p2p/`](../../js/modules/tic-tac-toe-p2p/README.md):
 
-### 2.1 State Model ([`game-logic.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/tic-tac-toe-p2p/game-logic.js))
+### 2.1 State Model ([`game-logic.js`](../../js/modules/tic-tac-toe-p2p/game-logic.js))
 - **Board Representation**: Array of 9 cells (`null`, `'X'`, or `'O'`).
 - **Turn Alternation**: Rigorous enforcement of `canMakeMove()`, verifying that the local player's role matches `currentPlayer`.
 - **Win Condition Detection**: Checks 8 winning lines (3 horizontal, 3 vertical, 2 diagonal) after every move; detects draw states when all 9 cells are filled with no winning line.
@@ -70,7 +76,7 @@ Messages exchanged over the `pkc-game-channel`:
 
 ## 3. Authenticated Multiplayer Board Game Suite
 
-Integrated into [`app.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/app.html) via specialized views:
+Integrated into [`app.html`](../../src/pages/app.astro) via specialized views:
 
 ### 3.1 Authenticated Monopoly (`monopolyAuthView`)
 - **Board Topology**: 40 tiles including properties, railroads, utilities, Chance, Community Chest, and Jail.
@@ -88,7 +94,7 @@ Integrated into [`app.html`](file:///Users/bkoo/Documents/Development/GovTech/MC
 - **Handicap & Scoring**: Japanese and Chinese scoring algorithms.
 
 ### 3.4 Dungeons & Dragons (D&D Bali) Adventure Engine
-- Located at [`docs/Dungeons and Dragons/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/Dungeons%20and%20Dragons/).
+- Located at [`docs/Dungeons and Dragons/`](../06-components/games/dungeons-and-dragons).
 - Dynamic narrative branching with dice-rolling probability distributions (d20 system) and collaborative party inventory management.
 
 ---

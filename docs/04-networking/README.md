@@ -1,5 +1,10 @@
 # 🌐 Networking, WebRTC & Membrane Boundaries
 
+| Field | Value |
+| --- | --- |
+| Audience | Engineers, architects, and QA reviewers working in this documentation tier |
+| BMAD Owner | Architect (`bmad-agent-architect`) and Developer (`bmad-agent-dev`) |
+| Source of Truth | [`ws-server.js`](../../ws-server.js) and [`server/mcard-probe-policy.mjs`](../../server/mcard-probe-policy.mjs) |
 This directory documents the networking architecture, WebRTC peer-to-peer (P2P) mesh, signaling server, and SSRF network boundary enforcement.
 
 ---
@@ -26,22 +31,22 @@ The networking tier in `LandingPage` encompasses two primary domains:
 ## 📚 Documents in This Section
 
 ### WebRTC & P2P Mesh
-- **[p2p-serverless-design-choices.md](p2p-serverless-design-choices.md)** — Architectural design decisions for serverless P2P communication.
-- **[p2p-serverless-implementation.md](p2p-serverless-implementation.md)** — WebRTC data channel implementation details.
-- **[p2p-testing-guide.md](p2p-testing-guide.md)** — Testing procedures for multi-peer mesh topologies.
-- **[webrtc-dashboard-architecture.md](webrtc-dashboard-architecture.md)** — Real-time connection metrics and mesh status dashboard.
-- **[webrtc-connectivity-issues.md](webrtc-connectivity-issues.md)** — Troubleshooting ICE connection failures and NAT traversal.
+- **[p2p-serverless-design-choices.md](p2p-serverless-design-choices.md)** - Architectural design decisions for serverless P2P communication.
+- **[p2p-serverless-implementation.md](p2p-serverless-implementation.md)** - WebRTC data channel implementation details.
+- **[p2p-testing-guide.md](p2p-testing-guide.md)** - Testing procedures for multi-peer mesh topologies.
+- **[webrtc-dashboard-architecture.md](webrtc-dashboard-architecture.md)** - Real-time connection metrics and mesh status dashboard.
+- **[webrtc-connectivity-issues.md](webrtc-connectivity-issues.md)** - Troubleshooting ICE connection failures and NAT traversal.
 
 ### STUN Configuration & Bug Fixes
-- **[stun-server-setup.md](stun-server-setup.md)** — Public and private STUN server configuration.
-- **[stun-config-summary.md](stun-config-summary.md)** — Quick reference for ICE server lists.
-- **[p2p-bug-fix-peer-id.md](p2p-bug-fix-peer-id.md)** — Resolution of peer ID collisions and reconnection stability.
-- **[p2p-logger-fix.md](p2p-logger-fix.md)** — Logging improvements for signaling state transitions.
+- **[stun-server-setup.md](stun-server-setup.md)** - Public and private STUN server configuration.
+- **[stun-config-summary.md](stun-config-summary.md)** - Quick reference for ICE server lists.
+- **[p2p-bug-fix-peer-id.md](p2p-bug-fix-peer-id.md)** - Resolution of peer ID collisions and reconnection stability.
+- **[p2p-logger-fix.md](p2p-logger-fix.md)** - Logging improvements for signaling state transitions.
 
 ---
 
 ## 🧭 Related Functional Tiers
 
-- [**01-architecture/**](../01-architecture/README.md) — Monorepo estate boundaries and membrane architecture.
-- [**05-state-management/**](../05-state-management/README.md) — WebRTC connection Redux slice (`rtcConnectionSlice.js`).
-- [**08-testing/**](../08-testing/README.md) — Cross-origin telemetry and target membrane verification.
+- [**01-architecture/**](../01-architecture/README.md) - Monorepo estate boundaries and membrane architecture.
+- [**05-state-management/**](../05-state-management/README.md) - WebRTC connection Redux slice (`rtcConnectionSlice.js`).
+- [**08-testing/**](../08-testing/README.md) - Cross-origin telemetry and target membrane verification.

@@ -1,7 +1,13 @@
 # Mission Control & MCard Management
 
-> **Location**: [`LandingPage/docs/functionalities/01-MISSION-CONTROL-AND-MCARD-MANAGEMENT.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/01-MISSION-CONTROL-AND-MCARD-MANAGEMENT.md)  
-> **Source Files**: [`app.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/app.html), [`public/js/ViewManager.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/js/ViewManager.js), [`server/mcard-api.mjs`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/server/mcard-api.mjs), [`public/js/PWAManager.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/js/PWAManager.js)  
+| Field | Value |
+| --- | --- |
+| Audience | Engineers, architects, and QA reviewers consulting capability-level reference architecture |
+| BMAD Owner | Product Manager (`bmad-agent-pm`) and Developer (`bmad-agent-dev`) |
+| Classification | Maintained Capability Reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts |
+| Operational Guide | [../01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md](../01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md) |
+> **Location**: [`LandingPage/docs/functionalities/01-MISSION-CONTROL-AND-MCARD-MANAGEMENT.md`](./01-MISSION-CONTROL-AND-MCARD-MANAGEMENT.md)  
+> **Source Files**: [`app.html`](../../src/pages/app.astro), [`public/js/ViewManager.js`](../../public/js/ViewManager.js), [`server/mcard-api.mjs`](../../server/mcard-api.mjs), [`public/js/PWAManager.js`](../../public/js/PWAManager.js)  
 > **Status**: Comprehensive Functional Specification
 
 ---
@@ -44,7 +50,7 @@ graph LR
 
 ## 2. Dynamic View Management (`ViewManager.js`)
 
-View transitions and sub-application embeddings in [`app.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/app.html) are governed by the declarative [`ViewManager`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/js/ViewManager.js) class driven by [`public/config/app-views.json`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/config/app-views.json).
+View transitions and sub-application embeddings in [`app.html`](../../src/pages/app.astro) are governed by the declarative [`ViewManager`](../../public/js/ViewManager.js) class driven by [`public/config/app-views.json`](../../public/config/app-views.json).
 
 ### 2.1 View Lifecycle & Methods
 
@@ -59,7 +65,7 @@ View transitions and sub-application embeddings in [`app.html`](file:///Users/bk
 
 ### 2.2 Registered View Catalog
 
-The view manager orchestrates specialized workspaces embedded in [`app.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/app.html):
+The view manager orchestrates specialized workspaces embedded in [`app.html`](../../src/pages/app.astro):
 
 | View Identifier | Container ID | Description & Component Embed |
 | :--- | :--- | :--- |
@@ -81,9 +87,9 @@ The view manager orchestrates specialized workspaces embedded in [`app.html`](fi
 
 The MCard is the fundamental atomic unit of content and state. Each card carries a cryptographic content hash, metadata descriptor, type indicator, and payload.
 
-### 3.1 Backend Service: [`server/mcard-api.mjs`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/server/mcard-api.mjs)
+### 3.1 Backend Service: [`server/mcard-api.mjs`](../../server/mcard-api.mjs)
 
-Built on Express and `better-sqlite3`, managing [`data/mcard-api.db`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/data/mcard-api.db) configured with SQLite Write-Ahead Logging (WAL) for concurrent read/write throughput:
+Built on Express and `better-sqlite3`, managing [`data/mcard-api.db`](../../data/mcard-api.db) configured with SQLite Write-Ahead Logging (WAL) for concurrent read/write throughput:
 
 ```mermaid
 sequenceDiagram
@@ -116,13 +122,13 @@ sequenceDiagram
 
 Mission Control delivers full offline functionality through local storage fallback and progressive web app capabilities:
 
-1. **Service Worker Architecture** ([`public/sw.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/sw.js) & [`public/sw-clm.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/sw-clm.js)):
+1. **Service Worker Architecture** ([`public/sw.js`](../../public/sw.js) & [`public/sw-clm.js`](../../public/sw-clm.js)):
    - **Static Asset Cache**: Caches core JavaScript, CSS tokens, fonts, and vendor libraries on installation (`install` event).
    - **Network-First with Cache Fallback**: Applies to dynamic data queries and MCard API requests.
-   - **Offline Indicator**: Monitored via `window.addEventListener('online')` and `window.addEventListener('offline')`, toggling the `#offline-indicator` badge in [`app.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/app.html).
-2. **PWA Installation Modal** ([`public/js/PWAInstallModal.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/js/PWAInstallModal.js)):
+   - **Offline Indicator**: Monitored via `window.addEventListener('online')` and `window.addEventListener('offline')`, toggling the `#offline-indicator` badge in [`app.html`](../../src/pages/app.astro).
+2. **PWA Installation Modal** ([`public/js/PWAInstallModal.js`](../../public/js/PWAInstallModal.js)):
    - Captures browser `beforeinstallprompt` event.
    - Presents an unobtrusive UI prompt allowing users to add Mission Control as a standalone desktop application.
-3. **Local Storage Synchronization** ([`js/local-storage-manager.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/local-storage-manager.js)):
+3. **Local Storage Synchronization** ([`js/local-storage-manager.js`](../../js/local-storage-manager.js)):
    - Manages client-side card drafts and unsaved modifications in `localStorage` and `IndexedDB`.
    - Reconciles local changes with the SQLite backend upon reconnecting.

@@ -1,5 +1,10 @@
 # 📊 State Management Architecture
 
+| Field | Value |
+| --- | --- |
+| Audience | Engineers, architects, and QA reviewers working in this documentation tier |
+| BMAD Owner | Architect (`bmad-agent-architect`) and Developer (`bmad-agent-dev`) |
+| Source of Truth | [`js/harness/lab-runtime.js`](../../js/harness/lab-runtime.js) and [`js/harness/recording-state-machine.js`](../../js/harness/recording-state-machine.js) |
 This directory documents state management in `LandingPage`, covering the Redux Toolkit application store, WebRTC connection state, and the deterministic Recording State Machine in the Responsive UI Lab.
 
 ---
@@ -39,24 +44,24 @@ State management in `LandingPage` is divided into two distinct models:
 ## 📚 Documents in This Section
 
 ### Redux Documentation
-- **[redux/INDEX.md](redux/INDEX.md)** — Redux store overview and slice index.
-- **[redux/REDUX_ARCHITECTURE.md](redux/REDUX_ARCHITECTURE.md)** — Detailed state architecture and action flows.
-- **[redux/slices/](redux/slices/)** — Individual slice specifications:
-  - `auth-slice.md` — Authentication state, tokens, and user claims.
-  - `clm-slice.md` — Cubical Logic Model component registry and runtime state.
-  - `rtc-connection-slice.md` — WebRTC peer connections and signaling states.
-  - `participants-slice.md` — Presence and mesh participant tracking.
-  - `invitations-slice.md` — P2P session and game matchmaking invitations.
+- **[redux/INDEX.md](redux/INDEX.md)** - Redux store overview and slice index.
+- **[redux/REDUX_ARCHITECTURE.md](redux/REDUX_ARCHITECTURE.md)** - Detailed state architecture and action flows.
+- **[redux/slices/](redux/slices/)** - Individual slice specifications:
+  - `auth-slice.md` - Authentication state, tokens, and user claims.
+  - `clm-slice.md` - Cubical Logic Model component registry and runtime state.
+  - `rtc-connection-slice.md` - WebRTC peer connections and signaling states.
+  - `participants-slice.md` - Presence and mesh participant tracking.
+  - `invitations-slice.md` - P2P session and game matchmaking invitations.
 
 ### Implementation & Testing
-- **[REDUX_SLICES_IMPLEMENTATION.md](REDUX_SLICES_IMPLEMENTATION.md)** — Implementation guide for building and extending Redux slices.
-- **[REDUX_AUTH_TESTING.md](REDUX_AUTH_TESTING.md)** — Unit and integration testing strategies for the auth slice.
-- **[REDUX_FIX_SUMMARY.md](REDUX_FIX_SUMMARY.md)** — History of bug fixes and reducer optimizations.
+- **[REDUX_SLICES_IMPLEMENTATION.md](REDUX_SLICES_IMPLEMENTATION.md)** - Implementation guide for building and extending Redux slices.
+- **[REDUX_AUTH_TESTING.md](REDUX_AUTH_TESTING.md)** - Unit and integration testing strategies for the auth slice.
+- **[REDUX_FIX_SUMMARY.md](REDUX_FIX_SUMMARY.md)** - History of bug fixes and reducer optimizations.
 
 ---
 
 ## 🧭 Related Functional Tiers
 
-- [**02-authentication/**](../02-authentication/README.md) — Zitadel PKCE authentication integration.
-- [**04-networking/**](../04-networking/README.md) — WebRTC connection lifecycle and signaling.
-- [**08-testing/**](../08-testing/README.md) — Recording state machine verification and unit test suite.
+- [**02-authentication/**](../02-authentication/README.md) - Zitadel PKCE authentication integration.
+- [**04-networking/**](../04-networking/README.md) - WebRTC connection lifecycle and signaling.
+- [**08-testing/**](../08-testing/README.md) - Recording state machine verification and unit test suite.

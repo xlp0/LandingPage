@@ -1,62 +1,56 @@
+# How to Open and Use the Responsive UI Lab Workbench
 
-# 🎮 How to Open & Use the Responsive UI Lab Workbench
+| Field | Value |
+| --- | --- |
+| Audience | Operators, QA engineers, UX designers, and developers testing web targets in Responsive UI Lab |
+| BMAD Owner | UX Designer (`bmad-agent-ux-designer`) and Test Architect |
+| Source of Truth | [`src/pages/responsive-lab.astro`](../../src/pages/responsive-lab.astro), [`js/harness/`](../../js/harness/), and [`app-config.json`](../../app-config.json) |
+| Drift Gate | `npm run docs:check` |
 
-This guide explains how to use the interactive features of the **Responsive UI Lab** (`responsive-lab.html`).
+This guide explains how to launch and operate the **Responsive UI Lab** workbench (`/responsive-lab.html`), keeping the **workbench** distinct from the **target under test** inside `#mission-control-iframe`.
 
----
+## 1. Launch the Workbench
 
-## 🚀 Launching the Workbench
+Build once and start the server on port **`3000`**.
 
-1. Start the server:
-   ```bash
-   npm run dev
-   ```
-2. Open your browser:
-   ```text
-   http://localhost:3001/responsive-lab.html
-   ```
+```bash
+npm run build
+npm start
+```
 
----
+Open `http://localhost:3000/responsive-lab.html` (or `http://localhost:4322/responsive-lab.html` when running `npm run dev`).
 
-## 🛠️ Workbench Capabilities & Controls
+## 2. Select a Target Under Test (`INV-STU-01`, `INV-STU-02`)
 
-### 1. Target URL Ingestion (`INV-STU-01`, `INV-STU-02`)
+Built-in targets come from `/app-config.json` (`urn:gqc:lab-config:v1`). Choose a target chip, type a URL into `#target-url-input`, or pass `?target=` in the query string.
 
-- **Top Selector**: Use the target URL dropdown to switch between built-in targets (e.g., `index.html`, `app.html`, or local development servers).
-- **Query Parameter**: Directly load any web target via URL:
-  ```text
-  http://localhost:3001/responsive-lab.html?target=http://localhost:4321/
-  ```
+```text
+http://localhost:3000/responsive-lab.html?target=/tests/fixtures/spa-test-target.html
+http://localhost:3000/responsive-lab.html?target=http://localhost:4321/
+```
 
-### 2. Device Selection & Orientation Reflow (`INV-RVP-01`)
+- **SPA Target (`/tests/fixtures/spa-test-target.html`)** activates full Petri net Place and Transition tracking against `tests/fixtures/spa-test-target.graph.json`.
+- **MPA Candidate (`/index.html`)** and **MCard `webapp` Target (`/app.html`)** run same-origin inside the stage without loop-redirecting.
+- **Blocked or Unapproved Cross-Origin URLs** enter explicit recoverable workbench error Places (`p_error_target_blocked`, `p_error_target_unapproved`, `p_error_handshake_timeout`) with a one-click `#btn-cors-alert-recover` recovery action (`t_recover_*`).
 
-- **Device Presets**: Choose from 8 modern device profiles in the top bar:
-  - *Phones*: iPhone 16 Pro, iPhone SE, Google Pixel 8, Samsung Galaxy S24
-  - *Tablets*: iPad Air 11", iPad Mini
-  - *Desktops*: MacBook Air 13", Desktop 1080p
-- **Orientation Toggle**: Click **Portrait** or **Landscape** to physically swap viewport dimensions ($W \leftrightarrow H$).
-- **Custom Viewports**: Use the Device Manager to define custom resolutions with automatic GCD aspect ratio calculation.
+## 3. Choose Device Geometry and Orientation (`INV-RVP-01`, `INV-RVP-02`)
 
-### 3. Layout-Box Stage Containment (`INV-RVP-02`)
+- **Eight Built-In Device Presets** span phones (`iPhone 16 Pro`, `iPhone SE`, `Google Pixel 8`, `Samsung Galaxy S24`), tablets (`iPad Air 11"`, `iPad Mini`), and desktops (`MacBook Air 13"`, `Desktop 1080p`).
+- **Orientation Swap** transposes width and height ($W \leftrightarrow H$) via `#btn-rotate-viewport`.
+- **Stage Containment** scales the iframe inside `.viewport-scale-wrapper` by $s = \min(1, W_{\text{available}} / w, H_{\text{available}} / h)$ so the outer workbench window never scrolls horizontally or vertically.
 
-- Even the largest desktop viewports fit entirely on screen inside the `.viewport-scale-wrapper` without introducing window scrollbars.
-- The scale factor $s = \min(1, W_{\text{available}} / w_{\text{target}}, H_{\text{available}} / h_{\text{target}})$ automatically recalculates on window resize.
+## 4. Walk the 5-Step Guided SPA Workflow (`SpaTestWorkflow`)
 
-### 4. Interaction Capture & Ring Buffer (`INV-ERB-01..03`)
+The `#spa-test-workflow` region guides verification across five keyboard-accessible tabs (`ArrowRight`, `ArrowLeft`, `Home`, `End`).
 
-- **Record**: Click **Record** to begin capturing pointer, touch, scroll, and navigation events into the bounded in-memory ring buffer.
-- **Normalize**: Pointer coordinates are automatically mapped to scale-free values $[0.0, 1.0]$ relative to the target's viewport.
-- **Redact**: Sensitive inputs (passwords, PINs) are automatically redacted (`INV-PRV-01`).
-- **Stop**: Click **Stop** to inspect the recorded session and its event sequence.
+1. **Target** verifies target classification (`spa`, `mpa-candidate`, `webapp`, or policy error) and capture channel (`same-origin`, `probe-agent`, or `unavailable`).
+2. **Device** confirms active preset dimensions, orientation, and fidelity tier (`T0` in-browser iframe).
+3. **Places** inspects declared `PlaceMCard` nodes (`clm://type/view/...`) and highlights the live active Place inside the iframe.
+4. **Transitions** tracks `TransitionMCard` firings, flags unmapped transitions (`p_spa_missing_transition` / `p_error_modal`), and exercises recovery (`t_spa_recover_overview`).
+5. **Evidence** links completed `responsive_test_run:v1` captures to `NetMCard` and `FiringReceiptMCard` hashes via a separate `urn:gqc:navigation-run-link:v1` MCard.
 
-### 5. In-Target Telemetry & Ergonomics (`INV-DEV-01..04`)
+## 5. Record, Persist, and Replay (`INV-ERB-01..04`)
 
-- **Horizontal Bleed**: Real-time warning if `scrollWidth > innerWidth`.
-- **Frame Latency**: 60 fps / 16.6ms budget compliance monitoring.
-- **Cumulative Layout Shift (CLS)**: Cumulative shift tracking during rapid reflows.
-- **Tap Target Ergonomics**: Live visual audit highlighting clickable elements $< 44\text{px} \times 44\text{px}$ on coarse-pointer profiles.
-
-### 6. Persistence & Replay (`INV-ERB-04`)
-
-- **Save Run**: Send the session to `/api/test-runs` to seal it into the SQLite Triad (`data/mcard-api.db`) with Blake3 content addressing.
-- **Automated Replay**: Execute deterministic Playwright headless replays via `npm run test:replay`.
+- Click **Record** (`#rec-btn-start`) to capture pointer, keyboard, scroll, and viewport events normalized to $[0.0, 1.0]$ with sensitive input redaction (`INV-PRV-01`).
+- Click **Stop** (`#rec-btn-stop`) to finalize the run (`clmKernel: '0.0.13'`) and persist it to `/api/test-runs` in the SQLite Triad (`data/mcard-api.db`). Interrupted sessions save separately as `urn:gqc:interrupted-capture:v1` (`Incomplete Capture`) and never masquerade as passing runs.
+- Open the deferred **Conformance** (`#conformance-disclosure`) or **MCard Result** (`#mcard-result-disclosure`) panels to inspect the 15-check conformance report and Triad Blake3 digest, or replay headlessly via `npm run test:replay`.

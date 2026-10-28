@@ -1,64 +1,38 @@
-# 🚢 Deployment, GitOps & Infrastructure
+# Deployment, Containers, and GitOps Infrastructure
 
-This directory documents the deployment strategies, ArgoCD GitOps pipelines, containerization, and caching architecture for `LandingPage`.
+| Field | Value |
+| --- | --- |
+| Audience | DevOps engineers, operators, and release owners deploying LandingPage |
+| BMAD Owner | Architect (`bmad-agent-architect`) and Developer (`bmad-agent-dev`) |
+| Source of Truth | [`Dockerfile`](../../Dockerfile), [`docker-compose.yml`](../../docker-compose.yml), [`ws-server.js`](../../ws-server.js), and [`.github/workflows/playwright-quality.yml`](../../.github/workflows/playwright-quality.yml) |
+| Consensus Kernel | `clm-kernel@0.0.13` |
 
----
+## Runtime and Container Port Map
 
-## 🎯 Infrastructure Overview
+| Environment | Host / Service Port | Container / Process Port | Details |
+| --- | --- | --- | --- |
+| **Standalone Node (`npm start`)** | `3000` (`PORT` env overrides) | `3000` | Runs `node ws-server.js` serving Express APIs, `/ws/`, `dist/client`, and Astro SSR (`dist/server/entry.mjs`) |
+| **Local Astro + API Dev (`npm run dev`)** | `4322` + `3000` | `4322` (`astro dev`), `3000` (`ws-server.js`) | Keeps `4321` free for external Responsive UI Lab targets |
+| **Playwright CI (`npm test`)** | `3001` (`TEST_PORT`) | `3001` | Isolated `ws-server.js` process with temporary `MCARD_DB_PATH` |
+| **Dockerfile** | Configured by orchestrator | `EXPOSE 3000` | Container listens on `PORT=3000` with `/health` liveness endpoint |
+| **Docker Compose (`docker-compose.yml`)** | `8765` | `3000` (`8765:3000`) | Maps host port `8765` to unified HTTP + WebSocket container port `3000` |
 
-`LandingPage` is designed for hybrid deployment:
-1. **Containerized Node.js Runtime**:
-   - Runs `ws-server.js` (Express + WebSocket) serving static assets, the Responsive UI Lab, MCard SQLite API, and WebSocket signaling.
-2. **ArgoCD GitOps Automation**:
-   - Declarative Kubernetes deployment pipeline syncing repository changes to staging (`https://dev.pkc.pub`) and production (`https://henry.pkc.pub`).
-3. **Cloudflare R2 & Self-Hosted CDN**:
-   - High-throughput blob and media asset storage backed by Cloudflare R2 with localized edge caching rules.
-4. **Pre-Deployment CI Gates (`check_landingpage_retirement.py`)**:
-   - Monorepo CI verifies kernel consensus (`clm-kernel@0.0.9`), checks zero duplicate hash providers, ensures no resurrected retired islands, and runs unit and conformance batteries before deployment approval.
-
----
-
-## 📚 Documents in This Section
-
-### ArgoCD GitOps
-- **[ARGOCD_DEPLOYMENT.md](ARGOCD_DEPLOYMENT.md)** — Complete ArgoCD Kubernetes pipeline setup and cluster configuration.
-- **[ARGOCD_QUICK_GUIDE.md](ARGOCD_QUICK_GUIDE.md)** — Quick reference for manual sync, rollout restarts, and health checks.
-- **[ARGOCD_PRESENTATION.md](ARGOCD_PRESENTATION.md)** — Architectural presentation on GitOps principles in the PKC ecosystem.
-
-### Infrastructure & Storage
-- **[BACKEND_IMPLEMENTATION.md](BACKEND_IMPLEMENTATION.md)** — Node.js Express/WebSocket backend server configuration and environment setup.
-- **[R2_SETUP.md](R2_SETUP.md)** — Cloudflare R2 bucket configuration and S3-compatible credentials.
-- **[SELF-HOSTED-CDN.md](SELF-HOSTED-CDN.md)** — Architecture for self-hosted caching proxies and fallback CDNs.
-- **[SSH-KEY-SETUP.md](SSH-KEY-SETUP.md)** — Deploy key generation and repository authentication.
-
-### Performance & Caching
-- **[caching-strategy.md](caching-strategy.md)** — HTTP caching headers, Service Worker asset caching, and dynamic API cache invalidation.
-
----
-
-## 🚀 Pre-Deployment Verification Checklist
-
-Before deploying changes to staging or production, run the full verification gate:
+## Pre-Deployment CI Verification Gates
 
 ```bash
-# 1. Run unit test suite
+npm run check:net
+node scripts/check-package-source-parity.mjs
+npm run docs:check
+npm run build
+npm run check:playwright-discovery
 npm run test:unit
-
-# 2. Run multi-device responsive sweep
+npm run test:smoke
+npm run test:components
 npm run test:responsive
-
-# 3. Run device conformance & mint responsive certificate
 npm run test:conformance
-
-# 4. (From monorepo root) Validate estate boundary and retirement rules
-python3 scripts/ci/check_landingpage_retirement.py
-python3 scripts/ci/check_ulr_census.py
 ```
 
----
+## Documents in This Section
 
-## 🧭 Related Functional Tiers
-
-- [**00-getting-started/**](../00-getting-started/README.md) — Local development server startup.
-- [**08-testing/**](../08-testing/README.md) — Automated testing and conformance suites.
-- [**09-performance/**](../09-performance/README.md) — Web Vitals and Grafana observability.
+- [ARGOCD_DEPLOYMENT.md](./ARGOCD_DEPLOYMENT.md), [ARGOCD_QUICK_GUIDE.md](./ARGOCD_QUICK_GUIDE.md), and [ARGOCD_PRESENTATION.md](./ARGOCD_PRESENTATION.md)
+- [BACKEND_IMPLEMENTATION.md](./BACKEND_IMPLEMENTATION.md), [R2_SETUP.md](./R2_SETUP.md), [SELF-HOSTED-CDN.md](./SELF-HOSTED-CDN.md), [SSH-KEY-SETUP.md](./SSH-KEY-SETUP.md), and [caching-strategy.md](./caching-strategy.md)

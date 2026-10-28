@@ -229,7 +229,7 @@ schedule:
 - [Workflow Diagrams](./PIPELINE-WORKFLOW-DIAGRAM.md)
 
 ### Scripts Documentation
-- [Scripts README](../../.github/scripts/README.md)
+- [Scripts README](../../../.github/scripts/README.md)
 
 ### Troubleshooting
 Check the documentation files above for:

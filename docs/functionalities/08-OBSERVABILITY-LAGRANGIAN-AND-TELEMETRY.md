@@ -1,8 +1,14 @@
 # Observability, Lagrangian Mechanics & Telemetry
 
-> **Location**: [`LandingPage/docs/functionalities/08-OBSERVABILITY-LAGRANGIAN-AND-TELEMETRY.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/08-OBSERVABILITY-LAGRANGIAN-AND-TELEMETRY.md)  
-> **Source Directories**: [`js/observability/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/observability/), [`js/telemetry/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/telemetry/)  
-> **Key Implementations**: [`lagrangian.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/observability/lagrangian.js), [`fibration-dashboard.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/observability/fibration-dashboard.js), [`faro-collector.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/telemetry/faro-collector.js)  
+| Field | Value |
+| --- | --- |
+| Audience | Engineers, architects, and QA reviewers consulting capability-level reference architecture |
+| BMAD Owner | Architect (`bmad-agent-architect`) and Test Architect |
+| Classification | Maintained Capability Reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts |
+| Operational Guide | [../09-performance/README.md](../09-performance/README.md) |
+> **Location**: [`LandingPage/docs/functionalities/08-OBSERVABILITY-LAGRANGIAN-AND-TELEMETRY.md`](./08-OBSERVABILITY-LAGRANGIAN-AND-TELEMETRY.md)  
+> **Source Directories**: [`js/observability/`](../../js/observability), [`js/telemetry/`](../../js/telemetry)  
+> **Key Implementations**: [`lagrangian.js`](../../js/observability/lagrangian.js), [`fibration-dashboard.js`](../../js/observability/fibration-dashboard.js), [`faro-collector.js`](../../js/telemetry/faro-collector.js)  
 > **Status**: Comprehensive Functional Specification
 
 ---
@@ -46,7 +52,7 @@ graph LR
 
 ---
 
-## 2. Lagrangian Scorer Implementation ([`lagrangian.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/observability/lagrangian.js))
+## 2. Lagrangian Scorer Implementation ([`lagrangian.js`](../../js/observability/lagrangian.js))
 
 The scorer takes raw metric telemetry and computes the normalized variational action:
 
@@ -74,23 +80,23 @@ const result = computeLagrangian(metrics);
 // result.lagrangian: ~0.90 (Optimal stationary action)
 ```
 
-The [`least-action-navigator.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/runtime/least-action-navigator.js) uses these scores to optimize page transitions, routing users along paths of least computational and cognitive action ($\delta \int \mathcal{L} \, dt = 0$).
+The [`least-action-navigator.js`](../../js/runtime/least-action-navigator.js) uses these scores to optimize page transitions, routing users along paths of least computational and cognitive action ($\delta \int \mathcal{L} \, dt = 0$).
 
 ---
 
-## 3. Fibration Observability Dashboard ([`fibration-dashboard.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/observability/fibration-dashboard.js))
+## 3. Fibration Observability Dashboard ([`fibration-dashboard.js`](../../js/observability/fibration-dashboard.js))
 
 The Fibration Dashboard provides real-time visualization of fiber bundles, state topologies, and metric collectors:
 
 - **Fiber Space Visualization**: Uses D3.js and Chart.js to plot higher-dimensional state projections into 2D/3D charts.
 - **Metric Collectors**:
-  - [`collectors/functionality.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/observability/collectors/functionality.js): Tracks invariant verification, test results, and runtime assertions.
-  - [`collectors/payload.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/observability/collectors/payload.js): Monitors asset byte sizes, compression ratios, and cache hit percentages.
-  - [`collectors/performance.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/observability/collectors/performance.js): Records CPU frame times, memory allocations, and WebRTC round-trip times (RTT).
+  - [`collectors/functionality.js`](../../js/observability/collectors/functionality.js): Tracks invariant verification, test results, and runtime assertions.
+  - [`collectors/payload.js`](../../js/observability/collectors/payload.js): Monitors asset byte sizes, compression ratios, and cache hit percentages.
+  - [`collectors/performance.js`](../../js/observability/collectors/performance.js): Records CPU frame times, memory allocations, and WebRTC round-trip times (RTT).
 
 ---
 
-## 4. Grafana Faro Telemetry ([`faro-collector.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/telemetry/faro-collector.js))
+## 4. Grafana Faro Telemetry ([`faro-collector.js`](../../js/telemetry/faro-collector.js))
 
 The frontend integrates the **Grafana Faro Web SDK** for Real User Monitoring (RUM) and distributed tracing:
 

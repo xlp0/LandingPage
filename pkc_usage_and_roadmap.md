@@ -1,5 +1,10 @@
 # PKC Usage and Development Roadmap
 
+| Field | Value |
+| --- | --- |
+| Audience | Product managers and contributors reviewing conceptual PKC roadmap notes |
+| BMAD Owner | Product Manager (`bmad-agent-pm`) |
+| Status / Scope | Conceptual roadmap overview; current commands and ports live in [README.md](README.md) and [docs/00-getting-started/START_HERE.md](docs/00-getting-started/START_HERE.md) |
 This document outlines the operational usage, configuration protocols, and future developmental roadmap for the GovTech PKC (Personal Knowledge Container) platform, based on the principles of the Computational Trinity and the Cubical Logic Model (CLM).
 
 ## 1. Usage & Configuration Guide

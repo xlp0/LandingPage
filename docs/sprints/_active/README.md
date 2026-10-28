@@ -1,9 +1,16 @@
-# LandingPage active sprint area
+# LandingPage Active Sprint Workspace
 
-Program GQC is active under sequential execution (`GQC-00` through `GQC-07`). Its primary outcome is a guided SPA test workflow in the Responsive UI Lab. Users select a target, choose a device and viewport, test functional links, record or replay a journey, and inspect its MCard result.
+| Field | Value |
+| --- | --- |
+| Audience | Scrum masters, BMAD role leads, developers, and operators reviewing Program GQC |
+| BMAD Owner | Scrum Master |
+| Source of Truth | [`./INDEX.md`](./INDEX.md), [`./DECISIONS.tsv`](./DECISIONS.tsv), and [`./gqc-plan.md`](./gqc-plan.md) |
+| Drift Gate | `npm run docs:check` |
 
-GQC runs LandingPage on Astro. Pages are static by default, and interactive regions hydrate as Preact islands that mount the existing modules. Astro is mounted inside the existing Express server. Every page is a Place, and every link, redirect, page switch, and UI-reachable server call is a Transition in a workbench net built on the `clm-kernel` Layer 1 `PetriNetTopology`. GQC-02A authors and checks that net. GQC-02B moves pages onto Astro.
+Program GQC (`GQC-00` through `GQC-07`) has completed all ten sequential execution units and remains in `docs/sprints/_active/` awaiting explicit operator graduation approval.
 
-PenPot-assisted MPA assessment or management remains an optional extension. The current PenPot graph describes LandingPage navigation. A separate, Product Manager-approved PenPot file is required to assess a target MPA. The staged scope is read-only assessment. Editing PenPot documents or managing live MPA routes needs a separate decision. The [active sprint index](./INDEX.md) records the shared Page-as-Place and Functional-Link-as-Transition contract. Review the [GQC execution plan](./gqc-plan.md) and its [ten sprint specifications](./INDEX.md#active-program-gqc).
+GQC delivers the guided SPA test workflow in Responsive UI Lab (`/responsive-lab.html`), runs LandingPage on `astro@7.4.2` (`@astrojs/node@11.1.9` middleware inside `ws-server.js`) with 7 Preact islands (`preact@11.1.0`), formalizes the `31`-Place / `65`-Transition workbench Petri net (`src/net/workbench-net.yaml`) on `clm-kernel@0.0.12`, persists `NetMCard`, `FiringReceiptMCard`, and separate `urn:gqc:navigation-run-link:v1` MCards in the SQLite Triad, establishes paired performance baselines, and enforces `npm run docs:check` in CI.
 
-The graduated [SMO architecture program](../01-architecture/INDEX.md) and [ERB testing program](../08-testing/INDEX.md) remain the source for the completed MCard browser, responsive lab, capture, replay, and device-conformance work. GQC reuses those contracts and does not rebuild them.
+PenPot-assisted MPA target assessment remains **Optional / Deferred**. `design/landing-navigation.penpot` describes LandingPage's own navigation (`js/nav.js`), and assessing a separate MPA target requires explicit Product Manager approval and live Playwright verification.
+
+Review the [active sprint index](./INDEX.md), the [GQC execution plan](./gqc-plan.md), and the [GQC-07 graduation evidence report](./evidence/GQC-07-docs-and-graduation.md). The graduated [SMO architecture program](../01-architecture/INDEX.md) and [ERB testing program](../08-testing/INDEX.md) remain preserved unchanged.

@@ -1,7 +1,13 @@
 # In-Browser AI & WebLLM Runtime
 
-> **Location**: [`LandingPage/docs/functionalities/07-IN-BROWSER-AI-AND-WEB-LLM-RUNTIME.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/07-IN-BROWSER-AI-AND-WEB-LLM-RUNTIME.md)  
-> **Source Directory**: [`js/modules/web-llm/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/web-llm/)  
+| Field | Value |
+| --- | --- |
+| Audience | Engineers, architects, and QA reviewers consulting capability-level reference architecture |
+| BMAD Owner | Developer (`bmad-agent-dev`) |
+| Classification | Maintained Capability Reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts |
+| Operational Guide | [../06-components/README.md](../06-components/README.md) |
+> **Location**: [`LandingPage/docs/functionalities/07-IN-BROWSER-AI-AND-WEB-LLM-RUNTIME.md`](./07-IN-BROWSER-AI-AND-WEB-LLM-RUNTIME.md)  
+> **Source Directory**: [`js/modules/web-llm/`](../../js/modules/web-llm)  
 > **Core Engine**: [`@mlc-ai/web-llm`](https://github.com/mlc-ai/web-llm)  
 > **Status**: Comprehensive Functional Specification
 
@@ -33,7 +39,7 @@ graph TD
 
 ---
 
-## 2. Model Catalog & Quantization Profiles ([`config.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/web-llm/config.js))
+## 2. Model Catalog & Quantization Profiles ([`config.js`](../../js/modules/web-llm/config.js))
 
 The runtime defines three standardized models optimized for client hardware:
 
@@ -45,9 +51,9 @@ The runtime defines three standardized models optimized for client hardware:
 
 ---
 
-## 3. Architecture & Lifecycle ([`llm-manager.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/web-llm/llm-manager.js))
+## 3. Architecture & Lifecycle ([`llm-manager.js`](../../js/modules/web-llm/llm-manager.js))
 
-The [`LLMManager`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/web-llm/llm-manager.js) encapsulates all lifecycle and generation operations:
+The [`LLMManager`](../../js/modules/web-llm/llm-manager.js) encapsulates all lifecycle and generation operations:
 
 ### 3.1 State Transitions
 ```

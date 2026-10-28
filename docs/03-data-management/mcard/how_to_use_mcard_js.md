@@ -368,10 +368,10 @@ console.log(reduced.prettyPrint());  // → "f"
 
 ```bash
 # Run lambda calculus examples
-npm run clm:lambda
+npm run test:unit
 
 # Run all CLMs
-npm run clm:all
+npm run test:components
 ```
 
 ---
@@ -543,8 +543,8 @@ const hybrid = await store.hybridSearch("storage", "my-doc@^1.0.0", 5);
 npm install        # Install dependencies
 npm test           # Run comprehensive test suite (155 tests)
 npm run build      # Build for production
-npm run clm:all    # Run all CLM examples
-npm run clm:lambda # Run lambda calculus examples
+npm run test:components    # Run all CLM examples
+npm run test:unit # Run lambda calculus examples
 ```
 
 ---

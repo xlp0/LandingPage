@@ -1,8 +1,14 @@
 # Responsive UI Lab, Penpot & Design System
 
-> **Location**: [`LandingPage/docs/functionalities/09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md)  
-> **Source Files**: [`responsive-lab.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/responsive-lab.html), [`js/device-registry.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/device-registry.js), [`design/landing-navigation.penpot`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/design/landing-navigation.penpot), [`scripts/penpot-*.mjs`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/scripts/)  
-> **Styles & Tokens**: [`public/css/tokens.css`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/css/tokens.css), [`public/css/semantic-tokens.css`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/css/semantic-tokens.css)  
+| Field | Value |
+| --- | --- |
+| Audience | Engineers, architects, and QA reviewers consulting capability-level reference architecture |
+| BMAD Owner | UX Designer (`bmad-agent-ux-designer`), Architect, and Test Architect |
+| Classification | Maintained Capability Reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts |
+| Operational Guide | [../00-getting-started/OPEN_AND_USE.md](../00-getting-started/OPEN_AND_USE.md) |
+> **Location**: [`LandingPage/docs/functionalities/09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md`](./09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md)  
+> **Source Files**: [`responsive-lab.html`](../../src/pages/responsive-lab.astro), [`js/device-registry.js`](../../js/device-registry.js), [`design/landing-navigation.penpot`](../../design/landing-navigation.penpot), [`scripts/penpot-*.mjs`](../../scripts)  
+> **Styles & Tokens**: [`public/css/tokens.css`](../../public/css/tokens.css), [`public/css/semantic-tokens.css`](../../public/css/semantic-tokens.css)  
 > **Status**: Comprehensive Functional Specification
 
 ---
@@ -11,7 +17,7 @@
 
 The LandingPage frontend is engineered to guarantee perfect visual fidelity, accessibility, and responsiveness across the entire spectrum of consumer hardware (mobile phones, foldable devices, tablets, desktop monitors, and 4K/8K displays). 
 
-Rather than relying on basic browser devtools, the platform includes a built-in, standalone **Responsive UI Lab** ([`responsive-lab.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/responsive-lab.html)) and an automated **Penpot Design-to-Code Drift Verification Pipeline**.
+Rather than relying on basic browser devtools, the platform includes a built-in, standalone **Responsive UI Lab** ([`responsive-lab.html`](../../src/pages/responsive-lab.astro)) and an automated **Penpot Design-to-Code Drift Verification Pipeline**.
 
 ```mermaid
 graph TD
@@ -66,7 +72,7 @@ Governed by specification **RVP-02**, the device registry replaces ad-hoc CSS me
 
 ---
 
-## 3. Responsive Lab Capabilities ([`responsive-lab.html`](file:///Users/yohanessurya/Documents/Development/MCard_TDD/LandingPage/responsive-lab.html))
+## 3. Responsive Lab Capabilities ([`responsive-lab.html`](../../src/pages/responsive-lab.astro))
 
 - **Single Target Ingestion (`?target=<URL>`)**: Dynamically binds the laboratory viewport stage to any designated LandingPage URL (e.g., `http://localhost:4321/` or `app.html`), enabling focused benchmarking of a single web target.
 - **Full-Window Viewport Workbench**: Emulates target screen sizes inside an isolated sandbox container.
@@ -74,7 +80,7 @@ Governed by specification **RVP-02**, the device registry replaces ad-hoc CSS me
 - **Layout Freeze & Overflow Detection**: Stress-tests reflow performance by cycling rapidly through viewport dimensions and asserting zero element clipping or horizontal overflow.
 - **Zoom & Pan Scaling (`INV-RVP-02`)**: Scales the preview container via CSS `--frame-scale-factor: s` to fit 4K/desktop viewports on small laptop displays without window scrollbars.
 - **Viewport-Only Fidelity (T0)**: The lab iframe emulates CSS viewport size and rotation only. Pixel ratio, touch and coarse pointer, hover, mobile user agent, media preferences, and safe-area insets need Playwright contexts (T1/T2) or a real device (T3). See the fidelity tiers in the [ERB sprint index](../sprints/_active/INDEX.md).
-- **Event Capture Ring Buffer (`INV-ERB-01..05`)** — *planned, ERB-00…06*: Captures interaction streams with scale-free normalization $[0.0, 1.0]$ computed in the target's own viewport (same-origin listeners or a cross-origin probe agent), serializes runs canonically into MCard datasets via `clm-kernel`, and feeds Playwright replay and device-sensitive conformance checks.
+- **Event Capture Ring Buffer (`INV-ERB-01..05`)** - implemented across `ERB-00..06` and `SPRINT-GQC-00..07` using `clm-kernel@0.0.13`. Captures interaction streams with scale-free normalization $[0.0, 1.0]$ computed in the target's own viewport (same-origin listeners or a cross-origin probe agent), serializes runs canonically into MCard datasets via `clm-kernel`, and feeds Playwright replay and device-sensitive conformance checks.
 
 ---
 
@@ -82,18 +88,20 @@ Governed by specification **RVP-02**, the device registry replaces ad-hoc CSS me
 
 The project integrates directly with open-source design tool **Penpot**:
 
-- **Design Specification**: [`design/landing-navigation.penpot`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/design/landing-navigation.penpot) defines the canonical screen hierarchy, component boundaries, and navigation graph.
-- **Drift Detection** ([`scripts/penpot-drift.mjs`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/scripts/penpot-drift.mjs)):
+- **Design Specification**: [`design/landing-navigation.penpot`](../../design/landing-navigation.penpot) defines the canonical screen hierarchy, component boundaries, and navigation graph.
+- **Drift Detection** ([`scripts/penpot-drift.mjs`](../../scripts/penpot-drift.mjs)):
   - Compares the Penpot navigation graph with the live Express and client-side routes.
   - Flags unbound routes, unmapped buttons, drifted color palettes, and broken link cases (`INV-CDO-11`, `INV-CDO-12`, `INV-CDO-13`).
-- **Automated Screen Export** ([`scripts/penpot-screens.mjs`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/scripts/penpot-screens.mjs)): Extracts SVG assets and screen thumbnails directly from the `.penpot` zip archive.
+- **Automated Screen Export** ([`scripts/penpot-screens.mjs`](../../scripts/penpot-screens.mjs)): Extracts SVG assets and screen thumbnails directly from the `.penpot` zip archive.
 
 ---
 
 ## 5. Design Tokens & Accessibility Audits
 
 - **Token Cascade**:
-  - [`public/css/tokens.css`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/css/tokens.css): Defines foundational scales (spacing, typography, border-radii, motion durations, z-indexes).
-  - [`public/css/semantic-tokens.css`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/css/semantic-tokens.css): Maps primitives to contextual roles (`--bg-primary`, `--text-muted`, `--accent-focus`).
+  - [`public/css/tokens.css`](../../public/css/tokens.css): Defines foundational scales (spacing, typography, border-radii, motion durations, z-indexes).
+  - [`public/css/semantic-tokens.css`](../../public/css/semantic-tokens.css): Maps primitives to contextual roles (`--bg-primary`, `--text-muted`, `--accent-focus`).
 - **Theme Modes**: Supports `dark`, `light`, and `high-contrast` themes via `data-theme` DOM attributes.
-- **Style Audits** ([`style-audit/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/style-audit/)): Machine-generated audits validating color contrast ratios against WCAG 2.1 AA standards across all views.
+- **Style Audits** ([`style-audit/`](../../style-audit)): Machine-generated audits validating color contrast ratios against WCAG 2.1 AA standards across all views.
+
+- **PenPot Scope Boundary**: `design/landing-navigation.penpot` compiles LandingPage's own navigation bar into `js/nav.js`. External PenPot MPA target assessment inside Responsive UI Lab remains **Optional / Deferred** pending explicit Product Manager approval and live Playwright verification.

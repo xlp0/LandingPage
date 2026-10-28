@@ -1,8 +1,15 @@
-# Active sprint index
+# Active Sprint Index
+
+| Field | Value |
+| --- | --- |
+| Audience | Scrum masters, BMAD role owners, developers, and operators reviewing Program GQC |
+| BMAD Owner | Scrum Master |
+| Source of Truth | [`./DECISIONS.tsv`](./DECISIONS.tsv), [`./gqc-plan.md`](./gqc-plan.md), and [`./evidence/GQC-07-docs-and-graduation.md`](./evidence/GQC-07-docs-and-graduation.md) |
+| Drift Gate | `npm run docs:check` |
 
 ## Active program GQC
 
-**Status: ACTIVE.** Operator approved sequential execution of Program GQC (`GQC-00` through `GQC-07`) after the BMAD advisory review recorded in `DECISIONS.tsv`.
+**Program status is `COMPLETED` in `_active/` (awaiting operator graduation).** All ten execution units (`GQC-00` through `GQC-07`) have completed sequential execution with committed evidence under `./evidence/`, awaiting operator graduation approval.
 
 Program GQC makes the Responsive UI Lab a guided, SPA-first test workbench. Its P0 journey is to select and load a single-page application, choose a device and viewport, test functional links, record or replay a journey, and inspect the MCard result. Playwright trust, target policy, module ownership, measured performance, and documentation checks support that journey.
 
@@ -47,7 +54,7 @@ The Responsive UI Lab is the workbench. The selected application inside its ifra
 | Net trace | The ordered Transition IDs that a Playwright run fires, derived from navigation, request, and response events. Replayed through `ColoredPetriVM`; stored as `FiringRecord` content in GQC-05. |
 | Net parity | A build check that every Astro route maps to one `page` Place and every internal link in built HTML maps to one declared Transition. |
 
-LandingPage pins `clm-kernel@0.0.12`; the sibling CLM workspace source is 0.0.13. The installed 0.0.12 package exports `Layer4TrellisNavigationNet`, but current LandingPage source does not import it. Its `registerViewPlace(placeId, routeUri)` implementation stores `routeUri` as `PlaceMCard.typeExpr`. A read-only probe moved a session from one Place to another and routed an invalid action to `p_error_modal` with a CLM view type URI. A route handle such as `mcard:route:/index.html` is not itself a CLM type URI. GQC uses the installed package artifact as its runtime contract and verifies the mapping and persistence path before adoption.
+LandingPage pins `clm-kernel@0.0.12` (while the sibling CLM workspace source is 0.0.13). At planning time LandingPage source did not yet import `Layer4TrellisNavigationNet`; `SPRINT-GQC-04` and `SPRINT-GQC-05` subsequently wired `Layer4TrellisNavigationNet` into `server/test-run-api.mjs` and `scripts/net-to-netmcard.mjs`. Its `registerViewPlace(placeId, routeUri)` implementation stores `routeUri` as `PlaceMCard.typeExpr`. A read-only probe moved a session from one Place to another and routed an invalid action to `p_error_modal` with a CLM view type URI. A route handle such as `mcard:route:/index.html` is not itself a CLM type URI. GQC uses the installed package artifact as its runtime contract and verifies the mapping and persistence path before adoption.
 
 The current `design/landing-navigation.penpot` and generated `js/nav.js` describe LandingPage's own navigation. They do not describe an arbitrary target SPA or MPA. A separate target PenPot file needs explicit Product Manager approval before the optional MPA adapter can use it. The browser compatibility layer, the server Triad hash, and the PenPot graph hash are separate contracts. Documentation must not imply that all three use one hash implementation.
 
@@ -116,7 +123,7 @@ These are planning-time observations from the local system date 2026-10-27. `DEC
 | Tech Writer | Current setup, architecture, testing, and performance documentation. |
 | Scrum Master | Dependency order, evidence-based status, append-only decision log, and active-index status. |
 
-Poteto principles used by the plan include subtracting before adding, sequencing verifiable units, explaining each performance number, and encoding repeated rules as checks. Do not claim that the program has started.
+Poteto principles used by the plan include subtracting before adding, sequencing verifiable units, explaining each performance number, and encoding repeated rules as checks. All ten sprints (`GQC-00` through `GQC-07`) have completed execution and await operator graduation in [GQC-07-docs-and-graduation.md](./evidence/GQC-07-docs-and-graduation.md).
 
 ## Graduated programs
 
@@ -131,6 +138,6 @@ Poteto principles used by the plan include subtracting before adding, sequencing
 
 ## Related project pointers
 
-- **Parent workspace:** [MCard_TDD active index](../../../../docs/sprints/_active/README.md) and its [graduated program catalog](../../../../docs/sprints/programs/).
-- **MCard Studio:** [active index](../../../../mcard-studio/docs/sprints/_active/README.md) and its [storage sprint plans](../../../../mcard-studio/docs/sprints/02-Storage-VFS/README.md). GQC adopts its separated test commands and executable architecture checks. As of 2026-10-27, GQC also adopts Astro, with Preact islands and a Node middleware host. It does not adopt Vitest.
-- **CLM kernel:** [active index](../../../../clm/docs/sprints/_active/README.md) and [test infrastructure program](../../../../clm/docs/sprints/07_test-infrastructure/README.md). LandingPage tests the published dependency contract rather than duplicating kernel implementation.
+- **Parent workspace** paths `MCard_TDD/docs/sprints/_active/README.md` and `MCard_TDD/docs/sprints/programs/` live in the parent monorepo checkout outside standalone `LandingPage/`.
+- **MCard Studio** sibling paths `mcard-studio/docs/sprints/_active/README.md` and `mcard-studio/docs/sprints/02-Storage-VFS/README.md` informed GQC test separation and executable architecture checks. GQC adopts Astro (`astro@7.4.2`) with Preact (`preact@11.1.0`) islands and `@astrojs/node` middleware inside `ws-server.js`, and does not adopt Vitest (`node:test` and Playwright are canonical).
+- **CLM kernel** sibling paths `clm/docs/sprints/_active/README.md` and `clm/docs/sprints/07_test-infrastructure/README.md` govern the upstream kernel; `LandingPage` consumes published `clm-kernel@0.0.12` rather than duplicating kernel implementation.

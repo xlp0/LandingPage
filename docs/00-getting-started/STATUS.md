@@ -1,63 +1,44 @@
-# Project Status — Responsive Test Workbench & LandingPage
+# Project Status
 
-**Current Status**: 🟢 **Operational & 100% Certified**  
-**Graduation Milestone**: **Program ERB Graduated** (2026-10-21)  
-**Certification Record**: `urn:mcard:certification:responsive:v1`  
-**Monorepo Position**: Submodule 3 of `MCard_TDD` (Estate 4 in ULR-01 Four-Estate Architecture)
+| Field | Value |
+| --- | --- |
+| Audience | Product managers, Scrum masters, developers, and operators |
+| BMAD Owner | Scrum Master and Product Manager (`bmad-agent-pm`) |
+| Source of Truth | [`docs/sprints/INDEX.md`](../sprints/INDEX.md), [`docs/sprints/_active/INDEX.md`](../sprints/_active/INDEX.md), and [`package.json`](../../package.json) |
+| Consensus Kernel | `clm-kernel@0.0.13` |
 
----
+## Program Summary
 
-## 🎯 Architectural Role
+| Program | Scope | Status | Location |
+| --- | --- | --- | --- |
+| **Program SMO (`SMO-00..05`)** | Submodule modularity, 3-table SQLite Triad, Universal 4-Modality MCard Browser (historical `0.0.10` pin upgraded to `0.0.13`) | Graduated (2026-10-21) | [`docs/sprints/01-architecture/`](../sprints/01-architecture/INDEX.md) |
+| **Program ERB (`ERB-00..06`)** | Viewport stage, bounded ring buffer, membrane normalization, Triad test-run persistence, Playwright replay, 15-check conformance | Graduated (2026-10-21) | [`docs/sprints/08-testing/`](../sprints/08-testing/INDEX.md) |
+| **Program GQC (`SPRINT-GQC-00..07`)** | Petri net topology (`31` Places, `65` Transitions), Astro `7.4.2` + `7` Preact islands, SPA workbench workflow, Layer 1/Layer 4 `NetMCard` + `FiringReceiptMCard` Triad persistence, performance baselines, and CI documentation gates | Completed in `_active/` awaiting operator graduation | [`docs/sprints/_active/`](../sprints/_active/INDEX.md) |
 
-Within the `MCard_TDD` framework, `LandingPage` serves three defined responsibilities:
-1. **Responsive Test Workbench (`responsive-lab.html`)**: Systematic testing, telemetry capture, and deterministic replay for the device-sensitive behavior of a chosen target URL (e.g., `http://localhost:4321/`, `app.html`, or staging URLs).
-2. **Single-Page MCard Distillation Supplier (`SMR-09`)**: Distills the landing page into a content-addressed MCard (`urn:mcard:content:landing_page`) and provides the 6-sample portal corpus (`data/samples/portal_samples.mcard.db`) on the canonical Triad SQLite schema.
-3. **SSRF-Guarded External Portal Membrane**: Enforces connection-level DNS, private IP, and redirect validation on external URL probes (`external-portal-membrane.js`, `server/mcard-api.mjs`).
+## Certified Device-Sensitive and Petri Net Capabilities
 
----
+| Capability | Invariant or Contract | Primary Implementation | Automated Verification |
+| :--- | :--- | :--- | :--- |
+| **Geometry and Orientation Swap** | `INV-RVP-01`, `INV-RVP-02` | `js/harness/viewport-stage.js` | `tests/features/responsive-rotation-and-devices.spec.js` |
+| **Declared Fidelity Tiers** | `INV-DSF-01`, `INV-DSF-02` | `js/device-registry.js`, `js/harness/fidelity.js` | `tests/unit/fidelity.test.mjs`, `tests/unit/device-registry-v2.test.mjs` |
+| **Bleed, Tap Targets, and Frame Budget** | `INV-DEV-01`, `INV-DEV-02`, `INV-DEV-04` | `js/harness/telemetry-collector.js`, `js/harness/membrane-interceptor.js` | `tests/features/device-conformance.spec.js` |
+| **Normalized Capture and Privacy** | `INV-ERB-01..04`, `INV-PRV-01` | `js/harness/recorder.js` (`clmKernel: '0.0.13'`), `js/harness/test-run-schema.js` | `tests/unit/test-run-schema.test.mjs`, `tests/features/responsive-capture.spec.js` |
+| **Workbench and Target Petri Nets** | `urn:gqc:net-envelope:v1` | `src/net/workbench-net.yaml`, `scripts/check-net.mjs`, `server/test-run-api.mjs` | `npm run check:net`, `tests/features/spa-workbench-journey.spec.js`, `tests/features/spa-failure-recovery.spec.js` |
+| **Astro Host and 7 Preact Islands** | `astro@7.4.2`, `preact@11.1.0` | `ws-server.js`, `src/pages/*.astro`, `src/islands/*.jsx` | `tests/features/astro-host-parity.spec.js`, `tests/features/responsive-lab-islands.spec.js`, `tests/features/performance-baselines.spec.js` |
+| **Living Docs and Parity Gates** | `GQC-05`, `GQC-07` | `scripts/check-package-source-parity.mjs`, `scripts/check-docs.mjs` | `npm run docs:check`, `tests/unit/check-docs-net-ids.test.mjs` |
 
-## 🔬 Device-Sensitive Dimensions (100% Certified)
-
-All 7 core device dimensions are operational and verified:
-
-| Dimension | Invariant | Implementation | Test Suite | Status |
-| :--- | :--- | :--- | :--- | :---: |
-| **Geometry & Orientation Reflow** | `INV-RVP-01` | Dynamic 2D orientation swapping, aspect-ratio preservation | `responsive-rotation-and-devices.spec.js` (17/17) | ✅ Pass |
-| **Declared Fidelity Tiers** | `INV-DSF-01`, `INV-DSF-02` | Schema v2 capability profiles, T0–T3 emulation declarations | `fidelity.test.mjs`, `device-registry-v2.test.mjs` | ✅ Pass |
-| **Horizontal Viewport Bleed** | `INV-DEV-01` | `document.documentElement.scrollWidth <= window.innerWidth` | `telemetry-collector.test.mjs`, `device-conformance.spec.js` | ✅ Pass |
-| **Touch Target Ergonomics** | `INV-DEV-02` | Live $\ge 44\text{px} \times 44\text{px}$ tap audit on coarse pointers | `membrane-normalization.test.mjs`, conformance check | ✅ Pass |
-| **Event Capture Ring Buffer** | `INV-ERB-01..05`, `INV-PRV-01` | Bounded $N \le 2048$ FIFO buffer, scale-free coords $[0.0, 1.0]$, privacy redaction | `event-ring-buffer.test.mjs`, `responsive-capture.spec.js` (8/8) | ✅ Pass |
-| **Frame Timing & CLS** | `INV-DEV-04` | 60 fps / 16.6ms frame budget observation, Cumulative Layout Shift | `telemetry-collector.test.mjs` | ✅ Pass |
-| **MCard Triad Persistence** | `INV-ERB-04` | SQLite Triad storage (`/api/test-runs`) with canonical Blake3 hashing via `clm-kernel` | `test-run-api.test.mjs`, `test-run-schema.test.mjs` | ✅ Pass |
-
----
-
-## 🧪 Verification Battery Summary
+## Standard Verification Battery
 
 ```bash
-# Unit test battery (73/73 passing)
+npm run check:net
+node scripts/check-package-source-parity.mjs
+npm run docs:check
+npm run build
 npm run test:unit
-
-# Rotation & device containment integration (17/17 passing)
-npx playwright test tests/features/responsive-rotation-and-devices.spec.js --project=features
-
-# Interaction capture & telemetry (8/8 passing)
-npx playwright test tests/features/responsive-capture.spec.js --project=features
-
-# Deterministic Playwright replay at 1×, 2×, 5× (4/4 passing)
-npm run test:replay
-
-# Multi-device systematic sweep (16/16 combinations passing)
+npm run check:playwright-discovery
+npm run test:smoke
+npm run test:components
 npm run test:responsive
-
-# 15-check device conformance catalog & certification (16/16 passing)
+npm run test:replay
 npm run test:conformance
 ```
-
----
-
-## 📦 Dependency Consensus & Kernel Purity
-
-- **Kernel Pin**: Consumes published `clm-kernel@0.0.9`, aligned with `mcard-studio` and verified by root CI `check_landingpage_retirement.py`.
-- **Zero Local Hash Duplication**: Relies exclusively on `clm-kernel` Blake3 hashing; no local duplicate hash implementations.
-- **Retired Legacy Surfaces**: Legacy multi-card workbench islands are decommissioned and cataloged in `retired-islands.yaml`.

@@ -1,180 +1,72 @@
-# 📚 Documentation Structure Guide
+# Documentation Structure Guide
 
-> **Last Updated:** October 2026  
-> **Status:** Organized & Verified (`Program SMO` Complete)
+| Field | Value |
+| --- | --- |
+| Audience | All contributors, architects, QA engineers, and operators navigating `docs/` |
+| BMAD Owner | Tech Writer (`bmad-agent-tech-writer`) and Architect (`bmad-agent-architect`) |
+| Source of Truth | [`docs/INDEX.md`](./INDEX.md), [`package.json`](../package.json), and [`src/net/workbench-net.yaml`](../src/net/workbench-net.yaml) |
+| Drift Gate | `npm run docs:check` |
 
-## 🌟 Authoritative Functional Specifications
+## Documentation Taxonomy and Ownership
 
-> For the comprehensive functional documentation library covering all systems of the platform, see:  
-> 📖 [**Functional Specifications Library (`docs/functionalities/`)**](functionalities/README.md)
->
-> - [00. Master Overview & Architecture Map](functionalities/00-OVERVIEW-AND-FUNCTIONALITY-MAP.md)
-> - [01. Mission Control & MCard Management](functionalities/01-MISSION-CONTROL-AND-MCARD-MANAGEMENT.md)
-> - [02. Polymorphic Content Rendering Pipeline](functionalities/02-POLYMORPHIC-CONTENT-RENDERING-PIPELINE.md)
-> - [03. Cubical Logic Model (CLM) & Fiber Correctness](functionalities/03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md)
-> - [04. WebRTC P2P Mesh & Real-Time Collaboration](functionalities/04-WEBRTC-P2P-MESH-AND-REALTIME-COLLABORATION.md)
-> - [05. Real-Time Multiplayer Board Games](functionalities/05-REALTIME-MULTIPLAYER-BOARD-GAMES.md)
-> - [06. Authentication & Identity System (Zitadel OIDC)](functionalities/06-AUTHENTICATION-AND-IDENTITY-SYSTEM.md)
-> - [07. In-Browser AI & WebLLM Runtime](functionalities/07-IN-BROWSER-AI-AND-WEB-LLM-RUNTIME.md)
-> - [08. Observability, Lagrangian Mechanics & Telemetry](functionalities/08-OBSERVABILITY-LAGRANGIAN-AND-TELEMETRY.md)
-> - [09. Responsive UI Lab, Penpot & Design System](functionalities/09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md)
-> - [10. DevOps, ArgoCD GitOps & Cloud Infrastructure](functionalities/10-DEV-OPS-ARGO-CD-AND-INFRASTRUCTURE.md)
+`docs/` separates operational how-to guides, architectural contracts, capability references, and sprint records so each set has one clear owner and role.
 
----
-
-## 🏗️ Documentation Architecture
-
-This directory contains all technical documentation for the **PKC Landing Page, Universal 4-Modality MCard Content Browser, and Responsive Test Workbench** (Submodule 3 of `MCard_TDD`). Only `INDEX.md` and `README.md` reside at the `docs/` root; all domain documents live inside numbered tiers (`00-getting-started/` through `11-standards/`), `functionalities/`, `sprints/`, `project/`, `rules/`, or `archive/`.
+| Documentation Set | Path | Classification | Primary BMAD Owner |
+| --- | --- | --- | --- |
+| **Onboarding and Operations** | [`00-getting-started/`](00-getting-started/README.md) | Maintained operational guides | Developer and Tech Writer |
+| **Architecture and Petri Net** | [`01-architecture/`](01-architecture/README.md) | Maintained architectural contracts and generated net reference (`workbench-net.md`) | Architect |
+| **Domain Engineering Tiers** | [`02-authentication/`](02-authentication/README.md) through [`11-standards/`](11-standards/README.md) | Maintained domain guides and performance baselines | Domain Lead per tier `README.md` |
+| **Capability Reference Library** | [`functionalities/`](functionalities/README.md) | Maintained capability reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts | Tech Writer and Architect |
+| **Graduated Sprint Archives** | [`sprints/01-architecture/`](sprints/01-architecture/INDEX.md), [`sprints/08-testing/`](sprints/08-testing/INDEX.md) | Immutable historical sprint records (`SMO-00..05`, `ERB-00..06`) | Scrum Master |
+| **Active Sprint Workspace** | [`sprints/_active/`](sprints/_active/INDEX.md) | Program GQC (`SPRINT-GQC-00..07`) specs, `DECISIONS.tsv`, and evidence reports awaiting operator graduation | Scrum Master |
+| **Legacy Archive** | [`archive/`](archive/REORGANIZATION_PROPOSAL.md) | Historical pre-reorganization snapshots | Tech Writer |
 
 ---
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```text
 docs/
-├── functionalities/                  # Comprehensive Functional Specifications Library
-├── README.md                         # This file - Documentation guide
+├── README.md                         # Documentation taxonomy and structure guide
 ├── INDEX.md                          # Master navigation index
-│
-├── 00-getting-started/               # Entry point for new developers
-│   ├── README.md
-│   ├── START_HERE.md
-│   ├── QUICKSTART.md
-│   ├── STATUS.md
-│   └── OPEN_AND_USE.md
-│
-├── 01-architecture/                  # System architecture & Universal MCard Browser
-│   ├── README.md
-│   ├── UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md
-│   ├── landing-page-architecture.md
-│   ├── webrtc-communication-design.md
-│   ├── webrtc-connection-handshake-flow.md
-│   ├── CUBIC-LOGIC-MODEL.md
-│   ├── MODULAR_ARCHITECTURE.md
-│   ├── MCARD_MODULAR_ARCHITECTURE.md
-│   └── architecture-serverless-p2p.md
-│
-├── 02-authentication/                # Auth & security (Zitadel OIDC, OAuth, PKCE)
-│   ├── README.md
-│   ├── ZITADEL_SETUP.md
-│   ├── ZITADEL_INTEGRATION_GUIDE.md
-│   ├── ZITADEL_SETUP_INSTRUCTIONS.md
-│   ├── GOOGLE_OAUTH_SETUP_GUIDE.md
-│   └── PKC_ZITADEL_Game_Board_Planning.md
-│
-├── 03-data-management/               # MCard CAS, Canonical Triad SQLite & clm-kernel@0.0.10
-│   ├── README.md
-│   ├── MCARD-JS-SETUP.md
-│   ├── MCARD_LIBRARY_STRATEGY.md
-│   ├── MCARD_LIBRARY_USAGE.md
-│   ├── MCARD_LIBRARY_ISSUE.md
-│   ├── CONTENT_RENDERING_SYSTEM.md
-│   └── mcard/
-│
-├── 04-networking/                    # WebRTC & P2P mesh
-│   ├── README.md
-│   └── webrtc-*.md
-│
-├── 05-state-management/              # Redux Toolkit store & slices
-│   ├── README.md
-│   └── redux/
-│
-├── 06-components/                    # UI components, 3D Theater & Multiplayer Games
-│   ├── README.md
-│   ├── components/
-│   └── games/
-│       ├── CHESS_GAME_DOCUMENTATION.md
-│       ├── DND_BALI_GAME_DOCUMENTATION.md
-│       ├── GO_GAME_DOCUMENTATION.md
-│       ├── MONOPOLY_GAME_DOCUMENTATION.md
-│       └── dungeons-and-dragons/
-│
-├── 07-deployment/                    # CI/CD, ArgoCD & R2 CDN
-│   ├── README.md
-│   ├── ARGOCD_DEPLOYMENT.md
-│   ├── ARGOCD_QUICK_GUIDE.md
-│   ├── R2_SETUP.md
-│   ├── SELF-HOSTED-CDN.md
-│   └── BACKEND_IMPLEMENTATION.md
-│
-├── 08-testing/                       # Device-Sensitive Testing Infrastructure
-│   ├── README.md
-│   ├── DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md
-│   └── VERIFICATION_CHECKLIST.md
-│
-├── 09-performance/                   # Performance & observability
-│   ├── README.md
-│   ├── optimization/
-│   └── observability/
-│
-├── 10-project-management/            # Epics, stories & BMAD workflow state
-│   ├── README.md
-│   ├── IMPLEMENTATION_GUIDE.md
-│   ├── bmm-workflow-status.yaml
-│   ├── epics/
-│   └── stories/
-│
-├── 11-standards/                     # Coding standards & CSS contracts
-│   ├── README.md
-│   ├── rules/
-│   └── features/
-│
-├── sprints/                          # Graduated sprint programs & active pointer
-│   ├── _active/                      # Active sprints pointer (currently idle)
-│   ├── 01-architecture/              # Program SMO: Submodule Modularity (SMO-00..05)
-│   └── 08-testing/                   # Program ERB: Device-Sensitive Testing (ERB-00..06)
-│
-└── archive/                          # Historical & superseded documentation
-    ├── PHASE1_COMPLETE.md
-    ├── REORGANIZATION_PROPOSAL.md
-    └── STATUS_ROOT_LEGACY.md
+├── functionalities/                  # Maintained capability reference library (00..10)
+├── 00-getting-started/               # Onboarding, quickstart, port map, status, lab usage
+├── 01-architecture/                  # System architecture, Astro islands, generated workbench-net.md
+├── 02-authentication/                # Zitadel OIDC, Google OAuth, PKCE, privacy redaction
+├── 03-data-management/               # SQLite Triad, clm-kernel@0.0.13, MCard rendering
+├── 04-networking/                    # WebRTC P2P mesh, WebSocket /ws/ on port 3000, SSRF guards
+├── 05-state-management/              # lab-runtime.js coordinator, isolated Redux stores, FSM
+├── 06-components/                    # Preact islands, CLM components, 3D Theater, games
+├── 07-deployment/                    # Docker (EXPOSE 3000 / 8765:3000), ArgoCD, R2 CDN
+├── 08-testing/                       # node:test, Playwright projects, replay, conformance
+├── 09-performance/                   # GQC-06 island/place baselines, Grafana Faro/Loki
+├── 10-project-management/            # BMAD workflow state, epics, stories
+├── 11-standards/                     # CSS token contracts and coding standards
+├── project/                          # Supplementary implementation notes and diagrams
+├── rules/                            # Focused styling rules
+├── sprints/                          # Graduated archives (01-architecture, 08-testing) and _active/
+└── archive/                          # Historical reorganization records
 ```
 
 ---
 
-## 🎯 Quick Navigation by Task
+## Quick Navigation by Task
 
-### 🚀 Get Started
-- New to project -> [00-getting-started/START_HERE.md](00-getting-started/START_HERE.md)
-- Quick setup -> [00-getting-started/QUICKSTART.md](00-getting-started/QUICKSTART.md)
-- Check status -> [00-getting-started/STATUS.md](00-getting-started/STATUS.md)
+### Get Started
+- Developer onboarding in [00-getting-started/START_HERE.md](00-getting-started/START_HERE.md)
+- Five-minute local run in [00-getting-started/QUICKSTART.md](00-getting-started/QUICKSTART.md)
+- Interactive workbench walkthrough in [00-getting-started/OPEN_AND_USE.md](00-getting-started/OPEN_AND_USE.md)
+- Current program and gate status in [00-getting-started/STATUS.md](00-getting-started/STATUS.md)
 
-### 🏗️ Understand the Architecture
-- Universal 4-Modality MCard Browser -> [01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md](01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md)
-- LandingPage Architecture -> [01-architecture/landing-page-architecture.md](01-architecture/landing-page-architecture.md)
-- Cubical Logic Model -> [01-architecture/CUBIC-LOGIC-MODEL.md](01-architecture/CUBIC-LOGIC-MODEL.md)
-- Modular Architecture -> [01-architecture/MODULAR_ARCHITECTURE.md](01-architecture/MODULAR_ARCHITECTURE.md)
+### Understand the Architecture
+- Workbench vs target boundaries, three hash domains, and CLM Page-as-Place contracts in [01-architecture/landing-page-architecture.md](01-architecture/landing-page-architecture.md)
+- Astro 7 middleware, 7 Preact islands, and server-call policy in [01-architecture/astro-host-and-islands.md](01-architecture/astro-host-and-islands.md)
+- Generated `31`-Place / `65`-Transition Petri net reference in [01-architecture/workbench-net.md](01-architecture/workbench-net.md)
+- Universal 4-Modality MCard Browser in [01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md](01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md)
+- Package and kernel boundaries in [01-architecture/MCARD_MODULAR_ARCHITECTURE.md](01-architecture/MCARD_MODULAR_ARCHITECTURE.md)
 
-### 🔐 Set Up Authentication
-- Zitadel OAuth -> [02-authentication/ZITADEL_SETUP.md](02-authentication/ZITADEL_SETUP.md)
-- Zitadel Integration Guide -> [02-authentication/ZITADEL_INTEGRATION_GUIDE.md](02-authentication/ZITADEL_INTEGRATION_GUIDE.md)
-- Google OAuth Setup -> [02-authentication/GOOGLE_OAUTH_SETUP_GUIDE.md](02-authentication/GOOGLE_OAUTH_SETUP_GUIDE.md)
-- Client secrets -> [02-authentication/GENERATE_CLIENT_SECRET.md](02-authentication/GENERATE_CLIENT_SECRET.md)
-- Backend integration -> [02-authentication/OAUTH_BACKEND_INTEGRATION.md](02-authentication/OAUTH_BACKEND_INTEGRATION.md)
-
-### 💾 Work with MCard & Storage
-- MCard Setup -> [03-data-management/MCARD-JS-SETUP.md](03-data-management/MCARD-JS-SETUP.md)
-- Usage Tutorial -> [03-data-management/mcard/how_to_use_mcard_js.md](03-data-management/mcard/how_to_use_mcard_js.md)
-- Library Strategy -> [03-data-management/MCARD_LIBRARY_STRATEGY.md](03-data-management/MCARD_LIBRARY_STRATEGY.md)
-- Content Rendering System -> [03-data-management/CONTENT_RENDERING_SYSTEM.md](03-data-management/CONTENT_RENDERING_SYSTEM.md)
-
-### 🌐 Implement WebRTC
-- Communication Design -> [01-architecture/webrtc-communication-design.md](01-architecture/webrtc-communication-design.md)
-- Connection Handshake Flow -> [01-architecture/webrtc-connection-handshake-flow.md](01-architecture/webrtc-connection-handshake-flow.md)
-- P2P Serverless -> [04-networking/p2p-serverless-implementation.md](04-networking/p2p-serverless-implementation.md)
-
-### 🎨 Build Components & Games
-- Component Overview -> [06-components/README.md](06-components/README.md)
-- CLM Registry Alignment -> [06-components/CLM_REGISTRY_ALIGNMENT.md](06-components/CLM_REGISTRY_ALIGNMENT.md)
-- CLM Dynamic Loading -> [06-components/CLM-DYNAMIC-LOADING.md](06-components/CLM-DYNAMIC-LOADING.md)
-- Chess Game Docs -> [06-components/games/CHESS_GAME_DOCUMENTATION.md](06-components/games/CHESS_GAME_DOCUMENTATION.md)
-- Go Game Docs -> [06-components/games/GO_GAME_DOCUMENTATION.md](06-components/games/GO_GAME_DOCUMENTATION.md)
-- Monopoly Game Docs -> [06-components/games/MONOPOLY_GAME_DOCUMENTATION.md](06-components/games/MONOPOLY_GAME_DOCUMENTATION.md)
-- D&D Bali Game Docs -> [06-components/games/DND_BALI_GAME_DOCUMENTATION.md](06-components/games/DND_BALI_GAME_DOCUMENTATION.md)
-
-### 🚢 Deploy & Debug
-- ArgoCD Deployment -> [07-deployment/ARGOCD_DEPLOYMENT.md](07-deployment/ARGOCD_DEPLOYMENT.md)
-- ArgoCD Quick Guide -> [07-deployment/ARGOCD_QUICK_GUIDE.md](07-deployment/ARGOCD_QUICK_GUIDE.md)
-- R2 Storage -> [07-deployment/R2_SETUP.md](07-deployment/R2_SETUP.md)
-- Troubleshooting -> [09-performance/observability/TROUBLESHOOTING.md](09-performance/observability/TROUBLESHOOTING.md)
-- WebRTC Connectivity -> [04-networking/webrtc-connectivity-issues.md](04-networking/webrtc-connectivity-issues.md)
+### Verify, Measure, and Deploy
+- Device-sensitive testing and Playwright replay in [08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md](08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md)
+- Island byte budgets and navigation latency baselines in [09-performance/gqc-06-spa-and-island-baselines.md](09-performance/gqc-06-spa-and-island-baselines.md)
+- Container and ArgoCD deployment in [07-deployment/README.md](07-deployment/README.md)
+- Capability Reference Library in [functionalities/README.md](functionalities/README.md)

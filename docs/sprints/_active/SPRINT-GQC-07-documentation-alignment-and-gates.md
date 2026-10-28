@@ -4,7 +4,7 @@
 
 - Sprint ID: `SPRINT-GQC-07`
 - Handle: `urn:pcard:sprint:SPRINT-GQC-07`
-- Status: `ACTIVE`
+- Status: `COMPLETED`
 - Depends on: `SPRINT-GQC-06`
 - Unblocks: Program GQC graduation
 - Execution unit: `PR-GQC-07`
@@ -139,30 +139,30 @@ This sprint does not rewrite every old guide. It chooses an owner for overlappin
 
 ## Acceptance criteria
 
-- [ ] Every maintained documentation set names an audience, owner, and source of current facts.
-- [ ] The README and getting-started guide state the verified server and test ports.
-- [ ] Current kernel provenance agrees with the selected runtime source.
-- [ ] New test-run records use the selected provenance source. Existing records keep their recorded version.
-- [ ] Maintained docs name the Responsive UI Lab as the workbench and distinguish it from target SPAs, MPA candidates, MCard `webapp` targets, and portal samples.
-- [ ] Maintained architecture docs use Page-as-Place and Functional-Link-as-Transition terms consistently and link each claim to the approved CLM and MCard source.
-- [ ] The current PenPot graph is described as LandingPage navigation only. Any MPA assessment is marked optional and requires approved target bindings.
-- [ ] Docs describe `responsive_test_run:v1` as closed and do not claim that it contains a navigation graph unless GQC-05 adds an approved versioned relationship.
-- [ ] Docs distinguish Triad, browser compatibility, and PenPot graph hash contracts.
-- [ ] Test docs list only commands and projects that exist and pass discovery.
-- [ ] Internal Markdown links resolve from a clean checkout.
-- [ ] Maintained docs contain no workstation-specific `file:///Users/` links.
-- [ ] Historical sprint claims remain unchanged and are labeled as historical where readers could mistake them for current behavior.
-- [ ] `npm run docs:check` fails on a broken internal link or a documented package script that does not exist.
-- [ ] Every historical-link exception names one exact path, owner, reason, and expiry or review date.
-- [ ] The checker rejects directory-wide exclusions and unlisted historical exceptions.
-- [ ] CI runs `npm run docs:check`.
-- [ ] Every architecture claim changed in this program links to a test or source owner.
-- [ ] Setup docs name the Astro dev pair, the build command, `start`, and both dev ports. Each documented command runs from a clean checkout.
-- [ ] `docs/01-architecture/workbench-net.md` is generated from `workbench-net.yaml`, and CI fails when it is stale.
-- [ ] `docs:check` fails when a maintained doc names a Place or Transition ID that no declared net contains.
-- [ ] The island map in docs matches the committed island map and the GQC-04 ownership map.
-- [ ] CI runs `check:net`, the net-parity build check, and `docs:check`.
-- [ ] Maintained docs state that Astro is adopted and Vitest is not. Graduated records keep their original wording.
+- [x] Every maintained documentation set names an audience, owner, and source of current facts.
+- [x] The README and getting-started guide state the verified server and test ports.
+- [x] Current kernel provenance agrees with the selected runtime source.
+- [x] New test-run records use the selected provenance source. Existing records keep their recorded version.
+- [x] Maintained docs name the Responsive UI Lab as the workbench and distinguish it from target SPAs, MPA candidates, MCard `webapp` targets, and portal samples.
+- [x] Maintained architecture docs use Page-as-Place and Functional-Link-as-Transition terms consistently and link each claim to the approved CLM and MCard source.
+- [x] The current PenPot graph is described as LandingPage navigation only. Any MPA assessment is marked optional and requires approved target bindings.
+- [x] Docs describe `responsive_test_run:v1` as closed and do not claim that it contains a navigation graph unless GQC-05 adds an approved versioned relationship.
+- [x] Docs distinguish Triad, browser compatibility, and PenPot graph hash contracts.
+- [x] Test docs list only commands and projects that exist and pass discovery.
+- [x] Internal Markdown links resolve from a clean checkout.
+- [x] Maintained docs contain no workstation-specific `file:///Users/` links.
+- [x] Historical sprint claims remain unchanged and are labeled as historical where readers could mistake them for current behavior.
+- [x] `npm run docs:check` fails on a broken internal link or a documented package script that does not exist.
+- [x] Every historical-link exception names one exact path, owner, reason, and expiry or review date.
+- [x] The checker rejects directory-wide exclusions and unlisted historical exceptions.
+- [x] CI runs `npm run docs:check`.
+- [x] Every architecture claim changed in this program links to a test or source owner.
+- [x] Setup docs name the Astro dev pair, the build command, `start`, and both dev ports. Each documented command runs from a clean checkout.
+- [x] `docs/01-architecture/workbench-net.md` is generated from `workbench-net.yaml`, and CI fails when it is stale.
+- [x] `docs:check` fails when a maintained doc names a Place or Transition ID that no declared net contains.
+- [x] The island map in docs matches the committed island map and the GQC-04 ownership map.
+- [x] CI runs `check:net`, the net-parity build check, and `docs:check`.
+- [x] Maintained docs state that Astro is adopted and Vitest is not. Graduated records keep their original wording.
 
 ## Test design
 
@@ -187,14 +187,14 @@ This sprint does not rewrite every old guide. It chooses an owner for overlappin
 
 ## Definition of done
 
-- [ ] Every maintained guide has a named owner and no duplicate authority claim.
-- [ ] Current docs match the approved route, module, server, package, and test contracts.
-- [ ] Current docs describe the SPA-first guide, CLM Page-as-Place and Functional-Link-as-Transition mapping, MCard receipt path, and optional MPA scope without claiming unverified runtime behavior.
-- [ ] Current docs describe the Astro host, island map, workbench net, and server-call policy, and the generated net docs are fresh.
-- [ ] `npm run docs:check` passes on a clean checkout.
-- [ ] The complete unit, smoke, component, feature, conformance, and approved browser matrix passes.
-- [ ] Performance results include raw samples, spread, environment, and exact SHAs.
-- [ ] The Analyst, Architect, TEA, and Tech Writer approve the final documentation map.
-- [ ] The Product Manager approves the P0 SPA journey and the status of the optional PenPot MPA extension.
-- [ ] The Scrum Master records the graduation review and updates the active sprint index.
+- [x] Every maintained guide has a named owner and no duplicate authority claim.
+- [x] Current docs match the approved route, module, server, package, and test contracts.
+- [x] Current docs describe the SPA-first guide, CLM Page-as-Place and Functional-Link-as-Transition mapping, MCard receipt path, and optional MPA scope without claiming unverified runtime behavior.
+- [x] Current docs describe the Astro host, island map, workbench net, and server-call policy, and the generated net docs are fresh.
+- [x] `npm run docs:check` passes on a clean checkout.
+- [x] The complete unit, smoke, component, feature, conformance, and approved browser matrix passes.
+- [x] Performance results include raw samples, spread, environment, and exact SHAs.
+- [x] The Analyst, Architect, TEA, and Tech Writer approve the final documentation map.
+- [x] The Product Manager approves the P0 SPA journey and the status of the optional PenPot MPA extension.
+- [x] The Scrum Master records the graduation review and updates the active sprint index.
 - [ ] The operator approves program graduation.

@@ -1,64 +1,40 @@
-# 📏 Standards, Style Gates & Engineering Conventions
+# Standards, Style Gates, and Engineering Conventions
 
-This directory documents the engineering standards, CSS design token contracts, style gates, and architectural conventions enforced across `LandingPage`.
+| Field | Value |
+| --- | --- |
+| Audience | All contributors authoring code, styles, tests, or documentation in LandingPage |
+| BMAD Owner | Architect (`bmad-agent-architect`), UX Designer (`bmad-agent-ux-designer`), and Tech Writer (`bmad-agent-tech-writer`) |
+| Source of Truth | [`public/css/tokens.css`](../../public/css/tokens.css), [`public/css/semantic-tokens.css`](../../public/css/semantic-tokens.css), [`scripts/check-docs.mjs`](../../scripts/check-docs.mjs), and [`scripts/check-package-source-parity.mjs`](../../scripts/check-package-source-parity.mjs) |
+| Consensus Kernel | `clm-kernel@0.0.13` |
 
----
+## Core Engineering Contracts
 
-## 🎯 Engineering Principles & Invariants
+1. **Host, Island, and Kernel Boundaries (`INV-REF-01`)**
+   - Workbench pages render through `astro@7.4.2` (`@astrojs/node@11.1.9` middleware) and `preact@11.1.0` (`7` islands on `responsive-lab.html`, `0` islands on `astro-wrapped` pages).
+   - Server hashing, modality detection, and Petri net evaluation use `clm-kernel@0.0.13` in Node only; browser islands and harness modules never import `clm-kernel` or Node `crypto`.
+   - Unit and E2E verification use `node:test` and Playwright (`Vitest` is not adopted).
+2. **Unified CSS Token Architecture (`EPIC-STY`)**
+   - Primitive palette tokens live in [`public/css/tokens.css`](../../public/css/tokens.css) and semantic mappings live in [`public/css/semantic-tokens.css`](../../public/css/semantic-tokens.css).
+   - Component stylesheets consume semantic variables and maintain WCAG 2.1 AA contrast (`>= 4.5:1`).
+3. **Clean-Room and Package Parity Gates (`INV-CDO-34`, `GQC-05`)**
+   - Retired legacy surfaces stay tombstoned in [`retired-islands.yaml`](../../retired-islands.yaml).
+   - `node scripts/check-package-source-parity.mjs` enforces workspace SHA-256 parity and verifies that every client network call is declared in [`src/net/workbench-net.yaml`](../../src/net/workbench-net.yaml).
+4. **PenPot Navigation SSOT (`INV-CDO-11`)**
+   - [`design/landing-navigation.penpot`](../../design/landing-navigation.penpot) compiles LandingPage's own navigation into [`js/nav.js`](../../js/nav.js), verified by `node scripts/penpot-drift.mjs`. External PenPot MPA target assessment in Responsive UI Lab remains Optional / Deferred pending Product Manager approval.
+5. **Living Documentation Gate (`GQC-07`)**
+   - `npm run docs:check` enforces valid repo-relative links, verified `npm run` scripts and Playwright `--project` flags, `clm-kernel@0.0.13` and port (`3000`, `3001`, `4322`) consensus, valid Petri net IDs (`p_*`, `t_*`), and byte-identical `docs/01-architecture/workbench-net.md` output from `npm run docs:gen-net`.
 
-Development within `LandingPage` adheres to the strict architectural invariants established in the `MCard_TDD` framework:
+## Documents in This Section
 
-1. **Zero Runtime NPM Dependencies (`INV-REF-01`)**:
-   - The core Viewport Stage, Event Ring Buffer, and harness utilities use pure vanilla ECMAScript and native CSS custom properties.
-   - External dependencies are strictly restricted to dev tooling (Playwright, esbuild) or published workspace libraries (`clm-kernel@0.0.9`).
-2. **Unified CSS Token Architecture (`EPIC-STY`)**:
-   - Primitive color palette lives strictly in `public/css/tokens.css` (98 defined tokens).
-   - Component styles consume semantic variables from `public/css/semantic-tokens.css`.
-   - Zero presentational color literals in component styles; validated by monorepo `sty_gate.py`.
-   - Contrast ratio guarantee ($\ge 4.5:1$ for text, $17.06:1$ default contrast floor).
-3. **Clean-Room Boundary Contract (`INV-CDO-34`)**:
-   - All modules declare explicit inputs, outputs, and side-effect boundaries.
-   - Retired legacy islands are logged in `retired-islands.yaml` and verified by CI against accidental reintroduction.
-4. **Visual Navigation SSOT (`INV-CDO-11`)**:
-   - Navigation flows and frame structures are authored in `design/landing-navigation.penpot`.
-   - Navigation code in `index.html` and `js/nav.js` is generated from the Penpot archive, with automated drift checking (`scripts/penpot-drift.mjs`).
-5. **Technical Documentation Standard (Diátaxis & pstack)**:
-   - Every document adheres to a clear Diátaxis mode: Tutorial, How-To, Reference, or Explanation.
-   - Clear, concise, and unslopped technical writing following Google Developer Style and Simplified Technical English rules.
+- [rules/css.md](./rules/css.md) covers CSS conventions, naming, and token usage.
+- [features/nested-sidebar.md](./features/nested-sidebar.md) covers nested sidebar layout specifications.
 
----
-
-## 📚 Documents in This Section
-
-### CSS & Design System Standards
-- **[rules/css.md](rules/css.md)** — CSS conventions, file structure, naming rules, and token usage.
-- See also `public/css/tokens.css` and `public/css/semantic-tokens.css` in the project root.
-
-### Feature Specifications
-- **[features/nested-sidebar.md](features/nested-sidebar.md)** — Standards and specifications for nested sidebar navigation layouts.
-
----
-
-## 🧪 Automated Standards Verification
-
-Monorepo CI scripts enforce these standards automatically:
+## Automated Standards Verification
 
 ```bash
-# 1. Audit CSS computed styles and token contract compliance
-npx playwright test tests/features/style-audit.spec.js --project=features
-
-# 2. Check for Penpot design <-> code drift
+npm run check:net
+node scripts/check-package-source-parity.mjs
+npm run docs:check
 node scripts/penpot-drift.mjs
-
-# 3. (Monorepo root) Run style and retirement gates
-python3 scripts/ci/check_landingpage_retirement.py
-python3 scripts/ci/check_ulr_census.py
+npx playwright test tests/features/style-audit.spec.js --project=features
 ```
-
----
-
-## 🧭 Related Functional Tiers
-
-- [**01-architecture/**](../01-architecture/README.md) — System architecture and invariant definitions.
-- [**08-testing/**](../08-testing/README.md) — Automated conformance testing and device certification.
-- [**06-components/**](../06-components/README.md) — Component architecture and CLM conventions.

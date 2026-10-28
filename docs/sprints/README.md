@@ -1,16 +1,24 @@
 # Sprint Specifications Directory
 
-This directory houses the sprint planning, execution specifications, and graduation archives for the PKC Landing Page project.
+| Field | Value |
+| --- | --- |
+| Audience | Scrum masters, product managers, developers, and operators |
+| BMAD Owner | Scrum Master |
+| Source of Truth | [`docs/sprints/INDEX.md`](./INDEX.md) and [`docs/sprints/_active/INDEX.md`](./_active/INDEX.md) |
+| Drift Gate | `npm run docs:check` |
+
+This directory houses sprint planning, execution specifications, evidence reports, and graduated archives for the `LandingPage` repository.
 
 ## Directory Structure
 
-- [**`_active/`**](./_active/INDEX.md) — Active and in-flight sprint programs (currently all graduated).
-- [**`01-architecture/`**](./01-architecture/INDEX.md) — **Program SMO: Submodule Modularity & Universal MCard Browser** (Graduated 2026-10-21). Sprints SMO-00 through SMO-05 covering submodule sovereignty, monorepo duality, binary-safe Canonical Triad store, `clm-kernel@0.0.10` consensus, universal 4-modality content browser dispatcher, and documentation hygiene.
-- [**`08-testing/`**](./08-testing/INDEX.md) — **Program ERB: Device-Sensitive Test Infrastructure** (Graduated 2026-10-21). Sprints ERB-00 through ERB-06 covering the responsive lab modularization, event ring buffer, capability profiles, capture membranes, MCard CLM persistence, Playwright replay driver, multi-device sweeps, and conformance certification.
+- [**`_active/`**](./_active/INDEX.md) holds **Program GQC** (`SPRINT-GQC-00..07`), where all ten execution units are completed with committed evidence in [`_active/evidence/`](./_active/evidence/GQC-07-docs-and-graduation.md) and remain in `_active/` awaiting explicit operator graduation approval.
+- [**`01-architecture/`**](./01-architecture/INDEX.md) archives graduated **Program SMO** (`SMO-00..05`, 2026-10-21; historical `clm-kernel@0.0.10` records preserved unchanged, superseded in living code and docs by `clm-kernel@0.0.12`).
+- [**`08-testing/`**](./08-testing/INDEX.md) archives graduated **Program ERB** (`ERB-00..06`, 2026-10-21).
 
-## Completed Programs
+## Sprint Program Ledger
 
-| Program | Code | Sprints | Category | Graduation Date | Status |
-| :--- | :---: | :---: | :--- | :---: | :---: |
-| **Submodule Modularity & Universal MCard Browser** | `SMO` | SMO-00..SMO-05 | [01-architecture](./01-architecture/INDEX.md) | 2026-10-21 | ✅ Graduated & Certified |
-| **Device-Sensitive Test Infrastructure** | `ERB` | ERB-00..ERB-06 | [08-testing](./08-testing/INDEX.md) | 2026-10-21 | ✅ Graduated & Certified |
+| Program | Code | Sprints | Directory | Status |
+| :--- | :---: | :---: | :--- | :---: |
+| **Submodule Modularity and Universal MCard Browser** | `SMO` | `SMO-00..SMO-05` | [01-architecture](./01-architecture/INDEX.md) | Graduated (2026-10-21) |
+| **Device-Sensitive Test Infrastructure** | `ERB` | `ERB-00..ERB-06` | [08-testing](./08-testing/INDEX.md) | Graduated (2026-10-21) |
+| **Guided SPA Workbench, Astro Islands, Petri Net, and Docs Gates** | `GQC` | `GQC-00..GQC-07` | [_active](./_active/INDEX.md) | Completed in `_active/` (Awaiting Operator Graduation) |

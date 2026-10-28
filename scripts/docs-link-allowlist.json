@@ -1,0 +1,103 @@
+{
+  "schema": "urn:gqc:docs-link-allowlist:v1",
+  "exceptions": [
+    {
+      "file": "docs/sprints/01-architecture/00-submodule-modularity-and-organizational-program-charter.md",
+      "target": "../../../../README.md",
+      "owner": "Architect (bmad-agent-architect) and Scrum Master",
+      "reason": "Graduated SMO charter references parent MCard_TDD superproject README outside standalone LandingPage checkout and remains immutable historical evidence.",
+      "reviewBy": "2027-06-30"
+    },
+    {
+      "file": "docs/sprints/01-architecture/00-submodule-modularity-and-organizational-program-charter.md",
+      "target": "../../../../mcard-studio/README.md",
+      "owner": "Architect (bmad-agent-architect) and Scrum Master",
+      "reason": "Graduated SMO charter references sibling mcard-studio submodule README outside standalone LandingPage checkout.",
+      "reviewBy": "2027-06-30"
+    },
+    {
+      "file": "docs/sprints/01-architecture/00-submodule-modularity-and-organizational-program-charter.md",
+      "target": "../../../../clm/README.md",
+      "owner": "Architect (bmad-agent-architect) and Scrum Master",
+      "reason": "Graduated SMO charter references sibling clm submodule README outside standalone LandingPage checkout.",
+      "reviewBy": "2027-06-30"
+    },
+    {
+      "file": "docs/sprints/01-architecture/00-submodule-modularity-and-organizational-program-charter.md",
+      "target": "../../../responsive-lab.html",
+      "owner": "Architect (bmad-agent-architect) and Scrum Master",
+      "reason": "Graduated SMO charter predates SPRINT-GQC-02B migration of root responsive-lab.html to src/pages/responsive-lab.astro.",
+      "reviewBy": "2027-06-30"
+    },
+    {
+      "file": "docs/sprints/01-architecture/INDEX.md",
+      "target": "../../../../docs/sprints/programs/rds/README.md",
+      "owner": "Scrum Master and Architect (bmad-agent-architect)",
+      "reason": "Graduated SMO sprint index cross-links parent MCard_TDD program RDS index outside standalone LandingPage checkout.",
+      "reviewBy": "2027-06-30"
+    },
+    {
+      "file": "docs/sprints/01-architecture/INDEX.md",
+      "target": "../../../../mcard-studio/docs/sprints/06-Shell-Runtime/README.md",
+      "owner": "Scrum Master and Architect (bmad-agent-architect)",
+      "reason": "Graduated SMO sprint index cross-links sibling mcard-studio Shell-Runtime sprint archive outside standalone LandingPage checkout.",
+      "reviewBy": "2027-06-30"
+    },
+    {
+      "file": "docs/sprints/01-architecture/sprint-smo01-submodule-topology-and-monorepo-duality.md",
+      "target": "../../../../Makefile",
+      "owner": "Architect (bmad-agent-architect) and Scrum Master",
+      "reason": "Graduated SMO-01 sprint record references parent MCard_TDD superproject Makefile outside standalone LandingPage checkout.",
+      "reviewBy": "2027-06-30"
+    },
+    {
+      "file": "docs/sprints/01-architecture/sprint-smo02-published-kernel-consensus-and-dependency-parity.md",
+      "target": "../../../../mcard-studio/scripts/check-kernel-version-consensus.mjs",
+      "owner": "Architect (bmad-agent-architect) and Scrum Master",
+      "reason": "Graduated SMO-02 sprint record references sibling mcard-studio consensus script outside standalone LandingPage checkout.",
+      "reviewBy": "2027-06-30"
+    },
+    {
+      "file": "docs/sprints/01-architecture/sprint-smo02-published-kernel-consensus-and-dependency-parity.md",
+      "target": "../../../../mcard-studio/scripts/config/kernel-version-consensus.json",
+      "owner": "Architect (bmad-agent-architect) and Scrum Master",
+      "reason": "Graduated SMO-02 sprint record references sibling mcard-studio consensus config outside standalone LandingPage checkout.",
+      "reviewBy": "2027-06-30"
+    },
+    {
+      "file": "docs/sprints/01-architecture/sprint-smo02-published-kernel-consensus-and-dependency-parity.md",
+      "target": "../../../../mcard-studio/package.json",
+      "owner": "Architect (bmad-agent-architect) and Scrum Master",
+      "reason": "Graduated SMO-02 sprint record references sibling mcard-studio package manifest outside standalone LandingPage checkout.",
+      "reviewBy": "2027-06-30"
+    },
+    {
+      "file": "docs/sprints/01-architecture/sprint-smo02-published-kernel-consensus-and-dependency-parity.md",
+      "target": "../../../../mcard-studio/package-lock.json",
+      "owner": "Architect (bmad-agent-architect) and Scrum Master",
+      "reason": "Graduated SMO-02 sprint record references sibling mcard-studio lockfile outside standalone LandingPage checkout.",
+      "reviewBy": "2027-06-30"
+    },
+    {
+      "file": "docs/sprints/01-architecture/sprint-smo02-published-kernel-consensus-and-dependency-parity.md",
+      "target": "../../../../mcard-studio/src/packages/mcard-studio/package.json",
+      "owner": "Architect (bmad-agent-architect) and Scrum Master",
+      "reason": "Graduated SMO-02 sprint record references sibling mcard-studio inner workspace manifest outside standalone LandingPage checkout.",
+      "reviewBy": "2027-06-30"
+    },
+    {
+      "file": "docs/sprints/01-architecture/sprint-smo05-master-readme-alignment-and-verification.md",
+      "target": "../../../../README.md",
+      "owner": "Architect (bmad-agent-architect) and Scrum Master",
+      "reason": "Graduated SMO-05 sprint record references parent MCard_TDD superproject README outside standalone LandingPage checkout.",
+      "reviewBy": "2027-06-30"
+    },
+    {
+      "file": "docs/sprints/01-architecture/sprint-smo05-master-readme-alignment-and-verification.md",
+      "target": "../../../../mcard-studio/README.md",
+      "owner": "Architect (bmad-agent-architect) and Scrum Master",
+      "reason": "Graduated SMO-05 sprint record references sibling mcard-studio README outside standalone LandingPage checkout.",
+      "reviewBy": "2027-06-30"
+    }
+  ]
+}

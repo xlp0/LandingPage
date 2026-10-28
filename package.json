@@ -54,7 +54,9 @@
     "test:smoke:cross-browser": "PW_CROSS_BROWSER=1 playwright test --project=smoke-firefox --project=smoke-webkit",
     "build:astro": "astro build",
     "build:packages": "(cd packages/core && node build.js) && (cd packages/markdown-renderer && node build.js)",
-    "start": "node ws-server.js"
+    "start": "node ws-server.js",
+    "docs:gen-net": "node scripts/gen-net-docs.mjs",
+    "docs:check": "node scripts/check-docs.mjs"
   },
   "repository": {
     "type": "git",
@@ -82,7 +84,8 @@
     "astro": "7.4.2",
     "axios": "^1.6.0",
     "better-sqlite3": "^12.5.0",
-    "clm-kernel": "0.0.12",
+    "clm-kernel": "0.0.13",
+    "cordis": "^4.0.0-rc.10",
     "core-js": "^3.46.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",

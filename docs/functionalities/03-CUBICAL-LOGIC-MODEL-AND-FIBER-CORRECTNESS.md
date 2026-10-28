@@ -1,8 +1,14 @@
 # Cubical Logic Model (CLM) & Fiber Correctness
 
-> **Location**: [`LandingPage/docs/functionalities/03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md)  
-> **Source Files**: [`fiber-inspector.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/fiber-inspector.html), [`fiber-conformance.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/fiber-conformance.html), [`js/clm-iframe-loader.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/clm-iframe-loader.js), [`js/redux/slices/clm-slice.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/redux/slices/clm-slice.js), [`js/redux/middleware/clm-middleware.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/redux/middleware/clm-middleware.js)  
-> **Kernel Version**: `clm-kernel@0.0.3` ([`public/js/vendor/clm-kernel.bundle.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/js/vendor/clm-kernel.bundle.js))  
+| Field | Value |
+| --- | --- |
+| Audience | Engineers, architects, and QA reviewers consulting capability-level reference architecture |
+| BMAD Owner | Architect (`bmad-agent-architect`) |
+| Classification | Maintained Capability Reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts |
+| Operational Guide | [../01-architecture/workbench-net.md](../01-architecture/workbench-net.md) |
+> **Location**: [`LandingPage/docs/functionalities/03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md`](./03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md)  
+> **Source Files**: [`fiber-inspector.html`](../../src/pages/fiber-inspector.astro), [`fiber-conformance.html`](../../src/pages/fiber-conformance.astro), [`js/clm-iframe-loader.js`](../../js/clm-iframe-loader.js), [`js/redux/slices/clm-slice.js`](../../js/redux/slices/clm-slice.js), [`js/redux/middleware/clm-middleware.js`](../../js/redux/middleware/clm-middleware.js)  
+> **Kernel Version**: `clm-kernel@0.0.13` ([`server/mcard-modality.mjs`](../../server/mcard-modality.mjs))  
 > **Status**: Comprehensive Functional Specification
 
 ---
@@ -36,9 +42,9 @@ graph TD
 
 ---
 
-## 2. Kernel Integration (`clm-kernel@0.0.3`)
+## 2. Kernel Integration (`clm-kernel@0.0.13`)
 
-The client embeds the bundled kernel [`public/js/vendor/clm-kernel.bundle.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/js/vendor/clm-kernel.bundle.js) built from `clm-kernel@0.0.3`.
+Server-side MCard hashing, modality classification, and Petri net evaluation use published `clm-kernel@0.0.13` via [`server/mcard-modality.mjs`](../../server/mcard-modality.mjs) and [`server/mcard-api.mjs`](../../server/mcard-api.mjs), while browser-local IndexedDB views in `app.html` use [`public/js/mcard-kernel/compat.js`](../../public/js/mcard-kernel/compat.js). Browser islands never import `clm-kernel`.
 
 Key capabilities exposed:
 1. **Manifest Parsing & Validation**: Reads declarative YAML/JSON Petri net and CLM manifests (`examples/*.clm.yaml`).
@@ -85,18 +91,18 @@ sequenceDiagram
 
 ## 4. Fiber Inspector & Observability Panel
 
-Located at [`fiber-inspector.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/fiber-inspector.html) and implemented by [`js/observability/correctness/correctness-panel.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/observability/correctness/correctness-panel.js):
+Located at [`fiber-inspector.html`](../../src/pages/fiber-inspector.astro) and implemented by [`js/observability/correctness/correctness-panel.js`](../../js/observability/correctness/correctness-panel.js):
 
 - **Correctness Evaluation**: Compares measured epistemic capability ($S$) against residual axiomatic entropy ($H$).
 - **Lattice Inspection**: Live inspection of Hasse diagrams and state lattices.
-- **Witness Verification**: Reads and validates cryptographic witness records from [`public/conformance/witness.json`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/conformance/witness.json).
+- **Witness Verification**: Reads and validates cryptographic witness records from [`public/conformance/witness.json`](../../public/conformance/witness.json).
 
 ---
 
 ## 5. Fiber Conformance Test Harness
 
-Located at [`fiber-conformance.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/fiber-conformance.html):
+Located at [`fiber-conformance.html`](../../src/pages/fiber-conformance.astro):
 
-- **Automated Invariant Verification**: Runs battery of tests against [`public/conformance/harness-data.json`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/conformance/harness-data.json).
-- **Unit Lint Integration**: Reads static and dynamic linter violations from [`public/conformance/unit-lint.json`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/conformance/unit-lint.json).
-- **Membrane Probe**: Uses [`public/conformance/membrane-probe.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/conformance/membrane-probe.html) to stress-test cross-frame security and data boundary leaks.
+- **Automated Invariant Verification**: Runs battery of tests against [`public/conformance/harness-data.json`](../../public/conformance/harness-data.json).
+- **Unit Lint Integration**: Reads static and dynamic linter violations from [`public/conformance/unit-lint.json`](../../public/conformance/unit-lint.json).
+- **Membrane Probe**: Uses [`public/conformance/membrane-probe.html`](../../public/conformance/membrane-probe.html) to stress-test cross-frame security and data boundary leaks.

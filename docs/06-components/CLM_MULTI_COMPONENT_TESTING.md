@@ -489,7 +489,7 @@ await expect(page).toHaveScreenshot('hero-content.png');
 
 - [CLM Testing System](./CLM_TESTING_SYSTEM.md) - Original single-component testing
 - [CLM Testing UI Update](./CLM_TESTING_UI_UPDATE.md) - UI changes documentation
-- [CLM Registry](../clm-registry.yaml) - Component definitions
+- [CLM Registry](../../clm-registry.yaml) - Component definitions
 - [Playwright Docs](https://playwright.dev) - Playwright documentation
 - [GitHub Actions Docs](https://docs.github.com/actions) - GitHub Actions guide
 

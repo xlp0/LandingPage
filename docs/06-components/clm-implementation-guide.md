@@ -405,7 +405,7 @@ verification:
 
 ## 📚 References
 
-- [Cubical Logic Model for WebRTC](../cubical-logic-model-for-webrtc.md)
-- [CLM Think Structure](../clm-think-structure.md)
-- [CLM Structure Diagram](../clm-structure-diagram.md)
+- [Cubical Logic Model for WebRTC](./cubical-logic-model-for-webrtc.md)
+- [CLM Think Structure](./clm-think-structure.md)
+- [CLM Structure Diagram](./clm-structure-diagram.md)
 - [PKC Documentation](https://pkc.pub)

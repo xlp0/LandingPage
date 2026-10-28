@@ -195,7 +195,7 @@ curl http://localhost:8765
 - [Full Documentation](./CLM_TESTING_SYSTEM.md)
 - [Playwright Docs](https://playwright.dev)
 - [GitHub Actions Docs](https://docs.github.com/actions)
-- [CLM Registry](../clm-registry.yaml)
+- [CLM Registry](../../clm-registry.yaml)
 
 ---
 

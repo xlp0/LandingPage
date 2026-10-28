@@ -49,9 +49,9 @@ This directory contains documentation for the **MCard** (Content-Addressable Sto
 
 ## Related Documentation
 
-- [../CLM_Language_Specification.md](../CLM_Language_Specification.md) - Original CLM spec
-- [../CUBIC-LOGIC-MODEL.md](../CUBIC-LOGIC-MODEL.md) - Cubic Logic Model overview
-- [../CLM-DYNAMIC-LOADING.md](../CLM-DYNAMIC-LOADING.md) - CLM dynamic loading system
+- [../CLM_Language_Specification.md](../../06-components/CLM_Language_Specification.md) - Original CLM spec
+- [../CUBIC-LOGIC-MODEL.md](../../01-architecture/CUBIC-LOGIC-MODEL.md) - Cubic Logic Model overview
+- [../CLM-DYNAMIC-LOADING.md](../../06-components/CLM-DYNAMIC-LOADING.md) - CLM dynamic loading system
 
 ---
 

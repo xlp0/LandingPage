@@ -1,5 +1,10 @@
 # PKC Architecture & Configuration Strategy
 
+| Field | Value |
+| --- | --- |
+| Audience | Architects and researchers reviewing conceptual Computational Trinity background notes |
+| BMAD Owner | Architect (`bmad-agent-architect`) |
+| Status / Scope | Conceptual background document; operational contracts live in [docs/01-architecture/landing-page-architecture.md](docs/01-architecture/landing-page-architecture.md) |
 ## Table of Contents
 1.  [Architectural Overview: The Computational Trinity](#1-architectural-overview-the-computational-trinity)
 2.  [Component Roles: The Trinity](#component-roles-the-trinity)

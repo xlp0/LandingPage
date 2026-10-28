@@ -1,29 +1,33 @@
 # Universal 4-Modality MCard Content Browser Architecture
 
-**Status**: Active (`Program SMO`, Sprints `SMO-01` through `SMO-05`)
-**Consensus Kernel**: `clm-kernel@0.0.10` (`npm:clm-kernel`)
-**Canonical Storage**: 3-table, 3-column SQLite Triad (`card`, `handle_registry`, `handle_history`)
+| Field | Value |
+| --- | --- |
+| Audience | Developers, architects, and QA engineers working on MCard ingestion, modality classification, and viewer isolation |
+| BMAD Owner | Architect (`bmad-agent-architect`) and Product Manager (`bmad-agent-pm`) |
+| Source of Truth | [`server/mcard-api.mjs`](../../server/mcard-api.mjs), [`server/mcard-modality.mjs`](../../server/mcard-modality.mjs), [`js/landing-page-mcard.js`](../../js/landing-page-mcard.js), and [`package.json`](../../package.json) |
+| Consensus Kernel | `clm-kernel@0.0.13` (`KERNEL_PROVENANCE = 'clm-kernel@0.0.13'`) |
+| Canonical Storage | 3-table, 3-column SQLite Triad (`card`, `handle_registry`, `handle_history`) |
 
 ---
 
-## 1. Consumer and Operator Outcome
+## 1. Surface Role and Operator Outcome
 
-`LandingPage` operates as the **Universal MCard Content Browser** and **Responsive UI Lab** (Estate 3 of the `MCard_TDD` four-estate workspace). Every artifact stored in the canonical SQLite Triad (`card(hash, content, g_time)`) is browsable through a single content-addressed pipeline without bespoke per-feature backends.
+`LandingPage` serves as **Estate 4 (Submodule 3)** of the `MCard_TDD` workspace. While `/responsive-lab.html` (`p_page_responsive_lab`) is the primary Responsive UI Lab workbench, `/?noredirect=1` and `/index.html?noredirect=1` (`p_view_index_mcard_viewer`) expose the **Single-Page Universal 4-Modality MCard Viewer**, distinct from the legacy Mission Control IndexedDB host at `/app.html` (`p_page_app`).
 
-An operator or automated Playwright harness can ingest, verify, and browse any MCard payload across four universal content modalities (`media`, `document`, `code`, `webapp`) while preserving hash integrity and strict execution isolation.
+Every artifact stored in the SQLite Triad (`card(hash, content, g_time)`) is browsable through one content-addressed pipeline across four modalities (`media`, `document`, `code`, `webapp`) while preserving Triad Blake3 integrity (`clm-kernel@0.0.13`) and strict execution isolation. Historical references to `clm-kernel@0.0.10` in graduated SMO sprint records denote the earlier SMO baseline superseded by `0.0.13`.
 
 ---
 
 ## 2. The Four Universal Content Modalities
 
-`LandingPage/server/mcard-modality.mjs` delegates byte-level magic-number inspection, extension resolution, and structural classification to the published `clm-kernel@0.0.10` package (`TypeInterpreter`, `detectMime`, `isBinary`) and maps every card onto one of four modalities:
+[`server/mcard-modality.mjs`](../../server/mcard-modality.mjs) delegates magic-number inspection, extension resolution, and structural classification to `clm-kernel@0.0.13` (`TypeInterpreter`, `detectMime`, `isBinary`) and maps every card onto one of four modalities.
 
-| Modality | Canonical MIME Families | Server & Browser Pipeline | Execution Isolation Contract |
+| Modality | Canonical MIME Families | Server and Browser Pipeline | Execution Isolation Contract |
 | :--- | :--- | :--- | :--- |
-| **1. `media`** (Static Media Files) | `image/*`, `audio/*`, `video/*`, `application/pdf`, `model/*`, `application/octet-stream` | Binary-safe `CanonicalTriadBackend.get(hash)` verifies the `blake3` or `sha256` digest over `rawBytes` before decoding. Streamed via `GET /api/mcard/:hash/raw` with `X-Content-Type-Options: nosniff`. Projected via `<img>`, `<audio controls>`, `<video controls>`, or sandboxed PDF `<iframe>`. | Zero script execution. Strict `Content-Security-Policy` (`default-src 'none'; img-src 'self' data: blob:; media-src 'self' data: blob:`). |
-| **2. `document`** (Text & Structured Documents) | `text/markdown`, `text/plain`, `application/json`, `application/x-yaml`, `application/x-latex` | Stored as UTF-8 bytes in `card.content`. Projected via `renderPage()` (`mcard-document-body`), `MarkdownRenderer`, `TextRenderer`, `JsonRenderer`, and `LaTeXRenderer` with `[[hash]]` and `[[handle\|label]]` transclusion links. | All raw HTML entities (`&`, `<`, `>`, `"`, `'`) are escaped prior to transclusion link resolution. |
-| **3. `code`** (Source Code & CLM Descriptors) | `application/javascript`, `text/javascript`, `application/typescript`, `text/css`, `text/x-python`, `text/x-rust`, `text/x-sql`, `application/x-clm` | Classified by `TypeInterpreter` (`category: 'code'`) or CLM triad structural markers (`abstract_spec` / `concrete_impl` / `balanced_exp`). Projected via inert line-numbered `<pre class="mcard-code-body" data-modality="code" data-execution="inert">` or `CLMRenderer` in inspect mode. | **Inert Inspection Law (`INV-SMO-04`)**: Browsing a `code` MCard never evaluates or executes the code payload. |
-| **4. `webapp`** (Executable Web Pages & Portals) | `text/html`, `text/uri-list`, `external-url: https://...` | Inline `text/html` MCards are projected into `<iframe class="mcard-webapp-frame" sandbox="allow-scripts allow-forms" referrerpolicy="no-referrer" srcdoc="...">`. External/local portal URLs are probed via `GET /api/mcard/probe-url` (`mcard-probe-policy.mjs`) and mounted via `external-portal-membrane.js` (`live` / `snapshot` / `offline`). Supports toggling `{ viewMode: 'source' }` to inspect raw HTML inertly as `code`. | **Membrane Isolation Law**: `allow-same-origin` is omitted from all untrusted `webapp` iframes; telemetry uses fail-closed `postMessage` validation (`mcard-portal-telemetry/v1`). |
+| **1. `media`** | `image/*`, `audio/*`, `video/*`, `application/pdf`, `model/*`, `application/octet-stream` | `CanonicalTriadBackend.get(hash)` verifies the `blake3` or `sha256` digest over `rawBytes` before streaming via `GET /api/mcard/:hash/raw` with `X-Content-Type-Options: nosniff`. Projected via `<img>`, `<audio controls>`, `<video controls>`, or sandboxed PDF `<iframe>`. | Zero script execution under strict media CSP headers. |
+| **2. `document`** | `text/markdown`, `text/plain`, `application/json`, `application/x-yaml`, `application/x-latex` | Stored as UTF-8 bytes in `card.content`. Projected via `renderPage()` (`mcard-document-body`) with `[[hash]]` and `[[handle\|label]]` transclusion links. | Raw HTML entities (`&`, `<`, `>`, `"`, `'`) are escaped prior to transclusion link resolution. |
+| **3. `code`** | `application/javascript`, `text/javascript`, `application/typescript`, `text/css`, `text/x-python`, `text/x-rust`, `text/x-sql`, `application/clm` | Classified by `TypeInterpreter` (`category: 'code'`) or CLM triad structural markers (`abstract_spec`, `concrete_impl`, `balanced_exp`). Projected via inert line-numbered `<pre class="mcard-code-body" data-modality="code" data-execution="inert">`. | **Inert Inspection Law (`INV-SMO-04`)** ensures browsing a `code` MCard never evaluates or executes the payload. |
+| **4. `webapp`** | `text/html`, `text/uri-list`, `external-url: https://...` | Inline `text/html` MCards render inside `<iframe class="mcard-webapp-frame" sandbox="allow-scripts allow-forms" referrerpolicy="no-referrer" srcdoc="...">`. External URLs probe through `GET /api/mcard/probe-url` (`mcard-probe-policy.mjs`) and mount via `external-portal-membrane.js` (`live`, `snapshot`, `offline`). Supports `{ viewMode: 'source' }` to inspect raw HTML inertly as `code`. | **Membrane Isolation Law** omits `allow-same-origin` from untrusted `webapp` iframes and validates `mcard-portal-telemetry/v1` messages fail-closed. |
 
 ---
 
@@ -31,22 +35,22 @@ An operator or automated Playwright harness can ingest, verify, and browse any M
 
 ```mermaid
 flowchart LR
-  SQLite["Canonical Triad SQLite\ncard(hash, content, g_time)"] --> Verify["Digest Verification\nverifyRecord(hash, rawBytes, g_time)"]
-  Verify --> Classify["Modality Classifier\nmcard-modality.mjs + clm-kernel@0.0.10"]
-  Classify -->|media| MediaOut["GET /api/mcard/:hash/raw\nimg / audio / video / pdf iframe"]
-  Classify -->|document| DocOut["Escaped Document View\n+ [[hash]] Transclusion Links"]
-  Classify -->|code| CodeOut["Inert Code View\ndata-execution=inert (Line Numbered)"]
-  Classify -->|webapp| WebappOut["Sandboxed Iframe Membrane\nsandbox='allow-scripts allow-forms'"]
+  SQLite["Canonical Triad SQLite card(hash, content, g_time)"] --> Verify["Digest Verification verifyRecord(hash, rawBytes, g_time)"]
+  Verify --> Classify["Modality Classifier mcard-modality.mjs + clm-kernel@0.0.13"]
+  Classify -->|"media"| MediaOut["GET /api/mcard/:hash/raw img, audio, video, pdf iframe"]
+  Classify -->|"document"| DocOut["Escaped Document View + transclusion links"]
+  Classify -->|"code"| CodeOut["Inert Code View data-execution=inert"]
+  Classify -->|"webapp"| WebappOut["Sandboxed Iframe Membrane allow-scripts allow-forms"]
 ```
 
 ---
 
 ## 4. Key Implementation Modules
 
-- [server/mcard-api.mjs](../../server/mcard-api.mjs) - Canonical 3-table, 3-column Triad SQLite backend (`CanonicalTriadBackend`) and REST routes (`GET /api/mcard`, `POST /api/mcard`, `GET /api/mcard/landing`, `PUT /api/mcard/landing`, `GET /api/mcard/probe-url`, `GET /api/mcard/:hash`, `GET /api/mcard/:hash/raw`).
-- [server/mcard-modality.mjs](../../server/mcard-modality.mjs) - Universal 4-modality classifier backed by `clm-kernel@0.0.10` (`TypeInterpreter`, `detectMime`, `isBinary`).
-- [server/mcard-probe-policy.mjs](../../server/mcard-probe-policy.mjs) - SSRF guard, DNS-rebinding validator, redirect hop inspector, and `X-Frame-Options` / `CSP frame-ancestors` policy evaluator.
-- [js/landing-page-mcard.js](../../js/landing-page-mcard.js) - Single-page universal 4-modality MCard browser controller and Sovereign HUD Pill (`#mcard-sovereign-pill`).
-- [js/external-portal-membrane.js](../../js/external-portal-membrane.js) - Three-state external portal membrane (`live`, `snapshot`, `offline`) and `mcard-portal-telemetry/v1` receiver.
-- [js/renderers/BaseRenderer.js](../../js/renderers/BaseRenderer.js) and [js/renderers/EmbedRenderer.js](../../js/renderers/EmbedRenderer.js) - Browser-side renderer base class and sandboxed embed renderer.
-- [tests/single-page-mcard.test.mjs](../../tests/single-page-mcard.test.mjs) - 24-test automated verification suite covering Triad storage, binary media streaming, `clm-kernel@0.0.10` consensus, 4-modality rendering, and SSRF/sandbox negative controls.
+- [`server/mcard-api.mjs`](../../server/mcard-api.mjs) implements `CanonicalTriadBackend` (`card`, `handle_registry`, `handle_history`) and REST routes (`/api/mcard`, `/api/mcard/landing`, `/api/mcard/probe-url`, `/api/mcard/:hash`, `/api/mcard/:hash/raw`).
+- [`server/mcard-modality.mjs`](../../server/mcard-modality.mjs) implements the 4-modality classifier backed by `clm-kernel@0.0.13`.
+- [`server/mcard-probe-policy.mjs`](../../server/mcard-probe-policy.mjs) implements the SSRF guard, DNS-rebinding validator, redirect hop inspector, and framing header evaluator.
+- [`js/landing-page-mcard.js`](../../js/landing-page-mcard.js) implements the single-page 4-modality MCard viewer and Sovereign HUD Pill (`#mcard-sovereign-pill`) on `/?noredirect=1`.
+- [`js/external-portal-membrane.js`](../../js/external-portal-membrane.js) implements the three-state external portal membrane (`live`, `snapshot`, `offline`).
+- [`js/renderers/BaseRenderer.js`](../../js/renderers/BaseRenderer.js) and [`js/renderers/EmbedRenderer.js`](../../js/renderers/EmbedRenderer.js) implement the separate MIME-keyed component isolation renderers.
+- [`tests/single-page-mcard.test.mjs`](../../tests/single-page-mcard.test.mjs) and [`tests/smoke/single-page-mcard.spec.js`](../../tests/smoke/single-page-mcard.spec.js) verify Triad storage, binary media streaming, `clm-kernel@0.0.13` modality classification, and sandbox negative controls.

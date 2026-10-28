@@ -1,5 +1,10 @@
 # Performance, Observability, and Verified Baselines
 
+| Field | Value |
+| --- | --- |
+| Audience | Engineers, architects, and QA reviewers working in this documentation tier |
+| BMAD Owner | Architect (`bmad-agent-architect`) and Test Architect |
+| Source of Truth | [`docs/09-performance/gqc-06-spa-and-island-baselines.md`](./gqc-06-spa-and-island-baselines.md) |
 This directory documents performance measurement contracts, per-Place JavaScript byte probes, Astro island hydration baselines, in-target telemetry, and historical rendering notes in `LandingPage`.
 
 ---

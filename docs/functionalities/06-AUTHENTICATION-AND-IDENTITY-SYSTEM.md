@@ -1,7 +1,13 @@
 # Authentication & Identity System
 
-> **Location**: [`LandingPage/docs/functionalities/06-AUTHENTICATION-AND-IDENTITY-SYSTEM.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/06-AUTHENTICATION-AND-IDENTITY-SYSTEM.md)  
-> **Source Files**: [`routes/auth.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/routes/auth.js), [`js/modules/auth-manager.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/auth-manager.js), [`public/config/zitadel-config.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/public/config/zitadel-config.js), [`js/components/AuthStatusComponent.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/components/AuthStatusComponent.js)  
+| Field | Value |
+| --- | --- |
+| Audience | Engineers, architects, and QA reviewers consulting capability-level reference architecture |
+| BMAD Owner | Architect (`bmad-agent-architect`) |
+| Classification | Maintained Capability Reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts |
+| Operational Guide | [../02-authentication/README.md](../02-authentication/README.md) |
+> **Location**: [`LandingPage/docs/functionalities/06-AUTHENTICATION-AND-IDENTITY-SYSTEM.md`](./06-AUTHENTICATION-AND-IDENTITY-SYSTEM.md)  
+> **Source Files**: [`routes/auth.js`](../../routes/auth.js), [`js/modules/auth-manager.js`](../../js/modules/auth-manager.js), [`public/config/zitadel-config.js`](../../public/config/zitadel-config.js), [`js/components/AuthStatusComponent.js`](../../js/components/AuthStatusComponent.js)  
 > **Identity Provider**: Zitadel OpenID Connect (OIDC)  
 > **Status**: Comprehensive Functional Specification
 
@@ -13,7 +19,7 @@ The LandingPage identity subsystem is built on **OAuth 2.0 and OpenID Connect (O
 
 The architecture strictly isolates secrets and tokens through a **Hybrid Backend-For-Frontend (BFF)** pattern:
 - **Client Application**: Operates using Authorization Code Flow with **Proof Key for Code Exchange (PKCE)**. The browser never holds or sees the `ZITADEL_CLIENT_SECRET`.
-- **Backend API Gateway** ([`routes/auth.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/routes/auth.js)): Holds the confidential `CLIENT_SECRET` in server environment variables, appending it when exchanging authorization codes with Zitadel's token endpoint (`/oauth/v2/token`).
+- **Backend API Gateway** ([`routes/auth.js`](../../routes/auth.js)): Holds the confidential `CLIENT_SECRET` in server environment variables, appending it when exchanging authorization codes with Zitadel's token endpoint (`/oauth/v2/token`).
 - **Secure Session Cookies**: Sets `HttpOnly`, `SameSite=Lax`, and `Secure` (in production) cookies (`mcard_auth=1`) preventing Cross-Site Scripting (XSS) token exfiltration.
 
 ```mermaid
@@ -37,7 +43,7 @@ sequenceDiagram
 
 ---
 
-## 2. Backend Authentication Endpoints ([`routes/auth.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/routes/auth.js))
+## 2. Backend Authentication Endpoints ([`routes/auth.js`](../../routes/auth.js))
 
 | Endpoint | Method | Input Parameters | Processing & Invariants |
 | :--- | :--- | :--- | :--- |
@@ -47,7 +53,7 @@ sequenceDiagram
 
 ---
 
-## 3. Client Authentication Manager ([`js/modules/auth-manager.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/auth-manager.js))
+## 3. Client Authentication Manager ([`js/modules/auth-manager.js`](../../js/modules/auth-manager.js))
 
 The client manager maintains session state, handles token refreshes, and binds identity into Redux:
 
@@ -80,5 +86,5 @@ The client manager maintains session state, handles token refreshes, and binds i
 
 ## 4. UI Components & Status Indicators
 
-- **Auth Status Badge** ([`components/auth-status.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/components/auth-status.html) / [`js/components/AuthStatusComponent.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/components/AuthStatusComponent.js)): Displays authenticated username, user avatar, roles, and a quick-action Sign In / Sign Out button in the navigation header.
+- **Auth Status Badge** ([`components/auth-status.html`](../../components/auth-status.html) / [`js/components/AuthStatusComponent.js`](../../js/components/AuthStatusComponent.js)): Displays authenticated username, user avatar, roles, and a quick-action Sign In / Sign Out button in the navigation header.
 - **Role-Based Access Control (RBAC)**: Views like `monopolyAuthView` and administrative tabs inspect `state.auth.user.roles` before allowing room creation or game participation.

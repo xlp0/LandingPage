@@ -9,11 +9,28 @@ import { RecordingStateMachine } from './recording-state-machine.js';
 import { UnavailableCaptureSource } from './capture-probe-agent.js';
 import { TEST_RUN_SCHEMA, targetSlug } from './test-run-schema.js';
 
+export const DEFAULT_CLM_KERNEL_VERSION = '0.0.13';
+
+export function resolveClmKernelVersion(explicitVersion = null) {
+  if (typeof explicitVersion === 'string' && explicitVersion.trim()) {
+    return explicitVersion.trim();
+  }
+  if (typeof document !== 'undefined' && typeof document.querySelector === 'function') {
+    const meta = document.querySelector('meta[name="lab-kernel-version"]');
+    const content = meta && typeof meta.getAttribute === 'function' ? meta.getAttribute('content') : null;
+    if (typeof content === 'string' && content.trim()) {
+      return content.trim();
+    }
+  }
+  return DEFAULT_CLM_KERNEL_VERSION;
+}
+
 export class InteractionRecorder {
   constructor(options = {}) {
     this.buffer = new EventRingBuffer({ capacity: options.capacity || 2048 });
     this.fsm = new RecordingStateMachine({ now: options.now });
     this.source = options.source || null;
+    this._clmKernelVersion = typeof options.clmKernelVersion === 'string' && options.clmKernelVersion.trim() ? options.clmKernelVersion.trim() : null;
     this._sourceEpoch = 0;
     this._boundTargetUrl = null;
     this._recordedTargetUrl = null;
@@ -190,7 +207,8 @@ export class InteractionRecorder {
       orientation = 'portrait',
       fidelity = { tier: 0, runner: 'lab-iframe', emulated: ['viewport'], notEmulated: [] },
       finalState = null,
-      telemetry = null
+      telemetry = null,
+      clmKernelVersion = null
     } = options;
 
     const snapshot = this.buffer.snapshot();
@@ -247,7 +265,7 @@ export class InteractionRecorder {
       },
       lab: {
         commit: '424022c',
-        clmKernel: '0.0.10'
+        clmKernel: resolveClmKernelVersion(clmKernelVersion || this._clmKernelVersion)
       },
       metrics: {
         startedAt: this.startedAt || new Date().toISOString(),

@@ -1,14 +1,24 @@
 # Changelog
 
+| Field | Value |
+| --- | --- |
+| Audience | Developers, operators, and release reviewers inspecting historical release milestones |
+| BMAD Owner | Tech Writer (`bmad-agent-tech-writer`) and Scrum Master |
+| Status / Scope | Historical release log; earlier SMO/ERB entries record historical `0.0.9` and `0.0.10` milestones superseded by `clm-kernel@0.0.13` |
 All notable changes to the PKC Landing Page are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+- **Program GQC (`SPRINT-GQC-00..07`)** aligned the Astro 7.4.2 and Preact 11.1.0 workbench host (`responsive-lab.html` with 7 islands), formalized the 31-Place / 65-Transition Petri net (`src/net/workbench-net.yaml`), persisted Layer 1/Layer 4 `NetMCard`, `FiringReceiptMCard`, and `urn:gqc:navigation-run-link:v1` MCards, updated `js/harness/recorder.js` to stamp `clm-kernel@0.0.13` while preserving historical `0.0.10` and `0.0.12` record reads, and added `npm run docs:gen-net` plus `npm run docs:check`.
+
 ### Added
-- **Kernel Provenance Export & Explicit `ajv` Dev Dependency (`CLA-05`)**: Exported `KERNEL_PROVENANCE = 'clm-kernel@0.0.12'` from `server/mcard-api.mjs` and `server/mcard-modality.mjs`, and declared `ajv` (`^8.17.1`) explicitly in `package.json` `devDependencies` for standalone schema validation.
+- **Kernel Provenance Export & Explicit `ajv` Dev Dependency (`CLA-05`)**: Exported `KERNEL_PROVENANCE = 'clm-kernel@0.0.12'` from `server/mcard-api.mjs` and `server/mcard-modality.mjs` (subsequently advanced to `clm-kernel@0.0.13`), and declared `ajv` (`^8.17.1`) explicitly in `package.json` `devDependencies` for standalone schema validation.
 - **Responsive UI Lab Omnibar & Target Switching (`responsive-lab.html`, `js/harness/lab-toolbar.js`)**: Added direct URL typing omnibar with `normalizeInputUrl` and preset target switching coordinated via `TargetMembrane` (`INV-STU-01`, `INV-STU-02`).
 
 ### Changed
+- **Published `clm-kernel@0.0.13` Consumer Consensus & Direct `cordis` Runtime Dependency (2026-10-28)**:
+  - Exact-pinned `clm-kernel` to `"0.0.13"` in `package.json` and `package-lock.json` in lockstep with `mcard-studio`, and declared `"cordis": "^4.0.0-rc.10"` directly in `dependencies` after `clm-kernel@0.0.13` moved `cordis` out of runtime `dependencies`.
+  - Advanced `KERNEL_PROVENANCE = 'clm-kernel@0.0.13'` in `server/mcard-api.mjs` and `server/mcard-modality.mjs`, `DEFAULT_CLM_KERNEL_VERSION = '0.0.13'` in `js/harness/recorder.js`, stale-version doc enforcement in `scripts/check-docs.mjs`, unit test assertions (`tests/unit/gqc-mcard-persistence.test.mjs`, `tests/unit/mcard-api-triad.test.mjs`), and living documentation across `README.md` and `docs/`. Verified `185/185` unit tests (`npm run test:unit`) and `npm run docs:check`.
 - **Published `clm-kernel@0.0.12` Dependency Advance & Bundler Shim Subtraction (`CLA-01`, `CLA-05`)**:
   - Exact-pinned `clm-kernel` to published `"0.0.12"` in `package.json` and `package-lock.json` in lockstep with `mcard-studio` (`check_kx_release_artifacts.py`, `check-kernel-version-consensus.mjs`), and rebuilt `public/js/vendor/mcard-bundle.js`.
   - Replaced 7 disk shim files (`public/js/mcard-kernel/node-shims/{dgram,fs,http,https,module,url,zlib}.js`) with an inline esbuild `node-noop` virtual plugin in `scripts/build-mcard-bundle.js`, and retired zero-byte `routes/auth.mjs` plus stale `public/js/vendor/mcard-js.bundle.js.map` (`-128` non-kernel LOC: `8,036` to `7,908`).
@@ -17,9 +27,9 @@ All notable changes to the PKC Landing Page are documented in this file. The for
   - Synchronized Penpot navigation flow graph archive digest (`e4d0e5fd...`) in `js/nav.js` and `design/landing-navigation.penpot`.
   - Refreshed `clm-registry.yaml` to project the `EPIC-CLC` (`CLC-01`..`CLC-06`) sprint records with verified zero penpot drift (`node LandingPage/scripts/penpot-drift.mjs`). Verified 97/97 unit tests (`npm run test:unit`).
 
-## [0.3.0] — 2026-10-21
+## [0.3.0] - 2026-10-21
 
-### Completed & Graduated — Program SMO (Submodule Modularity, Universal MCard Content Browser, and Organizational Alignment)
+### Completed & Graduated - Program SMO (Submodule Modularity, Universal MCard Content Browser, and Organizational Alignment)
 Successfully implemented, verified, and graduated all 6 sprints of **Program SMO** (`SMO-00` through `SMO-05`) from `docs/sprints/_active/` to permanent architectural home `docs/sprints/01-architecture/`.
 
 - **SMO-00 (Program Charter & Invariants)**: Defined Program Charter, established invariants `INV-SMO-01..05`, standardized the Universal 4-Modality MCard Content Browser architecture (Static Media, Text/Documents, Inert Source Code, Sandboxed Executable Web Pages), and aligned four-estate positioning across `MCard_TDD`, `clm`, `mcard-studio`, and `LandingPage`.
@@ -37,9 +47,9 @@ Successfully implemented, verified, and graduated all 6 sprints of **Program SMO
 - **Submodule Boundary**: 0 cross-submodule filesystem imports in `server/`, `js/`, `scripts/`, `tests/`.
 - **Documentation Integrity**: 100% relative link resolution in `README.md`, `docs/INDEX.md`, and all sprint specs.
 
-## [0.2.0] — 2026-10-21
+## [0.2.0] - 2026-10-21
 
-### Completed & Graduated — Program ERB (Device-Sensitive Testing Infrastructure)
+### Completed & Graduated - Program ERB (Device-Sensitive Testing Infrastructure)
 Successfully implemented, verified, and graduated all 7 sprints of the **Event Capture Ring Buffer & Device-Sensitive Testing Infrastructure** (`SPRINT-ERB-00` through `SPRINT-ERB-06`) from `docs/sprints/_active/` to permanent functional home `docs/sprints/08-testing/`.
 
 - **ERB-00 (Infrastructure Modularization)**: Decomposed monolithic `responsive-lab.html` into clean ES modules under `js/harness/` (`viewport-stage.js`, `target-membrane.js`, `lab-toolbar.js`). Preserved all stage invariants (`INV-RVP-01..03`, `INV-REF-01`) with zero regression.
@@ -72,9 +82,9 @@ Successfully implemented, verified, and graduated all 7 sprints of the **Event C
 - **Portal Streamlining & Direct Navigation (`index.html`)**: Streamlined `index.html` to present Responsive UI Lab as the single choice and added top-level automatic navigation to `responsive-lab.html` (`window.self === window.top`), while preserving iframe embeddability and vertical scrollability invariants.
 - **Dependency Alignment (`package.json`, `package-lock.json`)**: Upgraded `clm-kernel` dependency to published `0.0.9`.
 
-## 0.1.0 — 2026-10-18
+## 0.1.0 - 2026-10-18
 
-### Added — SMR-09: Single-Page MCard Distillation & Portal Samples
+### Added - SMR-09: Single-Page MCard Distillation & Portal Samples
 
 - **Single-page MCard distillation** (`js/landing-page-mcard.js`): the landing page renders as a self-describing content-addressed MCard record, completing the corpus-supplier role under `EPIC-SMR`.
 - **External portal membrane** (`js/external-portal-membrane.js`): third-party portal embedding is isolated behind an explicit membrane boundary.
@@ -89,4 +99,4 @@ Successfully implemented, verified, and graduated all 7 sprints of the **Event C
 
 ### Sprint status
 
-- `DoD-SMR-09`: **8/8 verified** — first SMR sprint fully green in the umbrella program.
+- `DoD-SMR-09`: **8/8 verified** - first SMR sprint fully green in the umbrella program.

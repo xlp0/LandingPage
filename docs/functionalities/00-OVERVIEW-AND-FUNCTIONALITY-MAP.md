@@ -1,9 +1,15 @@
 # Master Functional Overview & Architecture Map
 
-> **Location**: [`LandingPage/docs/functionalities/00-OVERVIEW-AND-FUNCTIONALITY-MAP.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/00-OVERVIEW-AND-FUNCTIONALITY-MAP.md)  
-> **Target Project**: [`LandingPage`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage) (`pkc-landing-page-monorepo`)  
+| Field | Value |
+| --- | --- |
+| Audience | Engineers, architects, and QA reviewers consulting capability-level reference architecture |
+| BMAD Owner | Architect (`bmad-agent-architect`) and Product Manager (`bmad-agent-pm`) |
+| Classification | Maintained Capability Reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts |
+| Operational Guide | [../01-architecture/landing-page-architecture.md](../01-architecture/landing-page-architecture.md) |
+> **Location**: [`LandingPage/docs/functionalities/00-OVERVIEW-AND-FUNCTIONALITY-MAP.md`](./00-OVERVIEW-AND-FUNCTIONALITY-MAP.md)  
+> **Target Project**: [`LandingPage`](../../README.md) (`pkc-landing-page-monorepo`)  
 > **Status**: Comprehensive Functional Specification  
-> **Related Architecture**: [`docs/01-architecture/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/01-architecture/)
+> **Related Architecture**: [`docs/01-architecture/`](../01-architecture/README.md)
 
 ---
 
@@ -27,7 +33,7 @@ graph TD
 
     subgraph "Execution & Rendering Engines"
         MC --> PR[Polymorphic Content Pipeline: RendererRegistry]
-        MC --> CLM[Cubical Logic Model: clm-kernel v0.0.3]
+        MC --> CLM[Cubical Logic Model: clm-kernel v0.0.13]
         MC --> WLLM[In-Browser AI: WebLLM / WebGPU]
         MC --> P2P[WebRTC Mesh: Serverless & WebSocket Signaled]
     end
@@ -51,14 +57,14 @@ graph TD
 
 ## 2. Monorepo Package Topology
 
-The repository is structured as an npm workspaces monorepo containing modular libraries under [`packages/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/packages/):
+The repository is structured as an npm workspaces monorepo containing modular libraries under [`packages/`](../../packages):
 
 | Package | Path | Purpose | Key Exports & Dependencies |
 | :--- | :--- | :--- | :--- |
-| **`@pkc/core`** | [`packages/core`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/packages/core) | Lightweight module loader and capability detection for browser environments | Feature detection (`webworkers`, `webrtc`, `indexeddb`, `webgpu`), modular loader |
-| **`@pkc/markdown-renderer`** | [`packages/markdown-renderer`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/packages/markdown-renderer) | Modular Markdown parser with math and diagram support | `marked`, `katex`, `mermaid`, sanitized HTML generation |
-| **`@pkc/p2p`** | [`packages/p2p`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/packages/p2p) | Serverless peer-to-peer networking | WebRTC connection orchestrator, manual SDP/QR code exchange |
-| **`pkc-server`** | [`packages/server`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/packages/server) | Server utilities, WebSocket gateway & Express middleware | Signaling bridge, room registry, proxy handlers |
+| **`@pkc/core`** | [`packages/core`](../../packages/core/README.md) | Lightweight module loader and capability detection for browser environments | Feature detection (`webworkers`, `webrtc`, `indexeddb`, `webgpu`), modular loader |
+| **`@pkc/markdown-renderer`** | [`packages/markdown-renderer`](../../packages/markdown-renderer/README.md) | Modular Markdown parser with math and diagram support | `marked`, `katex`, `mermaid`, sanitized HTML generation |
+| **`@pkc/p2p`** | [`packages/p2p`](../../packages/p2p/README.md) | Serverless peer-to-peer networking | WebRTC connection orchestrator, manual SDP/QR code exchange |
+| **`pkc-server`** | [`packages/server`](../../packages/server/README.md) | Server utilities, WebSocket gateway & Express middleware | Signaling bridge, room registry, proxy handlers |
 
 ---
 
@@ -79,7 +85,7 @@ mindmap
       Audio Synthesis (Tone.js) & Waveforms
       Video & PDF In-Browser Viewing
     Cubical Logic Model (CLM)
-      clm-kernel v0.0.3 Evaluation
+      clm-kernel v0.0.13 Evaluation
       Fault-Isolated Iframe Membrane
       Fiber Inspector & Conformance Harness
       Redux Type-Theoretic State Middleware
@@ -123,13 +129,13 @@ mindmap
 
 | Entry Point / View | URL / File Path | Core Functionality |
 | :--- | :--- | :--- |
-| **Mission Control Portal** | [`index.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/index.html) | System navigation hub, environment configuration loader, links to core apps. |
-| **MCard Manager** | [`app.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/app.html) | Primary operational interface for card management, view switching, multimedia rendering, and authenticated games. |
-| **Responsive UI Lab** | [`responsive-lab.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/responsive-lab.html) | Multi-device viewport testing workbench with device rotation, custom dimension scaling, and layout freeze analysis. |
-| **Fiber Inspector** | [`fiber-inspector.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/fiber-inspector.html) | Observability and correctness panel evaluating epistemic capability ($S$) against axiomatic entropy ($H$). |
-| **Fiber Conformance Harness** | [`fiber-conformance.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/fiber-conformance.html) | Automated test harness verifying Triad compliance and membrane isolation invariants. |
-| **CLM Sprint Registry** | [`sprint-registry.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/sprint-registry.html) | Visual SSoT display projection of the 122 sprints and 284 grammar handles from `clm-registry.yaml`. |
-| **PKC Design Archive** | [`pkc-docs-index.html`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/pkc-docs-index.html) | Curated interactive reader for foundational whitepapers (Yoneda Arithmetic, Sovereign Knowledge Networks). |
+| **Mission Control Portal** | [`index.html`](../../src/pages/index.astro) | System navigation hub, environment configuration loader, links to core apps. |
+| **MCard Manager** | [`app.html`](../../src/pages/app.astro) | Primary operational interface for card management, view switching, multimedia rendering, and authenticated games. |
+| **Responsive UI Lab** | [`responsive-lab.html`](../../src/pages/responsive-lab.astro) | Multi-device viewport testing workbench with device rotation, custom dimension scaling, and layout freeze analysis. |
+| **Fiber Inspector** | [`fiber-inspector.html`](../../src/pages/fiber-inspector.astro) | Observability and correctness panel evaluating epistemic capability ($S$) against axiomatic entropy ($H$). |
+| **Fiber Conformance Harness** | [`fiber-conformance.html`](../../src/pages/fiber-conformance.astro) | Automated test harness verifying Triad compliance and membrane isolation invariants. |
+| **CLM Sprint Registry** | [`sprint-registry.html`](../../src/pages/sprint-registry.astro) | Visual SSoT display projection of the 122 sprints and 284 grammar handles from `clm-registry.yaml`. |
+| **PKC Design Archive** | [`pkc-docs-index.html`](../../pkc-docs-index.html) | Curated interactive reader for foundational whitepapers (Yoneda Arithmetic, Sovereign Knowledge Networks). |
 
 ---
 
@@ -137,23 +143,23 @@ mindmap
 
 The functionalities extracted from the LandingPage codebase are organized into the following series of dedicated specifications:
 
-1. [`01-MISSION-CONTROL-AND-MCARD-MANAGEMENT.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/01-MISSION-CONTROL-AND-MCARD-MANAGEMENT.md)  
+1. [`01-MISSION-CONTROL-AND-MCARD-MANAGEMENT.md`](./01-MISSION-CONTROL-AND-MCARD-MANAGEMENT.md)  
    *MCard lifecycle, storage backends (SQLite/WAL), PWA offline caching, and dynamic view management.*
-2. [`02-POLYMORPHIC-CONTENT-RENDERING-PIPELINE.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/02-POLYMORPHIC-CONTENT-RENDERING-PIPELINE.md)  
+2. [`02-POLYMORPHIC-CONTENT-RENDERING-PIPELINE.md`](./02-POLYMORPHIC-CONTENT-RENDERING-PIPELINE.md)  
    *RendererRegistry, Markdown with callouts, KaTeX/MathJax, TikZ-CD vectorization, and Tone.js audio synthesis.*
-3. [`03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md)  
-   *CLM kernel integration (v0.0.3), iframe membrane isolation, Redux CLM middleware, and Fiber conformance.*
-4. [`04-WEBRTC-P2P-MESH-AND-REALTIME-COLLABORATION.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/04-WEBRTC-P2P-MESH-AND-REALTIME-COLLABORATION.md)  
+3. [`03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md`](./03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md)  
+   *CLM kernel integration (v0.0.13), iframe membrane isolation, Redux CLM middleware, and Fiber conformance.*
+4. [`04-WEBRTC-P2P-MESH-AND-REALTIME-COLLABORATION.md`](./04-WEBRTC-P2P-MESH-AND-REALTIME-COLLABORATION.md)  
    *Dual-mode WebRTC (serverless QR/SDP vs WebSocket signaling), RoomService v3, video meetings, and STUN/TURN NAT traversal.*
-5. [`05-REALTIME-MULTIPLAYER-BOARD-GAMES.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/05-REALTIME-MULTIPLAYER-BOARD-GAMES.md)  
+5. [`05-REALTIME-MULTIPLAYER-BOARD-GAMES.md`](./05-REALTIME-MULTIPLAYER-BOARD-GAMES.md)  
    *Distributed game engines: P2P Tic-Tac-Toe, Authenticated Monopoly, Chess, Go, and D&D Bali adventure.*
-6. [`06-AUTHENTICATION-AND-IDENTITY-SYSTEM.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/06-AUTHENTICATION-AND-IDENTITY-SYSTEM.md)  
+6. [`06-AUTHENTICATION-AND-IDENTITY-SYSTEM.md`](./06-AUTHENTICATION-AND-IDENTITY-SYSTEM.md)  
    *Zitadel OAuth2/OIDC integration, PKCE code challenge verification, token refresh cycles, and Redux auth slices.*
-7. [`07-IN-BROWSER-AI-AND-WEB-LLM-RUNTIME.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/07-IN-BROWSER-AI-AND-WEB-LLM-RUNTIME.md)  
+7. [`07-IN-BROWSER-AI-AND-WEB-LLM-RUNTIME.md`](./07-IN-BROWSER-AI-AND-WEB-LLM-RUNTIME.md)  
    *Zero-server in-browser WebLLM engine, WebGPU acceleration, model lifecycle management, and streaming chat.*
-8. [`08-OBSERVABILITY-LAGRANGIAN-AND-TELEMETRY.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/08-OBSERVABILITY-LAGRANGIAN-AND-TELEMETRY.md)  
+8. [`08-OBSERVABILITY-LAGRANGIAN-AND-TELEMETRY.md`](./08-OBSERVABILITY-LAGRANGIAN-AND-TELEMETRY.md)  
    *Principle of Least Action (ℒ), Lagrangian software scoring, Fibration dashboards, and Grafana Faro RUM.*
-9. [`09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md)  
+9. [`09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md`](./09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md)  
    *Responsive UI Lab, device registry, Penpot design sync & drift detection, CSS tokens, and accessibility audits.*
-10. [`10-DEV-OPS-ARGO-CD-AND-INFRASTRUCTURE.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/10-DEV-OPS-ARGO-CD-AND-INFRASTRUCTURE.md)  
+10. [`10-DEV-OPS-ARGO-CD-AND-INFRASTRUCTURE.md`](./10-DEV-OPS-ARGO-CD-AND-INFRASTRUCTURE.md)  
     *Containerization, Kubernetes manifests, ArgoCD GitOps, Cloudflare R2 object storage, and automated daily reporting.*

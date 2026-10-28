@@ -21,7 +21,7 @@ export {
 
 const router = express.Router();
 
-export const KERNEL_PROVENANCE = 'clm-kernel@0.0.12';
+export const KERNEL_PROVENANCE = 'clm-kernel@0.0.13';
 export const LANDING_HANDLE = 'urn:mcard:content:landing_page';
 export const DEFAULT_ALGORITHM = 'blake3';
 export const LEGACY_ALGORITHM = 'sha256';

@@ -4,15 +4,15 @@
 
 ## 1. Introduction
 
-The **Cubical Logic Model (CLM)** is a domain-specific language (DSL) grounded in YAML syntax, designed to define **Polynomial Cards (PCards)**—verifiable, executable units of logic that exist as three-dimensional constructs with clear separation between **Specification (Abstract)**, **Implementation (Concrete)**, and **Verification (Balanced)**.
+The **Cubical Logic Model (CLM)** is a domain-specific language (DSL) grounded in YAML syntax, designed to define **Polynomial Cards (PCards)**-verifiable, executable units of logic that exist as three-dimensional constructs with clear separation between **Specification (Abstract)**, **Implementation (Concrete)**, and **Verification (Balanced)**.
 
 **Every CLM file is a function.** Each function is searchable, composable, and executable across its three dimensions, forming a coordinate system for computable logic.
 
 ### CLM as Frontend to the Polynomial Type Runtime (PTR)
 
-CLM serves as the **declarative frontend** to the **Polynomial Type Runtime (PTR)** (pronounced "Peter")—a universal execution engine that supports arbitrary language runtimes. See [PTR Runtime Overview](./PTR_Runtime_Overview.md) for complete documentation.
+CLM serves as the **declarative frontend** to the **Polynomial Type Runtime (PTR)** (pronounced "Peter")-a universal execution engine that supports arbitrary language runtimes. See `PTR_Runtime_Overview.md` (planned) for complete documentation.
 
-**Etymology**: PTR is pronounced "Peter", from Greek **Πέτρος (Petros)** meaning "rock" or "stone"—the bedrock foundation that CLM's cubical structures stand upon.
+**Etymology**: PTR is pronounced "Peter", from Greek **Πέτρος (Petros)** meaning "rock" or "stone"-the bedrock foundation that CLM's cubical structures stand upon.
 
 **Supported runtimes**:
 
@@ -44,7 +44,7 @@ CLM serves as the **declarative frontend** to the **Polynomial Type Runtime (PTR
 │                           ▼                                   │
 │   ┌─────────────────────────────────────────────────────────┐ │
 │   │             PTR (Polynomial Type Runtime)               │ │
-│   │        Pronounced "Peter" — The rock foundation         │ │
+│   │        Pronounced "Peter" - The rock foundation         │ │
 │   │                                                         │ │
 │   │   ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌───────┐ │ │
 │   │   │   JS   │ │ Python │ │  Rust  │ │   C    │ │ WASM  │ │ │
@@ -189,7 +189,7 @@ CLM is designed as a **Local-First** system where:
 
 ### MCard: Universal Content-Addressable Storage
 
-All CLM files and data content are stored as **MCards**—hash-indexed blobs that serve as the universal unit of storage:
+All CLM files and data content are stored as **MCards**-hash-indexed blobs that serve as the universal unit of storage:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -414,7 +414,7 @@ Every CLM file defines a **function** positioned in a three-dimensional space:
 
 ### Excitable Medium Paradigm
 
-CLM functions behave as **Excitable Media**—they can exist in quiescent states and become active when stimulated by external events:
+CLM functions behave as **Excitable Media**-they can exist in quiescent states and become active when stimulated by external events:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -787,7 +787,7 @@ While recursive runtimes enable vertical composition (interpreters), horizontal 
 
 ## 7. Network IO Extension
 
-CLM supports network operations through builtin primitives and declarative resource definitions. See [CLM_Network_IO_Specification.md](./CLM_Network_IO_Specification.md) for complete details.
+CLM supports network operations through builtin primitives and declarative resource definitions. See `CLM_Network_IO_Specification.md` (planned) for complete details.
 
 ### 7.1. HTTP Operations
 
@@ -858,7 +858,7 @@ concrete:
 
 ## 8. Agentic Workflow Extension
 
-CLM can define autonomous agents through an optional fourth dimension. See [CLM_Agentic_Workflow_Specification.md](./CLM_Agentic_Workflow_Specification.md) for complete details.
+CLM can define autonomous agents through an optional fourth dimension. See `CLM_Agentic_Workflow_Specification.md` (planned) for complete details.
 
 ### 8.1. The Agent Dimension
 
@@ -1049,12 +1049,12 @@ balanced:
 | Polyglot Runtimes | ✅ Implemented | Section 4.5 |
 | `builtin: load_content` | ✅ Implemented | Section 2.3 |
 | `builtin: load_url` | 🔄 Partial | Section 7.1 |
-| `builtin: http_request` | 📋 Planned | [Network IO Spec](./CLM_Network_IO_Specification.md) |
-| WebSocket Support | 📋 Planned | [Network IO Spec](./CLM_Network_IO_Specification.md) |
-| Message Queues | 📋 Planned | [Network IO Spec](./CLM_Network_IO_Specification.md) |
-| Agent Dimension | 📋 Planned | [Agentic Spec](./CLM_Agentic_Workflow_Specification.md) |
-| Workflow Runtime | 📋 Planned | [Agentic Spec](./CLM_Agentic_Workflow_Specification.md) |
-| Event Triggers | 📋 Planned | [Agentic Spec](./CLM_Agentic_Workflow_Specification.md) |
+| `builtin: http_request` | 📋 Planned | `CLM_Network_IO_Specification.md` (planned) |
+| WebSocket Support | 📋 Planned | `CLM_Network_IO_Specification.md` (planned) |
+| Message Queues | 📋 Planned | `CLM_Network_IO_Specification.md` (planned) |
+| Agent Dimension | 📋 Planned | `CLM_Agentic_Workflow_Specification.md` (planned) |
+| Workflow Runtime | 📋 Planned | `CLM_Agentic_Workflow_Specification.md` (planned) |
+| Event Triggers | 📋 Planned | `CLM_Agentic_Workflow_Specification.md` (planned) |
 
 ---
 
@@ -1102,6 +1102,6 @@ RUNTIME_TYPE   ::= "python" | "javascript" | "rust" | "c" | "wasm" | "lean"
 
 ## Appendix B: Related Documents
 
-- [CLM_Network_IO_Specification.md](./CLM_Network_IO_Specification.md) - Detailed Network IO specification
-- [CLM_Agentic_Workflow_Specification.md](./CLM_Agentic_Workflow_Specification.md) - Detailed Agentic Workflow specification
-- [CLM_Implementation_Roadmap.md](./CLM_Implementation_Roadmap.md) - Implementation timeline and priorities
+- `CLM_Network_IO_Specification.md` (planned) - Detailed Network IO specification
+- `CLM_Agentic_Workflow_Specification.md` (planned) - Detailed Agentic Workflow specification
+- `CLM_Implementation_Roadmap.md` (planned) - Implementation timeline and priorities

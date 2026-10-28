@@ -1,8 +1,14 @@
 # WebRTC P2P Mesh & Real-Time Collaboration
 
-> **Location**: [`LandingPage/docs/functionalities/04-WEBRTC-P2P-MESH-AND-REALTIME-COLLABORATION.md`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docs/functionalities/04-WEBRTC-P2P-MESH-AND-REALTIME-COLLABORATION.md)  
-> **Source Directories**: [`js/modules/p2p-serverless/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/p2p-serverless/), [`js/modules/webrtc-dashboard/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/webrtc-dashboard/), [`js/modules/video-meeting/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/video-meeting/)  
-> **Backend Components**: [`ws-server.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/ws-server.js), [`room-registry.mjs`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/room-registry.mjs), [`room-message-handler-server.mjs`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/room-message-handler-server.mjs)  
+| Field | Value |
+| --- | --- |
+| Audience | Engineers, architects, and QA reviewers consulting capability-level reference architecture |
+| BMAD Owner | Architect (`bmad-agent-architect`) and Developer (`bmad-agent-dev`) |
+| Classification | Maintained Capability Reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts |
+| Operational Guide | [../04-networking/README.md](../04-networking/README.md) |
+> **Location**: [`LandingPage/docs/functionalities/04-WEBRTC-P2P-MESH-AND-REALTIME-COLLABORATION.md`](./04-WEBRTC-P2P-MESH-AND-REALTIME-COLLABORATION.md)  
+> **Source Directories**: [`js/modules/p2p-serverless/`](../../js/modules/p2p-serverless/README.md), [`js/modules/webrtc-dashboard/`](../../js/modules/webrtc-dashboard/README.md), [`js/modules/video-meeting/`](../../js/modules/video-meeting/README.md)  
+> **Backend Components**: [`ws-server.js`](../../ws-server.js), [`room-registry.mjs`](../../room-registry.mjs), [`room-message-handler-server.mjs`](../../room-message-handler-server.mjs)  
 > **Status**: Comprehensive Functional Specification
 
 ---
@@ -43,7 +49,7 @@ graph TB
 
 ## 2. Serverless P2P Module (`p2p-serverless/`)
 
-Located at [`js/modules/p2p-serverless/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/p2p-serverless/):
+Located at [`js/modules/p2p-serverless/`](../../js/modules/p2p-serverless/README.md):
 
 - **Perfect Negotiation Pattern**: Implements standard W3C WebRTC perfect negotiation with `makingOffer`, `ignoreOffer`, and polite peer resolution to eliminate glare race conditions.
 - **Manual Discovery via QR & Token**:
@@ -57,25 +63,25 @@ Located at [`js/modules/p2p-serverless/`](file:///Users/bkoo/Documents/Developme
 
 ## 3. WebRTC Dashboard & Room Service v3.0
 
-Located at [`js/modules/webrtc-dashboard/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/webrtc-dashboard/):
+Located at [`js/modules/webrtc-dashboard/`](../../js/modules/webrtc-dashboard/README.md):
 
-The room architecture was refactored into a modular suite orchestrated by [`RoomService`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/webrtc-dashboard/room-service-v3.js):
+The room architecture was refactored into a modular suite orchestrated by [`RoomService`](../../js/modules/webrtc-dashboard/room-service-v3.js):
 
 | Component Service | Source File | Responsibilities |
 | :--- | :--- | :--- |
-| **`RoomState`** | [`services/room-state.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/webrtc-dashboard/services/room-state.js) | Centralized reactive state store for room configuration, members, and active channels. |
-| **`RoomCreator`** | [`services/room-creator.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/webrtc-dashboard/services/room-creator.js) | Handles room creation, password protection, host permissions, and Redux sync. |
-| **`RoomJoiner`** | [`services/room-joiner.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/webrtc-dashboard/services/room-joiner.js) | Manages admission handshake, participant authorization, and connection establishment. |
-| **`RoomBroadcaster`**| [`services/room-broadcaster.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/webrtc-dashboard/services/room-broadcaster.js) | Emits room updates and participant activity across connected peers. |
-| **`RoomDiscovery`** | [`services/room-discovery.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/webrtc-dashboard/services/room-discovery.js) | Polls and listens for active rooms advertised by the WebSocket signaling server. |
-| **`WebRTCCoordinator`**| [`services/webrtc-coordinator.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/webrtc-dashboard/services/webrtc-coordinator.js) | Manages peer connection pools, track additions, and renegotiations. |
-| **`RoomMessageHandler`**| [`services/room-message-handler.js`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/webrtc-dashboard/services/room-message-handler.js) | Routes inbound chat, system notifications, and card transfer messages. |
+| **`RoomState`** | [`services/room-state.js`](../../js/modules/webrtc-dashboard/services/room-state.js) | Centralized reactive state store for room configuration, members, and active channels. |
+| **`RoomCreator`** | [`services/room-creator.js`](../../js/modules/webrtc-dashboard/services/room-creator.js) | Handles room creation, password protection, host permissions, and Redux sync. |
+| **`RoomJoiner`** | [`services/room-joiner.js`](../../js/modules/webrtc-dashboard/services/room-joiner.js) | Manages admission handshake, participant authorization, and connection establishment. |
+| **`RoomBroadcaster`**| [`services/room-broadcaster.js`](../../js/modules/webrtc-dashboard/services/room-broadcaster.js) | Emits room updates and participant activity across connected peers. |
+| **`RoomDiscovery`** | [`services/room-discovery.js`](../../js/modules/webrtc-dashboard/services/room-discovery.js) | Polls and listens for active rooms advertised by the WebSocket signaling server. |
+| **`WebRTCCoordinator`**| [`services/webrtc-coordinator.js`](../../js/modules/webrtc-dashboard/services/webrtc-coordinator.js) | Manages peer connection pools, track additions, and renegotiations. |
+| **`RoomMessageHandler`**| [`services/room-message-handler.js`](../../js/modules/webrtc-dashboard/services/room-message-handler.js) | Routes inbound chat, system notifications, and card transfer messages. |
 
 ---
 
 ## 4. Multi-Party Video Meetings (`video-meeting/`)
 
-Located at [`js/modules/video-meeting/`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/js/modules/video-meeting/):
+Located at [`js/modules/video-meeting/`](../../js/modules/video-meeting/README.md):
 
 - **Media Pipeline**: Captures local camera and microphone via `navigator.mediaDevices.getUserMedia()`.
 - **Dynamic Video Grid**: Automatically recalculates aspect ratios and layout grid columns based on active participant count.
@@ -89,8 +95,8 @@ Located at [`js/modules/video-meeting/`](file:///Users/bkoo/Documents/Developmen
 ## 5. NAT Traversal & STUN/TURN Infrastructure
 
 - **Local STUN Server**:
-  - Automated deployment via [`docker-compose.stun.yml`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/docker-compose.stun.yml) running Coturn on port `3478` (UDP/TCP).
-  - Controlled by script [`scripts/start-stun.sh`](file:///Users/bkoo/Documents/Development/GovTech/MCard_TDD/LandingPage/scripts/start-stun.sh).
+  - Automated deployment via [`docker-compose.stun.yml`](../../docker-compose.stun.yml) running Coturn on port `3478` (UDP/TCP).
+  - Controlled by script [`scripts/start-stun.sh`](../../scripts/start-stun.sh).
 - **Public Fallback**:
   - Built-in failover to Google Public STUN (`stun:stun.l.google.com:19302`) when local infrastructure is unreachable.
 - **Candidate Filtering**: Automatically prioritizes host and server-reflexive candidates for minimal latency on intranet deployments.

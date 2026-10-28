@@ -1,5 +1,10 @@
 # GQC-06 SPA Workbench, Astro Island, and Place-Transition Baselines
 
+| Field | Value |
+| --- | --- |
+| Audience | Developers, architects, and QA engineers inspecting Place byte budgets and navigation latency baselines |
+| BMAD Owner | Architect (`bmad-agent-architect`) and Test Architect |
+| Source of Truth | [`tests/performance/place-bytes.mjs`](../../tests/performance/place-bytes.mjs) and [`tests/features/performance-baselines.spec.js`](../../tests/features/performance-baselines.spec.js) |
 ## Validation Metadata
 
 | Field | Value |
@@ -57,7 +62,7 @@ Static manifest analysis (`analyzePlaceBytes`) inspects `dist/client/` against `
 | `p_page_fiber_inspector` | `page` | `/fiber-inspector.html` | `astro-wrapped` | 0 | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `42,111 / 14,757 / 12,651 B` | `42,111 / 14,757 / 12,651 B` | `0 B` island JS, `50,000 B` page JS | **Blocking** (`0 B` island JS), total advisory |
 | `p_page_fiber_conformance` | `page` | `/fiber-conformance.html` | `astro-wrapped` | 0 | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `42,111 / 14,757 / 12,651 B` | `42,111 / 14,757 / 12,651 B` | `0 B` island JS, `50,000 B` page JS | **Blocking** (`0 B` island JS), total advisory |
 | `p_view_index_mcard_viewer` | `view` | `/index.html?noredirect=1` | `astro-wrapped` | 0 | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `85,224 / 26,240 / 22,318 B` | `85,224 / 26,240 / 22,318 B` | `0 B` island JS, `160,000 B` dynamic network JS | **Blocking** (`0 B` island JS), total advisory |
-| `p_undecided_pkc_docs_index` | `static` | `/pkc-docs-index.html` | `astro-wrapped` | 0 | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `0 B` island JS | **Blocking** (`0 B` island JS) |
+| None (tombstoned `/pkc-docs-index.html`) | `static` | `/pkc-docs-index.html` | `astro-wrapped` | 0 | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `0 B` island JS | **Blocking** (`0 B` island JS) |
 
 ### Shared Chunk and Deferred Island Reconciliation on `p_page_responsive_lab`
 
@@ -131,7 +136,7 @@ Server-call Transitions report request dispatch and `ok` or `fail` completion se
 | `/sprint-registry.html` | `p_page_sprint_registry` | `19.81 ms` (`20.05 ms`) | `20.24 ms` (`20.54 ms`) | `0 B` | `0 B` | Parity (`+0.44 ms`), `0 B` client JS |
 | `/fiber-inspector.html` | `p_page_fiber_inspector` | `22.39 ms` (`22.75 ms`) | `23.03 ms` (`23.57 ms`) | `42,111 B` | `42,111 B` | Parity (`+0.65 ms`), `0 B` island JS |
 | `/fiber-conformance.html` | `p_page_fiber_conformance` | `16.53 ms` (`16.96 ms`) | `17.19 ms` (`18.14 ms`) | `42,111 B` | `42,111 B` | Parity (`+0.67 ms`), `0 B` island JS |
-| `/pkc-docs-index.html` | `p_undecided_pkc_docs_index` | `19.83 ms` (`20.47 ms`) | `20.15 ms` (`20.51 ms`) | `0 B` | `0 B` | Parity (`+0.32 ms`), `0 B` client JS |
+| `/pkc-docs-index.html` | None (tombstoned `/pkc-docs-index.html`) | `19.83 ms` (`20.47 ms`) | `20.15 ms` (`20.51 ms`) | `0 B` | `0 B` | Parity (`+0.32 ms`), `0 B` client JS |
 | Probe-target load + rotate | `p_page_responsive_lab` | `105.71 ms` (`122.58 ms`) | `139.31 ms` (`170.56 ms`) | `112,756 B` | `149,091 B` | Reflects the same one-time `+36.3 KB` Preact island boot cost on `responsive-lab.html` |
 
 ---

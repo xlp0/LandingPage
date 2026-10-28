@@ -1,158 +1,97 @@
-# 🚀 Developer Onboarding Guide — Start Here
+# Developer Onboarding Guide
 
-Welcome to the **PKC Landing Page & Responsive Test Workbench** codebase! This document provides complete onboarding context for developers joining the project.
+| Field | Value |
+| --- | --- |
+| Audience | Developers and QA engineers onboarding to the LandingPage repository |
+| BMAD Owner | Developer (`bmad-agent-dev`) and Architect (`bmad-agent-architect`) |
+| Source of Truth | [`package.json`](../../package.json), [`ws-server.js`](../../ws-server.js), [`astro.config.mjs`](../../astro.config.mjs), and [`src/net/workbench-net.yaml`](../../src/net/workbench-net.yaml) |
+| Consensus Kernel | `clm-kernel@0.0.13` |
 
----
+## Prerequisites and Setup
 
-## 🎯 What is the LandingPage Project?
-
-Within the **MCard_TDD** monorepo framework, `LandingPage` functions as **Submodule 3** (Estate 4 under the ULR-01 architectural census). Rather than functioning as a traditional static landing page, it is specialized into three core responsibilities:
-
-1. **Responsive Test Workbench (`responsive-lab.html`)**:
-   A dedicated testing workbench for certifying the **device-sensitive functionality** of any chosen target web application. It emulates 8 modern devices across phones, tablets, and desktops, tracks 7 device dimensions (orientation reflow, horizontal bleed, touch ergonomics, event capture ring buffer, frame timing, CLS, and Triad persistence), and provides deterministic Playwright replay.
-
-2. **Single-Page MCard Distillation (`SMR-09`)**:
-   Emits the landing page as a self-describing, content-addressed MCard (`urn:mcard:content:landing_page`) and hosts a 6-sample portal database (`data/samples/portal_samples.mcard.db`) on the canonical 3-table Triad SQLite schema.
-
-3. **SSRF-Guarded External Portal Membrane**:
-   Provides secure iframe embedding and URL probing with connection-level DNS, loopback/link-local/private-IP blocking, and redirect validation (`js/external-portal-membrane.js`, `server/mcard-api.mjs`).
-
----
-
-## 💻 Prerequisites & Setup
-
-### Prerequisites
-- **Node.js**: $\ge 18.0.0$ (LTS recommended)
-- **npm**: $\ge 9.0.0$
-- Modern browser (Chromium, Firefox, or WebKit)
-
-### Quick Setup
+Requires Node.js `>= 18.0.0` and npm `>= 9.0.0`.
 
 ```bash
-# 1. Navigate to the repository
 cd LandingPage
-
-# 2. Install dependencies
 npm install
-
-# 3. (Optional) Install Playwright browser binaries for testing
 npm run install-browsers
+npm run build
 ```
 
----
-
-## 🚀 Running the Workbench
-
-Start the local development server:
+## Running the Workbench and Understanding Ports
 
 ```bash
-npm run dev
-# Or: npm run ws-server
+npm start
 ```
 
-The server starts on port **3001** (or the port defined in `.env`).
+| Mode | Command | Port(s) | Notes |
+| --- | --- | --- | --- |
+| **Production / Built Local Server** | `npm start` or `npm run ws-server` | **`3000`** | Default `ws-server.js` HTTP, REST API, WebSocket `/ws/`, and Astro SSR middleware port (`PORT` overrides) |
+| **Interactive Astro + API Dev** | `npm run dev` | **`4322`** and **`3000`** | Runs `astro dev --port 4322` plus `node ws-server.js` on `3000`. Port `4322` avoids colliding with external target port `4321` |
+| **Automated Playwright Runner** | `npm test` / `npx playwright test` | **`3001`** (`TEST_PORT`) | Boots an isolated `ws-server.js` on `127.0.0.1:3001` with a temporary `MCARD_DB_PATH` |
+| **Docker Compose** | `docker compose up` | **`8765` -> `3000`** | Maps host port `8765` to container port `3000` (`Dockerfile` `EXPOSE 3000`) |
 
-### Key Application Routes
+### Key Application Routes (on `http://localhost:3000`)
 
-| Route | Description |
-| :--- | :--- |
-| **`http://localhost:3001/responsive-lab.html`** | **Primary Workbench**: Responsive UI Lab viewport stage, device registry, interaction recorder, and telemetry inspector. |
-| **`http://localhost:3001/responsive-lab.html?target=http://localhost:4321/`** | **Target Testing**: Launches the lab pointing to an external or local application (e.g., local Astro dev server). |
-| **`http://localhost:3001/index.html`** | **Portal Entry**: Auto-navigates to the Responsive UI Lab at top level while remaining embeddable as an iframe target. |
-| **`http://localhost:3001/app.html`** | **Mission Control**: Cockpit for MCard browsing, WebLLM AI runtime, and Lagrangian mechanics telemetry. |
-| **`http://localhost:3001/api/test-runs`** | **Test Runs REST API**: SQLite Triad endpoint for persisting and querying test sessions with Blake3 hashing. |
-| **`http://localhost:3001/api/mcard`** | **MCard API**: ESM endpoint querying SQLite content-addressed cards and handles. |
+| Route | Workbench Place / Role | Description |
+| :--- | :--- | :--- |
+| `/responsive-lab.html` (`/` redirects here) | `p_page_responsive_lab` | **Primary Workbench** (`astro-islands`, 7 Preact islands) with device presets, viewport stage, 5-step SPA Petri net workflow, recorder, conformance matrix, and MCard result panel |
+| `/responsive-lab.html?target=/tests/fixtures/spa-test-target.html` | Workbench + target `spa-test-target-net` | Loads the deterministic SPA fixture target inside `#mission-control-iframe` |
+| `/?noredirect=1` or `/index.html?noredirect=1` | `p_view_index_mcard_viewer` | **Single-Page 4-Modality MCard Viewer** (`media`, `document`, `code`, `webapp`); `/index.html` also acts as an MPA candidate when embedded in the Lab iframe |
+| `/app.html` | `p_page_app` | **Mission Control** (`astro-wrapped`), legacy IndexedDB MCard host classified as an MCard `webapp` target |
+| `/sprint-registry.html` | `p_page_sprint_registry` | CLM sprint registry catalog backed by `/api/clm/registry` |
+| `/fiber-inspector.html` and `/fiber-conformance.html` | `p_page_fiber_inspector`, `p_page_fiber_conformance` | Internal CLM fiber diagnostics (`0 B` island JS) |
+| `/app-config.json` and `/api/config` | Config endpoints | `/app-config.json` serves `urn:gqc:lab-config:v1` target presets; `/api/config` serves `urn:gqc:runtime-config:v1` runtime environment config |
 
----
-
-## 🧪 Running the Automated Verification Battery
-
-All capabilities are verified through automated unit tests, feature specs, replay drivers, and conformance checks:
+## Running Verification Gates and Tests
 
 ```bash
-# Run all unit tests (73 tests across 12 suites)
+npm run check:net
+node scripts/check-package-source-parity.mjs
+npm run docs:check
 npm run test:unit
-
-# Run multi-device systematic sweep across 8 profiles × 2 orientations (16 tests)
+npm run check:playwright-discovery
+npm run test:smoke
+npm run test:components
 npm run test:responsive
-
-# Run deterministic Playwright replay driver at 1×, 2×, 5× (4 tests)
 npm run test:replay
-
-# Run 15-check device conformance catalog & mint responsive certificate (16 tests)
 npm run test:conformance
-
-# Run viewport rotation and device containment tests (17 tests)
-npx playwright test tests/features/responsive-rotation-and-devices.spec.js --project=features
-
-# Run event capture and telemetry tests (8 tests)
-npx playwright test tests/features/responsive-capture.spec.js --project=features
 ```
 
----
+`LandingPage` uses **`node:test`** (`npm run test:unit`) and **Playwright** (`smoke`, `components`, `features` projects). Earlier notes stating Astro was not adopted are superseded (`astro@7.4.2` and `@astrojs/preact@6.1.1` are active), while **Vitest remains un-adopted**.
 
-## 📁 Repository Directory Structure
+## Repository Structure
 
-```
+```text
 LandingPage/
-├── responsive-lab.html           # Primary Responsive UI Lab & Test Workbench
-├── index.html                    # Streamlined portal entry & embeddable target
-├── app.html                      # Mission Control cockpit
-├── ws-server.js                  # Express & WebSocket server with CORS allowlist
-├── package.json                  # Dependencies (clm-kernel@0.0.9 pin)
-├── app-config.json               # Lab target URLs registry (INV-STU-02)
-├── retired-islands.yaml          # Formal catalog of retired legacy surfaces
+├── astro.config.mjs              # Astro 7.4.2 + @astrojs/node middleware + @astrojs/preact
+├── ws-server.js                  # Sole supported Express + WS + Astro middleware server (:3000)
+├── package.json                  # Scripts and pinned dependencies (clm-kernel@0.0.13)
+├── app-config.json               # Approved Responsive Lab target URLs (urn:gqc:lab-config:v1)
+├── retired-islands.yaml          # Tombstoned legacy surfaces
+├── src/
+│   ├── pages/                    # Six Astro workbench pages (.astro -> .html routes)
+│   ├── islands/                  # Seven Preact islands mounted on responsive-lab.astro
+│   └── net/workbench-net.yaml    # Canonical 31-Place, 65-Transition workbench Petri net
 ├── js/
-│   ├── harness/                  # Lab ESM harness (ERB-00..06 modules)
-│   │   ├── viewport-stage.js     # Viewport geometry & containment (INV-RVP-01..02)
-│   │   ├── target-membrane.js    # Single-writer iframe membrane (INV-STU-01)
-│   │   ├── lab-toolbar.js        # Lab UI controls & target selector
-│   │   ├── event-ring-buffer.js  # Bounded FIFO ring buffer (INV-ERB-01)
-│   │   ├── recording-state-machine.js # 20-pair deterministic FSM (INV-ERB-03)
-│   │   ├── fidelity.js           # Declared fidelity tiers T0–T3 (INV-DSF-01)
-│   │   ├── membrane-interceptor.js # Parent-iframe event interceptor & tap ergonomics
-│   │   ├── lab-probe-agent.js    # Opt-in cross-origin probe agent
-│   │   ├── normalize-event.js    # Scale-free coordinate normalization (INV-ERB-02)
-│   │   ├── telemetry-collector.js# Bleed, frame budget & CLS tracking (INV-DEV-01..04)
-│   │   └── test-run-schema.js    # Triad serialization & Blake3 hashing (INV-ERB-04)
-│   ├── device-registry.js        # Schema v2 device profiles (8 built-in devices)
-│   ├── landing-page-mcard.js     # SMR-09 single-page MCard distillation
-│   ├── external-portal-membrane.js # SSRF-guarded portal membrane
-│   └── nav.js                    # Penpot-generated navigation logic
+│   ├── harness/                  # Viewport stage, membrane, ring buffer, recorder (0.0.13), SPA workflow
+│   ├── device-registry.js        # Schema v2 device profiles (8 presets)
+│   ├── landing-page-mcard.js     # Single-page 4-modality MCard viewer controller
+│   ├── external-portal-membrane.js # SSRF-guarded external portal membrane
+│   └── nav.js                    # Navigation bar generated from design/landing-navigation.penpot
 ├── server/
-│   ├── test-run-api.mjs          # /api/test-runs SQLite Triad router
-│   └── mcard-api.mjs             # /api/mcard ESM API router
-├── data/
-│   ├── mcard-api.db              # SQLite Triad database for test runs and MCards
-│   └── samples/                  # Deterministic 6-sample portal corpus
-├── scripts/
-│   ├── playwright-replay-driver.mjs # Headless Playwright replay driver
-│   └── seed-portal-samples.mjs   # Seed script for portal sample corpus
-├── tests/
-│   ├── unit/                     # node:test unit suites
-│   ├── features/                 # Playwright feature specs
-│   └── conformance/              # 15-check modular conformance catalog
-└── docs/                         # Tiered documentation directory
-    ├── 00-getting-started/       # Onboarding, quickstart, status
-    ├── 01-architecture/          # System design & Monorepo estate boundaries
-    ├── 02-authentication/        # Zitadel OIDC & PKCE authentication
-    ├── 03-data-management/       # MCard Triad storage & clm-kernel integration
-    ├── 04-networking/            # WebRTC P2P mesh & signaling
-    ├── 05-state-management/      # Redux store & state slices
-    ├── 06-components/            # UI components & CLM framework
-    ├── 07-deployment/            # ArgoCD GitOps, Docker, CDN
-    ├── 08-testing/               # Device-sensitive testing infrastructure
-    ├── 09-performance/           # Observability, Faro telemetry, Web Vitals
-    ├── 10-project-management/    # Epics, stories, and sprint tracking
-    └── 11-standards/             # Coding guidelines, CSS rules, standards
+│   ├── mcard-api.mjs             # SQLite Triad backend and /api/mcard routes (Triad Blake3)
+│   ├── mcard-modality.mjs        # 4-modality classifier (KERNEL_PROVENANCE = clm-kernel@0.0.13)
+│   ├── mcard-probe-policy.mjs    # DNS, private-IP, redirect, and framing SSRF guards
+│   └── test-run-api.mjs          # /api/test-runs, NetMCard, FiringReceiptMCard, and run-link API
+├── scripts/                      # Net, parity, docs, PenPot, seed, and replay CLI tools
+├── tests/                        # node:test unit suites, Playwright specs, conformance, perf
+└── docs/                         # 12 engineering tiers, functionalities/, and sprints/
 ```
 
----
+## Key Architectural Rules
 
-## 🏛️ Monorepo Position & Boundary Discipline
-
-When contributing to `LandingPage`, keep in mind these architectural invariants:
-- **Estate Separation (`ULR-01`)**: `LandingPage` is a consumer of `clm-kernel` and does not define its own cryptographic primitives or alternative logic engines.
-- **Kernel Consensus**: Both `LandingPage` and `mcard-studio` pin `clm-kernel@0.0.9`. Any version change must be coordinated across the monorepo via `kernel-version-consensus.json`.
-- **SSOT Integrity**: Navigation routes and structure are authored in `design/landing-navigation.penpot` and verified via `scripts/penpot-drift.mjs`.
-- **Zero Runtime Dependencies for Lab Stage (`INV-REF-01`)**: The core viewport stage and event ring buffer run in vanilla JavaScript with native CSS custom properties.
+1. **Kernel Consensus (`clm-kernel@0.0.13`).** Server Triad hashing and modality classification delegate to `clm-kernel@0.0.13`, and `js/harness/recorder.js` stamps `lab.clmKernel: '0.0.13'` on new test runs while preserving readability of historical `0.0.10` records. Browser islands never import `clm-kernel`.
+2. **Three Distinct Hash Domains.** Server Triad Blake3 (`server/mcard-api.mjs`), browser compatibility SHA-256 (`public/js/mcard-kernel/compat.js` for `app.html` IndexedDB), and build-time PenPot graph SHA-256 (`scripts/penpot-zip.mjs`) never mix.
+3. **Declared Net Transitions.** Every UI-reachable client server call under `src/` or `js/harness/` must be declared in `src/net/workbench-net.yaml` and passes `node scripts/check-package-source-parity.mjs`.
+4. **PenPot Boundary.** `design/landing-navigation.penpot` drives LandingPage's own navigation (`js/nav.js`), while external PenPot MPA target assessment in the Lab remains Optional / Deferred pending Product Manager approval.

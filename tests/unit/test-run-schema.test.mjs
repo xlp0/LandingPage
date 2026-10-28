@@ -1,11 +1,22 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   validateTestRun,
+  parseStoredTestRunRecord,
   canonicalJson,
   targetSlug,
   TEST_RUN_SCHEMA
 } from '../../js/harness/test-run-schema.js';
+import {
+  InteractionRecorder,
+  DEFAULT_CLM_KERNEL_VERSION
+} from '../../js/harness/recorder.js';
+import { KERNEL_PROVENANCE } from '../../server/mcard-modality.mjs';
+
+const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
 function createValidRunFixture() {
   return {
@@ -139,5 +150,46 @@ describe('Test Run Schema & Serialization (INV-ERB-04)', () => {
     assert.equal(targetSlug('http://localhost:4321/explore/nested'), 'localhost-4321-explore-nested');
     assert.equal(targetSlug('https://example.gov/subpage?query=1'), 'example-gov-subpage');
     assert.equal(targetSlug('http://127.0.0.1:3001/tests/fixtures/probe.html'), '127-0-0-1-3001-tests-fixtures-probe-html');
+  });
+});
+
+describe('GQC-07-UNIT-03: clmKernel provenance alignment and historical record compatibility', () => {
+  test('new InteractionRecorder runs stamp current clm-kernel 0.0.13 matching package.json and KERNEL_PROVENANCE', () => {
+    const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
+    assert.equal(DEFAULT_CLM_KERNEL_VERSION, '0.0.13');
+    assert.equal(pkg.dependencies['clm-kernel'], DEFAULT_CLM_KERNEL_VERSION);
+    assert.equal(KERNEL_PROVENANCE, `clm-kernel@${DEFAULT_CLM_KERNEL_VERSION}`);
+
+    const recorder = new InteractionRecorder();
+    const run = recorder.buildTestRun({
+      target: { url: 'http://localhost:3000/tests/fixtures/spa-test-target.html' }
+    });
+    assert.equal(run.lab.clmKernel, '0.0.13');
+    const validation = validateTestRun(run);
+    assert.equal(validation.valid, true, validation.errors.join(', '));
+  });
+
+  test('InteractionRecorder honors explicit clmKernelVersion injection option', () => {
+    const recorder = new InteractionRecorder({ clmKernelVersion: '0.0.13-custom' });
+    const fromCtor = recorder.buildTestRun();
+    assert.equal(fromCtor.lab.clmKernel, '0.0.13-custom');
+
+    const fromCall = recorder.buildTestRun({ clmKernelVersion: '0.0.13-call' });
+    assert.equal(fromCall.lab.clmKernel, '0.0.13-call');
+  });
+
+  test('historical 0.0.10 responsive_test_run:v1 records remain valid and readable without rewriting', () => {
+    const historicalRun = createValidRunFixture();
+    assert.equal(historicalRun.lab.clmKernel, '0.0.10');
+
+    const validation = validateTestRun(historicalRun);
+    assert.equal(validation.valid, true, validation.errors.join(', '));
+
+    const storedBytes = canonicalJson(historicalRun);
+    const parsed = parseStoredTestRunRecord(JSON.parse(storedBytes));
+    assert.equal(parsed.ok, true);
+    assert.equal(parsed.record.schema, TEST_RUN_SCHEMA);
+    assert.equal(parsed.record.lab.clmKernel, '0.0.10');
+    assert.equal(canonicalJson(parsed.record), storedBytes);
   });
 });
