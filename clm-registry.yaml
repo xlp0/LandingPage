@@ -1948,6 +1948,151 @@ sprints:
         - vcard:sprint-407:update_docs_architecture_code_migration_to_clm_md
         - vcard:sprint-407:graduate_sprints_403_407_into_the_12_aspect_deployment_architect
       state: sealed
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-DCO-DOCUMENTATION-AND-COORDINATION-ALIGNMENT
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-DCO-DOCUMENTATION-AND-COORDINATION-ALIGNMENT
+    title: 'Program Charter: EPIC-DCO Documentation, Cross-Estate Coordination and Four-Estate SSoT Realignment'
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:DCO-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: DCO-01
+    title: 'Sprint DCO-01: Baseline Audit, Documentation Drift, and Boundary-Gate Census'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:dco-01:dod_dco_01_01_the_drift_register_records_the_exact_scanner_outpu
+        - vcard:dco-01:dod_dco_01_02_the_census_matches_the_36_clm_target_names_and_sep
+        - vcard:dco-01:dod_dco_01_03_active_normative_documents_root_makefile_help_and_
+        - vcard:dco-01:dod_dco_01_04_the_documentation_estate_check_passes_across_the_r
+        - vcard:dco-01:dod_dco_01_05_the_entrypoint_docs_index_md_carries_the_mandatory
+        - vcard:dco-01:dod_dco_01_06_the_census_records_the_measured_root_inventory_and
+        - vcard:dco-01:dod_dco_01_07_all_eight_dco_sprint_specifications_declare_precur
+        - vcard:dco-01:dod_dco_01_08_the_four_estate_verification_gate_passes_cleanly_o
+      state: sealed
+  - handle: urn:pcard:sprint:DCO-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: DCO-02
+    title: 'Sprint DCO-02: Submodule Lockstep Governance & Pinning Integrity'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:dco-02:dod_dco_02_01_both_consumers_exact_pin_the_published_version_0_0
+        - vcard:dco-02:dod_dco_02_02_all_five_kernel_version_surfaces_agree_on_the_work
+        - vcard:dco-02:dod_dco_02_03_no_consumer_imports_kernel_source_directly_every_c
+        - vcard:dco-02:dod_dco_02_04_the_root_gitmodules_declares_exactly_the_three_can
+        - vcard:dco-02:dod_dco_02_05_submodule_pointers_resolve_to_recorded_commits_rat
+        - vcard:dco-02:dod_dco_02_06_the_pinning_matrix_docs_sprints_active_evidence_dc
+        - vcard:dco-02:dod_dco_02_07_the_pointer_proposal_specification_defines_witness
+        - vcard:dco-02:dod_dco_02_08_the_landingpage_retirement_audit_passes_confirming
+      state: sealed
+  - handle: urn:pcard:sprint:DCO-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: DCO-03
+    title: 'Sprint DCO-03: Hermetic OCI Environment for Formal Oracles'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:dco-03:dod_dco_03_01_the_formal_lock_declares_lean_coq_julia_and_tla_pr
+        - vcard:dco-03:dod_dco_03_02_the_oci_manifest_pins_image_digest_os_platform_for
+        - vcard:dco-03:dod_dco_03_03_at_least_two_runs_on_the_same_source_commit_image_
+        - vcard:dco-03:dod_dco_03_04_the_python_oracle_runner_resolves_binaries_and_arg
+        - vcard:dco-03:dod_dco_03_05_the_portable_typescript_witness_validator_passes_i
+        - vcard:dco-03:dod_dco_03_06_the_rust_formal_runner_compiles_and_passes_its_nam
+        - vcard:dco-03:dod_dco_03_07_the_normative_formal_runtime_specification_links_t
+        - vcard:dco-03:dod_dco_03_08_ci_selects_the_pinned_oci_image_without_host_toolc
+      state: sealed
+  - handle: urn:pcard:sprint:DCO-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: DCO-04
+    title: 'Sprint DCO-04: Seeded Boundary Stress and Tri-Runtime Refinement'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:dco-04:dod_dco_04_01_the_fuzz_matrix_records_a_fixed_seed_pr_iteration_
+        - vcard:dco-04:dod_dco_04_02_the_1_000_iteration_run_writes_the_report_and_reco
+        - vcard:dco-04:dod_dco_04_03_the_targeted_studio_composition_suite_tests_the_to
+        - vcard:dco-04:dod_dco_04_04_the_seeded_tri_runtime_smoke_completes_all_three_r
+        - vcard:dco-04:dod_dco_04_05_the_petri_invariant_guard_reports_zero_token_leaka
+        - vcard:dco-04:dod_dco_04_06_runtime_traces_are_compared_to_the_formal_small_st
+        - vcard:dco-04:dod_dco_04_07_repeated_runs_with_identical_seed_and_iterations_p
+        - vcard:dco-04:dod_dco_04_08_ci_runs_the_bounded_pr_smoke_schedules_the_soak_an
+      state: sealed
+  - handle: urn:pcard:sprint:DCO-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: DCO-05
+    title: "Sprint DCO-05: Core Architecture, Function Catalog Navigation, and Di\xE1taxis"
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:dco-05:dod_dco_05_01_the_root_architecture_overview_explains_mcard_pcar
+        - vcard:dco-05:dod_dco_05_02_the_overview_diagram_shows_the_four_estates_packag
+        - vcard:dco-05:dod_dco_05_03_the_root_index_links_to_canonical_clm_sources_unde
+        - vcard:dco-05:dod_dco_05_04_the_catalog_navigation_page_explains_how_a_reader_
+        - vcard:dco-05:dod_dco_05_05_the_traceability_receipt_maps_every_root_architect
+        - vcard:dco-05:dod_dco_05_06_the_diataxis_receipt_assigns_every_root_guide_recu
+        - vcard:dco-05:dod_dco_05_07_every_runnable_python_command_in_guide_code_blocks
+        - vcard:dco-05:dod_dco_05_08_the_documentation_estate_check_passes_across_the_r
+      state: sealed
+  - handle: urn:pcard:sprint:DCO-06
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: DCO-06
+    title: 'Sprint DCO-06: Normative Specifications and Canonical Decision Records'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:dco-06:dod_dco_06_01_the_normative_release_specifications_describe_publ
+        - vcard:dco-06:dod_dco_06_02_synccontract_v1_names_each_wire_type_canonical_cod
+        - vcard:dco-06:dod_dco_06_03_the_normative_mcard_functional_closure_document_di
+        - vcard:dco-06:dod_dco_06_04_the_functional_closure_specification_states_the_co
+        - vcard:dco-06:dod_dco_06_05_docs_decisions_contains_dec_21_through_dec_26_each
+        - vcard:dco-06:dod_dco_06_06_the_specification_audit_receipt_contains_a_content
+        - vcard:dco-06:dod_dco_06_07_the_decision_index_lists_exactly_dec_21_through_de
+        - vcard:dco-06:dod_dco_06_08_the_documentation_estate_check_and_sprint_registry
+      state: sealed
+  - handle: urn:pcard:sprint:DCO-07
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: DCO-07
+    title: 'Sprint DCO-07: Higher-Order Cohomology and Symplectic Variational Research Specification'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:dco-07:dod_dco_07_01_the_h2_h3_record_defines_cochain_groups_through_de
+        - vcard:dco-07:dod_dco_07_02_the_theory_document_expresses_h_2_and_h_3_using_th
+        - vcard:dco-07:dod_dco_07_03_the_symplectic_status_record_defines_state_coordin
+        - vcard:dco-07:dod_dco_07_04_any_symplectic_experiment_report_includes_method_t
+        - vcard:dco-07:dod_dco_07_05_the_theory_references_the_current_julia_oracle_by_
+        - vcard:dco-07:dod_dco_07_06_each_external_mathematical_claim_has_a_complete_ci
+        - vcard:dco-07:dod_dco_07_07_no_claim_marked_proved_lacks_an_existing_proof_art
+        - vcard:dco-07:dod_dco_07_08_the_documentation_estate_check_passes_across_the_r
+      state: sealed
+  - handle: urn:pcard:sprint:DCO-08
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: DCO-08
+    title: 'Sprint DCO-08: Research Outlook, Navigation and Evidence-Led Graduation'
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:dco-08:dod_dco_08_01_the_compendium_contains_exactly_three_frontiers_an
+        - vcard:dco-08:dod_dco_08_02_the_functorial_compilation_entry_defines_categorie
+        - vcard:dco-08:dod_dco_08_03_the_root_architecture_index_links_to_the_existing_
+        - vcard:dco-08:dod_dco_08_04_the_root_entrypoint_and_sprint_index_link_to_the_d
+        - vcard:dco-08:dod_dco_08_05_the_docs_checker_detects_an_injected_stale_claim_a
+        - vcard:dco-08:dod_dco_08_06_the_docs_checker_detects_an_injected_orphan_and_re
+        - vcard:dco-08:dod_dco_08_07_the_certification_ledger_contains_exactly_64_uniqu
+        - vcard:dco-08:dod_dco_08_08_the_four_estate_verification_gate_passes_cleanly_a
+      state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CAS
     card_type: mcard
     archetype: specification_mcard
@@ -5808,9 +5953,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: d23570bd7de8e9a972be107abb769f30c5f7114e73fb062f46f19309691d1dd1
-  projection_sha256: 9bfebe1c46ff5308479bd87bd95e024fd809f834b34e41096fd9de295457238b
-  kernel_version: 0.0.13
-  landing_page_commit: beab20e895ca7d1a87f4494efdabc160261bc9f1
-  sprint_count: 277
+  source_sha256: 3e8b7243c94ebb01740aded742a0b08bc7830cac08bdb122fd5c1523b7b2ea88
+  projection_sha256: af8e0259963d77e5bb7bbcb7c299037a93b4a2cad8f8d5d3bc51bd2cd410ed04
+  kernel_version: 0.0.14
+  landing_page_commit: 9563b9fc34a9d430b1a505b12f5ae7475e2c70c0
+  sprint_count: 286
   unresolved_trace_refs: 0
