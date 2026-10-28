@@ -67,6 +67,25 @@ function buildInitialSnapshot(targetNets = {}) {
         events: []
       }
     },
+    layer4Session: {
+      sessionId: null,
+      sessionStatus: 'IDLE',
+      currentViewPlaceId: defaultNet?.entryPlaceId || null,
+      layer4PlaceId: defaultNet?.entryPlaceId || null,
+      netMCardHash: defaultNet?.layer4Verification?.netMCardHash || null,
+      bindingsMCardHash: defaultNet?.layer4Verification?.bindingsMCardHash || null,
+      initialMarkingHash: null,
+      markingHash: null,
+      stepCount: 0,
+      receiptHashes: [],
+      latestReceiptHash: null,
+      latestReceiptVerdict: null,
+      lastRequestId: null,
+      lastTransitionId: null,
+      idempotentReplay: false,
+      busy: false,
+      error: null
+    },
     capture: {
       recorderState: 'IDLE',
       completeness: 'idle',
@@ -77,8 +96,9 @@ function buildInitialSnapshot(targetNets = {}) {
       eventCount: 0,
       undersizedTaps: 0,
       savedRun: null,
+      navigationLink: null,
       graphLinkageNote:
-        'Graph-to-run MCard linkage (navigation_run_link:v1) is deferred to SPRINT-GQC-05; responsive_test_run:v1 remains closed.'
+        'Graph-to-run MCard linkage uses urn:gqc:navigation-run-link:v1 (SPRINT-GQC-05); responsive_test_run:v1 remains closed.'
     },
     moduleWarnings: [],
     statusAnnouncement:
@@ -418,6 +438,18 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
                   {state.liveSpa.reloadedDuringSession ? 'yes' : 'no'}
                 </code>
               </div>
+              <div className="spa-workflow-kv">
+                <span className="spa-workflow-k">NetMCard:</span>
+                <code data-testid="workflow-net-mcard-hash">
+                  {state.layer4Session?.netMCardHash || activeNet.layer4Verification?.netMCardHash || 'none'}
+                </code>
+              </div>
+              <div className="spa-workflow-kv">
+                <span className="spa-workflow-k">Bindings MCard:</span>
+                <code data-testid="workflow-bindings-mcard-hash">
+                  {state.layer4Session?.bindingsMCardHash || activeNet.layer4Verification?.bindingsMCardHash || 'none'}
+                </code>
+              </div>
             </div>
             <div className="spa-workflow-table-wrap">
               <table className="spa-workflow-table" data-testid="workflow-places-table">
@@ -498,6 +530,48 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
                   {state.liveSpa.inErrorPlace ? state.liveSpa.activePlaceId : 'none'}
                 </code>
               </div>
+              <div className="spa-workflow-kv">
+                <span className="spa-workflow-k">Layer 4 Session:</span>
+                <code data-testid="workflow-layer4-session-status">
+                  {state.layer4Session?.sessionStatus || 'IDLE'}
+                </code>
+              </div>
+              <div className="spa-workflow-kv">
+                <span className="spa-workflow-k">Layer 4 Place:</span>
+                <code data-testid="workflow-layer4-place">
+                  {state.layer4Session?.layer4PlaceId || activeNet.entryPlaceId}
+                </code>
+              </div>
+              <div className="spa-workflow-kv">
+                <span className="spa-workflow-k">Layer 4 Steps:</span>
+                <code data-testid="workflow-layer4-step-count">
+                  {String(state.layer4Session?.stepCount ?? 0)}
+                </code>
+              </div>
+              <div className="spa-workflow-kv">
+                <span className="spa-workflow-k">Marking Hash:</span>
+                <code data-testid="workflow-layer4-marking-hash">
+                  {state.layer4Session?.markingHash || 'none'}
+                </code>
+              </div>
+              <div className="spa-workflow-kv">
+                <span className="spa-workflow-k">Latest Receipt:</span>
+                <code data-testid="workflow-latest-receipt-hash">
+                  {state.layer4Session?.latestReceiptHash || 'none'}
+                </code>
+              </div>
+              <div className="spa-workflow-kv">
+                <span className="spa-workflow-k">Receipt Verdict:</span>
+                <code data-testid="workflow-latest-receipt-verdict">
+                  {state.layer4Session?.latestReceiptVerdict || 'none'}
+                </code>
+              </div>
+              <div className="spa-workflow-kv">
+                <span className="spa-workflow-k">Receipts Count:</span>
+                <code data-testid="workflow-layer4-receipt-count">
+                  {String(state.layer4Session?.receiptHashes?.length ?? 0)}
+                </code>
+              </div>
             </div>
             <div className="spa-workflow-table-wrap">
               <table className="spa-workflow-table" data-testid="workflow-transitions-table">
@@ -508,6 +582,7 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
                     <th scope="col">From</th>
                     <th scope="col">Destination / Error Place</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Execute</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -516,6 +591,9 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
                     const destText = t.errorPlaceId
                       ? `Error: ${t.errorPlaceId}`
                       : t.destinationPlaceId;
+                    const isErrorModal = state.layer4Session?.sessionStatus === 'ERROR_MODAL';
+                    const isRecoverAction = t.kind === 'recover';
+                    const fireDisabled = Boolean(state.layer4Session?.busy) || (isErrorModal && !isRecoverAction);
                     return (
                       <tr key={t.transitionId} data-testid={`transition-row-${t.transitionId}`}>
                         <td><code data-testid={`transition-id-${t.transitionId}`}>{t.transitionId}</code></td>
@@ -523,11 +601,42 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
                         <td><code>{t.fromPlaceId}</code></td>
                         <td><code data-testid={`transition-dest-${t.transitionId}`}>{destText}</code></td>
                         <td><code data-testid={`transition-status-${t.transitionId}`}>{liveStatus}</code></td>
+                        <td>
+                          <button
+                            type="button"
+                            data-testid={`workflow-fire-${t.transitionId}`}
+                            className="toolbar-btn"
+                            disabled={fireDisabled}
+                            onClick={() => workflowRef.current?.fireLayer4Transition(t.transitionId)}
+                          >
+                            {isRecoverAction ? 'Recover' : 'Fire'}
+                          </button>
+                        </td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
+            </div>
+            <div className="spa-workflow-actions">
+              <button
+                type="button"
+                data-testid="workflow-start-layer4-session"
+                className="toolbar-btn"
+                disabled={Boolean(state.layer4Session?.busy)}
+                onClick={() => workflowRef.current?.startLayer4Session()}
+              >
+                Start Layer 4 Session
+              </button>
+              <button
+                type="button"
+                data-testid="workflow-replay-last-request"
+                className="toolbar-btn"
+                disabled={Boolean(state.layer4Session?.busy) || !state.layer4Session?.lastRequestId}
+                onClick={() => workflowRef.current?.replayLastLayer4Request()}
+              >
+                Repeat Last Request
+              </button>
             </div>
           </div>
         )}
@@ -597,6 +706,15 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
           >
             Stop &amp; Save MCard
           </button>
+          <button
+            type="button"
+            data-testid="workflow-link-layer4-run"
+            className="toolbar-btn"
+            disabled={!state.capture.savedRun?.ok || !activeNet || Boolean(state.layer4Session?.busy)}
+            onClick={() => workflowRef.current?.linkSavedRunToLayer4()}
+          >
+            Link Graph &amp; Receipts MCard
+          </button>
         </div>
 
         <div data-testid="workflow-mcard-evidence" className="spa-workflow-evidence-box">
@@ -614,6 +732,28 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
                   {state.capture.savedRun.hash}
                 </code>
               </div>
+              {state.capture.navigationLink?.ok && (
+                <div>
+                  <div className="mcard-result-row">
+                    <span className="mcard-result-key">Nav Link Handle:</span>
+                    <code data-testid="workflow-nav-link-handle" className="mcard-result-val">
+                      {state.capture.navigationLink.linkHandle}
+                    </code>
+                  </div>
+                  <div className="mcard-result-row">
+                    <span className="mcard-result-key">Nav Link Hash:</span>
+                    <code data-testid="workflow-nav-link-hash" className="mcard-result-val">
+                      {state.capture.navigationLink.linkHash}
+                    </code>
+                  </div>
+                  <div className="mcard-result-row">
+                    <span className="mcard-result-key">Linked Receipts:</span>
+                    <code data-testid="workflow-nav-link-receipt-count" className="mcard-result-val">
+                      {String(state.capture.navigationLink.receiptCount)}
+                    </code>
+                  </div>
+                </div>
+              )}
             </div>
           ) : state.capture.savedRun && !state.capture.savedRun.ok ? (
             <div data-testid="workflow-mcard-save-error" className="spa-workflow-live-error">

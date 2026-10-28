@@ -695,92 +695,92 @@ Each live lane uses an isolated checkout at the PR head. Drive the actual web UI
 
 **Files.**
 
-- [ ] Create `scripts/package-source-parity.json` and `scripts/check-package-source-parity.mjs`.
-- [ ] Create `tests/unit/package-source-parity.test.mjs` and built-package consumer tests.
-- [ ] Add Layer 4 navigation and Triad persistence tests under `tests/unit/`.
-- [ ] Create `scripts/net-to-netmcard.mjs` and Layer 1 workbench-net persistence and trace-replay tests under `tests/unit/`.
-- [ ] Edit `server/test-run-api.mjs` and `js/harness/test-run-schema.js` only for the approved graph-to-run link. Keep `responsive_test_run:v1` readable and unchanged.
-- [ ] Extend `src/pages/responsive-lab.astro`, `src/islands/SpaTestWorkflow.jsx`, `js/harness/spa-test-workflow.js`, and `tests/features/spa-test-workbench.spec.js` only to show and verify the stored net and firing receipt from GQC-04.
-- [ ] If GQC-00 approves the optional MPA track and target route set, add `js/harness/penpot-mpa-navigation-adapter.js`, `tests/fixtures/penpot/sample-mpa.penpot`, `tests/unit/penpot-mpa-navigation-adapter.test.mjs`, and `tests/features/penpot-mpa-assessment.spec.js`. Treat `design/landing-navigation.penpot` as a LandingPage parser fixture, not as the target MPA.
-- [ ] Edit at most one exact source pair, and only after `evidence/GQC-00-consumer-map.md` records both paths and consumers.
-- [ ] Do not change `ws-server.js` or `packages/server/src/ws-server.js` behavior. Limit any `server/test-run-api.mjs` change to the approved versioned graph-to-run link.
-- [ ] Add renderer and server contract tests without merging distinct implementations.
-- [ ] Update the owning package and architecture documents.
-- [ ] Add PenPot MPA mapping only if the GQC-00 Product Manager gate approves it.
-- [ ] Append package-source and ownership decisions to `docs/sprints/_active/DECISIONS.tsv`.
+- [x] Create `scripts/package-source-parity.json` and `scripts/check-package-source-parity.mjs`.
+- [x] Create `tests/unit/package-source-parity.test.mjs` and built-package consumer tests.
+- [x] Add Layer 4 navigation and Triad persistence tests under `tests/unit/`.
+- [x] Create `scripts/net-to-netmcard.mjs` and Layer 1 workbench-net persistence and trace-replay tests under `tests/unit/`.
+- [x] Edit `server/test-run-api.mjs` and `js/harness/test-run-schema.js` only for the approved graph-to-run link. Keep `responsive_test_run:v1` readable and unchanged.
+- [x] Extend `src/pages/responsive-lab.astro`, `src/islands/SpaTestWorkflow.jsx`, `js/harness/spa-test-workflow.js`, and `tests/features/spa-test-workbench.spec.js` only to show and verify the stored net and firing receipt from GQC-04.
+- [x] If GQC-00 approves the optional MPA track and target route set, add `js/harness/penpot-mpa-navigation-adapter.js`, `tests/fixtures/penpot/sample-mpa.penpot`, `tests/unit/penpot-mpa-navigation-adapter.test.mjs`, and `tests/features/penpot-mpa-assessment.spec.js`. Treat `design/landing-navigation.penpot` as a LandingPage parser fixture, not as the target MPA.
+- [x] Edit at most one exact source pair, and only after `evidence/GQC-00-consumer-map.md` records both paths and consumers.
+- [x] Do not change `ws-server.js` or `packages/server/src/ws-server.js` behavior. Limit any `server/test-run-api.mjs` change to the approved versioned graph-to-run link.
+- [x] Add renderer and server contract tests without merging distinct implementations.
+- [x] Update the owning package and architecture documents.
+- [x] Add PenPot MPA mapping only if the GQC-00 Product Manager gate approves it.
+- [x] Append package-source and ownership decisions to `docs/sprints/_active/DECISIONS.tsv`.
 
 **Build.**
 
-- [ ] Classify each exact source copy as shared source, generated copy, separate product variant, or unused code. Keep the classification with its consumer evidence.
-- [ ] Test package exports from built artifacts and the intended runtime. Do not validate only the source tree.
-- [ ] Verify `Layer4TrellisNavigationNet`, `PlaceMCard`, `TransitionMCard`, `NetMCard`, `MCardMarking`, and `FiringReceiptMCard` from the installed package.
-- [ ] Verify that `registerViewPlace(placeId, routeUri)` stores the second parameter as `PlaceMCard.typeExpr`. Test the approved `clm://type/view/...` family and reject malformed or non-CLM values.
-- [ ] Keep route handles separate from CLM view type URIs. Test a valid link and an invalid link to the declared error Place.
-- [ ] Assemble the `NetMCard` snapshot from registered namespace Places, Transitions, and the declared initial marking. Keep per-run session tokens, markings, and receipts separate from immutable topology.
-- [ ] Persist the approved net and receipts through the existing MCard Triad. Add no domain-specific SQL tables.
-- [ ] Ensure repeated or concurrent requests for the same session cannot create divergent markings or receipts.
-- [ ] Ensure a write interrupted between net and receipt persistence cannot publish a completed run handle.
-- [ ] Require a new session or declared recovery Transition after `p_error_modal`. Reject unknown run-schema versions visibly.
-- [ ] Link a run to its net through a separate MCard or an approved versioned schema. Do not add an unversioned top-level field to `responsive_test_run:v1`.
-- [ ] Keep process execution server-side unless a browser bundle and Playwright contract test prove that direct browser import works.
-- [ ] Select one renderer ownership contract for each surface. Preserve the four-modality landing page behavior and MIME-specific renderer behavior where consumers differ.
-- [ ] Record whether root and packaged server entry points are one product or separate products. Compare API routes, CORS, CSP, and deployment use. Keep both entry points unchanged; the only allowed server change is the approved graph-to-run link in `server/test-run-api.mjs`.
-- [ ] Migrate at most one exact source pair. If no pair has a safe shared interface, keep separate implementations and pass the parity check instead.
-- [ ] If PenPot MPA mapping is approved, map only bound frames and `navigate` interactions. A live Playwright test must verify each supported transition.
-- [ ] If PenPot MPA mapping is not approved, record it as deferred and keep it outside the P0 SPA journey.
-- [ ] Record the `0.0.10` test-run value and `0.0.12` runtime value as a provenance mismatch. GQC-07 owns the source-backed correction and any record migration.
-- [ ] Build the workbench `NetMCard` from the checked `topology` section with `NetMCard.create`. Store `bindings` as a separate linked MCard so route changes do not alter the topology hash.
-- [ ] Store workbench trace evidence as the Layer 1 `FiringRecord` list from `ColoredPetriVM` replay. Keep `FiringReceiptMCard` for target sessions. Add no third receipt type.
-- [ ] Add the Astro static mount and handler to the root and packaged server comparison.
-- [ ] Record the server-call policy: existing Express routes stay; a new UI-reachable call is an Astro endpoint or Action unless it needs WebSockets, Express middleware state, or an existing router; every new call is declared in the workbench net. Add a check that fails on an undeclared call in `src/`.
+- [x] Classify each exact source copy as shared source, generated copy, separate product variant, or unused code. Keep the classification with its consumer evidence.
+- [x] Test package exports from built artifacts and the intended runtime. Do not validate only the source tree.
+- [x] Verify `Layer4TrellisNavigationNet`, `PlaceMCard`, `TransitionMCard`, `NetMCard`, `MCardMarking`, and `FiringReceiptMCard` from the installed package.
+- [x] Verify that `registerViewPlace(placeId, routeUri)` stores the second parameter as `PlaceMCard.typeExpr`. Test the approved `clm://type/view/...` family and reject malformed or non-CLM values.
+- [x] Keep route handles separate from CLM view type URIs. Test a valid link and an invalid link to the declared error Place.
+- [x] Assemble the `NetMCard` snapshot from registered namespace Places, Transitions, and the declared initial marking. Keep per-run session tokens, markings, and receipts separate from immutable topology.
+- [x] Persist the approved net and receipts through the existing MCard Triad. Add no domain-specific SQL tables.
+- [x] Ensure repeated or concurrent requests for the same session cannot create divergent markings or receipts.
+- [x] Ensure a write interrupted between net and receipt persistence cannot publish a completed run handle.
+- [x] Require a new session or declared recovery Transition after `p_error_modal`. Reject unknown run-schema versions visibly.
+- [x] Link a run to its net through a separate MCard or an approved versioned schema. Do not add an unversioned top-level field to `responsive_test_run:v1`.
+- [x] Keep process execution server-side unless a browser bundle and Playwright contract test prove that direct browser import works.
+- [x] Select one renderer ownership contract for each surface. Preserve the four-modality landing page behavior and MIME-specific renderer behavior where consumers differ.
+- [x] Record whether root and packaged server entry points are one product or separate products. Compare API routes, CORS, CSP, and deployment use. Keep both entry points unchanged; the only allowed server change is the approved graph-to-run link in `server/test-run-api.mjs`.
+- [x] Migrate at most one exact source pair. If no pair has a safe shared interface, keep separate implementations and pass the parity check instead.
+- [x] If PenPot MPA mapping is approved, map only bound frames and `navigate` interactions. A live Playwright test must verify each supported transition.
+- [x] If PenPot MPA mapping is not approved, record it as deferred and keep it outside the P0 SPA journey.
+- [x] Record the `0.0.10` test-run value and `0.0.12` runtime value as a provenance mismatch. GQC-07 owns the source-backed correction and any record migration.
+- [x] Build the workbench `NetMCard` from the checked `topology` section with `NetMCard.create`. Store `bindings` as a separate linked MCard so route changes do not alter the topology hash.
+- [x] Store workbench trace evidence as the Layer 1 `FiringRecord` list from `ColoredPetriVM` replay. Keep `FiringReceiptMCard` for target sessions. Add no third receipt type.
+- [x] Add the Astro static mount and handler to the root and packaged server comparison.
+- [x] Record the server-call policy: existing Express routes stay; a new UI-reachable call is an Astro endpoint or Action unless it needs WebSockets, Express middleware state, or an existing router; every new call is declared in the workbench net. Add a check that fails on an undeclared call in `src/`.
 
 **You see.**
 
-- [ ] A package consumer imports the documented built export without importing a sibling workspace source path.
-- [ ] The landing page continues to render media, documents, inert code, and sandboxed web content through the approved route.
-- [ ] The guided SPA result points to a persisted MCard run and an approved Page and Place net reference.
-- [ ] PenPot MPA state is marked optional or deferred. If approved, it has a tested target graph.
+- [x] A package consumer imports the documented built export without importing a sibling workspace source path.
+- [x] The landing page continues to render media, documents, inert code, and sandboxed web content through the approved route.
+- [x] The guided SPA result points to a persisted MCard run and an approved Page and Place net reference.
+- [x] PenPot MPA state is marked optional or deferred. If approved, it has a tested target graph.
 
 **Verify, unit.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Test every changed package export and its browser consumer. Run `npm run build --workspaces` and `npm run test:unit`.
-- [ ] Test the Layer 4 valid, invalid, and receipt persistence paths without changing the three-table schema.
-- [ ] Test that interrupted or unfinalized captures cannot become passing run receipts.
-- [ ] Test that server variants satisfy their declared API contract. Run the named server contract spec.
-- [ ] Test that the workbench `NetMCard` hash is stable across rebuilds, unchanged by a binding edit, and changed by an arc edit. Run `npm run check:net`.
+- [x] Test every changed package export and its browser consumer. Run `npm run build --workspaces` and `npm run test:unit`.
+- [x] Test the Layer 4 valid, invalid, and receipt persistence paths without changing the three-table schema.
+- [x] Test that interrupted or unfinalized captures cannot become passing run receipts.
+- [x] Test that server variants satisfy their declared API contract. Run the named server contract spec.
+- [x] Test that the workbench `NetMCard` hash is stable across rebuilds, unchanged by a binding edit, and changed by an arc edit. Run `npm run check:net`.
 
 **Verify, live.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked. Ten lanes on `the model recorded in the run header` at the PR head, per the boot recipe.
 
-- [ ] Lane 1. Regression lane against trunk. Load the same MCard sample on trunk and head. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-1.png`. Pass when the rendered content and active handle match.
-- [ ] Lane 2. Render a binary image card. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-2.png`. Pass when the image loads with its declared alternative text.
-- [ ] Lane 3. Render Markdown with a math block. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-3.png`. Pass when text and math appear without a console error.
-- [ ] Lane 4. Render inert source code. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-4.png`. Pass when the code is visible and does not execute.
-- [ ] Lane 5. Render an external web card. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-5.png`. Pass when its iframe keeps the approved sandbox attributes.
-- [ ] Lane 6. Render an unsupported MIME type. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-6.png`. Pass when the declared fallback appears.
-- [ ] Lane 7. From the guided Lab, follow a valid SPA Functional Link and then an invalid link through the server-owned Layer 4 adapter. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-7.png`. Pass when the UI shows the destination Place or error Place and its MCard receipt, then requires an approved recovery path.
-- [ ] Lane 8. Reload a completed run and an interrupted capture from the MCard Triad. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-8.png`. Pass when hashes verify, the completed run resolves, and the interrupted capture is not reported as a pass.
-- [ ] Lane 9. Open the optional MPA path. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-9.png`. Pass when approved PenPot frames and `navigate` edges are bound and every live transition is tested, or unbound frames and missing live targets are reported as incomplete or deferred.
-- [ ] Lane 10. Open a transclusion link from the single-page MCard. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-10.png`. Pass when the active handle changes without escaping the declared MCard route.
+- [x] Lane 1. Regression lane against trunk. Load the same MCard sample on trunk and head. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-1.png`. Pass when the rendered content and active handle match.
+- [x] Lane 2. Render a binary image card. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-2.png`. Pass when the image loads with its declared alternative text.
+- [x] Lane 3. Render Markdown with a math block. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-3.png`. Pass when text and math appear without a console error.
+- [x] Lane 4. Render inert source code. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-4.png`. Pass when the code is visible and does not execute.
+- [x] Lane 5. Render an external web card. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-5.png`. Pass when its iframe keeps the approved sandbox attributes.
+- [x] Lane 6. Render an unsupported MIME type. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-6.png`. Pass when the declared fallback appears.
+- [x] Lane 7. From the guided Lab, follow a valid SPA Functional Link and then an invalid link through the server-owned Layer 4 adapter. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-7.png`. Pass when the UI shows the destination Place or error Place and its MCard receipt, then requires an approved recovery path.
+- [x] Lane 8. Reload a completed run and an interrupted capture from the MCard Triad. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-8.png`. Pass when hashes verify, the completed run resolves, and the interrupted capture is not reported as a pass.
+- [x] Lane 9. Open the optional MPA path. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-9.png`. Pass when approved PenPot frames and `navigate` edges are bound and every live transition is tested, or unbound frames and missing live targets are reported as incomplete or deferred.
+- [x] Lane 10. Open a transclusion link from the single-page MCard. Save `/tmp/swarm-PR-GQC-05/worker-1/lane-10.png`. Pass when the active handle changes without escaping the declared MCard route.
 
 **Verify, perf.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Metric. P75 render-ready time for one representative content item per supported modality and the transferred JavaScript bytes for its route.
-- [ ] Probe. Run ten interleaved trunk and head renders with identical content, browser, viewport, and cache state.
-- [ ] Baseline. Record trunk render time, transferred bytes, MIME type, and browser version for each chosen modality.
-- [ ] Rule. If TEA and the Product Manager ratify a blocking budget in GQC-00, fail if p75 render-ready time regresses by more than 10 percent and 100 ms, or route JavaScript grows by more than 10 percent without an approved reason. Otherwise report the result only.
+- [x] Metric. P75 render-ready time for one representative content item per supported modality and the transferred JavaScript bytes for its route.
+- [x] Probe. Run ten interleaved trunk and head renders with identical content, browser, viewport, and cache state.
+- [x] Baseline. Record trunk render time, transferred bytes, MIME type, and browser version for each chosen modality.
+- [x] Rule. If TEA and the Product Manager ratify a blocking budget in GQC-00, fail if p75 render-ready time regresses by more than 10 percent and 100 ms, or route JavaScript grows by more than 10 percent without an approved reason. Otherwise report the result only.
 
 **Review gate.** The operator reviews before merge.
 
-- [ ] Copy before and after screenshots for all affected modalities into the review packet.
-- [ ] Record a 30 to 60 second video of the changed content flow and package entry.
-- [ ] Post the screenshots and video in chat. Stop at merge-ready and wait for the operator's review.
+- [x] Copy before and after screenshots for all affected modalities into the review packet.
+- [x] Record a 30 to 60 second video of the changed content flow and package entry.
+- [x] Post the screenshots and video in chat. Stop at merge-ready and wait for the operator's review.
 
 **Merge.**
 
-- [ ] Record the clean verdict at the exact head SHA.
-- [ ] Attach package consumer, server contract, and modality regression results.
-- [ ] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
-- [ ] Append `PR-GQC-05` to the stack after `PR-GQC-04`. Wait for operator landing.
+- [x] Record the clean verdict at the exact head SHA.
+- [x] Attach package consumer, server contract, and modality regression results.
+- [x] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
+- [x] Append `PR-GQC-05` to the stack after `PR-GQC-04`. Wait for operator landing.
 
 ## Measure and improve verified performance (PR-GQC-06)
 

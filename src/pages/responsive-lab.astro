@@ -10,6 +10,7 @@ import ConformancePanelIsland from '../islands/ConformancePanelIsland.jsx';
 import MCardResultIsland from '../islands/MCardResultIsland.jsx';
 import SpaTestWorkflow from '../islands/SpaTestWorkflow.jsx';
 import { loadNetEnvelope, validateNetEnvelope } from '../../scripts/check-net.mjs';
+import { createLayer4TargetAdapter } from '../../scripts/net-to-netmcard.mjs';
 import { assertDisjointNetIds, serializeTargetNetEnvelope } from '../../js/harness/spa-test-workflow.js';
 
 const workbenchEnvelope = loadNetEnvelope(path.resolve(process.cwd(), 'src/net/workbench-net.yaml'));
@@ -71,12 +72,16 @@ if (trapStep.navigated || !trapStep.trappedToErrorModal) {
   throw new Error('Layer 4 validation failed to trap invalid SPA link link_spa_invalid_unmapped');
 }
 
+const spaLayer4Adapter = createLayer4TargetAdapter(spaTargetEnvelope);
+
 const targetNets = {
   '/tests/fixtures/spa-test-target.html': serializeTargetNetEnvelope(spaTargetEnvelope, {
     targetUrl: '/tests/fixtures/spa-test-target.html',
     targetType: 'spa',
     layer4Verification: {
       facade: 'Layer4TrellisNavigationNet',
+      netMCardHash: spaLayer4Adapter.netMCardHash,
+      bindingsMCardHash: spaLayer4Adapter.bindingsMCardHash,
       committedPlaceId: validStep.currentViewPlaceId,
       invalidLinkTrapped: trapStep.trappedToErrorModal,
       errorModalPlaceId: trapStep.currentViewPlaceId

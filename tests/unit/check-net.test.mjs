@@ -23,8 +23,8 @@ test('GQC-02A-UNIT-01 parses workbench-net.yaml and spa-test-target.graph.json w
   assert.deepEqual(workbenchResult.violations, []);
   assert.equal(workbenchResult.valid, true);
   assert.equal(workbenchResult.sessionInvariantHolds, true);
-  assert.equal(workbenchResult.parsedTopology.places.length, 28);
-  assert.equal(workbenchResult.parsedTopology.transitions.length, 56);
+  assert.equal(workbenchResult.parsedTopology.places.length, 31);
+  assert.equal(workbenchResult.parsedTopology.transitions.length, 65);
 
   const spaEnvelope = loadNetEnvelope(SPA_FIXTURE_NET_PATH);
   const spaResult = validateNetEnvelope(spaEnvelope, {

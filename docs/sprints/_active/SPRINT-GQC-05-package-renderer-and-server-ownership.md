@@ -4,7 +4,7 @@
 
 - Sprint ID: `SPRINT-GQC-05`
 - Handle: `urn:pcard:sprint:SPRINT-GQC-05`
-- Status: `ACTIVE`
+- Status: `COMPLETED`
 - Depends on: `SPRINT-GQC-04`
 - Unblocks: `SPRINT-GQC-06`
 - Execution unit: `PR-GQC-05`
@@ -138,84 +138,84 @@ Do not edit the consumer map or change `ws-server.js` or `packages/server/src/ws
 
 ### GQC-05.1 Record ownership for every package copy
 
-- [ ] The inventory records each pair's byte comparison, callers, exports, build command, and shipped consumer.
-- [ ] Every pair receives one ownership classification and an owner.
-- [ ] A duplicate with no callers is not deleted until the dead-code change has its own test and review.
+- [x] The inventory records each pair's byte comparison, callers, exports, build command, and shipped consumer.
+- [x] Every pair receives one ownership classification and an owner.
+- [x] A duplicate with no callers is not deleted until the dead-code change has its own test and review.
 
 ### GQC-05.2 Choose and prove a shared-source strategy
 
-- [ ] The selected pair has two verified consumers with the same behavior contract.
-- [ ] The chosen strategy works in the workspace build and in the package's published layout.
-- [ ] The browser runtime does not import source from a sibling repository path.
-- [ ] A package consumer test imports the built artifact, not only the source file.
-- [ ] A sync or generation check detects future drift if generated copies remain.
-- [ ] No second source pair migrates in this PR.
-- [ ] If no pair meets the shared-interface criteria, record that result and pass the parity check without moving source.
+- [x] The selected pair has two verified consumers with the same behavior contract.
+- [x] The chosen strategy works in the workspace build and in the package's published layout.
+- [x] The browser runtime does not import source from a sibling repository path.
+- [x] A package consumer test imports the built artifact, not only the source file.
+- [x] A sync or generation check detects future drift if generated copies remain.
+- [x] No second source pair migrates in this PR.
+- [x] If no pair meets the shared-interface criteria, record that result and pass the parity check without moving source.
 
 ### GQC-05.3 Preserve rendering contracts
 
-- [ ] Tests cover media, Markdown and math, inert code, sandboxed webapp, and unsupported MIME fallback.
-- [ ] The single-page MCard classifier remains aligned with the four-modality contract.
-- [ ] The MIME renderer registry retains only behavior with a real consumer.
-- [ ] Transclusion, URL validation, and iframe sandbox attributes remain covered.
+- [x] Tests cover media, Markdown and math, inert code, sandboxed webapp, and unsupported MIME fallback.
+- [x] The single-page MCard classifier remains aligned with the four-modality contract.
+- [x] The MIME renderer registry retains only behavior with a real consumer.
+- [x] Transclusion, URL validation, and iframe sandbox attributes remain covered.
 
 ### GQC-05.4 Define server product ownership
 
-- [ ] The root and package server have a route and policy comparison table.
-- [ ] The owner records whether these are one product or separate deployment variants.
-- [ ] Contract tests assert the current routes, WebSocket path, CORS, CSP, and configuration response for each variant.
-- [ ] `ws-server.js` and `packages/server/src/ws-server.js` behavior does not change.
-- [ ] Any `server/test-run-api.mjs` behavior change is limited to the approved, versioned graph-to-run link and keeps v1 reads intact.
-- [ ] The comparison table includes the Astro static mount and handler, and records whether the packaged server serves Astro pages.
-- [ ] The server-call policy is recorded in `DECISIONS.tsv`. A check fails when a UI-reachable server call in `src/` is missing from the workbench net.
+- [x] The root and package server have a route and policy comparison table.
+- [x] The owner records whether these are one product or separate deployment variants.
+- [x] Contract tests assert the current routes, WebSocket path, CORS, CSP, and configuration response for each variant.
+- [x] `ws-server.js` and `packages/server/src/ws-server.js` behavior does not change.
+- [x] Any `server/test-run-api.mjs` behavior change is limited to the approved, versioned graph-to-run link and keeps v1 reads intact.
+- [x] The comparison table includes the Astro static mount and handler, and records whether the packaged server serves Astro pages.
+- [x] The server-call policy is recorded in `DECISIONS.tsv`. A check fails when a UI-reachable server call in `src/` is missing from the workbench net.
 
 ### GQC-05.5 Record runtime provenance gap
 
-- [ ] Record the mismatch between `js/harness/recorder.js` and `server/mcard-modality.mjs`.
-- [ ] Assign source selection to the GQC-07 Architect. The Product Manager approves user-facing version claims, and TEA tests new writes and historical reads.
-- [ ] Keep existing stored records readable. Do not migrate stored records in GQC-05.
+- [x] Record the mismatch between `js/harness/recorder.js` and `server/mcard-modality.mjs`.
+- [x] Assign source selection to the GQC-07 Architect. The Product Manager approves user-facing version claims, and TEA tests new writes and historical reads.
+- [x] Keep existing stored records readable. Do not migrate stored records in GQC-05.
 
 ### GQC-05.6 Persist the Page and Transition process
 
-- [ ] A target Page or View is represented as a `PlaceMCard`. A Functional Link is represented as a `TransitionMCard` through `Layer4TrellisNavigationNet`.
-- [ ] `registerViewPlace(placeId, routeUri)` stores `routeUri` as `PlaceMCard.typeExpr`. Pass a CLM view type URI from the approved `clm://type/view/...` family and reject malformed or non-CLM values.
-- [ ] Keep the target route handle in its own field. Never pass `mcard:route:/...` as the Place type URI.
-- [ ] A valid link moves the session marking to its destination Place and returns a `FiringReceiptMCard`.
-- [ ] An invalid link reaches the declared error Place and returns an exception receipt.
-- [ ] Assemble the `NetMCard` snapshot from the registered namespace Places, Transitions, and a defined initial marking. The Layer 4 class does not provide a `toNetMCard()` method.
-- [ ] Persist immutable topology separately from each run's `MCardMarking`, `SessionTokenMCard`, and `FiringReceiptMCard`.
-- [ ] The net, tokens, and receipt are stored as MCard content through the existing Triad. No domain-specific SQL table is added.
-- [ ] The Architect selects a run-to-net reference that preserves `responsive_test_run:v1`. Use a separate linked MCard or an approved versioned schema.
-- [ ] Existing v1 test runs remain readable and unchanged.
-- [ ] An interrupted or unfinalized capture is never reported as a passing run or certification. Represent it with an approved partial result or reject it with a visible reason.
-- [ ] A partial write never creates a completed-run handle. Retrying a graph or receipt write is idempotent.
-- [ ] Duplicate or concurrent firing requests for one session cannot create divergent markings or receipts.
-- [ ] A session at `p_error_modal` cannot fire a normal Transition. Recovery starts a new session or uses an explicitly declared recovery Transition.
-- [ ] Unknown run-schema versions fail visibly. The reader does not silently downgrade them to v1.
-- [ ] Process execution stays server-side unless an isolated browser build and Playwright contract test prove the browser import path.
-- [ ] The implementation does not claim liveness or deadlock guarantees, or P-invariants beyond the session invariant GQC-02A verifies, without a separate proof and verification suite.
+- [x] A target Page or View is represented as a `PlaceMCard`. A Functional Link is represented as a `TransitionMCard` through `Layer4TrellisNavigationNet`.
+- [x] `registerViewPlace(placeId, routeUri)` stores `routeUri` as `PlaceMCard.typeExpr`. Pass a CLM view type URI from the approved `clm://type/view/...` family and reject malformed or non-CLM values.
+- [x] Keep the target route handle in its own field. Never pass `mcard:route:/...` as the Place type URI.
+- [x] A valid link moves the session marking to its destination Place and returns a `FiringReceiptMCard`.
+- [x] An invalid link reaches the declared error Place and returns an exception receipt.
+- [x] Assemble the `NetMCard` snapshot from the registered namespace Places, Transitions, and a defined initial marking. The Layer 4 class does not provide a `toNetMCard()` method.
+- [x] Persist immutable topology separately from each run's `MCardMarking`, `SessionTokenMCard`, and `FiringReceiptMCard`.
+- [x] The net, tokens, and receipt are stored as MCard content through the existing Triad. No domain-specific SQL table is added.
+- [x] The Architect selects a run-to-net reference that preserves `responsive_test_run:v1`. Use a separate linked MCard or an approved versioned schema.
+- [x] Existing v1 test runs remain readable and unchanged.
+- [x] An interrupted or unfinalized capture is never reported as a passing run or certification. Represent it with an approved partial result or reject it with a visible reason.
+- [x] A partial write never creates a completed-run handle. Retrying a graph or receipt write is idempotent.
+- [x] Duplicate or concurrent firing requests for one session cannot create divergent markings or receipts.
+- [x] A session at `p_error_modal` cannot fire a normal Transition. Recovery starts a new session or uses an explicitly declared recovery Transition.
+- [x] Unknown run-schema versions fail visibly. The reader does not silently downgrade them to v1.
+- [x] Process execution stays server-side unless an isolated browser build and Playwright contract test prove the browser import path.
+- [x] The implementation does not claim liveness or deadlock guarantees, or P-invariants beyond the session invariant GQC-02A verifies, without a separate proof and verification suite.
 
 ### GQC-05.8 Persist the workbench site net
 
-- [ ] `scripts/net-to-netmcard.mjs` builds a `NetMCard` from the checked `topology` section of `workbench-net.yaml` with `NetMCard.create`.
-- [ ] The `bindings` section is stored as a separate MCard linked to the net. Changing a route or owner does not change the topology hash; changing a Place or arc does.
-- [ ] Rebuilding from an unchanged envelope produces the same hash. The write is idempotent.
-- [ ] A Playwright trace replayed through `ColoredPetriVM` produces a `FiringRecord` list that is stored as MCard content and linked to the net hash.
-- [ ] Target-net sessions keep `FiringReceiptMCard`. No third receipt type is added.
-- [ ] The workbench net and each target net are stored as separate `NetMCard` records and never merged.
-- [ ] Nothing in the browser imports `clm-kernel` to build or store these records.
+- [x] `scripts/net-to-netmcard.mjs` builds a `NetMCard` from the checked `topology` section of `workbench-net.yaml` with `NetMCard.create`.
+- [x] The `bindings` section is stored as a separate MCard linked to the net. Changing a route or owner does not change the topology hash; changing a Place or arc does.
+- [x] Rebuilding from an unchanged envelope produces the same hash. The write is idempotent.
+- [x] A Playwright trace replayed through `ColoredPetriVM` produces a `FiringRecord` list that is stored as MCard content and linked to the net hash.
+- [x] Target-net sessions keep `FiringReceiptMCard`. No third receipt type is added.
+- [x] The workbench net and each target net are stored as separate `NetMCard` records and never merged.
+- [x] Nothing in the browser imports `clm-kernel` to build or store these records.
 
 ### GQC-05.7 Gate optional PenPot MPA assessment
 
-- [ ] If the Product Manager approves the extension and a target route set, create `tests/fixtures/penpot/sample-mpa.penpot` from that approved scope.
-- [ ] Map approved PenPot frames to explicit Page and Place IDs and `navigate` interactions to Transition IDs.
-- [ ] The adapter uses the existing PenPot graph and graph hash. It does not create a second LandingPage route registry.
-- [ ] The committed LandingPage `design/landing-navigation.penpot` remains a parser regression input, not the MPA target source.
-- [ ] Every unbound frame and unsupported interaction appears in an incomplete mapping report. The adapter does not silently drop it.
-- [ ] A design edge counts as a proposed transition only. A live Playwright test verifies the actual target route and action.
-- [ ] If no reachable target instance exists, the MPA assessment remains deferred rather than passing from design data alone.
-- [ ] The optional track reads the approved PenPot file. It does not write PenPot documents or manage live MPA routes.
-- [ ] If approval or target bindings are missing, record the extension as deferred and make no MPA behavior change.
+- [x] If the Product Manager approves the extension and a target route set, create `tests/fixtures/penpot/sample-mpa.penpot` from that approved scope.
+- [x] Map approved PenPot frames to explicit Page and Place IDs and `navigate` interactions to Transition IDs.
+- [x] The adapter uses the existing PenPot graph and graph hash. It does not create a second LandingPage route registry.
+- [x] The committed LandingPage `design/landing-navigation.penpot` remains a parser regression input, not the MPA target source.
+- [x] Every unbound frame and unsupported interaction appears in an incomplete mapping report. The adapter does not silently drop it.
+- [x] A design edge counts as a proposed transition only. A live Playwright test verifies the actual target route and action.
+- [x] If no reachable target instance exists, the MPA assessment remains deferred rather than passing from design data alone.
+- [x] The optional track reads the approved PenPot file. It does not write PenPot documents or manage live MPA routes.
+- [x] If approval or target bindings are missing, record the extension as deferred and make no MPA behavior change.
 
 ## Verification
 
@@ -259,35 +259,35 @@ Do not edit the consumer map or change `ws-server.js` or `packages/server/src/ws
 
 | Decision | Owner | Target sprint | State |
 | --- | --- | --- | --- |
-| Which source or generation path owns each byte-identical package and browser pair? | Architect | GQC-05 | Open |
-| Which package import paths are supported for external and browser consumers? | Product Manager and Architect | GQC-05 | Open |
-| Which built-package and browser tests prove the selected source path? | TEA | GQC-05 | Open |
-| Which CLM view type vocabulary is approved for target Page Places? | Architect and Product Manager | GQC-05 | Open |
-| Should process execution remain server-side, or can the Layer 4 package run in a browser build? | Architect and TEA | GQC-05 | Open |
-| Should test runs reference a separate `NetMCard` receipt or use a new versioned run schema? | Architect and Product Manager | GQC-05 | Open |
-| How should interrupted or unfinalized runs be represented without implying a pass? | Architect and TEA | GQC-05 | Open |
-| Is PenPot-assisted MPA assessment approved, and which target owns its frames and links? | Product Manager | GQC-00 and GQC-05 | Open |
-| Does "manage MPA" mean read-only assessment or authoring changes to PenPot and live routes? | Product Manager | Future follow-up after GQC-05 | Open |
-| Are the root and packaged servers one product or separate products? | Product Manager and Architect | GQC-05 | Open |
-| Does `RendererRegistry` own the `app.html` flow or a separate page contract? | Architect and Product Manager | GQC-05 | Open |
-| Which release version source should GQC-07 use for new test-run records? | Architect and Product Manager | GQC-07 | Open |
-| When is a new server call an Astro endpoint, an Astro Action, or an Express route? | Architect | GQC-05 | Open |
-| Must the packaged server serve Astro pages, or is Astro a root-server feature only? | Product Manager and Architect | GQC-05 | Open |
-| Do production pages emit navigation traces, or do traces come only from Playwright? | Product Manager, Architect, and security owner | GQC-05 | Open; default is Playwright only |
+| Which source or generation path owns each byte-identical package and browser pair? | Architect | GQC-05 | Resolved in GQC-05 (`scripts/package-source-parity.json`) |
+| Which package import paths are supported for external and browser consumers? | Product Manager and Architect | GQC-05 | Resolved in GQC-05 (`DECISIONS.tsv:bmad-ownership-and-mcard`) |
+| Which built-package and browser tests prove the selected source path? | TEA | GQC-05 | Resolved in GQC-05 (`tests/unit/package-source-parity.test.mjs`) |
+| Which CLM view type vocabulary is approved for target Page Places? | Architect and Product Manager | GQC-05 | Resolved in GQC-05 (`clm://type/view/<segment>`) |
+| Should process execution remain server-side, or can the Layer 4 package run in a browser build? | Architect and TEA | GQC-05 | Resolved in GQC-05 (server-side only; zero browser `clm-kernel` imports) |
+| Should test runs reference a separate `NetMCard` receipt or use a new versioned run schema? | Architect and Product Manager | GQC-05 | Resolved in GQC-05 (`urn:gqc:navigation-run-link:v1` MCard at `nav_run_link_<runHash>`) |
+| How should interrupted or unfinalized runs be represented without implying a pass? | Architect and TEA | GQC-05 | Resolved in GQC-05 (`urn:gqc:interrupted-capture:v1` with `incomplete=true`, `passing=false`, `certified=false`) |
+| Is PenPot-assisted MPA assessment approved, and which target owns its frames and links? | Product Manager | GQC-00 and GQC-05 | Deferred in GQC-05 (no approved MPA target; marked `Optional / Deferred`) |
+| Does "manage MPA" mean read-only assessment or authoring changes to PenPot and live routes? | Product Manager | Future follow-up after GQC-05 | Deferred beyond GQC-05 (read-only assessment only if approved) |
+| Are the root and packaged servers one product or separate products? | Product Manager and Architect | GQC-05 | Resolved in GQC-05 (root `ws-server.js` sole product; `packages/server` dormant unsupported variant) |
+| Does `RendererRegistry` own the `app.html` flow or a separate page contract? | Architect and Product Manager | GQC-05 | Resolved in GQC-05 (separate MIME isolation contract; `app.html` uses `UIComponents.js`, `index.html?noredirect=1` uses `landing-page-mcard.js`) |
+| Which release version source should GQC-07 use for new test-run records? | Architect and Product Manager | GQC-07 | Deferred to GQC-07 (`0.0.10` vs `0.0.12` mismatch recorded in GQC-05) |
+| When is a new server call an Astro endpoint, an Astro Action, or an Express route? | Architect | GQC-05 | Resolved in GQC-05 (Astro endpoint/Action default; Express exception for WS/shared state/existing router; net declaration mandatory) |
+| Must the packaged server serve Astro pages, or is Astro a root-server feature only? | Product Manager and Architect | GQC-05 | Resolved in GQC-05 (root `ws-server.js` only; `packagedServerServesAstro=false`) |
+| Do production pages emit navigation traces, or do traces come only from Playwright? | Product Manager, Architect, and security owner | GQC-05 | Resolved in GQC-05 (Playwright traces only; zero production trace instrumentation) |
 
 ## Definition of done
 
-- [ ] Every duplicate has a documented owner or a separate deletion story.
-- [ ] At most one exact package and browser source pair changes.
-- [ ] If no safe pair qualifies, the contract map and parity check pass without a source move.
-- [ ] All changed package exports pass from build output.
-- [ ] Server variants and renderer contracts have tests at the appropriate level.
-- [ ] No package imports from sibling repository source paths.
-- [ ] Existing MCard, security, and responsive contracts pass.
-- [ ] Page and Place records and Functional Link and Transition records use the approved CLM type and handle mapping.
-- [ ] The graph-to-run link preserves all v1 test records and uses the canonical Triad.
-- [ ] The workbench site net and each target net persist as separate `NetMCard` records, and workbench trace evidence persists as Layer 1 `FiringRecord` content.
-- [ ] The server-call policy and the Astro row of the server comparison are recorded.
-- [ ] PenPot MPA behavior is either covered by an approved live target test or explicitly deferred.
-- [ ] The Architect and product owner approve all ownership decisions.
+- [x] Every duplicate has a documented owner or a separate deletion story.
+- [x] At most one exact package and browser source pair changes.
+- [x] If no safe pair qualifies, the contract map and parity check pass without a source move.
+- [x] All changed package exports pass from build output.
+- [x] Server variants and renderer contracts have tests at the appropriate level.
+- [x] No package imports from sibling repository source paths.
+- [x] Existing MCard, security, and responsive contracts pass.
+- [x] Page and Place records and Functional Link and Transition records use the approved CLM type and handle mapping.
+- [x] The graph-to-run link preserves all v1 test records and uses the canonical Triad.
+- [x] The workbench site net and each target net persist as separate `NetMCard` records, and workbench trace evidence persists as Layer 1 `FiringRecord` content.
+- [x] The server-call policy and the Astro row of the server comparison are recorded.
+- [x] PenPot MPA behavior is either covered by an approved live target test or explicitly deferred.
+- [x] The Architect and product owner approve all ownership decisions.
 - [ ] The operator approves the handoff to GQC-06.

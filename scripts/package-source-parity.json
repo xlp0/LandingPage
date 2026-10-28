@@ -1,0 +1,231 @@
+{
+  "schema": "urn:gqc:package-source-parity:v1",
+  "sprint": "SPRINT-GQC-05",
+  "migratedPairLimit": 1,
+  "migratedPairIds": [
+    "markdown-renderer"
+  ],
+  "sourcePairs": [
+    {
+      "id": "markdown-renderer",
+      "classification": "shared-source",
+      "owner": "Platform / Docs Shell (@pkc/markdown-renderer)",
+      "migratedInSprint": "SPRINT-GQC-05",
+      "canonicalSource": {
+        "path": "packages/markdown-renderer/src/index.js",
+        "bytes": 189,
+        "sha256": "53aaabaa0a5843dd99600741001332074dedea97009d24990f59fd861f895ebb"
+      },
+      "browserEntry": {
+        "path": "js/modules/markdown-renderer/index.js",
+        "bytes": 76,
+        "sha256": "057304fd5bb393d94ea6d6eb720afba58980d743cdeb75870a5a9bb8372c7f79",
+        "mode": "re-export-canonical-source",
+        "expectedReExportTarget": "../../../packages/markdown-renderer/src/index.js"
+      },
+      "packageMeta": {
+        "packageName": "@pkc/markdown-renderer",
+        "packageJson": "packages/markdown-renderer/package.json",
+        "exportsDot": "./dist/index.js",
+        "buildCommand": "cd packages/markdown-renderer && npm run build",
+        "builtArtifact": "packages/markdown-renderer/dist/index.js",
+        "browserCallers": [
+          "js/pkc-core.js (module registry dynamic import ./modules/markdown-renderer/index.js)"
+        ],
+        "externalConsumers": [
+          "npm consumer importing @pkc/markdown-renderer -> dist/index.js"
+        ],
+        "shippedConsumer": "Browser PKC loader and packed @pkc/markdown-renderer dist/index.js"
+      }
+    },
+    {
+      "id": "pkc-core",
+      "classification": "separate-product-variant",
+      "owner": "Platform / Browser Runtime Loader (js/pkc-core.js) vs Standalone Package (@pkc/core)",
+      "migratedInSprint": null,
+      "appVariant": {
+        "path": "js/pkc-core.js",
+        "bytes": 6888,
+        "sha256": "5af77ec9a3dbb6de133a6576079c1af976c8450ecb48749306c3afefeac940f1",
+        "contractSummary": "Canonical LandingPage browser loader with GQC-04 topological dependsOn ordering, reverse stop() teardown, and onModuleError containment."
+      },
+      "packageVariant": {
+        "path": "packages/core/src/pkc-core.js",
+        "bytes": 4080,
+        "sha256": "28044be02851c73f2d71f619be876451c1794f2ef860e6e6fed1ab61ec71bc30",
+        "contractSummary": "Standalone @pkc/core v1.0.0 baseline loader bundled with capabilities.js into packages/core/dist/index.js."
+      },
+      "packageMeta": {
+        "packageName": "@pkc/core",
+        "packageJson": "packages/core/package.json",
+        "exportsDot": "./dist/index.js",
+        "buildCommand": "cd packages/core && npm run build",
+        "builtArtifact": "packages/core/dist/index.js",
+        "browserCallers": [
+          "public/examples/tictactoe-p2p.html",
+          "tests/unit/module-registry-lifecycle.test.mjs"
+        ],
+        "externalConsumers": [
+          "npm consumer importing @pkc/core -> dist/index.js"
+        ],
+        "shippedConsumer": "LandingPage public demos use js/pkc-core.js; standalone consumers use @pkc/core dist/index.js"
+      }
+    },
+    {
+      "id": "p2p-serverless",
+      "classification": "unmigrated-exact-copy-gated",
+      "owner": "P2P Feature Owner (js/modules/p2p-serverless canonical; @pkc/p2p build gated)",
+      "migratedInSprint": null,
+      "exactCopies": [
+        {
+          "appPath": "js/modules/p2p-serverless/index.js",
+          "packagePath": "packages/p2p/src/index.js",
+          "bytes": 16273,
+          "sha256": "96d0e04ad7dc137f16a588fd2e6b1cc218642fdbb854306bf9e8a9bd8ede09e5"
+        },
+        {
+          "appPath": "js/modules/p2p-serverless/config.js",
+          "packagePath": "packages/p2p/src/config.js",
+          "bytes": 1357,
+          "sha256": "adb3e1a100b0a9fb97e6e814bcd2421e4523eb2245755951d4b722af498bb856"
+        },
+        {
+          "appPath": "js/modules/p2p-serverless/connection.js",
+          "packagePath": "packages/p2p/src/connection.js",
+          "bytes": 11298,
+          "sha256": "7f63bed15ff7c2e2cb7b95575ba78f2c097a1bd9d2a77ba1095dc1bfcf261f48"
+        },
+        {
+          "appPath": "js/modules/p2p-serverless/discovery.js",
+          "packagePath": "packages/p2p/src/discovery.js",
+          "bytes": 8487,
+          "sha256": "0c46339e4a375220832fc471211ee98bb1c453e123e82bba3da9621c999573e8"
+        },
+        {
+          "appPath": "js/modules/p2p-serverless/qr-code.js",
+          "packagePath": "packages/p2p/src/qr-code.js",
+          "bytes": 6375,
+          "sha256": "c063d91e5336355c332ce0a1e5da33bc7d2857a892648599f500b5d82da94f0f"
+        }
+      ],
+      "packageMeta": {
+        "packageName": "@pkc/p2p",
+        "packageJson": "packages/p2p/package.json",
+        "exportsDot": "./dist/index.js",
+        "buildCommand": "cd packages/p2p && npm run build (pre-existing broken esbuild default re-export in packages/p2p/src/main.js)",
+        "builtArtifact": null,
+        "browserCallers": [
+          "js/pkc-core.js",
+          "public/examples/p2p-Next.html"
+        ],
+        "externalConsumers": [],
+        "shippedConsumer": "LandingPage WebRTC browser demos via js/modules/p2p-serverless/*"
+      }
+    },
+    {
+      "id": "room-registry",
+      "classification": "unused-package-copy",
+      "owner": "Platform / Signaling Server (root room-registry.mjs canonical; packages/server copy retained for dead-code story)",
+      "migratedInSprint": null,
+      "exactCopies": [
+        {
+          "appPath": "room-registry.mjs",
+          "packagePath": "packages/server/src/room-registry.mjs",
+          "bytes": 3492,
+          "sha256": "c302da1e6649a3fd6c74a7e3835b331769067213c852c65469a0bcc9ff6825ea"
+        }
+      ],
+      "packageMeta": {
+        "packageName": "@pkc/server",
+        "packageJson": "packages/server/package.json",
+        "exportsDot": "./dist/ws-server.js",
+        "buildCommand": "cd packages/server && npm run build (pre-existing broken relative imports in packages/server/src/ws-server.js)",
+        "builtArtifact": null,
+        "browserCallers": [],
+        "serverCallers": [
+          "ws-server.js imports ./room-registry.mjs"
+        ],
+        "externalConsumers": [],
+        "shippedConsumer": "Root ws-server.js signaling registry; packages/server copy has zero runtime callers"
+      }
+    }
+  ],
+  "serverOwnership": {
+    "decision": "separate-deployment-variants-with-single-supported-product",
+    "productOwner": "Product Manager and Platform Architect",
+    "soleSupportedProduct": "ws-server.js",
+    "dormantUnsupportedVariant": "packages/server/src/ws-server.js",
+    "packagedServerServesAstro": false,
+    "serverCallPolicy": {
+      "decisionRef": "DECISIONS.tsv#GQC-05 (row 50)",
+      "existingExpressRoutes": "keep-unchanged",
+      "newUiServerCallDefault": "astro-endpoint-or-astro-action",
+      "expressRouteExceptions": [
+        "requires WebSocket signaling state",
+        "requires shared Express middleware state",
+        "extends an existing Express router such as /api/test-runs"
+      ],
+      "mandatoryNetDeclaration": "Every UI-reachable client server call in src/ or js/harness/ must be declared in src/net/workbench-net.yaml bindings.transitions or bindings.staticJsonAssets before merge."
+    },
+    "variants": {
+      "rootServer": {
+        "path": "ws-server.js",
+        "bytes": 15365,
+        "sha256": "e7dafe7f8141f75f7bee9eb66fe3a025e7b6d4cec4a8946fa16d9eaaaabd36a1",
+        "status": "supported-production-host",
+        "owner": "Platform Host Owner",
+        "deploymentCallers": [
+          "package.json start/dev",
+          "Dockerfile",
+          "docker-entrypoint.sh",
+          "playwright.config.mjs"
+        ],
+        "routes": [
+          "/health",
+          "/api/rooms",
+          "/api/env",
+          "/api/config",
+          "/app-config.json",
+          "/api/auth/*",
+          "/api/clm/*",
+          "/api/mcard/*",
+          "/api/test-runs/*"
+        ],
+        "websocketPath": "/ws/",
+        "corsPolicy": "GQC-03 narrowed origin allowlist via resolveAllowedOrigins; no wildcard Access-Control-Allow-Origin",
+        "cspPolicy": "Unified buildContentSecurityPolicy from server/mcard-probe-policy.mjs without unsafe-eval",
+        "configEndpoints": "Hoisted validated /app-config.json and /api/config ahead of static middleware",
+        "astroHandlerMount": "Mounts dist/client static assets (X-GQC-Page-Mount: astro-prerendered) and dist/server/entry.mjs SSR handler (X-GQC-Page-Mount: astro-ssr-handler)",
+        "servesAstroPages": true
+      },
+      "packageServer": {
+        "path": "packages/server/src/ws-server.js",
+        "bytes": 18594,
+        "sha256": "8c850486a016a90c04db29716110369b184313c346b43f7a1c0919c3ded777bf",
+        "status": "dormant-unsupported-variant",
+        "owner": "Platform Dead-Code Backlog Owner",
+        "deploymentCallers": [],
+        "routes": [
+          "/health",
+          "/api/rooms",
+          "/",
+          "/api/env",
+          "/api/config",
+          "/app-config.json",
+          "/api/auth/*",
+          "/api/clm/*"
+        ],
+        "missingRoutesComparedToRoot": [
+          "/api/mcard/* (commented out)",
+          "/api/test-runs/* (absent)"
+        ],
+        "websocketPath": "/ws/",
+        "corsPolicy": "Wildcard origin: * and explicit Access-Control-Allow-Origin: * headers on /api/rooms, /api/config, /app-config.json",
+        "cspPolicy": "Cookie-branched mcard_auth=1 CSP containing unsafe-eval",
+        "configEndpoints": "express.static(__dirname) mounted ahead of dynamic /app-config.json route",
+        "astroHandlerMount": "None; does not mount dist/client or dist/server/entry.mjs",
+        "servesAstroPages": false
+      }
+    }
+  }
+}

@@ -65,9 +65,21 @@ test.describe('SPRINT-GQC-02B: Astro Host Parity and Middleware Contracts', () =
 
     const configRes = await request.get('/api/config');
     expect(configRes.status()).toBe(200);
-    expect(configRes.headers()['access-control-allow-origin']).toBe('*');
+    expect(configRes.headers()['access-control-allow-origin']).toBeUndefined();
     const configBody = await configRes.json();
     expect(configBody).toHaveProperty('PORT');
+
+    const allowedCorsRes = await request.get('/api/config', {
+      headers: { Origin: 'http://localhost:3001' }
+    });
+    expect(allowedCorsRes.status()).toBe(200);
+    expect(allowedCorsRes.headers()['access-control-allow-origin']).toBe('http://localhost:3001');
+
+    const blockedCorsRes = await request.get('/api/config', {
+      headers: { Origin: 'https://github.com' }
+    });
+    expect(blockedCorsRes.status()).toBe(200);
+    expect(blockedCorsRes.headers()['access-control-allow-origin']).toBeUndefined();
 
     const appConfigRes = await request.get('/app-config.json');
     expect(appConfigRes.status()).toBe(200);

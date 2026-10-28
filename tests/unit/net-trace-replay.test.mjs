@@ -295,14 +295,14 @@ test('attachWorkbenchNetTracer derives FIFO server calls, popup promotions, open
   const coverage = computeTransitionCoverage(workbenchNet, {
     replayedTraces: [{ ...replay, asserted: true }]
   });
-  assert.equal(coverage.declared, 56);
+  assert.equal(coverage.declared, 65);
   assert.equal(coverage.fired, 9);
   assert.equal(coverage.asserted, 9);
   assert.equal(coverage.policy, 'ADVISORY');
   assert.equal(coverage.blocking, false);
 
   const md = formatNetCoverageMarkdown([
-    { filePath: 'src/net/workbench-net.yaml', placeCount: 28, coverage }
+    { filePath: 'src/net/workbench-net.yaml', placeCount: 31, coverage }
   ]);
   assert.match(md, /ADVISORY/);
   assert.equal(md.includes('\u2014'), false);

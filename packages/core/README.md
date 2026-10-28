@@ -1,69 +1,50 @@
 # @pkc/core
 
-PKC Core - Lightweight module loader and capability detection for browser environments.
+Standalone PKC module loader and browser capability detector (`@pkc/core` `1.0.0`).
 
-## Installation
+## Ownership and workspace status
+
+- Workspace package name is `@pkc/core` (`1.0.0`), registered in root `package.json#workspaces`.
+- Ownership classification in `scripts/package-source-parity.json` is `separate-product-variant`.
+- Standalone package source lives in `packages/core/src/index.js`, `packages/core/src/pkc-core.js` (`4,080 B`), and `packages/core/src/capabilities.js`, bundled by `npm run build` into `packages/core/dist/index.js`.
+- LandingPage browser runtime uses `js/pkc-core.js` (`6,888 B`), which adds `SPRINT-GQC-04` topological `dependsOn` ordering, reverse `PKC.stop()` teardown, and `onModuleError` failure isolation for optional modules. Both variants remain separate in `SPRINT-GQC-05`.
+
+## Installation and build
 
 ```bash
-npm install @pkc/core
+cd packages/core
+npm run build
 ```
 
-## Features
+## Environment requirements
 
-- **Module Lifecycle Management**: Init/start pattern for module loading
-- **Capability Detection**: Automatic detection of WebRTC, WebSocket, IndexedDB support
-- **Configuration Loading**: Dynamic app-config.json loading
-- **Zero Dependencies**: Pure browser JavaScript, no external dependencies
+`packages/core/dist/index.js` evaluates `document.baseURI` and browser capability globals (`RTCPeerConnection`, `WebSocket`, `indexedDB`, and `navigator.storage`) at module load time. Import `@pkc/core` in a browser runtime or supply a minimal `globalThis.document` shim in Node unit tests, as demonstrated in `tests/unit/package-source-parity.test.mjs`.
 
 ## Usage
 
 ```javascript
 import { PKC } from '@pkc/core';
 
-// Initialize with configuration
 const modules = await PKC.init({
   modules: [
     {
-      id: 'my-module',
-      entry: '/path/to/module.js',
-      enabled: true,
-      when: 'webrtc' // Optional: load only if WebRTC is available
+      id: 'markdown-renderer',
+      entry: '/js/modules/markdown-renderer/index.js',
+      enabled: true
     }
   ]
 });
 
-// Check capabilities
-if (PKC.capabilities.webrtc) {
-  console.log('WebRTC is supported');
-}
-
-if (PKC.capabilities.storage.idb) {
-  console.log('IndexedDB is available');
+if (PKC.capabilities.webrtc && PKC.capabilities.storage.idb) {
+  console.log(Object.keys(modules));
 }
 ```
 
-## API
+## Exported API
 
-### `PKC.capabilities`
-
-Object containing detected browser capabilities:
-- `webrtc`: WebRTC API support
-- `websocket`: WebSocket API support
-- `storage.idb`: IndexedDB support
-- `storage.opfs`: Origin Private File System support
-
-### `PKC.init(config)`
-
-Initialize and load modules based on configuration.
-
-**Parameters:**
-- `config`: Configuration object or path to modules.json
-
-**Returns:** Promise resolving to loaded modules map
-
-### `PKC.register(def)`
-
-Register a module definition.
+- `PKC.capabilities` exposes detected `webrtc`, `websocket`, `storage.idb`, and `storage.opfs` flags. Capabilities are exposed on `PKC.capabilities` rather than a standalone named function export.
+- `PKC.init(config)` loads enabled module descriptors and resolves to the initialized module map.
+- `PKC.register(definition)` registers an inline module definition.
 
 ## License
 

@@ -1,70 +1,42 @@
 # @pkc/markdown-renderer
 
-Markdown renderer with LaTeX math support for browser environments.
+PKC browser module descriptor for the Markdown capability slot in `PKC.init()`.
 
-## Installation
+## Ownership and workspace status
+
+- Workspace package name is `@pkc/markdown-renderer` (`1.0.0`), registered in root `package.json#workspaces`.
+- Ownership classification in `scripts/package-source-parity.json` is `shared-source`, owned by the Platform and Docs Shell team.
+- Canonical source is `packages/markdown-renderer/src/index.js`.
+- Built package output is `packages/markdown-renderer/dist/index.js`, produced by `npm run build` (`esbuild`).
+- In-repository browser caller `js/modules/markdown-renderer/index.js` re-exports the default descriptor from `../../../packages/markdown-renderer/src/index.js` without duplicating implementation lines or importing from outside the repository.
+
+## Installation and build
 
 ```bash
-npm install @pkc/core @pkc/markdown-renderer katex
+cd packages/markdown-renderer
+npm run build
 ```
 
-Note: KaTeX must be installed as a peer dependency.
+External package consumers import the built `./dist/index.js` entry declared in `package.json#exports`. `tests/unit/package-source-parity.test.mjs` packs `@pkc/markdown-renderer` with `npm pack` into `os.tmpdir()` and verifies that the unpacked tarball imports cleanly with zero repository-relative parent paths.
 
-## Features
+## Exported contract
 
-- **Markdown Rendering**: Full markdown support
-- **LaTeX Math**: Inline and display math equations using KaTeX
-- **Obsidian Compatible**: Works with Obsidian-style `$...$` syntax
-- **Browser Optimized**: Lightweight, browser-focused implementation
-
-## Usage
+`@pkc/markdown-renderer` exports a default PKC module lifecycle object with `id`, `init({ pkc, capabilities })`, `start()`, and `stop()` methods.
 
 ```javascript
-import { PKC } from '@pkc/core';
-import MarkdownRenderer from '@pkc/markdown-renderer';
+import MarkdownRendererModule from '@pkc/markdown-renderer';
 
-// Initialize with PKC
-await PKC.init({
-  modules: [
-    {
-      id: 'markdown',
-      entry: () => MarkdownRenderer,
-      enabled: true
-    }
-  ]
+await MarkdownRendererModule.init({
+  pkc: { ctx: { log: console.log } },
+  capabilities: { indexeddb: true, websocket: true }
 });
-
-const renderer = window.pkc.modules['markdown'];
-
-// Render markdown with LaTeX
-const html = await renderer.render(`
-# Hello World
-
-Einstein's formula: $E = mc^2$
-
-Display equation:
-
-$$
-\\int_0^\\infty f(x) dx
-$$
-`);
-
-document.getElementById('content').innerHTML = html;
+await MarkdownRendererModule.start();
+await MarkdownRendererModule.stop();
 ```
 
-## Supported Syntax
+## Relationship to LandingPage Markdown surfaces
 
-### Inline Math
-```markdown
-The formula $E = mc^2$ is famous.
-```
-
-### Display Math
-```markdown
-$$
-\\sum_{i=1}^n i = \\frac{n(n+1)}{2}
-$$
-```
+`@pkc/markdown-renderer` provides the `markdown-renderer` capability descriptor referenced by `modules.json`. Single-page MCard document rendering on `index.html?noredirect=1` is owned separately by `js/landing-page-mcard.js` and `server/mcard-modality.mjs`. Component-isolation Markdown, KaTeX, and Mermaid DOM rendering is owned separately by `js/renderers/MarkdownRenderer.js`.
 
 ## License
 

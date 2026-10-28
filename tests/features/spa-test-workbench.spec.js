@@ -7,7 +7,12 @@ import { test, expect } from '../fixtures/net-trace.js';
 import { toPlaywrightContext } from '../fixtures/device-matrix.js';
 import { ensureTargetReachable } from '../fixtures/target-preflight.js';
 import { TEST_RUN_SCHEMA } from '../../js/harness/test-run-schema.js';
-import { replayNetTrace } from '../../scripts/check-net.mjs';
+import path from 'node:path';
+import os from 'node:os';
+import fs from 'node:fs';
+import { loadNetEnvelope, replayNetTrace } from '../../scripts/check-net.mjs';
+import { persistWorkbenchTraceToTriad } from '../../scripts/net-to-netmcard.mjs';
+import { CanonicalTriadBackend } from '../../server/mcard-api.mjs';
 import { replayRun } from '../../scripts/playwright-replay-driver.mjs';
 
 const spaEnvelope = loadSpaFixtureGraph();
@@ -269,6 +274,186 @@ test.describe('SPRINT-GQC-04: Guided SPA Test Workflow Island and Dual-Net Repla
     await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
     await expect(page.getByTestId('spa-test-workflow')).toHaveAttribute('data-workflow-ready', 'true');
     await expect(page.getByTestId('spa-workflow-module-warnings')).toHaveCount(0);
+    expect(dialogs).toEqual([]);
+  });
+});
+
+test.describe('SPRINT-GQC-05: Layer 4 Trellis Navigation Receipts, Error Recovery, Idempotency, and Workbench FiringRecord Persistence', () => {
+  test('GQC-05-E2E-01: fires valid and invalid SPA transitions from the guided UI, enforces p_error_modal recovery, links completed run MCard to receipts, and persists workbench FiringRecord trace', async ({
+    isolatedLabPage,
+    workbench,
+    workbenchNetTracer,
+    request
+  }) => {
+    const { page, dialogs } = isolatedLabPage;
+    await page.setViewportSize({ width: 1440, height: 960 });
+
+    await workbench.open({ targetPath: SPA_FIXTURE_PATH });
+    const frame = workbench.targetFrame();
+    const appRoot = frame.locator('#spa-app-root');
+    await expect(appRoot).toHaveAttribute('data-place-id', 'p_spa_overview');
+
+    await page.getByTestId('workflow-tab-step-places').click();
+    const netHashText = await page.getByTestId('workflow-net-mcard-hash').textContent();
+    const bindingsHashText = await page.getByTestId('workflow-bindings-mcard-hash').textContent();
+    expect(netHashText).toMatch(/^[0-9a-f]{64}$/);
+    expect(bindingsHashText).toMatch(/^[0-9a-f]{64}$/);
+    expect(netHashText).not.toBe(bindingsHashText);
+
+    await page.getByTestId('workflow-tab-step-transitions').click();
+    await page.getByTestId('workflow-fire-t_spa_open_details').click();
+    await expect(page.getByTestId('workflow-layer4-session-status')).toHaveText('ACTIVE');
+    await expect(page.getByTestId('workflow-layer4-place')).toHaveText('p_spa_details');
+    await expect(page.getByTestId('workflow-latest-receipt-verdict')).toHaveText('COMMITTED');
+    await expect(page.getByTestId('workflow-layer4-step-count')).toHaveText('1');
+    await expect(appRoot).toHaveAttribute('data-place-id', 'p_spa_details');
+    const firstReceiptHash = await page.getByTestId('workflow-latest-receipt-hash').textContent();
+    expect(firstReceiptHash).toMatch(/^[0-9a-f]{64}$/);
+
+    await page.getByTestId('workflow-fire-t_spa_back_overview').click();
+    await expect(page.getByTestId('workflow-layer4-place')).toHaveText('p_spa_overview');
+    await expect(page.getByTestId('workflow-layer4-step-count')).toHaveText('2');
+    await expect(appRoot).toHaveAttribute('data-place-id', 'p_spa_overview');
+
+    await page.getByTestId('workflow-fire-t_spa_invalid_unmapped').click();
+    await expect(page.getByTestId('workflow-layer4-session-status')).toHaveText('ERROR_MODAL');
+    await expect(page.getByTestId('workflow-layer4-place')).toHaveText('p_error_modal');
+    await expect(page.getByTestId('workflow-latest-receipt-verdict')).toHaveText(/EXCEPTION|TrappedToErrorModal/);
+    await expect(page.getByTestId('spa-workflow-error')).toBeVisible();
+    await expect(page.getByTestId('spa-workflow-error')).toContainText('p_error_modal');
+    await expect(page.getByTestId('spa-workflow-error')).toContainText('Recover to Overview');
+    await expect(page.getByTestId('workflow-fire-t_spa_open_details')).toBeDisabled();
+    await expect(page.getByTestId('workflow-fire-t_spa_recover_overview')).toBeEnabled();
+
+    const activeSessionId = await page.evaluate(() => window.__lab.workflow.state().layer4Session.sessionId);
+    const blockedNormalFire = await request.post('/api/test-runs/navigation/fire', {
+      data: {
+        netId: 'spa-test-target-net',
+        sessionId: activeSessionId,
+        transitionId: 't_spa_open_details',
+        requestId: 'e2e_blocked_normal_while_trapped'
+      }
+    });
+    expect(blockedNormalFire.status()).toBe(409);
+    const blockedBody = await blockedNormalFire.json();
+    expect(blockedBody.requiresRecovery).toBe(true);
+
+    await page.getByTestId('workflow-fire-t_spa_recover_overview').click();
+    await expect(page.getByTestId('workflow-layer4-session-status')).toHaveText('ACTIVE');
+    await expect(page.getByTestId('workflow-layer4-place')).toHaveText('p_spa_overview');
+    await expect(page.getByTestId('spa-workflow-error')).toBeHidden();
+    await expect(page.getByTestId('workflow-fire-t_spa_open_details')).toBeEnabled();
+    await expect(appRoot).toHaveAttribute('data-place-id', 'p_spa_overview');
+
+    await page.getByTestId('workflow-tab-step-evidence').click();
+    await page.getByTestId('workflow-rec-start').click();
+    await frame.getByRole('button', { name: 'Open Service Details' }).click();
+    await expect(appRoot).toHaveAttribute('data-place-id', 'p_spa_details');
+
+    const saveRespPromise = page.waitForResponse(
+      (res) => res.url().endsWith('/api/test-runs') && res.request().method() === 'POST'
+    );
+    await page.getByTestId('workflow-rec-stop').click();
+    const saveResp = await saveRespPromise;
+    expect([200, 201]).toContain(saveResp.status());
+    const savedBody = await saveResp.json();
+
+    const linkRespPromise = page.waitForResponse(
+      (res) => res.url().includes('/api/test-runs/navigation/link') && res.request().method() === 'POST'
+    );
+    await page.getByTestId('workflow-link-layer4-run').click();
+    const linkResp = await linkRespPromise;
+    expect([200, 201]).toContain(linkResp.status());
+
+    await expect(page.getByTestId('workflow-nav-link-handle')).toHaveText(`nav_run_link_${savedBody.hash}`);
+    const linkHashText = await page.getByTestId('workflow-nav-link-hash').textContent();
+    expect(linkHashText).toMatch(/^[0-9a-f]{64}$/);
+
+    const resolvedLinkRes = await request.get(`/api/test-runs/navigation/link?runHash=${savedBody.hash}`);
+    expect(resolvedLinkRes.status()).toBe(200);
+    const resolvedLinkBody = await resolvedLinkRes.json();
+    expect(resolvedLinkBody.verified).toBe(true);
+    expect(resolvedLinkBody.link.targetNetMCardHash).toBe(netHashText);
+    expect(resolvedLinkBody.receipts.length).toBe(4);
+
+    const workbenchReplay = await workbenchNetTracer.replay();
+    expect(workbenchReplay.ok).toBe(true);
+    expect(workbenchReplay.firedTransitionIds).toContain('t_req_post_nav_session');
+    expect(workbenchReplay.firedTransitionIds).toContain('t_ok_post_nav_session');
+    expect(workbenchReplay.firedTransitionIds).toContain('t_req_post_nav_fire');
+    expect(workbenchReplay.firedTransitionIds).toContain('t_ok_post_nav_fire');
+    expect(workbenchReplay.firedTransitionIds).toContain('t_req_post_nav_link');
+    expect(workbenchReplay.firedTransitionIds).toContain('t_ok_post_nav_link');
+
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gqc05-wb-trace-'));
+    const traceStorage = new CanonicalTriadBackend(path.join(tmpDir, 'trace.db'));
+    try {
+      const wbEnvelope = loadNetEnvelope(path.resolve(process.cwd(), 'src/net/workbench-net.yaml'));
+      const persistedTrace = await persistWorkbenchTraceToTriad(
+        traceStorage,
+        wbEnvelope,
+        workbenchNetTracer.getTrace()
+      );
+      expect(persistedTrace.firingRecordCount).toBe(workbenchReplay.firedTransitionIds.length);
+      const reloadedTrace = traceStorage.get(persistedTrace.traceMCardHash);
+      expect(reloadedTrace.verified).toBe(true);
+      const parsedTrace = JSON.parse(reloadedTrace.content);
+      expect(parsedTrace.workbenchNetMCardHash).toBe(persistedTrace.workbenchNetMCardHash);
+      expect(parsedTrace.firingRecords.map((r) => r.transitionId)).toEqual(workbenchReplay.firedTransitionIds);
+    } finally {
+      traceStorage.close();
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+
+    expect(dialogs).toEqual([]);
+  });
+
+  test('GQC-05-E2E-02: submitting the same transition twice for one session keeps marking and receipt sequence consistent without double-commit', async ({
+    isolatedLabPage,
+    workbench,
+    workbenchNetTracer
+  }) => {
+    const { page, dialogs } = isolatedLabPage;
+    await page.setViewportSize({ width: 1440, height: 960 });
+
+    await workbench.open({ targetPath: SPA_FIXTURE_PATH });
+    await page.getByTestId('workflow-tab-step-transitions').click();
+
+    const firstFirePromise = page.waitForResponse(
+      (res) => res.url().includes('/api/test-runs/navigation/fire') && res.request().method() === 'POST'
+    );
+    await page.getByTestId('workflow-fire-t_spa_open_details').click();
+    const firstFireRes = await firstFirePromise;
+    expect(firstFireRes.status()).toBe(200);
+    const firstFireBody = await firstFireRes.json();
+    expect(firstFireBody.deduplicated).toBe(false);
+
+    await expect(page.getByTestId('workflow-layer4-place')).toHaveText('p_spa_details');
+    await expect(page.getByTestId('workflow-layer4-step-count')).toHaveText('1');
+    await expect(page.getByTestId('workflow-layer4-receipt-count')).toHaveText('1');
+    const markingHash1 = await page.getByTestId('workflow-layer4-marking-hash').textContent();
+    const receiptHash1 = await page.getByTestId('workflow-latest-receipt-hash').textContent();
+
+    const duplicateFirePromise = page.waitForResponse(
+      (res) => res.url().includes('/api/test-runs/navigation/fire') && res.request().method() === 'POST'
+    );
+    await page.getByTestId('workflow-replay-last-request').click();
+    const duplicateFireRes = await duplicateFirePromise;
+    expect(duplicateFireRes.status()).toBe(200);
+    const duplicateFireBody = await duplicateFireRes.json();
+    expect(duplicateFireBody.deduplicated).toBe(true);
+    expect(duplicateFireBody.receipt.receiptHash).toBe(receiptHash1);
+    expect(duplicateFireBody.latestMarkingHash).toBe(markingHash1);
+    expect(duplicateFireBody.stepCount).toBe(1);
+
+    await expect(page.getByTestId('workflow-layer4-place')).toHaveText('p_spa_details');
+    await expect(page.getByTestId('workflow-layer4-step-count')).toHaveText('1');
+    await expect(page.getByTestId('workflow-layer4-receipt-count')).toHaveText('1');
+    await expect(page.getByTestId('workflow-layer4-marking-hash')).toHaveText(markingHash1);
+    await expect(page.getByTestId('workflow-latest-receipt-hash')).toHaveText(receiptHash1);
+
+    const workbenchReplay = await workbenchNetTracer.replay();
+    expect(workbenchReplay.ok).toBe(true);
     expect(dialogs).toEqual([]);
   });
 });

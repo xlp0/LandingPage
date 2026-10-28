@@ -89,6 +89,15 @@ topology:
     - id: p_error_target_unapproved
       initialTokens: 0
       description: Recoverable unapproved or malformed custom target state on responsive-lab.html
+    - id: p_pending_post_nav_session
+      initialTokens: 0
+      description: In-flight pending state for POST /api/test-runs/navigation/session from p_page_responsive_lab
+    - id: p_pending_post_nav_fire
+      initialTokens: 0
+      description: In-flight pending state for POST /api/test-runs/navigation/fire from p_page_responsive_lab
+    - id: p_pending_post_nav_link
+      initialTokens: 0
+      description: In-flight pending state for POST /api/test-runs/navigation/link from p_page_responsive_lab
   transitions:
     - id: t_redirect_index_to_lab
       inputs:
@@ -191,6 +200,51 @@ topology:
     - id: t_fail_get_conformance_latest
       inputs:
         - p_pending_get_conformance_latest
+      outputs:
+        - p_page_responsive_lab
+    - id: t_req_post_nav_session
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_pending_post_nav_session
+    - id: t_ok_post_nav_session
+      inputs:
+        - p_pending_post_nav_session
+      outputs:
+        - p_page_responsive_lab
+    - id: t_fail_post_nav_session
+      inputs:
+        - p_pending_post_nav_session
+      outputs:
+        - p_page_responsive_lab
+    - id: t_req_post_nav_fire
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_pending_post_nav_fire
+    - id: t_ok_post_nav_fire
+      inputs:
+        - p_pending_post_nav_fire
+      outputs:
+        - p_page_responsive_lab
+    - id: t_fail_post_nav_fire
+      inputs:
+        - p_pending_post_nav_fire
+      outputs:
+        - p_page_responsive_lab
+    - id: t_req_post_nav_link
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_pending_post_nav_link
+    - id: t_ok_post_nav_link
+      inputs:
+        - p_pending_post_nav_link
+      outputs:
+        - p_page_responsive_lab
+    - id: t_fail_post_nav_link
+      inputs:
+        - p_pending_post_nav_link
       outputs:
         - p_page_responsive_lab
     - id: t_req_get_env
@@ -538,6 +592,42 @@ bindings:
       entry: false
       deepLinkEntry: false
       owner: Product Manager and TEA
+    p_pending_post_nav_session:
+      kind: pending
+      surface: workbench
+      pageId: pending_post_nav_session
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:pending:post_nav_session
+      clmTypeUri: clm://type/view/workbench/pending/post-nav-session
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Architect and TEA
+    p_pending_post_nav_fire:
+      kind: pending
+      surface: workbench
+      pageId: pending_post_nav_fire
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:pending:post_nav_fire
+      clmTypeUri: clm://type/view/workbench/pending/post-nav-fire
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Architect and TEA
+    p_pending_post_nav_link:
+      kind: pending
+      surface: workbench
+      pageId: pending_post_nav_link
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:pending:post_nav_link
+      clmTypeUri: clm://type/view/workbench/pending/post-nav-link
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Architect and TEA
     p_pending_get_env:
       kind: pending
       surface: workbench
@@ -963,6 +1053,108 @@ bindings:
       ownerPage: responsive-lab.html
       owner: Product Manager and TEA
       errorPresentation: '#conformance-status-badge fallback state on responsive-lab.html'
+    t_req_post_nav_session:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_post_nav_session
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_pending_post_nav_session
+      httpMethod: POST
+      httpPath: /api/test-runs/navigation/session
+      trigger: fetch("/api/test-runs/navigation/session") in js/harness/spa-test-workflow.js
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_ok_post_nav_session:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_post_nav_session
+      fromPlaceId: p_pending_post_nav_session
+      toPlaceId: p_page_responsive_lab
+      httpMethod: POST
+      httpPath: /api/test-runs/navigation/session
+      trigger: HTTP 2xx response for POST /api/test-runs/navigation/session
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_fail_post_nav_session:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_post_nav_session
+      fromPlaceId: p_pending_post_nav_session
+      toPlaceId: p_page_responsive_lab
+      httpMethod: POST
+      httpPath: /api/test-runs/navigation/session
+      trigger: HTTP 4xx/5xx or network failure for POST /api/test-runs/navigation/session
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+      errorPresentation: '#spa-workflow-error visible alert banner on responsive-lab.html'
+    t_req_post_nav_fire:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_post_nav_fire
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_pending_post_nav_fire
+      httpMethod: POST
+      httpPath: /api/test-runs/navigation/fire
+      trigger: fetch("/api/test-runs/navigation/fire") in js/harness/spa-test-workflow.js
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_ok_post_nav_fire:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_post_nav_fire
+      fromPlaceId: p_pending_post_nav_fire
+      toPlaceId: p_page_responsive_lab
+      httpMethod: POST
+      httpPath: /api/test-runs/navigation/fire
+      trigger: HTTP 2xx response for POST /api/test-runs/navigation/fire
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_fail_post_nav_fire:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_post_nav_fire
+      fromPlaceId: p_pending_post_nav_fire
+      toPlaceId: p_page_responsive_lab
+      httpMethod: POST
+      httpPath: /api/test-runs/navigation/fire
+      trigger: HTTP 4xx/5xx or network failure for POST /api/test-runs/navigation/fire
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+      errorPresentation: '#spa-workflow-error visible p_error_modal lock alert and recovery prompt on responsive-lab.html'
+    t_req_post_nav_link:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_post_nav_link
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_pending_post_nav_link
+      httpMethod: POST
+      httpPath: /api/test-runs/navigation/link
+      trigger: fetch("/api/test-runs/navigation/link") in js/harness/spa-test-workflow.js
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_ok_post_nav_link:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_post_nav_link
+      fromPlaceId: p_pending_post_nav_link
+      toPlaceId: p_page_responsive_lab
+      httpMethod: POST
+      httpPath: /api/test-runs/navigation/link
+      trigger: HTTP 2xx response for POST /api/test-runs/navigation/link
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_fail_post_nav_link:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_post_nav_link
+      fromPlaceId: p_pending_post_nav_link
+      toPlaceId: p_page_responsive_lab
+      httpMethod: POST
+      httpPath: /api/test-runs/navigation/link
+      trigger: HTTP 4xx/5xx or network failure for POST /api/test-runs/navigation/link
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+      errorPresentation: '#spa-workflow-error visible link verification alert on responsive-lab.html'
     t_req_get_env:
       kind: server-call-request
       surface: workbench
@@ -1407,6 +1599,12 @@ bindings:
       status: not-ui-reachable
       owner: TEA
       reason: Programmatic test-run history endpoint with zero browser callers
+    - httpMethod: GET
+      httpPath: /api/test-runs/navigation/link
+      source: server/test-run-api.mjs
+      status: not-ui-reachable
+      owner: Architect and TEA
+      reason: Programmatic navigation-run-link reload and Triad verification endpoint for CLI and Playwright harnesses
     - httpMethod: GET
       httpPath: /api/test-runs/conformance/diff
       source: server/test-run-api.mjs:157

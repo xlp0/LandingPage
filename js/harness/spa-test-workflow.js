@@ -50,7 +50,14 @@ export const WORKFLOW_STEPS = Object.freeze([
     label: '4. Links & Transitions',
     title: 'Inspect Functional Links & Transitions',
     workbenchPlaceId: 'p_page_responsive_lab',
-    workbenchTransitions: Object.freeze([])
+    workbenchTransitions: Object.freeze([
+      't_req_post_nav_session',
+      't_ok_post_nav_session',
+      't_fail_post_nav_session',
+      't_req_post_nav_fire',
+      't_ok_post_nav_fire',
+      't_fail_post_nav_fire'
+    ])
   }),
   Object.freeze({
     id: 'step-evidence',
@@ -62,7 +69,10 @@ export const WORKFLOW_STEPS = Object.freeze([
       't_req_post_test_runs',
       't_ok_post_test_runs',
       't_fail_post_test_runs',
-      't_recover_post_test_runs'
+      't_recover_post_test_runs',
+      't_req_post_nav_link',
+      't_ok_post_nav_link',
+      't_fail_post_nav_link'
     ])
   })
 ]);
@@ -77,7 +87,7 @@ const RECOVERABLE_POLICY_STATES = new Set([
 ]);
 
 const GRAPH_LINKAGE_NOTE =
-  'Graph-to-run MCard linkage (navigation_run_link:v1) is deferred to SPRINT-GQC-05; responsive_test_run:v1 remains closed.';
+  'Graph-to-run MCard linkage uses urn:gqc:navigation-run-link:v1 (SPRINT-GQC-05); responsive_test_run:v1 remains closed.';
 
 export function assertDisjointNetIds(workbenchEnvelope, targetEnvelope) {
   const wbPlaces = new Set((workbenchEnvelope?.topology?.places || []).map((p) => p.id));
@@ -233,6 +243,7 @@ export function createSpaTestWorkflow(options = {}) {
   const recoverTargetFn = options.recoverTarget || (() => membrane?.recoverToDefault?.());
   const selectDeviceFn = options.selectDevicePreset || null;
   const resolveIframe = options.resolveIframe || (() => (doc ? doc.getElementById('mission-control-iframe') : null));
+  const customFetch = typeof options.fetchImpl === 'function' ? options.fetchImpl : null;
 
   const subscribers = new Set();
   const cleanupFns = [];
@@ -245,6 +256,101 @@ export function createSpaTestWorkflow(options = {}) {
   let iframeLoadCleanup = null;
   let spaObserver = null;
   let lastBoundTargetPathname = '';
+
+  const layer4Session = {
+    sessionId: null,
+    sessionStatus: 'IDLE',
+    currentViewPlaceId: null,
+    layer4PlaceId: null,
+    netMCardHash: null,
+    bindingsMCardHash: null,
+    initialMarkingHash: null,
+    markingHash: null,
+    stepCount: 0,
+    receiptHashes: [],
+    latestReceiptHash: null,
+    latestReceiptVerdict: null,
+    lastRequestId: null,
+    lastTransitionId: null,
+    idempotentReplay: false,
+    busy: false,
+    error: null
+  };
+  let navLinkState = null;
+  let rpcQueue = Promise.resolve();
+  let requestSeq = 0;
+
+  function resetLayer4SessionState(targetNet = null) {
+    layer4Session.sessionId = null;
+    layer4Session.sessionStatus = 'IDLE';
+    layer4Session.currentViewPlaceId = targetNet?.entryPlaceId || null;
+    layer4Session.layer4PlaceId = targetNet?.entryPlaceId || null;
+    layer4Session.netMCardHash = targetNet?.layer4Verification?.netMCardHash || null;
+    layer4Session.bindingsMCardHash = targetNet?.layer4Verification?.bindingsMCardHash || null;
+    layer4Session.initialMarkingHash = null;
+    layer4Session.markingHash = null;
+    layer4Session.stepCount = 0;
+    layer4Session.receiptHashes = [];
+    layer4Session.latestReceiptHash = null;
+    layer4Session.latestReceiptVerdict = null;
+    layer4Session.lastRequestId = null;
+    layer4Session.lastTransitionId = null;
+    layer4Session.idempotentReplay = false;
+    layer4Session.busy = false;
+    layer4Session.error = null;
+    navLinkState = null;
+  }
+
+  function enqueueRpc(task) {
+    const run = rpcQueue.then(task, task);
+    rpcQueue = run.catch(() => {});
+    return run;
+  }
+
+  async function postNavSessionRequest(payload) {
+    if (customFetch) {
+      return customFetch('/api/test-runs/navigation/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    }
+    return fetch('/api/test-runs/navigation/session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  }
+
+  async function postNavFireRequest(payload) {
+    if (customFetch) {
+      return customFetch('/api/test-runs/navigation/fire', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    }
+    return fetch('/api/test-runs/navigation/fire', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  }
+
+  async function postNavLinkRequest(payload) {
+    if (customFetch) {
+      return customFetch('/api/test-runs/navigation/link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    }
+    return fetch('/api/test-runs/navigation/link', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  }
 
   const liveSpa = {
     connected: false,
@@ -314,6 +420,7 @@ export function createSpaTestWorkflow(options = {}) {
         liveSpa.transitionStatuses[t.transitionId] = 'idle';
       }
     }
+    resetLayer4SessionState(targetNet);
   }
 
   function resolveMatchedTargetNet(targetDetail) {
@@ -598,6 +705,7 @@ export function createSpaTestWorkflow(options = {}) {
             eventCount: saved.run?.metrics?.eventCount ?? eventCount
           }
         : null,
+      navigationLink: navLinkState ? { ...navLinkState } : null,
       graphLinkageNote: GRAPH_LINKAGE_NOTE
     };
   }
@@ -613,8 +721,13 @@ export function createSpaTestWorkflow(options = {}) {
     let errorAnnouncement = '';
     if (target.recoverable) {
       errorAnnouncement = `Target policy ${target.policyState}: ${target.reason || 'Capture disabled'}`;
+    } else if (layer4Session.sessionStatus === 'ERROR_MODAL') {
+      const detailPrefix = layer4Session.error ? `${layer4Session.error}. ` : '';
+      errorAnnouncement = `${detailPrefix}Layer 4 session trapped at p_error_modal (${layer4Session.currentViewPlaceId || 'p_spa_missing_transition'}). Recover to Overview or start a new session.`;
     } else if (liveSpa.inErrorPlace && liveSpa.errorAlertText) {
       errorAnnouncement = liveSpa.errorAlertText;
+    } else if (layer4Session.error) {
+      errorAnnouncement = layer4Session.error;
     } else if (invalidatedReason) {
       errorAnnouncement = `Incomplete capture: ${invalidatedReason}`;
     }
@@ -654,6 +767,12 @@ export function createSpaTestWorkflow(options = {}) {
         successfulNavigationCount: liveSpa.successfulNavigationCount,
         transitionStatuses: { ...liveSpa.transitionStatuses },
         targetTrace: getTargetTrace()
+      },
+      layer4Session: {
+        ...layer4Session,
+        netMCardHash: layer4Session.netMCardHash || targetNet?.layer4Verification?.netMCardHash || null,
+        bindingsMCardHash: layer4Session.bindingsMCardHash || targetNet?.layer4Verification?.bindingsMCardHash || null,
+        receiptHashes: [...layer4Session.receiptHashes]
       },
       capture,
       moduleWarnings: moduleWarnings.map((w) => ({ ...w })),
@@ -727,6 +846,239 @@ export function createSpaTestWorkflow(options = {}) {
     stage?.rotate?.('rotate');
     syncTargetDom();
     emit();
+  }
+
+  function clickIframeTransitionLink(linkId) {
+    const iframe = resolveIframe();
+    if (!iframe) return false;
+    try {
+      const innerDoc = iframe.contentDocument || iframe.contentWindow?.document || null;
+      if (!innerDoc || typeof innerDoc.querySelector !== 'function') return false;
+      const btn = innerDoc.querySelector(`[data-link-id="${linkId}"]`);
+      if (btn && typeof btn.click === 'function') {
+        btn.click();
+        syncTargetDom();
+        return true;
+      }
+    } catch {}
+    return false;
+  }
+
+  async function internalEnsureSession(matchedNet, sessionOptions = {}) {
+    const payload = {
+      netId: matchedNet.netId,
+      ...(sessionOptions.sessionId ? { sessionId: sessionOptions.sessionId } : {}),
+      ...(sessionOptions.entryPlaceId ? { entryPlaceId: sessionOptions.entryPlaceId } : {})
+    };
+    const res = await postNavSessionRequest(payload);
+    const body = await res.json();
+    if (!res.ok || !body?.ok) {
+      throw new Error(body?.error || `HTTP ${res.status}`);
+    }
+    layer4Session.sessionId = body.sessionId;
+    layer4Session.sessionStatus = body.sessionStatus || 'ACTIVE';
+    layer4Session.currentViewPlaceId = body.currentViewPlaceId || matchedNet.entryPlaceId;
+    layer4Session.layer4PlaceId = body.currentViewPlaceId || matchedNet.entryPlaceId;
+    layer4Session.netMCardHash = body.netMCardHash || layer4Session.netMCardHash;
+    layer4Session.bindingsMCardHash = body.bindingsMCardHash || layer4Session.bindingsMCardHash;
+    layer4Session.initialMarkingHash = body.initialMarkingHash || null;
+    layer4Session.markingHash = body.initialMarkingHash || null;
+    layer4Session.stepCount = 0;
+    layer4Session.receiptHashes = [];
+    layer4Session.latestReceiptHash = null;
+    layer4Session.latestReceiptVerdict = null;
+    layer4Session.lastRequestId = null;
+    layer4Session.lastTransitionId = null;
+    layer4Session.idempotentReplay = false;
+    layer4Session.error = null;
+    return body;
+  }
+
+  function startLayer4Session(sessionOptions = {}) {
+    return enqueueRpc(async () => {
+      const effective = membrane?.getLastPolicyRejection?.() || membrane?.getTarget?.() || null;
+      const matchedNet = resolveMatchedTargetNet(effective);
+      if (!matchedNet) {
+        return { ok: false, error: 'No active SPA target net' };
+      }
+      layer4Session.busy = true;
+      emit();
+      try {
+        if (sessionOptions.syncDom !== false) {
+          syncTargetDom();
+          if (liveSpa.activePlaceId === 'p_spa_missing_transition') {
+            clickIframeTransitionLink('link_spa_recover_overview');
+          } else if (liveSpa.activePlaceId === 'p_spa_details') {
+            clickIframeTransitionLink('link_spa_back_overview');
+          }
+        }
+        const summary = await internalEnsureSession(matchedNet, sessionOptions);
+        layer4Session.busy = false;
+        emit();
+        return { ok: true, ...summary };
+      } catch (err) {
+        layer4Session.busy = false;
+        layer4Session.error = err instanceof Error ? err.message : String(err);
+        emit();
+        return { ok: false, error: layer4Session.error };
+      }
+    });
+  }
+
+  function fireLayer4Transition(transitionId, fireOptions = {}) {
+    return enqueueRpc(async () => {
+      const effective = membrane?.getLastPolicyRejection?.() || membrane?.getTarget?.() || null;
+      const matchedNet = resolveMatchedTargetNet(effective);
+      if (!matchedNet) {
+        return { ok: false, error: 'No active SPA target net' };
+      }
+      layer4Session.busy = true;
+      emit();
+      try {
+        if (!layer4Session.sessionId) {
+          const startEntry =
+            liveSpa.activePlaceId && liveSpa.activePlaceKind !== 'error'
+              ? liveSpa.activePlaceId
+              : matchedNet.entryPlaceId;
+          await internalEnsureSession(matchedNet, { entryPlaceId: startEntry });
+        }
+        const resolvedReqId =
+          fireOptions.requestId || `req_${layer4Session.sessionId}_${(requestSeq += 1)}`;
+        const res = await postNavFireRequest({
+          netId: matchedNet.netId,
+          sessionId: layer4Session.sessionId,
+          transitionId,
+          mode: fireOptions.mode || 'auto',
+          requestId: resolvedReqId
+        });
+        const body = await res.json();
+        if (!res.ok || body?.ok === false) {
+          layer4Session.busy = false;
+          layer4Session.error = body?.error || `HTTP ${res.status}`;
+          emit();
+          return { ok: false, status: res.status, ...body };
+        }
+        layer4Session.sessionStatus = body.sessionStatus || 'ACTIVE';
+        layer4Session.currentViewPlaceId = body.currentViewPlaceId;
+        layer4Session.layer4PlaceId = body.trappedToErrorModal ? 'p_error_modal' : body.currentViewPlaceId;
+        layer4Session.markingHash = body.latestMarkingHash || body.markingHash || layer4Session.markingHash;
+        layer4Session.stepCount = Number(body.stepCount || 0);
+        layer4Session.receiptHashes = Array.isArray(body.receiptHashes) ? [...body.receiptHashes] : [];
+        layer4Session.latestReceiptHash =
+          body.receipt?.receiptHash || body.latestReceipt?.receiptHash || body.receiptHash || null;
+        layer4Session.latestReceiptVerdict =
+          body.receipt?.verdict || (body.trappedToErrorModal ? 'EXCEPTION' : 'COMMITTED');
+        layer4Session.lastRequestId = resolvedReqId;
+        layer4Session.lastTransitionId = transitionId;
+        layer4Session.idempotentReplay = Boolean(body.deduplicated || body.idempotentReplay);
+        layer4Session.error = null;
+
+        if (fireOptions.syncDom !== false && !layer4Session.idempotentReplay) {
+          const transRow = matchedNet.transitions.find((t) => t.transitionId === transitionId);
+          if (transRow?.linkId) {
+            clickIframeTransitionLink(transRow.linkId);
+          }
+        }
+        layer4Session.busy = false;
+        emit();
+        return body;
+      } catch (err) {
+        layer4Session.busy = false;
+        layer4Session.error = err instanceof Error ? err.message : String(err);
+        emit();
+        return { ok: false, error: layer4Session.error };
+      }
+    });
+  }
+
+  function replayLastLayer4Request() {
+    if (!layer4Session.lastTransitionId || !layer4Session.lastRequestId) {
+      return Promise.resolve({ ok: false, error: 'No prior Layer 4 transition request to replay' });
+    }
+    return fireLayer4Transition(layer4Session.lastTransitionId, {
+      requestId: layer4Session.lastRequestId,
+      syncDom: false
+    });
+  }
+
+  function linkSavedRunToLayer4(linkOptions = {}) {
+    return enqueueRpc(async () => {
+      const effective = membrane?.getLastPolicyRejection?.() || membrane?.getTarget?.() || null;
+      const matchedNet = resolveMatchedTargetNet(effective);
+      const runHash = linkOptions.runHash || recorder?.lastSavedRun?.data?.hash || null;
+      if (!matchedNet || !runHash) {
+        return { ok: false, error: 'Saved run hash and active SPA target net are required' };
+      }
+      layer4Session.busy = true;
+      emit();
+      try {
+        if (!layer4Session.sessionId) {
+          await internalEnsureSession(matchedNet, {
+            entryPlaceId: liveSpa.entryPlaceId || matchedNet.entryPlaceId
+          });
+          for (const evt of liveSpa.events) {
+            const reqId = `sync_${layer4Session.sessionId}_${(requestSeq += 1)}`;
+            const fireRes = await postNavFireRequest({
+              netId: matchedNet.netId,
+              sessionId: layer4Session.sessionId,
+              transitionId: evt.transitionId,
+              mode: 'auto',
+              requestId: reqId
+            });
+            const fireBody = await fireRes.json();
+            if (fireRes.ok && fireBody?.ok !== false) {
+              layer4Session.sessionStatus = fireBody.sessionStatus || 'ACTIVE';
+              layer4Session.currentViewPlaceId = fireBody.currentViewPlaceId;
+              layer4Session.layer4PlaceId = fireBody.trappedToErrorModal ? 'p_error_modal' : fireBody.currentViewPlaceId;
+              layer4Session.markingHash = fireBody.latestMarkingHash || fireBody.markingHash || layer4Session.markingHash;
+              layer4Session.stepCount = Number(fireBody.stepCount || 0);
+              layer4Session.receiptHashes = Array.isArray(fireBody.receiptHashes) ? [...fireBody.receiptHashes] : [];
+              layer4Session.latestReceiptHash =
+                fireBody.receipt?.receiptHash || fireBody.latestReceipt?.receiptHash || fireBody.receiptHash || null;
+              layer4Session.latestReceiptVerdict =
+                fireBody.receipt?.verdict || (fireBody.trappedToErrorModal ? 'TrappedToErrorModal' : 'Committed');
+              layer4Session.lastRequestId = reqId;
+              layer4Session.lastTransitionId = evt.transitionId;
+            }
+          }
+        }
+        const linkRes = await postNavLinkRequest({
+          runHash,
+          netId: matchedNet.netId,
+          sessionId: layer4Session.sessionId
+        });
+        const linkBody = await linkRes.json();
+        if (!linkRes.ok || !linkBody?.ok) {
+          navLinkState = {
+            ok: false,
+            error: linkBody?.error || `HTTP ${linkRes.status}`
+          };
+          layer4Session.busy = false;
+          emit();
+          return navLinkState;
+        }
+        navLinkState = {
+          ok: true,
+          linkHandle: linkBody.linkHandle,
+          linkHash: linkBody.linkHash,
+          runHash,
+          sessionId: layer4Session.sessionId,
+          targetNetMCardHash: linkBody.link?.targetNetMCardHash || layer4Session.netMCardHash,
+          bindingsMCardHash: linkBody.link?.bindingsMCardHash || layer4Session.bindingsMCardHash,
+          receiptCount: Array.isArray(linkBody.link?.receiptHashes) ? linkBody.link.receiptHashes.length : 0,
+          error: null
+        };
+        layer4Session.busy = false;
+        emit();
+        return navLinkState;
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        navLinkState = { ok: false, error: msg };
+        layer4Session.busy = false;
+        emit();
+        return navLinkState;
+      }
+    });
   }
 
   function recordTargetObservation(observation) {
@@ -842,6 +1194,10 @@ export function createSpaTestWorkflow(options = {}) {
     selectDevicePreset,
     rotateDevice,
     syncTargetDom,
+    startLayer4Session,
+    fireLayer4Transition,
+    replayLastLayer4Request,
+    linkSavedRunToLayer4,
     recordTargetObservation,
     getTargetTrace,
     clearTargetTrace,

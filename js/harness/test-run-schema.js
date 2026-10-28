@@ -10,6 +10,16 @@ export const TEST_RUN_SCHEMA = 'urn:mcard:schema:responsive_test_run:v1';
 export const REPLAY_RESULT_SCHEMA = 'urn:mcard:schema:replay_result:v1';
 export const CONFORMANCE_REPORT_SCHEMA = 'urn:mcard:schema:device_conformance_report:v1';
 export const CERTIFICATION_SCHEMA = 'urn:mcard:certification:responsive:v1';
+export const NAVIGATION_RUN_LINK_SCHEMA = 'urn:gqc:navigation-run-link:v1';
+export const INTERRUPTED_CAPTURE_SCHEMA = 'urn:gqc:interrupted-capture:v1';
+export const RECOGNIZED_RUN_SCHEMAS = Object.freeze([
+  TEST_RUN_SCHEMA,
+  REPLAY_RESULT_SCHEMA,
+  CONFORMANCE_REPORT_SCHEMA,
+  CERTIFICATION_SCHEMA,
+  NAVIGATION_RUN_LINK_SCHEMA,
+  INTERRUPTED_CAPTURE_SCHEMA
+]);
 export const MAX_EVENTS = 2048;
 
 const ALLOWED_TOP_LEVEL_KEYS = new Set([
@@ -154,6 +164,119 @@ export function validateCertification(cert) {
  * @param {any} run
  * @returns {{ valid: boolean, errors: string[] }}
  */
+
+const HEX64_PATTERN = /^[a-f0-9]{64}$/;
+
+export function validateNavigationRunLink(link) {
+  const errors = [];
+  if (!link || typeof link !== 'object' || Array.isArray(link)) {
+    return { valid: false, errors: ['Navigation run link must be a non-null object'] };
+  }
+  if (link.schema !== NAVIGATION_RUN_LINK_SCHEMA) {
+    errors.push(`Invalid schema: expected '${NAVIGATION_RUN_LINK_SCHEMA}', got '${link.schema}'`);
+  }
+  if (typeof link.runHash !== 'string' || !HEX64_PATTERN.test(link.runHash)) {
+    errors.push('runHash must be a 64-character lowercase hex digest');
+  }
+  if (typeof link.sessionId !== 'string' || !link.sessionId.trim()) {
+    errors.push('sessionId must be a non-empty string');
+  }
+  if (typeof link.targetNetId !== 'string' || !link.targetNetId.trim()) {
+    errors.push('targetNetId must be a non-empty string');
+  }
+  if (typeof link.targetNetMCardHash !== 'string' || !HEX64_PATTERN.test(link.targetNetMCardHash)) {
+    errors.push('targetNetMCardHash must be a 64-character lowercase hex digest');
+  }
+  if (typeof link.bindingsMCardHash !== 'string' || !HEX64_PATTERN.test(link.bindingsMCardHash)) {
+    errors.push('bindingsMCardHash must be a 64-character lowercase hex digest');
+  }
+  if (typeof link.initialMarkingHash !== 'string' || !HEX64_PATTERN.test(link.initialMarkingHash)) {
+    errors.push('initialMarkingHash must be a 64-character lowercase hex digest');
+  }
+  if (!Array.isArray(link.receiptHashes) || link.receiptHashes.some((h) => typeof h !== 'string' || !HEX64_PATTERN.test(h))) {
+    errors.push('receiptHashes must be an array of 64-character lowercase hex digests');
+  }
+  if (typeof link.finalPlaceId !== 'string' || !link.finalPlaceId.trim()) {
+    errors.push('finalPlaceId must be a non-empty string');
+  }
+  if (link.sessionStatus !== 'ACTIVE' && link.sessionStatus !== 'ERROR_MODAL') {
+    errors.push(`sessionStatus must be 'ACTIVE' or 'ERROR_MODAL', got '${link.sessionStatus}'`);
+  }
+  return { valid: errors.length === 0, errors };
+}
+
+export function validateInterruptedCapture(cap) {
+  const errors = [];
+  if (!cap || typeof cap !== 'object' || Array.isArray(cap)) {
+    return { valid: false, errors: ['Interrupted capture must be a non-null object'] };
+  }
+  if (cap.schema !== INTERRUPTED_CAPTURE_SCHEMA) {
+    errors.push(`Invalid schema: expected '${INTERRUPTED_CAPTURE_SCHEMA}', got '${cap.schema}'`);
+  }
+  if (typeof cap.sessionId !== 'string' || !cap.sessionId.trim()) {
+    errors.push('sessionId must be a non-empty string');
+  }
+  if (!cap.target || typeof cap.target !== 'object' || typeof cap.target.url !== 'string' || !cap.target.url.trim()) {
+    errors.push('target must be an object with non-empty url');
+  }
+  if (typeof cap.lifecycleState !== 'string' || !cap.lifecycleState.trim() || cap.lifecycleState === 'FINALIZED') {
+    errors.push('lifecycleState must be a non-empty non-FINALIZED state');
+  }
+  if (typeof cap.reason !== 'string' || !cap.reason.trim()) {
+    errors.push('reason must be a non-empty string');
+  }
+  if (cap.incomplete !== true) {
+    errors.push('incomplete must be true');
+  }
+  if (cap.passing !== false) {
+    errors.push('passing must be false');
+  }
+  if (cap.certified !== false) {
+    errors.push('certified must be false');
+  }
+  return { valid: errors.length === 0, errors };
+}
+
+export function parseStoredTestRunRecord(record) {
+  if (!record || typeof record !== 'object' || Array.isArray(record)) {
+    return { ok: false, unsupportedVersion: false, errors: ['Stored record must be a JSON object'] };
+  }
+  if (typeof record.schema === 'string' && !RECOGNIZED_RUN_SCHEMAS.includes(record.schema)) {
+    return {
+      ok: false,
+      unsupportedVersion: true,
+      downgradedToV1: false,
+      schema: record.schema,
+      errors: [`Unsupported test run schema version '${record.schema}'`]
+    };
+  }
+  if (record.schema === INTERRUPTED_CAPTURE_SCHEMA) {
+    const check = validateInterruptedCapture(record);
+    return {
+      ok: check.valid,
+      unsupportedVersion: false,
+      incomplete: true,
+      passing: false,
+      certified: false,
+      verdict: 'incomplete',
+      schema: record.schema,
+      record,
+      errors: check.errors
+    };
+  }
+  const check = validateTestRun(record);
+  return {
+    ok: check.valid,
+    unsupportedVersion: Boolean(check.unsupportedVersion),
+    incomplete: false,
+    passing: check.valid && record.schema === TEST_RUN_SCHEMA,
+    verdict: check.valid ? 'finalized' : 'invalid',
+    schema: record.schema || null,
+    record,
+    errors: check.errors
+  };
+}
+
 export function validateTestRun(run) {
   if (run?.schema === REPLAY_RESULT_SCHEMA) {
     return validateReplayResult(run);
@@ -164,11 +287,34 @@ export function validateTestRun(run) {
   if (run?.schema === CERTIFICATION_SCHEMA) {
     return validateCertification(run);
   }
+  if (run?.schema === NAVIGATION_RUN_LINK_SCHEMA) {
+    return validateNavigationRunLink(run);
+  }
+  if (run?.schema === INTERRUPTED_CAPTURE_SCHEMA) {
+    return validateInterruptedCapture(run);
+  }
+  if (
+    run &&
+    typeof run === 'object' &&
+    !Array.isArray(run) &&
+    typeof run.schema === 'string' &&
+    !RECOGNIZED_RUN_SCHEMAS.includes(run.schema)
+  ) {
+    return {
+      valid: false,
+      unsupportedVersion: true,
+      errors: [`Unsupported schema version '${run.schema}'; silent downgrade to '${TEST_RUN_SCHEMA}' is prohibited`]
+    };
+  }
 
   const errors = [];
 
   if (!run || typeof run !== 'object' || Array.isArray(run)) {
     return { valid: false, errors: ['Test run must be a non-null object'] };
+  }
+
+  if (run.incomplete === true || (run.lifecycleState !== undefined && run.lifecycleState !== 'FINALIZED')) {
+    errors.push('Unfinalized or interrupted capture cannot be stored as responsive_test_run:v1');
   }
 
   // Reject unknown top-level keys (closed schema)

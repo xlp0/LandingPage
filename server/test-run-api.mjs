@@ -3,13 +3,25 @@
  * Stores immutable test runs in Canonical Triad SQLite database via clm-kernel blake3 hashing.
  */
 
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import express from 'express';
 import { computeHash } from 'clm-kernel';
 import {
+  TEST_RUN_SCHEMA,
+  NAVIGATION_RUN_LINK_SCHEMA,
+  INTERRUPTED_CAPTURE_SCHEMA,
   validateTestRun,
+  validateNavigationRunLink,
+  parseStoredTestRunRecord,
   canonicalJson,
   targetSlug
 } from '../js/harness/test-run-schema.js';
+import { loadNetEnvelope } from '../scripts/check-net.mjs';
+import { createLayer4TargetAdapter } from '../scripts/net-to-netmcard.mjs';
+
+const SERVER_DIR = path.dirname(fileURLToPath(import.meta.url));
+const DEFAULT_SPA_GRAPH_PATH = path.resolve(SERVER_DIR, '../tests/fixtures/spa-test-target.graph.json');
 import {
   validateExternalUrl,
   formatGTime,
@@ -21,12 +33,34 @@ import {
  * Creates the test-run Express router mounted on /api/test-runs.
  * @param {{ storage: import('./mcard-api.mjs').CanonicalTriadBackend }} options
  */
-export function createTestRunRouter({ storage }) {
+export function createTestRunRouter({ storage, targetEnvelopes = null, beforeLinkHandleBind = null }) {
   if (!storage) {
     throw new Error('createTestRunRouter requires a valid storage backend instance');
   }
 
   const router = express.Router();
+  const targetAdapters = new Map();
+
+  function getOrCreateTargetAdapter(netId = 'spa-test-target-net', customEnvelope = null) {
+    if (customEnvelope) {
+      return createLayer4TargetAdapter(customEnvelope, { storage });
+    }
+    if (targetAdapters.has(netId)) {
+      return targetAdapters.get(netId);
+    }
+    const configured = targetEnvelopes && targetEnvelopes[netId]
+      ? targetEnvelopes[netId]
+      : (netId === 'spa-test-target-net' ? loadNetEnvelope(DEFAULT_SPA_GRAPH_PATH) : null);
+    if (!configured) {
+      const err = new Error(`Unknown target net "${netId}"`);
+      err.statusCode = 404;
+      err.code = 'UNKNOWN_TARGET_NET';
+      throw err;
+    }
+    const adapter = createLayer4TargetAdapter(configured, { storage });
+    targetAdapters.set(netId, adapter);
+    return adapter;
+  }
 
   /**
    * POST /api/test-runs
@@ -36,10 +70,19 @@ export function createTestRunRouter({ storage }) {
     const run = req.body;
 
     // Schema validation
+    if (run?.schema === NAVIGATION_RUN_LINK_SCHEMA) {
+      return res.status(400).json({
+        error: 'Use POST /api/test-runs/navigation/link to verify and bind graph-to-run links'
+      });
+    }
+
     const schemaResult = validateTestRun(run);
     if (!schemaResult.valid) {
       return res.status(400).json({
-        error: 'Test run schema validation failed',
+        error: schemaResult.unsupportedVersion
+          ? 'Unsupported test run schema version'
+          : 'Test run schema validation failed',
+        unsupportedVersion: Boolean(schemaResult.unsupportedVersion),
         errors: schemaResult.errors
       });
     }
@@ -97,6 +140,31 @@ export function createTestRunRouter({ storage }) {
         handle: runHandle,
         latestHandle,
         previousHash: latestBind.previousHash || null,
+        gTime: putResult.gTime
+      });
+    }
+
+    if (run.schema === INTERRUPTED_CAPTURE_SCHEMA) {
+      const now = new Date();
+      const gTime = `${formatGTime('blake3', now, 'en-US')}|type=interrupted_capture|target=${slug}|state=${run.lifecycleState}`;
+      const putResult = storage.put(canonicalString, {
+        algorithm: DEFAULT_ALGORITHM,
+        gTime
+      });
+      const shortHandle = `interrupted_capture_${putResult.hash.slice(0, 16)}`;
+      const sessionHandle = `urn:mcard:interrupted_capture:${slug}:${run.sessionId}`;
+      storage.bindHandle(shortHandle, putResult.hash);
+      storage.bindHandle(sessionHandle, putResult.hash);
+      const statusCode = putResult.inserted ? 201 : 200;
+      return res.status(statusCode).json({
+        hash: putResult.hash,
+        inserted: putResult.inserted,
+        handle: shortHandle,
+        sessionHandle,
+        incomplete: true,
+        passing: false,
+        certified: false,
+        verdict: 'incomplete',
         gTime: putResult.gTime
       });
     }
@@ -334,6 +402,239 @@ export function createTestRunRouter({ storage }) {
     });
   });
 
+  router.post('/navigation/session', (req, res) => {
+    try {
+      const {
+        netId = 'spa-test-target-net',
+        sessionId,
+        entryPlaceId,
+        targetEnvelope = null
+      } = req.body || {};
+      const resolvedSessionId = sessionId || `l4_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      const adapter = getOrCreateTargetAdapter(netId, targetEnvelope);
+      const summary = adapter.startSession({
+        sessionId: resolvedSessionId,
+        ...(entryPlaceId ? { entryPlaceId } : {})
+      });
+      return res.status(200).json({ ok: true, ...summary });
+    } catch (err) {
+      const statusCode = err?.statusCode || (err instanceof TypeError ? 400 : 500);
+      return res.status(statusCode).json({
+        ok: false,
+        error: err instanceof Error ? err.message : String(err),
+        code: err?.code || 'NAVIGATION_SESSION_ERROR'
+      });
+    }
+  });
+
+  router.post('/navigation/fire', async (req, res) => {
+    try {
+      const {
+        netId = 'spa-test-target-net',
+        sessionId,
+        transitionId = null,
+        actionName = null,
+        mode = 'auto',
+        requestId = null
+      } = req.body || {};
+      const adapter = getOrCreateTargetAdapter(netId);
+      const result = await adapter.fireTransition({
+        sessionId,
+        transitionId,
+        actionName,
+        mode,
+        requestId
+      });
+      return res.status(200).json(result);
+    } catch (err) {
+      const statusCode = err?.statusCode || (err instanceof TypeError ? 400 : 500);
+      return res.status(statusCode).json({
+        ok: false,
+        error: err instanceof Error ? err.message : String(err),
+        code: err?.code || 'NAVIGATION_FIRE_ERROR',
+        requiresRecovery: Boolean(err?.requiresRecovery)
+      });
+    }
+  });
+
+  router.post('/navigation/link', async (req, res) => {
+    try {
+      const {
+        runHash,
+        netId = 'spa-test-target-net',
+        sessionId,
+        targetNetMCardHash: explicitNetHash = null,
+        bindingsMCardHash: explicitBindingsHash = null,
+        initialMarkingHash: explicitMarkingHash = null,
+        receiptHashes: explicitReceipts = null,
+        finalPlaceId: explicitFinalPlace = null,
+        sessionStatus: explicitStatus = null
+      } = req.body || {};
+
+      const normalizedRunHash = String(runHash || '').toLowerCase();
+      const runCard = storage.get(normalizedRunHash);
+      if (!runCard || !runCard.verified) {
+        return res.status(409).json({
+          ok: false,
+          error: 'Cannot link navigation graph: completed test run MCard is missing or unverified'
+        });
+      }
+
+      let parsedRun = null;
+      try {
+        parsedRun = JSON.parse(runCard.content);
+      } catch {}
+      if (!parsedRun || parsedRun.schema !== TEST_RUN_SCHEMA) {
+        return res.status(400).json({
+          ok: false,
+          error: `Only finalized ${TEST_RUN_SCHEMA} runs may bind a navigation-run-link handle`
+        });
+      }
+
+      const adapter = getOrCreateTargetAdapter(netId);
+      const sessionSummary = sessionId ? adapter.getSessionSummary(sessionId) : null;
+
+      const resolvedNetHash = explicitNetHash || sessionSummary?.netMCardHash || adapter.netMCardHash;
+      const resolvedBindingsHash = explicitBindingsHash || sessionSummary?.bindingsMCardHash || adapter.bindingsMCardHash;
+      const resolvedMarkingHash = explicitMarkingHash || sessionSummary?.initialMarkingHash || '';
+      const resolvedReceipts = Array.isArray(explicitReceipts)
+        ? explicitReceipts
+        : (sessionSummary?.receiptHashes || []);
+      const resolvedFinalPlace = explicitFinalPlace || sessionSummary?.currentViewPlaceId || adapter.entryPlaceId;
+      const resolvedStatus = explicitStatus || sessionSummary?.sessionStatus || 'ACTIVE';
+      const resolvedSessionId = String(sessionId || sessionSummary?.sessionId || parsedRun.sessionId || '');
+
+      const linkPayload = {
+        schema: NAVIGATION_RUN_LINK_SCHEMA,
+        runHash: normalizedRunHash,
+        sessionId: resolvedSessionId,
+        targetNetId: adapter.netId,
+        targetNetMCardHash: resolvedNetHash,
+        bindingsMCardHash: resolvedBindingsHash,
+        initialMarkingHash: resolvedMarkingHash,
+        receiptHashes: resolvedReceipts,
+        finalPlaceId: resolvedFinalPlace,
+        sessionStatus: resolvedStatus
+      };
+
+      const linkValid = validateNavigationRunLink(linkPayload);
+      if (!linkValid.valid) {
+        return res.status(400).json({
+          ok: false,
+          error: 'Navigation run link validation failed',
+          errors: linkValid.errors
+        });
+      }
+
+      const netCard = storage.get(resolvedNetHash);
+      const bindCard = storage.get(resolvedBindingsHash);
+      const markCard = storage.get(resolvedMarkingHash);
+      if (!netCard?.verified || !bindCard?.verified || !markCard?.verified) {
+        return res.status(409).json({
+          ok: false,
+          error: 'Cannot publish navigation-run-link: target NetMCard, bindings MCard, or initial marking MCard failed verification'
+        });
+      }
+      const parsedNet = JSON.parse(netCard.content);
+      if (parsedNet.kind !== 'net_mcard') {
+        return res.status(409).json({
+          ok: false,
+          error: 'Target net hash does not reference a canonical net_mcard'
+        });
+      }
+
+      for (const rHash of resolvedReceipts) {
+        const rCard = storage.get(rHash);
+        if (!rCard?.verified) {
+          return res.status(409).json({
+            ok: false,
+            error: `Cannot publish navigation-run-link: FiringReceiptMCard ${rHash} missing or unverified`
+          });
+        }
+        const parsedReceipt = JSON.parse(rCard.content);
+        if (parsedReceipt.kind !== 'firing_receipt_mcard') {
+          return res.status(409).json({
+            ok: false,
+            error: `Referenced receipt ${rHash} is not a canonical firing_receipt_mcard`
+          });
+        }
+      }
+
+      if (typeof beforeLinkHandleBind === 'function') {
+        await beforeLinkHandleBind({ runHash: normalizedRunHash, linkPayload });
+      }
+
+      const linkCanonical = canonicalJson(linkPayload);
+      const linkGTime = `${formatGTime('blake3', new Date('2026-04-16T00:00:00.000Z'), 'en-US')}|type=navigation_run_link|net=${adapter.netId}`;
+      const linkPut = storage.put(linkCanonical, {
+        algorithm: DEFAULT_ALGORITHM,
+        gTime: linkGTime
+      });
+      const linkHandle = `nav_run_link_${normalizedRunHash}`;
+      storage.bindHandle(linkHandle, linkPut.hash);
+
+      return res.status(linkPut.inserted ? 201 : 200).json({
+        ok: true,
+        inserted: linkPut.inserted,
+        linkHandle,
+        linkHash: linkPut.hash,
+        link: linkPayload
+      });
+    } catch (err) {
+      const statusCode = err?.statusCode || 500;
+      return res.status(statusCode).json({
+        ok: false,
+        error: err instanceof Error ? err.message : String(err),
+        code: err?.code || 'NAVIGATION_LINK_ERROR'
+      });
+    }
+  });
+
+  router.get('/navigation/link', (req, res) => {
+    const normalizedRunHash = String(req.query.runHash || '').toLowerCase();
+    if (!normalizedRunHash) {
+      return res.status(400).json({ ok: false, error: 'Query parameter runHash is required' });
+    }
+    const linkHandle = `nav_run_link_${normalizedRunHash}`;
+    const linkHash = storage.resolveHandle(linkHandle);
+    if (!linkHash) {
+      return res.status(404).json({ ok: false, error: `No navigation-run-link found for ${linkHandle}` });
+    }
+    const linkCard = storage.get(linkHash);
+    if (!linkCard) {
+      return res.status(404).json({ ok: false, error: 'Navigation link card missing' });
+    }
+    const link = JSON.parse(linkCard.content);
+    const runCard = storage.get(link.runHash);
+    const netCard = storage.get(link.targetNetMCardHash);
+    const bindCard = storage.get(link.bindingsMCardHash);
+    const markCard = storage.get(link.initialMarkingHash);
+    const receipts = (link.receiptHashes || []).map((rh) => {
+      const rc = storage.get(rh);
+      return rc
+        ? { hash: rc.hash, verified: rc.verified, receipt: JSON.parse(rc.content) }
+        : { hash: rh, verified: false, receipt: null };
+    });
+
+    const verified = Boolean(
+      linkCard.verified &&
+      runCard?.verified &&
+      netCard?.verified &&
+      bindCard?.verified &&
+      markCard?.verified &&
+      receipts.every((r) => r.verified)
+    );
+
+    return res.json({
+      ok: true,
+      verified,
+      linkHandle,
+      linkHash: linkCard.hash,
+      link,
+      receipts
+    });
+  });
+
   /**
    * GET /api/test-runs/:hash
    * Fetches single run with content verification.
@@ -350,6 +651,32 @@ export function createTestRunRouter({ storage }) {
       parsed = JSON.parse(card.content);
     } catch {
       parsed = card.content;
+    }
+
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed) && typeof parsed.schema === 'string') {
+      const check = parseStoredTestRunRecord(parsed);
+      if (check.unsupportedVersion) {
+        return res.status(422).json({
+          error: check.errors[0],
+          schema: parsed.schema,
+          unsupportedVersion: true,
+          downgradedToV1: false,
+          verified: card.verified
+        });
+      }
+      if (parsed.schema === INTERRUPTED_CAPTURE_SCHEMA) {
+        return res.json({
+          hash: card.hash,
+          gTime: card.gTime,
+          algorithm: card.algorithm,
+          verified: card.verified,
+          incomplete: true,
+          passing: false,
+          certified: false,
+          verdict: 'incomplete',
+          run: parsed
+        });
+      }
     }
 
     return res.json({
