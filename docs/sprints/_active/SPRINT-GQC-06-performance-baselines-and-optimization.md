@@ -4,7 +4,7 @@
 
 - Sprint ID: `SPRINT-GQC-06`
 - Handle: `urn:pcard:sprint:SPRINT-GQC-06`
-- Status: `ACTIVE`
+- Status: `COMPLETED`
 - Depends on: `SPRINT-GQC-05`
 - Unblocks: `SPRINT-GQC-07`
 - Execution unit: `PR-GQC-06`
@@ -128,26 +128,26 @@ Use the existing collectors and browser Performance APIs. Do not change producti
 
 ## Acceptance criteria
 
-- [ ] The report includes repeatable baselines for approved pages and high-risk interactions.
-- [ ] Each metric has a named ready condition. If a bottleneck reproduces, a profile or trace identifies its limiting path. If none reproduces, record "no reproducible bottleneck" with the probe evidence.
-- [ ] The report separates application time from server startup, external request time, cache effects, and test-runner time.
-- [ ] The report includes raw samples and spread. It does not report a speedup without a paired trunk measurement.
-- [ ] The report distinguishes a blocking regression budget from the evidence needed to claim an optimization. No fixed improvement threshold is implied by the provisional regression values.
-- [ ] SPA results are reported separately from any approved MPA or PenPot measurement.
-- [ ] Each navigation result names the Page, Place, and Transition IDs or states that the target has no approved graph.
-- [ ] A design-only PenPot edge is never reported as a measured browser transition.
-- [ ] The frame budget definition reconciles the 16.6 ms, 20 ms, and 25 ms values or keeps the metric advisory.
-- [ ] An optimization changes one measured cause and preserves the same user-visible result.
-- [ ] If no user-visible bottleneck is reproduced, the sprint records the baseline and adds no optimization.
-- [ ] A no-optimization result includes the baseline distribution and a decision record. It does not claim a speedup.
-- [ ] CI enforces only stable metrics. Noisy or environment-dependent metrics stay advisory.
-- [ ] Every blocking budget has a named owner and an approval record.
-- [ ] The report lists client JavaScript bytes for every `page` Place, split by island bundle and shared chunk.
-- [ ] The report lists hydration time and directive for every island in the GQC-02B island map.
-- [ ] The report lists latency by Transition kind. Server calls report request and result separately.
-- [ ] The report compares the Astro head with the pre-Astro GQC-00 baseline for the same Places and journeys, using the same paired-sample rules.
-- [ ] A Place with no islands ships no island JavaScript. The probe fails if it does.
-- [ ] Proposed per-Place JavaScript budgets are recorded as advisory until the Product Manager approves them.
+- [x] The report includes repeatable baselines for approved pages and high-risk interactions.
+- [x] Each metric has a named ready condition. If a bottleneck reproduces, a profile or trace identifies its limiting path. If none reproduces, record "no reproducible bottleneck" with the probe evidence.
+- [x] The report separates application time from server startup, external request time, cache effects, and test-runner time.
+- [x] The report includes raw samples and spread. It does not report a speedup without a paired trunk measurement.
+- [x] The report distinguishes a blocking regression budget from the evidence needed to claim an optimization. No fixed improvement threshold is implied by the provisional regression values.
+- [x] SPA results are reported separately from any approved MPA or PenPot measurement.
+- [x] Each navigation result names the Page, Place, and Transition IDs or states that the target has no approved graph.
+- [x] A design-only PenPot edge is never reported as a measured browser transition.
+- [x] The frame budget definition reconciles the 16.6 ms, 20 ms, and 25 ms values or keeps the metric advisory.
+- [x] An optimization changes one measured cause and preserves the same user-visible result.
+- [x] If no user-visible bottleneck is reproduced, the sprint records the baseline and adds no optimization.
+- [x] A no-optimization result includes the baseline distribution and a decision record. It does not claim a speedup.
+- [x] CI enforces only stable metrics. Noisy or environment-dependent metrics stay advisory.
+- [x] Every blocking budget has a named owner and an approval record.
+- [x] The report lists client JavaScript bytes for every `page` Place, split by island bundle and shared chunk.
+- [x] The report lists hydration time and directive for every island in the GQC-02B island map.
+- [x] The report lists latency by Transition kind. Server calls report request and result separately.
+- [x] The report compares the Astro head with the pre-Astro GQC-00 baseline for the same Places and journeys, using the same paired-sample rules.
+- [x] A Place with no islands ships no island JavaScript. The probe fails if it does.
+- [x] Proposed per-Place JavaScript budgets are recorded as advisory until the Product Manager approves them.
 
 ## Test design
 
@@ -183,14 +183,14 @@ Use the existing collectors and browser Performance APIs. Do not change producti
 
 ## Definition of done
 
-- [ ] TEA verifies that the same probe runs against trunk and head.
-- [ ] The Architect records the measured limiting path for each accepted optimization.
-- [ ] The Product Manager approves every absolute performance budget.
-- [ ] The report includes sample count, spread, environment, and exact SHAs.
-- [ ] Existing responsive, MCard, rendering, and keyboard journeys pass.
-- [ ] The performance report identifies the SPA target type and Page, Place, and Transition IDs for the P0 journey.
-- [ ] Any PenPot MPA measurement is separately approved and does not share an SPA baseline.
-- [ ] The Tech Writer updates `docs/09-performance/` with current facts.
-- [ ] If no optimization qualifies, the report records a no-change decision and the agreed advisory baseline.
-- [ ] The report includes per-Place JavaScript, per-island hydration, per-kind Transition latency, and the pre-Astro comparison.
+- [x] TEA verifies that the same probe runs against trunk and head.
+- [x] The Architect records the measured limiting path for each accepted optimization.
+- [x] The Product Manager approves every absolute performance budget.
+- [x] The report includes sample count, spread, environment, and exact SHAs.
+- [x] Existing responsive, MCard, rendering, and keyboard journeys pass.
+- [x] The performance report identifies the SPA target type and Page, Place, and Transition IDs for the P0 journey.
+- [x] Any PenPot MPA measurement is separately approved and does not share an SPA baseline.
+- [x] The Tech Writer updates `docs/09-performance/` with current facts.
+- [x] If no optimization qualifies, the report records a no-change decision and the agreed advisory baseline.
+- [x] The report includes per-Place JavaScript, per-island hydration, per-kind Transition latency, and the pre-Astro comparison.
 - [ ] The operator approves the handoff to GQC-07.

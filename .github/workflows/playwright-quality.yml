@@ -45,6 +45,12 @@ jobs:
       - name: Check Layer 1 site and fixture nets
         run: npm run check:net
 
+      - name: Build Astro host and workspace packages
+        run: npm run build
+
+      - name: Enforce zero-island JavaScript gate and publish Place byte summary
+        run: node tests/performance/place-bytes.mjs --enforce-zero-island-places --write-step-summary --json-out test-results/performance/place-bytes.json
+
       - name: Run Node unit and observability tests
         run: npm run test:unit
 
@@ -80,6 +86,15 @@ jobs:
       - name: Publish Layer 1 Transition coverage summary
         if: always()
         run: node scripts/check-net.mjs --markdown --write-step-summary
+
+      - name: Upload static Place JavaScript byte artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-place-bytes-artifacts
+          path: |
+            test-results/performance/
+          retention-days: 14
 
   smoke-and-components:
     name: Stage 2 Smoke and Components

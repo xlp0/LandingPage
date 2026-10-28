@@ -4,7 +4,7 @@
 
 - Sprint ID: `SPRINT-GQC-07`
 - Handle: `urn:pcard:sprint:SPRINT-GQC-07`
-- Status: `STAGED`
+- Status: `ACTIVE`
 - Depends on: `SPRINT-GQC-06`
 - Unblocks: Program GQC graduation
 - Execution unit: `PR-GQC-07`

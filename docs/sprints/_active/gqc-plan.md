@@ -788,73 +788,73 @@ Each live lane uses an isolated checkout at the PR head. Drive the actual web UI
 
 **Files.**
 
-- [ ] Add reproducible probes under `tests/performance/` and Playwright coverage under `tests/features/`.
-- [ ] Use existing collectors and browser Performance APIs. Do not change production instrumentation in this PR.
-- [ ] Edit one exact production file named by the accepted profile only when paired measurements prove that file is the limiting path. Record the file before the edit.
-- [ ] If a probe needs production instrumentation or more than one optimization file, pause GQC-06 and obtain an approved plan update with an explicit PR boundary before proceeding.
-- [ ] Edit `.github/workflows/playwright-quality.yml` only to attach the performance report or enforce an approved stable metric.
-- [ ] Edit `docs/09-performance/` with the measurement method and current limits.
-- [ ] Append approved performance gate or no-change decisions to `docs/sprints/_active/DECISIONS.tsv`.
-- [ ] Do not add a metrics package until the native browser APIs and existing collectors prove insufficient.
+- [x] Add reproducible probes under `tests/performance/` and Playwright coverage under `tests/features/`.
+- [x] Use existing collectors and browser Performance APIs. Do not change production instrumentation in this PR.
+- [x] Edit one exact production file named by the accepted profile only when paired measurements prove that file is the limiting path. Record the file before the edit.
+- [x] If a probe needs production instrumentation or more than one optimization file, pause GQC-06 and obtain an approved plan update with an explicit PR boundary before proceeding.
+- [x] Edit `.github/workflows/playwright-quality.yml` only to attach the performance report or enforce an approved stable metric.
+- [x] Edit `docs/09-performance/` with the measurement method and current limits.
+- [x] Append approved performance gate or no-change decisions to `docs/sprints/_active/DECISIONS.tsv`.
+- [x] Do not add a metrics package until the native browser APIs and existing collectors prove insufficient.
 
 **Build.**
 
-- [ ] Record cold and warm navigation, LCP, CLS, interaction latency, frame time, and route JavaScript bytes for the P0 guided SPA journey.
-- [ ] Measure SPA target load, Place transition, capture or replay, MCard receipt persistence, resize, orientation, and repeated target cleanup as separate stages.
-- [ ] Record target type, Page ID, Place ID, and Transition ID with each navigation measurement. Do not combine SPA and MPA baselines.
-- [ ] Measure representative Markdown, math, media, and web content through the approved renderer.
-- [ ] Measure an MPA or PenPot flow only if the Product Manager approved it and a live target exists.
-- [ ] Profile the largest measured bottleneck. Change one cause at a time and run the paired probe before code-ready.
-- [ ] Include any accepted optimization in the code-ready diff before the verification swarm starts. Do not edit source while live lanes run.
-- [ ] If no user-visible bottleneck is reproducible, ship the baseline and keep performance checks advisory. Do not add a speculative optimization.
-- [ ] Reconcile the existing 16.6 ms, 20 ms, and 25 ms frame limits before making a frame budget blocking.
-- [ ] Report client JavaScript bytes per `page` Place, hydration time per island, and latency per Transition kind. Server calls report request and result separately.
-- [ ] Compare the Astro head with the GQC-00 pre-Astro baseline for the same Places and journeys.
-- [ ] Mark island hydration from a test-only init script. Add no production hydration instrumentation.
-- [ ] Allow one island directive change only when a paired measurement proves it helps.
+- [x] Record cold and warm navigation, LCP, CLS, interaction latency, frame time, and route JavaScript bytes for the P0 guided SPA journey.
+- [x] Measure SPA target load, Place transition, capture or replay, MCard receipt persistence, resize, orientation, and repeated target cleanup as separate stages.
+- [x] Record target type, Page ID, Place ID, and Transition ID with each navigation measurement. Do not combine SPA and MPA baselines.
+- [x] Measure representative Markdown, math, media, and web content through the approved renderer.
+- [x] Measure an MPA or PenPot flow only if the Product Manager approved it and a live target exists.
+- [x] Profile the largest measured bottleneck. Change one cause at a time and run the paired probe before code-ready.
+- [x] Include any accepted optimization in the code-ready diff before the verification swarm starts. Do not edit source while live lanes run.
+- [x] If no user-visible bottleneck is reproducible, ship the baseline and keep performance checks advisory. Do not add a speculative optimization.
+- [x] Reconcile the existing 16.6 ms, 20 ms, and 25 ms frame limits before making a frame budget blocking.
+- [x] Report client JavaScript bytes per `page` Place, hydration time per island, and latency per Transition kind. Server calls report request and result separately.
+- [x] Compare the Astro head with the GQC-00 pre-Astro baseline for the same Places and journeys.
+- [x] Mark island hydration from a test-only init script. Add no production hydration instrumentation.
+- [x] Allow one island directive change only when a paired measurement proves it helps.
 
 **You see.**
 
-- [ ] The performance report includes the browser, machine, data, cache mode, sample count, spread, and source path for each metric.
-- [ ] Each accepted optimization improves its target metric without breaking a user flow or moving cost to another route.
+- [x] The performance report includes the browser, machine, data, cache mode, sample count, spread, and source path for each metric.
+- [x] Each accepted optimization improves its target metric without breaking a user flow or moving cost to another route.
 
 **Verify, unit.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Test metric collection, serialization, and failed-observation handling. Run `npm run test:unit`.
-- [ ] Run the named performance scenario and keep its report as a CI artifact.
+- [x] Test metric collection, serialization, and failed-observation handling. Run `npm run test:unit`.
+- [x] Run the named performance scenario and keep its report as a CI artifact.
 
 **Verify, live.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked. Ten lanes on `the model recorded in the run header` at the PR head, per the boot recipe.
 
-- [ ] Lane 1. Regression lane against trunk. Run the same approved SPA workbench journey on trunk and head. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-1.png`. Pass when the same user-visible end state is reached.
-- [ ] Lane 2. Open the deterministic SPA target in a cold context. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-2.png`. Pass when its first Page and Place are ready without a long task blocking the first interaction.
-- [ ] Lane 3. Open `responsive-lab.html` in a cold context. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-3.png`. Pass when the guide, target selector, and toolbar reach their ready state.
-- [ ] Lane 4. Resize and rotate the lab for 60 seconds. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-4.png`. Pass when timing is recorded and layout state remains correct. If a frame limit is ratified, also check it. Otherwise keep the result advisory.
-- [ ] Lane 5. Switch targets 50 times. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-5.png`. Pass when the listener count returns to baseline and the ready state remains responsive.
-- [ ] Lane 6. Follow a declared SPA Functional Link and its Transition. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-6.png`. Pass when the browser reaches the destination Place and the transition duration is recorded.
-- [ ] Lane 7. Open Mission Control without requesting an in-browser model. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-7.png`. Pass when model assets are not downloaded before the user selects the model feature.
-- [ ] Lane 8. Repeat the selected render with cold and warm cache. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-8.png`. Pass when both runs record cache state and produce the same content.
-- [ ] Lane 9. Run the approved small-screen viewport. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-9.png`. Pass when layout and tap targets pass their existing conformance checks.
-- [ ] Lane 10. Verify the optimization already present at the code-ready head. If none qualified, rerun the P0 SPA journey unchanged and record a no-change decision. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-10.png`. Pass when the journey reaches the same end state and no MPA metric is blended into the SPA result.
+- [x] Lane 1. Regression lane against trunk. Run the same approved SPA workbench journey on trunk and head. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-1.png`. Pass when the same user-visible end state is reached.
+- [x] Lane 2. Open the deterministic SPA target in a cold context. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-2.png`. Pass when its first Page and Place are ready without a long task blocking the first interaction.
+- [x] Lane 3. Open `responsive-lab.html` in a cold context. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-3.png`. Pass when the guide, target selector, and toolbar reach their ready state.
+- [x] Lane 4. Resize and rotate the lab for 60 seconds. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-4.png`. Pass when timing is recorded and layout state remains correct. If a frame limit is ratified, also check it. Otherwise keep the result advisory.
+- [x] Lane 5. Switch targets 50 times. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-5.png`. Pass when the listener count returns to baseline and the ready state remains responsive.
+- [x] Lane 6. Follow a declared SPA Functional Link and its Transition. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-6.png`. Pass when the browser reaches the destination Place and the transition duration is recorded.
+- [x] Lane 7. Open Mission Control without requesting an in-browser model. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-7.png`. Pass when model assets are not downloaded before the user selects the model feature.
+- [x] Lane 8. Repeat the selected render with cold and warm cache. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-8.png`. Pass when both runs record cache state and produce the same content.
+- [x] Lane 9. Run the approved small-screen viewport. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-9.png`. Pass when layout and tap targets pass their existing conformance checks.
+- [x] Lane 10. Verify the optimization already present at the code-ready head. If none qualified, rerun the P0 SPA journey unchanged and record a no-change decision. Save `/tmp/swarm-PR-GQC-06/worker-1/lane-10.png`. Pass when the journey reaches the same end state and no MPA metric is blended into the SPA result.
 
 **Verify, perf.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Metric. P75 navigation-to-ready time, p95 interaction-frame interval, and the selected bottleneck metric.
-- [ ] Probe. Run 21 paired trunk and head trials after three warm-ups per side, interleaved with the same browser, page, data, viewport, and cache mode.
-- [ ] Baseline. Record the trunk distribution before the change and publish the environment and probe version.
-- [ ] Rule. Apply a blocking regression limit only if TEA and the Product Manager ratify it in GQC-00. Keep an optimization only when its paired result improves beyond observed spread and its profile identifies the limiting path. If no candidate meets that test, pass with an advisory baseline and a no-change decision.
+- [x] Metric. P75 navigation-to-ready time, p95 interaction-frame interval, and the selected bottleneck metric.
+- [x] Probe. Run 21 paired trunk and head trials after three warm-ups per side, interleaved with the same browser, page, data, viewport, and cache mode.
+- [x] Baseline. Record the trunk distribution before the change and publish the environment and probe version.
+- [x] Rule. Apply a blocking regression limit only if TEA and the Product Manager ratify it in GQC-00. Keep an optimization only when its paired result improves beyond observed spread and its profile identifies the limiting path. If no candidate meets that test, pass with an advisory baseline and a no-change decision.
 
 **Review gate.** The operator reviews before merge.
 
-- [ ] If an interaction changes, copy before and after screenshots into the review packet. If no optimization qualifies, attach the baseline screenshot and no-change decision.
-- [ ] If an interaction changes, record a 30 to 60 second video of it. If no optimization qualifies, record a 30 to 60 second video of the measured journey without changes.
-- [ ] Post the screenshots and video in chat. Stop at merge-ready and wait for the operator's review.
+- [x] If an interaction changes, copy before and after screenshots into the review packet. If no optimization qualifies, attach the baseline screenshot and no-change decision.
+- [x] If an interaction changes, record a 30 to 60 second video of it. If no optimization qualifies, record a 30 to 60 second video of the measured journey without changes.
+- [x] Post the screenshots and video in chat. Stop at merge-ready and wait for the operator's review.
 
 **Merge.**
 
-- [ ] Record the clean verdict at the exact head SHA.
-- [ ] Attach raw measurements, the profile or trace, and the performance decision.
-- [ ] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
-- [ ] Append `PR-GQC-06` to the stack after `PR-GQC-05`. Wait for operator landing.
+- [x] Record the clean verdict at the exact head SHA.
+- [x] Attach raw measurements, the profile or trace, and the performance decision.
+- [x] Rebase onto current trunk after the verdict. Confirm the patch-id is unchanged.
+- [x] Append `PR-GQC-06` to the stack after `PR-GQC-05`. Wait for operator landing.
 
 ## Align living documentation with verified contracts (PR-GQC-07)
 
