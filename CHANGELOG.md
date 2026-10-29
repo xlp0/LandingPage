@@ -9,6 +9,10 @@ All notable changes to the PKC Landing Page are documented in this file. The for
 
 ## [Unreleased]
 
+- **Published `clm-kernel@0.0.14` Consumer Consensus (2026-10-29)**:
+  - Exact-pinned `clm-kernel` to `"0.0.14"` in `package.json` and `package-lock.json` in lockstep with `mcard-studio`.
+  - Updated provenance and version references across documentation and configuration.
+
 - **Program GQC (`SPRINT-GQC-00..07`)** aligned the Astro 7.4.2 and Preact 11.1.0 workbench host (`responsive-lab.html` with 7 islands), formalized the 31-Place / 65-Transition Petri net (`src/net/workbench-net.yaml`), persisted Layer 1/Layer 4 `NetMCard`, `FiringReceiptMCard`, and `urn:gqc:navigation-run-link:v1` MCards, updated `js/harness/recorder.js` to stamp `clm-kernel@0.0.13` while preserving historical `0.0.10` and `0.0.12` record reads, and added `npm run docs:gen-net` plus `npm run docs:check`.
 
 ### Added

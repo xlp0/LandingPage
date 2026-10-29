@@ -5,7 +5,7 @@
 | Audience | Developers, architects, QA engineers, and operators working on LandingPage in standalone or `MCard_TDD` monorepo mode |
 | BMAD Owner | Product Manager (`bmad-agent-pm`), Architect (`bmad-agent-architect`), and Tech Writer (`bmad-agent-tech-writer`) |
 | Source of Truth | [`package.json`](./package.json), [`ws-server.js`](./ws-server.js), [`astro.config.mjs`](./astro.config.mjs), and [`src/net/workbench-net.yaml`](./src/net/workbench-net.yaml) |
-| Consensus Kernel | `clm-kernel@0.0.13` (`KERNEL_PROVENANCE = 'clm-kernel@0.0.13'`, `DEFAULT_CLM_KERNEL_VERSION = '0.0.13'`) |
+| Consensus Kernel | `clm-kernel@0.0.14` (`KERNEL_PROVENANCE = 'clm-kernel@0.0.14'`, `DEFAULT_CLM_KERNEL_VERSION = '0.0.14'`) |
 | Drift Gates | `npm run check:net`, `node scripts/check-package-source-parity.mjs`, `npm run docs:check`, and `npm run build` |
 
 ## Quick Start and Port Map
