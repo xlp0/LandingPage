@@ -333,16 +333,21 @@ test('(guard): LandingPage and mcard-studio resolve clm-kernel to the PUBLISHED 
       .dependencies['clm-kernel'];
     assert.ok(spec, `${consumer} must declare clm-kernel`);
     const lock = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package-lock.json'), 'utf8')).packages;
-    const resolved = lock[`${consumer}/node_modules/clm-kernel`] || {};
+    // npm hoists identical versions to the root, so a consumer's copy may be either nested or
+    // hoisted. Both are valid resolutions; only a workspace link is not.
+    const resolved =
+      lock[`${consumer}/node_modules/clm-kernel`] || lock['node_modules/clm-kernel'] || {};
     assert.match(
       String(resolved.resolved || ''),
       /registry\.npmjs\.org\/clm-kernel/,
       `${consumer} must resolve clm-kernel from the registry, not the ${workspaceVersion} workspace source (spec: ${spec})`
     );
+    // Version alone no longer discriminates: once the workspace version is published, a registry
+    // install and a workspace link report the same number. A link is the thing to forbid.
     assert.notEqual(
-      String(resolved.version),
-      workspaceVersion,
-      `${consumer} must not resolve the unpublished workspace version ${workspaceVersion}`
+      resolved.link,
+      true,
+      `${consumer} must not resolve clm-kernel through a workspace link`,
     );
   }
 });
