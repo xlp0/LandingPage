@@ -84,7 +84,7 @@
     "astro": "7.4.2",
     "axios": "^1.6.0",
     "better-sqlite3": "^12.5.0",
-    "clm-kernel": "0.0.16",
+    "clm-kernel": "0.0.17",
     "cordis": "^4.0.0-rc.10",
     "core-js": "^3.46.0",
     "cors": "^2.8.5",
