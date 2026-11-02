@@ -164,13 +164,12 @@ def call_ollama(prompt):
 
 def generate_markdown_report(user_name, date_str, commits, analysis):
     """Generate markdown report from analysis."""
-    md_content = f"""# Daily Report - {date_str}
-**Author:** {user_name}  
-**Date:** {date_str}
-
-## Summary
-
-"""
+    md_content = (
+        f"# Daily Report - {date_str}\n"
+        f"**Author:** {user_name}  \n"
+        f"**Date:** {date_str}\n\n"
+        "## Summary\n\n"
+    )
 
     for point in analysis["summary"]:
         md_content += f"- {point}\n"

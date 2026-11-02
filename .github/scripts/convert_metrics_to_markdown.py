@@ -118,23 +118,20 @@ def generate_kubernetes_report(data, output_file):
         )
         date_str = dt.strftime("%Y-%m-%d")
         time_str = dt.strftime("%H:%M:%S %Z")
-    except:
+    except Exception:
         date_str = "N/A"
         time_str = "N/A"
 
     # Start building report
-    report = f"""# {dashboard_name}
-
-**Collection Date:** {date_str}  
-**Collection Time:** {time_str}  
-**Time Range:** {time_range}  
-**Dashboard UID:** {data.get("dashboard", "N/A")}
-
----
-
-## 📊 Metrics Summary
-
-"""
+    report = (
+        f"# {dashboard_name}\n\n"
+        f"**Collection Date:** {date_str}  \n"
+        f"**Collection Time:** {time_str}  \n"
+        f"**Time Range:** {time_range}  \n"
+        f"**Dashboard UID:** {data.get('dashboard', 'N/A')}\n\n"
+        "---\n\n"
+        "## 📊 Metrics Summary\n\n"
+    )
 
     # Count available metrics
     available_metrics = sum(1 for m in metrics.values() if m is not None)

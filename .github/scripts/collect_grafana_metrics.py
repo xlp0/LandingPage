@@ -242,7 +242,6 @@ def collect_dashboard_metrics(
     # Collect metrics from each panel
     for panel in panels:
         panel_title = panel.get("title", "Untitled")
-        panel_id = panel.get("id", 0)
 
         # Extract queries
         queries = extract_queries_from_panel(panel)
