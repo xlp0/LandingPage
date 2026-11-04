@@ -440,7 +440,7 @@ export function checkMarkdownFiles({
         !/historical|graduated|superseded|earlier|legacy|smo/i.test(line)
       ) {
         errors.push(
-          `${relPath}:${idx + 1}: stale kernel version claim "${line.trim()}" must use clm-kernel@0.0.18 or explicitly label historical context`
+          `${relPath}:${idx + 1}: stale kernel version claim "${line.trim()}" must use clm-kernel@0.0.19 or explicitly label historical context`
         );
       }
     });

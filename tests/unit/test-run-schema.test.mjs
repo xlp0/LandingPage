@@ -154,9 +154,9 @@ describe('Test Run Schema & Serialization (INV-ERB-04)', () => {
 });
 
 describe('GQC-07-UNIT-03: clmKernel provenance alignment and historical record compatibility', () => {
-  test('new InteractionRecorder runs stamp current clm-kernel 0.0.18 matching package.json and KERNEL_PROVENANCE', () => {
+  test('new InteractionRecorder runs stamp current clm-kernel 0.0.19 matching package.json and KERNEL_PROVENANCE', () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
-    assert.equal(DEFAULT_CLM_KERNEL_VERSION, '0.0.18');
+    assert.equal(DEFAULT_CLM_KERNEL_VERSION, '0.0.19');
     assert.equal(pkg.dependencies['clm-kernel'], DEFAULT_CLM_KERNEL_VERSION);
     assert.equal(KERNEL_PROVENANCE, `clm-kernel@${DEFAULT_CLM_KERNEL_VERSION}`);
 
@@ -164,7 +164,7 @@ describe('GQC-07-UNIT-03: clmKernel provenance alignment and historical record c
     const run = recorder.buildTestRun({
       target: { url: 'http://localhost:3000/tests/fixtures/spa-test-target.html' }
     });
-    assert.equal(run.lab.clmKernel, '0.0.18');
+    assert.equal(run.lab.clmKernel, '0.0.19');
     const validation = validateTestRun(run);
     assert.equal(validation.valid, true, validation.errors.join(', '));
   });

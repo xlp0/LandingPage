@@ -37,7 +37,7 @@ tests/
 ├── conformance/                  # 15 modular device conformance checks and *.conformance.json specs
 ├── performance/                  # place-bytes.mjs, metrics-model.mjs, run-paired-benchmark.mjs
 ├── observability/                # alignment.test.js and correctness.test.js (node:test)
-├── unit/                         # Pure Node contract suites (net, recorder 0.0.18, Triad, docs gate)
+├── unit/                         # Pure Node contract suites (net, recorder 0.0.19, Triad, docs gate)
 ├── fixtures/                     # server-contract.js, app-fixtures.js, net-trace.js, spa-test-target.*
 └── gui-coverage.json             # Surface-to-spec coverage registry
 ```

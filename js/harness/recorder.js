@@ -9,7 +9,7 @@ import { RecordingStateMachine } from './recording-state-machine.js';
 import { UnavailableCaptureSource } from './capture-probe-agent.js';
 import { TEST_RUN_SCHEMA, targetSlug } from './test-run-schema.js';
 
-export const DEFAULT_CLM_KERNEL_VERSION = '0.0.18';
+export const DEFAULT_CLM_KERNEL_VERSION = '0.0.19';
 
 export function resolveClmKernelVersion(explicitVersion = null) {
   if (typeof explicitVersion === 'string' && explicitVersion.trim()) {
