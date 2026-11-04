@@ -1966,7 +1966,7 @@ sprints:
       total: 8
       vcard_refs:
         - vcard:dco-01:dod_dco_01_01_the_drift_register_records_the_exact_scanner_outpu
-        - vcard:dco-01:dod_dco_01_02_the_census_matches_the_36_clm_target_names_and_sep
+        - vcard:dco-01:dod_dco_01_02_the_census_matches_the_48_clm_target_names_and_sep
         - vcard:dco-01:dod_dco_01_03_active_normative_documents_root_makefile_help_and_
         - vcard:dco-01:dod_dco_01_04_the_documentation_estate_check_passes_across_the_r
         - vcard:dco-01:dod_dco_01_05_the_entrypoint_docs_index_md_carries_the_mandatory
@@ -5953,9 +5953,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: ea395dcb08679bb2b702530e3524eb8bb1c262c74a4fb130eafa41aafddd0665
-  projection_sha256: af8e0259963d77e5bb7bbcb7c299037a93b4a2cad8f8d5d3bc51bd2cd410ed04
-  kernel_version: 0.0.15
-  landing_page_commit: 5c62569359ce0252480cc406dd5a2e2353f864b8
+  source_sha256: f2e1cf7b7c03dcff97e45cc6072e1862d8f8cbd5b816e1cf18dd4b2eef3b5418
+  projection_sha256: 38ce17ad77ef3c172802da55671065bc87759c756a1e2e357865d01fc7a6be9a
+  kernel_version: 0.0.20
+  landing_page_commit: a1a4bb157d973a677c583afff5ff915e3c9b2a9c
   sprint_count: 286
   unresolved_trace_refs: 0
