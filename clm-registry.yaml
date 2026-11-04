@@ -1986,7 +1986,7 @@ sprints:
         - vcard:dco-02:dod_dco_02_02_all_five_kernel_version_surfaces_agree_on_the_work
         - vcard:dco-02:dod_dco_02_03_no_consumer_imports_kernel_source_directly_every_c
         - vcard:dco-02:dod_dco_02_04_the_root_gitmodules_declares_exactly_the_three_can
-        - vcard:dco-02:dod_dco_02_05_submodule_pointers_resolve_to_recorded_commits_rat
+        - vcard:dco-02:dod_dco_02_05_every_submodule_worktree_is_clean_and_checked_out_
         - vcard:dco-02:dod_dco_02_06_the_pinning_matrix_docs_sprints_active_evidence_dc
         - vcard:dco-02:dod_dco_02_07_the_pointer_proposal_specification_defines_witness
         - vcard:dco-02:dod_dco_02_08_the_landingpage_retirement_audit_passes_confirming
@@ -2017,7 +2017,7 @@ sprints:
       total: 8
       vcard_refs:
         - vcard:dco-04:dod_dco_04_01_the_fuzz_matrix_records_a_fixed_seed_pr_iteration_
-        - vcard:dco-04:dod_dco_04_02_the_1_000_iteration_run_writes_the_report_and_reco
+        - vcard:dco-04:dod_dco_04_02_the_1_000_iteration_run_writes_the_report_with_ok_
         - vcard:dco-04:dod_dco_04_03_the_targeted_studio_composition_suite_tests_the_to
         - vcard:dco-04:dod_dco_04_04_the_seeded_tri_runtime_smoke_completes_all_three_r
         - vcard:dco-04:dod_dco_04_05_the_petri_invariant_guard_reports_zero_token_leaka
@@ -2074,7 +2074,7 @@ sprints:
         - vcard:dco-07:dod_dco_07_05_the_theory_references_the_current_julia_oracle_by_
         - vcard:dco-07:dod_dco_07_06_each_external_mathematical_claim_has_a_complete_ci
         - vcard:dco-07:dod_dco_07_07_no_claim_marked_proved_lacks_an_existing_proof_art
-        - vcard:dco-07:dod_dco_07_08_the_documentation_estate_check_passes_across_the_r
+        - vcard:dco-07:dod_dco_07_08_the_four_estate_verification_gate_passes_verified_
       state: sealed
   - handle: urn:pcard:sprint:DCO-08
     card_type: pcard
@@ -5953,9 +5953,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: f2e1cf7b7c03dcff97e45cc6072e1862d8f8cbd5b816e1cf18dd4b2eef3b5418
-  projection_sha256: 38ce17ad77ef3c172802da55671065bc87759c756a1e2e357865d01fc7a6be9a
+  source_sha256: 6e2f43b156d9b7a33b861daaf631456d5609bde22fc6c86a82c678cf41832ae1
+  projection_sha256: fa37e7c0c81123cd122e703935e5be70d322aac418fd0732cd2e471f717b1c50
   kernel_version: 0.0.20
-  landing_page_commit: a1a4bb157d973a677c583afff5ff915e3c9b2a9c
+  landing_page_commit: 488311f203a6120f9ad2ccee834d5b1a59ce95c2
   sprint_count: 286
   unresolved_trace_refs: 0
