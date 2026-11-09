@@ -1982,7 +1982,7 @@ sprints:
     dod:
       total: 8
       vcard_refs:
-        - vcard:dco-02:dod_dco_02_01_both_consumers_exact_pin_the_published_version_0_0
+        - vcard:dco-02:dod_dco_02_01_both_consumers_exact_pin_the_published_version_rec
         - vcard:dco-02:dod_dco_02_02_all_five_kernel_version_surfaces_agree_on_the_work
         - vcard:dco-02:dod_dco_02_03_no_consumer_imports_kernel_source_directly_every_c
         - vcard:dco-02:dod_dco_02_04_the_root_gitmodules_declares_exactly_the_three_can
@@ -2050,7 +2050,7 @@ sprints:
     dod:
       total: 8
       vcard_refs:
-        - vcard:dco-06:dod_dco_06_01_the_normative_release_specifications_describe_publ
+        - vcard:dco-06:dod_dco_06_01_the_normative_release_specifications_describe_the_
         - vcard:dco-06:dod_dco_06_02_synccontract_v1_names_each_wire_type_canonical_cod
         - vcard:dco-06:dod_dco_06_03_the_normative_mcard_functional_closure_document_di
         - vcard:dco-06:dod_dco_06_04_the_functional_closure_specification_states_the_co
@@ -5953,9 +5953,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: 6e2f43b156d9b7a33b861daaf631456d5609bde22fc6c86a82c678cf41832ae1
-  projection_sha256: fa37e7c0c81123cd122e703935e5be70d322aac418fd0732cd2e471f717b1c50
-  kernel_version: 0.0.20
-  landing_page_commit: 488311f203a6120f9ad2ccee834d5b1a59ce95c2
+  source_sha256: 53018a32847a310c78876e19b10cf92cce27ee149c19f4bbe717bf2cbd9c34cb
+  projection_sha256: 4c2753bf31b08e9afb6542d5b5226386f8d6bd7bf7ab70c58ec158c09f50d121
+  kernel_version: 0.0.21
+  landing_page_commit: 219f67516c20f7c72c8b26ca036ac3975b7af52c
   sprint_count: 286
   unresolved_trace_refs: 0
