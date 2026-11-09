@@ -442,8 +442,11 @@ test('DoD-SMR-09-04: the seed generator produces the 6-sample corpus with 4 view
 
   const result = verify({ dbFile, manifestFile });
   assert.equal(result.ok, true, result.problems.join('; '));
-  assert.equal(fs.existsSync(path.join(REPO_ROOT, 'LandingPage/data/samples/portal_samples.mcard.db')), true);
-  assert.equal(fs.existsSync(path.join(REPO_ROOT, 'LandingPage/data/samples/portal_samples_manifest.yaml')), true);
+  assert.deepEqual(
+    yaml.load(fs.readFileSync(path.join(REPO_ROOT, 'LandingPage/data/samples/portal_samples_manifest.yaml'), 'utf8')),
+    manifest,
+    'the committed manifest must equal the generator output (the .db itself is generated and git-ignored)'
+  );
 });
 
 test('DoD-SMR-09-04: the corpus validates against crd_landing_viewport.schema.json', () => {
@@ -464,9 +467,10 @@ test('DoD-SMR-09-04: the corpus validates against crd_landing_viewport.schema.js
     assert.equal(classes.has(name), true, `the corpus must cover the ${name} class`);
   }
 
-  const store = new CanonicalTriadBackend(
-    path.join(REPO_ROOT, 'LandingPage/data/samples/portal_samples.mcard.db')
-  );
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'smr09-corpus-'));
+  const dbFile = path.join(dir, 'portal_samples.mcard.db');
+  seed({ dbFile, manifestFile: path.join(dir, 'portal_samples_manifest.yaml') });
+  const store = new CanonicalTriadBackend(dbFile);
   try {
     const handlePattern = new RegExp(schema.definitions.viewportSample.properties.handle.pattern);
     for (const sample of manifest.samples) {

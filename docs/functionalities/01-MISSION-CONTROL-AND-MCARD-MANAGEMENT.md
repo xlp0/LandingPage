@@ -89,7 +89,7 @@ The MCard is the fundamental atomic unit of content and state. Each card carries
 
 ### 3.1 Backend Service: [`server/mcard-api.mjs`](../../server/mcard-api.mjs)
 
-Built on Express and `better-sqlite3`, managing [`data/mcard-api.db`](../../data/mcard-api.db) configured with SQLite Write-Ahead Logging (WAL) for concurrent read/write throughput:
+Built on Express and `better-sqlite3`, managing `data/mcard-api.db` (created at runtime by `initMCardAPI`; git-ignored) configured with SQLite Write-Ahead Logging (WAL) for concurrent read/write throughput:
 
 ```mermaid
 sequenceDiagram

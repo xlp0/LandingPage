@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
 import node from '@astrojs/node';
 import preact from '@astrojs/preact';
@@ -43,23 +44,19 @@ for (const prefix of httpProxyPrefixes) {
   proxy[prefix] = { target: backendOrigin, changeOrigin: false };
 }
 
-const astroNestedExternals = {
-  cookie: new URL('./node_modules/astro/node_modules/cookie/dist/index.js', import.meta.url).href,
-  send: new URL('./node_modules/@astrojs/node/node_modules/send/index.js', import.meta.url).href
-};
-
-function resolveAstroNestedDepsPlugin() {
-  return {
-    name: 'gqc-resolve-astro-nested-deps',
-    enforce: 'pre',
-    resolveId(source) {
-      if (Object.hasOwn(astroNestedExternals, source)) {
-        return { id: astroNestedExternals[source], external: true };
-      }
-      return null;
-    }
-  };
-}
+// Astro and @astrojs/node pin some dependencies at majors the workspace root hoists
+// differently (e.g. clsx 2 vs 1, devalue 6 vs 5). Left external, the server bundle's bare
+// imports would resolve from dist/ to the wrong root copy, so bundle each owner's nested
+// packages instead. Works under both standalone and workspace-hoisted installs.
+const nestedDepNames = ['astro', '@astrojs/node'].flatMap((pkg) => {
+  const entry = fileURLToPath(import.meta.resolve(pkg));
+  const marker = `node_modules/${pkg}/`;
+  const nestedDir = entry.slice(0, entry.lastIndexOf(marker) + marker.length) + 'node_modules';
+  if (!fs.existsSync(nestedDir)) return [];
+  return fs.readdirSync(nestedDir).filter((name) => !name.startsWith('.')).flatMap((name) =>
+    name.startsWith('@') ? fs.readdirSync(`${nestedDir}/${name}`).map((sub) => `${name}/${sub}`) : [name]
+  );
+});
 
 export default defineConfig({
   adapter: node({ mode: 'middleware' }),
@@ -77,7 +74,12 @@ export default defineConfig({
     }
   },
   vite: {
-    plugins: [resolveAstroNestedDepsPlugin()],
+    ssr: {
+      noExternal: nestedDepNames
+    },
+    environments: {
+      prerender: { resolve: { noExternal: nestedDepNames } }
+    },
     server: {
       proxy
     }

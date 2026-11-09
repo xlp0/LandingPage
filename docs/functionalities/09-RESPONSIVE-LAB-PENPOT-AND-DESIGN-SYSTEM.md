@@ -102,6 +102,6 @@ The project integrates directly with open-source design tool **Penpot**:
   - [`public/css/tokens.css`](../../public/css/tokens.css): Defines foundational scales (spacing, typography, border-radii, motion durations, z-indexes).
   - [`public/css/semantic-tokens.css`](../../public/css/semantic-tokens.css): Maps primitives to contextual roles (`--bg-primary`, `--text-muted`, `--accent-focus`).
 - **Theme Modes**: Supports `dark`, `light`, and `high-contrast` themes via `data-theme` DOM attributes.
-- **Style Audits** ([`style-audit/`](../../style-audit)): Machine-generated audits validating color contrast ratios against WCAG 2.1 AA standards across all views.
+- **Style Audits** (`style-audit/`, written by [`tests/features/style-audit.spec.js`](../../tests/features/style-audit.spec.js); git-ignored): Machine-generated audits validating color contrast ratios against WCAG 2.1 AA standards across all views.
 
 - **PenPot Scope Boundary**: `design/landing-navigation.penpot` compiles LandingPage's own navigation bar into `js/nav.js`. External PenPot MPA target assessment inside Responsive UI Lab remains **Optional / Deferred** pending explicit Product Manager approval and live Playwright verification.

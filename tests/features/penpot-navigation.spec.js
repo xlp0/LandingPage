@@ -10,21 +10,19 @@ test.describe('Sprint CDO-15: Penpot Navigation Authoring', () => {
     await expect(navBar).toHaveAttribute('data-graph-hash');
 
     const homeLink = page.locator('#penpot-site-nav a[data-penpot-handle="mcard:route:/index.html"]');
-    const missionLink = page.locator('#penpot-site-nav a[data-penpot-handle="mcard:route:/app.html"]');
-    const labLink = page.locator('#penpot-site-nav a[data-penpot-handle="mcard:route:/responsive-lab.html"]');
+    const docsLink = page.locator('#penpot-site-nav a[data-penpot-handle="mcard:route:/pkc-docs-index.html"]');
 
     await expect(homeLink).toBeVisible();
-    await expect(missionLink).toBeVisible();
-    await expect(labLink).toBeVisible();
+    await expect(docsLink).toBeVisible();
+    await expect(page.locator('#penpot-site-nav a[data-penpot-handle]')).toHaveCount(2);
 
     await expect(homeLink).toContainText('Home');
-    await expect(missionLink).toContainText('Mission Control');
-    await expect(labLink).toContainText('Responsive UI Lab');
+    await expect(docsLink).toContainText('Docs Index');
     await expect(homeLink).toHaveClass(/penpot-nav-link-active/);
 
-    await labLink.click();
-    await expect(page).toHaveURL(/responsive-lab\.html/);
-    await expect(page.getByRole('heading', { name: /Responsive UI Lab/i })).toBeVisible();
+    await docsLink.click();
+    await expect(page).toHaveURL(/pkc-docs-index\.html/);
+    await expect(page.getByRole('heading', { name: /PKC Design Documents/i })).toBeVisible();
   });
 
   test('DV-CDO-15-04: js/nav.js exports matching graph hash and routes', async ({ isolatedLabPage }) => {
@@ -45,7 +43,7 @@ test.describe('Sprint CDO-15: Penpot Navigation Authoring', () => {
     expect(navData.graphHash).toHaveLength(64);
     expect(navData.archiveHash).toBeDefined();
     expect(navData.archiveHash).toHaveLength(64);
-    expect(navData.routesCount).toBe(3);
+    expect(navData.routesCount).toBe(2);
     expect(navData.startingFrame).toMatch(/^d757/);
   });
 });

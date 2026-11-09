@@ -15,10 +15,10 @@
   "penpotNavigation": {
     "sourcePath": "design/landing-navigation.penpot",
     "generatedModulePath": "js/nav.js",
-    "graphHash": "7fc5562f37de5880c28963dfbfeb7b976cafb6feb6e8698078528a9d63a41fb4",
-    "archiveHash": "e4d0e5fd22a754d51d60c7609cfefc92249b93b53edf5826cbfb1e57548f18ad",
-    "frameCount": 3,
-    "interactionCount": 4,
+    "graphHash": "5c58f7d1f1cd48669f2fd504a6839151549a6176c5c3184e03d1eba5f7407ac7",
+    "archiveHash": "bd62e0b9247e7501d83c6766744d92ee5a75f810af9f89cb24230deb8a248295",
+    "frameCount": 2,
+    "interactionCount": 2,
     "scope": "landing-page-workbench-only",
     "externalMpaStatus": "optional-excluded-from-p0"
   },
@@ -602,10 +602,10 @@
       "targetHandle": "mcard:route:/index.html",
       "pageId": "d7570000-0000-8000-8000-000000000011",
       "placeId": "p_workbench_landing_portal",
-      "functionalLinkId": "mcard:route:/index.html->mcard:route:/responsive-lab.html",
-      "transitionId": "penpot:d7570000-0000-8000-8000-000000000011->d7570000-0000-8000-8000-000000000013",
+      "functionalLinkId": "mcard:route:/index.html->mcard:route:/pkc-docs-index.html",
+      "transitionId": "penpot:d7570000-0000-8000-8000-000000000011->d7570000-0000-8000-8000-000000000012",
       "firing_sequence": [
-        "penpot:d7570000-0000-8000-8000-000000000011->d7570000-0000-8000-8000-000000000013"
+        "penpot:d7570000-0000-8000-8000-000000000011->d7570000-0000-8000-8000-000000000012"
       ],
       "sourceKind": "generated-penpot-module",
       "sourceRef": "js/nav.js",
@@ -617,7 +617,6 @@
         "t_ok_get_mcard_landing",
         "t_req_get_clm_program_artifact",
         "t_ok_get_clm_program_artifact",
-        "t_link_viewer_to_lab",
         "t_req_get_app_config",
         "t_ok_get_app_config"
       ],
@@ -631,8 +630,8 @@
       "specPath": "tests/features/penpot-navigation.spec.js",
       "playwrightProject": "features",
       "command": "npx playwright test tests/features/penpot-navigation.spec.js --project=features",
-      "evidence": "Rendered #penpot-site-nav data-graph-hash and runtime navigation from /index.html?noredirect=1 to /responsive-lab.html",
-      "observableOutcome": "Renders PenPot-generated navigation bar on /index.html?noredirect=1 and navigates to /responsive-lab.html as a workbench regression check separate from target-SPA coverage",
+      "evidence": "Rendered #penpot-site-nav data-graph-hash and runtime navigation from /index.html?noredirect=1 to /pkc-docs-index.html",
+      "observableOutcome": "Renders PenPot-generated navigation bar on /index.html?noredirect=1 and navigates to /pkc-docs-index.html as a workbench regression check separate from target-SPA coverage",
       "docPath": "docs/sprints/_active/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
     },
     {

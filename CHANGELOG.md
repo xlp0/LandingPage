@@ -9,6 +9,10 @@ All notable changes to the PKC Landing Page are documented in this file. The for
 
 ## [Unreleased]
 
+- **Published `clm-kernel@0.0.20` Consumer Consensus (2026-11-09)**:
+  - Exact-pinned `clm-kernel` to `"0.0.20"` in `package.json` and `package-lock.json` in lockstep with `mcard-studio`.
+  - Updated `KERNEL_PROVENANCE`, `DEFAULT_CLM_KERNEL_VERSION`, the stale-version check in `scripts/check-docs.mjs`, unit contract assertions, and living documentation to `0.0.20`.
+
 - **Published `clm-kernel@0.0.19` Consumer Consensus (2026-11-04)**:
   - Exact-pinned `clm-kernel` to `"0.0.19"` in `package.json` and `package-lock.json` in lockstep with `mcard-studio`.
   - Updated `KERNEL_PROVENANCE = 'clm-kernel@0.0.19'` in `server/mcard-api.mjs` and `server/mcard-modality.mjs`, `DEFAULT_CLM_KERNEL_VERSION = '0.0.19'` in `js/harness/recorder.js`, stale-version documentation checks in `scripts/check-docs.mjs`, unit contract assertions, and living documentation in `README.md` and `docs/00-getting-started/START_HERE.md`.
