@@ -720,7 +720,7 @@ var IndexedDBBackend = class _IndexedDBBackend {
   }
 };
 
-// ../node_modules/cosmokit/lib/index.mjs
+// ../clm/kernel/clm_js_core/node_modules/cosmokit/lib/index.mjs
 function isNullable(value) {
   return value === null || value === void 0;
 }
@@ -904,7 +904,7 @@ var Time;
   Time2.template = template;
 })(Time || (Time = {}));
 
-// ../node_modules/cordis/lib/index.js
+// ../clm/kernel/clm_js_core/node_modules/cordis/lib/index.js
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 var DisposableList = class {
@@ -946,10 +946,11 @@ var symbols = {
   caller: /* @__PURE__ */ Symbol.for("cordis.caller"),
   receiver: /* @__PURE__ */ Symbol.for("cordis.receiver"),
   original: /* @__PURE__ */ Symbol.for("cordis.original"),
-  metadata: /* @__PURE__ */ Symbol.for("cordis.metadata"),
+  decorator: /* @__PURE__ */ Symbol.for("cordis.decorator"),
   initHooks: /* @__PURE__ */ Symbol.for("cordis.initHooks"),
   checkProto: /* @__PURE__ */ Symbol.for("cordis.checkProto"),
   // context symbols
+  root: /* @__PURE__ */ Symbol.for("cordis.root"),
   effect: /* @__PURE__ */ Symbol.for("cordis.effect"),
   filter: /* @__PURE__ */ Symbol.for("cordis.filter"),
   isolate: /* @__PURE__ */ Symbol.for("cordis.isolate"),
@@ -957,11 +958,12 @@ var symbols = {
   // service symbols
   init: /* @__PURE__ */ Symbol.for("cordis.init"),
   check: /* @__PURE__ */ Symbol.for("cordis.check"),
-  config: /* @__PURE__ */ Symbol.for("cordis.config"),
   invoke: /* @__PURE__ */ Symbol.for("cordis.invoke"),
+  metadata: /* @__PURE__ */ Symbol.for("cordis.metadata"),
   extend: /* @__PURE__ */ Symbol.for("cordis.extend"),
   tracker: /* @__PURE__ */ Symbol.for("cordis.tracker"),
-  resolveConfig: /* @__PURE__ */ Symbol.for("cordis.resolveConfig")
+  mergeIntercept: /* @__PURE__ */ Symbol.for("cordis.mergeIntercept"),
+  resolveIntercept: /* @__PURE__ */ Symbol.for("cordis.resolveIntercept")
 };
 var GeneratorFunction = function* () {
 }.constructor;
@@ -1152,6 +1154,426 @@ function buildOuterStack(offset = 0) {
   return () => outerError.stack.split("\n").slice(3 + offset);
 }
 __name(buildOuterStack, "buildOuterStack");
+var kValidationError = /* @__PURE__ */ Symbol.for("ValidationError");
+var ValidationError = class _ValidationError extends TypeError {
+  constructor(issues) {
+    super(`invalid config:
+` + issues.map((issue) => {
+      if (issue.path?.length) {
+        return `  - ${issue.message} (at ${_ValidationError.formatPath(issue.path)})`;
+      } else {
+        return `  - ${issue.message}`;
+      }
+    }).join("\n"));
+    this.issues = issues;
+  }
+  issues;
+  static {
+    __name(this, "ValidationError");
+  }
+  name = "ValidationError";
+  static is(error) {
+    return !!error?.[kValidationError];
+  }
+  static normalizePath(path = []) {
+    return path.map((segment) => typeof segment === "object" ? segment.key : segment);
+  }
+  static formatPath(path) {
+    return _ValidationError.normalizePath(path).map(String).join(".");
+  }
+};
+Object.defineProperty(ValidationError.prototype, kValidationError, {
+  value: true
+});
+function resolveConfig(runtime, config) {
+  if (!runtime.Config) return config;
+  const result = runtime.Config["~standard"].validate(config);
+  if ("then" in result) {
+    throw new TypeError("Async config validation is not supported");
+  }
+  if (result.issues) {
+    throw new ValidationError(result.issues);
+  } else {
+    return result.value;
+  }
+}
+__name(resolveConfig, "resolveConfig");
+var CordisError = class _CordisError extends Error {
+  constructor(code, message) {
+    super(message ?? _CordisError.Code[code]);
+    this.code = code;
+  }
+  code;
+  static {
+    __name(this, "CordisError");
+  }
+};
+((CordisError2) => {
+  CordisError2.Code = {
+    INACTIVE_EFFECT: "cannot create effect on inactive context"
+  };
+})(CordisError || (CordisError = {}));
+var INACTIVE = "__INACTIVE__";
+var Fiber = class {
+  constructor(parent, config, inject, runtime, getOuterStack) {
+    this.parent = parent;
+    this.config = config;
+    this.inject = inject;
+    this.runtime = runtime;
+    const collect = /* @__PURE__ */ __name((dispose) => {
+      this._disposables.push(dispose);
+    }, "collect");
+    if (runtime) {
+      this.uid = parent.registry.counter;
+      this.ctx = this.context = parent.extend({ fiber: this });
+      this._runner = {
+        epoch: INACTIVE,
+        getOuterStack,
+        execute: /* @__PURE__ */ __name(function() {
+          const config2 = this._resolve(this.config);
+          if (isConstructor(runtime.callback)) {
+            const instance = new runtime.callback(this.ctx, config2);
+            for (const hook of instance?.[symbols.initHooks] ?? []) {
+              hook();
+            }
+            return instance?.[symbols.init]?.();
+          } else {
+            return runtime.callback(this.ctx, config2);
+          }
+        }, "execute"),
+        collect
+      };
+      this.context.emit("internal/plugin", this);
+      for (const name of Object.keys(this.inject)) {
+        this._checkImpl(name);
+      }
+      this.dispose = parent.fiber.effect(() => {
+        const remove = runtime.fibers.push(this);
+        try {
+          this._refresh();
+        } catch (error) {
+          this.ctx.logger.error(error);
+          this._error = error;
+        }
+        return async () => {
+          this.uid = null;
+          this.context.emit("internal/plugin", this);
+          if (this.ctx.registry.has(runtime.callback)) {
+            remove();
+            if (!runtime.fibers.length) {
+              this.ctx.registry.delete(runtime.callback);
+            }
+          }
+          this._setEpoch(INACTIVE);
+          while (this.inertia) {
+            await this.inertia;
+          }
+          this._updateState(() => {
+          });
+        };
+      }, "ctx.plugin()");
+    } else {
+      this.uid = 0;
+      this.ctx = this.context = parent;
+      this.state = 2;
+      this.committed = /* @__PURE__ */ Object.create(null);
+      this._runner = {
+        epoch: "0",
+        getOuterStack,
+        execute: /* @__PURE__ */ __name(() => {
+        }, "execute"),
+        collect
+      };
+      this.dispose = () => this.restart();
+    }
+  }
+  parent;
+  config;
+  inject;
+  runtime;
+  static {
+    __name(this, "Fiber");
+  }
+  uid;
+  ctx;
+  state = 0;
+  dispose;
+  committed;
+  provisions = /* @__PURE__ */ new Set();
+  inertia;
+  _hooks = /* @__PURE__ */ Object.create(null);
+  _disposables = new DisposableList();
+  // Same as `this.ctx`, but with a more specific type.
+  context;
+  _error;
+  _revision = 0;
+  _runner;
+  _store = /* @__PURE__ */ Object.create(null);
+  _release;
+  get name() {
+    let fiber = this;
+    do {
+      if (fiber.runtime?.name) return fiber.runtime.name;
+      fiber = fiber.parent.fiber;
+    } while (fiber !== fiber.parent.fiber);
+    return "root";
+  }
+  assertActive() {
+    if (this.uid !== null) return;
+    throw new CordisError("INACTIVE_EFFECT");
+  }
+  _resolve(config) {
+    return this.context.waterfall("internal/config", this, () => config);
+  }
+  _execute(runner) {
+    const oldEpoch = runner.epoch;
+    return composeError((info) => {
+      const safeCollect = /* @__PURE__ */ __name((dispose) => {
+        if (typeof dispose === "function") {
+          runner.collect(dispose);
+        } else if (!isNullable(dispose)) {
+          throw new TypeError("Invalid effect");
+        }
+      }, "safeCollect");
+      const effect = runner.execute.call(this);
+      if (typeof effect === "function") {
+        return runner.collect(effect);
+      } else if (isNullable(effect)) {
+      } else if (!isObject(effect)) {
+        throw new TypeError("Invalid effect");
+      } else if ("then" in effect) {
+        return effect.then(safeCollect);
+      } else if (Symbol.iterator in effect) {
+        info.error = new Error();
+        const iter = effect[Symbol.iterator]();
+        while (true) {
+          const result = iter.next();
+          safeCollect(result.value);
+          if (result.done) return;
+        }
+      } else if (Symbol.asyncIterator in effect) {
+        const iter = effect[Symbol.asyncIterator]();
+        return (async () => {
+          await Promise.resolve();
+          info.error = new Error();
+          while (true) {
+            if (runner.epoch !== oldEpoch) return;
+            const result = await iter.next();
+            safeCollect(result.value);
+            if (result.done) return;
+          }
+        })();
+      } else {
+        throw new TypeError("Invalid effect");
+      }
+    }, runner.getOuterStack);
+  }
+  effect(execute, label = "anonymous") {
+    this.assertActive();
+    const disposables = [];
+    const dispose = /* @__PURE__ */ __name(() => {
+      let task2;
+      for (const dispose2 of disposables.splice(0).reverse()) {
+        if (task2) {
+          task2 = task2.then(dispose2);
+        } else {
+          const result = dispose2();
+          if (isObject(result) && "then" in result) {
+            task2 = result;
+          }
+        }
+      }
+      return task2;
+    }, "dispose");
+    const meta = { label, children: [] };
+    const runner = {
+      execute,
+      epoch: true,
+      collect: /* @__PURE__ */ __name((dispose2) => {
+        disposables.push(dispose2);
+        this._disposables.delete(dispose2);
+        if (dispose2[symbols.effect]) {
+          meta.children.push(dispose2[symbols.effect]);
+        }
+      }, "collect"),
+      getOuterStack: buildOuterStack()
+    };
+    let task;
+    try {
+      task = this._execute(runner);
+    } catch (reason) {
+      dispose();
+      throw reason;
+    }
+    task?.catch(dispose).catch((error) => this.ctx.logger.error(error));
+    const wrapper = defineProperty(() => {
+      if (!runner.epoch) return;
+      runner.epoch = false;
+      return task ? task.then(dispose) : dispose();
+    }, symbols.effect, meta);
+    const disposeAsync = /* @__PURE__ */ __name(() => {
+      if (!runner.epoch) return;
+      runner.epoch = false;
+      return dispose();
+    }, "disposeAsync");
+    wrapper.then = async (onFulfilled, onRejected) => {
+      return Promise.resolve(task).then(() => disposeAsync).then(onFulfilled, onRejected);
+    };
+    disposables.push(this._disposables.push(wrapper));
+    return wrapper;
+  }
+  getEffects() {
+    return [...this._disposables].map((dispose) => dispose[symbols.effect]).filter(Boolean);
+  }
+  _getState() {
+    if (this.uid === null) return 4;
+    if (this._error) return 3;
+    if (this._runner.epoch !== INACTIVE) return 2;
+    return 0;
+  }
+  _updateState(callback) {
+    const oldState = this.state;
+    this.state = callback() ?? this._getState();
+    if (oldState === this.state) return;
+    this.context.emit("internal/status", this, oldState);
+    if (oldState !== 2 && this.state !== 2) return;
+    for (const key of Reflect.ownKeys(this.ctx.reflect.store)) {
+      const impl = this.ctx.reflect.store[key];
+      if (impl.ctx.fiber !== this) continue;
+      this.ctx.isolate(impl.name, impl.isolate).reflect.notify([impl.name]);
+    }
+  }
+  _checkImpl(name) {
+    const impl = this.ctx.reflect._getImpl(name, true);
+    if (!impl) return delete this._store[name];
+    try {
+      if (impl.check && !impl.check.call(getTraceable(this.ctx, impl.value))) {
+        return delete this._store[name];
+      }
+    } catch (error) {
+      impl.ctx.logger.error(error);
+      return delete this._store[name];
+    }
+    this._store[name] = impl;
+  }
+  _refresh() {
+    let epoch = `${this._revision}`;
+    for (const name of Object.keys(this.inject)) {
+      const impl = this._store[name];
+      if (!impl) {
+        epoch = INACTIVE;
+        break;
+      }
+      epoch += ":" + impl.uid;
+    }
+    this._setEpoch(epoch);
+  }
+  _setEpoch(epoch) {
+    const oldEpoch = this._runner.epoch;
+    if (epoch === oldEpoch) return;
+    if (this._error) return;
+    this._runner.epoch = epoch;
+    if (this.inertia) return;
+    this._updateState(() => {
+      if (epoch !== INACTIVE && oldEpoch === INACTIVE) {
+        this.inertia = this._reload();
+        return 1;
+      } else {
+        this.inertia = this._unload();
+        return 5;
+      }
+    });
+  }
+  async _reload() {
+    this.committed = { ...this._store };
+    for (const impl of Object.values(this.committed)) {
+      if (impl.ctx.fiber === this) continue;
+      impl.dependents.add(this);
+    }
+    const oldEpoch = this._runner.epoch;
+    try {
+      await Promise.resolve();
+      if (this._runner.epoch === oldEpoch) {
+        await this._execute(this._runner);
+      }
+    } catch (reason) {
+      this.ctx.logger.error(reason);
+      if (this._runner.epoch === oldEpoch) {
+        this._error = reason;
+        this._runner.epoch = INACTIVE;
+      }
+    }
+    this._updateState(() => {
+      if (this._runner.epoch === oldEpoch) {
+        this.inertia = void 0;
+      } else {
+        this.inertia = this._unload();
+        return 5;
+      }
+    });
+  }
+  async _unload() {
+    while ([...this.provisions].some((impl) => impl.dependents.size)) {
+      await new Promise((resolve) => this._release = resolve);
+    }
+    this._release = void 0;
+    await Promise.all(this._disposables.clear().map(async (dispose) => {
+      try {
+        await composeError(async (info) => {
+          await Promise.resolve();
+          info.error = new Error();
+          await dispose();
+        }, this._runner.getOuterStack);
+      } catch (reason) {
+        this.ctx.logger.error(reason);
+      }
+    }));
+    for (const impl of Object.values(this.committed ?? {})) {
+      if (!impl.dependents.delete(this) || impl.dependents.size) continue;
+      impl.release?.();
+      impl.ctx.fiber._release?.();
+    }
+    this.committed = void 0;
+    this._updateState(() => {
+      if (this._runner.epoch === INACTIVE) {
+        this.inertia = void 0;
+      } else {
+        this.inertia = this._reload();
+        return 1;
+      }
+    });
+  }
+  async await() {
+    while (this.inertia) {
+      await this.inertia;
+    }
+    if (this._error) throw this._error;
+    return this;
+  }
+  async restart() {
+    const fiber = this.ctx.fiber;
+    fiber.assertActive();
+    fiber._revision++;
+    fiber._refresh();
+    await fiber.await();
+  }
+  update(config, noSave = false) {
+    const fiber = this.ctx.fiber;
+    fiber.assertActive();
+    const loaded = fiber._runner.epoch !== INACTIVE;
+    const resolved = loaded ? fiber._resolve(config) : void 0;
+    if (!noSave) fiber.context.emit("internal/commit", fiber, config);
+    fiber.config = config;
+    fiber._error = void 0;
+    const restart = /* @__PURE__ */ __name(() => fiber.restart(), "restart");
+    const result = loaded ? fiber.context.waterfall(fiber, "internal/update", resolved, restart) : restart();
+    if (result === void 0) return;
+    const task = Promise.resolve(result);
+    task.catch(() => {
+    });
+    return task;
+  }
+};
 function isBailed(value) {
   return value !== null && value !== false && value !== void 0;
 }
@@ -1167,17 +1589,20 @@ var EventsService = class {
       if (name === "internal/update" && !options.global) {
         const hooks = this.fiber._hooks["internal/update"] ??= new DisposableList();
         const method = options.prepend ? "unshift" : "push";
-        return hooks[method](listener);
+        return this.fiber.effect(() => hooks[method](listener), 'ctx.on("internal/update")');
       }
     });
-    this.on("internal/update", function(config, noSave, next) {
+    this.on("internal/update", function(config, next) {
       const cbs = [...this._hooks["internal/update"] || []];
       const _next = /* @__PURE__ */ __name(() => {
         const cb = cbs.shift() ?? next;
-        return cb.call(this, config, noSave, _next);
+        return cb.call(this, config, _next);
       }, "_next");
       return _next();
     }, { global: true, prepend: true });
+    this.on("internal/config", (fiber, next) => {
+      return resolveConfig(fiber.runtime, next());
+    });
   }
   ctx;
   static {
@@ -1191,7 +1616,8 @@ var EventsService = class {
       this.emit("internal/dispatch", type, name, args, thisArg);
     }
     const filter = thisArg?.[Context.filter];
-    return [thisArg, (this._hooks[name] || []).filter((hook) => hook.global || !filter || filter.call(thisArg, hook.ctx)).map((hook) => hook.callback)];
+    const callbacks = (this._hooks[name] || []).filter((hook) => hook.global || !filter || filter.call(thisArg, hook.ctx)).map((hook) => hook.callback);
+    return [thisArg, callbacks, name];
   }
   /** @deprecated */
   dispatch(type, args) {
@@ -1199,10 +1625,12 @@ var EventsService = class {
     return callbacks.map((callback) => callback.bind(thisArg));
   }
   async parallel(...args) {
-    const [thisArg, callbacks] = this._resolve("emit", args);
+    const [thisArg, callbacks, name] = this._resolve("parallel", args);
     const results = await Promise.allSettled(callbacks.map(async (callback) => Reflect.apply(callback, thisArg, args)));
     const errors = results.filter((result) => result.status === "rejected");
-    if (errors.length) throw new AggregateError(errors.map((error) => error.reason));
+    if (!errors.length) return;
+    const label = typeof name === "symbol" ? String(name) : `"${name}"`;
+    throw new AggregateError(errors.map((error) => error.reason), `one or more listeners of event ${label} failed`);
   }
   emit(...args) {
     const [thisArg, callbacks] = this._resolve("emit", args);
@@ -1273,6 +1701,308 @@ var EventsService = class {
       return listener.apply(this, args);
     }, options);
     return dispose;
+  }
+};
+function enhanceError(error) {
+  const lines = error.stack.split("\n");
+  lines.splice(0, 2, `Error: ${error.message}`);
+  error.stack = lines.join("\n");
+  return error;
+}
+__name(enhanceError, "enhanceError");
+var RESERVED_WORDS = ["prototype", "then"];
+function isSpecialProperty(prop) {
+  return typeof prop === "symbol" || RESERVED_WORDS.includes(prop) || parseInt(prop).toString() === prop || prop.startsWith("_");
+}
+__name(isSpecialProperty, "isSpecialProperty");
+function locate(ctx, name) {
+  const key = ctx[symbols.isolate][name];
+  let table = ctx[symbols.isolate];
+  let fiber = ctx.fiber;
+  while (true) {
+    let impl;
+    for (const provision of fiber.provisions) {
+      if (provision.name === name && provision.ctx[symbols.isolate][name] === key) impl = provision;
+    }
+    if (impl) return { impl };
+    while (table !== fiber.ctx[symbols.isolate]) {
+      if (!table || Object.hasOwn(table, name)) return;
+      table = Object.getPrototypeOf(table);
+    }
+    impl = fiber.committed?.[name];
+    if (impl || name in fiber.inject) return { fiber, impl };
+    if (!fiber.runtime) return;
+    fiber = fiber.parent.fiber;
+  }
+}
+__name(locate, "locate");
+var ReflectService = class {
+  constructor(ctx) {
+    this.ctx = ctx;
+    defineProperty(this, symbols.tracker, {
+      property: "ctx",
+      noShadow: true
+    });
+    this.mixin("reflect", ["get", "set", "provide", "accessor", "mixin"]);
+    this.mixin("fiber", ["runtime", "effect"]);
+    this.mixin("registry", ["inject", "plugin"]);
+    this.mixin("events", ["on", "once", "parallel", "emit", "serial", "bail", "waterfall"]);
+  }
+  ctx;
+  static {
+    __name(this, "ReflectService");
+  }
+  static handler = {
+    get: /* @__PURE__ */ __name((target, prop, ctx) => {
+      if (isSpecialProperty(prop)) {
+        return Reflect.get(target, prop, ctx);
+      }
+      if (Reflect.has(target, prop)) {
+        return getTraceable(ctx, Reflect.get(target, prop, ctx));
+      }
+      const error = new Error(`cannot get property "${prop}" without inject`);
+      try {
+        const def = target.reflect.props[prop];
+        if (def?.type === "accessor") {
+          return def.get.call(ctx, ctx[symbols.receiver], error);
+        }
+        const defSite = ctx[symbols.shadow] ?? ctx;
+        if (!defSite.fiber.runtime) return ctx.reflect.get(prop, false);
+        return ctx.events.waterfall("internal/get", ctx, prop, error, () => {
+          const result = locate(defSite, prop);
+          if (!result) throw error;
+          if (result.impl) return getTraceable(ctx, result.impl.value);
+          error.message = `cannot get required service "${prop}" in inactive context`;
+          throw error;
+        });
+      } catch (e) {
+        throw e === error ? enhanceError(e) : e;
+      }
+    }, "get"),
+    set: /* @__PURE__ */ __name((target, prop, value, ctx) => {
+      if (isSpecialProperty(prop)) {
+        return Reflect.set(target, prop, value, ctx);
+      }
+      const error = new Error(`cannot set property "${prop}" without provide`);
+      const def = target.reflect.props[prop];
+      if (!def) {
+        if (!ctx.fiber.runtime) return Reflect.set(target, prop, value, ctx);
+        throw enhanceError(error);
+      }
+      try {
+        if (def.type === "accessor") {
+          if (!def.set) return false;
+          return def.set.call(ctx, value, ctx[symbols.receiver], error);
+        }
+        return ctx.events.waterfall("internal/set", ctx, prop, value, error, () => {
+          return ctx.reflect.set(prop, value, error);
+        });
+      } catch (e) {
+        throw e === error ? enhanceError(e) : e;
+      }
+    }, "set"),
+    has: /* @__PURE__ */ __name((target, prop) => {
+      if (isSpecialProperty(prop)) {
+        return Reflect.has(target, prop);
+      }
+      if (Reflect.has(target, prop)) return true;
+      return !!target.reflect.props[prop];
+    }, "has")
+  };
+  store = /* @__PURE__ */ Object.create(null);
+  props = /* @__PURE__ */ Object.create(null);
+  _implCounter = 0;
+  get(name, strict = true) {
+    return getTraceable(this.ctx, this._getImpl(name, strict)?.value);
+  }
+  _getImpl(name, strict = true) {
+    const key = this.ctx[symbols.isolate][name];
+    const impl = key && this.store[key];
+    if (!impl) return;
+    if (strict && impl.ctx.fiber.state !== 2) return;
+    return impl;
+  }
+  set(name, value, error) {
+    const key = this.ctx[symbols.isolate][name];
+    const impl = this.store[key];
+    if (!impl) {
+      throw new Error(`cannot set property "${name}" without provide`);
+    }
+    if (impl.ctx.fiber !== this.ctx.fiber) {
+      throw new Error(`cannot set property "${name}" in multiple fibers`);
+    }
+    impl.value = value;
+    return true;
+  }
+  provide(name, value, check) {
+    return this.ctx.fiber.effect(() => {
+      if (!this.props[name]) {
+        this.props[name] ??= { type: "service" };
+      } else if (this.props[name].type !== "service") {
+        throw new Error(`property "${name}" is already declared as ${this.props[name].type}`);
+      }
+      this.props[name] = { type: "service" };
+      this.ctx[symbols.root][symbols.isolate][name] ??= Symbol(name);
+      const key = this.ctx[symbols.isolate][name];
+      const impl = { uid: ++this._implCounter, name, value, ctx: this.ctx, check, isolate: key, dependents: /* @__PURE__ */ new Set() };
+      if (this.store[key]) {
+        throw new Error(`service "${name}" has been registered at <${this.store[key].ctx.fiber.name}>`);
+      }
+      this.store[key] = impl;
+      this.ctx.fiber.provisions.add(impl);
+      if (this.ctx.fiber.state === 2) {
+        this.notify([name]);
+      }
+      return async () => {
+        if (this.store[impl.isolate] === impl) delete this.store[impl.isolate];
+        this.ctx.isolate(name, impl.isolate).reflect.notify([name]);
+        await new Promise((resolve) => {
+          impl.release = resolve;
+          if (!impl.dependents.size) resolve();
+        });
+        impl.release = void 0;
+        this.ctx.fiber.provisions.delete(impl);
+      };
+    }, `ctx.provide(${JSON.stringify(name)})`);
+  }
+  notify(names, filter = (ctx, name) => ctx[symbols.isolate][name] === this.ctx[symbols.isolate][name]) {
+    for (const runtime of this.ctx.registry.values()) {
+      for (const fiber of runtime.fibers) {
+        let hasUpdate = false;
+        for (const name of names) {
+          if (!(name in fiber.inject)) continue;
+          if (!filter(fiber.ctx, name)) continue;
+          hasUpdate = true;
+          fiber._checkImpl(name);
+        }
+        if (!hasUpdate) continue;
+        fiber._refresh();
+      }
+    }
+    for (const name of names) {
+      const self = Object.create(this.ctx);
+      self[symbols.filter] = (target) => filter(target, name);
+      this.ctx.events.emit(self, "internal/service", name, this._getImpl(name, false)?.value);
+    }
+  }
+  accessor(name, options) {
+    return this.ctx.fiber.effect(() => {
+      if (name in this.props) {
+        throw new Error(`property "${name}" is already declared as ${this.props[name].type}`);
+      }
+      this.props[name] = { type: "accessor", ...options };
+      return () => delete this.props[name];
+    }, `ctx.accessor(${JSON.stringify(name)})`);
+  }
+  mixin(source, mixins) {
+    const self = this;
+    return this.ctx.fiber.effect(function* () {
+      const entries = Array.isArray(mixins) ? mixins.map((key) => [key, key]) : Object.entries(mixins);
+      const getTarget = /* @__PURE__ */ __name((ctx, error) => {
+        return ctx[source];
+      }, "getTarget");
+      for (const [key, value] of entries) {
+        yield self.accessor(value, {
+          get(receiver, error) {
+            const service = getTarget(this, error);
+            if (isNullable(service)) return service;
+            const mixin = receiver ? withProps(receiver, service) : service;
+            const value2 = Reflect.get(service, key, mixin);
+            if (typeof value2 !== "function") return value2;
+            return value2.bind(mixin ?? service);
+          },
+          set(value2, receiver, error) {
+            const service = getTarget(this, error);
+            const mixin = receiver ? withProps(receiver, service) : service;
+            return Reflect.set(service, key, value2, mixin);
+          }
+        });
+      }
+    }, `ctx.mixin(${JSON.stringify(source)})`);
+  }
+  trace(value) {
+    return getTraceable(this.ctx, value);
+  }
+  bind(callback) {
+    return new Proxy(callback, {
+      apply: /* @__PURE__ */ __name((target, thisArg, args) => {
+        return Reflect.apply(target, this.trace(thisArg), args.map((arg) => this.trace(arg)));
+      }, "apply"),
+      construct: /* @__PURE__ */ __name((target, args, newTarget) => {
+        return Reflect.construct(target, args.map((arg) => this.trace(arg)), newTarget);
+      }, "construct")
+    });
+  }
+};
+var Service = class _Service {
+  constructor(ctx, name) {
+    this.ctx = ctx;
+    name ??= this.constructor["provide"];
+    let self = this;
+    const tracker = {
+      associate: name,
+      property: "ctx"
+    };
+    if (self[symbols.invoke]) {
+      self = createCallable(name, joinPrototype(Object.getPrototypeOf(this), Function.prototype), tracker);
+    }
+    self.ctx = ctx;
+    self.name = name;
+    defineProperty(self, symbols.tracker, tracker);
+    self.ctx.reflect.provide(name, self, this[symbols.check]);
+    return self;
+  }
+  ctx;
+  static {
+    __name(this, "Service");
+  }
+  static init = symbols.init;
+  static check = symbols.check;
+  static invoke = symbols.invoke;
+  static metadata = symbols.metadata;
+  static extend = symbols.extend;
+  static tracker = symbols.tracker;
+  static mergeIntercept = symbols.mergeIntercept;
+  static resolveIntercept = symbols.resolveIntercept;
+  name;
+  [symbols.filter](ctx) {
+    return ctx[symbols.isolate][this.name] === this.ctx[symbols.isolate][this.name];
+  }
+  [symbols.extend](props) {
+    let self;
+    if (this[_Service.invoke]) {
+      self = createCallable(this.name, this, this[symbols.tracker]);
+    } else {
+      self = Object.create(this);
+    }
+    return Object.assign(self, props);
+  }
+  [symbols.mergeIntercept](...values) {
+    return Object.assign({}, ...values);
+  }
+  [symbols.resolveIntercept]() {
+    const values = [];
+    let intercept = this.ctx[Context.intercept];
+    while (this.name in intercept) {
+      if (Object.hasOwn(intercept, this.name)) {
+        values.unshift(intercept[this.name]);
+      }
+      intercept = Object.getPrototypeOf(intercept);
+    }
+    const value = locate(this[symbols.caller] ?? this.ctx, this.name)?.fiber?.inject[this.name];
+    if (!isNullable(value)) values.unshift(value);
+    const merge = this[symbols.mergeIntercept] ?? _Service.prototype[symbols.mergeIntercept];
+    return merge.apply(this, values);
+  }
+  static [Symbol.hasInstance](instance) {
+    if (!instance) return false;
+    let constructor = instance.constructor;
+    while (constructor) {
+      constructor = constructor.prototype?.constructor;
+      if (constructor === this) return true;
+      constructor &&= Object.getPrototypeOf(constructor);
+    }
+    return false;
   }
 };
 var defaultFormatters = {
@@ -1368,7 +2098,7 @@ var Logger = class {
       if (args.length === 1 && args[0] instanceof Error) {
         if (args[0].cause) {
           this[type](args[0].cause);
-        } else if (isAggregateError(args[0])) {
+        } else if (isAggregateError(args[0]) && args[0].errors.length) {
           args[0].errors.forEach((error) => this[type](error));
           return;
         }
@@ -1502,20 +2232,9 @@ var LoggerService = class _LoggerService {
       return () => this.exporters.delete(id);
     }, "ctx.logger.exporter()");
   }
-  _resolveConfig() {
-    let intercept = this.ctx[symbols.intercept];
-    const configs = [];
-    while ("logger" in intercept) {
-      if (Object.hasOwn(intercept, "logger")) {
-        configs.unshift(intercept["logger"]);
-      }
-      intercept = Object.getPrototypeOf(intercept);
-    }
-    return Object.assign({}, ...configs);
-  }
   [symbols.invoke](name) {
-    const config = this._resolveConfig();
     const caller = this[symbols.caller];
+    const config = Service.prototype[Service.resolveIntercept].call(this);
     const fiber = (caller ?? this.ctx).fiber;
     name ??= config.name;
     name ??= hyphenate(fiber.name);
@@ -1534,613 +2253,6 @@ var LoggerService = class _LoggerService {
     }
   }
 };
-var kValidationError = /* @__PURE__ */ Symbol.for("ValidationError");
-var ValidationError = class extends TypeError {
-  static {
-    __name(this, "ValidationError");
-  }
-  name = "ValidationError";
-  constructor(issues) {
-    super(`invalid config:
-` + issues.map((issue) => {
-      if (issue.path) {
-        return `  - ${issue.message} (at ${issue.path.join(".")})`;
-      } else {
-        return `  - ${issue.message}`;
-      }
-    }).join("\n"));
-  }
-};
-Object.defineProperty(ValidationError.prototype, kValidationError, {
-  value: true
-});
-function resolveConfig(runtime, config) {
-  if (!runtime.Config) return config;
-  const result = runtime.Config["~standard"].validate(config);
-  if ("then" in result) {
-    throw new TypeError("Async config validation is not supported");
-  }
-  if (result.issues) {
-    throw new ValidationError(result.issues);
-  } else {
-    return result.value;
-  }
-}
-__name(resolveConfig, "resolveConfig");
-var CordisError = class _CordisError extends Error {
-  constructor(code, message) {
-    super(message ?? _CordisError.Code[code]);
-    this.code = code;
-  }
-  code;
-  static {
-    __name(this, "CordisError");
-  }
-};
-((CordisError2) => {
-  CordisError2.Code = {
-    INACTIVE_EFFECT: "cannot create effect on inactive context"
-  };
-})(CordisError || (CordisError = {}));
-var INACTIVE = "__INACTIVE__";
-var Fiber = class {
-  constructor(parent, config, inject, runtime, getOuterStack) {
-    this.parent = parent;
-    this.inject = inject;
-    this.runtime = runtime;
-    const collect = /* @__PURE__ */ __name((dispose) => {
-      this._disposables.push(dispose);
-    }, "collect");
-    if (runtime) {
-      this.uid = parent.registry.counter;
-      this.ctx = this.context = parent.extend({ fiber: this });
-      const injectEntries = Object.entries(this.inject);
-      if (injectEntries.length) {
-        this.ctx[Context.intercept] = Object.create(parent[Context.intercept]);
-        for (const [name, config2] of injectEntries) {
-          if (isNullable(config2)) continue;
-          this.ctx[Context.intercept][name] = config2;
-        }
-      }
-      this._runner = {
-        epoch: INACTIVE,
-        getOuterStack,
-        execute: /* @__PURE__ */ __name(function() {
-          if (isConstructor(runtime.callback)) {
-            const instance = new runtime.callback(this.ctx, this.config);
-            for (const hook of instance?.[symbols.initHooks] ?? []) {
-              hook();
-            }
-            return instance?.[symbols.init]?.();
-          } else {
-            return runtime.callback(this.ctx, this.config);
-          }
-        }, "execute"),
-        collect
-      };
-      this.context.emit("internal/plugin", this);
-      for (const name of Object.keys(this.inject)) {
-        this._checkImpl(name);
-      }
-      this.dispose = parent.fiber.effect(() => {
-        const remove = runtime.fibers.push(this);
-        try {
-          this.config = resolveConfig(runtime, config);
-          this._refresh();
-        } catch (error) {
-          this.ctx.logger.error(error);
-          this._error = error;
-        }
-        return async () => {
-          this.uid = null;
-          this.context.emit("internal/plugin", this);
-          if (this.ctx.registry.has(runtime.callback)) {
-            remove();
-            if (!runtime.fibers.length) {
-              this.ctx.registry.delete(runtime.callback);
-            }
-          }
-          this._setEpoch(INACTIVE);
-          while (this.inertia) {
-            await this.inertia;
-          }
-        };
-      }, "ctx.plugin()");
-    } else {
-      this.uid = 0;
-      this.ctx = this.context = parent;
-      this.state = 2;
-      this.store = /* @__PURE__ */ Object.create(null);
-      this._runner = {
-        epoch: "",
-        getOuterStack,
-        execute: /* @__PURE__ */ __name(() => {
-        }, "execute"),
-        collect
-      };
-      this.dispose = () => this.restart();
-    }
-  }
-  parent;
-  inject;
-  runtime;
-  static {
-    __name(this, "Fiber");
-  }
-  uid;
-  ctx;
-  config;
-  state = 0;
-  dispose;
-  store;
-  inertia;
-  _hooks = /* @__PURE__ */ Object.create(null);
-  _disposables = new DisposableList();
-  // Same as `this.ctx`, but with a more specific type.
-  context;
-  _error;
-  _runner;
-  _store = /* @__PURE__ */ Object.create(null);
-  get name() {
-    let fiber = this;
-    do {
-      if (fiber.runtime?.name) return fiber.runtime.name;
-      fiber = fiber.parent.fiber;
-    } while (fiber !== fiber.parent.fiber);
-    return "root";
-  }
-  assertActive() {
-    if (this.uid !== null) return;
-    throw new CordisError("INACTIVE_EFFECT");
-  }
-  _execute(runner) {
-    const oldEpoch = runner.epoch;
-    return composeError((info) => {
-      const safeCollect = /* @__PURE__ */ __name((dispose) => {
-        if (typeof dispose === "function") {
-          runner.collect(dispose);
-        } else if (!isNullable(dispose)) {
-          throw new TypeError("Invalid effect");
-        }
-      }, "safeCollect");
-      const effect = runner.execute.call(this);
-      if (typeof effect === "function") {
-        return runner.collect(effect);
-      } else if (isNullable(effect)) {
-      } else if (!isObject(effect)) {
-        throw new TypeError("Invalid effect");
-      } else if ("then" in effect) {
-        return effect.then(safeCollect);
-      } else if (Symbol.iterator in effect) {
-        info.error = new Error();
-        const iter = effect[Symbol.iterator]();
-        while (true) {
-          const result = iter.next();
-          safeCollect(result.value);
-          if (result.done) return;
-        }
-      } else if (Symbol.asyncIterator in effect) {
-        const iter = effect[Symbol.asyncIterator]();
-        return (async () => {
-          await Promise.resolve();
-          info.error = new Error();
-          while (true) {
-            if (runner.epoch !== oldEpoch) return;
-            const result = await iter.next();
-            safeCollect(result.value);
-            if (result.done) return;
-          }
-        })();
-      } else {
-        throw new TypeError("Invalid effect");
-      }
-    }, runner.getOuterStack);
-  }
-  effect(execute, label = "anonymous") {
-    this.assertActive();
-    const disposables = [];
-    const dispose = /* @__PURE__ */ __name(() => {
-      let task2;
-      for (const dispose2 of disposables.splice(0).reverse()) {
-        if (task2) {
-          task2 = task2.then(dispose2);
-        } else {
-          const result = dispose2();
-          if (isObject(result) && "then" in result) {
-            task2 = result;
-          }
-        }
-      }
-      return task2;
-    }, "dispose");
-    const meta = { label, children: [] };
-    const runner = {
-      execute,
-      epoch: true,
-      collect: /* @__PURE__ */ __name((dispose2) => {
-        disposables.push(dispose2);
-        this._disposables.delete(dispose2);
-        if (dispose2[symbols.effect]) {
-          meta.children.push(dispose2[symbols.effect]);
-        }
-      }, "collect"),
-      getOuterStack: buildOuterStack()
-    };
-    let task;
-    try {
-      task = this._execute(runner);
-    } catch (reason) {
-      dispose();
-      throw reason;
-    }
-    task?.catch(dispose).catch((error) => this.ctx.logger.error(error));
-    const wrapper = defineProperty(() => {
-      if (!runner.epoch) return;
-      runner.epoch = false;
-      return task ? task.then(dispose) : dispose();
-    }, symbols.effect, meta);
-    const disposeAsync = /* @__PURE__ */ __name(() => {
-      if (!runner.epoch) return;
-      runner.epoch = false;
-      return dispose();
-    }, "disposeAsync");
-    wrapper.then = async (onFulfilled, onRejected) => {
-      return Promise.resolve(task).then(() => disposeAsync).then(onFulfilled, onRejected);
-    };
-    disposables.push(this._disposables.push(wrapper));
-    return wrapper;
-  }
-  getEffects() {
-    return [...this._disposables].map((dispose) => dispose[symbols.effect]).filter(Boolean);
-  }
-  _getState() {
-    if (this.uid === null) return 4;
-    if (this._error) return 3;
-    if (this._runner.epoch !== INACTIVE) return 2;
-    return 0;
-  }
-  _updateState(callback) {
-    const oldState = this.state;
-    this.state = callback() ?? this._getState();
-    if (oldState === this.state) return;
-    this.context.emit("internal/status", this, oldState);
-    if (oldState !== 2 && this.state !== 2) return;
-    for (const key of Reflect.ownKeys(this.ctx.reflect.store)) {
-      const impl = this.ctx.reflect.store[key];
-      if (impl.fiber !== this) continue;
-      this.ctx.reflect.notify([impl.name]);
-    }
-  }
-  _checkImpl(name) {
-    const impl = this.ctx.reflect._getImpl(name, true);
-    if (!impl) return delete this._store[name];
-    try {
-      if (impl.check && !impl.check.call(getTraceable(this.ctx, impl.value))) {
-        return delete this._store[name];
-      }
-    } catch (error) {
-      impl.fiber.ctx.logger.error(error);
-      return delete this._store[name];
-    }
-    this._store[name] = impl;
-  }
-  _refresh() {
-    let epoch = false;
-    epoch = "";
-    for (const name of Object.keys(this.inject)) {
-      const impl = this._store[name];
-      if (!impl) {
-        epoch = INACTIVE;
-        break;
-      }
-      epoch += ":" + impl.fiber.uid;
-    }
-    this._setEpoch(epoch);
-  }
-  _setEpoch(epoch) {
-    const oldEpoch = this._runner.epoch;
-    if (epoch === oldEpoch) return;
-    if (this._error) return;
-    this._runner.epoch = epoch;
-    if (this.inertia) return;
-    this._updateState(() => {
-      if (epoch !== INACTIVE && oldEpoch === INACTIVE) {
-        this.inertia = this._reload();
-        return 1;
-      } else {
-        this.inertia = this._unload();
-        return 5;
-      }
-    });
-  }
-  async _reload() {
-    this.store = { ...this._store };
-    const oldEpoch = this._runner.epoch;
-    try {
-      await Promise.resolve();
-      await this._execute(this._runner);
-    } catch (reason) {
-      this.ctx.logger.error(reason);
-      this._error = reason;
-      this._runner.epoch = INACTIVE;
-    }
-    this._updateState(() => {
-      if (this._runner.epoch === oldEpoch) {
-        this.inertia = void 0;
-      } else {
-        this.inertia = this._unload();
-        return 5;
-      }
-    });
-  }
-  async _unload() {
-    await Promise.all(this._disposables.clear().map(async (dispose) => {
-      try {
-        await composeError(async (info) => {
-          await Promise.resolve();
-          info.error = new Error();
-          await dispose();
-        }, this._runner.getOuterStack);
-      } catch (reason) {
-        this.ctx.logger.error(reason);
-      }
-    }));
-    this.store = void 0;
-    this._updateState(() => {
-      if (this._runner.epoch === INACTIVE) {
-        this.inertia = void 0;
-      } else {
-        this.inertia = this._reload();
-        return 1;
-      }
-    });
-  }
-  async await() {
-    while (this.inertia) {
-      await this.inertia;
-    }
-    if (this._error) throw this._error;
-    return this;
-  }
-  async restart() {
-    const fiber = this.ctx.fiber;
-    fiber.assertActive();
-    fiber._setEpoch(INACTIVE);
-    fiber._refresh();
-    await fiber.await();
-  }
-  update(config, noSave = false) {
-    const fiber = this.ctx.fiber;
-    fiber.assertActive();
-    config = resolveConfig(fiber.runtime, config);
-    const result = fiber.context.waterfall(fiber, "internal/update", config, noSave, () => {
-      fiber.config = config;
-      fiber._error = void 0;
-      return fiber.restart();
-    });
-    if (result === void 0) return;
-    const task = Promise.resolve(result);
-    task.catch(() => {
-    });
-    return task;
-  }
-};
-function enhanceError(error) {
-  const lines = error.stack.split("\n");
-  lines.splice(0, 2, `Error: ${error.message}`);
-  error.stack = lines.join("\n");
-  return error;
-}
-__name(enhanceError, "enhanceError");
-var RESERVED_WORDS = ["prototype", "then"];
-function isSpecialProperty(prop) {
-  return typeof prop === "symbol" || RESERVED_WORDS.includes(prop) || parseInt(prop).toString() === prop || prop.startsWith("_");
-}
-__name(isSpecialProperty, "isSpecialProperty");
-var ReflectService = class {
-  constructor(ctx) {
-    this.ctx = ctx;
-    defineProperty(this, symbols.tracker, {
-      property: "ctx",
-      noShadow: true
-    });
-    this.mixin("reflect", ["get", "set", "provide", "accessor", "mixin"]);
-    this.mixin("fiber", ["runtime", "effect"]);
-    this.mixin("registry", ["inject", "plugin"]);
-    this.mixin("events", ["on", "once", "parallel", "emit", "serial", "bail", "waterfall"]);
-  }
-  ctx;
-  static {
-    __name(this, "ReflectService");
-  }
-  static handler = {
-    get: /* @__PURE__ */ __name((target, prop, ctx) => {
-      if (isSpecialProperty(prop)) {
-        return Reflect.get(target, prop, ctx);
-      }
-      if (Reflect.has(target, prop)) {
-        return getTraceable(ctx, Reflect.get(target, prop, ctx));
-      }
-      const error = new Error(`cannot get property "${prop}" without inject`);
-      try {
-        const def = target.reflect.props[prop];
-        if (def?.type === "accessor") {
-          return def.get.call(ctx, ctx[symbols.receiver], error);
-        }
-        const defSite = ctx[symbols.shadow] ?? ctx;
-        if (!defSite.fiber.runtime) return ctx.reflect.get(prop, false);
-        return ctx.events.waterfall("internal/get", ctx, prop, error, () => {
-          const key = target[symbols.isolate][prop];
-          let fiber = defSite.fiber;
-          while (true) {
-            const impl = fiber.store?.[prop];
-            if (impl) return getTraceable(ctx, impl.value);
-            if (prop in fiber.inject) {
-              error.message = `cannot get required service "${prop}" in inactive context`;
-              throw error;
-            }
-            if (!fiber.runtime) throw error;
-            if (fiber.parent[symbols.isolate][prop] !== key) throw error;
-            fiber = fiber.parent.fiber;
-          }
-        });
-      } catch (e) {
-        throw e === error ? enhanceError(e) : e;
-      }
-    }, "get"),
-    set: /* @__PURE__ */ __name((target, prop, value, ctx) => {
-      if (isSpecialProperty(prop)) {
-        return Reflect.set(target, prop, value, ctx);
-      }
-      const error = new Error(`cannot set property "${prop}" without provide`);
-      const def = target.reflect.props[prop];
-      if (!def) {
-        if (!ctx.fiber.runtime) return Reflect.set(target, prop, value, ctx);
-        throw enhanceError(error);
-      }
-      try {
-        if (def.type === "accessor") {
-          if (!def.set) return false;
-          return def.set.call(ctx, value, ctx[symbols.receiver], error);
-        }
-        return ctx.events.waterfall("internal/set", ctx, prop, value, error, () => {
-          return ctx.reflect.set(prop, value, error);
-        });
-      } catch (e) {
-        throw e === error ? enhanceError(e) : e;
-      }
-    }, "set"),
-    has: /* @__PURE__ */ __name((target, prop) => {
-      if (isSpecialProperty(prop)) {
-        return Reflect.has(target, prop);
-      }
-      if (Reflect.has(target, prop)) return true;
-      return !!target.reflect.props[prop];
-    }, "has")
-  };
-  store = /* @__PURE__ */ Object.create(null);
-  props = /* @__PURE__ */ Object.create(null);
-  get(name, strict = true) {
-    return getTraceable(this.ctx, this._getImpl(name, strict)?.value);
-  }
-  _getImpl(name, strict = true) {
-    const key = this.ctx[symbols.isolate][name];
-    const impl = key && this.store[key];
-    if (!impl) return;
-    if (strict && impl.fiber.state !== 2) return;
-    return impl;
-  }
-  set(name, value, error) {
-    const key = this.ctx[symbols.isolate][name];
-    const impl = this.store[key];
-    if (!impl) {
-      throw new Error(`cannot set property "${name}" without provide`);
-    }
-    if (impl.fiber !== this.ctx.fiber) {
-      throw new Error(`cannot set property "${name}" in multiple fibers`);
-    }
-    impl.value = value;
-    return true;
-  }
-  provide(name, value, check) {
-    return this.ctx.fiber.effect(() => {
-      if (!this.props[name]) {
-        this.props[name] ??= { type: "service" };
-      } else if (this.props[name].type !== "service") {
-        throw new Error(`property "${name}" is already declared as ${this.props[name].type}`);
-      }
-      this.props[name] = { type: "service" };
-      this.ctx.root[symbols.isolate][name] ??= Symbol(name);
-      const key = this.ctx[symbols.isolate][name];
-      const impl = { name, value, fiber: this.ctx.fiber, check };
-      if (this.store[key]) {
-        throw new Error(`service "${name}" has been registered at <${this.store[key].fiber.name}>`);
-      }
-      this.store[key] = impl;
-      this.ctx.fiber.store[name] = impl;
-      if (this.ctx.fiber.state === 2) {
-        this.notify([name]);
-      }
-      return async () => {
-        delete this.store[key];
-        const fibers = this.notify([name]);
-        await Promise.allSettled(fibers.map((fiber) => fiber.await()));
-        delete this.ctx.fiber.store[name];
-      };
-    }, `ctx.provide(${JSON.stringify(name)})`);
-  }
-  notify(names, filter = (ctx, name) => ctx[symbols.isolate][name] === this.ctx[symbols.isolate][name]) {
-    const fibers = [];
-    for (const runtime of this.ctx.registry.values()) {
-      for (const fiber of runtime.fibers) {
-        let hasUpdate = false;
-        for (const name of names) {
-          if (!(name in fiber.inject)) continue;
-          if (!filter(fiber.ctx, name)) continue;
-          hasUpdate = true;
-          fiber._checkImpl(name);
-        }
-        if (!hasUpdate) continue;
-        fiber._refresh();
-        fibers.push(fiber);
-      }
-    }
-    for (const name of names) {
-      const self = Object.create(this.ctx);
-      self[symbols.filter] = (target) => filter(target, name);
-      this.ctx.events.emit(self, "internal/service", name, this._getImpl(name, false)?.value);
-    }
-    return fibers;
-  }
-  accessor(name, options) {
-    return this.ctx.fiber.effect(() => {
-      if (name in this.props) {
-        throw new Error(`property "${name}" is already declared as ${this.props[name].type}`);
-      }
-      this.props[name] = { type: "accessor", ...options };
-      return () => delete this.props[name];
-    }, `ctx.accessor(${JSON.stringify(name)})`);
-  }
-  mixin(source, mixins) {
-    const self = this;
-    return this.ctx.fiber.effect(function* () {
-      const entries = Array.isArray(mixins) ? mixins.map((key) => [key, key]) : Object.entries(mixins);
-      const getTarget = /* @__PURE__ */ __name((ctx, error) => {
-        return ctx[source];
-      }, "getTarget");
-      for (const [key, value] of entries) {
-        yield self.accessor(value, {
-          get(receiver, error) {
-            const service = getTarget(this, error);
-            if (isNullable(service)) return service;
-            const mixin = receiver ? withProps(receiver, service) : service;
-            const value2 = Reflect.get(service, key, mixin);
-            if (typeof value2 !== "function") return value2;
-            return value2.bind(mixin ?? service);
-          },
-          set(value2, receiver, error) {
-            const service = getTarget(this, error);
-            const mixin = receiver ? withProps(receiver, service) : service;
-            return Reflect.set(service, key, value2, mixin);
-          }
-        });
-      }
-    }, `ctx.mixin(${JSON.stringify(source)})`);
-  }
-  trace(value) {
-    return getTraceable(this.ctx, value);
-  }
-  bind(callback) {
-    return new Proxy(callback, {
-      apply: /* @__PURE__ */ __name((target, thisArg, args) => {
-        return Reflect.apply(target, this.trace(thisArg), args.map((arg) => this.trace(arg)));
-      }, "apply"),
-      construct: /* @__PURE__ */ __name((target, args, newTarget) => {
-        return Reflect.construct(target, args.map((arg) => this.trace(arg)), newTarget);
-      }, "construct")
-    });
-  }
-};
 function isApplicable(object) {
   return object && typeof object === "object" && typeof object.apply === "function";
 }
@@ -2154,7 +2266,7 @@ function Inject(name, config) {
       }
       value.inject[name] = config;
     } else if (decorator.kind === "method") {
-      const inject = (value[symbols.metadata] ??= {}).inject ??= /* @__PURE__ */ Object.create(null);
+      const inject = (value[symbols.decorator] ??= {}).inject ??= /* @__PURE__ */ Object.create(null);
       inject[name] = config;
       decorator.addInitializer(function() {
         const property = this[symbols.tracker]?.property;
@@ -2275,6 +2387,7 @@ var Context = class _Context {
   static {
     __name(this, "Context");
   }
+  static root = symbols.root;
   static effect = symbols.effect;
   static filter = symbols.filter;
   static isolate = symbols.isolate;
@@ -2290,7 +2403,7 @@ var Context = class _Context {
     this[symbols.isolate] = /* @__PURE__ */ Object.create(null);
     this[symbols.intercept] = /* @__PURE__ */ Object.create(null);
     const self = new Proxy(this, ReflectService.handler);
-    this.root = self;
+    this[symbols.root] = self;
     this.baseUrl = void 0;
     this.fiber = new Fiber(self, {}, /* @__PURE__ */ Object.create(null), null, () => []);
     this.reflect = new ReflectService(self);
@@ -2321,76 +2434,6 @@ var Context = class _Context {
     const intercept = Object.create(this[symbols.intercept]);
     intercept[name] = config;
     return this.extend({ [symbols.intercept]: intercept });
-  }
-};
-var Service = class _Service {
-  constructor(ctx, name) {
-    this.ctx = ctx;
-    name ??= this.constructor["provide"];
-    let self = this;
-    const tracker = {
-      associate: name,
-      property: "ctx"
-    };
-    if (self[symbols.invoke]) {
-      self = createCallable(name, joinPrototype(Object.getPrototypeOf(this), Function.prototype), tracker);
-    }
-    self.ctx = ctx;
-    self.name = name;
-    defineProperty(self, symbols.tracker, tracker);
-    self.ctx.reflect.provide(name, self, this[symbols.check]);
-    return self;
-  }
-  ctx;
-  static {
-    __name(this, "Service");
-  }
-  static init = symbols.init;
-  static check = symbols.check;
-  static config = symbols.config;
-  static invoke = symbols.invoke;
-  static extend = symbols.extend;
-  static tracker = symbols.tracker;
-  static resolveConfig = symbols.resolveConfig;
-  name;
-  [symbols.filter](ctx) {
-    return ctx[symbols.isolate][this.name] === this.ctx[symbols.isolate][this.name];
-  }
-  [symbols.extend](props) {
-    let self;
-    if (this[_Service.invoke]) {
-      self = createCallable(this.name, this, this[symbols.tracker]);
-    } else {
-      self = Object.create(this);
-    }
-    return Object.assign(self, props);
-  }
-  [symbols.resolveConfig](base, head) {
-    let intercept = this.ctx[Context.intercept];
-    const configs = [];
-    while (this.name in intercept) {
-      if (Object.hasOwn(intercept, this.name)) {
-        configs.unshift(intercept[this.name]);
-      }
-      intercept = Object.getPrototypeOf(intercept);
-    }
-    if (base) configs.unshift(base);
-    if (head) configs.push(head);
-    if (this["Config"]?.merge) {
-      return this["Config"].merge(...configs);
-    } else {
-      return Object.assign({}, ...configs);
-    }
-  }
-  static [Symbol.hasInstance](instance) {
-    if (!instance) return false;
-    let constructor = instance.constructor;
-    while (constructor) {
-      constructor = constructor.prototype?.constructor;
-      if (constructor === this) return true;
-      constructor &&= Object.getPrototypeOf(constructor);
-    }
-    return false;
   }
 };
 

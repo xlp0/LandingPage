@@ -1957,6 +1957,151 @@ sprints:
       total: 0
       vcard_refs: []
       state: specification
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-PKD-PERVASIVE-KERNEL-DOCUMENTATION-REORGANIZATION
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-PKD-PERVASIVE-KERNEL-DOCUMENTATION-REORGANIZATION
+    title: Program charter for EPIC-PKD pervasive kernel documentation reorganization
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:PKD-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKD-01
+    title: Sprint PKD-01 docs estate audit, DCO graduation handoff, and canonical taxonomy
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:pkd-01:dod_pkd_01_01_epic_dco_resides_under_docs_sprints_programs_dco_w
+        - vcard:pkd-01:dod_pkd_01_02_every_check_dco_py_verifier_resolves_its_graduated
+        - vcard:pkd-01:dod_pkd_01_03_registry_handle_moves_json_records_every_dco_sprin
+        - vcard:pkd-01:dod_pkd_01_04_registry_sprints_yaml_and_registry_display_registr
+        - vcard:pkd-01:dod_pkd_01_05_docs_sprints_active_pkd_evidence_pkd_00_codebase_a
+        - vcard:pkd-01:dod_pkd_01_06_docs_sprints_active_pkd_evidence_pkd_01_taxonomy_c
+        - vcard:pkd-01:dod_pkd_01_07_scripts_ci_check_pkd_taxonomy_py_self_test_detects
+        - vcard:pkd-01:dod_pkd_01_08_repository_documentation_testability_and_sprint_es
+      state: sealed
+  - handle: urn:pcard:sprint:PKD-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKD-02
+    title: Sprint PKD-02 pervasive clm-kernel installation and Diataxis developer guides
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:pkd-02:dod_pkd_02_01_docs_guides_organizes_all_11_content_guides_under_
+        - vcard:pkd-02:dod_pkd_02_02_docs_guides_tutorials_install_and_run_clm_kernel_a
+        - vcard:pkd-02:dod_pkd_02_03_docs_guides_how_to_mount_mcard_filesystem_and_name
+        - vcard:pkd-02:dod_pkd_02_04_docs_guides_how_to_dispatch_flux_mcard_tokens_and_
+        - vcard:pkd-02:dod_pkd_02_05_docs_guides_reference_clm_kernel_package_subpaths_
+        - vcard:pkd-02:dod_pkd_02_06_every_clm_kernel_symbol_imported_in_docs_guides_co
+        - vcard:pkd-02:dod_pkd_02_07_updated_scripts_ci_check_dco_docs_py_diataxis_and_
+        - vcard:pkd-02:dod_pkd_02_08_documentation_reachability_and_estate_gates_pass_w
+      state: sealed
+  - handle: urn:pcard:sprint:PKD-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKD-03
+    title: Sprint PKD-03 Pillar 1 MCard File System and Plan 9 namespace architecture
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:pkd-03:dod_pkd_03_01_all_5_pre_evacuation_migration_reports_reside_unde
+        - vcard:pkd-03:dod_pkd_03_02_docs_architecture_01_foundations_md_symlink_is_ret
+        - vcard:pkd-03:dod_pkd_03_03_docs_architecture_01_pillar_one_mcard_filesystem_a
+        - vcard:pkd-03:dod_pkd_03_04_docs_architecture_01_pillar_one_mcard_filesystem_a
+        - vcard:pkd-03:dod_pkd_03_05_clm_kernel_clm_js_core_src_shared_handlekind_ts_js
+        - vcard:pkd-03:dod_pkd_03_06_docs_architecture_plan9_namespace_mcard_function_n
+        - vcard:pkd-03:dod_pkd_03_07_scripts_ci_check_pkd_pillar1_docs_py_self_test_det
+        - vcard:pkd-03:dod_pkd_03_08_documentation_reachability_dco_architecture_tracea
+      state: sealed
+  - handle: urn:pcard:sprint:PKD-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKD-04
+    title: Sprint PKD-04 Pillar 2 generic and meta Language Runtime architecture
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:pkd-04:dod_pkd_04_01_all_provider_pages_under_clm_docs_architecture_con
+        - vcard:pkd-04:dod_pkd_04_02_all_11_runtime_cross_submodule_symlinks_are_remove
+        - vcard:pkd-04:dod_pkd_04_03_docs_architecture_02_pillar_two_generic_meta_langu
+        - vcard:pkd-04:dod_pkd_04_04_docs_architecture_02_pillar_two_generic_meta_langu
+        - vcard:pkd-04:dod_pkd_04_05_docs_architecture_02_pillar_two_generic_meta_langu
+        - vcard:pkd-04:dod_pkd_04_06_docs_architecture_02_pillar_two_generic_meta_langu
+        - vcard:pkd-04:dod_pkd_04_07_root_overview_topology_and_catalog_navigation_chec
+        - vcard:pkd-04:dod_pkd_04_08_documentation_traceability_reachability_and_clm_bo
+      state: sealed
+  - handle: urn:pcard:sprint:PKD-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKD-05
+    title: Sprint PKD-05 Pillar 3 Flux networking and MCard token payload architecture
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:pkd-05:dod_pkd_05_01_zero_filesystem_symlinks_exist_anywhere_under_docs
+        - vcard:pkd-05:dod_pkd_05_02_docs_architecture_03_pillar_three_flux_networking_
+        - vcard:pkd-05:dod_pkd_05_03_docs_architecture_03_pillar_three_flux_networking_
+        - vcard:pkd-05:dod_pkd_05_04_docs_architecture_03_pillar_three_flux_networking_
+        - vcard:pkd-05:dod_pkd_05_05_studio_s_single_writer_flux_boundary_check_passes_
+        - vcard:pkd-05:dod_pkd_05_06_docs_architecture_readme_md_and_mcard_studio_docs_
+        - vcard:pkd-05:dod_pkd_05_07_scripts_ci_check_pkd_pillar3_docs_py_self_test_det
+        - vcard:pkd-05:dod_pkd_05_08_documentation_traceability_reachability_and_estate
+      state: sealed
+  - handle: urn:pcard:sprint:PKD-06
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKD-06
+    title: Sprint PKD-06 theory reorganization, three-pillar grounding, and claim maturity
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:pkd-06:dod_pkd_06_01_docs_theory_holds_only_readme_md_at_top_level_and_
+        - vcard:pkd-06:dod_pkd_06_02_all_17_relocated_docs_theory_artifacts_carry_prove
+        - vcard:pkd-06:dod_pkd_06_03_docs_theory_04_flux_and_mesh_postellaw_md_and_all_
+        - vcard:pkd-06:dod_pkd_06_04_docs_theory_02_filesystem_and_sor_essays_cite_real
+        - vcard:pkd-06:dod_pkd_06_05_docs_theory_01_foundations_and_docs_theory_03_meta
+        - vcard:pkd-06:dod_pkd_06_06_docs_theory_04_flux_and_mesh_essays_cite_real_acti
+        - vcard:pkd-06:dod_pkd_06_07_every_non_index_theory_essay_declares_proved_speci
+        - vcard:pkd-06:dod_pkd_06_08_repository_documentation_reachability_and_estate_c
+      state: sealed
+  - handle: urn:pcard:sprint:PKD-07
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKD-07
+    title: Sprint PKD-07 normative specifications, ADR consolidation, and historical demotion
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:pkd-07:dod_pkd_07_01_all_8_superseded_release_and_planning_documents_re
+        - vcard:pkd-07:dod_pkd_07_02_active_specifications_technical_01_clm_language_sp
+        - vcard:pkd-07:dod_pkd_07_03_docs_specifications_mcard_filesystem_and_namespace
+        - vcard:pkd-07:dod_pkd_07_04_docs_specifications_flux_mcard_token_payload_netwo
+        - vcard:pkd-07:dod_pkd_07_05_docs_decisions_contains_sequential_dec_18_through_
+        - vcard:pkd-07:dod_pkd_07_06_docs_specifications_readme_md_indexes_all_active_t
+        - vcard:pkd-07:dod_pkd_07_07_existing_scripts_ci_check_dco_specifications_py_fu
+        - vcard:pkd-07:dod_pkd_07_08_documentation_reachability_and_estate_checks_pass_
+      state: sealed
+  - handle: urn:pcard:sprint:PKD-08
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKD-08
+    title: Sprint PKD-08 index hubs, root manifest alignment, handle-move registry, and certification
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:pkd-08:dod_pkd_08_01_docs_index_md_contains_zero_clm_core_and_active_mc
+        - vcard:pkd-08:dod_pkd_08_02_docs_changelog_readme_md_documents_the_pre_clm_ker
+        - vcard:pkd-08:dod_pkd_08_03_root_readme_md_replaces_createsavepoint_with_savep
+        - vcard:pkd-08:dod_pkd_08_04_root_makefile_formal_check_invokes_scripts_ci_run_
+        - vcard:pkd-08:dod_pkd_08_05_registry_handle_moves_json_records_all_54_non_spri
+        - vcard:pkd-08:dod_pkd_08_06_kernel_version_consensus_0_0_21_published_pin_and_
+        - vcard:pkd-08:dod_pkd_08_07_docs_sprints_active_pkd_evidence_pkd_08_certificat
+        - vcard:pkd-08:dod_pkd_08_08_makefile_check_estate_runs_scripts_ci_verify_pkd_c
+      state: sealed
   - handle: urn:pcard:sprint:DCO-01
     card_type: pcard
     archetype: ClmTriadManifest
@@ -1966,7 +2111,7 @@ sprints:
       total: 8
       vcard_refs:
         - vcard:dco-01:dod_dco_01_01_the_drift_register_records_the_exact_scanner_outpu
-        - vcard:dco-01:dod_dco_01_02_the_census_matches_the_48_clm_target_names_and_sep
+        - vcard:dco-01:dod_dco_01_02_the_census_matches_the_54_clm_target_names_and_sep
         - vcard:dco-01:dod_dco_01_03_active_normative_documents_root_makefile_help_and_
         - vcard:dco-01:dod_dco_01_04_the_documentation_estate_check_passes_across_the_r
         - vcard:dco-01:dod_dco_01_05_the_entrypoint_docs_index_md_carries_the_mandatory
@@ -1982,12 +2127,12 @@ sprints:
     dod:
       total: 8
       vcard_refs:
-        - vcard:dco-02:dod_dco_02_01_both_consumers_exact_pin_the_published_version_rec
-        - vcard:dco-02:dod_dco_02_02_all_five_kernel_version_surfaces_agree_on_the_work
+        - vcard:dco-02:dod_dco_02_01_both_consumer_package_manifests_exact_pin_clm_kern
+        - vcard:dco-02:dod_dco_02_02_all_inspected_kernel_version_surfaces_agree_on_the
         - vcard:dco-02:dod_dco_02_03_no_consumer_imports_kernel_source_directly_every_c
         - vcard:dco-02:dod_dco_02_04_the_root_gitmodules_declares_exactly_the_three_can
-        - vcard:dco-02:dod_dco_02_05_every_submodule_worktree_is_clean_and_checked_out_
-        - vcard:dco-02:dod_dco_02_06_the_pinning_matrix_docs_sprints_active_evidence_dc
+        - vcard:dco-02:dod_dco_02_05_the_pointer_verifier_proves_each_root_gitlink_equa
+        - vcard:dco-02:dod_dco_02_06_the_pinning_matrix_records_workspace_consumer_vers
         - vcard:dco-02:dod_dco_02_07_the_pointer_proposal_specification_defines_witness
         - vcard:dco-02:dod_dco_02_08_the_landingpage_retirement_audit_passes_confirming
       state: sealed
@@ -2000,7 +2145,7 @@ sprints:
       total: 8
       vcard_refs:
         - vcard:dco-03:dod_dco_03_01_the_formal_lock_declares_lean_coq_julia_and_tla_pr
-        - vcard:dco-03:dod_dco_03_02_the_oci_manifest_pins_image_digest_os_platform_for
+        - vcard:dco-03:dod_dco_03_02_the_manifest_records_the_image_digest_platform_loc
         - vcard:dco-03:dod_dco_03_03_at_least_two_runs_on_the_same_source_commit_image_
         - vcard:dco-03:dod_dco_03_04_the_python_oracle_runner_resolves_binaries_and_arg
         - vcard:dco-03:dod_dco_03_05_the_portable_typescript_witness_validator_passes_i
@@ -2050,7 +2195,7 @@ sprints:
     dod:
       total: 8
       vcard_refs:
-        - vcard:dco-06:dod_dco_06_01_the_normative_release_specifications_describe_the_
+        - vcard:dco-06:dod_dco_06_01_the_normative_release_specifications_describe_publ
         - vcard:dco-06:dod_dco_06_02_synccontract_v1_names_each_wire_type_canonical_cod
         - vcard:dco-06:dod_dco_06_03_the_normative_mcard_functional_closure_document_di
         - vcard:dco-06:dod_dco_06_04_the_functional_closure_specification_states_the_co
@@ -5953,9 +6098,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: a71c4c6fd499bc713860a7276d7d91ee9876456eac625b5ecc4f3aad298dd376
-  projection_sha256: 4c2753bf31b08e9afb6542d5b5226386f8d6bd7bf7ab70c58ec158c09f50d121
-  kernel_version: 0.0.21
-  landing_page_commit: 7e0548af7c42cd0c9ce8153848d0d80653c2553b
-  sprint_count: 286
+  source_sha256: 86caf507cab29e3a99a31e3ea5cb417d208f2a9d79d12bc89288b5c93bdd6f83
+  projection_sha256: 403150758e82e2ca7c58c312fe53274ad01bf084dae7794345082ac2a382a49b
+  kernel_version: 0.0.22
+  landing_page_commit: a057be0b992d7a90047357e1cadd7b4cf907b78d
+  sprint_count: 295
   unresolved_trace_refs: 0

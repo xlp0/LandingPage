@@ -83,7 +83,7 @@ describe('GQC-07 documentation alignment and gate contracts', () => {
   it('GQC-07-UNIT-02: verifies kernel version consensus and server/test/Astro port ownership', () => {
     const repoCheck = checkVersionAndPortContracts(DEFAULT_ROOT_DIR);
     assert.deepEqual(repoCheck.errors, []);
-    assert.equal(repoCheck.expectedKernel, '0.0.20');
+    assert.equal(repoCheck.expectedKernel, '0.0.21');
 
     withTempDir((tmpDir) => {
       writeRel(
