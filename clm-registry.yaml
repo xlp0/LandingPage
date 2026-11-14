@@ -1977,10 +1977,10 @@ sprints:
         - vcard:pkd-01:dod_pkd_01_01_epic_dco_resides_under_docs_sprints_programs_dco_w
         - vcard:pkd-01:dod_pkd_01_02_every_check_dco_py_verifier_resolves_its_graduated
         - vcard:pkd-01:dod_pkd_01_03_registry_handle_moves_json_records_every_dco_sprin
-        - vcard:pkd-01:dod_pkd_01_04_registry_sprints_yaml_and_registry_display_registr
+        - vcard:pkd-01:dod_pkd_01_04_registry_sprints_yaml_and_landingpage_clm_registry
         - vcard:pkd-01:dod_pkd_01_05_docs_sprints_active_pkd_evidence_pkd_00_codebase_a
         - vcard:pkd-01:dod_pkd_01_06_docs_sprints_active_pkd_evidence_pkd_01_taxonomy_c
-        - vcard:pkd-01:dod_pkd_01_07_scripts_ci_check_pkd_taxonomy_py_self_test_detects
+        - vcard:pkd-01:dod_pkd_01_07_scripts_ci_check_pkd_taxonomy_py_self_test_rejects
         - vcard:pkd-01:dod_pkd_01_08_repository_documentation_testability_and_sprint_es
       state: sealed
   - handle: urn:pcard:sprint:PKD-02
@@ -2015,7 +2015,7 @@ sprints:
         - vcard:pkd-03:dod_pkd_03_05_clm_kernel_clm_js_core_src_shared_handlekind_ts_js
         - vcard:pkd-03:dod_pkd_03_06_docs_architecture_plan9_namespace_mcard_function_n
         - vcard:pkd-03:dod_pkd_03_07_scripts_ci_check_pkd_pillar1_docs_py_self_test_det
-        - vcard:pkd-03:dod_pkd_03_08_documentation_reachability_dco_architecture_tracea
+        - vcard:pkd-03:dod_pkd_03_08_documentation_reachability_current_pkd_architectur
       state: sealed
   - handle: urn:pcard:sprint:PKD-04
     card_type: pcard
@@ -2025,7 +2025,7 @@ sprints:
     dod:
       total: 8
       vcard_refs:
-        - vcard:pkd-04:dod_pkd_04_01_all_provider_pages_under_clm_docs_architecture_con
+        - vcard:pkd-04:dod_pkd_04_01_the_seven_named_provider_pages_under_clm_docs_arch
         - vcard:pkd-04:dod_pkd_04_02_all_11_runtime_cross_submodule_symlinks_are_remove
         - vcard:pkd-04:dod_pkd_04_03_docs_architecture_02_pillar_two_generic_meta_langu
         - vcard:pkd-04:dod_pkd_04_04_docs_architecture_02_pillar_two_generic_meta_langu
@@ -2042,7 +2042,7 @@ sprints:
     dod:
       total: 8
       vcard_refs:
-        - vcard:pkd-05:dod_pkd_05_01_zero_filesystem_symlinks_exist_anywhere_under_docs
+        - vcard:pkd-05:dod_pkd_05_01_zero_filesystem_symlinks_exist_anywhere_under_root
         - vcard:pkd-05:dod_pkd_05_02_docs_architecture_03_pillar_three_flux_networking_
         - vcard:pkd-05:dod_pkd_05_03_docs_architecture_03_pillar_three_flux_networking_
         - vcard:pkd-05:dod_pkd_05_04_docs_architecture_03_pillar_three_flux_networking_
@@ -2065,7 +2065,7 @@ sprints:
         - vcard:pkd-06:dod_pkd_06_04_docs_theory_02_filesystem_and_sor_essays_cite_real
         - vcard:pkd-06:dod_pkd_06_05_docs_theory_01_foundations_and_docs_theory_03_meta
         - vcard:pkd-06:dod_pkd_06_06_docs_theory_04_flux_and_mesh_essays_cite_real_acti
-        - vcard:pkd-06:dod_pkd_06_07_every_non_index_theory_essay_declares_proved_speci
+        - vcard:pkd-06:dod_pkd_06_07_every_non_index_theory_essay_assigns_justified_per
         - vcard:pkd-06:dod_pkd_06_08_repository_documentation_reachability_and_estate_c
       state: sealed
   - handle: urn:pcard:sprint:PKD-07
@@ -2098,7 +2098,7 @@ sprints:
         - vcard:pkd-08:dod_pkd_08_03_root_readme_md_replaces_createsavepoint_with_savep
         - vcard:pkd-08:dod_pkd_08_04_root_makefile_formal_check_invokes_scripts_ci_run_
         - vcard:pkd-08:dod_pkd_08_05_registry_handle_moves_json_records_all_54_non_spri
-        - vcard:pkd-08:dod_pkd_08_06_kernel_version_consensus_0_0_21_published_pin_and_
+        - vcard:pkd-08:dod_pkd_08_06_kernel_version_consensus_after_an_explicit_decisio
         - vcard:pkd-08:dod_pkd_08_07_docs_sprints_active_pkd_evidence_pkd_08_certificat
         - vcard:pkd-08:dod_pkd_08_08_makefile_check_estate_runs_scripts_ci_verify_pkd_c
       state: sealed
@@ -6098,9 +6098,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: ec76531bae041bf0896402370c1b68c9a74c91edc81ae76bd1fbae241122ca61
-  projection_sha256: 403150758e82e2ca7c58c312fe53274ad01bf084dae7794345082ac2a382a49b
-  kernel_version: 0.0.22
-  landing_page_commit: 06b572dd22548a20dbe387567d865dc5302be7d4
+  source_sha256: de5742c19733b8c6fdca34764471c82a6350d948172371f332492eb05290820e
+  projection_sha256: d1dd40c4cb2afad2a8a5bd0767c553afdda96bc350cb8748cfc636ec98387742
+  kernel_version: 0.0.23
+  landing_page_commit: 468eef5357d66596d75ee036e2eee7823a3c97cb
   sprint_count: 295
   unresolved_trace_refs: 0
