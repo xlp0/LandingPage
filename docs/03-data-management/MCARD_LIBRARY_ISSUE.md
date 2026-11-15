@@ -10,7 +10,7 @@
 ## Resolved Integration Issues
 
 1. **Binary Corruption During UTF-8 Coercion (`SMO-01`)**
-   Resolved by verifying `clm-kernel@0.0.13` digests over raw `Buffer` bytes (`toRawBuffer`) in `CanonicalTriadBackend.get(hash)` and streaming media via `GET /api/mcard/:hash/raw` before any text decoding.
+   Resolved by verifying `clm-kernel@0.0.22` digests over raw `Buffer` bytes (`toRawBuffer`) in `CanonicalTriadBackend.get(hash)` and streaming media via `GET /api/mcard/:hash/raw` before any text decoding.
 2. **Client vs Server Kernel Version Skew (`SPRINT-GQC-05`, `SPRINT-GQC-07`)**
    `js/harness/recorder.js` previously stamped `lab.clmKernel: '0.0.10'` after the server upgraded to `clm-kernel@0.0.12`. `recorder.js` now exports `DEFAULT_CLM_KERNEL_VERSION = '0.0.13'` (with injectable `clmKernelVersion`), while `validateTestRun` and `parseStoredTestRunRecord` continue reading historical `0.0.10` records without mutation.
 3. **Closed `responsive_test_run:v1` Top-Level Schema vs Petri Net Linkage (`SPRINT-GQC-05`)**

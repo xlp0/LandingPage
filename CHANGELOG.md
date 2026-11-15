@@ -9,6 +9,11 @@ All notable changes to the PKC Landing Page are documented in this file. The for
 
 ## [Unreleased]
 
+- **Published `clm-kernel@0.0.22` Consumer Consensus (2026-11-15)**:
+  - Pin `clm-kernel` to `"0.0.22"` in `package.json`, `package-lock.json`, and `public/js/vendor/mcard-bundle.js` in lockstep with `mcard-studio` while tracking active CLM workspace version `0.0.23`.
+  - Advance `KERNEL_PROVENANCE = 'clm-kernel@0.0.22'` in `server/mcard-api.mjs` and `server/mcard-modality.mjs`, plus `DEFAULT_CLM_KERNEL_VERSION = '0.0.22'` in `js/harness/recorder.js`.
+  - Update the stale-version check in `scripts/check-docs.mjs`, unit contract assertions, `clm-registry.yaml` display projection across graduated `EPIC-PKD`, and living documentation in `README.md`, `docs/00-getting-started/START_HERE.md`, `tests/README.md`, and `tests/TEST_DOCUMENTATION.md`.
+
 - **Published `clm-kernel@0.0.21` Consumer Consensus (2026-11-11)**:
   - Pin `clm-kernel` to `"0.0.21"` in `package.json`, `package-lock.json`, and `public/js/vendor/mcard-bundle.js` in lockstep with `mcard-studio` while tracking active CLM workspace version `0.0.22`.
   - Advance `KERNEL_PROVENANCE = 'clm-kernel@0.0.21'` in `server/mcard-api.mjs` and `server/mcard-modality.mjs`, plus `DEFAULT_CLM_KERNEL_VERSION = '0.0.21'` in `js/harness/recorder.js`.

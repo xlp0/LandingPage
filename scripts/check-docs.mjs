@@ -348,6 +348,10 @@ export function checkMarkdownFiles({
   const errors = [];
   const files = collectMarkdownFiles(rootDir);
   const resolvedRoot = path.resolve(rootDir);
+  const pkgPath = path.join(resolvedRoot, 'package.json');
+  const expectedKernel = fs.existsSync(pkgPath)
+    ? JSON.parse(fs.readFileSync(pkgPath, 'utf8'))?.dependencies?.['clm-kernel'] || null
+    : null;
 
   for (const relPath of files) {
     const absPath = path.join(resolvedRoot, relPath);
@@ -435,13 +439,16 @@ export function checkMarkdownFiles({
 
     const lines = content.split(/\r?\n/);
     lines.forEach((line, idx) => {
-      if (
-        /clm-kernel@0\.0\.(3|9|10|11|12)\b/.test(line) &&
-        !/historical|graduated|superseded|earlier|legacy|smo/i.test(line)
-      ) {
-        errors.push(
-          `${relPath}:${idx + 1}: stale kernel version claim "${line.trim()}" must use clm-kernel@0.0.21 or explicitly label historical context`
-        );
+      if (!expectedKernel || /historical|graduated|superseded|earlier|legacy|smo/i.test(line)) {
+        return;
+      }
+      for (const match of line.matchAll(/clm-kernel@(\d+\.\d+\.\d+)\b/g)) {
+        if (match[1] !== expectedKernel) {
+          errors.push(
+            `${relPath}:${idx + 1}: stale kernel version claim "${line.trim()}" must use clm-kernel@${expectedKernel} or explicitly label historical context`
+          );
+          break;
+        }
       }
     });
   }

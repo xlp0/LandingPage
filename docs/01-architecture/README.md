@@ -5,7 +5,7 @@
 | Audience | Architects, developers, and QA engineers navigating the LandingPage architecture tier |
 | BMAD Owner | Architect (`bmad-agent-architect`) |
 | Source of Truth | [`ws-server.js`](../../ws-server.js), [`astro.config.mjs`](../../astro.config.mjs), [`src/net/workbench-net.yaml`](../../src/net/workbench-net.yaml), and [`package.json`](../../package.json) |
-| Consensus Kernel | `clm-kernel@0.0.13` |
+| Consensus Kernel | `clm-kernel@0.0.22` |
 
 This directory documents the verified architecture, Petri net topology, Astro island boundaries, and MCard storage contracts of the **LandingPage** repository.
 
@@ -13,7 +13,7 @@ This directory documents the verified architecture, Petri net topology, Astro is
 
 ## Monorepo Context and Estate Boundaries (`ULR-01`)
 
-Within the `MCard_TDD` workspace, `LandingPage` serves as **Estate 4 (Submodule 3)** consuming published `clm-kernel@0.0.13`.
+Within the `MCard_TDD` workspace, `LandingPage` serves as **Estate 4 (Submodule 3)** consuming published `clm-kernel@0.0.22`.
 
 ```
 ┌────────────────────────────────────────────────────────┐
@@ -28,7 +28,7 @@ Within the `MCard_TDD` workspace, `LandingPage` serves as **Estate 4 (Submodule 
        └────────┬────────┘      └────────┬────────┘
                 │                        │
                 └───────────┬────────────┘
-                            │ (consumes clm-kernel@0.0.13)
+                            │ (consumes clm-kernel@0.0.22)
                    ┌────────▼────────┐
                    │  LandingPage/   │
                    │ Estate 4: Sub 3 │
@@ -36,7 +36,7 @@ Within the `MCard_TDD` workspace, `LandingPage` serves as **Estate 4 (Submodule 
 ```
 
 1. **Estate 1 (`MCard_TDD`)** coordinates cross-estate schemas and retirement gates.
-2. **Estate 2 (`clm/`)** provides the pure Cubical Logic Model microkernel published as `clm-kernel@0.0.13`.
+2. **Estate 2 (`clm/`)** provides the pure Cubical Logic Model microkernel published as `clm-kernel@0.0.22`.
 3. **Estate 3 (`mcard-studio/`)** provides the multi-panel desktop and web studio workspace.
 4. **Estate 4 (`LandingPage/`)** provides the Responsive UI Lab workbench (`responsive-lab.html`), the single-page 4-modality MCard viewer (`/?noredirect=1`), and the SSRF-guarded external portal membrane.
 
@@ -55,7 +55,7 @@ Hosted by `src/pages/responsive-lab.astro` (`astro-islands`, 7 Preact islands) a
 
 ### 2. Single-Page 4-Modality MCard Viewer (`/?noredirect=1`)
 
-- Distills the landing page as `urn:mcard:content:landing_page` via `js/landing-page-mcard.js` and `server/mcard-modality.mjs` (`clm-kernel@0.0.13`).
+- Distills the landing page as `urn:mcard:content:landing_page` via `js/landing-page-mcard.js` and `server/mcard-modality.mjs` (`clm-kernel@0.0.22`).
 - Serves the 6-sample corpus (`data/samples/portal_samples.mcard.db`) on the canonical 3-table SQLite Triad (`card`, `handle_registry`, `handle_history`).
 - Renders `media`, `document`, inert `code` (`data-execution="inert"`), and sandboxed `webapp` payloads without `allow-same-origin` leaks.
 
@@ -71,7 +71,7 @@ Hosted by `src/pages/responsive-lab.astro` (`astro-islands`, 7 Preact islands) a
 - **[landing-page-architecture.md](./landing-page-architecture.md)** covers the end-to-end workbench vs target boundary, invariants, three hash domains, Page-as-Place and Functional-Link-as-Transition contracts, and PenPot scope.
 - **[astro-host-and-islands.md](./astro-host-and-islands.md)** covers `astro@7.4.2`, `@astrojs/node@11.1.9` middleware order, the 7 Preact islands on `responsive-lab.html`, port assignments, and UI server-call policy.
 - **[workbench-net.md](./workbench-net.md)** provides the generated reference table and Mermaid topology for all `31` Places and `65` Transitions in `src/net/workbench-net.yaml`.
-- **[UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md](./UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md)** covers the 4-modality MCard classifier (`media`, `document`, `code`, `webapp`) backed by `clm-kernel@0.0.13`.
+- **[UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md](./UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md)** covers the 4-modality MCard classifier (`media`, `document`, `code`, `webapp`) backed by `clm-kernel@0.0.22`.
 - **[MCARD_MODULAR_ARCHITECTURE.md](./MCARD_MODULAR_ARCHITECTURE.md)** covers MCard package boundaries, the three hash domains, and `scripts/check-package-source-parity.mjs`.
 - **[CUBIC-LOGIC-MODEL.md](./CUBIC-LOGIC-MODEL.md)** introduces the Abstract, Concrete, and Balanced CLM dimensions.
 - **[redux-clm-type-theory.md](./redux-clm-type-theory.md)** documents categorical state typing for isolated CLM renderers.

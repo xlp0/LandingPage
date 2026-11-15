@@ -5,7 +5,7 @@
 | Audience | Product managers, Scrum masters, developers, and operators |
 | BMAD Owner | Scrum Master and Product Manager (`bmad-agent-pm`) |
 | Source of Truth | [`docs/sprints/INDEX.md`](../sprints/INDEX.md), [`docs/sprints/_active/INDEX.md`](../sprints/_active/INDEX.md), and [`package.json`](../../package.json) |
-| Consensus Kernel | `clm-kernel@0.0.13` |
+| Consensus Kernel | `clm-kernel@0.0.22` |
 
 ## Program Summary
 

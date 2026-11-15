@@ -33,7 +33,7 @@ docs/
 ├── 00-getting-started/               # Onboarding, quickstart, port map, status, lab usage
 ├── 01-architecture/                  # System architecture, Astro islands, generated workbench-net.md
 ├── 02-authentication/                # Zitadel OIDC, Google OAuth, PKCE, privacy redaction
-├── 03-data-management/               # SQLite Triad, clm-kernel@0.0.13, MCard rendering
+├── 03-data-management/               # SQLite Triad, clm-kernel@0.0.22, MCard rendering
 ├── 04-networking/                    # WebRTC P2P mesh, WebSocket /ws/ on port 3000, SSRF guards
 ├── 05-state-management/              # lab-runtime.js coordinator, isolated Redux stores, FSM
 ├── 06-components/                    # Preact islands, CLM components, 3D Theater, games

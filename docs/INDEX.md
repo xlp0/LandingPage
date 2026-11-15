@@ -5,7 +5,7 @@
 | Audience | Developers, architects, product managers, QA engineers, and operators |
 | BMAD Owner | Tech Writer (`bmad-agent-tech-writer`) |
 | Source of Truth | [`README.md`](../README.md), [`docs/README.md`](./README.md), and [`src/net/workbench-net.yaml`](../src/net/workbench-net.yaml) |
-| Consensus Kernel | `clm-kernel@0.0.13` |
+| Consensus Kernel | `clm-kernel@0.0.22` |
 
 Welcome to the master documentation index for **PKC Landing Page, Universal 4-Modality MCard Content Browser, and Responsive Test Workbench** (Estate 4 / Submodule 3 of `MCard_TDD`).
 
@@ -61,7 +61,7 @@ Maintained capability reference documents (`DECISIONS.tsv` row 63), complementin
 | **00. Getting Started** | Developer onboarding, port map (`3000`, `4322`, `3001`), operational status, interactive lab guide | [00-getting-started/README.md](00-getting-started/README.md) |
 | **01. Architecture** | [LandingPage Architecture](01-architecture/landing-page-architecture.md), [Astro Host and Islands](01-architecture/astro-host-and-islands.md), [Workbench Net](01-architecture/workbench-net.md), [Universal 4-Modality MCard Browser](01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md) | [01-architecture/README.md](01-architecture/README.md) |
 | **02. Authentication** | Zitadel OIDC, Google OAuth setup, PKCE flow, privacy redaction (`INV-PRV-01`) | [02-authentication/README.md](02-authentication/README.md) |
-| **03. Data Management** | Canonical SQLite Triad, `clm-kernel@0.0.13` consensus, three hash domains, sample corpus | [03-data-management/README.md](03-data-management/README.md) |
+| **03. Data Management** | Canonical SQLite Triad, `clm-kernel@0.0.22` consensus, three hash domains, sample corpus | [03-data-management/README.md](03-data-management/README.md) |
 | **04. Networking** | WebRTC P2P data mesh, WebSocket `/ws/` signaling on port `3000`, SSRF membrane | [04-networking/README.md](04-networking/README.md) |
 | **05. State Management** | `lab-runtime.js` coordinator, isolated legacy Redux stores, 20-pair recording FSM | [05-state-management/README.md](05-state-management/README.md) |
 | **06. Components** | Preact islands, Responsive Lab harness modules, CLM Three Sets, 3D Theater, games | [06-components/README.md](06-components/README.md) |

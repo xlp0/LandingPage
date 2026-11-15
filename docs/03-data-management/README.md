@@ -5,7 +5,7 @@
 | Audience | Developers and architects working with the SQLite Triad, MCard APIs, and rendering pipelines |
 | BMAD Owner | Architect (`bmad-agent-architect`) and Developer (`bmad-agent-dev`) |
 | Source of Truth | [`server/mcard-api.mjs`](../../server/mcard-api.mjs), [`server/mcard-modality.mjs`](../../server/mcard-modality.mjs), and [`server/test-run-api.mjs`](../../server/test-run-api.mjs) |
-| Consensus Kernel | `clm-kernel@0.0.13` |
+| Consensus Kernel | `clm-kernel@0.0.22` |
 
 ## Canonical Storage and Hash Authority
 
@@ -15,7 +15,7 @@
 
 ## Documents in This Section
 
-- [MCARD_LIBRARY_STRATEGY.md](./MCARD_LIBRARY_STRATEGY.md) covers `clm-kernel@0.0.13` consensus and the three hash domains.
+- [MCARD_LIBRARY_STRATEGY.md](./MCARD_LIBRARY_STRATEGY.md) covers `clm-kernel@0.0.22` consensus and the three hash domains.
 - [MCARD_LIBRARY_USAGE.md](./MCARD_LIBRARY_USAGE.md) covers `/api/mcard` and `/api/test-runs` endpoints on port `3000` (`3001` in Playwright).
 - [MCARD_LIBRARY_ISSUE.md](./MCARD_LIBRARY_ISSUE.md) records resolved binary-streaming, provenance, and closed-schema issues.
 - [MCARD-JS-SETUP.md](./MCARD-JS-SETUP.md) and [MCARD-UPDATE-2.1.13.md](./MCARD-UPDATE-2.1.13.md) cover `mcard-js` vendor bundle setup and history.

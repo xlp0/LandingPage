@@ -11,7 +11,7 @@
 
 `LandingPage` enforces a strict runtime boundary between server-side content addressing and browser-side UI modules.
 
-1. **Server Authority (`clm-kernel@0.0.13`).** [`server/mcard-api.mjs`](../../server/mcard-api.mjs), [`server/mcard-modality.mjs`](../../server/mcard-modality.mjs), [`server/test-run-api.mjs`](../../server/test-run-api.mjs), and [`scripts/net-to-netmcard.mjs`](../../scripts/net-to-netmcard.mjs) run exclusively in Node and delegate Blake3 hashing, MIME/type interpretation, Layer 1 Petri net assembly (`NetMCard`), and Layer 4 firing receipts (`FiringReceiptMCard`) to `clm-kernel@0.0.13`.
+1. **Server Authority (`clm-kernel@0.0.22`).** [`server/mcard-api.mjs`](../../server/mcard-api.mjs), [`server/mcard-modality.mjs`](../../server/mcard-modality.mjs), [`server/test-run-api.mjs`](../../server/test-run-api.mjs), and [`scripts/net-to-netmcard.mjs`](../../scripts/net-to-netmcard.mjs) run exclusively in Node and delegate Blake3 hashing, MIME/type interpretation, Layer 1 Petri net assembly (`NetMCard`), and Layer 4 firing receipts (`FiringReceiptMCard`) to `clm-kernel@0.0.22`.
 2. **Browser Compatibility Layer (`public/js/mcard-kernel/`).** Legacy Mission Control (`/app.html`) loads [`public/js/mcard-kernel/MCardManager.js`](../../public/js/mcard-kernel/MCardManager.js) and [`public/js/mcard-kernel/compat.js`](../../public/js/mcard-kernel/compat.js) for browser-local IndexedDB card management. `compat.js` computes Web Crypto SHA-256 keys strictly for local IndexedDB entries and never substitutes for server Triad Blake3 digests.
 3. **Zero Kernel Imports in Astro Islands.** None of the seven Preact islands in [`src/islands/`](../../src/islands/) or harness modules in [`js/harness/`](../../js/harness/) import `clm-kernel` or Node `crypto`.
 
