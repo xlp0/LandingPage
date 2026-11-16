@@ -98,7 +98,7 @@ export const PKC = {
   },
 
   async _loadModules(modules, options = {}) {
-    const loader = options.loader || ((entry) => import(entry));
+    const loader = options.loader || ((entry) => import(/* @vite-ignore */ entry));
     const loadedModules = {};
 
     for (const m of modules) {

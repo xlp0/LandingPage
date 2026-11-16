@@ -45,8 +45,8 @@
       "migratedInSprint": null,
       "appVariant": {
         "path": "js/pkc-core.js",
-        "bytes": 6888,
-        "sha256": "5af77ec9a3dbb6de133a6576079c1af976c8450ecb48749306c3afefeac940f1",
+        "bytes": 6907,
+        "sha256": "060b6cb439430bfbd6ff493ebe4291711e678d862551205bed095f7e7ef05b7e",
         "contractSummary": "Canonical LandingPage browser loader with GQC-04 topological dependsOn ordering, reverse stop() teardown, and onModuleError containment."
       },
       "packageVariant": {
