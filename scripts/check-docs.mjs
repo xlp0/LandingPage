@@ -1,6 +1,7 @@
 import fs from 'node:fs';
+import { findPackageJSON } from 'node:module';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { loadNetEnvelope } from './check-net.mjs';
 import {
   renderWorkbenchNetDocs,
@@ -438,17 +439,34 @@ export function checkMarkdownFiles({
     }
 
     const lines = content.split(/\r?\n/);
+    const versionPatterns = [
+      /clm-kernel@(\d+\.\d+\.\d+)\b/g,
+      /DEFAULT_CLM_KERNEL_VERSION\s*=\s*['"](\d+\.\d+\.\d+)['"]/g,
+      /lab\.clmKernel:\s*['"](\d+\.\d+\.\d+)['"]/g
+    ];
     lines.forEach((line, idx) => {
-      if (!expectedKernel || /historical|graduated|superseded|earlier|legacy|smo/i.test(line)) {
+      if (!expectedKernel) {
         return;
       }
-      for (const match of line.matchAll(/clm-kernel@(\d+\.\d+\.\d+)\b/g)) {
-        if (match[1] !== expectedKernel) {
-          errors.push(
-            `${relPath}:${idx + 1}: stale kernel version claim "${line.trim()}" must use clm-kernel@${expectedKernel} or explicitly label historical context`
-          );
-          break;
+      const sentences = line.split(/(?<=[.!?])\s+/);
+      let reported = false;
+      for (const sentence of sentences) {
+        if (/historical|graduated|superseded|earlier|legacy|smo|previously/i.test(sentence)) {
+          continue;
         }
+        for (const pattern of versionPatterns) {
+          for (const match of sentence.matchAll(pattern)) {
+            if (match[1] !== expectedKernel) {
+              errors.push(
+                `${relPath}:${idx + 1}: stale kernel version claim "${line.trim()}" must use clm-kernel@${expectedKernel} or explicitly label historical context`
+              );
+              reported = true;
+              break;
+            }
+          }
+          if (reported) break;
+        }
+        if (reported) break;
       }
     });
   }
@@ -460,8 +478,11 @@ export function checkVersionAndPortContracts(rootDir = DEFAULT_ROOT_DIR) {
   const errors = [];
   const pkgPath = path.join(rootDir, 'package.json');
   const lockPath = path.join(rootDir, 'package-lock.json');
+  const apiPath = path.join(rootDir, 'server/mcard-api.mjs');
   const modalityPath = path.join(rootDir, 'server/mcard-modality.mjs');
   const recorderPath = path.join(rootDir, 'js/harness/recorder.js');
+  const STALE_022_INTEGRITY =
+    'sha512-PL/MmkHNQPZG90vwsmt7KUdnbYYm8sWKA2vlehURk4kBik33tNt0GmAmi4BNxUjzmj7Tbzw8hlwEN+bYfSjncQ==';
 
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
   const expectedKernel = pkg?.dependencies?.['clm-kernel'];
@@ -472,10 +493,73 @@ export function checkVersionAndPortContracts(rootDir = DEFAULT_ROOT_DIR) {
 
   if (fs.existsSync(lockPath)) {
     const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
-    const lockVer = lock?.packages?.['node_modules/clm-kernel']?.version;
+    const lockEntry = lock?.packages?.['node_modules/clm-kernel'];
+    const lockVer = lockEntry?.version;
     if (lockVer !== expectedKernel) {
       errors.push(
         `package-lock.json:1: locked clm-kernel version "${lockVer}" disagrees with package.json "${expectedKernel}"`
+      );
+    }
+    if (lockEntry?.resolved) {
+      if (!String(lockEntry.resolved).includes(`clm-kernel-${expectedKernel}.tgz`)) {
+        errors.push(
+          `package-lock.json:1: locked clm-kernel resolved URL "${lockEntry.resolved}" does not match clm-kernel-${expectedKernel}.tgz`
+        );
+      }
+      if (!lockEntry.integrity || (expectedKernel !== '0.0.22' && lockEntry.integrity === STALE_022_INTEGRITY)) {
+        errors.push(
+          'package-lock.json:1: locked clm-kernel integrity is missing or retains stale 0.0.22 digest'
+        );
+      }
+    }
+  }
+
+  let installedPkgPath = null;
+  try {
+    installedPkgPath = findPackageJSON('clm-kernel', pathToFileURL(pkgPath));
+  } catch {
+    installedPkgPath = null;
+  }
+  const resolvedRoot = path.resolve(rootDir);
+  const inLocalOrParentModules =
+    installedPkgPath &&
+    (installedPkgPath.startsWith(`${resolvedRoot}${path.sep}`) ||
+      installedPkgPath.startsWith(`${path.resolve(resolvedRoot, '..', 'node_modules')}${path.sep}`));
+  if (inLocalOrParentModules && fs.existsSync(installedPkgPath)) {
+    const installedPkg = JSON.parse(fs.readFileSync(installedPkgPath, 'utf8'));
+    if (installedPkg.version !== expectedKernel) {
+      errors.push(
+        `node_modules/clm-kernel/package.json:1: installed version "${installedPkg.version}" disagrees with package.json "${expectedKernel}"`
+      );
+    }
+    for (const sub of [
+      './primitives',
+      './petri',
+      './store',
+      './node',
+      './browser',
+      './api-surface.json',
+      './published-capabilities.json'
+    ]) {
+      if (!installedPkg.exports || !Object.prototype.hasOwnProperty.call(installedPkg.exports, sub)) {
+        errors.push(
+          `node_modules/clm-kernel/package.json:1: installed clm-kernel is missing required subpath export "${sub}"`
+        );
+      }
+    }
+    const installedDir = path.dirname(installedPkgPath);
+    for (const metaFile of ['api-surface.json', 'published-capabilities.json']) {
+      if (!fs.existsSync(path.join(installedDir, metaFile))) {
+        errors.push(`node_modules/clm-kernel/${metaFile}:1: required KC-01 metadata file is missing`);
+      }
+    }
+  }
+
+  if (fs.existsSync(apiPath)) {
+    const apiSrc = fs.readFileSync(apiPath, 'utf8');
+    if (!apiSrc.includes(`clm-kernel@${expectedKernel}`)) {
+      errors.push(
+        `server/mcard-api.mjs:1: KERNEL_PROVENANCE does not match clm-kernel@${expectedKernel}`
       );
     }
   }

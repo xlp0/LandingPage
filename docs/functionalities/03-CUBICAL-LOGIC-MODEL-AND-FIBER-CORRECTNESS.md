@@ -8,7 +8,7 @@
 | Operational Guide | [../01-architecture/workbench-net.md](../01-architecture/workbench-net.md) |
 > **Location**: [`LandingPage/docs/functionalities/03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md`](./03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md)  
 > **Source Files**: [`fiber-inspector.html`](../../src/pages/fiber-inspector.astro), [`fiber-conformance.html`](../../src/pages/fiber-conformance.astro), [`js/clm-iframe-loader.js`](../../js/clm-iframe-loader.js), [`js/redux/slices/clm-slice.js`](../../js/redux/slices/clm-slice.js), [`js/redux/middleware/clm-middleware.js`](../../js/redux/middleware/clm-middleware.js)  
-> **Kernel Version**: `clm-kernel@0.0.22` ([`server/mcard-modality.mjs`](../../server/mcard-modality.mjs))  
+> **Kernel Version**: `clm-kernel@0.0.23` ([`server/mcard-modality.mjs`](../../server/mcard-modality.mjs))  
 > **Status**: Comprehensive Functional Specification
 
 ---
@@ -42,9 +42,9 @@ graph TD
 
 ---
 
-## 2. Kernel Integration (`clm-kernel@0.0.22`)
+## 2. Kernel Integration (`clm-kernel@0.0.23`)
 
-Server-side MCard hashing, modality classification, and Petri net evaluation use published `clm-kernel@0.0.22` via [`server/mcard-modality.mjs`](../../server/mcard-modality.mjs) and [`server/mcard-api.mjs`](../../server/mcard-api.mjs), while browser-local IndexedDB views in `app.html` use [`public/js/mcard-kernel/compat.js`](../../public/js/mcard-kernel/compat.js). Browser islands never import `clm-kernel`.
+Server-side MCard hashing, modality classification, and Petri net evaluation use published `clm-kernel@0.0.23` via [`server/mcard-modality.mjs`](../../server/mcard-modality.mjs) and [`server/mcard-api.mjs`](../../server/mcard-api.mjs), while browser-local IndexedDB views in `app.html` use [`public/js/mcard-kernel/compat.js`](../../public/js/mcard-kernel/compat.js). Browser islands never import `clm-kernel`.
 
 Key capabilities exposed:
 1. **Manifest Parsing & Validation**: Reads declarative YAML/JSON Petri net and CLM manifests (`examples/*.clm.yaml`).

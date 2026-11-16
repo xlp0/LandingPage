@@ -8,12 +8,15 @@ const interpreter = TypeInterpreter.createDefault();
 const CODE_MIMES = new Set([
   'text/javascript',
   'application/javascript',
+  'text/jsx',
+  'text/tsx',
   'text/x-typescript',
   'application/typescript',
   'text/x-python',
   'text/rust',
   'text/x-rust',
   'text/x-sh',
+  'text/x-shellscript',
   'application/x-sh',
   'text/css',
   'application/sql',
@@ -21,13 +24,14 @@ const CODE_MIMES = new Set([
   'application/xml',
   'text/xml',
   'application/clm',
+  'application/x-clm',
   'text/x-c',
   'text/x-c++',
   'text/x-java',
 ]);
 
-const MEDIA_PREFIXES = ['image/', 'audio/', 'video/', 'model/'];
-const MEDIA_MIMES = new Set(['application/pdf', 'application/octet-stream']);
+const MEDIA_PREFIXES = ['image/', 'audio/', 'video/', 'model/', 'font/'];
+const MEDIA_MIMES = new Set(['application/pdf', 'application/octet-stream', 'application/3d-obj']);
 
 export function toRawBuffer(content) {
   if (Buffer.isBuffer(content)) return content;
@@ -71,16 +75,16 @@ function isMarkdownHeadingWithoutObjGeometry(text) {
   return /^#{1,6}\s+\S/m.test(text) && !(/^v\s+-?\d/m.test(text) && /^f\s+\d/m.test(text));
 }
 
-export function classifyMCardContent(content, { filename = '', mimeHint = '' } = {}) {
+export function classifyMCardContent(content, { filename = '', mimeHint = '', extHint = '' } = {}) {
   const rawBytes = toRawBuffer(content);
   const uint8 = new Uint8Array(rawBytes.buffer, rawBytes.byteOffset, rawBytes.byteLength);
   const binary = isBinaryContent(rawBytes);
 
-  const extHint = filename ? filename.split('.').pop()?.toLowerCase() : '';
+  const explicitExt = extHint ? String(extHint).replace(/^\./, '').toLowerCase() : '';
   const judgment = interpreter.judge({
     data: uint8,
     filename: filename || undefined,
-    extHint: extHint || undefined,
+    extHint: explicitExt || undefined,
   });
 
   if (mimeHint && mimeHint.includes('/')) {
@@ -94,8 +98,9 @@ export function classifyMCardContent(content, { filename = '', mimeHint = '' } =
     };
   }
 
-  if (judgment.matchedRule === 'magic_bytes' || (extHint && judgment.matchedRule === 'extension_hint')) {
-    const mimeType = judgment.mime || detectMime(uint8, extHint);
+  const hintForDetect = explicitExt || filename || undefined;
+  if (judgment.matchedRule === 'magic_bytes' || (Boolean(hintForDetect) && judgment.matchedRule === 'extension_hint')) {
+    const mimeType = judgment.mime || detectMime(uint8, hintForDetect);
     return {
       mimeType,
       category: judgment.category || 'media',
@@ -106,7 +111,7 @@ export function classifyMCardContent(content, { filename = '', mimeHint = '' } =
   }
 
   if (binary) {
-    const sniffed = detectMime(uint8, extHint);
+    const sniffed = detectMime(uint8, hintForDetect);
     const mimeType = sniffed !== 'text/plain' ? sniffed : 'application/octet-stream';
     return {
       mimeType,

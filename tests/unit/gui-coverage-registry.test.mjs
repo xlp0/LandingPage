@@ -7,7 +7,8 @@ import {
   parsePetriNetYaml,
   IncidenceMatrix,
   ColoredPetriVM
-} from 'clm-kernel/layer1';
+} from 'clm-kernel/petri';
+import { MCardCollection, MemoryBackend } from 'clm-kernel/store';
 import {
   PENPOT_ARCHIVE_HASH,
   PENPOT_GRAPH_HASH,
@@ -296,7 +297,7 @@ export function validateNetEnvelope(envelope, { requireErrorRecovery = false } =
     }
   }
 
-  const vm = new ColoredPetriVM(parsedTopology);
+  const vm = new ColoredPetriVM(parsedTopology, new MCardCollection(new MemoryBackend()));
   if (!matrix.verifyPInvariant(vm.getMarking(), weights, 1)) {
     errors.push(`IncidenceMatrix.verifyPInvariant failed at entry marking for "${envelope.netId}"`);
   }
@@ -400,7 +401,7 @@ export async function replayFiringSequence(envelope, firingSequence) {
   if (!check.valid) {
     throw new Error(`Invalid net envelope: ${check.errors.join('; ')}`);
   }
-  const vm = new ColoredPetriVM(check.parsedTopology);
+  const vm = new ColoredPetriVM(check.parsedTopology, new MCardCollection(new MemoryBackend()));
   const records = [];
   for (const tid of firingSequence) {
     const rec = await vm.fireTransition(tid);
@@ -916,7 +917,7 @@ if (process.env.GQC_SKIP_TEST_REGISTRATION !== '1') {
     assert.deepEqual(check.errors, []);
     assert.equal(check.valid, true);
 
-    const vm = new ColoredPetriVM(check.parsedTopology);
+    const vm = new ColoredPetriVM(check.parsedTopology, new MCardCollection(new MemoryBackend()));
     await assert.rejects(
       () => vm.fireTransition('t_spa_back_overview'),
       /not enabled/i

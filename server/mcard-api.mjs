@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'node:path';
 import fs from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
-import { computeHash } from 'clm-kernel';
+import { computeHash } from 'clm-kernel/primitives';
 
 import {
   MODALITY_TYPES, classifyMCardContent, detectContentType, isBinaryContent, resolveModality, toRawBuffer,

@@ -6,7 +6,8 @@ import {
   parsePetriNetYaml,
   IncidenceMatrix,
   ColoredPetriVM
-} from 'clm-kernel/layer1';
+} from 'clm-kernel/petri';
+import { MCardCollection, MemoryBackend } from 'clm-kernel/store';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 export const ROOT_DIR = path.resolve(SCRIPT_DIR, '..');
@@ -641,7 +642,7 @@ export async function replayNetTrace(envelope, trace) {
 
   const seededTopology = parsePetriNetYaml(yaml.dump(seededRawTopology));
   const sessionWeights = buildSessionWeightMap(seededTopology.places, placeBindings);
-  const vm = new ColoredPetriVM(seededTopology);
+  const vm = new ColoredPetriVM(seededTopology, new MCardCollection(new MemoryBackend()));
 
   const resolveActiveSessionPlace = (marking) => {
     const holders = Object.entries(marking)

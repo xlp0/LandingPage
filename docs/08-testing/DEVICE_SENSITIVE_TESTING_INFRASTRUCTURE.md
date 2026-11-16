@@ -5,7 +5,7 @@
 | Audience | QA engineers, developers, and operators certifying responsive web targets with Responsive UI Lab and Playwright |
 | BMAD Owner | Test Architect and Architect (`bmad-agent-architect`) |
 | Source of Truth | [`js/device-registry.js`](../../js/device-registry.js), [`js/harness/`](../../js/harness/), [`scripts/playwright-replay-driver.mjs`](../../scripts/playwright-replay-driver.mjs), and [`server/test-run-api.mjs`](../../server/test-run-api.mjs) |
-| Consensus Kernel | `clm-kernel@0.0.22` |
+| Consensus Kernel | `clm-kernel@0.0.23` |
 
 ## 1. Overview
 
@@ -14,7 +14,7 @@
 1. **Dynamic Geometry and Orientation Reflow (`INV-RVP-01`)** swaps viewport width and height ($W \leftrightarrow H$) without clipping or outer window scrollbars (`INV-RVP-02`).
 2. **Horizontal Viewport Bleed (`INV-DEV-01`)** verifies `document.documentElement.scrollWidth <= window.innerWidth` across all viewports.
 3. **Touch Target Ergonomics (`INV-DEV-02`)** audits interactive controls ($\ge 44\text{px} \times 44\text{px}$) on coarse-pointer profiles.
-4. **Scale-Invariant Interaction Capture (`INV-ERB-01..04`)** buffers normalized $[0.0, 1.0]$ coordinates in memory ($N \le 2048$), redacts sensitive inputs (`INV-PRV-01`), stamps `lab.clmKernel: '0.0.13'` on new `responsive_test_run:v1` records (while keeping historical `0.0.10` runs readable), and persists Triad Blake3 MCards.
+4. **Scale-Invariant Interaction Capture (`INV-ERB-01..04`)** buffers normalized $[0.0, 1.0]$ coordinates in memory ($N \le 2048$), redacts sensitive inputs (`INV-PRV-01`), stamps `lab.clmKernel: '0.0.23'` on new `responsive_test_run:v1` records (while keeping historical `0.0.10` runs readable), and persists Triad Blake3 MCards.
 5. **Frame Budget and Layout Stability (`INV-DEV-04`)** tracks $16.6\text{ms}$ ($60\text{fps}$) frame budgets and Cumulative Layout Shift (CLS).
 
 > [!NOTE]
@@ -100,4 +100,4 @@ Conformance specs live under `tests/conformance/<slug>.conformance.json` (note t
 }
 ```
 
-When all 16 device and orientation combinations pass `INV-DEV-01` (`no-horizontal-overflow`) and `INV-DEV-03` (`orientation-preserves-state`), the conformance runner mints `urn:mcard:certification:responsive:v1` hashed with Triad Blake3 (`clm-kernel@0.0.22`) and bound to `urn:mcard:certification_latest:<slug>`.
+When all 16 device and orientation combinations pass `INV-DEV-01` (`no-horizontal-overflow`) and `INV-DEV-03` (`orientation-preserves-state`), the conformance runner mints `urn:mcard:certification:responsive:v1` hashed with Triad Blake3 (`clm-kernel@0.0.23`) and bound to `urn:mcard:certification_latest:<slug>`.

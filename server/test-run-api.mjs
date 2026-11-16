@@ -6,7 +6,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
-import { computeHash } from 'clm-kernel';
 import {
   TEST_RUN_SCHEMA,
   NAVIGATION_RUN_LINK_SCHEMA,

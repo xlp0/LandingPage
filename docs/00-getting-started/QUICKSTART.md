@@ -34,7 +34,7 @@ Open `http://localhost:3000/responsive-lab.html` in your browser. The workbench 
 - Switch between approved targets in the toolbar omnibar (such as `/tests/fixtures/spa-test-target.html`, `/index.html`, `/app.html`, or an external local target like `http://localhost:4321/`).
 - Pick any of the 8 built-in device profiles (`iPhone 16 Pro`, `Pixel 8`, `iPad Air`, `Desktop 1080p`, and others) and swap Portrait and Landscape orientation.
 - Step through the 5-tab **SPA Test Workflow** (`Target`, `Device`, `Places`, `Transitions`, `Evidence`).
-- Record normalized interactions, persist `responsive_test_run:v1` MCards (`clmKernel: '0.0.13'`) to `/api/test-runs`, and inspect conformance results.
+- Record normalized interactions, persist `responsive_test_run:v1` MCards (`clmKernel: '0.0.23'`) to `/api/test-runs`, and inspect conformance results.
 
 To open the **Single-Page 4-Modality MCard Viewer** instead of redirecting `/` to the Lab, open `http://localhost:3000/?noredirect=1`.
 

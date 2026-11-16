@@ -4,23 +4,25 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
 import {
-  PlaceMCard,
-  TransitionMCard,
-  TokenMCard,
-  NetMCard,
   MCardMarking,
   FiringReceiptMCard,
   Layer4TrellisNavigationNet
 } from 'clm-kernel';
 import {
+  PlaceMCard,
+  TransitionMCard,
+  TokenMCard,
+  NetMCard,
   parsePetriNetYaml,
   ColoredPetriVM
-} from 'clm-kernel/layer1';
+} from 'clm-kernel/petri';
+import { MCardCollection, MemoryBackend } from 'clm-kernel/store';
 import {
   CanonicalTriadBackend,
   DEFAULT_ALGORITHM,
   formatGTime,
-  hashContent
+  hashContent,
+  toRawBuffer
 } from '../server/mcard-api.mjs';
 import { canonicalJson } from '../js/harness/test-run-schema.js';
 import {
@@ -85,9 +87,7 @@ export function storeKernelMCard(storage, kernelItem, handle = null) {
   if (!card || !card.hash || card.content === undefined) {
     throw new Error('Invalid kernel MCard object missing card envelope');
   }
-  const rawBytes = Buffer.isBuffer(card.content)
-    ? card.content
-    : Buffer.from(card.content, 'utf8');
+  const rawBytes = toRawBuffer(card.content);
   const putRes = storage.put(rawBytes, {
     algorithm: DEFAULT_ALGORITHM,
     gTime: card.gTime
@@ -242,7 +242,7 @@ export async function persistWorkbenchTraceToTriad(storage, workbenchEnvelope, t
 
   const seededTopology = parsePetriNetYaml(yaml.dump(seededRawTopology));
   const sessionWeights = buildSessionWeights(seededTopology.places, placeBindings);
-  const vm = new ColoredPetriVM(seededTopology);
+  const vm = new ColoredPetriVM(seededTopology, new MCardCollection(new MemoryBackend()));
   const firingRecords = [];
 
   for (let idx = 0; idx < events.length; idx += 1) {

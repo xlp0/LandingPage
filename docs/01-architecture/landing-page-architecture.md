@@ -49,14 +49,14 @@ This document describes the verified architectural contracts of the **LandingPag
 │   │                                │                               │   │
 │   │   ┌────────────────────────────▼────────────────────────────┐  │   │
 │   │   │       Event Ring Buffer (FIFO, N <= 2048) & FSM         │  │   │
-│   │   │       (`INV-ERB-01`, `INV-ERB-03`, `clmKernel 0.0.13`)  │  │   │
+│   │   │       (`INV-ERB-01`, `INV-ERB-03`, `clmKernel 0.0.23`)  │  │   │
 │   │   └────────────────────────────┬────────────────────────────┘  │   │
 │   └────────────────────────────────┼───────────────────────────────┘   │
 │                                    │                                   │
 │   ┌────────────────────────────────▼───────────────────────────────┐   │
 │   │        Backend & Persistence Layer (`server/test-run-api.mjs`) │   │
 │   │   - SQLite Triad (`card`, `handle_registry`, `handle_history`) │   │
-│   │   - Canonical JSON Serialization & Blake3 (`clm-kernel@0.0.22`)│   │
+│   │   - Canonical JSON Serialization & Blake3 (`clm-kernel@0.0.23`)│   │
 │   │   - Layer 1 Workbench NetMCard & Layer 4 Target Receipts       │   │
 │   │   - Headless Playwright Replay Driver (1x, 2x, 5x, fast)       │   │
 │   │   - 15-Check Device Conformance Catalog & Certification        │   │
@@ -78,7 +78,7 @@ This document describes the verified architectural contracts of the **LandingPag
 | **`INV-ERB-01`** | Bounded Memory Footprint | `EventRingBuffer` uses a preallocated circular slot array ($N \le 2048$). Pushing to a full buffer drops the oldest event in $O(1)$ without memory reallocation. |
 | **`INV-ERB-02`** | Spatial Invariance | Pointer coordinates normalize to $[0.0, 1.0]$ relative to the target's internal viewport where $x_{\text{norm}} = (x - \text{rect.left}) / w$. |
 | **`INV-ERB-03`** | Deterministic Recording FSM | State transitions between `IDLE`, `RECORDING`, `PAUSED`, and `STOPPED` obey a closed 20-pair transition table. |
-| **`INV-ERB-04`** | Content-Addressed Test Runs | Test run payloads sort keys canonically and hash via `clm-kernel@0.0.22` Blake3 before storage in the SQLite Triad. |
+| **`INV-ERB-04`** | Content-Addressed Test Runs | Test run payloads sort keys canonically and hash via `clm-kernel@0.0.23` Blake3 before storage in the SQLite Triad. |
 | **`INV-DSF-01`** | Declared Fidelity Tiers | Every run declares its emulation capability tier across T0 (Lab iframe), T1 (Playwright context), T2 (CDP throttling), or T3 (real physical hardware). |
 | **`INV-PRV-01`** | Privacy by Construction | Password fields, PIN inputs, and sensitive attributes are masked and redacted prior to ring buffer entry. |
 | **`INV-DEV-01`** | Zero Horizontal Bleed | `document.documentElement.scrollWidth <= window.innerWidth` is enforced across all viewports. |
@@ -89,9 +89,9 @@ This document describes the verified architectural contracts of the **LandingPag
 
 ## 4. Kernel Provenance, Three Hash Domains, and PenPot Boundaries
 
-### 4.1 Published Kernel Consensus (`clm-kernel@0.0.22`)
+### 4.1 Published Kernel Consensus (`clm-kernel@0.0.23`)
 
-`LandingPage` pins published `clm-kernel@0.0.13` in [`package.json`](../../package.json) and `package-lock.json`. [`server/mcard-modality.mjs`](../../server/mcard-modality.mjs) exports `KERNEL_PROVENANCE = 'clm-kernel@0.0.13'`, and [`js/harness/recorder.js`](../../js/harness/recorder.js) exports `DEFAULT_CLM_KERNEL_VERSION = '0.0.13'` (with injectable `clmKernelVersion` option and optional `<meta name="lab-kernel-version">` lookup) so newly recorded `urn:mcard:schema:responsive_test_run:v1` payloads stamp `lab.clmKernel: '0.0.13'`. Historical `responsive_test_run:v1` records stamped during earlier SMO sprints with `lab.clmKernel: '0.0.10'` remain valid and readable without rewriting (`DECISIONS.tsv` row 63).
+`LandingPage` pins published `clm-kernel@0.0.23` in [`package.json`](../../package.json) and `package-lock.json`. [`server/mcard-modality.mjs`](../../server/mcard-modality.mjs) exports `KERNEL_PROVENANCE = 'clm-kernel@0.0.23'`, and [`js/harness/recorder.js`](../../js/harness/recorder.js) exports `DEFAULT_CLM_KERNEL_VERSION = '0.0.23'` (with injectable `clmKernelVersion` option and optional `<meta name="lab-kernel-version">` lookup) so newly recorded `urn:mcard:schema:responsive_test_run:v1` payloads stamp `lab.clmKernel: '0.0.23'`. Historical `responsive_test_run:v1` records stamped during earlier SMO sprints with `lab.clmKernel: '0.0.10'` remain valid and readable without rewriting (`DECISIONS.tsv` row 63).
 
 ### 4.2 Three Distinct Hash Domains
 
@@ -99,7 +99,7 @@ This document describes the verified architectural contracts of the **LandingPag
 
 | Hash Domain | Module | Algorithm and Scope | Authority Rule |
 | --- | --- | --- | --- |
-| **1. Triad Content Hash** | [`server/mcard-api.mjs`](../../server/mcard-api.mjs) and [`server/test-run-api.mjs`](../../server/test-run-api.mjs) via `clm-kernel@0.0.22` | Canonical Blake3 (with SHA-256 verification compatibility) over raw card bytes or `canonicalJson()` payloads in SQLite `card(hash, content, g_time)` | Sole authoritative hash for MCard persistence, `NetMCard`, `FiringReceiptMCard`, `responsive_test_run:v1`, and certification records |
+| **1. Triad Content Hash** | [`server/mcard-api.mjs`](../../server/mcard-api.mjs) and [`server/test-run-api.mjs`](../../server/test-run-api.mjs) via `clm-kernel@0.0.23` | Canonical Blake3 (with SHA-256 verification compatibility) over raw card bytes or `canonicalJson()` payloads in SQLite `card(hash, content, g_time)` | Sole authoritative hash for MCard persistence, `NetMCard`, `FiringReceiptMCard`, `responsive_test_run:v1`, and certification records |
 | **2. Browser Compatibility Hash** | [`public/js/mcard-kernel/compat.js`](../../public/js/mcard-kernel/compat.js) | Web Crypto SHA-256 (`crypto.subtle.digest`) with deterministic fallback for local IndexedDB keys inside `app.html` (`MCardManager`) | Scoped strictly to browser-local Mission Control IndexedDB state; never accepted as a server Triad Blake3 digest |
 | **3. PenPot Navigation Graph Hash** | [`scripts/penpot-zip.mjs`](../../scripts/penpot-zip.mjs) and [`scripts/penpot-drift.mjs`](../../scripts/penpot-drift.mjs) | Node `crypto` SHA-256 over canonicalized PenPot navigation graph JSON extracted from `design/landing-navigation.penpot` | Used strictly at build/CI time to detect drift between `design/landing-navigation.penpot` and generated `js/nav.js` |
 

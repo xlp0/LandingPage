@@ -4,10 +4,17 @@
 | --- | --- |
 | Audience | Developers, operators, and release reviewers inspecting historical release milestones |
 | BMAD Owner | Tech Writer (`bmad-agent-tech-writer`) and Scrum Master |
-| Status / Scope | Historical release log; earlier SMO/ERB entries record historical `0.0.9` and `0.0.10` milestones superseded by `clm-kernel@0.0.13` |
+| Status / Scope | Historical release log; earlier SMO/ERB entries record historical `0.0.9` and `0.0.10` milestones superseded by `clm-kernel@0.0.23` |
 All notable changes to the PKC Landing Page are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+- **Published `clm-kernel@0.0.23` Consumer Consensus (2026-11-17)**:
+  - Install and lock authentic published `clm-kernel@0.0.23` (`sha512-Kfks6Y...`) in `package.json` and `package-lock.json` while tracking active CLM workspace version `0.0.24`.
+  - Migrate server and Petri net imports to `ADR-014` capability subpaths (`clm-kernel/primitives` in `server/mcard-api.mjs`, `clm-kernel/petri` and explicit host-free `clm-kernel/store` `MCardCollection`/`MemoryBackend` in `scripts/check-net.mjs`, `scripts/net-to-netmcard.mjs`, and `tests/unit/gui-coverage-registry.test.mjs`), remove the unused barrel import in `server/test-run-api.mjs`, and normalize kernel card bytes via `toRawBuffer`.
+  - Update `server/mcard-modality.mjs` for `KC-15`'s 95-type dictionary and compound extensions (`.excalidraw.json`, `.mcard.petri.json`, `.url.txt`, `.jsx`, `.sh`, `font/*`, `application/3d-obj`).
+  - Harden `scripts/check-docs.mjs` to verify `server/mcard-api.mjs` provenance, lockfile tarball/integrity, and installed `clm-kernel` `KC-01`/`KC-18` exports, add `tests/unit/clm-kernel-023-contracts.test.mjs` (`KC-01`, `KC-02` SQLite `runConsumerConformance`, `KC-04`, `KC-15`, `KC-18`, `KC-19`, `KC-20`, `KC-22`, `KC-26`), and align living documentation (`README.md`, `docs/`, `tests/`) to `clm-kernel@0.0.23`.
+  - Verified after final edits: `190/190` unit tests passing (`npm run test:unit`, `0` failed SQLite `KC-02` `runConsumerConformance` cases), `229` Markdown files passing `npm run docs:check`, and `30/30` Playwright smoke tests passing (`npm run test:smoke`).
 
 - **Published `clm-kernel@0.0.22` Consumer Consensus (2026-11-15)**:
   - Pin `clm-kernel` to `"0.0.22"` in `package.json`, `package-lock.json`, and `public/js/vendor/mcard-bundle.js` in lockstep with `mcard-studio` while tracking active CLM workspace version `0.0.23`.

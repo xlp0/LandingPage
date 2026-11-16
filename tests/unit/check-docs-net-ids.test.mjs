@@ -83,7 +83,7 @@ describe('GQC-07 documentation alignment and gate contracts', () => {
   it('GQC-07-UNIT-02: verifies kernel version consensus and server/test/Astro port ownership', () => {
     const repoCheck = checkVersionAndPortContracts(DEFAULT_ROOT_DIR);
     assert.deepEqual(repoCheck.errors, []);
-    assert.equal(repoCheck.expectedKernel, '0.0.22');
+    assert.equal(repoCheck.expectedKernel, '0.0.23');
 
     withTempDir((tmpDir) => {
       writeRel(
@@ -109,9 +109,15 @@ describe('GQC-07 documentation alignment and gate contracts', () => {
       assert.ok(mismatch.errors.some((e) => e.includes('README.md') && e.includes('4322')));
 
       writeRel(tmpDir, 'docs/stale-version.md', '# Stale\nUses `clm-kernel@0.0.9` today.\n');
+      writeRel(
+        tmpDir,
+        'docs/mixed-sentence.md',
+        "# Mixed\nExports `DEFAULT_CLM_KERNEL_VERSION = '0.0.9'` today. Historical SMO records with `0.0.10` remain valid.\n"
+      );
       writeRel(tmpDir, 'docs/labeled-historical.md', '# Historical Note\nGraduated SMO sprints recorded `clm-kernel@0.0.10` as historical provenance.\n');
       const mdCheck = checkMarkdownFiles({ rootDir: tmpDir });
       assert.ok(mdCheck.errors.some((e) => e.includes('docs/stale-version.md:2')));
+      assert.ok(mdCheck.errors.some((e) => e.includes('docs/mixed-sentence.md:2')));
       assert.ok(!mdCheck.errors.some((e) => e.includes('docs/labeled-historical.md')));
     });
   });

@@ -15,7 +15,7 @@
 | --- | --- | --- | --- |
 | Page Host and SSR Middleware | `astro@7.4.2`, `@astrojs/node@11.1.9` (`mode: 'middleware'`) | Active in production and development | Mounted inside `ws-server.js` after Express API and security middleware |
 | Interactive Client Islands | `@astrojs/preact@6.1.1`, `preact@11.1.0` | Active on `responsive-lab.html` (`7` islands) | Zero island JS is emitted on `astro-wrapped` pages |
-| Petri Net and MCard Kernel | `clm-kernel@0.0.22` | Server and build-time Node only | Never imported inside browser islands or client bundles |
+| Petri Net and MCard Kernel | `clm-kernel@0.0.23` | Server and build-time Node only | Never imported inside browser islands or client bundles |
 | Unit and Integration Runner | `node:test` (`npm run test:unit`) | Canonical | Earlier statements saying `LandingPage` did not adopt Astro or Vitest are superseded for Astro, while **Vitest remains un-adopted** |
 | Browser E2E and Replay Runner | `@playwright/test@^1.57.0` (`1.64.1` locked) (`npm test`) | Canonical | Runs against `ws-server.js` on isolated `TEST_PORT=3001` |
 
