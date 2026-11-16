@@ -1,10 +1,13 @@
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import dotenv from 'dotenv';
 import { defineConfig } from 'astro/config';
 import node from '@astrojs/node';
 import preact from '@astrojs/preact';
 import { netParityIntegration } from './src/integrations/net-parity.mjs';
 import { buildContentSecurityPolicy } from './js/harness/target-membrane.js';
+
+dotenv.config();
 
 const astroPublicUrl = new URL('./.cache/astro-public', import.meta.url);
 fs.mkdirSync(astroPublicUrl, { recursive: true });

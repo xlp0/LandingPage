@@ -43,7 +43,7 @@
     "install-browsers": "playwright install",
     "report": "playwright show-report",
     "ws-server": "node ws-server.js",
-    "dev": "node -e \"import('node:child_process').then(({spawn})=>{const a=spawn(process.execPath,['ws-server.js'],{stdio:'inherit'});const b=spawn(process.execPath,['./node_modules/astro/bin/astro.mjs','dev','--port',process.env.ASTRO_PORT||'4322'],{stdio:'inherit'});let stopping=false;const stop=(code=0)=>{if(stopping)return;stopping=true;a.kill('SIGTERM');b.kill('SIGTERM');setTimeout(()=>process.exit(code),150).unref();};process.on('SIGINT',()=>stop(0));process.on('SIGTERM',()=>stop(0));a.on('exit',(c)=>stop(c??0));b.on('exit',(c)=>stop(c??0));})\"",
+    "dev": "node -e \"Promise.all([import('node:child_process'),import('node:module'),import('node:path'),import('node:url')]).then(([{spawn},{createRequire},path,{pathToFileURL}])=>{const req=createRequire(pathToFileURL(path.resolve('package.json')));const astroBin=path.join(path.dirname(req.resolve('astro/package.json')),'bin','astro.mjs');const a=spawn(process.execPath,['ws-server.js'],{stdio:'inherit'});const b=spawn(process.execPath,[astroBin,'dev','--ignore-lock','--port',process.env.ASTRO_PORT||'4322'],{stdio:'inherit'});let stopping=false;const stop=(code=0)=>{if(stopping)return;stopping=true;a.kill('SIGTERM');b.kill('SIGTERM');setTimeout(()=>process.exit(code),150).unref();};process.on('SIGINT',()=>stop(0));process.on('SIGTERM',()=>stop(0));a.on('exit',(c)=>stop(c??0));b.on('exit',(c)=>stop(c??0));})\"",
     "build:mcard": "node scripts/build-mcard-bundle.js",
     "build:charts": "node scripts/build-chart-bundles.js",
     "build": "npm run build:astro && npm run build:packages",
