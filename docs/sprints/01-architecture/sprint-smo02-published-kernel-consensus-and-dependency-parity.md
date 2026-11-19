@@ -13,7 +13,7 @@ Two requirements govern how `LandingPage` consumes `clm-kernel`.
 
 1. **Consensus Must Use the Published Latest `clm-kernel` (`0.0.10`) All the Time (`INV-SMO-02`)**.
    The latest published version of `clm-kernel` across npm, PyPI, and crates.io is `0.0.10` (while in-tree `clm` manifests advance on `workspace_version: "0.0.11"`). Both consumer submodules (`mcard-studio` and `LandingPage`) and the consensus guard ([`mcard-studio/scripts/check-kernel-version-consensus.mjs`](../../../../mcard-studio/scripts/check-kernel-version-consensus.mjs)) must track and enforce the published latest version (`0.0.10`) across:
-   - [`mcard-studio/scripts/config/kernel-version-consensus.json`](../../../../mcard-studio/scripts/config/kernel-version-consensus.json) (`consensus_version: "0.0.10"`, `lockfile_pin: "0.0.10"`, `manifest_pin: "0.0.10"`, `nested_peer_range: ">=0.0.10 <0.1.0"`)
+   - `mcard-studio/scripts/config/kernel-version-consensus.json` (later relocated to root `config/kernel-version-consensus.json` in `FRO-01`) (`consensus_version: "0.0.10"`, `lockfile_pin: "0.0.10"`, `manifest_pin: "0.0.10"`, `nested_peer_range: ">=0.0.10 <0.1.0"`)
    - [`mcard-studio/package.json`](../../../../mcard-studio/package.json) and [`mcard-studio/package-lock.json`](../../../../mcard-studio/package-lock.json) (`"clm-kernel": "0.0.10"`)
    - [`mcard-studio/src/packages/mcard-studio/package.json`](../../../../mcard-studio/src/packages/mcard-studio/package.json) (`"clm-kernel": ">=0.0.10 <0.1.0"`)
    - [`LandingPage/package.json`](../../../package.json) and [`LandingPage/package-lock.json`](../../../package-lock.json) (`"clm-kernel": "0.0.10"`)
@@ -29,7 +29,7 @@ Two requirements govern how `LandingPage` consumes `clm-kernel`.
 ## 2. Concrete Implementation Deliverables
 
 ### 2.1 Published Latest `clm-kernel@0.0.10` Alignment Across Consumer Estates
-- Update [`mcard-studio/scripts/config/kernel-version-consensus.json`](../../../../mcard-studio/scripts/config/kernel-version-consensus.json), [`mcard-studio/package.json`](../../../../mcard-studio/package.json), [`mcard-studio/package-lock.json`](../../../../mcard-studio/package-lock.json), [`mcard-studio/src/packages/mcard-studio/package.json`](../../../../mcard-studio/src/packages/mcard-studio/package.json), [`LandingPage/package.json`](../../../package.json), [`LandingPage/package-lock.json`](../../../package-lock.json), and [`LandingPage/js/harness/recorder.js`](../../../js/harness/recorder.js) to `"0.0.10"`.
+- Update `mcard-studio/scripts/config/kernel-version-consensus.json` (relocated to root `config/kernel-version-consensus.json` in `FRO-01`), [`mcard-studio/package.json`](../../../../mcard-studio/package.json), [`mcard-studio/package-lock.json`](../../../../mcard-studio/package-lock.json), [`mcard-studio/src/packages/mcard-studio/package.json`](../../../../mcard-studio/src/packages/mcard-studio/package.json), [`LandingPage/package.json`](../../../package.json), [`LandingPage/package-lock.json`](../../../package-lock.json), and [`LandingPage/js/harness/recorder.js`](../../../js/harness/recorder.js) to `"0.0.10"`.
 - Enhance [`mcard-studio/scripts/check-kernel-version-consensus.mjs`](../../../../mcard-studio/scripts/check-kernel-version-consensus.mjs) so that it:
   1. Verifies `node_modules/clm-kernel/package.json` on disk matches `consensus_version` (`0.0.10`).
   2. Verifies `LandingPage/package.json` and `LandingPage/package-lock.json` match `consensus_version` (`0.0.10`) when `LandingPage` is present in the parent workspace.
