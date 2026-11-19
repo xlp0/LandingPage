@@ -1948,143 +1948,6 @@ sprints:
         - vcard:sprint-407:update_docs_architecture_code_migration_to_clm_md
         - vcard:sprint-407:graduate_sprints_403_407_into_the_12_aspect_deployment_architect
       state: sealed
-  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-RPH-PETRI-REPRODUCIBLE-JOBS
-    card_type: mcard
-    archetype: specification_mcard
-    code: 00-PROGRAM-CHARTER-EPIC-RPH-PETRI-REPRODUCIBLE-JOBS
-    title: EPIC-RPH reproducible PCard jobs on an emptied kernel
-    dod:
-      total: 0
-      vcard_refs: []
-      state: specification
-  - handle: urn:pcard:sprint:RPH-00
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: RPH-00
-    title: Sprint `RPH-00` sound handle head and commit boundary
-    dod:
-      total: 6
-      vcard_refs:
-        - vcard:rph-00:dod_rph_00_01_two_racing_create_only_binds_on_separate_connectio
-        - vcard:rph-00:dod_rph_00_02_a_bind_inside_a_caller_s_savepoint_is_undone_by_th
-        - vcard:rph-00:dod_rph_00_03_a_reference_without_a_card_an_empty_handle_and_a_s
-        - vcard:rph-00:dod_rph_00_04_a_store_scoped_to_one_run_does_not_treat_a_longer_
-        - vcard:rph-00:dod_rph_00_05_the_store_holds_the_same_tables_before_and_after_t
-        - vcard:rph-00:dod_rph_00_06_the_audit_record_gives_one_result_for_every_vector
-      state: sealed
-  - handle: urn:pcard:sprint:RPH-01
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: RPH-01
-    title: Sprint `RPH-01` PCard catalog and kenotic census
-    dod:
-      total: 7
-      vcard_refs:
-        - vcard:rph-01:dod_rph_01_01_a_fixed_checkout_and_source_set_give_the_same_snap
-        - vcard:rph-01:dod_rph_01_02_mixed_manifest_handle_runtime_and_dynamic_fixtures
-        - vcard:rph-01:dod_rph_01_03_a_parseable_unbound_card_and_an_unreadable_source_
-        - vcard:rph-01:dod_rph_01_04_snapshot_counts_reconcile_across_every_classificat
-        - vcard:rph-01:dod_rph_01_05_each_capability_flag_is_set_independently_and_is_b
-        - vcard:rph-01:dod_rph_01_06_every_declared_input_of_every_executable_fixture_e
-        - vcard:rph-01:dod_rph_01_07_the_census_lists_each_process_memory_item_on_the_t
-      state: sealed
-  - handle: urn:pcard:sprint:RPH-02
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: RPH-02
-    title: Sprint `RPH-02` quoted recipes and keys
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:rph-02:dod_rph_02_01_python_rust_and_typescript_produce_the_identities_
-        - vcard:rph-02:dod_rph_02_02_each_of_input_source_dependency_initial_state_envi
-        - vcard:rph-02:dod_rph_02_03_a_missing_reference_a_cyclic_reference_a_rebound_h
-        - vcard:rph-02:dod_rph_02_04_building_lowering_canonicalizing_and_keying_a_reci
-        - vcard:rph-02:dod_rph_02_05_a_rule_manifest_with_a_declared_service_is_refused
-        - vcard:rph-02:dod_rph_02_06_a_changed_input_changes_exactly_the_deep_keys_down
-        - vcard:rph-02:dod_rph_02_07_staged_payload_bytes_are_committed_unchanged_and_n
-        - vcard:rph-02:dod_rph_02_08_two_intents_that_lower_to_one_unit_graph_share_eve
-      state: sealed
-  - handle: urn:pcard:sprint:RPH-03
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: RPH-03
-    title: Sprint `RPH-03` keyed witness records and fetch
-    dod:
-      total: 6
-      vcard_refs:
-        - vcard:rph-03:dod_rph_03_01_a_deep_key_fetch_in_a_fresh_process_returns_the_pu
-        - vcard:rph-03:dod_rph_03_02_an_upstream_change_with_identical_output_bytes_mis
-        - vcard:rph-03:dod_rph_03_03_two_processes_that_publish_one_key_leave_one_head_
-        - vcard:rph-03:dod_rph_03_04_admission_refuses_a_wrong_key_record_a_tampered_ou
-        - vcard:rph-03:dod_rph_03_05_result_record_and_head_commit_together_inside_the_
-        - vcard:rph-03:dod_rph_03_06_the_kernel_module_holds_no_handle_prefix_of_its_ow
-      state: sealed
-  - handle: urn:pcard:sprint:RPH-04
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: RPH-04
-    title: Sprint `RPH-04` firing coordinator and assessment net
-    dod:
-      total: 7
-      vcard_refs:
-        - vcard:rph-04:dod_rph_04_01_an_assessment_that_rebuilds_its_state_from_the_tap
-        - vcard:rph-04:dod_rph_04_02_the_abstract_net_with_bounded_retries_reaches_its_
-        - vcard:rph-04:dod_rph_04_03_the_slot_invariant_holds_in_the_incidence_check_an
-        - vcard:rph-04:dod_rph_04_04_racing_claims_leave_one_owner_and_a_terminal_commi
-        - vcard:rph-04:dod_rph_04_05_result_receipt_slot_move_and_keyed_record_commit_t
-        - vcard:rph-04:dod_rph_04_06_an_intent_without_a_completion_recovers_as_indeter
-        - vcard:rph-04:dod_rph_04_07_seeded_schedules_with_a_crash_on_each_side_of_the_
-      state: sealed
-  - handle: urn:pcard:sprint:RPH-05
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: RPH-05
-    title: Sprint `RPH-05` isolated replay, comparison and exploration
-    dod:
-      total: 8
-      vcard_refs:
-        - vcard:rph-05:dod_rph_05_01_fresh_attempts_restore_identical_snapshots_into_se
-        - vcard:rph-05:dod_rph_05_02_a_missing_fixture_a_denied_authorization_a_failed_
-        - vcard:rph-05:dod_rph_05_03_each_policy_class_accepts_its_positive_fixture_and
-        - vcard:rph-05:dod_rph_05_04_the_causal_comparator_accepts_two_legal_interleavi
-        - vcard:rph-05:dod_rph_05_05_a_duplicate_attempt_reference_and_a_memo_hit_are_b
-        - vcard:rph-05:dod_rph_05_06_the_sequential_law_holds_as_an_equality_of_configu
-        - vcard:rph-05:dod_rph_05_07_revert_branch_and_replay_of_both_branches_work_fro
-        - vcard:rph-05:dod_rph_05_08_a_cross_context_comparison_names_both_job_referenc
-      state: sealed
-  - handle: urn:pcard:sprint:RPH-06
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: RPH-06
-    title: Sprint `RPH-06` Julia sheaf-oracle pilot
-    dod:
-      total: 7
-      vcard_refs:
-        - vcard:rph-06:dod_rph_06_01_an_authorized_pilot_binding_is_linked_to_a_new_inv
-        - vcard:rph-06:dod_rph_06_02_staged_bytes_oracle_source_dependency_environment_
-        - vcard:rph-06:dod_rph_06_03_an_absent_toolchain_yields_unavailable_a_partial_c
-        - vcard:rph-06:dod_rph_06_04_after_a_reproduced_assessment_a_deep_key_fetch_ret
-        - vcard:rph-06:dod_rph_06_05_an_assessment_over_a_populated_tape_launches_two_r
-        - vcard:rph-06:dod_rph_06_06_the_list_of_files_this_sprint_changes_contains_no_
-        - vcard:rph-06:dod_rph_06_07_the_feasibility_record_names_the_tested_package_ve
-      state: sealed
-  - handle: urn:pcard:sprint:RPH-07
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: RPH-07
-    title: Sprint `RPH-07` coverage, conformance and CI
-    dod:
-      total: 7
-      vcard_refs:
-        - vcard:rph-07:dod_rph_07_01_snapshot_coverage_accounts_for_every_entry_names_e
-        - vcard:rph-07:dod_rph_07_02_bundle_validation_detects_missing_stale_tampered_a
-        - vcard:rph-07:dod_rph_07_03_a_failing_gate_verdict_gives_a_false_all_passed_in
-        - vcard:rph-07:dod_rph_07_04_the_replay_command_verifies_every_referenced_byte_
-        - vcard:rph-07:dod_rph_07_05_seeded_schedules_with_crash_and_retry_preserve_the
-        - vcard:rph-07:dod_rph_07_06_the_kenotic_gate_fails_on_an_extra_table_on_a_cons
-        - vcard:rph-07:dod_rph_07_07_the_ci_run_performs_fresh_required_attempts_fails_
-      state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CAS
     card_type: mcard
     archetype: specification_mcard
@@ -5244,6 +5107,143 @@ sprints:
         - vcard:ret-03:dod_ret_03_07_the_graduation_certificate_ret_graduation_json_is_
         - vcard:ret-03:dod_ret_03_08_the_program_directory_active_graduates_and_is_relo
       state: sealed
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-RPH-PETRI-REPRODUCIBLE-JOBS
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-RPH-PETRI-REPRODUCIBLE-JOBS
+    title: EPIC-RPH reproducible PCard jobs on an emptied kernel
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:RPH-00
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RPH-00
+    title: Sprint `RPH-00` sound handle head and commit boundary
+    dod:
+      total: 6
+      vcard_refs:
+        - vcard:rph-00:dod_rph_00_01_two_racing_create_only_binds_on_separate_connectio
+        - vcard:rph-00:dod_rph_00_02_a_bind_inside_a_caller_s_savepoint_is_undone_by_th
+        - vcard:rph-00:dod_rph_00_03_a_reference_without_a_card_an_empty_handle_and_a_s
+        - vcard:rph-00:dod_rph_00_04_a_store_scoped_to_one_run_does_not_treat_a_longer_
+        - vcard:rph-00:dod_rph_00_05_the_store_holds_the_same_tables_before_and_after_t
+        - vcard:rph-00:dod_rph_00_06_the_audit_record_gives_one_result_for_every_vector
+      state: sealed
+  - handle: urn:pcard:sprint:RPH-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RPH-01
+    title: Sprint `RPH-01` PCard catalog and kenotic census
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:rph-01:dod_rph_01_01_a_fixed_checkout_and_source_set_give_the_same_snap
+        - vcard:rph-01:dod_rph_01_02_mixed_manifest_handle_runtime_and_dynamic_fixtures
+        - vcard:rph-01:dod_rph_01_03_a_parseable_unbound_card_and_an_unreadable_source_
+        - vcard:rph-01:dod_rph_01_04_snapshot_counts_reconcile_across_every_classificat
+        - vcard:rph-01:dod_rph_01_05_each_capability_flag_is_set_independently_and_is_b
+        - vcard:rph-01:dod_rph_01_06_every_declared_input_of_every_executable_fixture_e
+        - vcard:rph-01:dod_rph_01_07_the_census_lists_each_process_memory_item_on_the_t
+      state: sealed
+  - handle: urn:pcard:sprint:RPH-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RPH-02
+    title: Sprint `RPH-02` quoted recipes and keys
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:rph-02:dod_rph_02_01_python_rust_and_typescript_produce_the_identities_
+        - vcard:rph-02:dod_rph_02_02_each_of_input_source_dependency_initial_state_envi
+        - vcard:rph-02:dod_rph_02_03_a_missing_reference_a_cyclic_reference_a_rebound_h
+        - vcard:rph-02:dod_rph_02_04_building_lowering_canonicalizing_and_keying_a_reci
+        - vcard:rph-02:dod_rph_02_05_a_rule_manifest_with_a_declared_service_is_refused
+        - vcard:rph-02:dod_rph_02_06_a_changed_input_changes_exactly_the_deep_keys_down
+        - vcard:rph-02:dod_rph_02_07_staged_payload_bytes_are_committed_unchanged_and_n
+        - vcard:rph-02:dod_rph_02_08_two_intents_that_lower_to_one_unit_graph_share_eve
+      state: sealed
+  - handle: urn:pcard:sprint:RPH-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RPH-03
+    title: Sprint `RPH-03` keyed witness records and fetch
+    dod:
+      total: 6
+      vcard_refs:
+        - vcard:rph-03:dod_rph_03_01_a_deep_key_fetch_in_a_fresh_process_returns_the_pu
+        - vcard:rph-03:dod_rph_03_02_an_upstream_change_with_identical_output_bytes_mis
+        - vcard:rph-03:dod_rph_03_03_two_processes_that_publish_one_key_leave_one_head_
+        - vcard:rph-03:dod_rph_03_04_admission_refuses_a_wrong_key_record_a_tampered_ou
+        - vcard:rph-03:dod_rph_03_05_result_record_and_head_commit_together_inside_the_
+        - vcard:rph-03:dod_rph_03_06_the_kernel_module_holds_no_handle_prefix_of_its_ow
+      state: sealed
+  - handle: urn:pcard:sprint:RPH-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RPH-04
+    title: Sprint `RPH-04` firing coordinator and assessment net
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:rph-04:dod_rph_04_01_an_assessment_that_rebuilds_its_state_from_the_tap
+        - vcard:rph-04:dod_rph_04_02_the_abstract_net_with_bounded_retries_reaches_its_
+        - vcard:rph-04:dod_rph_04_03_the_slot_invariant_holds_in_the_incidence_check_an
+        - vcard:rph-04:dod_rph_04_04_racing_claims_leave_one_owner_and_a_terminal_commi
+        - vcard:rph-04:dod_rph_04_05_result_receipt_slot_move_and_keyed_record_commit_t
+        - vcard:rph-04:dod_rph_04_06_an_intent_without_a_completion_recovers_as_indeter
+        - vcard:rph-04:dod_rph_04_07_seeded_schedules_with_a_crash_on_each_side_of_the_
+      state: sealed
+  - handle: urn:pcard:sprint:RPH-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RPH-05
+    title: Sprint `RPH-05` isolated replay, comparison and exploration
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:rph-05:dod_rph_05_01_fresh_attempts_restore_identical_snapshots_into_se
+        - vcard:rph-05:dod_rph_05_02_a_missing_fixture_a_denied_authorization_a_failed_
+        - vcard:rph-05:dod_rph_05_03_each_policy_class_accepts_its_positive_fixture_and
+        - vcard:rph-05:dod_rph_05_04_the_causal_comparator_accepts_two_legal_interleavi
+        - vcard:rph-05:dod_rph_05_05_a_duplicate_attempt_reference_and_a_memo_hit_are_b
+        - vcard:rph-05:dod_rph_05_06_the_sequential_law_holds_as_an_equality_of_configu
+        - vcard:rph-05:dod_rph_05_07_revert_branch_and_replay_of_both_branches_work_fro
+        - vcard:rph-05:dod_rph_05_08_a_cross_context_comparison_names_both_job_referenc
+      state: sealed
+  - handle: urn:pcard:sprint:RPH-06
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RPH-06
+    title: Sprint `RPH-06` Julia sheaf-oracle pilot
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:rph-06:dod_rph_06_01_an_authorized_pilot_binding_is_linked_to_a_new_inv
+        - vcard:rph-06:dod_rph_06_02_staged_bytes_oracle_source_dependency_environment_
+        - vcard:rph-06:dod_rph_06_03_an_absent_toolchain_yields_unavailable_a_partial_c
+        - vcard:rph-06:dod_rph_06_04_after_a_reproduced_assessment_a_deep_key_fetch_ret
+        - vcard:rph-06:dod_rph_06_05_an_assessment_over_a_populated_tape_launches_two_r
+        - vcard:rph-06:dod_rph_06_06_the_list_of_files_this_sprint_changes_contains_no_
+        - vcard:rph-06:dod_rph_06_07_the_feasibility_record_names_the_tested_package_ve
+      state: sealed
+  - handle: urn:pcard:sprint:RPH-07
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: RPH-07
+    title: Sprint `RPH-07` coverage, conformance and CI
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:rph-07:dod_rph_07_01_snapshot_coverage_accounts_for_every_entry_names_e
+        - vcard:rph-07:dod_rph_07_02_bundle_validation_detects_missing_stale_tampered_a
+        - vcard:rph-07:dod_rph_07_03_a_failing_gate_verdict_gives_a_false_all_passed_in
+        - vcard:rph-07:dod_rph_07_04_the_replay_command_verifies_every_referenced_byte_
+        - vcard:rph-07:dod_rph_07_05_seeded_schedules_with_crash_and_retry_preserve_the
+        - vcard:rph-07:dod_rph_07_06_the_kenotic_gate_fails_on_an_extra_table_on_a_cons
+        - vcard:rph-07:dod_rph_07_07_the_ci_run_performs_fresh_required_attempts_fails_
+      state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-RVP
     card_type: pcard
     archetype: ClmTriadManifest
@@ -6235,9 +6235,9 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: 60374f44740d517bb9b8c22dc6d21be510f8a097569a02344bcc34a30b1c4aec
-  projection_sha256: d52c428dcc2c90384a165958552cfa6d9705ff6eda9c7479424d99e2e88a8e71
-  kernel_version: 0.0.24
-  landing_page_commit: f8453136bfedf0d9ddd26457669033acaae9fae9
+  source_sha256: 6078f71542e983a5fe5f24ea86a7cf1fc8d783881088b6f384b7fe56329e9549
+  projection_sha256: fc4d2d1817171dc3090d9e564f6c65e43ea54e30dbe3c13cfe61c0bc84ecb63e
+  kernel_version: 0.0.25
+  landing_page_commit: 3fb2cb85662597649f82d92d31e05fd9f99d208f
   sprint_count: 304
   unresolved_trace_refs: 0

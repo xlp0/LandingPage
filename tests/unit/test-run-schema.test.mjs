@@ -154,42 +154,42 @@ describe('Test Run Schema & Serialization (INV-ERB-04)', () => {
 });
 
 describe('GQC-07-UNIT-03: clmKernel provenance alignment and historical record compatibility', () => {
-  test('new InteractionRecorder runs stamp current clm-kernel 0.0.23 matching package.json and KERNEL_PROVENANCE', () => {
-    const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
-    assert.equal(DEFAULT_CLM_KERNEL_VERSION, '0.0.23');
-    assert.equal(pkg.dependencies['clm-kernel'], DEFAULT_CLM_KERNEL_VERSION);
-    assert.equal(KERNEL_PROVENANCE, `clm-kernel@${DEFAULT_CLM_KERNEL_VERSION}`);
+    test('new InteractionRecorder runs stamp current clm-kernel 0.0.24 matching package.json and KERNEL_PROVENANCE', () => {
+      const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
+      assert.equal(DEFAULT_CLM_KERNEL_VERSION, '0.0.24');
+      assert.equal(pkg.dependencies['clm-kernel'], DEFAULT_CLM_KERNEL_VERSION);
+      assert.equal(KERNEL_PROVENANCE, `clm-kernel@${DEFAULT_CLM_KERNEL_VERSION}`);
 
-    const recorder = new InteractionRecorder();
-    const run = recorder.buildTestRun({
-      target: { url: 'http://localhost:3000/tests/fixtures/spa-test-target.html' }
+      const recorder = new InteractionRecorder();
+      const run = recorder.buildTestRun({
+        target: { url: 'http://localhost:3000/tests/fixtures/spa-test-target.html' }
+      });
+      assert.equal(run.lab.clmKernel, '0.0.24');
+      const validation = validateTestRun(run);
+      assert.equal(validation.valid, true, validation.errors.join(', '));
     });
-    assert.equal(run.lab.clmKernel, '0.0.23');
-    const validation = validateTestRun(run);
-    assert.equal(validation.valid, true, validation.errors.join(', '));
+
+    test('InteractionRecorder honors explicit clmKernelVersion injection option', () => {
+      const recorder = new InteractionRecorder({ clmKernelVersion: '0.0.13-custom' });
+      const fromCtor = recorder.buildTestRun();
+      assert.equal(fromCtor.lab.clmKernel, '0.0.13-custom');
+
+      const fromCall = recorder.buildTestRun({ clmKernelVersion: '0.0.13-call' });
+      assert.equal(fromCall.lab.clmKernel, '0.0.13-call');
+    });
+
+    test('historical 0.0.10 responsive_test_run:v1 records remain valid and readable without rewriting', () => {
+      const historicalRun = createValidRunFixture();
+      assert.equal(historicalRun.lab.clmKernel, '0.0.10');
+
+      const validation = validateTestRun(historicalRun);
+      assert.equal(validation.valid, true, validation.errors.join(', '));
+
+      const storedBytes = canonicalJson(historicalRun);
+      const parsed = parseStoredTestRunRecord(JSON.parse(storedBytes));
+      assert.equal(parsed.ok, true);
+      assert.equal(parsed.record.schema, TEST_RUN_SCHEMA);
+      assert.equal(parsed.record.lab.clmKernel, '0.0.10');
+      assert.equal(canonicalJson(parsed.record), storedBytes);
+    });
   });
-
-  test('InteractionRecorder honors explicit clmKernelVersion injection option', () => {
-    const recorder = new InteractionRecorder({ clmKernelVersion: '0.0.13-custom' });
-    const fromCtor = recorder.buildTestRun();
-    assert.equal(fromCtor.lab.clmKernel, '0.0.13-custom');
-
-    const fromCall = recorder.buildTestRun({ clmKernelVersion: '0.0.13-call' });
-    assert.equal(fromCall.lab.clmKernel, '0.0.13-call');
-  });
-
-  test('historical 0.0.10 responsive_test_run:v1 records remain valid and readable without rewriting', () => {
-    const historicalRun = createValidRunFixture();
-    assert.equal(historicalRun.lab.clmKernel, '0.0.10');
-
-    const validation = validateTestRun(historicalRun);
-    assert.equal(validation.valid, true, validation.errors.join(', '));
-
-    const storedBytes = canonicalJson(historicalRun);
-    const parsed = parseStoredTestRunRecord(JSON.parse(storedBytes));
-    assert.equal(parsed.ok, true);
-    assert.equal(parsed.record.schema, TEST_RUN_SCHEMA);
-    assert.equal(parsed.record.lab.clmKernel, '0.0.10');
-    assert.equal(canonicalJson(parsed.record), storedBytes);
-  });
-});

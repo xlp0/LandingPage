@@ -422,7 +422,10 @@ export function analyzePlaceBytes({
 
   for (const [placeId, binding] of Object.entries(envelope?.bindings?.places || {})) {
     if (!binding || (binding.kind !== 'page' && binding.kind !== 'view')) continue;
-    const htmlAbsPath = path.join(distClientDir, binding.pagePath);
+    const isLegacyStatic = binding.migrationState === 'legacy-static';
+    const htmlAbsPath = isLegacyStatic
+      ? path.join(rootDir, binding.pagePath)
+      : path.join(distClientDir, binding.pagePath);
     if (!fs.existsSync(htmlAbsPath)) {
       violations.push(`${placeId}: missing built HTML file ${htmlAbsPath}`);
       continue;

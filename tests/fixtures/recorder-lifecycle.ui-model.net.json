@@ -1,0 +1,179 @@
+{
+  "kind": "net_mcard",
+  "marking": {
+    "FINALIZED": [],
+    "IDLE": [
+      {
+        "color_type": "any",
+        "hash": "e078455d0d1697c3f7416bfbf22d7fc5ee3c64dc39f1ee8d31f71cb85ad8aa78",
+        "payload": {
+          "session_id": "s_init_a"
+        },
+        "token_id": "s_init_a"
+      },
+      {
+        "color_type": "any",
+        "hash": "3725f3f3d80ae5326a8838169591b132565cba1c68391bac463621b444badadb",
+        "payload": {
+          "session_id": "s_init_b"
+        },
+        "token_id": "s_init_b"
+      }
+    ],
+    "PAUSED": [],
+    "RECORDING": []
+  },
+  "net_id": "recorder-lifecycle-net",
+  "places": [
+    {
+      "capacity": null,
+      "hash": "9bad7dac45d4675cc17de51c37a96b2871ef6983ababd6e31dd6723e98f6a298",
+      "place_id": "IDLE",
+      "role": "Intermediate",
+      "type_expr": "any"
+    },
+    {
+      "capacity": null,
+      "hash": "7ff184a024e7b1a6f4545b37e9dea27b0ac5e78df2848c3ea637412b14aff83a",
+      "place_id": "RECORDING",
+      "role": "Intermediate",
+      "type_expr": "any"
+    },
+    {
+      "capacity": null,
+      "hash": "679b41342ed4172523ee48a5cd5c8a9b53579a433c5910ed5aa9a2ef05d420c5",
+      "place_id": "PAUSED",
+      "role": "Intermediate",
+      "type_expr": "any"
+    },
+    {
+      "capacity": null,
+      "hash": "f457d01bf04d3740f2f4aa6c191b6dcc3ff07fd86c22b86d75e7fe5e970777e6",
+      "place_id": "FINALIZED",
+      "role": "Intermediate",
+      "type_expr": "any"
+    }
+  ],
+  "transitions": [
+    {
+      "codomain_type": "any",
+      "coeffects": {
+        "filesystem": "none",
+        "network": "none",
+        "random": "none",
+        "sqlite": "none",
+        "time": "none"
+      },
+      "domain_type": "any",
+      "hash": "87ec420ed7fe301b740e3cf8dfa950de057c89a2c1f115f0e371686f2103c763",
+      "input_places": [
+        "IDLE"
+      ],
+      "operation_expr": "identity",
+      "output_places": [
+        "RECORDING"
+      ],
+      "transition_id": "t_rec_start"
+    },
+    {
+      "codomain_type": "any",
+      "coeffects": {
+        "filesystem": "none",
+        "network": "none",
+        "random": "none",
+        "sqlite": "none",
+        "time": "none"
+      },
+      "domain_type": "any",
+      "hash": "819728f98f9cd90435bfa69984bd6908bea9f5940e71082e25270f104789ab1c",
+      "input_places": [
+        "RECORDING"
+      ],
+      "operation_expr": "identity",
+      "output_places": [
+        "PAUSED"
+      ],
+      "transition_id": "t_rec_pause"
+    },
+    {
+      "codomain_type": "any",
+      "coeffects": {
+        "filesystem": "none",
+        "network": "none",
+        "random": "none",
+        "sqlite": "none",
+        "time": "none"
+      },
+      "domain_type": "any",
+      "hash": "83a54fd1065955d3d943b567ebc6b5005250f2c619700b1769e44b0c95ff32d5",
+      "input_places": [
+        "PAUSED"
+      ],
+      "operation_expr": "identity",
+      "output_places": [
+        "RECORDING"
+      ],
+      "transition_id": "t_rec_resume"
+    },
+    {
+      "codomain_type": "any",
+      "coeffects": {
+        "filesystem": "none",
+        "network": "none",
+        "random": "none",
+        "sqlite": "none",
+        "time": "none"
+      },
+      "domain_type": "any",
+      "hash": "bb5530dc452c51ccc8139da9c3f203623a4b175ff931d5a6a8b62782c24a2259",
+      "input_places": [
+        "RECORDING"
+      ],
+      "operation_expr": "identity",
+      "output_places": [
+        "FINALIZED"
+      ],
+      "transition_id": "t_rec_stop_recording"
+    },
+    {
+      "codomain_type": "any",
+      "coeffects": {
+        "filesystem": "none",
+        "network": "none",
+        "random": "none",
+        "sqlite": "none",
+        "time": "none"
+      },
+      "domain_type": "any",
+      "hash": "d13d143e66c339688a1893a3e1b5558d6248fe4cc12670c01bc0c4eb136fa0fe",
+      "input_places": [
+        "PAUSED"
+      ],
+      "operation_expr": "identity",
+      "output_places": [
+        "FINALIZED"
+      ],
+      "transition_id": "t_rec_stop_paused"
+    },
+    {
+      "codomain_type": "any",
+      "coeffects": {
+        "filesystem": "none",
+        "network": "none",
+        "random": "none",
+        "sqlite": "none",
+        "time": "none"
+      },
+      "domain_type": "any",
+      "hash": "c09a85a990a6216e5990dab6c5d9cf74b4443bc7443a5263f9d477699a38548e",
+      "input_places": [
+        "FINALIZED"
+      ],
+      "operation_expr": "identity",
+      "output_places": [
+        "IDLE"
+      ],
+      "transition_id": "t_rec_reset"
+    }
+  ]
+}

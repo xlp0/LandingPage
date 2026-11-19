@@ -13,9 +13,17 @@ test.describe('Fiber inspector — the correctness panel', () => {
     await page.goto('/fiber-inspector.html');
     // `attached`, not `visible`: #panel-status is a zero-size status div, so Playwright
     // treats it as hidden and a visible wait times out even though the panel rendered.
-    await page.waitForSelector('#panel-status[data-ready="true"]', {
+    await page.waitForSelector('body[data-page-state="ready"]', {
       state: 'attached', timeout: 20000,
     });
+  });
+
+  test('the loading notice is gone once the panel is ready', async ({ page }) => {
+    await expect(page.locator('#panel-status')).toHaveText('');
+  });
+
+  test('the intro keeps the space before the unwitnessed marker', async ({ page }) => {
+    await expect(page.locator('#inspector > p.note').first()).toContainText('is marked unwitnessed, never as healthy');
   });
 
   test('it renders a marking, not a list', async ({ page }) => {

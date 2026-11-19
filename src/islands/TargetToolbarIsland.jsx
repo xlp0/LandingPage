@@ -16,7 +16,8 @@ export default function TargetToolbarIsland() {
       controller = instance;
       runtime.attachToolbar(instance);
       if (typeof document !== 'undefined') {
-        document.getElementById('pane-url-bar')?.setAttribute('data-toolbar-ready', 'true');
+        const root = document.getElementById('pane-url-bar');
+        if (root) root.dataset.islandState = 'ready';
       }
       runtime.markBootParticipant('toolbar');
     });
@@ -31,7 +32,7 @@ export default function TargetToolbarIsland() {
   }, []);
 
   return (
-    <div className="url-selector-strip" id="pane-url-bar" data-island="target-toolbar">
+    <div className="url-selector-strip" id="pane-url-bar" data-island="target-toolbar" data-island-state="mounting">
       <div className="target-omnibar-header">
         <label
           htmlFor="target-url-input"
@@ -54,17 +55,17 @@ export default function TargetToolbarIsland() {
           autoComplete="off"
           spellCheck={false}
           aria-label="Test Target URL input"
-        />
+        data-testid="target-url-input" />
         <button
           type="button"
           id="btn-clear-target-url"
           className="url-clear-btn"
           title="Clear target URL"
           aria-label="Clear URL"
-        >
+         data-testid="btn-clear-target-url">
           ✕
         </button>
-        <button id="btn-load-in-iframe" className="toolbar-btn load-target-btn" title="Load target into viewport (Enter)">
+        <button id="btn-load-in-iframe" className="toolbar-btn load-target-btn" title="Load target into viewport (Enter)" data-testid="btn-load-in-iframe">
           <span>▶ Load Target</span>
         </button>
       </div>
@@ -104,7 +105,7 @@ export default function TargetToolbarIsland() {
             id="public-site-selector"
             className="target-url-select"
             aria-label="Select target website to test iframe compatibility"
-          />
+          data-testid="public-site-selector" />
         </div>
         <div className="target-quick-chips" id="target-quick-chips" aria-label="Quick launch targets" />
       </div>

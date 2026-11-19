@@ -36,7 +36,7 @@ test.describe('Sprint Registry & Conformance Display Parity (ORC-13)', () => {
   test('2. Registry view renders sealed and specification states distinguishably', async ({ page }) => {
     await page.goto('/sprint-registry.html');
     const status = page.locator('#registry-status');
-    await expect(status).toHaveAttribute('data-ready', 'true', { timeout: 10000 });
+    await expect(page.locator('body')).toHaveAttribute('data-page-state', 'ready', { timeout: 10000 });
 
     const sealedCards = page.locator('.sprint-card[data-state="sealed"]');
     const specCards = page.locator('.sprint-card[data-state="specification"]');

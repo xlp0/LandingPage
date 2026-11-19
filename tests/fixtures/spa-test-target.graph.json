@@ -96,7 +96,7 @@
         "routeHandle": "mcard:target:/tests/fixtures/spa-test-target.html#missing-transition",
         "clmTypeUri": "clm://type/view/target/spa-missing-transition",
         "entry": false,
-        "deepLinkEntry": false,
+        "deepLinkEntry": true,
         "owner": "Product Manager, Architect, and UX Designer"
       }
     },

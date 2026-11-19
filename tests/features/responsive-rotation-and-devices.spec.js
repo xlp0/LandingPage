@@ -192,10 +192,10 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     const stored = await page.evaluate((k) => JSON.parse(localStorage.getItem(k) || '[]'), STORAGE_KEY);
     expect(stored.some((d) => d.name === 'Playwright Ultra')).toBe(true);
 
-    // deletes cleanly (the confirm prompt must be accepted)
-    page.once('dialog', (d) => d.accept());
+    // deletes cleanly after the in-page confirmation dialog
     await page.locator('#btn-open-device-manager').click();
     await page.locator('button[data-delete-device="playwright-ultra"]').click();
+    await page.getByTestId('preset-delete-confirm').click();
     await page.locator('#btn-close-modal').click();
 
     await expect(page.locator('.size-preset-btn').filter({ hasText: 'Playwright Ultra' })).toHaveCount(0);
@@ -484,7 +484,7 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
       return {
         props: cs.transitionProperty,
         durations: cs.transitionDuration.split(',').map((d) => parseFloat(d)),
-        booting: document.body.classList.contains('lab-booting'),
+        booting: document.body.dataset.pageState === 'loading',
       };
     });
     expect(t.booting, 'transitions are enabled once initial geometry is committed').toBe(false);

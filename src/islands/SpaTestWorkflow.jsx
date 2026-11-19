@@ -165,19 +165,6 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
     }
   };
 
-  const triggerRibbonButton = (buttonId, fallbackFn) => {
-    if (typeof document !== 'undefined') {
-      const btn = document.getElementById(buttonId);
-      if (btn) {
-        btn.click();
-        return;
-      }
-    }
-    if (typeof fallbackFn === 'function') {
-      fallbackFn();
-    }
-  };
-
   const activeNet = state.targetNet;
 
   return (
@@ -187,7 +174,7 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
       data-island="spa-test-workflow"
       data-testid="spa-test-workflow"
       data-active-step={state.activeStepId}
-      data-workflow-ready={ready ? 'true' : 'false'}
+      data-island-state={ready ? 'ready' : 'mounting'}
       aria-labelledby="spa-workflow-heading"
     >
       <div className="spa-workflow-header">
@@ -622,6 +609,7 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
               <button
                 type="button"
                 data-testid="workflow-start-layer4-session"
+                data-effect="persist"
                 className="toolbar-btn"
                 disabled={Boolean(state.layer4Session?.busy)}
                 onClick={() => workflowRef.current?.startLayer4Session()}
@@ -631,6 +619,7 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
               <button
                 type="button"
                 data-testid="workflow-replay-last-request"
+                data-effect="persist"
                 className="toolbar-btn"
                 disabled={Boolean(state.layer4Session?.busy) || !state.layer4Session?.lastRequestId}
                 onClick={() => workflowRef.current?.replayLastLayer4Request()}
@@ -690,25 +679,13 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
         </div>
 
         <div className="spa-workflow-actions">
-          <button
-            type="button"
-            data-testid="workflow-rec-start"
-            className="toolbar-btn"
-            onClick={() => triggerRibbonButton('btn-rec-start', () => getLabRuntime().recorder.start())}
-          >
-            Start Capture
-          </button>
-          <button
-            type="button"
-            data-testid="workflow-rec-stop"
-            className="toolbar-btn"
-            onClick={() => triggerRibbonButton('btn-rec-stop', () => getLabRuntime().recorder.stop())}
-          >
-            Stop &amp; Save MCard
-          </button>
+          <p className="spa-workflow-note" data-testid="workflow-recorder-hint">
+            Use the recording ribbon above to start, pause, and stop the capture. Stop saves the MCard.
+          </p>
           <button
             type="button"
             data-testid="workflow-link-layer4-run"
+                data-effect="persist"
             className="toolbar-btn"
             disabled={!state.capture.savedRun?.ok || !activeNet || Boolean(state.layer4Session?.busy)}
             onClick={() => workflowRef.current?.linkSavedRunToLayer4()}

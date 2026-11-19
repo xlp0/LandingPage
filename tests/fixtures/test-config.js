@@ -25,7 +25,7 @@ export const ROOT_PAGE_CHARACTERIZATIONS = Object.freeze([
     redirectTarget: '/responsive-lab.html',
     expectedTitle: 'GovTech Platform | Mission Control',
     redirectTitle: 'GovTech OS - Responsive UI Lab (Full-Window Viewport Workbench)',
-    expectedSameOriginLinks: Object.freeze(['/', '/app.html', '/index.html', '/responsive-lab.html']),
+    expectedSameOriginLinks: Object.freeze(['/', '/index.html', '/pkc-docs-index.html', '/responsive-lab.html']),
   }),
   Object.freeze({
     pagePath: 'responsive-lab.html',
@@ -35,7 +35,7 @@ export const ROOT_PAGE_CHARACTERIZATIONS = Object.freeze([
     candidateNetPlaceId: 'p_wb_responsive_lab',
     route: '/responsive-lab.html',
     expectedTitle: 'GovTech OS - Responsive UI Lab (Full-Window Viewport Workbench)',
-    expectedSameOriginLinks: Object.freeze(['/', '/app.html']),
+    expectedSameOriginLinks: Object.freeze(['/app.html', '/index.html']),
   }),
   Object.freeze({
     pagePath: 'app.html',

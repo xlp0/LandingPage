@@ -1,0 +1,72 @@
+{
+  "schema": "urn:bpv:net-core-golden:v1",
+  "netId": "landingpage-workbench-net",
+  "origin": "http://127.0.0.1:3001",
+  "cases": [
+    {
+      "url": "/",
+      "expectedPlaceId": "p_page_index",
+      "expectedKind": "page"
+    },
+    {
+      "url": "/index.html",
+      "expectedPlaceId": "p_page_index",
+      "expectedKind": "page"
+    },
+    {
+      "url": "/responsive-lab.html",
+      "expectedPlaceId": "p_page_responsive_lab",
+      "expectedKind": "page"
+    },
+    {
+      "url": "/app.html",
+      "expectedPlaceId": "p_page_app",
+      "expectedKind": "page"
+    },
+    {
+      "url": "/sprint-registry.html",
+      "expectedPlaceId": "p_page_sprint_registry",
+      "expectedKind": "page"
+    },
+    {
+      "url": "/fiber-inspector.html",
+      "expectedPlaceId": "p_page_fiber_inspector",
+      "expectedKind": "page"
+    },
+    {
+      "url": "/fiber-conformance.html",
+      "expectedPlaceId": "p_page_fiber_conformance",
+      "expectedKind": "page"
+    },
+    {
+      "url": "/pkc-docs-index.html",
+      "expectedPlaceId": "p_page_docs_index",
+      "expectedKind": "page"
+    },
+    {
+      "url": "/index.html?noredirect=1",
+      "expectedPlaceId": "p_view_index_mcard_viewer",
+      "expectedKind": "view"
+    },
+    {
+      "url": "/?noredirect=1",
+      "expectedPlaceId": "p_view_index_mcard_viewer",
+      "expectedKind": "view"
+    },
+    {
+      "url": "/public/examples/games/monopoly-auth.html",
+      "expectedPlaceId": "p_external_games",
+      "expectedKind": "external"
+    },
+    {
+      "url": "/not-a-place",
+      "expectedPlaceId": null,
+      "expectedKind": null
+    },
+    {
+      "url": "/favicon.ico",
+      "expectedPlaceId": null,
+      "expectedKind": null
+    }
+  ]
+}

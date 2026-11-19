@@ -526,8 +526,8 @@ export function validateGuiCoverageRegistry(registry, { rootDir = ROOT_DIR, chec
     } else {
       const rootPageAstro =
         typeof surface.pagePath === 'string' &&
-        !surface.pagePath.includes('/') &&
-        surface.pagePath.endsWith('.html')
+          !surface.pagePath.includes('/') &&
+          surface.pagePath.endsWith('.html')
           ? path.join(rootDir, 'src', 'pages', `${surface.pagePath.slice(0, -5)}.astro`)
           : null;
       if (typeof surface.pagePath !== 'string' || !surface.pagePath.trim()) {

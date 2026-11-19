@@ -15,6 +15,31 @@ export function chipIdFor(device) {
   return BUILTIN_CHIP_IDS[device.id] || `btn-size-${device.id}`;
 }
 
+
+function confirmPresetDelete(name) {
+  return new Promise((resolve) => {
+    let dialog = document.getElementById('preset-delete-dialog');
+    if (!dialog) {
+      dialog = document.createElement('dialog');
+      dialog.id = 'preset-delete-dialog';
+      dialog.innerHTML = `
+        <form method="dialog">
+          <p id="preset-delete-message"></p>
+          <div class="dialog-actions">
+            <button type="submit" value="cancel" data-testid="preset-delete-cancel">Cancel</button>
+            <button type="submit" value="confirm" data-testid="preset-delete-confirm" data-effect="destructive">Delete preset</button>
+          </div>
+        </form>`;
+      document.body.appendChild(dialog);
+    }
+    const message = dialog.querySelector('#preset-delete-message');
+    if (message) message.textContent = `Delete preset '${name}'? This action cannot be undone.`;
+    const onClose = () => resolve(dialog.returnValue === 'confirm');
+    dialog.addEventListener('close', onClose, { once: true });
+    dialog.showModal();
+  });
+}
+
 export function initDevicePresetsUI(options = {}) {
   const {
     registry,
@@ -38,9 +63,11 @@ export function initDevicePresetsUI(options = {}) {
   }
 
   function markActiveChip(deviceId) {
-    activeChipId = deviceId ? chipIdFor({ id: deviceId }) : null;
+    activeChipId = deviceId === 'full' ? 'btn-size-full' : deviceId ? chipIdFor({ id: deviceId }) : null;
     presetsContainer?.querySelectorAll('.size-preset-btn').forEach((b) => {
-      b.classList.toggle('active', b.id === activeChipId);
+      const pressed = Boolean(activeChipId && b.id === activeChipId);
+      b.classList.toggle('active', pressed);
+      b.setAttribute('aria-pressed', String(pressed));
     });
   }
 
@@ -65,6 +92,7 @@ export function initDevicePresetsUI(options = {}) {
       btn.id = chipIdFor(d);
       btn.className = 'toolbar-btn size-preset-btn';
       btn.dataset.deviceId = d.id;
+      btn.dataset.testid = chipIdFor(d);
       btn.title = `${d.name} — ${d.width} × ${d.height}px (${aspectRatio(d.width, d.height)})`;
       btn.innerHTML = `<span>${d.name} (${d.width}px)</span>`;
 
@@ -82,18 +110,20 @@ export function initDevicePresetsUI(options = {}) {
     const full = document.createElement('button');
     full.type = 'button';
     full.id = 'btn-size-full';
+    full.dataset.testid = 'btn-size-full';
     full.className = 'toolbar-btn size-preset-btn';
     full.title = 'Reset to full container size (100%)';
     full.innerHTML = '<span>↔ Full (100%)</span>';
     full.addEventListener('click', () => {
       stage?.setViewportSize(100, 100, '%', 'Full (100%)', null, 'preset');
-      markActiveChip(null);
-      full.classList.add('active');
+      markActiveChip('full');
     });
     presetsContainer.appendChild(full);
 
-    if (activeChipId) {
-      presetsContainer.querySelector(`#${CSS.escape(activeChipId)}`)?.classList.add('active');
+    for (const chip of presetsContainer.querySelectorAll('.size-preset-btn')) {
+      const isActive = Boolean(activeChipId && chip.id === activeChipId);
+      chip.classList.toggle('active', isActive);
+      chip.setAttribute('aria-pressed', String(isActive));
     }
   }
 
@@ -126,9 +156,10 @@ export function initDevicePresetsUI(options = {}) {
         del.className = 'dm-delete';
         del.dataset.deleteDevice = d.id;
         del.textContent = '🗑️ Delete';
-        del.addEventListener('click', () => {
-          if (!window.confirm(`Delete preset '${d.name}'? This action cannot be undone.`)) return;
-          registry.remove(d.id);
+        del.dataset.testid = `preset-delete-${d.id}`;
+        del.addEventListener('click', async () => {
+          const confirmed = await confirmPresetDelete(d.name);
+          if (confirmed) registry.remove(d.id);
         });
         row.appendChild(del);
       }

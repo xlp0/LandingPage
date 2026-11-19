@@ -1,0 +1,97 @@
+{
+  "schema": "urn:clm:ui-model:v1",
+  "kind": "ui_model_mcard",
+  "model_id": "recorder-lifecycle",
+  "net_ref": "blake3:c4dcf32ff9c0f44222e6dfb8cc86a3464f0b298aac01aec94bcf6fd8822c2f4b",
+  "projection": {
+    "mode": "multiset",
+    "extractor_namespace": "recorder",
+    "place_key": "state",
+    "token_key": "session_id",
+    "places": {
+      "IDLE": "ext.recorder.idle",
+      "RECORDING": "ext.recorder.recording",
+      "PAUSED": "ext.recorder.paused",
+      "FINALIZED": "ext.recorder.finalized"
+    }
+  },
+  "properties": [
+    {
+      "id": "init_idle",
+      "template": "init",
+      "subject": "IDLE",
+      "severity": "error",
+      "within_s": 0
+    },
+    {
+      "id": "state_is_declared",
+      "template": "always_point",
+      "subject": "IDLE",
+      "severity": "error",
+      "within_s": 0
+    },
+    {
+      "id": "moves_follow_recorder",
+      "template": "always_arc",
+      "subject": "IDLE",
+      "target_place": "RECORDING",
+      "severity": "error",
+      "within_s": 0
+    },
+    {
+      "id": "reset_returns_idle",
+      "template": "now_next",
+      "subject": "FINALIZED",
+      "target_place": "IDLE",
+      "severity": "error",
+      "within_s": 0
+    },
+    {
+      "id": "start_eventually",
+      "template": "eventually_fire",
+      "subject": "t_rec_start",
+      "severity": "warning",
+      "within_s": 30
+    }
+  ],
+  "actions": {
+    "t_rec_start": {
+      "generator_key": "gen.recorder.start",
+      "weight": 10
+    },
+    "t_rec_pause": {
+      "generator_key": "gen.recorder.pause",
+      "weight": 8
+    },
+    "t_rec_resume": {
+      "generator_key": "gen.recorder.resume",
+      "weight": 8
+    },
+    "t_rec_stop_recording": {
+      "generator_key": "gen.recorder.stop_recording",
+      "weight": 6
+    },
+    "t_rec_stop_paused": {
+      "generator_key": "gen.recorder.stop_paused",
+      "weight": 6
+    },
+    "t_rec_reset": {
+      "generator_key": "gen.recorder.reset",
+      "weight": 8
+    }
+  },
+  "coverage": {
+    "declared_unreachable": [],
+    "required": [
+      "t_rec_start",
+      "t_rec_pause",
+      "t_rec_resume",
+      "t_rec_stop_recording"
+    ]
+  },
+  "engine": {
+    "name": "@antithesishq/bombadil",
+    "version": "0.7.10",
+    "time_budget_s": 300
+  }
+}

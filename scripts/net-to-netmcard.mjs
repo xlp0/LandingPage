@@ -680,8 +680,8 @@ export function createLayer4TargetAdapter(targetEnvelope, { storage = null } = {
       const nextStatus = step.trappedToErrorModal ? 'ERROR_MODAL' : 'ACTIVE';
       const mappedDest = step.trappedToErrorModal
         ? (matched?.binding?.toPlaceId && placeBindings[matched.binding.toPlaceId]?.kind === 'error'
-            ? matched.binding.toPlaceId
-            : 'p_error_modal')
+          ? matched.binding.toPlaceId
+          : 'p_error_modal')
         : step.currentViewPlaceId;
 
       const persistedMarkingHash = persistMarkingSnapshot(
@@ -732,7 +732,7 @@ export function createLayer4TargetAdapter(targetEnvelope, { storage = null } = {
     };
 
     const nextPromise = session.queue.then(runStep, runStep);
-    session.queue = nextPromise.catch(() => {});
+    session.queue = nextPromise.catch(() => { });
     return nextPromise;
   }
 

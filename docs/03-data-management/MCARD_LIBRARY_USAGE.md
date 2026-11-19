@@ -20,7 +20,7 @@ curl -s http://localhost:3000/api/mcard/stats
 | `/api/mcard` | `GET`, `POST` | Programmatic MCard list and Triad Blake3 write endpoints |
 | `/api/mcard/:hash` and `/api/mcard/:hash/raw` | `GET`, `DELETE` | Verified JSON envelope lookup, binary-safe media streaming (`nosniff`), and handle release |
 | `/api/mcard/probe-url` | `GET` | SSRF-guarded external URL framing and reachability probe |
-| `/api/test-runs` | `GET`, `POST` | Persists and queries `responsive_test_run:v1` (`clmKernel: '0.0.23'`), `urn:gqc:interrupted-capture:v1`, replay, and conformance records |
+| `/api/test-runs` | `GET`, `POST` | Persists and queries `responsive_test_run:v1` (`clmKernel: '0.0.24'`), `urn:gqc:interrupted-capture:v1`, replay, and conformance records |
 | `/api/test-runs/navigation/session`, `/fire`, `/link` | `POST` | Executes Layer 4 target transitions (`FiringReceiptMCard`) and writes separate `urn:gqc:navigation-run-link:v1` MCards |
 
 ## Seeding the 6-Sample Corpus

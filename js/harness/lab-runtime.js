@@ -247,11 +247,11 @@ function createLabRuntimeInstance() {
         outerRafId = null;
         innerRafId = requestAnimationFrame(() => {
           innerRafId = null;
-          document.body.classList.remove('lab-booting');
+          document.body.dataset.pageState = 'ready';
         });
       });
     } else if (typeof document !== 'undefined') {
-      document.body?.classList.remove('lab-booting');
+      if (document.body) document.body.dataset.pageState = 'ready';
     }
   }
 

@@ -4,10 +4,21 @@
 | --- | --- |
 | Audience | Developers, operators, and release reviewers inspecting historical release milestones |
 | BMAD Owner | Tech Writer (`bmad-agent-tech-writer`) and Scrum Master |
-| Status / Scope | Historical release log; earlier SMO/ERB entries record historical `0.0.9` and `0.0.10` milestones superseded by `clm-kernel@0.0.23` |
+| Status / Scope | Historical release log; earlier SMO/ERB entries record historical `0.0.9` and `0.0.10` milestones superseded by `clm-kernel@0.0.24` |
 All notable changes to the PKC Landing Page are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+- **Program SSG Staged (`SPRINT-SSG-00..08`, 2026-11-19)**:
+  - Installed StageShow `1.1.1` (`tools/stageshow/`, `.agents/skills/stageshow/`) alongside hermetic runner `scripts/stageshow/run.mjs`, CSS clash checks (`npm run stageshow:check-css`), `docker/bombadil/` runner configuration, and active sprint plans (`SPRINT-SSG-00` in progress; `SPRINT-SSG-01..08` planned) under `docs/sprints/_active/`.
+
+- **Published `clm-kernel@0.0.24` Consumer Consensus (2026-11-19)**:
+  - Install and lock published `clm-kernel@0.0.24` (`sha512-Ew88il...`) in `package.json`, `package-lock.json`, and rebuilt `public/js/vendor/mcard-bundle.js` while tracking active `clm/` workspace `0.0.25` (`01edfca1`, additive "One interpreter, one fiber" `Sprints 624..632` release with zero breaking export removals).
+  - Advance `KERNEL_PROVENANCE = 'clm-kernel@0.0.24'` in `server/mcard-api.mjs` and `server/mcard-modality.mjs`, `DEFAULT_CLM_KERNEL_VERSION = '0.0.24'` in `js/harness/recorder.js`, unit contract suites (`tests/unit/clm-kernel-024-contracts.test.mjs` aligned to `0.0.24` unified guard-term literal truthiness and `'unmatched'` unbound/malformed handling, `server-and-renderer-contracts.test.mjs`, `test-run-schema.test.mjs`, `check-docs-net-ids.test.mjs`), `clm-registry.yaml` (`kernel_version: 0.0.25`), and living documentation (`README.md`, `docs/`, `tests/`).
+
+- **Program GQC and Program BPV Graduated (2026-11-18)**:
+  - Graduated **Program GQC** (`SPRINT-GQC-00..07`) from `docs/sprints/_active/` to `docs/sprints/programs/gqc/` after completing all ten execution units, closing the cross-browser matrix (`60/60` Firefox/WebKit smoke), re-baselining `layout-freeze`, and reconciling documentation on `clm-kernel@0.0.23`.
+  - Graduated **Program BPV** (`SPRINT-BPV-00..07`) from `docs/sprints/_active/` to `docs/sprints/programs/bpv/` on operator approval (waiving the remaining 4 nightly calendar waits based on clean full-budget and shortened Docker nightlies while `landingpage-bombadil-bombadil-scheduler-1` continues running daily at `02:30` UTC).
 
 - **Published `clm-kernel@0.0.23` Consumer Consensus (2026-11-17)**:
   - Install and lock authentic published `clm-kernel@0.0.23` (`sha512-Kfks6Y...`) in `package.json` and `package-lock.json` while tracking active CLM workspace version `0.0.24`.

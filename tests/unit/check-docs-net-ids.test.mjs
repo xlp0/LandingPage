@@ -5,9 +5,11 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import {
+  ACTIVE_SPRINT_LIVING_DOCS,
   ALLOWLIST_SCHEMA,
   DEFAULT_ROOT_DIR,
   MAINTAINED_DOC_SET_ENTRYPOINTS,
+  isHistoricalDoc,
   validateLinkAllowlist,
   checkMarkdownFiles,
   checkVersionAndPortContracts,
@@ -83,7 +85,7 @@ describe('GQC-07 documentation alignment and gate contracts', () => {
   it('GQC-07-UNIT-02: verifies kernel version consensus and server/test/Astro port ownership', () => {
     const repoCheck = checkVersionAndPortContracts(DEFAULT_ROOT_DIR);
     assert.deepEqual(repoCheck.errors, []);
-    assert.equal(repoCheck.expectedKernel, '0.0.23');
+    assert.equal(repoCheck.expectedKernel, '0.0.24');
 
     withTempDir((tmpDir) => {
       writeRel(
@@ -293,6 +295,33 @@ describe('GQC-07 documentation alignment and gate contracts', () => {
 
       generateWorkbenchNetDocs({ rootDir: tmpDir, write: true });
       assert.deepEqual(checkWorkbenchNetFreshness(tmpDir).errors, []);
+    });
+  });
+
+  it('BPV-docs-check treats active sprint indexes as living docs, graduated archives as historical, and rejects /Users/ paths in all Markdown files', () => {
+    for (const rel of ACTIVE_SPRINT_LIVING_DOCS) {
+      assert.equal(isHistoricalDoc(rel), false, rel);
+    }
+    assert.equal(isHistoricalDoc('docs/sprints/_active/INDEX.md'), false);
+    assert.equal(isHistoricalDoc('docs/sprints/01-architecture/INDEX.md'), true);
+    assert.equal(isHistoricalDoc('docs/sprints/programs/gqc/INDEX.md'), true);
+    assert.equal(isHistoricalDoc('docs/sprints/programs/bpv/bpv-plan.md'), true);
+
+    withTempDir((tmpDir) => {
+      writeRel(tmpDir, 'package.json', JSON.stringify({ scripts: {}, dependencies: { 'clm-kernel': '0.0.24' } }));
+      writeRel(tmpDir, 'docs/sprints/_active/INDEX.md', '# Active Index\n\nRuns `npm run nonexistent:script`.\n');
+      writeRel(tmpDir, 'docs/sprints/old-sprint.md', '# Old Sprint\n\nRan from `/Users/alice/workspace/LandingPage`.\n');
+
+      const res = checkDocs({ rootDir: tmpDir, enforceRepoContracts: false });
+      assert.equal(res.ok, false);
+      assert.ok(
+        res.errors.some((e) => e.includes('docs/sprints/_active/INDEX.md:3') && e.includes('npm run nonexistent:script')),
+        res.errors.join('\n')
+      );
+      assert.ok(
+        res.errors.some((e) => e.includes('docs/sprints/old-sprint.md:3') && e.includes('workstation-specific')),
+        res.errors.join('\n')
+      );
     });
   });
 });

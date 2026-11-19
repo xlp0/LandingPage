@@ -16,7 +16,7 @@
     "sourcePath": "design/landing-navigation.penpot",
     "generatedModulePath": "js/nav.js",
     "graphHash": "5c58f7d1f1cd48669f2fd504a6839151549a6176c5c3184e03d1eba5f7407ac7",
-    "archiveHash": "bd62e0b9247e7501d83c6766744d92ee5a75f810af9f89cb24230deb8a248295",
+    "archiveHash": "8e6ddd1b5b0f63b635dafe8336339d29b9f31b54ac15e38af291a487b536dc17",
     "frameCount": 2,
     "interactionCount": 2,
     "scope": "landing-page-workbench-only",
@@ -38,7 +38,7 @@
       "status": "active",
       "approvalStatus": "approved",
       "primaryJourneyId": "workbench-lab-shell",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md",
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-00-project-census-and-behavior-baseline.md",
       "workbenchPlaceId": "p_page_responsive_lab",
       "sourceRef": "src/net/workbench-net.yaml"
     },
@@ -57,7 +57,7 @@
       "status": "active",
       "approvalStatus": "approved",
       "primaryJourneyId": "workbench-entry-redirect",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md",
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-00-project-census-and-behavior-baseline.md",
       "workbenchPlaceId": "p_page_index",
       "sourceRef": "src/net/workbench-net.yaml"
     },
@@ -77,7 +77,7 @@
       "approvalStatus": "tombstoned-unclassified",
       "targetSprint": "SPRINT-GQC-03",
       "primaryJourneyId": "legacy-mission-control-characterization",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md",
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md",
       "workbenchPlaceId": "p_page_app",
       "sourceRef": "src/net/workbench-net.yaml"
     },
@@ -96,7 +96,7 @@
       "status": "active",
       "approvalStatus": "tombstoned-internal",
       "primaryJourneyId": "diagnostic-fiber-conformance",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md",
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md",
       "workbenchPlaceId": "p_page_fiber_conformance",
       "sourceRef": "src/net/workbench-net.yaml"
     },
@@ -115,7 +115,7 @@
       "status": "active",
       "approvalStatus": "tombstoned-internal",
       "primaryJourneyId": "diagnostic-fiber-inspector",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md",
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md",
       "workbenchPlaceId": "p_page_fiber_inspector",
       "sourceRef": "src/net/workbench-net.yaml"
     },
@@ -134,7 +134,7 @@
       "status": "active",
       "approvalStatus": "tombstoned-internal",
       "primaryJourneyId": "diagnostic-sprint-registry",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md",
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md",
       "workbenchPlaceId": "p_page_sprint_registry",
       "sourceRef": "src/net/workbench-net.yaml"
     },
@@ -153,7 +153,7 @@
       "status": "active",
       "approvalStatus": "tombstoned-legacy-catalog",
       "primaryJourneyId": "legacy-pkc-docs-catalog",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md",
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md",
       "workbenchPlaceId": null
     }
   ],
@@ -176,7 +176,7 @@
       "approvalStatus": "approved-p0-fixture",
       "targetSprint": "SPRINT-GQC-02",
       "primaryJourneyId": "guided-spa-test",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
     },
     {
       "surfaceId": "target-app-html-default",
@@ -194,7 +194,7 @@
       "approvalStatus": "unclassified",
       "targetSprint": "SPRINT-GQC-03",
       "primaryJourneyId": "legacy-mission-control-characterization",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md"
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-00-project-census-and-behavior-baseline.md"
     },
     {
       "surfaceId": "target-index-portal-card",
@@ -211,7 +211,7 @@
       "status": "active",
       "approvalStatus": "portal-viewer-not-spa",
       "primaryJourneyId": "single-page-mcard-viewer",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md"
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-00-project-census-and-behavior-baseline.md"
     },
     {
       "surfaceId": "target-probe-agent",
@@ -228,7 +228,7 @@
       "status": "active",
       "approvalStatus": "approved-test-fixture",
       "primaryJourneyId": "probe-target-capture-and-conformance",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md"
     },
     {
       "surfaceId": "target-probe-noagent",
@@ -245,7 +245,7 @@
       "status": "active",
       "approvalStatus": "approved-test-fixture",
       "primaryJourneyId": "probe-target-capture-and-conformance",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md"
     },
     {
       "surfaceId": "target-conformance-good",
@@ -262,7 +262,7 @@
       "status": "active",
       "approvalStatus": "approved-test-fixture",
       "primaryJourneyId": "probe-target-capture-and-conformance",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md"
     },
     {
       "surfaceId": "target-conformance-bad",
@@ -279,7 +279,7 @@
       "status": "active",
       "approvalStatus": "approved-test-fixture",
       "primaryJourneyId": "probe-target-capture-and-conformance",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md"
     },
     {
       "surfaceId": "target-membrane-probe",
@@ -296,7 +296,7 @@
       "status": "active",
       "approvalStatus": "approved-test-fixture",
       "primaryJourneyId": "diagnostic-fiber-conformance",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md"
     },
     {
       "surfaceId": "target-external-localhost-4321",
@@ -314,7 +314,7 @@
       "approvalStatus": "unclassified",
       "targetSprint": "SPRINT-GQC-03",
       "primaryJourneyId": "workbench-lab-shell",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md"
     },
     {
       "surfaceId": "target-external-mcard-studio-5320",
@@ -332,7 +332,7 @@
       "approvalStatus": "unclassified",
       "targetSprint": "SPRINT-GQC-03",
       "primaryJourneyId": "workbench-lab-shell",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md"
     },
     {
       "surfaceId": "target-blocked-github",
@@ -350,7 +350,7 @@
       "approvalStatus": "blocked-reference",
       "targetSprint": "SPRINT-GQC-03",
       "primaryJourneyId": "workbench-lab-shell",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md"
     },
     {
       "surfaceId": "target-blocked-google",
@@ -368,7 +368,7 @@
       "approvalStatus": "blocked-reference",
       "targetSprint": "SPRINT-GQC-03",
       "primaryJourneyId": "workbench-lab-shell",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md"
     },
     {
       "surfaceId": "target-blocked-mdn",
@@ -386,7 +386,7 @@
       "approvalStatus": "blocked-reference",
       "targetSprint": "SPRINT-GQC-03",
       "primaryJourneyId": "workbench-lab-shell",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md"
     },
     {
       "surfaceId": "target-penpot-mpa-candidate",
@@ -406,7 +406,7 @@
       "approvalStatus": "optional-excluded-from-p0",
       "targetSprint": "SPRINT-GQC-05",
       "primaryJourneyId": "optional-penpot-mpa-assessment",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md"
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-00-project-census-and-behavior-baseline.md"
     }
   ],
   "journeys": [
@@ -455,7 +455,7 @@
         "capture-and-replay-journey",
         "inspect-mcard-result"
       ],
-      "docPath": "docs/sprints/_active/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
     },
     {
       "journeyId": "spa-failure-recovery",
@@ -502,7 +502,7 @@
         "capture-and-replay-journey",
         "inspect-mcard-result"
       ],
-      "docPath": "docs/sprints/_active/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
     },
     {
       "journeyId": "workbench-lab-shell",
@@ -551,7 +551,7 @@
       "command": "npx playwright test tests/features/responsive-rotation-and-devices.spec.js --project=features",
       "evidence": "Responsive Lab viewport geometry, preset persistence, and root characterization checks",
       "observableOutcome": "Boots Responsive Lab shell, applies builtin and custom device presets, rotates stage dimensions, and preserves layout containment",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md"
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-00-project-census-and-behavior-baseline.md"
     },
     {
       "journeyId": "workbench-entry-redirect",
@@ -592,7 +592,7 @@
       "command": "npx playwright test tests/smoke/landing-page.spec.js --project=smoke",
       "evidence": "Top-level / redirect to /responsive-lab.html and ?noredirect=1 portal shell checks",
       "observableOutcome": "Top-level navigation to / redirects cleanly to /responsive-lab.html while ?noredirect=1 renders the GovTech OS portal shell",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md"
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-00-project-census-and-behavior-baseline.md"
     },
     {
       "journeyId": "landing-page-penpot-navigation",
@@ -632,7 +632,7 @@
       "command": "npx playwright test tests/features/penpot-navigation.spec.js --project=features",
       "evidence": "Rendered #penpot-site-nav data-graph-hash and runtime navigation from /index.html?noredirect=1 to /pkc-docs-index.html",
       "observableOutcome": "Renders PenPot-generated navigation bar on /index.html?noredirect=1 and navigates to /pkc-docs-index.html as a workbench regression check separate from target-SPA coverage",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
     },
     {
       "journeyId": "single-page-mcard-viewer",
@@ -678,7 +678,7 @@
       "command": "npx playwright test tests/smoke/single-page-mcard.spec.js --project=smoke",
       "evidence": "4-modality MCard viewer SMO smoke and unit tests on /index.html?noredirect=1",
       "observableOutcome": "Loads, switches, and renders media, document, inert code, and sandboxed webapp MCards while rejecting unsafe URL schemes",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-00-project-census-and-behavior-baseline.md"
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-00-project-census-and-behavior-baseline.md"
     },
     {
       "journeyId": "probe-target-capture-and-conformance",
@@ -721,7 +721,7 @@
       "command": "npx playwright test tests/features/responsive-capture.spec.js --project=features",
       "evidence": "ERB cross-origin probe handshake, spatial normalization, replay parity, and device conformance reports",
       "observableOutcome": "Captures normalized pointer coordinates on probe-target.html, persists responsive_test_run:v1 MCard, and passes conformance catalog checks",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md"
     },
     {
       "journeyId": "diagnostic-fiber-conformance",
@@ -759,7 +759,7 @@
       "command": "npx playwright test tests/features/fiber-conformance.spec.js --project=features",
       "evidence": "Internal fiber conformance harness spec and root characterization smoke check",
       "observableOutcome": "Executes internal fiber conformance suite without runtime errors",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md"
     },
     {
       "journeyId": "diagnostic-fiber-inspector",
@@ -797,7 +797,7 @@
       "command": "npx playwright test tests/features/fiber-inspector.spec.js --project=features",
       "evidence": "Internal fiber inspector spec and root characterization smoke check",
       "observableOutcome": "Renders internal fiber marking inspector and verifies invariant display",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md"
     },
     {
       "journeyId": "diagnostic-sprint-registry",
@@ -835,7 +835,7 @@
       "command": "npx playwright test tests/features/sprint-registry.spec.js --project=features",
       "evidence": "Sprint registry projection spec and root characterization smoke check",
       "observableOutcome": "Renders CLM sprint registry display projection",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md"
     },
     {
       "journeyId": "legacy-pkc-docs-catalog",
@@ -868,7 +868,7 @@
       "command": "npx playwright test tests/smoke/root-pkc-docs-index.spec.js --project=smoke",
       "evidence": "Tombstoned legacy documentation index characterization check",
       "observableOutcome": "Characterizes tombstoned pkc-docs-index.html layout outside P0 SPA denominator",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md"
     },
     {
       "journeyId": "legacy-mission-control-characterization",
@@ -904,7 +904,7 @@
       "command": "npx playwright test tests/smoke/root-app.spec.js --project=smoke",
       "evidence": "Tombstoned root-app characterization check while Product Manager classifies app.html support",
       "observableOutcome": "Keeps legacy app.html characterized without counting as approved SPA target coverage",
-      "docPath": "docs/sprints/_active/evidence/GQC-00-consumer-map.md"
+      "docPath": "docs/sprints/programs/gqc/evidence/GQC-00-consumer-map.md"
     },
     {
       "journeyId": "optional-penpot-mpa-assessment",
@@ -934,7 +934,7 @@
       "command": null,
       "evidence": "Deferred to SPRINT-GQC-05 adapter contract and separate Product Manager MPA design approval",
       "observableOutcome": "Remains optional and excluded from P0 SPA coverage denominator until GQC-05 proves external PenPot MPA adapter support",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
     },
     {
       "journeyId": "undecided-auth-zitadel",
@@ -964,7 +964,7 @@
       "command": null,
       "evidence": "Stubbed at /api/auth/** boundary in tests/fixtures/app-fixtures.js pending deterministic provider approval",
       "observableOutcome": "Remains undecided outside P0 SPA coverage until Product Manager approves an OAuth journey and local test provider",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
     },
     {
       "journeyId": "undecided-p2p-collaboration",
@@ -994,7 +994,7 @@
       "command": null,
       "evidence": "Excluded from P0 SPA denominator pending multi-peer deterministic signaling approval",
       "observableOutcome": "Remains undecided outside P0 SPA coverage until Product Manager approves WebRTC collaboration journeys",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
     },
     {
       "journeyId": "undecided-webllm-inference",
@@ -1024,7 +1024,7 @@
       "command": null,
       "evidence": "External model downloads stubbed at boundary in tests/fixtures/app-fixtures.js",
       "observableOutcome": "Remains undecided outside P0 SPA coverage without downloading live WebLLM weights in CI",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
     },
     {
       "journeyId": "undecided-offline-pwa",
@@ -1054,7 +1054,7 @@
       "command": null,
       "evidence": "Service worker offline mode excluded from P0 SPA denominator pending Product Manager classification",
       "observableOutcome": "Remains undecided outside P0 SPA coverage until offline caching behavior is approved",
-      "docPath": "docs/sprints/_active/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
+      "docPath": "docs/sprints/programs/gqc/SPRINT-GQC-02-gui-journeys-and-test-seams.md"
     }
   ]
 }

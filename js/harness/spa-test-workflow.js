@@ -370,7 +370,15 @@ export function createSpaTestWorkflow(options = {}) {
     events: []
   };
 
+  // The stage mirror reads the same observation the guide shows, so the target's
+  // place has one source of truth (decision BPV-D08).
+  function mirrorTargetPlace() {
+    const observed = liveSpa.connected && liveSpa.activePlaceId;
+    stage?.setTargetPlace?.(observed ? { placeId: liveSpa.activePlaceId, bootNonce: liveSpa.bootNonce } : null);
+  }
+
   function emit() {
+    mirrorTargetPlace();
     const snapshot = getState();
     for (const fn of [...subscribers]) {
       try {
@@ -456,15 +464,7 @@ export function createSpaTestWorkflow(options = {}) {
 
     if (nextCount > liveSpa.transitionCount && obs.lastTransitionId && obs.lastTransitionId !== 'none') {
       const fromPlaceId = liveSpa.activePlaceId || liveSpa.entryPlaceId || matchedNet?.entryPlaceId || obs.placeId;
-      let resolvedTid = String(obs.lastTransitionId);
-      if (resolvedTid === 'popstate_sync' && matchedNet?.transitions) {
-        const match = matchedNet.transitions.find(
-          (t) => t.fromPlaceId === fromPlaceId && t.targetPlaceId === obs.placeId
-        );
-        if (match) {
-          resolvedTid = match.transitionId;
-        }
-      }
+      const resolvedTid = String(obs.lastTransitionId);
       const transRow = matchedNet?.transitions?.find((t) => t.transitionId === resolvedTid) || null;
       liveSpa.events.push({
         transitionId: resolvedTid,

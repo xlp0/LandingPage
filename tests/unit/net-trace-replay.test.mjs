@@ -295,7 +295,10 @@ test('attachWorkbenchNetTracer derives FIFO server calls, popup promotions, open
   const coverage = computeTransitionCoverage(workbenchNet, {
     replayedTraces: [{ ...replay, asserted: true }]
   });
-  assert.equal(coverage.declared, 65);
+  assert.equal(
+    coverage.declared,
+    Object.keys(workbenchNet.bindings.transitions).length
+  );
   assert.equal(coverage.fired, 9);
   assert.equal(coverage.asserted, 9);
   assert.equal(coverage.policy, 'ADVISORY');

@@ -226,8 +226,8 @@ async function runDiagnosticCdpProfile(browser, baseUrl) {
     await page.goto(`${baseUrl}/responsive-lab.html`, { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(
       () =>
-        !document.body.classList.contains('lab-booting') &&
-        document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-workflow-ready') === 'true'
+        document.body.dataset.pageState !== 'loading' &&
+        document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-island-state') === 'ready'
     );
     stubbedDiagnosticReadyMs = Number((performance.now() - t0).toFixed(3));
 
@@ -270,8 +270,8 @@ async function runDiagnosticCdpProfile(browser, baseUrl) {
     await p2.goto(`${baseUrl}/responsive-lab.html`, { waitUntil: 'domcontentloaded', timeout: 10000 });
     await p2.waitForFunction(
       () =>
-        !document.body.classList.contains('lab-booting') &&
-        document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-workflow-ready') === 'true'
+        document.body.dataset.pageState !== 'loading' &&
+        document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-island-state') === 'ready'
     );
     unstubbedExternalFontsReadyMs = Number((performance.now() - t1).toFixed(3));
   } catch {
@@ -303,7 +303,7 @@ async function runDiagnosticCdpProfile(browser, baseUrl) {
       reproducibleApplicationBottleneck: false,
       verdict: 'no reproducible bottleneck',
       explanation:
-        'Main-thread JS execution is 5-8 ms and V8 compile is < 1 ms with 0 long tasks (>= 50 ms). Cold readyMs (~105-130 ms) is bounded by Chromium context/isolate initialization (~40 ms), loopback HTML+module fetch/parse (~35 ms), and the intentional two-frame requestAnimationFrame paint-settlement barrier (2 * 16.67 ms = 33.3 ms) in js/harness/lab-runtime.js before removing body.lab-booting.'
+        'Main-thread JS execution is 5-8 ms and V8 compile is < 1 ms with 0 long tasks (>= 50 ms). Cold readyMs (~105-130 ms) is bounded by Chromium context/isolate initialization (~40 ms), loopback HTML+module fetch/parse (~35 ms), and the intentional two-frame requestAnimationFrame paint-settlement barrier (2 * 16.67 ms = 33.3 ms) in js/harness/lab-runtime.js before clearing body[data-page-state="loading"].'
     }
   };
 }
@@ -346,8 +346,8 @@ async function runPairATrial(browser, baseUrl) {
     await page.goto(`${baseUrl}/responsive-lab.html`, { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(
       () =>
-        !document.body.classList.contains('lab-booting') &&
-        document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-workflow-ready') === 'true'
+        document.body.dataset.pageState !== 'loading' &&
+        document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-island-state') === 'ready'
     );
     const coldWallMs = Number((performance.now() - tCold).toFixed(3));
     await Promise.all(pendingColdJs);
@@ -418,8 +418,8 @@ async function runPairATrial(browser, baseUrl) {
     await page.goto(`${baseUrl}/responsive-lab.html`, { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(
       () =>
-        !document.body.classList.contains('lab-booting') &&
-        document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-workflow-ready') === 'true'
+        document.body.dataset.pageState !== 'loading' &&
+        document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-island-state') === 'ready'
     );
     const warmWallMs = Number((performance.now() - tWarm).toFixed(3));
     const warmSnap = await readBrowserPerfSnapshot(page);
@@ -498,7 +498,7 @@ async function runPairATrial(browser, baseUrl) {
 
     await page.getByTestId('workflow-tab-step-evidence').click();
     const tCap = performance.now();
-    await page.getByTestId('workflow-rec-start').click();
+    await page.locator('#btn-rec-start').click();
     await page.waitForFunction(
       () => document.querySelector('[data-testid="workflow-recorder-state"]')?.textContent?.trim() === 'RECORDING'
     );
@@ -539,7 +539,7 @@ async function runPairATrial(browser, baseUrl) {
     );
 
     const tStop = performance.now();
-    await page.getByTestId('workflow-rec-stop').click();
+    await page.locator('#btn-rec-stop').click();
     await reqP;
     const reqDispatchMs = Number(Math.max(0.05, postDispatchedAt - tStop).toFixed(3));
     const saveRes = await resP;
@@ -613,8 +613,8 @@ async function runPairATrial(browser, baseUrl) {
     await page.goto(`${baseUrl}/`, { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(
       () =>
-        !document.body.classList.contains('lab-booting') &&
-        document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-workflow-ready') === 'true'
+        document.body.dataset.pageState !== 'loading' &&
+        document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-island-state') === 'ready'
     );
     out.transitions.redirect = Number((performance.now() - tRedir).toFixed(3));
 
@@ -756,7 +756,7 @@ const SHARED_PRE_ASTRO_PLACES = [
     key: 'place_redirect_root',
     placeId: 'p_page_index',
     route: '/',
-    waitFn: () => !document.body.classList.contains('lab-booting')
+    waitFn: () => document.body.dataset.pageState !== 'loading'
   },
   {
     key: 'place_index_viewer',
@@ -768,7 +768,7 @@ const SHARED_PRE_ASTRO_PLACES = [
     key: 'place_responsive_lab',
     placeId: 'p_page_responsive_lab',
     route: '/responsive-lab.html',
-    waitFn: () => !document.body.classList.contains('lab-booting')
+    waitFn: () => document.body.dataset.pageState !== 'loading'
   },
   {
     key: 'place_app_mission_control',
@@ -847,7 +847,7 @@ async function runPairBTrial(browser, baseUrl) {
       `${baseUrl}/responsive-lab.html?target=${encodeURIComponent(PROBE_FIXTURE_PATH)}`,
       { waitUntil: 'domcontentloaded' }
     );
-    await jPage.waitForFunction(() => !document.body.classList.contains('lab-booting'));
+    await jPage.waitForFunction(() => document.body.dataset.pageState !== 'loading');
     await jPage.frameLocator('iframe[title="Responsive UI Lab Test Frame"]').locator('[data-testid="target-top-left"]').waitFor({ state: 'visible' });
     await jPage.evaluate(() => window.__lab?.geometry?.rotate());
     await jPage.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
@@ -900,7 +900,7 @@ async function collectLiveNetworkPlaceReconciliation(browser, baseUrl, staticPla
       });
       await page.goto(`${baseUrl}${r.route}`, { waitUntil: 'load' });
       if (r.isLab) {
-        await page.waitForFunction(() => !document.body.classList.contains('lab-booting'));
+        await page.waitForFunction(() => document.body.dataset.pageState !== 'loading');
       }
       const reportItem = byPlaceId.get(r.placeId);
       reconciliations.push(reconcilePlaceBytesWithNetwork(reportItem, jsResources));

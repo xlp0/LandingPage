@@ -131,7 +131,7 @@ export function createResponsiveLabWorkbench(page, request) {
       : RESPONSIVE_LAB_PATH;
     await page.goto(dest);
     await expect(page.getByRole('heading', { name: /Responsive UI Lab/i })).toBeVisible();
-    await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
+    await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
     await expect(page.getByRole('button', { name: /Start/i })).toBeVisible();
   }
 

@@ -1,7 +1,7 @@
 ---
 import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
 ---
-<WorkbenchLayout title={'Fiber Inspector \u2014 the correctness panel'} dir="ltr" viewport="width=device-width, initial-scale=1">
+<WorkbenchLayout placeIds={['p_page_fiber_inspector']} title={'Fiber Inspector \u2014 the correctness panel'} dir="ltr" viewport="width=device-width, initial-scale=1">
   <Fragment slot="head">
     <style is:inline>
   :root { --fg: #111; --bg: #fff; --line: #767676; --muted: #555; --warn: #7a4200; --ok: #0a7d2e; }
@@ -30,13 +30,14 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
   <p class="note">
     A view over the <strong>marking</strong>, not over a list. Places are the lifecycle
     states declared in <code>fiber_lifecycle.yaml</code>; a token is one card being
-    displayed by one fiber. A fiber that has never rendered is marked
+    displayed by one fiber. A fiber that has never rendered is marked{' '}
     <span class="unwitnessed">unwitnessed</span>, never as healthy.
   </p>
-  <div id="panel-status" data-ready="false"></div>
+  <div id="panel-status">Loading…</div>
 </main>
 
 <script is:inline type="module">
+import { setPageState } from '/js/harness/page-state.js';
 import { FiberRegistry } from './public/js/fibers/registry.js';
 import { MCard } from './public/js/mcard-kernel/compat.js';
 
@@ -151,7 +152,8 @@ async function main() {
   ].join(''));
 
   const status = document.getElementById('panel-status');
-  status.dataset.ready = 'true';
+  status.textContent = '';
+  setPageState('ready');
   status.dataset.fibers = String(report.fibers.length);
   status.dataset.neverExercised = String(report.totals.neverExercised.length);
   window.__FIBER_PANEL__ = {
@@ -163,7 +165,7 @@ async function main() {
 
 main().catch((e) => {
   const status = document.getElementById('panel-status');
-  status.dataset.ready = 'error';
+  setPageState('error', String(e.message ?? e));
   status.textContent = String(e.message ?? e);
 });
 </script>

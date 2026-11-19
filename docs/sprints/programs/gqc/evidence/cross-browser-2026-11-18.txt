@@ -1,0 +1,99 @@
+
+> pkc-landing-page-monorepo@0.0.0 test:smoke:cross-browser
+> PW_CROSS_BROWSER=1 playwright test --project=smoke-firefox --project=smoke-webkit
+
+
+Running 60 tests using 8 workers
+
+(node:17576) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17575) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17574) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17577) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17573) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17580) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17578) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17579) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   6 [smoke-firefox] › tests/smoke/root-app.spec.js:11:3 › Root Page Characterization for app.html › renders status, title, semantic landmarks, and outgoing same-origin links (884ms)
+  ✓   2 [smoke-firefox] › tests/smoke/clm-dashboard.spec.js:8:3 › CLM Dashboard Smoke Tests › Dashboard loads successfully (1.1s)
+  ✓   8 [smoke-firefox] › tests/smoke/root-pkc-docs-index.spec.js:8:3 › Root Page Characterization for pkc-docs-index.html › renders status, title, semantic landmarks, and outgoing same-origin links (878ms)
+  ✓   9 [smoke-firefox] › tests/smoke/root-responsive-lab.spec.js:8:3 › Root Page Characterization for responsive-lab.html › renders status, title, semantic landmarks, and outgoing same-origin links (800ms)
+  ✓  11 [smoke-firefox] › tests/smoke/root-sprint-registry.spec.js:8:3 › Root Page Characterization for sprint-registry.html › renders status, title, semantic landmarks, and outgoing same-origin links (554ms)
+  ✓   4 [smoke-firefox] › tests/smoke/landing-page.spec.js:11:3 › Landing Page Smoke Tests › Default landing entry redirects to Responsive UI Lab (1.5s)
+(node:17654) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  13 [smoke-firefox] › tests/smoke/landing-page.spec.js:18:3 › Landing Page Smoke Tests › Portal mode loads with Mission Control title when noredirect is set (436ms)
+  ✓   5 [smoke-firefox] › tests/smoke/root-index.spec.js:8:3 › Root Page Characterization for index.html › GET / and GET /index.html redirect to responsive-lab.html (1.7s)
+  ✓   7 [smoke-firefox] › tests/smoke/apps-menu.spec.js:13:3 › Apps Menu Smoke Tests › ViewManager registers expected app views and collapsible sidebar (1.4s)
+  ✓  10 [smoke-firefox] › tests/smoke/clm-dashboard.spec.js:13:3 › CLM Dashboard Smoke Tests › Component registry loads and populates sidebar (1.7s)
+  ✓   1 [smoke-firefox] › tests/smoke/root-fiber-inspector.spec.js:8:3 › Root Page Characterization for fiber-inspector.html › renders status, title, semantic landmarks, and outgoing same-origin links (995ms)
+  ✓  15 [smoke-firefox] › tests/smoke/landing-page.spec.js:23:3 › Landing Page Smoke Tests › Portal mode displays Penpot navigation landmarks and links (462ms)
+(node:17678) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   3 [smoke-firefox] › tests/smoke/root-fiber-conformance.spec.js:8:3 › Root Page Characterization for fiber-conformance.html › renders status, title, semantic landmarks, and outgoing same-origin links (1.2s)
+  ✓  16 [smoke-firefox] › tests/smoke/root-index.spec.js:18:3 › Root Page Characterization for index.html › GET /?noredirect=1 and GET /index.html?noredirect=1 render the portal landmarks and outgoing links (856ms)
+  ✓  19 [smoke-firefox] › tests/smoke/landing-page.spec.js:31:3 › Landing Page Smoke Tests › Portal mode displays single-page MCard host and Sovereign HUD pill (548ms)
+(node:17691) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17694) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  17 [smoke-firefox] › tests/smoke/apps-menu.spec.js:28:3 › Apps Menu Smoke Tests › Music Visualizer view can be opened and closed (1.3s)
+  ✓  21 [smoke-firefox] › tests/smoke/landing-page.spec.js:39:3 › Landing Page Smoke Tests › Portal top control transitions to Responsive UI Lab (717ms)
+  ✓  24 [smoke-firefox] › tests/smoke/apps-menu.spec.js:39:3 › Apps Menu Smoke Tests › Map view can be opened and closed (353ms)
+  ✓  18 [smoke-firefox] › tests/smoke/clm-dashboard.spec.js:22:3 › CLM Dashboard Smoke Tests › Loading overlay disappears after registry load (1.7s)
+(node:17712) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  25 [smoke-firefox] › tests/smoke/apps-menu.spec.js:50:3 › Apps Menu Smoke Tests › 3D Viewer can be opened and closed (890ms)
+  ✓  28 [smoke-firefox] › tests/smoke/apps-menu.spec.js:61:3 › Apps Menu Smoke Tests › Monopoly view can be opened and closed (339ms)
+  ✓  26 [smoke-firefox] › tests/smoke/clm-dashboard.spec.js:27:3 › CLM Dashboard Smoke Tests › Types column is visible (1.5s)
+(node:17722) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  12 [smoke-firefox] › tests/smoke/single-page-mcard.spec.js:31:3 › SMR-09 — Single-Page MCard host › index.html hosts exactly one active page handle (5.4s)
+  ✓  29 [smoke-firefox] › tests/smoke/clm-dashboard.spec.js:33:3 › CLM Dashboard Smoke Tests › Components column is visible (1.5s)
+  ✓  27 [smoke-webkit] › tests/smoke/root-fiber-conformance.spec.js:8:3 › Root Page Characterization for fiber-conformance.html › renders status, title, semantic landmarks, and outgoing same-origin links (1.7s)
+  ✓  30 [smoke-webkit] › tests/smoke/root-fiber-inspector.spec.js:8:3 › Root Page Characterization for fiber-inspector.html › renders status, title, semantic landmarks, and outgoing same-origin links (1.7s)
+  ✓  23 [smoke-webkit] › tests/smoke/root-app.spec.js:11:3 › Root Page Characterization for app.html › renders status, title, semantic landmarks, and outgoing same-origin links (1.7s)
+  ✓  32 [smoke-firefox] › tests/smoke/clm-dashboard.spec.js:39:3 › CLM Dashboard Smoke Tests › Main content area is visible (1.8s)
+  ✓  20 [smoke-webkit] › tests/smoke/clm-dashboard.spec.js:8:3 › CLM Dashboard Smoke Tests › Dashboard loads successfully (1.8s)
+  ✓  22 [smoke-webkit] › tests/smoke/landing-page.spec.js:11:3 › Landing Page Smoke Tests › Default landing entry redirects to Responsive UI Lab (1.8s)
+  ✓  14 [smoke-webkit] › tests/smoke/apps-menu.spec.js:13:3 › Apps Menu Smoke Tests › ViewManager registers expected app views and collapsible sidebar (1.9s)
+  ✓  34 [smoke-webkit] › tests/smoke/root-pkc-docs-index.spec.js:8:3 › Root Page Characterization for pkc-docs-index.html › renders status, title, semantic landmarks, and outgoing same-origin links (394ms)
+  ✓  37 [smoke-webkit] › tests/smoke/landing-page.spec.js:18:3 › Landing Page Smoke Tests › Portal mode loads with Mission Control title when noredirect is set (449ms)
+(node:17814) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  35 [smoke-webkit] › tests/smoke/root-responsive-lab.spec.js:8:3 › Root Page Characterization for responsive-lab.html › renders status, title, semantic landmarks, and outgoing same-origin links (749ms)
+  ✓  33 [smoke-webkit] › tests/smoke/root-index.spec.js:8:3 › Root Page Characterization for index.html › GET / and GET /index.html redirect to responsive-lab.html (954ms)
+  ✓  40 [smoke-webkit] › tests/smoke/landing-page.spec.js:23:3 › Landing Page Smoke Tests › Portal mode displays Penpot navigation landmarks and links (454ms)
+  ✓  38 [smoke-webkit] › tests/smoke/apps-menu.spec.js:28:3 › Apps Menu Smoke Tests › Music Visualizer view can be opened and closed (1.0s)
+  ✓  43 [smoke-webkit] › tests/smoke/landing-page.spec.js:31:3 › Landing Page Smoke Tests › Portal mode displays single-page MCard host and Sovereign HUD pill (460ms)
+  ✓  41 [smoke-webkit] › tests/smoke/root-sprint-registry.spec.js:8:3 › Root Page Characterization for sprint-registry.html › renders status, title, semantic landmarks, and outgoing same-origin links (519ms)
+  ✓  42 [smoke-webkit] › tests/smoke/root-index.spec.js:18:3 › Root Page Characterization for index.html › GET /?noredirect=1 and GET /index.html?noredirect=1 render the portal landmarks and outgoing links (621ms)
+  ✓  44 [smoke-webkit] › tests/smoke/apps-menu.spec.js:39:3 › Apps Menu Smoke Tests › Map view can be opened and closed (468ms)
+  ✓  36 [smoke-webkit] › tests/smoke/clm-dashboard.spec.js:13:3 › CLM Dashboard Smoke Tests › Component registry loads and populates sidebar (1.9s)
+  ✓  45 [smoke-webkit] › tests/smoke/landing-page.spec.js:39:3 › Landing Page Smoke Tests › Portal top control transitions to Responsive UI Lab (760ms)
+  ✓  31 [smoke-firefox] › tests/smoke/single-page-mcard.spec.js:38:3 › SMR-09 — Single-Page MCard host › the Sovereign HUD Pill renders the active hash and a Studio deep link (5.2s)
+  ✓  46 [smoke-webkit] › tests/smoke/apps-menu.spec.js:50:3 › Apps Menu Smoke Tests › 3D Viewer can be opened and closed (2.0s)
+  ✓  47 [smoke-webkit] › tests/smoke/clm-dashboard.spec.js:22:3 › CLM Dashboard Smoke Tests › Loading overlay disappears after registry load (1.7s)
+  ✓  49 [smoke-webkit] › tests/smoke/apps-menu.spec.js:61:3 › Apps Menu Smoke Tests › Monopoly view can be opened and closed (399ms)
+  ✓  50 [smoke-webkit] › tests/smoke/clm-dashboard.spec.js:27:3 › CLM Dashboard Smoke Tests › Types column is visible (1.7s)
+  ✓  39 [smoke-webkit] › tests/smoke/single-page-mcard.spec.js:31:3 › SMR-09 — Single-Page MCard host › index.html hosts exactly one active page handle (5.5s)
+  ✓  51 [smoke-webkit] › tests/smoke/clm-dashboard.spec.js:33:3 › CLM Dashboard Smoke Tests › Components column is visible (1.7s)
+  ✓  48 [smoke-firefox] › tests/smoke/single-page-mcard.spec.js:49:3 › SMR-09 — Single-Page MCard host › the sample switcher is populated from the seeded corpus (5.2s)
+  ✓  53 [smoke-webkit] › tests/smoke/clm-dashboard.spec.js:39:3 › CLM Dashboard Smoke Tests › Main content area is visible (1.7s)
+  ✓  52 [smoke-webkit] › tests/smoke/single-page-mcard.spec.js:38:3 › SMR-09 — Single-Page MCard host › the Sovereign HUD Pill renders the active hash and a Studio deep link (5.3s)
+  ✓  54 [smoke-firefox] › tests/smoke/single-page-mcard.spec.js:56:3 › SMR-09 — Single-Page MCard host › binding a page through the API updates the pill hash and renders the content (5.2s)
+  ✓  56 [smoke-firefox] › tests/smoke/single-page-mcard.spec.js:79:3 › SMR-09 — Single-Page MCard host › an unsafe URL is rejected with HTTP 400 and mutates nothing (7ms)
+  ✓  57 [smoke-firefox] › tests/smoke/single-page-mcard.spec.js:86:3 › SMR-09 — Single-Page MCard host › the external URL membrane reports a verdict for a local fixture (11ms)
+  ✓  55 [smoke-webkit] › tests/smoke/single-page-mcard.spec.js:49:3 › SMR-09 — Single-Page MCard host › the sample switcher is populated from the seeded corpus (5.3s)
+  ✓  58 [smoke-webkit] › tests/smoke/single-page-mcard.spec.js:56:3 › SMR-09 — Single-Page MCard host › binding a page through the API updates the pill hash and renders the content (5.5s)
+  ✓  59 [smoke-webkit] › tests/smoke/single-page-mcard.spec.js:79:3 › SMR-09 — Single-Page MCard host › an unsafe URL is rejected with HTTP 400 and mutates nothing (31ms)
+  ✓  60 [smoke-webkit] › tests/smoke/single-page-mcard.spec.js:86:3 › SMR-09 — Single-Page MCard host › the external URL membrane reports a verdict for a local fixture (22ms)
+
+  60 passed (37.4s)

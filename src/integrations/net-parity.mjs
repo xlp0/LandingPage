@@ -126,6 +126,55 @@ function resolveDocumentPlaceIds(placeBindings, primaryPlaceId, primaryBinding, 
   return ids;
 }
 
+
+export function checkDeclaredPlaceIds({ rootDir = ROOT_DIR, envelope, pagesDir = path.join(ROOT_DIR, 'src', 'pages') } = {}) {
+  const violations = [];
+  const placeBindings = envelope?.bindings?.places || {};
+  const files = fs.readdirSync(pagesDir).filter((name) => name.endsWith('.astro'));
+  for (const file of files) {
+    const source = fs.readFileSync(path.join(pagesDir, file), 'utf8');
+    const match = /placeIds=\{\[([\s\S]*?)\]\}/.exec(source);
+    const rel = path.relative(rootDir, path.join(pagesDir, file));
+    if (!match) {
+      violations.push({ rule: 'page-state-place-ids', file: rel, detail: 'page does not declare placeIds' });
+      continue;
+    }
+    const declared = Array.from(match[1].matchAll(/'([^']+)'|"([^"]+)"/g)).map((m) => m[1] || m[2]);
+    if (declared.length === 0) {
+      violations.push({ rule: 'page-state-place-ids', file: rel, detail: 'placeIds is empty' });
+    }
+    for (const placeId of declared) {
+      const binding = placeBindings[placeId];
+      if (!binding || (binding.kind !== 'page' && binding.kind !== 'view')) {
+        violations.push({ rule: 'page-state-place-ids', file: rel, detail: `undeclared page or view place ${placeId}` });
+        continue;
+      }
+      if (binding.pagePath && path.basename(binding.pagePath) !== file.replace(/\.astro$/, '.html')) {
+        const expected = path.basename(binding.pagePath, '.html');
+        if (expected !== file.replace(/\.astro$/, '')) {
+          violations.push({
+            rule: 'page-state-place-ids',
+            file: rel,
+            detail: `place ${placeId} is bound to ${binding.pagePath}`
+          });
+        }
+      }
+    }
+    const route = file === 'index.astro' ? '/' : `/${file.replace(/\.astro$/, '.html')}`;
+    const routePlaces = resolvePlacesForPublicRoute(placeBindings, route).map((entry) => entry.placeId);
+    const declaredSet = new Set(declared);
+    for (const placeId of routePlaces) {
+      if (!declaredSet.has(placeId)) {
+        violations.push({ rule: 'page-state-place-ids', file: rel, detail: `route ${route} is also bound to ${placeId}` });
+      }
+    }
+    if (routePlaces.length > 0 && !routePlaces.some((placeId) => declaredSet.has(placeId))) {
+      violations.push({ rule: 'page-state-place-ids', file: rel, detail: `no declared place covers route ${route}` });
+    }
+  }
+  return violations;
+}
+
 export function evaluateNetParity({
   envelope,
   routes = [],
@@ -420,6 +469,15 @@ export function netParityIntegration(options = {}) {
             builtHtmlByRoute.set(publicRoute, html);
             builtHtmlByRoute.set(htmlRelPath, html);
           }
+        }
+
+        const placeIdViolations = checkDeclaredPlaceIds({ rootDir, envelope });
+        if (placeIdViolations.length > 0) {
+          throw new Error(
+            `[gqc-net-parity] page-state placeIds violations:\n${placeIdViolations
+              .map((v) => `  ${v.file}: ${v.detail} (${v.rule})`)
+              .join('\n')}`
+          );
         }
 
         const actions = discoverAstroActions(rootDir);

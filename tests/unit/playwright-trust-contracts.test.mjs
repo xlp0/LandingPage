@@ -66,10 +66,10 @@ test('GQC-01-UNIT-01 configured Playwright projects partition specs cleanly, enf
     [
       ['smoke', 0],
       ['components', 0],
-      ['features', 1],
+      ['features', 0],
     ]
   );
-  assert.equal(RETRY_POLICY.projects.features.owner, 'TEA (SPRINT-GQC-02)');
+  assert.equal(RETRY_POLICY.projects.features.owner, 'TEA');
   assert.equal(SNAPSHOT_POLICY.owner, 'Architect and TEA');
   assert.deepEqual(BROWSER_MATRIX.pullRequest, ['Desktop Chrome']);
 

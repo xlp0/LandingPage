@@ -85,3 +85,9 @@ bin/
 /data/**/*.db-wal
 /data/**/*.db-journal
 style-audit/
+
+# Bombadil run output (traces, screenshots)
+bombadil-output/
+
+# StageShow audit and film output (reports, contact sheets, screenshots)
+stageshow-output/

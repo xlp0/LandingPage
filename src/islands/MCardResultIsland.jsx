@@ -54,7 +54,7 @@ export default function MCardResultIsland() {
         id="mcard-result-details"
         className="lab-disclosure-body"
         data-island="mcard-result"
-        data-mcard-result-state="empty"
+        data-island-state="empty"
       >
         <span style={{ color: 'var(--color-text-muted)' }}>No saved MCard test run in this session yet.</span>
       </div>
@@ -67,7 +67,7 @@ export default function MCardResultIsland() {
         id="mcard-result-details"
         className="lab-disclosure-body"
         data-island="mcard-result"
-        data-mcard-result-state="offline"
+        data-island-state="error"
       >
         <div style={{ color: 'var(--badge-danger-text)', fontWeight: 600 }}>Persistence Offline</div>
         <div id="mcard-result-error" style={{ color: 'var(--color-text-muted)', marginTop: '0.2rem' }}>
@@ -90,7 +90,7 @@ export default function MCardResultIsland() {
       id="mcard-result-details"
       className="lab-disclosure-body"
       data-island="mcard-result"
-      data-mcard-result-state="saved"
+      data-island-state="ready"
       data-mcard-hash={hash}
       data-mcard-handle={handle}
     >

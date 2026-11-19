@@ -1,0 +1,27 @@
+{
+  "schema": "urn:bpv:bombadil-scope:v1",
+  "registry": "tests/gui-coverage.json",
+  "rows": [
+    { "surfaceId": "target-spa-fixture", "netId": "spa-test-target-net", "startUrl": "/tests/fixtures/spa-test-target.html", "scope": "explore", "reason": "Smallest net and the clearest oracle. It is the canary target." },
+    { "surfaceId": "workbench-responsive-lab", "netId": "landingpage-workbench-net", "startUrl": "/responsive-lab.html", "scope": "explore", "reason": "Primary workbench with most islands." },
+    { "surfaceId": "workbench-landing-portal", "netId": "landingpage-workbench-net", "startUrl": "/index.html?noredirect=1", "scope": "explore", "reason": "Single-page MCard viewer that loads cards across many renderers." },
+    { "surfaceId": "workbench-sprint-registry", "netId": "landingpage-workbench-net", "startUrl": "/sprint-registry.html", "scope": "load-only", "reason": "Read-only developer viewer with no inbound links." },
+    { "surfaceId": "workbench-fiber-inspector", "netId": "landingpage-workbench-net", "startUrl": "/fiber-inspector.html", "scope": "load-only", "reason": "Read-only developer viewer with no inbound links." },
+    { "surfaceId": "workbench-fiber-conformance", "netId": "landingpage-workbench-net", "startUrl": "/fiber-conformance.html", "scope": "load-only", "reason": "Read-only developer viewer whose screenshot baselines make layout changes costly." },
+    { "surfaceId": "workbench-legacy-mission-control", "netId": "landingpage-workbench-net", "startUrl": "/app.html", "scope": "boundary", "reason": "Legacy Mission Control with auth flows, popups and a hidden file input (decision BPV-D07)." },
+    { "surfaceId": "target-app-html-default", "netId": "landingpage-workbench-net", "startUrl": "/app.html", "scope": "boundary", "reason": "Same page as Mission Control, loaded as a target inside the lab (decision BPV-D07)." },
+    { "surfaceId": "workbench-pkc-docs-index", "netId": "landingpage-workbench-net", "startUrl": "/pkc-docs-index.html", "scope": "boundary", "reason": "Legacy static catalog (p_page_docs_index, migrationState: legacy-static) that does not load the page-state contract, so runs stop at the link boundary." },
+    { "surfaceId": "target-index-portal-card", "netId": "landingpage-workbench-net", "startUrl": null, "scope": "none", "reason": "The portal loaded as a framed target. It is explored at its own URL through workbench-landing-portal." },
+    { "surfaceId": "target-probe-agent", "netId": null, "startUrl": null, "scope": "none", "reason": "Capture probe fixture driven by Playwright." },
+    { "surfaceId": "target-probe-noagent", "netId": null, "startUrl": null, "scope": "none", "reason": "Capture probe fixture driven by Playwright." },
+    { "surfaceId": "target-conformance-good", "netId": null, "startUrl": null, "scope": "none", "reason": "Conformance fixture driven by Playwright." },
+    { "surfaceId": "target-conformance-bad", "netId": null, "startUrl": null, "scope": "none", "reason": "Conformance fixture that fails on purpose." },
+    { "surfaceId": "target-membrane-probe", "netId": null, "startUrl": null, "scope": "none", "reason": "Membrane probe fixture driven by Playwright." },
+    { "surfaceId": "target-external-localhost-4321", "netId": null, "startUrl": null, "scope": "none", "reason": "External origin outside the exploration boundary." },
+    { "surfaceId": "target-external-mcard-studio-5320", "netId": null, "startUrl": null, "scope": "none", "reason": "External origin outside the exploration boundary. mcard-studio has its own Bombadil plan." },
+    { "surfaceId": "target-blocked-github", "netId": null, "startUrl": null, "scope": "none", "reason": "Cross-origin target blocked by X-Frame-Options." },
+    { "surfaceId": "target-blocked-google", "netId": null, "startUrl": null, "scope": "none", "reason": "Cross-origin target blocked by X-Frame-Options." },
+    { "surfaceId": "target-blocked-mdn", "netId": null, "startUrl": null, "scope": "none", "reason": "Cross-origin target blocked by X-Frame-Options." },
+    { "surfaceId": "target-penpot-mpa-candidate", "netId": null, "startUrl": null, "scope": "none", "reason": "Penpot design file, not a page. MPA assessment is optional and deferred." }
+  ]
+}

@@ -61,8 +61,16 @@ function toPosix(relPath) {
   return relPath.split(path.sep).join('/');
 }
 
+export const ACTIVE_SPRINT_LIVING_DOCS = new Set([
+  'docs/sprints/INDEX.md',
+  'docs/sprints/README.md',
+  'docs/sprints/_active/README.md',
+  'docs/sprints/_active/INDEX.md'
+]);
+
 export function isHistoricalDoc(relPath) {
   const posix = toPosix(relPath);
+  if (ACTIVE_SPRINT_LIVING_DOCS.has(posix)) return false;
   return (
     posix.startsWith('docs/sprints/') ||
     posix.startsWith('docs/archive/') ||
@@ -250,6 +258,10 @@ export function parseMarkdownDocument(source) {
       playwrightProjects.push({ line: lineNo, project: projMatch[1] });
     }
 
+    if (/\/Users\/(?!\.\.?\/)[A-Za-z0-9][A-Za-z0-9._-]*\//.test(line)) {
+      workstationUrls.push({ line: lineNo, text: line.trim() });
+    }
+
     if (inFence) return;
 
     for (const codeSpan of line.matchAll(/`([^`]+)`/g)) {
@@ -260,7 +272,7 @@ export function parseMarkdownDocument(source) {
     }
 
     const maskedLine = stripInlineCode(line);
-    if (/file:\/\/\/Users\//i.test(maskedLine)) {
+    if (/file:\/\/\/Users\//i.test(maskedLine) && !workstationUrls.some((w) => w.line === lineNo)) {
       workstationUrls.push({ line: lineNo, text: line.trim() });
     }
 
@@ -366,10 +378,8 @@ export function checkMarkdownFiles({
     const historical = isHistoricalDoc(relPath);
     const parsed = parseMarkdownDocument(content);
 
-    if (!historical) {
-      for (const hit of parsed.workstationUrls) {
-        errors.push(`${relPath}:${hit.line}: workstation-specific file:///Users/ link is forbidden`);
-      }
+    for (const hit of parsed.workstationUrls) {
+      errors.push(`${relPath}:${hit.line}: workstation-specific /Users/ path or file:///Users/ URL is forbidden`);
     }
 
     for (const link of parsed.links) {

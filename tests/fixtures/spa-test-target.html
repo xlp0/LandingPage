@@ -112,7 +112,15 @@
     }
   </style>
 </head>
-<body>
+<body
+  data-net-id="spa-test-target-net"
+  data-place-ids="p_spa_overview,p_spa_details,p_spa_missing_transition"
+  data-place-id="p_spa_overview"
+  data-page-state="ready"
+  data-boot-nonce=""
+  data-nav-arcs="p_spa_overview>p_spa_details>t_spa_open_details;p_spa_details>p_spa_overview>t_spa_back_overview;p_spa_overview>p_spa_missing_transition>t_spa_invalid_unmapped;p_spa_missing_transition>p_spa_overview>t_spa_recover_overview"
+>
+  <script type="module" src="/js/harness/page-state.js"></script>
   <div class="spa-shell">
     <header class="spa-header" role="banner">
       <h1>Citizen Service SPA Target</h1>
@@ -239,16 +247,39 @@
     let transitionCount = 0;
 
     appRoot.setAttribute('data-boot-nonce', bootNonce);
+    document.body.dataset.bootNonce = bootNonce;
     bootEl.textContent = bootNonce.slice(0, 12);
 
-    function renderPlace(placeId, transitionId = 'none', { pushHash = false } = {}) {
+    function followLink(action) {
+      const view = VIEWS[action.toPlaceId] || VIEWS.p_spa_overview;
+      if (window.location.hash !== view.hash) {
+        window.history.pushState({ placeId: view.placeId, transitionId: action.transitionId }, '', view.hash);
+        // Chrome silently drops history updates past its navigation flood limit. The URL stays the
+        // source of truth, so the view only changes when the history entry really changed.
+        if (window.location.hash !== view.hash) return;
+      }
+      renderPlace(action.toPlaceId, action.transitionId);
+    }
+
+    function renderPlace(placeId, transitionId = 'none') {
       const view = VIEWS[placeId] || VIEWS.p_spa_overview;
+      const previousPlaceId = document.body.dataset.placeId || 'p_spa_overview';
       if (transitionId !== 'none') {
         transitionCount += 1;
       }
 
       appRoot.setAttribute('data-page-id', view.pageId);
       appRoot.setAttribute('data-place-id', view.placeId);
+      document.body.dataset.placeId = view.placeId;
+      if (transitionId !== 'none') {
+        window.PageState?.reportTransition({
+          transitionId,
+          fromPlaceId: previousPlaceId,
+          toPlaceId: view.placeId
+        });
+      } else {
+        window.PageState?.setPlace(view.placeId);
+      }
       appRoot.setAttribute('data-last-transition-id', transitionId);
       appRoot.setAttribute('data-transition-count', String(transitionCount));
 
@@ -282,24 +313,37 @@
         btn.setAttribute('data-transition-id', action.transitionId);
         btn.setAttribute('aria-label', action.label);
         btn.textContent = action.label;
-        btn.addEventListener('click', () => {
-          renderPlace(action.toPlaceId, action.transitionId, { pushHash: true });
-        });
+        btn.addEventListener('click', () => followLink(action));
         actionsEl.appendChild(btn);
-      }
-
-      if (pushHash && window.location.hash !== view.hash) {
-        window.history.pushState({ placeId: view.placeId, transitionId }, '', view.hash);
       }
     }
 
+    const TRANSITION_BY_ARC = {
+      'p_spa_overview->p_spa_details': 't_spa_open_details',
+      'p_spa_details->p_spa_overview': 't_spa_back_overview',
+      'p_spa_overview->p_spa_missing_transition': 't_spa_invalid_unmapped',
+      'p_spa_missing_transition->p_spa_overview': 't_spa_recover_overview'
+    };
+
     window.addEventListener('popstate', () => {
       const targetPlace = HASH_TO_PLACE[window.location.hash] || 'p_spa_overview';
-      renderPlace(targetPlace, 'popstate_sync', { pushHash: false });
+      const fromPlace = document.body.dataset.placeId || 'p_spa_overview';
+      const declared = TRANSITION_BY_ARC[`${fromPlace}->${targetPlace}`];
+      if (declared) {
+        renderPlace(targetPlace, declared);
+        return;
+      }
+      renderPlace(targetPlace, 'none');
+      window.__netReport?.push({
+        seq: (window.__netReport?.length || 0) + 1,
+        transitionId: null,
+        fromPlaceId: fromPlace,
+        toPlaceId: targetPlace
+      });
     });
 
     const initialPlace = HASH_TO_PLACE[window.location.hash] || 'p_spa_overview';
-    renderPlace(initialPlace, 'none', { pushHash: false });
+    renderPlace(initialPlace, 'none');
   </script>
 </body>
 </html>

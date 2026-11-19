@@ -18,8 +18,8 @@
 | Net ID | `landingpage-workbench-net` |
 | Target Handle | `mcard:workbench:landing-page` |
 | Entry Place | `p_page_index` |
-| Total Places | 31 |
-| Total Transitions | 65 |
+| Total Places | 32 |
+| Total Transitions | 66 |
 | Non-UI Programmatic Endpoints | 23 |
 
 Related architecture guides include [LandingPage Architecture](./landing-page-architecture.md) and [Astro Host and Preact Islands](./astro-host-and-islands.md).
@@ -30,7 +30,7 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | --- | --- |
 | `error` | 9 |
 | `external` | 1 |
-| `page` | 6 |
+| `page` | 7 |
 | `pending` | 14 |
 | `view` | 1 |
 
@@ -39,7 +39,7 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | Transition Kind | Count |
 | --- | --- |
 | `client-route` | 3 |
-| `link` | 6 |
+| `link` | 7 |
 | `open-external` | 3 |
 | `recover` | 9 |
 | `redirect` | 1 |
@@ -57,6 +57,7 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | `p_page_sprint_registry` | `page` | `/sprint-registry.html` | `mcard:route:/sprint-registry.html` | `clm://type/view/diagnostic/sprint-registry` | `astro-wrapped` | deep-link | Scrum Master | Internal CLM sprint registry catalog page |
 | `p_page_fiber_inspector` | `page` | `/fiber-inspector.html` | `mcard:route:/fiber-inspector.html` | `clm://type/view/diagnostic/fiber-inspector` | `astro-wrapped` | deep-link | Architect | Internal fiber correctness and marking inspector page |
 | `p_page_fiber_conformance` | `page` | `/fiber-conformance.html` | `mcard:route:/fiber-conformance.html` | `clm://type/view/diagnostic/fiber-conformance` | `astro-wrapped` | deep-link | Architect | Internal fiber conformance harness page |
+| `p_page_docs_index` | `page` | `/pkc-docs-index.html` | `mcard:route:/pkc-docs-index.html` | `clm://type/view/diagnostic/docs-index` | `legacy-static` | deep-link | Tech Writer | Internal PKC design-documents index page, declared by the Penpot portal flow |
 | `p_view_index_mcard_viewer` | `view` | `/index.html?noredirect=1` | `mcard:route:/index.html?noredirect=1` | `clm://type/view/workbench/mcard-viewer` | n/a | deep-link | Product Manager and UX Designer | Single-page 4-modality MCard viewer mode on index.html?noredirect=1 |
 | `p_external_games` | `external` | `/public/examples/games/*` | `mcard:external:/public/examples/games` | `clm://type/view/external/games` | n/a | reachable | Product Manager | External game popup windows launched from app.html via window.open |
 | `p_pending_get_app_config` | `pending` | `/responsive-lab.html` | `mcard:pending:get_app_config` | `clm://type/view/workbench/pending/get-app-config` | n/a | reachable | Product Manager and TEA | In-flight pending state for GET /app-config.json from p_page_responsive_lab |
@@ -87,24 +88,25 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 
 | Transition ID | Kind | From Place | To Place | Endpoint or Route | Owner Page | Owner | Trigger |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `t_redirect_index_to_lab` | `redirect` | `p_page_index` | `p_page_responsive_lab` | `/responsive-lab.html` | `index.html` | Product Manager and UX Designer | window.location.replace("responsive-lab.html") at index.html:13 |
-| `t_link_lab_to_index` | `link` | `p_page_responsive_lab` | `p_page_index` | `/` | `responsive-lab.html` | Product Manager and TEA | click a#btn-back-home[href="/"] at responsive-lab.html:875 |
-| `t_link_lab_to_app` | `link` | `p_page_responsive_lab` | `p_page_app` | `/app.html` | `responsive-lab.html` | Product Manager and TEA | click a#btn-nav-mission-control[href="app.html"] at responsive-lab.html:898 |
-| `t_link_app_to_index` | `link` | `p_page_app` | `p_page_index` | `/` | `app.html` | Product Manager | click button.header-btn onclick window.location.href="/" at app.html:76 |
-| `t_link_viewer_to_index` | `link` | `p_view_index_mcard_viewer` | `p_page_index` | `/index.html` | `index.html` | Product Manager and UX Designer | click a.penpot-nav-link[href="index.html"] at index.html:279 |
-| `t_link_viewer_to_app` | `link` | `p_view_index_mcard_viewer` | `p_page_app` | `/app.html` | `index.html` | Product Manager and UX Designer | click a.penpot-nav-link[href="app.html"] at index.html:280 |
-| `t_link_viewer_to_lab` | `link` | `p_view_index_mcard_viewer` | `p_page_responsive_lab` | `/responsive-lab.html` | `index.html` | Product Manager and UX Designer | click a[href="responsive-lab.html"] at index.html:281,293,323 or openResponsiveUILab at index.html:482 |
-| `t_open_external_monopoly` | `open-external` | `p_page_app` | `p_page_app` | `/public/examples/games/monopoly-auth.html` | `app.html` | Product Manager | window.open("/public/examples/games/monopoly-auth.html", "_blank") at app.html:284 |
-| `t_open_external_chess` | `open-external` | `p_page_app` | `p_page_app` | `/public/examples/games/chess-auth.html` | `app.html` | Product Manager | window.open("/public/examples/games/chess-auth.html", "_blank") at app.html:316 |
-| `t_open_external_go` | `open-external` | `p_page_app` | `p_page_app` | `/public/examples/games/go-auth.html` | `app.html` | Product Manager | window.open("/public/examples/games/go-auth.html", "_blank") at app.html:348 |
-| `t_req_get_app_config` | `server-call-request` | `p_page_responsive_lab` | `p_pending_get_app_config` | `GET /app-config.json` | `responsive-lab.html` | Product Manager and TEA | fetch("/app-config.json") in js/harness/lab-toolbar.js:175 |
+| `t_redirect_index_to_lab` | `redirect` | `p_page_index` | `p_page_responsive_lab` | `/responsive-lab.html` | `index.html` | Product Manager and UX Designer | window.location.replace("responsive-lab.html") at index.html |
+| `t_link_lab_to_index` | `link` | `p_page_responsive_lab` | `p_view_index_mcard_viewer` | `/index.html?noredirect=1` | `responsive-lab.html` | Product Manager and TEA | click a#btn-back-home[href="/index.html?noredirect=1"] at responsive-lab.html |
+| `t_link_lab_to_app` | `link` | `p_page_responsive_lab` | `p_page_app` | `/app.html` | `responsive-lab.html` | Product Manager and TEA | click a#btn-nav-mission-control[href="app.html"] at responsive-lab.html |
+| `t_link_app_to_index` | `link` | `p_page_app` | `p_page_index` | `/` | `app.html` | Product Manager | click button.header-btn onclick window.location.href="/" at app.html |
+| `t_link_viewer_to_index` | `link` | `p_view_index_mcard_viewer` | `p_page_index` | `/index.html` | `index.html` | Product Manager and UX Designer | click a.penpot-nav-link[href="index.html"] at index.html |
+| `t_link_viewer_to_lab` | `link` | `p_view_index_mcard_viewer` | `p_page_responsive_lab` | `/responsive-lab.html` | `index.html` | Product Manager and UX Designer | click a[href="responsive-lab.html"] at index.html or openResponsiveUILab at index.html |
+| `t_link_viewer_to_docs` | `link` | `p_view_index_mcard_viewer` | `p_page_docs_index` | `/pkc-docs-index.html` | `index.html` | Tech Writer | click a.penpot-nav-link[href="pkc-docs-index.html"] at src/pages/index.astro |
+| `t_link_docs_to_index` | `link` | `p_page_docs_index` | `p_page_index` | `/index.html` | `pkc-docs-index.html` | Tech Writer | Penpot flow link Docs Index -> Home in js/nav.js (legacy-static pkc-docs-index.html does not mount PENPOT-GENERATED-NAV) |
+| `t_open_external_monopoly` | `open-external` | `p_page_app` | `p_page_app` | `/public/examples/games/monopoly-auth.html` | `app.html` | Product Manager | window.open("/public/examples/games/monopoly-auth.html", "_blank") at app.html |
+| `t_open_external_chess` | `open-external` | `p_page_app` | `p_page_app` | `/public/examples/games/chess-auth.html` | `app.html` | Product Manager | window.open("/public/examples/games/chess-auth.html", "_blank") at app.html |
+| `t_open_external_go` | `open-external` | `p_page_app` | `p_page_app` | `/public/examples/games/go-auth.html` | `app.html` | Product Manager | window.open("/public/examples/games/go-auth.html", "_blank") at app.html |
+| `t_req_get_app_config` | `server-call-request` | `p_page_responsive_lab` | `p_pending_get_app_config` | `GET /app-config.json` | `responsive-lab.html` | Product Manager and TEA | fetch("/app-config.json") in js/harness/lab-toolbar.js |
 | `t_ok_get_app_config` | `server-call-ok` | `p_pending_get_app_config` | `p_page_responsive_lab` | `GET /app-config.json` | `responsive-lab.html` | Product Manager and TEA | HTTP 2xx response for GET /app-config.json |
 | `t_fail_get_app_config` | `server-call-fail` | `p_pending_get_app_config` | `p_page_responsive_lab` | `GET /app-config.json` | `responsive-lab.html` | Product Manager and TEA | HTTP 4xx/5xx or network failure for GET /app-config.json |
-| `t_req_post_test_runs` | `server-call-request` | `p_page_responsive_lab` | `p_pending_post_test_runs` | `POST /api/test-runs` | `responsive-lab.html` | Product Manager and TEA | fetch("/api/test-runs", { method: "POST" }) in js/harness/recorder.js:219 |
+| `t_req_post_test_runs` | `server-call-request` | `p_page_responsive_lab` | `p_pending_post_test_runs` | `POST /api/test-runs` | `responsive-lab.html` | Product Manager and TEA | fetch("/api/test-runs", { method: "POST" }) in js/harness/recorder.js |
 | `t_ok_post_test_runs` | `server-call-ok` | `p_pending_post_test_runs` | `p_page_responsive_lab` | `POST /api/test-runs` | `responsive-lab.html` | Product Manager and TEA | HTTP 2xx response for POST /api/test-runs |
 | `t_fail_post_test_runs` | `server-call-fail` | `p_pending_post_test_runs` | `p_error_post_test_runs` | `POST /api/test-runs` | `responsive-lab.html` | Product Manager and TEA | HTTP 4xx/5xx or network failure for POST /api/test-runs |
 | `t_recover_post_test_runs` | `recover` | `p_error_post_test_runs` | `p_page_responsive_lab` | `/responsive-lab.html` | `responsive-lab.html` | Product Manager and TEA | Reload or reset responsive-lab.html to /responsive-lab.html from p_error_post_test_runs |
-| `t_req_get_conformance_latest` | `server-call-request` | `p_page_responsive_lab` | `p_pending_get_conformance_latest` | `GET /api/test-runs/conformance/latest` | `responsive-lab.html` | Product Manager and TEA | fetch("/api/test-runs/conformance/latest?target=...") in js/harness/conformance-panel.js:25 |
+| `t_req_get_conformance_latest` | `server-call-request` | `p_page_responsive_lab` | `p_pending_get_conformance_latest` | `GET /api/test-runs/conformance/latest` | `responsive-lab.html` | Product Manager and TEA | fetch("/api/test-runs/conformance/latest?target=...") in js/harness/conformance-panel.js |
 | `t_ok_get_conformance_latest` | `server-call-ok` | `p_pending_get_conformance_latest` | `p_page_responsive_lab` | `GET /api/test-runs/conformance/latest` | `responsive-lab.html` | Product Manager and TEA | HTTP 2xx response for GET /api/test-runs/conformance/latest |
 | `t_fail_get_conformance_latest` | `server-call-fail` | `p_pending_get_conformance_latest` | `p_page_responsive_lab` | `GET /api/test-runs/conformance/latest` | `responsive-lab.html` | Product Manager and TEA | HTTP 4xx/5xx or network failure for GET /api/test-runs/conformance/latest |
 | `t_req_post_nav_session` | `server-call-request` | `p_page_responsive_lab` | `p_pending_post_nav_session` | `POST /api/test-runs/navigation/session` | `responsive-lab.html` | Architect and TEA | fetch("/api/test-runs/navigation/session") in js/harness/spa-test-workflow.js |
@@ -116,28 +118,28 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | `t_req_post_nav_link` | `server-call-request` | `p_page_responsive_lab` | `p_pending_post_nav_link` | `POST /api/test-runs/navigation/link` | `responsive-lab.html` | Architect and TEA | fetch("/api/test-runs/navigation/link") in js/harness/spa-test-workflow.js |
 | `t_ok_post_nav_link` | `server-call-ok` | `p_pending_post_nav_link` | `p_page_responsive_lab` | `POST /api/test-runs/navigation/link` | `responsive-lab.html` | Architect and TEA | HTTP 2xx response for POST /api/test-runs/navigation/link |
 | `t_fail_post_nav_link` | `server-call-fail` | `p_pending_post_nav_link` | `p_page_responsive_lab` | `POST /api/test-runs/navigation/link` | `responsive-lab.html` | Architect and TEA | HTTP 4xx/5xx or network failure for POST /api/test-runs/navigation/link |
-| `t_req_get_env` | `server-call-request` | `p_view_index_mcard_viewer` | `p_pending_get_env` | `GET /api/env` | `index.html` | Product Manager and UX Designer | fetch("/api/env") in index.html:351 |
+| `t_req_get_env` | `server-call-request` | `p_view_index_mcard_viewer` | `p_pending_get_env` | `GET /api/env` | `index.html` | Product Manager and UX Designer | fetch("/api/env") in index.html |
 | `t_ok_get_env` | `server-call-ok` | `p_pending_get_env` | `p_view_index_mcard_viewer` | `GET /api/env` | `index.html` | Product Manager and UX Designer | HTTP 2xx response for GET /api/env |
 | `t_fail_get_env` | `server-call-fail` | `p_pending_get_env` | `p_view_index_mcard_viewer` | `GET /api/env` | `index.html` | Product Manager and UX Designer | HTTP 4xx/5xx or network failure for GET /api/env |
-| `t_req_get_mcard_landing` | `server-call-request` | `p_view_index_mcard_viewer` | `p_pending_get_mcard_landing` | `GET /api/mcard/landing` | `index.html` | Product Manager | api.landing() GET /api/mcard/landing in js/landing-page-mcard.js:176,199 |
+| `t_req_get_mcard_landing` | `server-call-request` | `p_view_index_mcard_viewer` | `p_pending_get_mcard_landing` | `GET /api/mcard/landing` | `index.html` | Product Manager | api.landing() GET /api/mcard/landing in js/landing-page-mcard.js |
 | `t_ok_get_mcard_landing` | `server-call-ok` | `p_pending_get_mcard_landing` | `p_view_index_mcard_viewer` | `GET /api/mcard/landing` | `index.html` | Product Manager | HTTP 2xx response for GET /api/mcard/landing |
 | `t_fail_get_mcard_landing` | `server-call-fail` | `p_pending_get_mcard_landing` | `p_view_index_mcard_viewer` | `GET /api/mcard/landing` | `index.html` | Product Manager | HTTP 4xx/5xx or network failure for GET /api/mcard/landing |
-| `t_req_put_mcard_landing` | `server-call-request` | `p_view_index_mcard_viewer` | `p_pending_put_mcard_landing` | `PUT /api/mcard/landing` | `index.html` | Product Manager | api.setLanding() PUT /api/mcard/landing in js/landing-page-mcard.js:177,216 |
+| `t_req_put_mcard_landing` | `server-call-request` | `p_view_index_mcard_viewer` | `p_pending_put_mcard_landing` | `PUT /api/mcard/landing` | `index.html` | Product Manager | api.setLanding() PUT /api/mcard/landing in js/landing-page-mcard.js |
 | `t_ok_put_mcard_landing` | `server-call-ok` | `p_pending_put_mcard_landing` | `p_view_index_mcard_viewer` | `PUT /api/mcard/landing` | `index.html` | Product Manager | HTTP 2xx response for PUT /api/mcard/landing |
 | `t_fail_put_mcard_landing` | `server-call-fail` | `p_pending_put_mcard_landing` | `p_error_put_mcard_landing` | `PUT /api/mcard/landing` | `index.html` | Product Manager | HTTP 4xx/5xx or network failure for PUT /api/mcard/landing |
 | `t_recover_put_mcard_landing` | `recover` | `p_error_put_mcard_landing` | `p_view_index_mcard_viewer` | `/index.html?noredirect=1` | `index.html` | Product Manager | Reload or reset index.html to /index.html?noredirect=1 from p_error_put_mcard_landing |
-| `t_req_get_clm_program_artifact` | `server-call-request` | `p_view_index_mcard_viewer` | `p_pending_get_clm_program_artifact` | `GET /api/clm/program-artifact` | `index.html` | Architect | fetch("/api/clm/program-artifact?...") in js/observability/fibration-dashboard.js:157 |
+| `t_req_get_clm_program_artifact` | `server-call-request` | `p_view_index_mcard_viewer` | `p_pending_get_clm_program_artifact` | `GET /api/clm/program-artifact` | `index.html` | Architect | fetch("/api/clm/program-artifact?...") in js/observability/fibration-dashboard.js |
 | `t_ok_get_clm_program_artifact` | `server-call-ok` | `p_pending_get_clm_program_artifact` | `p_view_index_mcard_viewer` | `GET /api/clm/program-artifact` | `index.html` | Architect | HTTP 2xx response for GET /api/clm/program-artifact |
 | `t_fail_get_clm_program_artifact` | `server-call-fail` | `p_pending_get_clm_program_artifact` | `p_view_index_mcard_viewer` | `GET /api/clm/program-artifact` | `index.html` | Architect | HTTP 4xx/5xx or network failure for GET /api/clm/program-artifact |
-| `t_req_get_clm_registry` | `server-call-request` | `p_page_sprint_registry` | `p_pending_get_clm_registry` | `GET /api/clm/registry` | `sprint-registry.html` | Scrum Master | fetch("/api/clm/registry") in sprint-registry.html:140 |
+| `t_req_get_clm_registry` | `server-call-request` | `p_page_sprint_registry` | `p_pending_get_clm_registry` | `GET /api/clm/registry` | `sprint-registry.html` | Scrum Master | fetch("/api/clm/registry") in sprint-registry.html |
 | `t_ok_get_clm_registry` | `server-call-ok` | `p_pending_get_clm_registry` | `p_page_sprint_registry` | `GET /api/clm/registry` | `sprint-registry.html` | Scrum Master | HTTP 2xx response for GET /api/clm/registry |
 | `t_fail_get_clm_registry` | `server-call-fail` | `p_pending_get_clm_registry` | `p_error_get_clm_registry` | `GET /api/clm/registry` | `sprint-registry.html` | Scrum Master | HTTP 4xx/5xx or network failure for GET /api/clm/registry |
 | `t_recover_get_clm_registry` | `recover` | `p_error_get_clm_registry` | `p_page_sprint_registry` | `/sprint-registry.html` | `sprint-registry.html` | Scrum Master | Reload or reset sprint-registry.html to /sprint-registry.html from p_error_get_clm_registry |
-| `t_req_get_fiber_inspector_harness` | `server-call-request` | `p_page_fiber_inspector` | `p_pending_get_fiber_inspector_harness` | `GET /public/conformance/harness-data.json` | `fiber-inspector.html` | Architect | fetch("./public/conformance/harness-data.json") gating JSON in fiber-inspector.html:72 |
+| `t_req_get_fiber_inspector_harness` | `server-call-request` | `p_page_fiber_inspector` | `p_pending_get_fiber_inspector_harness` | `GET /public/conformance/harness-data.json` | `fiber-inspector.html` | Architect | fetch("./public/conformance/harness-data.json") gating JSON in fiber-inspector.html |
 | `t_ok_get_fiber_inspector_harness` | `server-call-ok` | `p_pending_get_fiber_inspector_harness` | `p_page_fiber_inspector` | `GET /public/conformance/harness-data.json` | `fiber-inspector.html` | Architect | HTTP 2xx response for GET /public/conformance/harness-data.json |
 | `t_fail_get_fiber_inspector_harness` | `server-call-fail` | `p_pending_get_fiber_inspector_harness` | `p_error_get_fiber_inspector_harness` | `GET /public/conformance/harness-data.json` | `fiber-inspector.html` | Architect | HTTP 4xx/5xx or network failure for GET /public/conformance/harness-data.json |
 | `t_recover_get_fiber_inspector_harness` | `recover` | `p_error_get_fiber_inspector_harness` | `p_page_fiber_inspector` | `/fiber-inspector.html` | `fiber-inspector.html` | Architect | Reload or reset fiber-inspector.html to /fiber-inspector.html from p_error_get_fiber_inspector_harness |
-| `t_req_get_fiber_conformance_harness` | `server-call-request` | `p_page_fiber_conformance` | `p_pending_get_fiber_conformance_harness` | `GET /public/conformance/harness-data.json` | `fiber-conformance.html` | Architect | fetch("./public/conformance/harness-data.json") gating JSON in fiber-conformance.html:144 |
+| `t_req_get_fiber_conformance_harness` | `server-call-request` | `p_page_fiber_conformance` | `p_pending_get_fiber_conformance_harness` | `GET /public/conformance/harness-data.json` | `fiber-conformance.html` | Architect | fetch("./public/conformance/harness-data.json") gating JSON in fiber-conformance.html |
 | `t_ok_get_fiber_conformance_harness` | `server-call-ok` | `p_pending_get_fiber_conformance_harness` | `p_page_fiber_conformance` | `GET /public/conformance/harness-data.json` | `fiber-conformance.html` | Architect | HTTP 2xx response for GET /public/conformance/harness-data.json |
 | `t_fail_get_fiber_conformance_harness` | `server-call-fail` | `p_pending_get_fiber_conformance_harness` | `p_error_get_fiber_conformance_harness` | `GET /public/conformance/harness-data.json` | `fiber-conformance.html` | Architect | HTTP 4xx/5xx or network failure for GET /public/conformance/harness-data.json |
 | `t_recover_get_fiber_conformance_harness` | `recover` | `p_error_get_fiber_conformance_harness` | `p_page_fiber_conformance` | `/fiber-conformance.html` | `fiber-conformance.html` | Architect | Reload or reset fiber-conformance.html to /fiber-conformance.html from p_error_get_fiber_conformance_harness |
@@ -191,6 +193,7 @@ flowchart TD
   p_page_sprint_registry["p_page_sprint_registry (page)"]
   p_page_fiber_inspector["p_page_fiber_inspector (page)"]
   p_page_fiber_conformance["p_page_fiber_conformance (page)"]
+  p_page_docs_index["p_page_docs_index (page)"]
   p_view_index_mcard_viewer["p_view_index_mcard_viewer (view)"]
   p_external_games["p_external_games (external)"]
   p_pending_get_app_config["p_pending_get_app_config (pending)"]
@@ -217,12 +220,13 @@ flowchart TD
   p_pending_post_nav_fire["p_pending_post_nav_fire (pending)"]
   p_pending_post_nav_link["p_pending_post_nav_link (pending)"]
   p_page_index -->|"t_redirect_index_to_lab (redirect)"| p_page_responsive_lab
-  p_page_responsive_lab -->|"t_link_lab_to_index (link)"| p_page_index
+  p_page_responsive_lab -->|"t_link_lab_to_index (link)"| p_view_index_mcard_viewer
   p_page_responsive_lab -->|"t_link_lab_to_app (link)"| p_page_app
   p_page_app -->|"t_link_app_to_index (link)"| p_page_index
   p_view_index_mcard_viewer -->|"t_link_viewer_to_index (link)"| p_page_index
-  p_view_index_mcard_viewer -->|"t_link_viewer_to_app (link)"| p_page_app
   p_view_index_mcard_viewer -->|"t_link_viewer_to_lab (link)"| p_page_responsive_lab
+  p_view_index_mcard_viewer -->|"t_link_viewer_to_docs (link)"| p_page_docs_index
+  p_page_docs_index -->|"t_link_docs_to_index (link)"| p_page_index
   p_page_app -->|"t_open_external_monopoly (open-external)"| p_page_app
   p_page_app -->|"t_open_external_chess (open-external)"| p_page_app
   p_page_app -->|"t_open_external_go (open-external)"| p_page_app

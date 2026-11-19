@@ -1,4 +1,8 @@
 ---
+import fs from 'node:fs';
+import path from 'node:path';
+import yaml from 'js-yaml';
+
 const {
   title,
   lang = 'en',
@@ -6,9 +10,20 @@ const {
   dataTheme,
   dataLattice,
   bodyClass,
+  netId = 'landingpage-workbench-net',
+  placeIds = [],
   viewport = 'width=device-width, initial-scale=1.0'
 } = Astro.props;
 const isDev = import.meta.env.DEV;
+
+const netPath = path.join(process.cwd(), 'src/net/workbench-net.yaml');
+const envelope = yaml.load(fs.readFileSync(netPath, 'utf8'));
+const navArcs = Object.entries(envelope?.bindings?.transitions || {})
+  .filter(([, binding]) => ['redirect', 'link', 'client-route', 'recover'].includes(binding?.kind))
+  .map(([transitionId, binding]) => `${binding.fromPlaceId}>${binding.toPlaceId}>${transitionId}`)
+  .join(';');
+const declaredPlaces = (placeIds || []).join(',');
+const singlePlace = (placeIds || []).length === 1 ? placeIds[0] : undefined;
 ---
 <!DOCTYPE html>
 <html lang={lang} dir={dir} data-lattice={dataLattice} data-theme={dataTheme}>
@@ -32,9 +47,33 @@ const isDev = import.meta.env.DEV;
         }
       </script>
     )}
+    <style is:inline>
+      #page-status,
+      #page-alert {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+      }
+    </style>
+    <script type="module" src="/js/harness/page-state.js"></script>
     <slot name="head" />
   </head>
-  <body class={bodyClass}>
+  <body
+    class={bodyClass}
+    data-net-id={netId}
+    data-place-id={singlePlace}
+    data-place-ids={declaredPlaces}
+    data-page-state="loading"
+    data-nav-arcs={navArcs}
+  >
+    <div id="page-status" role="status" aria-live="polite"></div>
+    <div id="page-alert" role="alert" aria-live="assertive"></div>
     <slot />
   </body>
 </html>

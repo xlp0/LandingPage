@@ -179,8 +179,8 @@ async function runP0JourneyOnce(browser, baseUrl, screenshotPath = null) {
     await page.goto(`${baseUrl}/responsive-lab.html`, { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(
       () =>
-        !document.body.classList.contains('lab-booting') &&
-        document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-workflow-ready') === 'true'
+        document.body.dataset.pageState !== 'loading' &&
+        document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-island-state') === 'ready'
     );
     await page.getByTestId('workflow-select-spa-fixture').click();
     const frame = page.frameLocator('iframe[title="Responsive UI Lab Test Frame"]');
@@ -190,7 +190,7 @@ async function runP0JourneyOnce(browser, baseUrl, screenshotPath = null) {
     });
 
     await page.getByTestId('workflow-tab-step-evidence').click();
-    await page.getByTestId('workflow-rec-start').click();
+    await page.locator('#btn-rec-start').click();
     await page.waitForFunction(
       () => document.querySelector('[data-testid="workflow-recorder-state"]')?.textContent?.trim() === 'RECORDING'
     );
@@ -204,7 +204,7 @@ async function runP0JourneyOnce(browser, baseUrl, screenshotPath = null) {
     const saveP = page.waitForResponse(
       (res) => res.url().includes('/api/test-runs') && res.request().method() === 'POST'
     );
-    await page.getByTestId('workflow-rec-stop').click();
+    await page.locator('#btn-rec-stop').click();
     const saveRes = await saveP;
     const saved = await saveRes.json();
     await page.waitForFunction(
@@ -249,8 +249,8 @@ async function recordReviewVideo(browser, baseUrl, outVideoPath, disclosureShotP
   await page.goto(`${baseUrl}/responsive-lab.html`, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(
     () =>
-      !document.body.classList.contains('lab-booting') &&
-      document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-workflow-ready') === 'true'
+      document.body.dataset.pageState !== 'loading' &&
+      document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-island-state') === 'ready'
   );
   await pause(3500);
 
@@ -273,7 +273,7 @@ async function recordReviewVideo(browser, baseUrl, outVideoPath, disclosureShotP
 
   await page.getByTestId('workflow-tab-step-evidence').click();
   await pause(2000);
-  await page.getByTestId('workflow-rec-start').click();
+  await page.locator('#btn-rec-start').click();
   await pause(2500);
 
   await frame.locator('button[data-link-id="link_spa_open_details"]').click();
@@ -286,7 +286,7 @@ async function recordReviewVideo(browser, baseUrl, outVideoPath, disclosureShotP
   const saveP = page.waitForResponse(
     (res) => res.url().includes('/api/test-runs') && res.request().method() === 'POST'
   );
-  await page.getByTestId('workflow-rec-stop').click();
+  await page.locator('#btn-rec-stop').click();
   await saveP;
   await pause(3000);
 
@@ -411,8 +411,8 @@ async function main() {
         await page.goto(`${headSrv.baseUrl}/responsive-lab.html`, { waitUntil: 'domcontentloaded' });
         await page.waitForFunction(
           () =>
-            !document.body.classList.contains('lab-booting') &&
-            document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-workflow-ready') === 'true'
+            document.body.dataset.pageState !== 'loading' &&
+            document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-island-state') === 'ready'
         );
         const selectorVisible = await page.getByRole('combobox', { name: /Select target website/i }).isVisible();
         const loadBtnVisible = await page.getByRole('button', { name: /Load Target/i }).isVisible();
@@ -444,8 +444,8 @@ async function main() {
         );
         await page.waitForFunction(
           () =>
-            !document.body.classList.contains('lab-booting') &&
-            document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-workflow-ready') === 'true'
+            document.body.dataset.pageState !== 'loading' &&
+            document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-island-state') === 'ready'
         );
         const frame = page.frameLocator('iframe[title="Responsive UI Lab Test Frame"]');
         await page.waitForFunction(() => {
@@ -531,7 +531,7 @@ async function main() {
           `${headSrv.baseUrl}/responsive-lab.html?target=${encodeURIComponent(SPA_FIXTURE_PATH)}`,
           { waitUntil: 'domcontentloaded' }
         );
-        await page.waitForFunction(() => !document.body.classList.contains('lab-booting'));
+        await page.waitForFunction(() => document.body.dataset.pageState !== 'loading');
         await page.waitForFunction(() => {
           const f = document.querySelector('iframe[title="Responsive UI Lab Test Frame"]');
           return f?.contentDocument?.querySelector('#spa-app-root')?.getAttribute('data-place-id') === 'p_spa_overview';
@@ -595,7 +595,7 @@ async function main() {
           `${headSrv.baseUrl}/responsive-lab.html?target=${encodeURIComponent(SPA_FIXTURE_PATH)}`,
           { waitUntil: 'domcontentloaded' }
         );
-        await page.waitForFunction(() => !document.body.classList.contains('lab-booting'));
+        await page.waitForFunction(() => document.body.dataset.pageState !== 'loading');
         const frame = page.frameLocator('iframe[title="Responsive UI Lab Test Frame"]');
         await page.waitForFunction(() => {
           const f = document.querySelector('iframe[title="Responsive UI Lab Test Frame"]');

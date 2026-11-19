@@ -25,8 +25,7 @@ test.describe('Landing Page Smoke Tests', () => {
     const nav = page.getByRole('navigation', { name: 'Penpot Navigation Flow' });
     await expect(nav).toBeVisible();
     await expect(nav.getByRole('link', { name: 'Home' })).toBeVisible();
-    await expect(nav.getByRole('link', { name: 'Mission Control' })).toBeVisible();
-    await expect(nav.getByRole('link', { name: 'Responsive UI Lab' })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Docs Index' })).toBeVisible();
   });
 
   test('Portal mode displays single-page MCard host and Sovereign HUD pill', async ({ page }) => {
@@ -37,10 +36,9 @@ test.describe('Landing Page Smoke Tests', () => {
     await expect(page.locator('#mcard-sovereign-pill')).toBeVisible();
   });
 
-  test('Portal navigation link transitions to Responsive UI Lab', async ({ page }) => {
+  test('Portal top control transitions to Responsive UI Lab', async ({ page }) => {
     await page.goto(`${LANDING_PAGE_PATH}?noredirect=1`);
-    const nav = page.getByRole('navigation', { name: 'Penpot Navigation Flow' });
-    await nav.getByRole('link', { name: 'Responsive UI Lab' }).click();
+    await page.locator('#responsive-ui-lab-btn').click();
     await expect(page).toHaveURL(new RegExp(`${RESPONSIVE_LAB_PATH}$`));
     await expect(page.locator('#lab-stage-container')).toBeVisible();
   });

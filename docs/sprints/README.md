@@ -5,20 +5,25 @@
 | Audience | Scrum masters, product managers, developers, and operators |
 | BMAD Owner | Scrum Master |
 | Source of Truth | [`docs/sprints/INDEX.md`](./INDEX.md) and [`docs/sprints/_active/INDEX.md`](./_active/INDEX.md) |
+| Status | `ACTIVE` (`Program SSG` in flight; `4` graduated programs archived) |
 | Drift Gate | `npm run docs:check` |
 
 This directory houses sprint planning, execution specifications, evidence reports, and graduated archives for the `LandingPage` repository.
 
 ## Directory Structure
 
-- [**`_active/`**](./_active/INDEX.md) holds **Program GQC** (`SPRINT-GQC-00..07`), where all ten execution units are completed with committed evidence in [`_active/evidence/`](./_active/evidence/GQC-07-docs-and-graduation.md) and remain in `_active/` awaiting explicit operator graduation approval.
-- [**`01-architecture/`**](./01-architecture/INDEX.md) archives graduated **Program SMO** (`SMO-00..05`, 2026-10-21; historical `clm-kernel@0.0.10` records preserved unchanged, superseded in living code and docs by `clm-kernel@0.0.12`).
+- [**`_active/`**](./_active/INDEX.md) hosts active **Program SSG** (`SPRINT-SSG-00..08`, started `2026-11-19`) alongside [`ssg-plan.md`](./_active/ssg-plan.md), [`SSG-egm-review.md`](./_active/evidence/SSG-egm-review.md), and the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) decision ledger.
+- [**`programs/bpv/`**](./programs/bpv/INDEX.md) archives graduated **Program BPV** (`SPRINT-BPV-00..07`, graduated `2026-11-18` with operator approval; see [`BPV-07-graduation.md`](./programs/bpv/evidence/BPV-07-graduation.md); `bombadil-scheduler` remains active daily at `02:30` UTC).
+- [**`programs/gqc/`**](./programs/gqc/INDEX.md) archives graduated **Program GQC** (`SPRINT-GQC-00..07`, graduated `2026-11-18` with operator approval; see [`GQC-07-docs-and-graduation.md`](./programs/gqc/evidence/GQC-07-docs-and-graduation.md)).
 - [**`08-testing/`**](./08-testing/INDEX.md) archives graduated **Program ERB** (`ERB-00..06`, 2026-10-21).
+- [**`01-architecture/`**](./01-architecture/INDEX.md) archives graduated **Program SMO** (`SMO-00..05`, 2026-10-21; historical `clm-kernel@0.0.10` records preserved unchanged, superseded in living code and docs by `clm-kernel@0.0.24`).
 
 ## Sprint Program Ledger
 
 | Program | Code | Sprints | Directory | Status |
 | :--- | :---: | :---: | :--- | :---: |
-| **Submodule Modularity and Universal MCard Browser** | `SMO` | `SMO-00..SMO-05` | [01-architecture](./01-architecture/INDEX.md) | Graduated (2026-10-21) |
-| **Device-Sensitive Test Infrastructure** | `ERB` | `ERB-00..ERB-06` | [08-testing](./08-testing/INDEX.md) | Graduated (2026-10-21) |
-| **Guided SPA Workbench, Astro Islands, Petri Net, and Docs Gates** | `GQC` | `GQC-00..GQC-07` | [_active](./_active/INDEX.md) | Completed in `_active/` (Awaiting Operator Graduation) |
+| **StageShow Craft, Bombadil Dashboard, and Coherent Layout** | `SSG` | `SSG-00..SSG-08` | [_active](./_active/INDEX.md) | Active (`2026-11-19`) |
+| **Bombadil Property Verification and Explorable GUI** | `BPV` | `BPV-00..BPV-07` | [programs/bpv](./programs/bpv/INDEX.md) | Graduated (`2026-11-18`) |
+| **Guided SPA Workbench, Astro Islands, Petri Net, and Docs Gates** | `GQC` | `GQC-00..GQC-07` | [programs/gqc](./programs/gqc/INDEX.md) | Graduated (`2026-11-18`) |
+| **Device-Sensitive Test Infrastructure** | `ERB` | `ERB-00..ERB-06` | [08-testing](./08-testing/INDEX.md) | Graduated (`2026-10-21`) |
+| **Submodule Modularity and Universal MCard Browser** | `SMO` | `SMO-00..SMO-05` | [01-architecture](./01-architecture/INDEX.md) | Graduated (`2026-10-21`) |

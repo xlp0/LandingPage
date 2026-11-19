@@ -1,7 +1,11 @@
 ---
 import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
 ---
-<WorkbenchLayout title="MCard Manager" dataLattice="web:desktop:portrait:en-US:dark:balanced" dataTheme="dark">
+<WorkbenchLayout placeIds={['p_page_app']} title="MCard Manager" dataLattice="web:desktop:portrait:en-US:dark:balanced" dataTheme="dark">
+<script is:inline type="module">
+  import { setPageState } from '/js/harness/page-state.js';
+  window.addEventListener('load', () => setPageState('ready'));
+</script>
   <Fragment slot="head">
     <link rel="stylesheet" href="/public/css/semantic-tokens.css">
   
@@ -372,10 +376,10 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
 
       
       <div class="middle-column">
-        <div class="mobile-back-btn" onclick="navigateBack()">
+        <button type="button" class="mobile-back-btn" data-testid="app-mobile-back-types" onclick="navigateBack()">
           <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
           Back to Types
-        </div>
+        </button>
         <div class="column-header">
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <h3 id="columnTitle">All MCards</h3>
@@ -457,10 +461,10 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
 
       
       <div class="viewer-column">
-        <div class="mobile-back-btn" onclick="navigateBack()">
+        <button type="button" class="mobile-back-btn" data-testid="app-mobile-back-cards" onclick="navigateBack()">
           <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
           Back to Cards
-        </div>
+        </button>
         <div class="viewer-header">
           <h3 id="viewerTitle">Select an MCard</h3>
           <div class="viewer-actions" id="viewerActions" style="display: none;">
@@ -491,7 +495,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
         <div class="chat-header">
           <h3>
             <i data-lucide="message-square"
-              style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
+              style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>{' '}
             Chat Assistant
           </h3>
           <button class="chat-close-btn" onclick="toggleChat()">
@@ -521,7 +525,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
         <div class="chat-header">
           <h3 id="editPanelTitle">
             <i data-lucide="edit-3"
-              style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
+              style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>{' '}
             <span id="editPanelTitleText">New Text Card</span>
           </h3>
           <button class="chat-close-btn" onclick="closeEditPanel()">

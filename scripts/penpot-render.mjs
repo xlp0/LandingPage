@@ -102,7 +102,8 @@ export function getOutgoingLinks(frameId) {
 
   const navHtmlItems = routesList.map(r => {
     const activeClass = r.isStartingFrame ? ' penpot-nav-link-active' : '';
-    return `      <a class="penpot-nav-link${activeClass}" href="${r.path}" data-penpot-frame="${r.frameId}" data-penpot-handle="${r.handle}">${r.name}</a>`;
+    const testId = `penpot-nav-${r.path.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase()}`;
+    return `      <a class="penpot-nav-link${activeClass}" href="${r.path}" data-testid="${testId}" data-penpot-frame="${r.frameId}" data-penpot-handle="${r.handle}">${r.name}</a>`;
   }).join('\n');
 
   const penpotNavBlock = `<!-- BEGIN: PENPOT-GENERATED-NAV (INV-CDO-11) -->
@@ -187,14 +188,27 @@ ${navHtmlItems}
 
   fs.writeFileSync(indexPath, indexHtml, 'utf8');
 
+  // 3. Render the same block into the Astro page, which is what the server actually serves (GQC-02B).
+  const astroIndexPath = path.join(resolvedUnit, 'src', 'pages', 'index.astro');
+  const targets = [
+    { path: navJsPath, size: fs.statSync(navJsPath).size },
+    { path: indexPath, size: fs.statSync(indexPath).size },
+  ];
+  if (!fs.existsSync(astroIndexPath)) {
+    throw new Error(`${astroIndexPath} is missing. The served portal page must receive the navigation.`);
+  }
+  const astroSource = fs.readFileSync(astroIndexPath, 'utf8');
+  if (!navBlockRegex.test(astroSource)) {
+    throw new Error(`${astroIndexPath} has no PENPOT-GENERATED-NAV markers to replace.`);
+  }
+  fs.writeFileSync(astroIndexPath, astroSource.replace(navBlockRegex, penpotNavBlock), 'utf8');
+  targets.push({ path: astroIndexPath, size: fs.statSync(astroIndexPath).size });
+
   return {
     ok: true,
     graphHash: graph.meta.graphHash,
     archiveHash: graph.meta.archiveHash,
-    targets: [
-      { path: navJsPath, size: fs.statSync(navJsPath).size },
-      { path: indexPath, size: fs.statSync(indexPath).size },
-    ],
+    targets,
   };
 }
 

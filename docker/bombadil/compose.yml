@@ -1,0 +1,63 @@
+# Local Docker services for Program BPV's Bombadil runs. Nothing here runs on GitHub.
+#
+#   One nightly now:       docker compose -f docker/bombadil/compose.yml --profile manual run --rm bombadil-nightly
+#   Deterministic checks:  docker compose -f docker/bombadil/compose.yml --profile manual run --rm bombadil-gate
+#   Every night at 02:30:  docker compose -f docker/bombadil/compose.yml up -d bombadil-scheduler
+#
+# Results land in the host's bombadil-output/nightly-<UTC time>/ (summary.md, coverage.md, logs).
+# After package-lock.json changes, rebuild and drop the dependency volume:
+#   docker compose -f docker/bombadil/compose.yml down -v && docker compose -f docker/bombadil/compose.yml build
+name: landingpage-bombadil
+
+x-bombadil: &bombadil
+  build:
+    context: ../..
+    dockerfile: docker/bombadil/Dockerfile
+  image: landingpage-bombadil:local
+  working_dir: /app
+  # Chromium crashes with Docker's default 64 MB /dev/shm.
+  shm_size: 2gb
+  environment:
+    TZ: ${TZ:-UTC}
+    TIME_LIMIT: ${TIME_LIMIT:-5m}
+    WORKBENCH_TIME_LIMIT: ${WORKBENCH_TIME_LIMIT:-10m}
+    PAGE_LOAD_TIME_LIMIT: ${PAGE_LOAD_TIME_LIMIT:-2m}
+    CANARY_TIME_LIMIT: ${CANARY_TIME_LIMIT:-2m}
+    MIN_FIRINGS: ${MIN_FIRINGS:-20}
+  volumes:
+    - ../..:/app
+    # Linux dependencies from the image, kept apart from the host's macOS node_modules.
+    - node_modules:/app/node_modules
+    # The container builds its own Astro output so it never overwrites the host's dist/.
+    - dist:/app/dist
+    - astro_cache:/app/.astro
+
+services:
+  bombadil-nightly:
+    <<: *bombadil
+    profiles: ["manual"]
+    command: ["bash", "scripts/bombadil/nightly.sh"]
+
+  bombadil-gate:
+    <<: *bombadil
+    profiles: ["manual"]
+    command: ["bash", "-c", "npm run check:bombadil-nets && npm run check:explorable-gui && npm run check:net && npm run docs:check && npm run test:unit"]
+
+  bombadil-scheduler:
+    <<: *bombadil
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-UTC}
+      NIGHTLY_AT: ${NIGHTLY_AT:-02:30}
+      RUN_ON_START: ${RUN_ON_START:-0}
+      TIME_LIMIT: ${TIME_LIMIT:-5m}
+      WORKBENCH_TIME_LIMIT: ${WORKBENCH_TIME_LIMIT:-10m}
+      PAGE_LOAD_TIME_LIMIT: ${PAGE_LOAD_TIME_LIMIT:-2m}
+      CANARY_TIME_LIMIT: ${CANARY_TIME_LIMIT:-2m}
+      MIN_FIRINGS: ${MIN_FIRINGS:-20}
+    command: ["bash", "scripts/bombadil/nightly-scheduler.sh"]
+
+volumes:
+  node_modules:
+  dist:
+  astro_cache:

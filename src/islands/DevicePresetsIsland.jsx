@@ -15,6 +15,9 @@ export default function DevicePresetsIsland() {
     runtime.attachPresetsUI(presetsUI);
     runtime.markBootParticipant('presets');
 
+    const root = document.getElementById('controlled-size-controller');
+    if (root) root.dataset.islandState = 'ready';
+
     return () => {
       runtime.detachPresetsUI(presetsUI);
       presetsUI.destroy();
@@ -22,28 +25,7 @@ export default function DevicePresetsIsland() {
   }, []);
 
   return (
-    <div className="workbench-toolbar" id="controlled-size-controller" data-island="device-presets">
-      <div className="toolbar-group">
-        <span className="group-label">Workbench Arrangement:</span>
-        <div className="toolbar-group-row">
-          <button
-            id="btn-arrange-horizontal-dock"
-            className="toolbar-btn arrangement-btn active"
-            data-arrangement="horizontal"
-            title="Horizontal arrangement (Left Sidebar + Canvas)"
-          >
-            <span>☲ Horizontal (Side-by-Side)</span>
-          </button>
-          <button
-            id="btn-arrange-vertical-dock"
-            className="toolbar-btn arrangement-btn"
-            data-arrangement="vertical"
-            title="Vertical arrangement (Stacked Topbar + Canvas)"
-          >
-            <span>☰ Vertical (Stacked)</span>
-          </button>
-        </div>
-      </div>
+    <div className="workbench-toolbar" id="controlled-size-controller" data-island="device-presets" data-island-state="mounting">
 
       <div className="toolbar-group">
         <span className="group-label">Viewport Orientation:</span>
@@ -53,16 +35,18 @@ export default function DevicePresetsIsland() {
             className="toolbar-btn orientation-btn-primary"
             data-orientation="vertical"
             title="Switch to Vertical (Portrait) layout"
-          >
-            <span>↕ Vertical (Portrait)</span>
+            aria-pressed="false"
+           data-testid="btn-orient-vertical">
+            <span>↕ Portrait</span>
           </button>
           <button
             id="btn-orient-horizontal"
             className="toolbar-btn orientation-btn-primary active"
             data-orientation="horizontal"
             title="Switch to Horizontal (Landscape) layout"
-          >
-            <span>↔ Horizontal (Landscape)</span>
+            aria-pressed="true"
+           data-testid="btn-orient-horizontal">
+            <span>↔ Landscape</span>
           </button>
         </div>
       </div>
@@ -75,7 +59,7 @@ export default function DevicePresetsIsland() {
             className="toolbar-btn"
             title="Open Device Preset Manager"
             aria-label="Open Device Preset Manager"
-          >
+           data-testid="btn-open-device-manager">
             <span>⚙️ Manage</span>
           </button>
         </div>
@@ -93,7 +77,8 @@ export default function DevicePresetsIsland() {
               className="toolbar-btn size-preset-btn"
               data-device-id={device.id}
               title={`${device.name} \u2014 ${device.width} \u00d7 ${device.height}px (${aspectRatio(device.width, device.height)})`}
-            >
+              aria-pressed="false"
+             data-testid={chipIdFor(device)}>
               <span>{`${device.name} (${device.width}px)`}</span>
             </button>
           ))}
@@ -102,7 +87,8 @@ export default function DevicePresetsIsland() {
             id="btn-size-full"
             className="toolbar-btn size-preset-btn active"
             title="Reset to full container size (100%)"
-          >
+            aria-pressed="true"
+           data-testid="btn-size-full">
             <span>↔ Full (100%)</span>
           </button>
         </div>
@@ -125,7 +111,7 @@ export default function DevicePresetsIsland() {
             min="100"
             max="7680"
             aria-label="Width in pixels"
-          />
+          data-testid="controlled-width-input" />
           <label htmlFor="controlled-height-input" style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)' }}>
             H:
           </label>
@@ -137,8 +123,8 @@ export default function DevicePresetsIsland() {
             min="100"
             max="7680"
             aria-label="Height in pixels"
-          />
-          <button id="btn-apply-custom-dim" type="button" className="toolbar-btn" style={{ padding: '0.2rem 0.5rem' }}>
+          data-testid="controlled-height-input" />
+          <button id="btn-apply-custom-dim" type="button" className="toolbar-btn" style={{ padding: '0.2rem 0.5rem' }} data-testid="btn-apply-custom-dim">
             Apply
           </button>
         </div>
@@ -149,7 +135,7 @@ export default function DevicePresetsIsland() {
             className="toolbar-btn"
             style={{ flex: 1 }}
             title="Swap Width and Height (90° Rotation)"
-          >
+           data-testid="btn-rotate-viewport">
             🔄 Rotate (90°)
           </button>
           <button
@@ -157,7 +143,7 @@ export default function DevicePresetsIsland() {
             type="button"
             className="toolbar-btn"
             title="Toggle between 100% Actual Size and Fit-to-Screen"
-          >
+           data-testid="btn-scale-toggle">
             🔍 Fit: Auto
           </button>
         </div>

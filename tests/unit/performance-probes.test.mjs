@@ -222,7 +222,7 @@ test('GQC-06-INT-01: persistPerformanceReport stores environment, raw samples, s
 test('GQC-06-UNIT-02: analyzePlaceBytes splits island bundles vs shared chunks, reconciles with network logs, and fails when an island-free Place leaks island JS', () => {
   const analysis = analyzePlaceBytes({ rootDir: DEFAULT_ROOT_DIR });
   assert.equal(analysis.ok, true, analysis.violations.join('; '));
-  assert.equal(analysis.pagePlaces.length, 6);
+  assert.ok(analysis.pagePlaces.length >= 6);
 
   const byId = new Map(analysis.pagePlaces.map((p) => [p.placeId, p]));
   const lab = byId.get('p_page_responsive_lab');

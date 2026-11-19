@@ -1,15 +1,25 @@
 ---
 import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
 ---
-<WorkbenchLayout title="GovTech Platform | Mission Control">
-  <Fragment slot="head">
-    <meta name="description" content="GovTech Operating System - Computational Trinitarianism">
-  
+<WorkbenchLayout
+  title="GovTech Platform | Mission Control"
+  placeIds={['p_page_index', 'p_view_index_mcard_viewer']}
+>
   <script is:inline>
     if (window.self === window.top && !window.location.search.includes('noredirect')) {
       window.location.replace('responsive-lab.html');
     }
   </script>
+  <script is:inline type="module">
+    import { setPageState, setPlace } from '/js/harness/page-state.js';
+    if (window.self !== window.top || window.location.search.includes('noredirect')) {
+      setPlace('p_view_index_mcard_viewer');
+      setPageState('ready');
+    }
+  </script>
+  <Fragment slot="head">
+    <meta name="description" content="GovTech Operating System - Computational Trinitarianism">
+  
   <link rel="stylesheet" href="./public/css/semantic-tokens.css">
   <style is:inline>
     * {
@@ -117,6 +127,39 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       gap: 1.5rem;
       width: 100%;
       margin-top: 2rem;
+    }
+
+    .mcard-page-host {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      margin-top: 2rem;
+      box-sizing: border-box;
+    }
+
+    .mcard-page-host .mcard-page {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .mcard-page-host .mcard-page-body {
+      max-width: 100%;
+      box-sizing: border-box;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .mcard-page-host * {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .mcard-page-host pre,
+    .mcard-page-host code,
+    .mcard-page-host .mcard-page-body {
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
     }
 
     .card {
@@ -262,34 +305,43 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
 
   </style>
   </Fragment>
-  <nav class="penpot-nav-bar" id="penpot-site-nav" aria-label="Penpot Navigation Flow" data-graph-hash="7fc5562f37de5880c28963dfbfeb7b976cafb6feb6e8698078528a9d63a41fb4">
+  <!-- BEGIN: PENPOT-GENERATED-NAV (INV-CDO-11) -->
+  <nav class="penpot-nav-bar" id="penpot-site-nav" aria-label="Penpot Navigation Flow" data-graph-hash="5c58f7d1f1cd48669f2fd504a6839151549a6176c5c3184e03d1eba5f7407ac7">
     <span class="penpot-nav-title">🎨 Flow: main-nav</span>
     <div class="penpot-nav-links">
-      <a class="penpot-nav-link penpot-nav-link-active" href="index.html" data-penpot-frame="d7570000-0000-8000-8000-000000000011" data-penpot-handle="mcard:route:/index.html">Home</a>
-      <a class="penpot-nav-link" href="app.html" data-penpot-frame="d7570000-0000-8000-8000-000000000012" data-penpot-handle="mcard:route:/app.html">Mission Control</a>
-      <a class="penpot-nav-link" href="responsive-lab.html" data-penpot-frame="d7570000-0000-8000-8000-000000000013" data-penpot-handle="mcard:route:/responsive-lab.html">Responsive UI Lab</a>
+      <a class="penpot-nav-link penpot-nav-link-active" href="index.html" data-testid="penpot-nav-index-html" data-penpot-frame="d7570000-0000-8000-8000-000000000011" data-penpot-handle="mcard:route:/index.html">Home</a>
+      <a class="penpot-nav-link" href="pkc-docs-index.html" data-testid="penpot-nav-pkc-docs-index-html" data-penpot-frame="d7570000-0000-8000-8000-000000000012" data-penpot-handle="mcard:route:/pkc-docs-index.html">Docs Index</a>
     </div>
   </nav>
-  
+  <!-- END: PENPOT-GENERATED-NAV -->
 
+  <main class="portal-main" style="display: contents">
   <div class="top-controls">
-    <div class="faro-badge" id="faro-status-badge" title="Grafana Faro Observability Connected">
+    <div class="faro-badge" id="faro-status-badge" title="Grafana Faro RUM">
       <span class="faro-pulse"></span>
       <span>Faro RUM</span>
     </div>
+    <script is:inline>
+      window.addEventListener('load', () => {
+        const badge = document.getElementById('faro-status-badge');
+        if (!badge) return;
+        const connected = Boolean(window.__faro_collector);
+        badge.dataset.faroState = connected ? 'connected' : 'uninitialized';
+        badge.title = connected ? 'Grafana Faro telemetry connected' : 'Grafana Faro telemetry not initialized';
+      });
+    </script>
     
     
-    <a class="control-btn" id="responsive-ui-lab-btn" href="responsive-lab.html" title="Open Responsive UI Lab (Full-Window Viewport & Orientation Workbench)">
+    <a class="control-btn" id="responsive-ui-lab-btn" data-testid="responsive-ui-lab-btn" href="responsive-lab.html" title="Open Responsive UI Lab (Full-Window Viewport & Orientation Workbench)">
       <span id="sidepane-icon">📐</span>
       <span id="sidepane-label">Responsive UI Lab</span>
     </a>
-    <button class="control-btn" id="mission-control-sidepane-btn" style="display: none;" aria-hidden="true" title="Side Pane Alias"></button>
 
-    <button class="control-btn" id="theme-toggle-btn" title="Toggle Display Theme (Dark / Light / High-Contrast)">
+    <button class="control-btn" id="theme-toggle-btn" data-testid="theme-toggle-btn" title="Toggle Display Theme (Dark / Light / High-Contrast)">
       <span id="theme-icon">🌙</span>
       <span id="theme-label">Dark</span>
     </button>
-    <button class="control-btn" id="power-toggle-btn" title="Toggle Energy Saving Mode">
+    <button class="control-btn" id="power-toggle-btn" data-testid="power-toggle-btn" aria-pressed="false" title="Toggle Energy Saving Mode">
       <span id="power-icon">⚡</span>
       <span id="power-label">Normal</span>
     </button>
@@ -301,7 +353,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
 
     <div class="card-grid" style="max-width: 580px; margin: 2rem auto;">
       
-      <div id="responsive-ui-lab-card" class="card" style="cursor: pointer; width: 100%;">
+      <div id="responsive-ui-lab-card" class="card" style="width: 100%;">
         <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M4 6h16M4 12h16m-7 6h7M7 17l-3-3 3-3" />
@@ -309,11 +361,9 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
         <h2>Responsive UI Lab</h2>
         <p>Dedicated full-window workbench maximizing screen real-estate to test various sized windows in vertical (portrait) or horizontal (landscape) orientations with live iframe layout reflow.</p>
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.75rem;">
-          <a id="responsive-ui-lab-fullpage-link" href="responsive-lab.html" class="split-launch-btn" title="Open Responsive UI Lab in dedicated full-window workbench">
+          <a id="responsive-ui-lab-fullpage-link" data-testid="responsive-ui-lab-fullpage-link" href="responsive-lab.html" class="split-launch-btn" title="Open Responsive UI Lab in dedicated full-window workbench">
             <span>⧉ Open Full-Window Lab</span>
           </a>
-          <button id="responsive-ui-lab-sidepane-trigger" style="display: none;" aria-hidden="true"></button>
-          <button id="mission-control-sidepane-trigger" style="display: none;" aria-hidden="true"></button>
         </div>
         <div style="display: flex; gap: 0.35rem; margin-top: 0.75rem; flex-wrap: wrap; justify-content: center;">
           <span style="font-size: 0.7rem; background: var(--badge-success-bg); color: var(--badge-success-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">↕ Vertical (Portrait)</span>
@@ -386,27 +436,6 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
     window.__deployment_inspector = inspector;
     window.__least_action_navigator = leastActionNavigator;
 
-    function openMissionControlSplit(e) {
-      if (e) e.preventDefault();
-      const targetUrl = 'app.html';
-      const win = window.open(targetUrl, 'GovTechMissionControl', 'noopener,noreferrer');
-      if (win) {
-        win.focus();
-        if (window.BroadcastChannel) {
-          const channel = new BroadcastChannel('govtech-mission-control-sync');
-          channel.postMessage({
-            type: 'SPLIT_TAB_LAUNCHED',
-            source: 'MetaPortal',
-            targetUrl: targetUrl,
-            crossOriginSafe: true,
-            timestamp: Date.now()
-          });
-        }
-        console.log('[Mission Control] Multi-tab split pane launched (CORS & frame-ancestors safe)');
-      }
-    }
-    window.__open_mission_control_split = openMissionControlSplit;
-
     function updateControlUI(state) {
       const themeLabel = document.getElementById('theme-label');
       const themeIcon = document.getElementById('theme-icon');
@@ -435,6 +464,10 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
           powerIcon.textContent = '⚡';
         }
       }
+      document.getElementById('power-toggle-btn')?.setAttribute(
+        'aria-pressed',
+        String(state.powerMode === 'energy-saving')
+      );
     }
 
     document.getElementById('theme-toggle-btn')?.addEventListener('click', () => {
@@ -445,55 +478,11 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       presentation.toggleEnergySaving();
     });
 
-    document.getElementById('deployment-inspector-btn')?.addEventListener('click', () => {
-      inspector.open();
-    });
-
-    document.getElementById('deployment-inspector-card')?.addEventListener('click', () => {
-      inspector.open();
-    });
-
-    document.getElementById('least-action-btn')?.addEventListener('click', () => {
-      leastActionNavigator.open();
-    });
-
-    document.getElementById('fibration-observability-btn')?.addEventListener('click', () => {
-      leastActionNavigator.open(null, 'fibration');
-    });
-
-    document.getElementById('least-action-card')?.addEventListener('click', () => {
-      leastActionNavigator.open();
-    });
-
     function openResponsiveUILab() {
       window.location.href = 'responsive-lab.html';
     }
 
     window.__open_responsive_ui_lab = openResponsiveUILab;
-    window.__open_mission_side_pane = openResponsiveUILab;
-
-    document.getElementById('mission-control-sidepane-btn')?.addEventListener('click', openResponsiveUILab);
-    document.getElementById('responsive-ui-lab-sidepane-trigger')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openResponsiveUILab();
-    });
-    document.getElementById('mission-control-sidepane-trigger')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openResponsiveUILab();
-    });
-
-    document.getElementById('mission-control-btn')?.addEventListener('click', openMissionControlSplit);
-    document.getElementById('mission-control-split-btn')?.addEventListener('click', openMissionControlSplit);
-    document.getElementById('mission-control-link')?.addEventListener('click', openMissionControlSplit);
-    document.getElementById('mission-control-card')?.addEventListener('click', (e) => {
-      if (e.target.closest('#mission-control-link')) return;
-      openMissionControlSplit();
-    });
-
-    document.getElementById('responsive-ui-lab-card')?.addEventListener('click', (e) => {
-      if (e.target.closest('#responsive-ui-lab-fullpage-link')) return;
-      openResponsiveUILab();
-    });
 
     updateControlUI({ theme: presentation.currentTheme, powerMode: presentation.currentPowerMode });
   </script>
@@ -526,4 +515,5 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       },
     }).catch((error) => console.warn('[SMR-09] single-page MCard host:', error.message));
   </script>
+  </main>
 </WorkbenchLayout>

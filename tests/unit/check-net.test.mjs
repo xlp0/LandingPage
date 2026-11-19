@@ -3,8 +3,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import os from 'node:os';
 import {
+  computeTransitionCoverage,
+  formatNetCoverageMarkdown,
   loadNetEnvelope,
+  replayBombadilTraces,
+  runCli,
   validateNetEnvelope,
   validateExpressEndpointCoverage
 } from '../../scripts/check-net.mjs';
@@ -23,8 +28,14 @@ test('GQC-02A-UNIT-01 parses workbench-net.yaml and spa-test-target.graph.json w
   assert.deepEqual(workbenchResult.violations, []);
   assert.equal(workbenchResult.valid, true);
   assert.equal(workbenchResult.sessionInvariantHolds, true);
-  assert.equal(workbenchResult.parsedTopology.places.length, 31);
-  assert.equal(workbenchResult.parsedTopology.transitions.length, 65);
+  assert.equal(
+    workbenchResult.parsedTopology.places.length,
+    Object.keys(workbenchEnvelope.bindings.places).length
+  );
+  assert.equal(
+    workbenchResult.parsedTopology.transitions.length,
+    Object.keys(workbenchEnvelope.bindings.transitions).length
+  );
 
   const spaEnvelope = loadNetEnvelope(SPA_FIXTURE_NET_PATH);
   const spaResult = validateNetEnvelope(spaEnvelope, {
@@ -332,4 +343,121 @@ test('gui-coverage.json workbenchPlaceId and workbenchTransitionIds resolve to d
     }
   }
   assert.ok(resolvedRows >= 10);
+});
+
+// BPV-07, decision BPV-D11: Bombadil exploration fires transitions but asserts nothing.
+const SAMPLE_TRACE = path.join(ROOT_DIR, 'tests/fixtures/bombadil/sample-trace.jsonl');
+const guiCoverage = () => JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'tests/gui-coverage.json'), 'utf8'));
+
+function explorationTrace(events) {
+  return {
+    traceId: 'bombadil#1',
+    netId: 'landingpage-workbench-net',
+    entryPlaceId: events[0].fromPlaceId,
+    events,
+    asserted: false
+  };
+}
+
+test('BPV-07 an explored-only trace raises the fired count and leaves the asserted count unchanged', async () => {
+  const workbenchNet = loadNetEnvelope(WORKBENCH_NET_PATH);
+  const before = computeTransitionCoverage(workbenchNet, { guiCoverage: guiCoverage() });
+  const { replayed, failures } = await replayBombadilTraces(workbenchNet, [
+    explorationTrace([
+      { transitionId: 't_link_lab_to_index', fromPlaceId: 'p_page_responsive_lab', toPlaceId: 'p_view_index_mcard_viewer' },
+      { transitionId: 't_link_viewer_to_docs', fromPlaceId: 'p_view_index_mcard_viewer', toPlaceId: 'p_page_docs_index' }
+    ])
+  ]);
+  assert.deepEqual(failures, []);
+  assert.ok(replayed.every((trace) => trace.asserted === false));
+
+  const after = computeTransitionCoverage(workbenchNet, { guiCoverage: guiCoverage(), replayedTraces: replayed });
+  assert.equal(after.asserted, before.asserted);
+  assert.deepEqual(after.assertedTransitionIds, before.assertedTransitionIds);
+  assert.ok(after.fired >= before.fired);
+  assert.ok(after.firedTransitionIds.includes('t_link_viewer_to_docs'));
+  // The three groups partition the declared transitions.
+  assert.equal(after.asserted + after.exploredOnly + after.neverFired, after.declared);
+  assert.equal(after.exploredOnly, after.exploredOnlyTransitionIds.length);
+  assert.equal(after.neverFired, after.neverFiredTransitionIds.length);
+  for (const id of after.exploredOnlyTransitionIds) assert.equal(after.assertedTransitionIds.includes(id), false, id);
+});
+
+test('BPV-07 a trace that breaks the net is reported and adds nothing to coverage', async () => {
+  const workbenchNet = loadNetEnvelope(WORKBENCH_NET_PATH);
+  const { replayed, failures } = await replayBombadilTraces(workbenchNet, [
+    explorationTrace([
+      { transitionId: 't_link_viewer_to_docs', fromPlaceId: 'p_page_responsive_lab', toPlaceId: 'p_page_docs_index' }
+    ])
+  ]);
+  assert.equal(replayed.length, 0);
+  assert.equal(failures.length, 1);
+  assert.equal(failures[0].traceId, 'bombadil#1');
+  assert.match(failures[0].reason, /disabled-transition|post-place-mismatch|invalid-trace-entry-place/);
+});
+
+test('BPV-07 the coverage table keeps explored-only and never-fired apart from asserted', () => {
+  const workbenchNet = loadNetEnvelope(WORKBENCH_NET_PATH);
+  const coverage = computeTransitionCoverage(workbenchNet, { guiCoverage: guiCoverage() });
+  const md = formatNetCoverageMarkdown([{ filePath: 'src/net/workbench-net.yaml', placeCount: 32, coverage }]);
+  assert.match(md, /\| Asserted \| Explored only \| Never fired \|/);
+});
+
+test('BPV-07 check-net --bombadil-traces replays a directory of runs', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpv07-traces-'));
+  fs.mkdirSync(path.join(dir, 'workbench-run'));
+  fs.copyFileSync(SAMPLE_TRACE, path.join(dir, 'workbench-run', 'trace.jsonl'));
+  const out = [];
+  const code = await runCli(['--bombadil-traces', dir], { stdout: (text) => out.push(text), stderr: () => {} });
+  assert.equal(code, 0);
+  const text = out.join('');
+  assert.match(text, /bombadilTraces=1 replayed=1 failed=0/);
+  assert.match(text, /net=landingpage-workbench-net[^\n]*explored=\d+/);
+});
+
+test('BPV-07 a transition binding must agree with its topology arc', () => {
+  const net = structuredClone(loadNetEnvelope(SPA_FIXTURE_NET_PATH));
+  const [first] = net.topology.transitions;
+  net.bindings.transitions[first.id] = { ...net.bindings.transitions[first.id], toPlaceId: first.inputs[0] };
+  const result = validateNetEnvelope(net, { filePath: 'drifted.json' });
+  assert.equal(result.valid, false);
+  const violation = result.violations.find((v) => v.rule === 'binding-topology-mismatch');
+  assert.ok(violation, JSON.stringify(result.violations.map((v) => v.rule)));
+  assert.equal(violation.id, first.id);
+});
+
+test('BPV-07 the committed nets have no binding that disagrees with its arc', () => {
+  for (const file of [WORKBENCH_NET_PATH, SPA_FIXTURE_NET_PATH]) {
+    const result = validateNetEnvelope(loadNetEnvelope(file), { filePath: file });
+    assert.deepEqual(result.violations.filter((v) => v.rule === 'binding-topology-mismatch'), [], file);
+  }
+});
+
+test('BPV-07 traces with an unattributed or unknown netId count as failed rather than being dropped', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpv07-unresolved-'));
+  fs.mkdirSync(path.join(dir, 'run-1'));
+  const line = JSON.stringify({
+    timestamp: 1,
+    snapshots: [
+      {
+        name: 'netReport',
+        value: {
+          netId: null,
+          nonce: 'n-unresolved',
+          path: '/index.html',
+          records: [{ seq: 1, transitionId: null, fromPlaceId: 'p_page_index', toPlaceId: 'p_page_responsive_lab' }]
+        }
+      }
+    ]
+  });
+  fs.writeFileSync(path.join(dir, 'run-1', 'trace.jsonl'), `${line}\n`);
+  const out = [];
+  const err = [];
+  const code = await runCli(['--bombadil-traces', dir], {
+    stdout: (text) => out.push(text),
+    stderr: (text) => err.push(text)
+  });
+  assert.equal(code, 0);
+  assert.match(out.join(''), /bombadilTraces=1 replayed=0 failed=1/);
+  assert.match(err.join(''), /unresolved-trace-net/);
 });

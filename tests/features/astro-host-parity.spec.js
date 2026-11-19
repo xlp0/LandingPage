@@ -119,7 +119,7 @@ test.describe('SPRINT-GQC-02B: Astro Host Parity and Middleware Contracts', () =
     await page.goto(`/responsive-lab.html?target=${encodeURIComponent(SPA_FIXTURE_PATH)}`);
     await expect(page.locator('meta[name="x-gqc-host"]')).toHaveAttribute('content', 'astro');
     await expect(page.getByRole('heading', { name: /Responsive UI Lab/i })).toBeVisible();
-    await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
+    await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
 
     const frame = workbench.targetFrame();
     const appRoot = frame.locator('#spa-app-root');
@@ -158,7 +158,7 @@ test.describe('SPRINT-GQC-02B: Astro Host Parity and Middleware Contracts', () =
     await page.waitForURL(/\/responsive-lab\.html(?:\?|$)/);
     await expect(page.locator('meta[name="x-gqc-host"]')).toHaveAttribute('content', 'astro');
     await expect(page.getByRole('heading', { name: /Responsive UI Lab/i })).toBeVisible();
-    await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
+    await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
 
     await page.goto('/?noredirect=1');
     await expect(page).toHaveURL(/\/\?noredirect=1$/);

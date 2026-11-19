@@ -98,20 +98,20 @@ export function initRecordingRibbon(options = {}) {
     }
 
     if (state === 'IDLE' || state === 'FINALIZED') {
-      btnStart.style.display = 'inline-flex';
-      btnPause.style.display = 'none';
-      btnResume.style.display = 'none';
-      btnStop.style.display = 'none';
+      btnStart.hidden = false;
+      btnPause.hidden = true;
+      btnResume.hidden = true;
+      btnStop.hidden = true;
     } else if (state === 'RECORDING') {
-      btnStart.style.display = 'none';
-      btnPause.style.display = 'inline-flex';
-      btnResume.style.display = 'none';
-      btnStop.style.display = 'inline-flex';
+      btnStart.hidden = true;
+      btnPause.hidden = false;
+      btnResume.hidden = true;
+      btnStop.hidden = false;
     } else if (state === 'PAUSED') {
-      btnStart.style.display = 'none';
-      btnPause.style.display = 'none';
-      btnResume.style.display = 'inline-flex';
-      btnStop.style.display = 'inline-flex';
+      btnStart.hidden = true;
+      btnPause.hidden = true;
+      btnResume.hidden = false;
+      btnStop.hidden = false;
     }
 
     if (eventCount) eventCount.textContent = `${stats.size || 0} ev`;

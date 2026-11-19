@@ -188,7 +188,7 @@ jobs:
   deploy-to-test:
     needs: test-components
     runs-on: ubuntu-latest
-    if: ${{ always() && github.ref == 'refs/heads/main' }}
+    if: ${{ success() && github.ref == 'refs/heads/main' }}
     name: Deploy to test.pkc.pub
     steps:
       - uses: actions/checkout@v4

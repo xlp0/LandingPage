@@ -242,7 +242,7 @@ test.describe('SPRINT-GQC-03: Target Policy Enforcement & Capture Lifecycle', ()
     const expectedQuickUrls = cfg.labTargets.filter((t) => t.quickLaunch && t.status === 'allowed').map((t) => t.url);
 
     await page.goto(LAB_URL);
-    await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
+    await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
 
     const renderedChipUrls = await page.locator('#target-quick-chips .target-chip').evaluateAll((els) =>
       els.map((el) => el.getAttribute('data-url'))
@@ -261,7 +261,7 @@ test.describe('SPRINT-GQC-03: Target Policy Enforcement & Capture Lifecycle', ()
 
   test('GQC-03-E2E-02: forged origin and stale nonce probe messages are rejected and counted without entering snapshot', async ({ page }) => {
     await page.goto(`${LAB_URL}?target=${encodeURIComponent(CROSS_ORIGIN_TARGET)}`);
-    await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
+    await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
     await expect.poll(async () => page.evaluate(() => window.__lab.recorder.source()?.kind)).toBe('probe-agent');
 
     await page.locator('#btn-rec-start').click();
@@ -306,7 +306,7 @@ test.describe('SPRINT-GQC-03: Target Policy Enforcement & Capture Lifecycle', ()
 
   test('GQC-03-E2E-03: sensitive password input is redacted in persisted MCard test run', async ({ page, request }) => {
     await page.goto(`${LAB_URL}?target=${encodeURIComponent(SAME_ORIGIN_TARGET)}`);
-    await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
+    await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
 
     await page.locator('#btn-rec-start').click();
 
@@ -341,7 +341,7 @@ test.describe('SPRINT-GQC-03: Target Policy Enforcement & Capture Lifecycle', ()
     const workbenchNet = loadNetEnvelope(WORKBENCH_NET_ABS_PATH);
 
     await page.goto(`${LAB_URL}?target=${encodeURIComponent(NO_AGENT_TARGET)}`);
-    await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
+    await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
 
     await expect(page.locator('#cors-block-alert')).toBeHidden();
     await expect(page.locator('#btn-rec-start')).toBeDisabled();
@@ -361,7 +361,7 @@ test.describe('SPRINT-GQC-03: Target Policy Enforcement & Capture Lifecycle', ()
 
     await page.locator('#btn-target-recover').click();
 
-    await expect(page.locator('#public-site-selector')).toHaveValue('app.html');
+    await expect(page.locator('#public-site-selector')).toHaveValue('/tests/fixtures/spa-test-target.html');
     await expect(page.locator('#target-policy-status')).toHaveAttribute('data-policy-state', 'approved-same-origin');
     await expect(page.locator('#rec-source-pill')).toHaveText('Source: same-origin');
     await expect(page.locator('#btn-rec-start')).toBeEnabled();
@@ -400,7 +400,7 @@ test.describe('SPRINT-GQC-03: Target Policy Enforcement & Capture Lifecycle', ()
     });
 
     await page.goto(`${LAB_URL}?target=${encodeURIComponent(CROSS_ORIGIN_TARGET)}`);
-    await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
+    await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
     await expect.poll(async () => page.evaluate(() => window.__lab.recorder.source()?.kind)).toBe('probe-agent');
 
     await page.locator('#btn-rec-start').click();
@@ -437,7 +437,7 @@ test.describe('SPRINT-GQC-03: Target Policy Enforcement & Capture Lifecycle', ()
 
   test('GQC-03-E2E-06: switching targets while a probe message is in flight fences out late events from the new target run', async ({ page }) => {
     await page.goto(`${LAB_URL}?target=${encodeURIComponent(CROSS_ORIGIN_TARGET)}`);
-    await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
+    await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
     await expect.poll(async () => page.evaluate(() => window.__lab.recorder.source()?.kind)).toBe('probe-agent');
 
     await page.locator('#btn-rec-start').click();
@@ -512,7 +512,7 @@ test.describe('SPRINT-GQC-03: Target Policy Enforcement & Capture Lifecycle', ()
     expect(cspHeader).toContain("default-src 'self'");
     expect(cspHeader.includes('frame-src *;')).toBe(false);
 
-    await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
+    await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
 
     await page.locator('#conformance-disclosure > summary').click();
     await page.locator('#mcard-result-disclosure > summary').click();
@@ -600,7 +600,7 @@ test.describe('SPRINT-GQC-03: Target Policy Enforcement & Capture Lifecycle', ()
     });
 
     await page.goto(`${LAB_URL}?target=${encodeURIComponent(CROSS_ORIGIN_TARGET)}`);
-    await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
+    await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
     await expect.poll(async () => page.evaluate(() => window.__lab.recorder.source()?.kind)).toBe('probe-agent');
 
     const audit = await page.evaluate(async () => {

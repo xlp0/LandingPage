@@ -8,6 +8,7 @@ import {
   ColoredPetriVM
 } from 'clm-kernel/petri';
 import { MCardCollection, MemoryBackend } from 'clm-kernel/store';
+import { findTraceFilesDeep, readFirings, toNetTraces } from './bombadil/trace-to-net.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 export const ROOT_DIR = path.resolve(SCRIPT_DIR, '..');
@@ -58,7 +59,7 @@ function parseSprintRank(sprintId) {
   return major * 100 + suffix;
 }
 
-export function isExceptionActive(exception, currentSprint = 'SPRINT-GQC-02A') {
+export function isExceptionActive(exception, currentSprint = 'SPRINT-GQC-07') {
   if (!exception || typeof exception !== 'object') return false;
   if (typeof exception.owner !== 'string' || !exception.owner.trim()) return false;
   if (typeof exception.reason !== 'string' || !exception.reason.trim()) return false;
@@ -287,6 +288,29 @@ export function validateNetEnvelope(
         boundTransitionId,
         'dangling-binding',
         `bindings.transitions entry "${boundTransitionId}" is not declared in topology.transitions`
+      );
+    }
+  }
+
+  // The page-state contract reports the binding's places at runtime, and replays fire the
+  // topology, so the two must name the same arc (BPV-07 found one that drifted).
+  for (const transition of rawTransitions) {
+    const binding = transitionBindings[transition.id];
+    if (!binding) continue;
+    const inputs = Array.isArray(transition.inputs) ? transition.inputs : [];
+    const outputs = Array.isArray(transition.outputs) ? transition.outputs : [];
+    if (binding.fromPlaceId && !inputs.includes(binding.fromPlaceId)) {
+      fail(
+        transition.id,
+        'binding-topology-mismatch',
+        `Transition "${transition.id}" binding fromPlaceId "${binding.fromPlaceId}" is not a topology input (${inputs.join(', ')})`
+      );
+    }
+    if (binding.toPlaceId && !outputs.includes(binding.toPlaceId)) {
+      fail(
+        transition.id,
+        'binding-topology-mismatch',
+        `Transition "${transition.id}" binding toPlaceId "${binding.toPlaceId}" is not a topology output (${outputs.join(', ')})`
       );
     }
   }
@@ -782,19 +806,58 @@ export function computeTransitionCoverage(
   const fired = firedSet.size;
   const asserted = assertedSet.size;
   const ratio = declared === 0 ? 1 : Number((asserted / declared).toFixed(4));
+  // BPV-D11: explored coverage never counts as asserted. Asserted, explored-only and
+  // never-fired partition the declared transitions.
+  const exploredOnlyTransitionIds = declaredIds.filter((id) => firedSet.has(id) && !assertedSet.has(id)).sort();
+  const neverFiredTransitionIds = declaredIds.filter((id) => !firedSet.has(id)).sort();
 
   return {
     netId: envelope.netId,
     declared,
     fired,
     asserted,
+    exploredOnly: exploredOnlyTransitionIds.length,
+    neverFired: neverFiredTransitionIds.length,
     coverageRatio: ratio,
     policy: 'ADVISORY',
     blocking: false,
     firedTransitionIds: [...firedSet].sort(),
     assertedTransitionIds: [...assertedSet].sort(),
+    exploredOnlyTransitionIds,
+    neverFiredTransitionIds,
     uncoveredTransitionIds: declaredIds.filter((id) => !assertedSet.has(id))
   };
+}
+
+// Replays Bombadil exploration traces (scripts/bombadil/trace-to-net.mjs) against one net.
+// Every replay is marked `asserted: false` (BPV-D11). A trace the net rejects is reported
+// and contributes nothing to coverage.
+export async function replayBombadilTraces(envelope, traces) {
+  const replayed = [];
+  const failures = [];
+  for (const trace of traces) {
+    const result = await replayNetTrace(envelope, trace);
+    if (result.ok) {
+      replayed.push({ ...result, asserted: false });
+    } else {
+      failures.push({ traceId: trace.traceId, reason: result.reason, message: result.message });
+    }
+  }
+  return { replayed, failures };
+}
+
+// Older traces carry no netId on their firings. Those go to the one net that declares
+// the transition, so they can still be replayed.
+function loadBombadilTraces(traceRoot, envelopes) {
+  const files = findTraceFilesDeep(traceRoot, { excludeCanary: true });
+  const resolveNetId = (firing) =>
+    firing.netId ??
+    envelopes.find((envelope) => envelope.bindings?.transitions?.[firing.transitionId])?.netId ??
+    null;
+  const traces = files.flatMap((file) =>
+    toNetTraces(readFirings(fs.readFileSync(file, 'utf8'), { source: file }), { resolveNetId, source: file })
+  );
+  return { files, traces };
 }
 
 export function formatNetCoverageMarkdown(entries) {
@@ -803,39 +866,80 @@ export function formatNetCoverageMarkdown(entries) {
     '',
     '- Policy status is ADVISORY until TEA and Product Manager approve a blocking floor in SPRINT-GQC-06.',
     '',
-    '| Net ID | File | Places | Declared | Fired | Asserted | Coverage | Policy |',
-    '| --- | --- | --- | --- | --- | --- | --- | --- |'
+    '- Explored only counts transitions that Bombadil exploration fired and no asserted spec covers (BPV-D11). They never count toward Coverage.',
+    '',
+    '| Net ID | File | Places | Declared | Fired | Asserted | Explored only | Never fired | Coverage | Policy |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |'
   ];
 
   for (const entry of entries) {
-    const pct = `${(entry.coverage.coverageRatio * 100).toFixed(1)}%`;
+    const c = entry.coverage;
+    const pct = `${(c.coverageRatio * 100).toFixed(1)}%`;
     lines.push(
-      `| ${entry.coverage.netId} | ${entry.filePath} | ${entry.placeCount} | ${entry.coverage.declared} | ${entry.coverage.fired} | ${entry.coverage.asserted} | ${pct} | ${entry.coverage.policy} |`
+      `| ${c.netId} | ${entry.filePath} | ${entry.placeCount} | ${c.declared} | ${c.fired} | ${c.asserted} | ${c.exploredOnly} | ${c.neverFired} | ${pct} | ${c.policy} |`
     );
   }
 
   return lines.join('\n');
 }
 
-export function runCli(argv = process.argv.slice(2)) {
-  const writeStepSummary = argv.includes('--write-step-summary');
-  const markdownOnly = argv.includes('--markdown');
-  const explicitFiles = argv.filter((arg) => !arg.startsWith('--'));
-  const targetFiles = explicitFiles.length > 0 ? explicitFiles : DEFAULT_NET_FILES;
+function parseCliArgs(argv) {
+  const at = argv.indexOf('--bombadil-traces');
+  const traceRoot = at >= 0 ? argv[at + 1] : null;
+  if (at >= 0 && (!traceRoot || traceRoot.startsWith('--'))) {
+    throw new Error('--bombadil-traces needs a directory, such as bombadil-output');
+  }
+  const rest = at >= 0 ? [...argv.slice(0, at), ...argv.slice(at + 2)] : argv;
+  const explicitFiles = rest.filter((arg) => !arg.startsWith('--'));
+  return {
+    writeStepSummary: rest.includes('--write-step-summary'),
+    markdownOnly: rest.includes('--markdown'),
+    traceRoot,
+    targetFiles: explicitFiles.length > 0 ? explicitFiles : DEFAULT_NET_FILES
+  };
+}
+
+const defaultIo = {
+  stdout: (text) => process.stdout.write(text),
+  stderr: (text) => process.stderr.write(text)
+};
+
+export async function runCli(argv = process.argv.slice(2), io = defaultIo) {
+  let options;
+  try {
+    options = parseCliArgs(argv);
+  } catch (err) {
+    io.stderr(`${err.message}\n`);
+    return 2;
+  }
+  const { writeStepSummary, markdownOnly, traceRoot, targetFiles } = options;
 
   const guiCoveragePath = path.join(ROOT_DIR, 'tests/gui-coverage.json');
   const guiCoverage = fs.existsSync(guiCoveragePath)
     ? JSON.parse(fs.readFileSync(guiCoveragePath, 'utf8'))
     : null;
 
+  const envelopes = targetFiles.map((relPath) => loadNetEnvelope(relPath));
+  let bombadil = null;
+  if (traceRoot) {
+    try {
+      bombadil = loadBombadilTraces(traceRoot, envelopes);
+    } catch (err) {
+      io.stderr(`[bombadil-traces] ${err.message}\n`);
+      return 2;
+    }
+  }
+
   const allViolations = [];
   const summaryEntries = [];
+  const replayFailures = [];
+  let replayedCount = 0;
 
-  for (const relPath of targetFiles) {
-    const envelope = loadNetEnvelope(relPath);
+  for (const [index, relPath] of targetFiles.entries()) {
+    const envelope = envelopes[index];
     const result = validateNetEnvelope(envelope, {
       filePath: relPath,
-      currentSprint: 'SPRINT-GQC-02A'
+      currentSprint: 'SPRINT-GQC-07'
     });
     allViolations.push(...result.violations);
 
@@ -844,7 +948,16 @@ export function runCli(argv = process.argv.slice(2)) {
       allViolations.push(...endpointAudit.violations);
     }
 
-    const coverage = computeTransitionCoverage(envelope, { guiCoverage });
+    let replayedTraces = [];
+    if (bombadil) {
+      const own = bombadil.traces.filter((trace) => trace.netId === envelope.netId);
+      const { replayed, failures } = await replayBombadilTraces(envelope, own);
+      replayedTraces = replayed;
+      replayedCount += replayed.length;
+      replayFailures.push(...failures.map((failure) => ({ ...failure, netId: envelope.netId })));
+    }
+
+    const coverage = computeTransitionCoverage(envelope, { guiCoverage, replayedTraces });
     summaryEntries.push({
       filePath: relPath,
       placeCount: result.parsedTopology ? result.parsedTopology.places.length : 0,
@@ -853,27 +966,51 @@ export function runCli(argv = process.argv.slice(2)) {
     });
   }
 
+  if (bombadil) {
+    const checkedNetIds = new Set(envelopes.map((envelope) => envelope.netId).filter(Boolean));
+    for (const trace of bombadil.traces) {
+      if (!checkedNetIds.has(trace.netId)) {
+        replayFailures.push({
+          netId: trace.netId || 'unresolved',
+          traceId: trace.traceId,
+          reason: 'unresolved-trace-net',
+          message: `Trace "${trace.traceId}" could not be attributed to any checked net`
+        });
+      }
+    }
+  }
+
   if (allViolations.length > 0) {
     for (const v of allViolations) {
-      process.stderr.write(`[${v.file}] id=${v.id} rule=${v.rule} ${v.message}\n`);
+      io.stderr(`[${v.file}] id=${v.id} rule=${v.rule} ${v.message}\n`);
     }
     return 1;
   }
 
-  const markdown = formatNetCoverageMarkdown(summaryEntries);
+  let markdown = formatNetCoverageMarkdown(summaryEntries);
+  if (bombadil) {
+    markdown += `\n\nBombadil traces: ${bombadil.files.length} runs, ${bombadil.traces.length} traces, ${replayedCount} replayed, ${replayFailures.length} rejected by the net.`;
+  }
   if (writeStepSummary && process.env.GITHUB_STEP_SUMMARY) {
     fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${markdown}\n`, 'utf8');
   }
 
   if (markdownOnly) {
-    process.stdout.write(`${markdown}\n`);
+    io.stdout(`${markdown}\n`);
   } else {
     for (const entry of summaryEntries) {
       const c = entry.coverage;
-      process.stdout.write(
-        `PASS ${entry.filePath} net=${c.netId} places=${entry.placeCount} transitions=${c.declared} reachableMarkings=${entry.reachableMarkingCount} sessionPInvariant=true coverage=${c.asserted}/${c.declared} fired=${c.fired} policy=${c.policy}\n`
+      io.stdout(
+        `PASS ${entry.filePath} net=${c.netId} places=${entry.placeCount} transitions=${c.declared} reachableMarkings=${entry.reachableMarkingCount} sessionPInvariant=true coverage=${c.asserted}/${c.declared} fired=${c.fired} explored=${c.exploredOnly} neverFired=${c.neverFired} policy=${c.policy}\n`
       );
     }
+    if (bombadil) {
+      io.stdout(`BOMBADIL runs=${bombadil.files.length} bombadilTraces=${bombadil.traces.length} replayed=${replayedCount} failed=${replayFailures.length}\n`);
+    }
+  }
+  // A rejected exploration trace is reported for triage, not failed: exploration asserts nothing (BPV-D11).
+  for (const failure of replayFailures) {
+    io.stderr(`[bombadil-traces] ${failure.netId} ${failure.traceId} ${failure.reason}: ${failure.message}\n`);
   }
 
   return 0;
@@ -881,5 +1018,5 @@ export function runCli(argv = process.argv.slice(2)) {
 
 const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : '';
 if (invokedPath === fileURLToPath(import.meta.url)) {
-  process.exitCode = runCli();
+  process.exitCode = await runCli();
 }

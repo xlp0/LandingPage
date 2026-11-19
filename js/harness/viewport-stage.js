@@ -28,6 +28,7 @@ export function createViewportStage(options = {}) {
     return {
       frame: pickEl('frame', 'controlled-panel-frame'),
       wrapper: pickEl('wrapper', 'viewport-scale-wrapper'),
+      targetPlaceLabel: pickEl('targetPlaceLabel', 'stage-target-place'),
       container: pickEl('container', 'lab-stage-container', typeof document !== 'undefined' ? document.body : null),
       workspace: pickEl('workspace', 'lab-workspace-container'),
       dimLabel: pickEl('dimLabel', 'controlled-frame-dim'),
@@ -42,9 +43,7 @@ export function createViewportStage(options = {}) {
       btnOrientVertical: pickEl('btnOrientVertical', 'btn-orient-vertical'),
       btnOrientHorizontal: pickEl('btnOrientHorizontal', 'btn-orient-horizontal'),
       btnArrangeVertical: pickEl('btnArrangeVertical', 'btn-arrange-vertical'),
-      btnArrangeHorizontal: pickEl('btnArrangeHorizontal', 'btn-arrange-horizontal'),
-      btnArrangeVerticalDock: pickEl('btnArrangeVerticalDock', 'btn-arrange-vertical-dock'),
-      btnArrangeHorizontalDock: pickEl('btnArrangeHorizontalDock', 'btn-arrange-horizontal-dock')
+      btnArrangeHorizontal: pickEl('btnArrangeHorizontal', 'btn-arrange-horizontal')
     };
   }
 
@@ -167,10 +166,13 @@ export function createViewportStage(options = {}) {
       orientation: next
     };
 
-    frame.classList.toggle('orientation-horizontal', next === 'horizontal');
-    frame.classList.toggle('orientation-vertical', next === 'vertical');
-    btnOrientHorizontal?.classList.toggle('active', next === 'horizontal');
-    btnOrientVertical?.classList.toggle('active', next === 'vertical');
+    const isHoriz = next === 'horizontal';
+    frame.classList.toggle('orientation-horizontal', isHoriz);
+    frame.classList.toggle('orientation-vertical', !isHoriz);
+    btnOrientHorizontal?.classList.toggle('active', isHoriz);
+    btnOrientVertical?.classList.toggle('active', !isHoriz);
+    btnOrientHorizontal?.setAttribute('aria-pressed', String(isHoriz));
+    btnOrientVertical?.setAttribute('aria-pressed', String(!isHoriz));
 
     applyGeometry(cause);
   }
@@ -189,7 +191,7 @@ export function createViewportStage(options = {}) {
   }
 
   function setArrangement(arrangement) {
-    const { workspace, btnArrangeHorizontal, btnArrangeVertical, btnArrangeHorizontalDock, btnArrangeVerticalDock } = currentElements();
+    const { workspace, btnArrangeHorizontal, btnArrangeVertical } = currentElements();
     if (!workspace) return;
     currentArrangement = arrangement === 'vertical' ? 'vertical' : 'horizontal';
     const horizontal = currentArrangement === 'horizontal';
@@ -198,8 +200,8 @@ export function createViewportStage(options = {}) {
     workspace.classList.toggle('arrangement-vertical', !horizontal);
     btnArrangeHorizontal?.classList.toggle('active', horizontal);
     btnArrangeVertical?.classList.toggle('active', !horizontal);
-    btnArrangeHorizontalDock?.classList.toggle('active', horizontal);
-    btnArrangeVerticalDock?.classList.toggle('active', !horizontal);
+    btnArrangeHorizontal?.setAttribute('aria-pressed', String(horizontal));
+    btnArrangeVertical?.setAttribute('aria-pressed', String(!horizontal));
 
     recomputeScale('arrangement');
   }
@@ -211,6 +213,28 @@ export function createViewportStage(options = {}) {
     setViewportSize(w, h, 'px', `Custom (${w}×${h})`, null, 'custom');
     if (typeof onPresetDeactivate === 'function') {
       onPresetDeactivate();
+    }
+  }
+
+  // Decision BPV-D08: the stage root mirrors the framed target's place, so users see the
+  // target state and checks can read it from the top document. `null` clears the mirror.
+  function setTargetPlace(observation) {
+    const { wrapper, targetPlaceLabel } = currentElements();
+    const placeId = observation?.placeId ? String(observation.placeId) : '';
+    const bootNonce = observation?.bootNonce ? String(observation.bootNonce) : '';
+    if (wrapper) {
+      if (placeId) {
+        wrapper.dataset.targetPlaceId = placeId;
+        if (bootNonce) wrapper.dataset.targetBootNonce = bootNonce;
+        else delete wrapper.dataset.targetBootNonce;
+      } else {
+        delete wrapper.dataset.targetPlaceId;
+        delete wrapper.dataset.targetBootNonce;
+      }
+    }
+    if (targetPlaceLabel) {
+      targetPlaceLabel.textContent = placeId ? `Target place: ${placeId}` : '';
+      targetPlaceLabel.hidden = !placeId;
     }
   }
 
@@ -235,8 +259,6 @@ export function createViewportStage(options = {}) {
 
     listen(els.btnArrangeVertical, 'click', () => setArrangement('vertical'));
     listen(els.btnArrangeHorizontal, 'click', () => setArrangement('horizontal'));
-    listen(els.btnArrangeVerticalDock, 'click', () => setArrangement('vertical'));
-    listen(els.btnArrangeHorizontalDock, 'click', () => setArrangement('horizontal'));
 
     listen(els.btnOrientVertical, 'click', () => setOrientation('vertical'));
     listen(els.btnOrientHorizontal, 'click', () => setOrientation('horizontal'));
@@ -264,11 +286,19 @@ export function createViewportStage(options = {}) {
       }
     }
 
+    const isHorizArrange = currentArrangement === 'horizontal';
+    els.btnArrangeHorizontal?.classList.toggle('active', isHorizArrange);
+    els.btnArrangeVertical?.classList.toggle('active', !isHorizArrange);
+    els.btnArrangeHorizontal?.setAttribute('aria-pressed', String(isHorizArrange));
+    els.btnArrangeVertical?.setAttribute('aria-pressed', String(!isHorizArrange));
+
     const isHoriz = viewport.orientation === 'horizontal';
     els.frame?.classList.toggle('orientation-horizontal', isHoriz);
     els.frame?.classList.toggle('orientation-vertical', !isHoriz);
     els.btnOrientHorizontal?.classList.toggle('active', isHoriz);
     els.btnOrientVertical?.classList.toggle('active', !isHoriz);
+    els.btnOrientHorizontal?.setAttribute('aria-pressed', String(isHoriz));
+    els.btnOrientVertical?.setAttribute('aria-pressed', String(!isHoriz));
   }
 
   rebind();
@@ -285,6 +315,7 @@ export function createViewportStage(options = {}) {
     applyGeometry,
     applyCustomDimensions,
     emitViewportChange,
+    setTargetPlace,
     rebind,
     destroy
   };

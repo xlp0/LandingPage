@@ -40,7 +40,7 @@ export default function ConformancePanelIsland() {
   }, []);
 
   return (
-    <div id="conformance-details" className="lab-disclosure-body" data-island="conformance-panel">
+    <div id="conformance-details" className="lab-disclosure-body" data-island="conformance-panel" data-island-state="ready">
       <span style={{ color: 'var(--color-text-muted)' }}>No active target or device selected.</span>
     </div>
   );

@@ -23,6 +23,9 @@ topology:
     - id: p_page_fiber_conformance
       initialTokens: 0
       description: Internal fiber conformance harness page
+    - id: p_page_docs_index
+      initialTokens: 0
+      description: Internal PKC design-documents index page, declared by the Penpot portal flow
     - id: p_view_index_mcard_viewer
       initialTokens: 0
       description: Single-page 4-modality MCard viewer mode on index.html?noredirect=1
@@ -108,7 +111,7 @@ topology:
       inputs:
         - p_page_responsive_lab
       outputs:
-        - p_page_index
+        - p_view_index_mcard_viewer
     - id: t_link_lab_to_app
       inputs:
         - p_page_responsive_lab
@@ -124,16 +127,21 @@ topology:
         - p_view_index_mcard_viewer
       outputs:
         - p_page_index
-    - id: t_link_viewer_to_app
-      inputs:
-        - p_view_index_mcard_viewer
-      outputs:
-        - p_page_app
     - id: t_link_viewer_to_lab
       inputs:
         - p_view_index_mcard_viewer
       outputs:
         - p_page_responsive_lab
+    - id: t_link_viewer_to_docs
+      inputs:
+        - p_view_index_mcard_viewer
+      outputs:
+        - p_page_docs_index
+    - id: t_link_docs_to_index
+      inputs:
+        - p_page_docs_index
+      outputs:
+        - p_page_index
     - id: t_open_external_monopoly
       inputs:
         - p_page_app
@@ -514,6 +522,20 @@ bindings:
       entry: false
       deepLinkEntry: true
       owner: Architect
+    p_page_docs_index:
+      kind: page
+      surface: workbench
+      pageId: page_diag_docs_index
+      pagePath: pkc-docs-index.html
+      route: /pkc-docs-index.html
+      routeAliases: []
+      routeHandle: mcard:route:/pkc-docs-index.html
+      clmTypeUri: clm://type/view/diagnostic/docs-index
+      mcardHash: null
+      migrationState: legacy-static
+      entry: false
+      deepLinkEntry: true
+      owner: Tech Writer
     p_view_index_mcard_viewer:
       kind: view
       surface: workbench
@@ -837,7 +859,10 @@ bindings:
       toPlaceId: p_page_responsive_lab
       route: /responsive-lab.html
       triggerHref: responsive-lab.html
-      trigger: window.location.replace("responsive-lab.html") at index.html:13
+      trigger: window.location.replace("responsive-lab.html") at index.html
+      triggerSource:
+        file: src/pages/index.astro
+        selector: "location.replace"
       ownerPage: index.html
       owner: Product Manager and UX Designer
     t_link_lab_to_index:
@@ -845,10 +870,13 @@ bindings:
       surface: workbench
       linkId: link_lab_to_index
       fromPlaceId: p_page_responsive_lab
-      toPlaceId: p_page_index
-      route: /
-      triggerHref: /
-      trigger: click a#btn-back-home[href="/"] at responsive-lab.html:875
+      toPlaceId: p_view_index_mcard_viewer
+      route: /index.html?noredirect=1
+      triggerHref: /index.html?noredirect=1
+      trigger: click a#btn-back-home[href="/index.html?noredirect=1"] at responsive-lab.html
+      triggerSource:
+        file: src/pages/responsive-lab.astro
+        selector: "btn-back-home"
       ownerPage: responsive-lab.html
       owner: Product Manager and TEA
     t_link_lab_to_app:
@@ -859,7 +887,10 @@ bindings:
       toPlaceId: p_page_app
       route: /app.html
       triggerHref: app.html
-      trigger: click a#btn-nav-mission-control[href="app.html"] at responsive-lab.html:898
+      trigger: click a#btn-nav-mission-control[href="app.html"] at responsive-lab.html
+      triggerSource:
+        file: src/pages/responsive-lab.astro
+        selector: "btn-nav-mission-control"
       ownerPage: responsive-lab.html
       owner: Product Manager and TEA
     t_link_app_to_index:
@@ -870,7 +901,10 @@ bindings:
       toPlaceId: p_page_index
       route: /
       triggerHref: /
-      trigger: click button.header-btn onclick window.location.href="/" at app.html:76
+      trigger: click button.header-btn onclick window.location.href="/" at app.html
+      triggerSource:
+        file: src/pages/app.astro
+        selector: "location.href"
       ownerPage: app.html
       owner: Product Manager
     t_link_viewer_to_index:
@@ -881,18 +915,10 @@ bindings:
       toPlaceId: p_page_index
       route: /index.html
       triggerHref: index.html
-      trigger: click a.penpot-nav-link[href="index.html"] at index.html:279
-      ownerPage: index.html
-      owner: Product Manager and UX Designer
-    t_link_viewer_to_app:
-      kind: link
-      surface: workbench
-      linkId: link_viewer_to_app
-      fromPlaceId: p_view_index_mcard_viewer
-      toPlaceId: p_page_app
-      route: /app.html
-      triggerHref: app.html
-      trigger: click a.penpot-nav-link[href="app.html"] at index.html:280
+      trigger: click a.penpot-nav-link[href="index.html"] at index.html
+      triggerSource:
+        file: src/pages/index.astro
+        selector: "mcard:route:/index.html"
       ownerPage: index.html
       owner: Product Manager and UX Designer
     t_link_viewer_to_lab:
@@ -903,9 +929,40 @@ bindings:
       toPlaceId: p_page_responsive_lab
       route: /responsive-lab.html
       triggerHref: responsive-lab.html
-      trigger: click a[href="responsive-lab.html"] at index.html:281,293,323 or openResponsiveUILab at index.html:482
+      trigger: click a[href="responsive-lab.html"] at index.html or openResponsiveUILab at index.html
+      triggerSource:
+        file: src/pages/index.astro
+        selector: "responsive-lab.html"
       ownerPage: index.html
       owner: Product Manager and UX Designer
+    t_link_viewer_to_docs:
+      kind: link
+      surface: workbench
+      linkId: link_viewer_to_docs
+      fromPlaceId: p_view_index_mcard_viewer
+      toPlaceId: p_page_docs_index
+      route: /pkc-docs-index.html
+      triggerHref: pkc-docs-index.html
+      trigger: click a.penpot-nav-link[href="pkc-docs-index.html"] at src/pages/index.astro
+      triggerSource:
+        file: src/pages/index.astro
+        selector: "mcard:route:/pkc-docs-index.html"
+      ownerPage: index.html
+      owner: Tech Writer
+    t_link_docs_to_index:
+      kind: link
+      surface: workbench
+      linkId: link_docs_to_index
+      fromPlaceId: p_page_docs_index
+      toPlaceId: p_page_index
+      route: /index.html
+      triggerHref: index.html
+      trigger: Penpot flow link Docs Index -> Home in js/nav.js (legacy-static pkc-docs-index.html does not mount PENPOT-GENERATED-NAV)
+      triggerSource:
+        file: js/nav.js
+        selector: "mcard:route:/index.html"
+      ownerPage: pkc-docs-index.html
+      owner: Tech Writer
     t_open_external_monopoly:
       kind: open-external
       surface: workbench
@@ -915,7 +972,10 @@ bindings:
       externalPlaceId: p_external_games
       route: /public/examples/games/monopoly-auth.html
       triggerHref: /public/examples/games/monopoly-auth.html
-      trigger: window.open("/public/examples/games/monopoly-auth.html", "_blank") at app.html:284
+      trigger: window.open("/public/examples/games/monopoly-auth.html", "_blank") at app.html
+      triggerSource:
+        file: src/pages/app.astro
+        selector: "monopoly-auth.html"
       ownerPage: app.html
       owner: Product Manager
     t_open_external_chess:
@@ -927,7 +987,10 @@ bindings:
       externalPlaceId: p_external_games
       route: /public/examples/games/chess-auth.html
       triggerHref: /public/examples/games/chess-auth.html
-      trigger: window.open("/public/examples/games/chess-auth.html", "_blank") at app.html:316
+      trigger: window.open("/public/examples/games/chess-auth.html", "_blank") at app.html
+      triggerSource:
+        file: src/pages/app.astro
+        selector: "chess-auth.html"
       ownerPage: app.html
       owner: Product Manager
     t_open_external_go:
@@ -939,7 +1002,10 @@ bindings:
       externalPlaceId: p_external_games
       route: /public/examples/games/go-auth.html
       triggerHref: /public/examples/games/go-auth.html
-      trigger: window.open("/public/examples/games/go-auth.html", "_blank") at app.html:348
+      trigger: window.open("/public/examples/games/go-auth.html", "_blank") at app.html
+      triggerSource:
+        file: src/pages/app.astro
+        selector: "go-auth.html"
       ownerPage: app.html
       owner: Product Manager
     t_req_get_app_config:
@@ -950,7 +1016,10 @@ bindings:
       toPlaceId: p_pending_get_app_config
       httpMethod: GET
       httpPath: /app-config.json
-      trigger: fetch("/app-config.json") in js/harness/lab-toolbar.js:175
+      trigger: fetch("/app-config.json") in js/harness/lab-toolbar.js
+      triggerSource:
+        file: js/harness/lab-toolbar.js
+        selector: "/app-config.json"
       ownerPage: responsive-lab.html
       owner: Product Manager and TEA
     t_ok_get_app_config:
@@ -984,7 +1053,10 @@ bindings:
       toPlaceId: p_pending_post_test_runs
       httpMethod: POST
       httpPath: /api/test-runs
-      trigger: 'fetch("/api/test-runs", { method: "POST" }) in js/harness/recorder.js:219'
+      trigger: 'fetch("/api/test-runs", { method: "POST" }) in js/harness/recorder.js'
+      triggerSource:
+        file: js/harness/recorder.js
+        selector: "/api/test-runs"
       ownerPage: responsive-lab.html
       owner: Product Manager and TEA
     t_ok_post_test_runs:
@@ -1027,7 +1099,10 @@ bindings:
       toPlaceId: p_pending_get_conformance_latest
       httpMethod: GET
       httpPath: /api/test-runs/conformance/latest
-      trigger: fetch("/api/test-runs/conformance/latest?target=...") in js/harness/conformance-panel.js:25
+      trigger: fetch("/api/test-runs/conformance/latest?target=...") in js/harness/conformance-panel.js
+      triggerSource:
+        file: js/harness/conformance-panel.js
+        selector: "conformance/latest"
       ownerPage: responsive-lab.html
       owner: Product Manager and TEA
     t_ok_get_conformance_latest:
@@ -1163,7 +1238,10 @@ bindings:
       toPlaceId: p_pending_get_env
       httpMethod: GET
       httpPath: /api/env
-      trigger: fetch("/api/env") in index.html:351
+      trigger: fetch("/api/env") in index.html
+      triggerSource:
+        file: src/pages/index.astro
+        selector: "/api/env"
       ownerPage: index.html
       owner: Product Manager and UX Designer
     t_ok_get_env:
@@ -1197,7 +1275,10 @@ bindings:
       toPlaceId: p_pending_get_mcard_landing
       httpMethod: GET
       httpPath: /api/mcard/landing
-      trigger: api.landing() GET /api/mcard/landing in js/landing-page-mcard.js:176,199
+      trigger: api.landing() GET /api/mcard/landing in js/landing-page-mcard.js
+      triggerSource:
+        file: js/landing-page-mcard.js
+        selector: "/api/mcard/landing"
       ownerPage: index.html
       owner: Product Manager
     t_ok_get_mcard_landing:
@@ -1231,7 +1312,10 @@ bindings:
       toPlaceId: p_pending_put_mcard_landing
       httpMethod: PUT
       httpPath: /api/mcard/landing
-      trigger: api.setLanding() PUT /api/mcard/landing in js/landing-page-mcard.js:177,216
+      trigger: api.setLanding() PUT /api/mcard/landing in js/landing-page-mcard.js
+      triggerSource:
+        file: js/landing-page-mcard.js
+        selector: "/api/mcard/landing"
       ownerPage: index.html
       owner: Product Manager
     t_ok_put_mcard_landing:
@@ -1274,7 +1358,10 @@ bindings:
       toPlaceId: p_pending_get_clm_program_artifact
       httpMethod: GET
       httpPath: /api/clm/program-artifact
-      trigger: fetch("/api/clm/program-artifact?...") in js/observability/fibration-dashboard.js:157
+      trigger: fetch("/api/clm/program-artifact?...") in js/observability/fibration-dashboard.js
+      triggerSource:
+        file: js/observability/fibration-dashboard.js
+        selector: "program-artifact"
       ownerPage: index.html
       owner: Architect
     t_ok_get_clm_program_artifact:
@@ -1308,7 +1395,10 @@ bindings:
       toPlaceId: p_pending_get_clm_registry
       httpMethod: GET
       httpPath: /api/clm/registry
-      trigger: fetch("/api/clm/registry") in sprint-registry.html:140
+      trigger: fetch("/api/clm/registry") in sprint-registry.html
+      triggerSource:
+        file: src/pages/sprint-registry.astro
+        selector: "/api/clm/registry"
       ownerPage: sprint-registry.html
       owner: Scrum Master
     t_ok_get_clm_registry:
@@ -1351,7 +1441,10 @@ bindings:
       toPlaceId: p_pending_get_fiber_inspector_harness
       httpMethod: GET
       httpPath: /public/conformance/harness-data.json
-      trigger: fetch("./public/conformance/harness-data.json") gating JSON in fiber-inspector.html:72
+      trigger: fetch("./public/conformance/harness-data.json") gating JSON in fiber-inspector.html
+      triggerSource:
+        file: src/pages/fiber-inspector.astro
+        selector: "harness-data.json"
       ownerPage: fiber-inspector.html
       owner: Architect
     t_ok_get_fiber_inspector_harness:
@@ -1394,7 +1487,10 @@ bindings:
       toPlaceId: p_pending_get_fiber_conformance_harness
       httpMethod: GET
       httpPath: /public/conformance/harness-data.json
-      trigger: fetch("./public/conformance/harness-data.json") gating JSON in fiber-conformance.html:144
+      trigger: fetch("./public/conformance/harness-data.json") gating JSON in fiber-conformance.html
+      triggerSource:
+        file: src/pages/fiber-conformance.astro
+        selector: "harness-data.json"
       ownerPage: fiber-conformance.html
       owner: Architect
     t_ok_get_fiber_conformance_harness:

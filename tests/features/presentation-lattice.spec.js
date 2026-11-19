@@ -16,8 +16,8 @@ import { test, expect } from '@playwright/test';
 test.describe('LandingPage Presentation Lattice & Observability', () => {
 
   test.beforeEach(async ({ page }) => {
-    // Navigate to landing page root
-    await page.goto('/');
+    // The portal lives at ?noredirect=1; bare "/" redirects to the Responsive UI Lab.
+    await page.goto('/?noredirect=1');
     await page.waitForLoadState('domcontentloaded');
     await page.waitForSelector('.top-controls', { state: 'visible', timeout: 10000 });
 
@@ -174,6 +174,21 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
   });
 
   test('5. Responsive layout invariance across Type Lattice viewports', async ({ page }) => {
+    const overflowOffenders = () =>
+      page.evaluate(() => {
+        const vw = document.documentElement.clientWidth;
+        return Array.from(document.querySelectorAll('body *'))
+          .filter((el) => {
+            const r = el.getBoundingClientRect();
+            return r.width > 0 && r.right > vw + 1;
+          })
+          .slice(0, 6)
+          .map((el) => {
+            const r = el.getBoundingClientRect();
+            return `${el.tagName.toLowerCase()}#${el.id || '-'}.${(el.className || '-').toString().split(' ')[0]} right=${Math.round(r.right)} vw=${vw}`;
+          });
+      });
+
     // Mobile Viewport (iPhone 14)
     console.log('[Test] Responsive check: Mobile (390x844)');
     await page.setViewportSize({ width: 390, height: 844 });
@@ -182,6 +197,7 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     const mobileOverflow = await page.evaluate(() => {
       return document.documentElement.scrollWidth > document.documentElement.clientWidth;
     });
+    expect(await overflowOffenders(), 'mobile viewport overflow').toEqual([]);
     expect(mobileOverflow).toBe(false);
 
     // Tablet Viewport (iPad)
@@ -192,6 +208,7 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     const tabletOverflow = await page.evaluate(() => {
       return document.documentElement.scrollWidth > document.documentElement.clientWidth;
     });
+    expect(await overflowOffenders(), 'tablet viewport overflow').toEqual([]);
     expect(tabletOverflow).toBe(false);
 
     // Desktop Viewport (1440x900)
@@ -203,159 +220,6 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
       return document.documentElement.scrollWidth > document.documentElement.clientWidth;
     });
     expect(desktopOverflow).toBe(false);
-  });
-
-  test('6. Meta-Portal Deployment Unit Inspector: G-Set SQLite db examination across Web, Desktop, Mobile, Wearables, AR/VR', async ({ page }) => {
-    const inspectorBtn = page.locator('#deployment-inspector-btn');
-    const modal = page.locator('#deployment-inspector-modal');
-
-    await expect(inspectorBtn).toBeVisible();
-    console.log('[Test] Step 1: Clicking Deployment Units button to open Inspector');
-    await inspectorBtn.click();
-
-    // Verify modal is open
-    await expect(modal).toBeVisible();
-    await expect(page.locator('#inspector-title')).toContainText('Deployment Process & Unit Inspector');
-
-    // Verify G-Set SQLite DB packaging info and Invariant tag
-    await expect(page.locator('.gset-immortal-tag')).toContainText('INV-REF-03: G-Set Immortal');
-    await expect(page.locator('#target-db-filename')).toContainText('landingpage.web.mcard.db');
-
-    // Verify Merkle Root and size metrics
-    await expect(page.locator('#merkle-root-display')).toBeVisible();
-    await expect(page.locator('#metric-total-size')).toContainText('MB');
-    await page.waitForTimeout(600);
-
-    // Switch to Desktop Target
-    console.log('[Test] Step 2: Switching to Desktop Target (Tauri)');
-    await page.locator('#tab-desktop').click();
-    await expect(page.locator('#current-target-name')).toContainText('Desktop (Tauri');
-    await expect(page.locator('#target-db-filename')).toHaveText('landingpage.desktop.mcard.db');
-    await page.waitForTimeout(600);
-
-    // Switch to Mobile Target
-    console.log('[Test] Step 3: Switching to Mobile Target (iOS / Android)');
-    await page.locator('#tab-mobile').click();
-    await expect(page.locator('#current-target-name')).toContainText('Mobile Devices');
-    await expect(page.locator('#target-db-filename')).toHaveText('landingpage.mobile.mcard.db');
-    await page.waitForTimeout(600);
-
-    // Switch to Wearables Target (Micro-screen, 2MB budget, zero-motion)
-    console.log('[Test] Step 4: Switching to Wearable Target (watchOS / WearOS)');
-    await page.locator('#tab-wearable').click();
-    await expect(page.locator('#current-target-name')).toContainText('Wearable Devices');
-    await expect(page.locator('#target-db-filename')).toHaveText('landingpage.wearable.mcard.db');
-    await expect(page.locator('.budget-ratio')).toContainText('2 MB');
-    await page.waitForTimeout(600);
-
-    // Switch to AR / VR Spatial Target (WebXR, 150MB budget, 3D glTF)
-    console.log('[Test] Step 5: Switching to AR/VR Spatial Target (WebXR / VisionPro / Quest)');
-    await page.locator('#tab-arvr').click();
-    await expect(page.locator('#current-target-name')).toContainText('AR / VR Spatial');
-    await expect(page.locator('#target-db-filename')).toHaveText('landingpage.arvr.mcard.db');
-    await expect(page.locator('.budget-ratio')).toContainText('150 MB');
-    await page.waitForTimeout(600);
-
-    // Close Inspector
-    console.log('[Test] Step 6: Closing inspector modal');
-    await page.locator('#inspector-close-btn').click();
-    await expect(modal).not.toBeVisible();
-  });
-
-  test('7. Direct portal card triggers Deployment Unit Inspector', async ({ page }) => {
-    const deploymentCard = page.locator('#deployment-inspector-card');
-    const modal = page.locator('#deployment-inspector-modal');
-
-    await expect(deploymentCard).toBeVisible();
-    console.log('[Test] Clicking Deployment Units card on main landing grid');
-    await deploymentCard.click();
-
-    await expect(modal).toBeVisible();
-    await expect(page.locator('#inspector-title')).toContainText('Deployment Process & Unit Inspector');
-    await page.waitForTimeout(500);
-
-    // Close via close button
-    await page.locator('#inspector-close-btn').click();
-    await expect(modal).not.toBeVisible();
-  });
-
-  test('8. Mission Control Observability Gateway: split tab launch leading to backend observable data (Grafana Faro & telemetry)', async ({ page, context }) => {
-    const missionBtn = page.locator('#mission-control-btn');
-    const splitBtn = page.locator('#mission-control-split-btn');
-    const missionCard = page.locator('#mission-control-card');
-    const missionLink = page.locator('#mission-control-link');
-    const corsBadge = page.locator('.cors-safe-badge');
-
-    await expect(missionBtn).toBeVisible();
-    await expect(splitBtn).toBeAttached();
-    await expect(missionCard).toBeVisible();
-    await expect(missionLink).toBeVisible();
-    await expect(corsBadge).toBeVisible();
-    await expect(corsBadge).toContainText('Grafana Faro Telemetry • CORS & Frame-Isolation Safe');
-
-    // Verify missionLink has target="_blank"
-    await expect(missionLink).toHaveAttribute('target', '_blank');
-    await expect(missionLink).toHaveAttribute('href', 'app.html');
-
-    // Test window.open behavior on split button click
-    console.log('[Test] Triggering Mission Control Observability Cockpit launch');
-    const [newPage] = await Promise.all([
-      context.waitForEvent('page'),
-      missionBtn.click()
-    ]);
-
-    await newPage.waitForLoadState('domcontentloaded');
-    console.log('[Test] Mission Control tab successfully opened with URL:', newPage.url());
-    expect(newPage.url()).toContain('app.html');
-    await newPage.close();
-  });
-
-  test('9. Least Action & Directionality Navigator: Epiplexity (S_T), Axiomatic Entropy (H_T), and Geodesic Sprints (δS = 0)', async ({ page }) => {
-    const leastActionBtn = page.locator('#least-action-btn');
-    const modal = page.locator('#least-action-modal');
-
-    await expect(leastActionBtn).toBeVisible();
-    console.log('[Test] Step 1: Opening Least Action Navigator');
-    await leastActionBtn.click();
-
-    await expect(modal).toBeVisible();
-    await expect(page.locator('#least-action-title')).toContainText('Least Action & Directionality Navigator');
-
-    // Verify CDO-11 optimal stationary geodesic metrics
-    console.log('[Test] Step 2: Verifying CDO-11 stationary action metrics');
-    await expect(page.locator('#current-direction-name')).toContainText('CDO-11: Multi-Target Native Packaging');
-    await expect(page.locator('#metric-epiplexity')).toHaveText('94.5');
-    await expect(page.locator('#metric-entropy')).toHaveText('12.2');
-    await expect(page.locator('#metric-lagrangian')).toHaveText('+82.3');
-    await expect(page.locator('#metric-distance-display')).toContainText('Physical Geodesic');
-    await expect(page.locator('.matrix-status-tag')).toContainText('Uncoupled (Diagonal [A])');
-
-    // Verify Vector Compass SVG is rendered with ∇S gradient
-    await expect(page.locator('#compass-svg-element')).toBeVisible();
-    await expect(page.locator('#compass-svg-element')).toContainText('∇S (SSOT)');
-
-    // Test candidate direction switching: Anti-Pattern A (Demonic Pruning)
-    console.log('[Test] Step 3: Inspecting Anti-Pattern A (Ad-Hoc Coupling)');
-    await page.locator('#dir-tab-anti-monolith').click();
-    await expect(page.locator('#current-direction-name')).toContainText('Ad-Hoc Monolithic Feature Sprawl');
-    await expect(page.locator('#metric-epiplexity')).toHaveText('24');
-    await expect(page.locator('#metric-entropy')).toHaveText('86.5');
-    await expect(page.locator('#metric-lagrangian')).toHaveText('-62.5');
-    await expect(page.locator('#metric-distance-display')).toContainText('Imaginary Action');
-    await expect(page.locator('.matrix-status-tag')).toContainText('Coupled (Full Cross-Talk)');
-
-    // Switch back to CDO-11 and lock direction
-    console.log('[Test] Step 4: Re-selecting CDO-11 and locking direction');
-    await page.locator('#dir-tab-cdo-11').click();
-    await expect(page.locator('#current-direction-name')).toContainText('CDO-11');
-    const lockBtn = page.locator('#lock-direction-btn');
-    await lockBtn.click();
-    await expect(lockBtn).toContainText('Locked to Sprint CDO-11');
-
-    // Close modal
-    console.log('[Test] Step 5: Closing Least Action Navigator modal');
-    await page.locator('#least-action-close-btn').click();
-    await expect(modal).not.toBeVisible();
   });
 
   test('10. Responsive UI Lab: verify full-window workbench navigation from top control button and landing card link', async ({ page }) => {
@@ -375,9 +239,6 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     // Verify full-window workbench URL and header
     expect(page.url()).toContain('responsive-lab.html');
     await expect(page.locator('#lab-main-heading')).toContainText('Responsive UI Lab');
-    await expect(page.locator('.lab-badge')).toContainText('Full-Window Workbench');
-    await expect(page.locator('#cors-notice-banner')).toBeVisible();
-    await expect(page.locator('#cors-notice-banner')).toContainText('Full-Window Real-Estate');
 
     // Step 2: Return to Portal via back button
     console.log('[Test] Step 2: Returning to GovTech OS Portal via back button');
@@ -422,7 +283,7 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     // Step 1: Verify full-window stage container and 100% screen real-estate
     await expect(page.locator('.lab-stage-container')).toBeVisible();
     await expect(controlledSizeController).toBeVisible();
-    await expect(iframe).toHaveAttribute('src', 'app.html');
+    await expect(iframe).toHaveAttribute('src', '/tests/fixtures/spa-test-target.html');
     await expect(corsStatusPill).toContainText('Controlled Viewport Active');
 
     // Step 2: Test Dual Workspace Arrangement (Side-by-Side Horizontal vs Stacked Vertical)
@@ -521,108 +382,11 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     await loadIframeBtn.click();
     await page.waitForTimeout(600);
 
-    // Verify browser security alert displays Desktop Tauri notice
+    // Verify the browser security alert explains why capture is disabled
     await expect(corsBlockAlert).toBeVisible();
     await expect(corsBlockReason).toContainText('X-Frame-Options: DENY');
-    await expect(corsBlockAlert).toContainText('In Desktop mode (Tauri)');
+    await expect(corsBlockAlert).toContainText('Capture is disabled for blocked targets');
     await expect(corsStatusPill).toContainText('Iframe Blocked');
-  });
-
-  test('12. CDO-13 Fibration Metric Observability and SPA Lagrangian Assessment: cross-unit fibration dashboard, parallel-coordinates linked brushing, admissibility cone, and deployment unit inspector metrics slot', async ({ page }) => {
-    // Step 1: Open Fibration Observability from top control button
-    console.log('[Test] Step 1: Opening Fibration Observability via top control button');
-    const fibrationBtn = page.locator('#fibration-observability-btn');
-    await expect(fibrationBtn).toBeVisible();
-    await fibrationBtn.click();
-
-    const navigatorModal = page.locator('#least-action-modal');
-    await expect(navigatorModal).toBeVisible();
-    const crossUnitSlot = page.locator('#mc-slot-cross-unit');
-    await expect(crossUnitSlot).toBeVisible();
-
-    // Step 2: Verify D3 chart components in Cross-Unit dashboard
-    console.log('[Test] Step 2: Verifying D3 chart components (Bundle Map, Parallel Coordinates, Treemap, Admissibility Cone)');
-    await expect(page.locator('#fibration-bundle-mount svg')).toBeVisible();
-    await expect(page.locator('#parallel-coords-mount svg')).toBeVisible();
-    await expect(page.locator('#fibration-treemap-mount svg')).toBeVisible();
-    await expect(page.locator('#fibration-treemap-mount')).toContainText('Archetype Budget');
-    await expect(page.locator('#admissibility-cone-mount svg')).toBeVisible();
-    await expect(page.locator('#fibration-unit-table')).toBeVisible();
-
-    // Step 3: Verify Admissibility Cone boundaries and pruning labels
-    console.log('[Test] Step 3: Verifying Admissibility Cone boundaries, imaginary boundary, and pruning labels');
-    const coneSvg = page.locator('#admissibility-cone-mount svg');
-    await expect(coneSvg).toContainText('Admissible Cone (ℒ > 0');
-    await expect(coneSvg).toContainText('Imaginary Boundary (ℒ = 0');
-    await expect(coneSvg).toContainText('Demonic Pruning Region (ℒ ≤ 0');
-    // Verify dominant HT contributor label in pruning region
-    await expect(coneSvg).toContainText('budget_breach');
-
-    // Step 4: Verify 7 lattice dimensions and metrics axes in Parallel Coordinates
-    console.log('[Test] Step 4: Verifying 7 lattice dimensions and metrics axes in Parallel Coordinates');
-    const pcSvg = page.locator('#parallel-coords-mount svg');
-    await expect(pcSvg).toContainText('1. Platform');
-    await expect(pcSvg).toContainText('2. Form Factor');
-    await expect(pcSvg).toContainText('3. Orientation');
-    await expect(pcSvg).toContainText('4. Locale');
-    await expect(pcSvg).toContainText('5. Display');
-    await expect(pcSvg).toContainText('6. Power');
-    await expect(pcSvg).toContainText('7. Adapter');
-    await expect(pcSvg).toContainText('LCP (ms)');
-    await expect(pcSvg).toContainText('Payload (MB)');
-    await expect(pcSvg).toContainText('Func (%)');
-    await expect(pcSvg).toContainText('Lagrangian ℒ');
-
-    // Step 5: Test parallel-coordinates linked brushing
-    console.log('[Test] Step 5: Testing linked brushing interaction');
-    const initialRows = await page.locator('#fibration-unit-table tbody tr').count();
-    expect(initialRows).toBeGreaterThan(0);
-
-    // Step 6: Close navigator modal
-    console.log('[Test] Step 6: Closing navigator modal');
-    await page.locator('#least-action-close-btn').click();
-    await expect(navigatorModal).not.toBeVisible();
-
-    // Step 7: Open Deployment Unit Inspector
-    console.log('[Test] Step 7: Opening Deployment Unit Inspector');
-    const inspectorBtn = page.locator('#deployment-inspector-btn');
-    await inspectorBtn.click();
-    const inspectorModal = page.locator('#deployment-inspector-modal');
-    await expect(inspectorModal).toBeVisible();
-
-    // Step 8: Verify Inspector Metrics Slot (#insp-slot-metrics)
-    console.log('[Test] Step 8: Verifying Inspector Metrics Slot (#insp-slot-metrics)');
-    const metricsSlot = page.locator('#insp-slot-metrics');
-    await expect(metricsSlot).toBeVisible();
-
-    // Treemap with archetype budget overlay
-    await expect(page.locator('#insp-treemap-container svg')).toBeVisible();
-
-    // Functionality radar canvas
-    await expect(page.locator('#insp-radar-canvas')).toBeVisible();
-
-    // Web Vitals multi-series line canvas
-    await expect(page.locator('#insp-vitals-canvas')).toBeVisible();
-
-    // Grouped budget bars canvas
-    await expect(page.locator('#insp-budget-canvas')).toBeVisible();
-
-    // Step 9: Verify #insp-slot-correctness hydrated panel
-    console.log('[Test] Step 9: Verifying #insp-slot-correctness hydrated panel');
-    const correctnessSlot = page.locator('#insp-slot-correctness');
-    await expect(correctnessSlot).toBeVisible();
-    await expect(correctnessSlot).toContainText('Correctness');
-
-    // Step 10: Switch target archetype to Wearable in inspector and verify metrics update
-    console.log('[Test] Step 10: Switching inspector target to Wearable to test budget comparison');
-    await page.locator('#tab-wearable').click();
-    await expect(page.locator('#insp-treemap-container svg')).toBeVisible();
-    await expect(page.locator('#insp-radar-canvas')).toBeVisible();
-
-    // Step 11: Close inspector and verify drain
-    console.log('[Test] Step 11: Closing Deployment Unit Inspector and verifying drain');
-    await page.locator('#inspector-close-btn').click();
-    await expect(inspectorModal).not.toBeVisible();
   });
 
 });

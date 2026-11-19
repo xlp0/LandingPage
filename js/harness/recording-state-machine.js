@@ -3,6 +3,14 @@
  * Strict 4-state lifecycle manager and active-time accounting clock.
  */
 
+export const RECORDER_TRANSITIONS = Object.freeze([
+  Object.freeze({ action: 'start', from: Object.freeze(['IDLE']), to: 'RECORDING' }),
+  Object.freeze({ action: 'pause', from: Object.freeze(['RECORDING']), to: 'PAUSED' }),
+  Object.freeze({ action: 'resume', from: Object.freeze(['PAUSED']), to: 'RECORDING' }),
+  Object.freeze({ action: 'stop', from: Object.freeze(['RECORDING', 'PAUSED']), to: 'FINALIZED' }),
+  Object.freeze({ action: 'reset', from: Object.freeze(['FINALIZED']), to: 'IDLE' })
+]);
+
 export class InvalidTransitionError extends Error {
   constructor({ from, action }) {
     super(`Invalid transition: cannot '${action}' from state '${from}'`);
@@ -52,11 +60,9 @@ export class RecordingStateMachine {
    * Transitions from IDLE -> RECORDING.
    */
   start() {
-    if (this._state !== 'IDLE') {
-      throw new InvalidTransitionError({ from: this._state, action: 'start' });
-    }
+    const row = this._require('start');
     const from = this._state;
-    this._state = 'RECORDING';
+    this._state = row.to;
     this._activeElapsedMs = 0;
     this._lastResumeTimestamp = this._now();
     this._notify(from, 'RECORDING', 'start');
@@ -66,11 +72,9 @@ export class RecordingStateMachine {
    * Transitions from RECORDING -> PAUSED.
    */
   pause() {
-    if (this._state !== 'RECORDING') {
-      throw new InvalidTransitionError({ from: this._state, action: 'pause' });
-    }
+    const row = this._require('pause');
     const from = this._state;
-    this._state = 'PAUSED';
+    this._state = row.to;
     this._activeElapsedMs += Math.max(0, this._now() - this._lastResumeTimestamp);
     this._notify(from, 'PAUSED', 'pause');
   }
@@ -79,11 +83,9 @@ export class RecordingStateMachine {
    * Transitions from PAUSED -> RECORDING.
    */
   resume() {
-    if (this._state !== 'PAUSED') {
-      throw new InvalidTransitionError({ from: this._state, action: 'resume' });
-    }
+    const row = this._require('resume');
     const from = this._state;
-    this._state = 'RECORDING';
+    this._state = row.to;
     this._lastResumeTimestamp = this._now();
     this._notify(from, 'RECORDING', 'resume');
   }
@@ -92,29 +94,33 @@ export class RecordingStateMachine {
    * Transitions from RECORDING | PAUSED -> FINALIZED.
    */
   stop() {
-    if (this._state !== 'RECORDING' && this._state !== 'PAUSED') {
-      throw new InvalidTransitionError({ from: this._state, action: 'stop' });
-    }
+    const row = this._require('stop');
     const from = this._state;
     if (from === 'RECORDING') {
       this._activeElapsedMs += Math.max(0, this._now() - this._lastResumeTimestamp);
     }
-    this._state = 'FINALIZED';
-    this._notify(from, 'FINALIZED', 'stop');
+    this._state = row.to;
+    this._notify(from, row.to, 'stop');
   }
 
   /**
    * Transitions from FINALIZED -> IDLE.
    */
   reset() {
-    if (this._state !== 'FINALIZED') {
-      throw new InvalidTransitionError({ from: this._state, action: 'reset' });
-    }
+    const row = this._require('reset');
     const from = this._state;
-    this._state = 'IDLE';
+    this._state = row.to;
     this._activeElapsedMs = 0;
     this._lastResumeTimestamp = 0;
-    this._notify(from, 'IDLE', 'reset');
+    this._notify(from, row.to, 'reset');
+  }
+
+  _require(action) {
+    const row = RECORDER_TRANSITIONS.find((candidate) => candidate.action === action);
+    if (!row || !row.from.includes(this._state)) {
+      throw new InvalidTransitionError({ from: this._state, action });
+    }
+    return row;
   }
 
   /**

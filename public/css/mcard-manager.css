@@ -1086,14 +1086,21 @@ input[type="file"] {
     right: 0;
   }
   
-  /* Add back button for mobile navigation */
+  /* Add back button for mobile navigation. It is a <button>, so the reset keeps
+     the box the <div> it replaced had: full width, no side borders, page font. */
   .mobile-back-btn {
     display: flex !important;
     align-items: center;
     gap: 4px;
+    width: 100%;
+    margin: 0;
     padding: 8px 12px;
     background: var(--color-surface);
+    border: 0;
     border-bottom: 1px solid var(--color-border);
+    font-family: inherit;
+    line-height: inherit;
+    text-align: left;
     cursor: pointer;
     color: var(--color-info);
     font-size: 13px;

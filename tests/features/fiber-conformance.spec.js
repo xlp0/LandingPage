@@ -299,7 +299,7 @@ test.describe('Fiber conformance — rendered properties', () => {
           `&locale=${coord.locale}&dir=${coord.dir}` +
           `&display_mode=${coord.display_mode}&power_mode=${coord.power_mode}`;
         await page.goto(url);
-        await page.waitForSelector('body[data-harness-ready="true"]', { timeout: 15000 });
+        await page.waitForSelector('body[data-page-state="ready"]', { timeout: 15000 });
 
         const harness = await page.evaluate(() => window.__FIBER_HARNESS__);
         expect(harness.status, `harness did not mount: ${JSON.stringify(harness)}`).toBe('mounted');
@@ -392,7 +392,7 @@ test.describe('Fiber visual witnesses', () => {
           `&locale=${coord.locale}&dir=${coord.dir}` +
           `&display_mode=${coord.display_mode}&power_mode=${coord.power_mode}`;
         await page.goto(url);
-        await page.waitForSelector('body[data-harness-ready="true"]', { timeout: 15000 });
+        await page.waitForSelector('body[data-page-state="ready"]', { timeout: 15000 });
 
         await expect(page.locator('#harness')).toHaveScreenshot(
           `${fiber.replace(/\//g, '-')}--${coord.id.replace(/[:]/g, '-')}.png`,
@@ -426,7 +426,7 @@ test.describe('Fiber membrane isolation', () => {
   test('a compatible frame mounts inside the membrane', async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 900 });
     await page.goto('/fiber-conformance.html?membrane=1&target=/public/conformance/membrane-probe.html');
-    await page.waitForSelector('body[data-harness-ready="true"]', { timeout: 15000 });
+    await page.waitForSelector('body[data-page-state="ready"]', { timeout: 15000 });
 
     const r = await page.evaluate(() => window.__FIBER_HARNESS__);
     expect(r.status).toBe('mounted');
@@ -437,7 +437,7 @@ test.describe('Fiber membrane isolation', () => {
   test('the membrane does not leak: no overflow and the frame is contained', async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 900 });
     await page.goto('/fiber-conformance.html?membrane=1&target=/public/conformance/membrane-probe.html');
-    await page.waitForSelector('body[data-harness-ready="true"]', { timeout: 15000 });
+    await page.waitForSelector('body[data-page-state="ready"]', { timeout: 15000 });
 
     const m = await page.evaluate(measure);
     expect(m.pageOverflow, 'the membrane widened the page').toBe(false);
@@ -473,7 +473,7 @@ test.describe('Fiber membrane isolation', () => {
 
     await page.setViewportSize({ width: 1024, height: 900 });
     await page.goto('/fiber-conformance.html?membrane=1&target=/blocked-target.html');
-    await page.waitForSelector('body[data-harness-ready="true"]', { timeout: 15000 });
+    await page.waitForSelector('body[data-page-state="ready"]', { timeout: 15000 });
 
     const r = await page.evaluate(() => window.__FIBER_HARNESS__);
     expect(r.status).toBe('blocked');
@@ -489,7 +489,7 @@ test.describe('Fiber membrane isolation', () => {
     const leaked = [];
     for (const fiber of FIBERS) {
       await page.goto(`/fiber-conformance.html?kind=${encodeURIComponent(fiber)}`);
-      await page.waitForSelector('body[data-harness-ready="true"]', { timeout: 15000 });
+      await page.waitForSelector('body[data-page-state="ready"]', { timeout: 15000 });
       const m = await page.evaluate(measure);
       if (m.pageOverflow || m.offenders.length) leaked.push({ fiber, offenders: m.offenders });
     }

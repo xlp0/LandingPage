@@ -44,7 +44,11 @@ const baseCorsOrigins = [
     'http://127.0.0.1:3000',
     'http://127.0.0.1:3001',
     'http://localhost:4321',
+    'http://127.0.0.1:4321',
     'http://localhost:4322',
+    'http://127.0.0.1:4322',
+    'http://localhost:4323',
+    'http://127.0.0.1:4323',
     'http://localhost:8765',
     'https://pkc.pub',
     'https://test.pkc.pub',
@@ -311,6 +315,14 @@ app.use(express.static(path.join(__dirname), {
         res.setHeader('X-GQC-Page-Mount', 'legacy-static');
     }
 }));
+
+app.use('/pkc-viewer.html', (req, res, next) => {
+    if ((req.method !== 'GET' && req.method !== 'HEAD') || (req.path && req.path !== '/')) {
+        return next();
+    }
+    res.setHeader('X-GQC-Page-Mount', 'legacy-static');
+    return res.sendFile(path.join(__dirname, 'archive', 'html', 'pkc-viewer.html'));
+});
 
 function startServer(options = {}) {
     const PORT = options.port !== undefined ? options.port : (process.env.PORT || 3000);

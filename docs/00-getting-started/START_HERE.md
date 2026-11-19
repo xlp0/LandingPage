@@ -5,11 +5,11 @@
 | Audience | Developers and QA engineers onboarding to the LandingPage repository |
 | BMAD Owner | Developer (`bmad-agent-dev`) and Architect (`bmad-agent-architect`) |
 | Source of Truth | [`package.json`](../../package.json), [`ws-server.js`](../../ws-server.js), [`astro.config.mjs`](../../astro.config.mjs), and [`src/net/workbench-net.yaml`](../../src/net/workbench-net.yaml) |
-| Consensus Kernel | `clm-kernel@0.0.23` |
+| Consensus Kernel | `clm-kernel@0.0.24` |
 
 ## Prerequisites and Setup
 
-Requires Node.js `>= 18.0.0` and npm `>= 9.0.0`.
+Requires Node.js `>= 22.15.0` (Node `24` LTS recommended) and npm `>= 10.0.0`.
 
 ```bash
 cd LandingPage
@@ -66,7 +66,7 @@ npm run test:conformance
 LandingPage/
 ├── astro.config.mjs              # Astro 7.4.2 + @astrojs/node middleware + @astrojs/preact
 ├── ws-server.js                  # Sole supported Express + WS + Astro middleware server (:3000)
-├── package.json                  # Scripts and pinned dependencies (clm-kernel@0.0.23)
+├── package.json                  # Scripts and pinned dependencies (clm-kernel@0.0.24)
 ├── app-config.json               # Approved Responsive Lab target URLs (urn:gqc:lab-config:v1)
 ├── retired-islands.yaml          # Tombstoned legacy surfaces
 ├── src/
@@ -74,14 +74,14 @@ LandingPage/
 │   ├── islands/                  # Seven Preact islands mounted on responsive-lab.astro
 │   └── net/workbench-net.yaml    # Canonical 31-Place, 65-Transition workbench Petri net
 ├── js/
-│   ├── harness/                  # Viewport stage, membrane, ring buffer, recorder (0.0.23), SPA workflow
+│   ├── harness/                  # Viewport stage, membrane, ring buffer, recorder (0.0.24), SPA workflow
 │   ├── device-registry.js        # Schema v2 device profiles (8 presets)
 │   ├── landing-page-mcard.js     # Single-page 4-modality MCard viewer controller
 │   ├── external-portal-membrane.js # SSRF-guarded external portal membrane
 │   └── nav.js                    # Navigation bar generated from design/landing-navigation.penpot
 ├── server/
 │   ├── mcard-api.mjs             # SQLite Triad backend and /api/mcard routes (Triad Blake3)
-│   ├── mcard-modality.mjs        # 4-modality classifier (KERNEL_PROVENANCE = clm-kernel@0.0.23)
+│   ├── mcard-modality.mjs        # 4-modality classifier (KERNEL_PROVENANCE = clm-kernel@0.0.24)
 │   ├── mcard-probe-policy.mjs    # DNS, private-IP, redirect, and framing SSRF guards
 │   └── test-run-api.mjs          # /api/test-runs, NetMCard, FiringReceiptMCard, and run-link API
 ├── scripts/                      # Net, parity, docs, PenPot, seed, and replay CLI tools
@@ -91,7 +91,7 @@ LandingPage/
 
 ## Key Architectural Rules
 
-1. **Kernel Consensus (`clm-kernel@0.0.23`).** Server Triad hashing and modality classification delegate to `clm-kernel@0.0.23`, and `js/harness/recorder.js` stamps `lab.clmKernel: '0.0.23'` on new test runs while preserving readability of historical `0.0.10` records. Browser islands never import `clm-kernel`.
+1. **Kernel Consensus (`clm-kernel@0.0.24`).** Server Triad hashing and modality classification delegate to `clm-kernel@0.0.24`, and `js/harness/recorder.js` stamps `lab.clmKernel: '0.0.24'` on new test runs while preserving readability of historical `0.0.10` records. Browser islands never import `clm-kernel`.
 2. **Three Distinct Hash Domains.** Server Triad Blake3 (`server/mcard-api.mjs`), browser compatibility SHA-256 (`public/js/mcard-kernel/compat.js` for `app.html` IndexedDB), and build-time PenPot graph SHA-256 (`scripts/penpot-zip.mjs`) never mix.
 3. **Declared Net Transitions.** Every UI-reachable client server call under `src/` or `js/harness/` must be declared in `src/net/workbench-net.yaml` and passes `node scripts/check-package-source-parity.mjs`.
 4. **PenPot Boundary.** `design/landing-navigation.penpot` drives LandingPage's own navigation (`js/nav.js`), while external PenPot MPA target assessment in the Lab remains Optional / Deferred pending Product Manager approval.

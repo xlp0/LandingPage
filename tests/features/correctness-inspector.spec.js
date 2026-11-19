@@ -3,14 +3,14 @@ import { test, expect } from '@playwright/test';
 test.describe('CDO-14: Correctness & Hoare Triple Observability in Deployment Unit Inspector', () => {
 
   test('DV-CDO-14-01..11: Full Correctness Panel rendering, Galois pairs, Hoare table, Alignment, Coherence, REPL SVG, Brittleness, and Island rows', async ({ page }) => {
-    // Navigate to Landing Page
-    await page.goto('/');
+    // The portal lives at ?noredirect=1; bare "/" redirects to the Responsive UI Lab.
+    await page.goto('/?noredirect=1');
 
-    // Step 1: Open Deployment Unit Inspector
+    // Step 1: Open Deployment Unit Inspector. Its portal button was removed on purpose in 9e08c3c,
+    // so the panel is opened through the inspector the page still exposes.
     console.log('[Test] Step 1: Opening Deployment Unit Inspector');
-    const inspectorBtn = page.locator('#deployment-inspector-btn');
-    await expect(inspectorBtn).toBeVisible();
-    await inspectorBtn.click();
+    await page.waitForFunction(() => window.__deployment_inspector !== undefined);
+    await page.evaluate(() => window.__deployment_inspector.open());
 
     const inspectorModal = page.locator('#deployment-inspector-modal');
     await expect(inspectorModal).toBeVisible();

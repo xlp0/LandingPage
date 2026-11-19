@@ -53,7 +53,7 @@ export function renderTransclusionLinks(escapedText) {
   return String(escapedText ?? '').replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, target, label) => {
     const cleanTarget = target.trim();
     const display = (label ?? cleanTarget).trim();
-    return `<a class="mcard-link" href="#mcard:${cleanTarget}" data-mcard-ref="${cleanTarget}">${display}</a>`;
+    return `<a class="mcard-link" href="#mcard:${cleanTarget}" data-testid="mcard-transclusion-link" data-mcard-ref="${cleanTarget}">${display}</a>`;
   });
 }
 
@@ -75,7 +75,7 @@ function renderMediaBody(card) {
   if (mime.startsWith('audio/')) return `<figure class="mcard-media-body" data-modality="media"><audio controls preload="metadata" src="${escapeHtml(rawUrl)}"></audio></figure>`;
   if (mime.startsWith('video/')) return `<figure class="mcard-media-body" data-modality="media"><video controls preload="metadata" src="${escapeHtml(rawUrl)}"></video></figure>`;
   if (mime === 'application/pdf') return `<div class="mcard-media-body" data-modality="media"><iframe class="mcard-pdf-frame" sandbox="" referrerpolicy="no-referrer" src="${escapeHtml(rawUrl)}" title="MCard PDF"></iframe></div>`;
-  return `<div class="mcard-media-body" data-modality="media"><a class="mcard-raw-download" href="${escapeHtml(rawUrl)}" download>Download ${escapeHtml(mime)}</a></div>`;
+  return `<div class="mcard-media-body" data-modality="media"><a class="mcard-raw-download" href="${escapeHtml(rawUrl)}" data-testid="mcard-raw-download" data-effect="download" download>Download ${escapeHtml(mime)}</a></div>`;
 }
 
 function renderWebappBody(card, options = {}) {
@@ -108,10 +108,10 @@ export function renderPill({ hash = '', verified = false, samples = [], activeSa
     `<span class="pill-witness">${verified ? '✓ Witnessed' : '⚠ Unverified'}</span>`,
     badge,
     `<label class="pill-switcher"><span class="visually-hidden">Switch sample</span>`,
-    `<select data-role="sample-switcher">${options}</select></label>`,
-    `<button type="button" data-role="open-url" title="Paste an external LandingPage URL (Cmd/Ctrl + K)">🌐 URL</button>`,
+    `<select data-role="sample-switcher" data-testid="pill-sample-switcher">${options}</select></label>`,
+    `<button type="button" data-role="open-url" data-testid="pill-open-url" data-effect="external" title="Paste an external LandingPage URL (Cmd/Ctrl + K)">🌐 URL</button>`,
     `<a class="pill-studio" href="${escapeHtml(buildDeepLink(hash))}"`,
-    ` data-role="open-in-studio" title="Open and refine this page in mcard-studio">✨ Open in mcard-studio</a>`,
+    ` data-role="open-in-studio" data-testid="pill-open-in-studio" data-effect="external" title="Open and refine this page in mcard-studio">✨ Open in mcard-studio</a>`,
     `</div>`,
   ].join('');
 }

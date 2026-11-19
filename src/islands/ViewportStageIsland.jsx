@@ -8,6 +8,8 @@ export default function ViewportStageIsland() {
     const runtime = getLabRuntime();
     runtime.attachStageSurface(iframeRef.current);
     runtime.markBootParticipant('stage');
+    const root = document.getElementById('viewport-scale-wrapper');
+    if (root) root.dataset.islandState = 'ready';
 
     return () => {
       runtime.detachStageSurface();
@@ -31,12 +33,12 @@ export default function ViewportStageIsland() {
           id="btn-cors-alert-recover"
           className="toolbar-btn"
           onClick={handleRecoverClick}
-        >
+         data-testid="btn-cors-alert-recover">
           ↺ Reset to Default Target
         </button>
       </div>
 
-      <div className="viewport-scale-wrapper" id="viewport-scale-wrapper" data-island="viewport-stage">
+      <div className="viewport-scale-wrapper" id="viewport-scale-wrapper" data-island="viewport-stage" data-island-state="mounting">
         <div
           className="viewport-frame orientation-horizontal"
           id="controlled-panel-frame"
@@ -51,6 +53,13 @@ export default function ViewportStageIsland() {
                 Responsive Iframe Surface
               </span>
             </div>
+            <span
+              className="frame-target-place-pill"
+              id="stage-target-place"
+              data-testid="stage-target-place"
+              aria-live="polite"
+              hidden
+            />
             <span className="frame-dimension-pill" id="controlled-frame-dim">
               100% × 100% • ↔ Horizontal (Landscape)
             </span>

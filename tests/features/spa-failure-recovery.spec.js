@@ -82,6 +82,12 @@ test.describe('SPRINT-GQC-02: SPA Failure Recovery and Keyboard Operation', () =
 
     await workbench.open();
 
+    // The lab boots on the SPA fixture, so Load Target reloads a frame that already shows it.
+    const frame = workbench.targetFrame();
+    const appRoot = frame.locator('#spa-app-root');
+    await expect(appRoot).toHaveAttribute('data-place-id', 'p_spa_overview');
+    const defaultBootNonce = await appRoot.getAttribute('data-boot-nonce');
+
     const urlInput = page.getByRole('textbox', { name: /Test Target URL input/i });
     const clearBtn = page.getByRole('button', { name: /Clear URL/i });
     const loadBtn = page.getByRole('button', { name: /Load Target/i });
@@ -102,8 +108,7 @@ test.describe('SPRINT-GQC-02: SPA Failure Recovery and Keyboard Operation', () =
     await expect(loadBtn).toBeFocused();
     await page.keyboard.press('Enter');
 
-    const frame = workbench.targetFrame();
-    const appRoot = frame.locator('#spa-app-root');
+    await expect(appRoot).not.toHaveAttribute('data-boot-nonce', defaultBootNonce);
     await expect(appRoot).toHaveAttribute('data-place-id', 'p_spa_overview');
     const bootNonce = await appRoot.getAttribute('data-boot-nonce');
 

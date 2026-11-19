@@ -166,8 +166,8 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
 
       const coldStart = performance.now();
       await page.goto(`${baseURL}/responsive-lab.html`, { waitUntil: 'domcontentloaded' });
-      await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
-      await expect(page.getByTestId('spa-test-workflow')).toHaveAttribute('data-workflow-ready', 'true');
+      await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
+      await expect(page.getByTestId('spa-test-workflow')).toHaveAttribute('data-island-state', 'ready');
       const coldWallReadyMs = Number((performance.now() - coldStart).toFixed(3));
       const coldSnap = await readBrowserPerfSnapshot(page);
 
@@ -178,7 +178,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
         pageId: 'page_responsive_lab',
         placeId: 'p_page_responsive_lab',
         transitionId: null,
-        readyCondition: '!body.lab-booting && [data-testid="spa-test-workflow"][data-workflow-ready="true"]',
+        readyCondition: 'body[data-page-state]:not([data-page-state="loading"]) && [data-testid="spa-test-workflow"][data-island-state="ready"]',
         cacheState: 'cold',
         includesServerStartup: false,
         readyMs: coldSnap.labReadyAtMs ?? coldWallReadyMs,
@@ -200,8 +200,8 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
 
       const warmStart = performance.now();
       await page.goto(`${baseURL}/responsive-lab.html`, { waitUntil: 'domcontentloaded' });
-      await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
-      await expect(page.getByTestId('spa-test-workflow')).toHaveAttribute('data-workflow-ready', 'true');
+      await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
+      await expect(page.getByTestId('spa-test-workflow')).toHaveAttribute('data-island-state', 'ready');
       const warmWallReadyMs = Number((performance.now() - warmStart).toFixed(3));
       const warmSnap = await readBrowserPerfSnapshot(page);
 
@@ -212,7 +212,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
         pageId: 'page_responsive_lab',
         placeId: 'p_page_responsive_lab',
         transitionId: null,
-        readyCondition: '!body.lab-booting && [data-testid="spa-test-workflow"][data-workflow-ready="true"]',
+        readyCondition: 'body[data-page-state]:not([data-page-state="loading"]) && [data-testid="spa-test-workflow"][data-island-state="ready"]',
         cacheState: 'warm',
         includesServerStartup: false,
         readyMs: warmSnap.labReadyAtMs ?? warmWallReadyMs,
@@ -338,7 +338,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
       await page.goto(`${baseURL}/responsive-lab.html?target=${encodeURIComponent(SPA_FIXTURE_PATH)}`, {
         waitUntil: 'domcontentloaded'
       });
-      await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
+      await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
       const frame = page.frameLocator('iframe[title="Responsive UI Lab Test Frame"]');
       await expect(frame.locator('#spa-app-root')).toHaveAttribute('data-place-id', 'p_spa_overview');
 
@@ -387,7 +387,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
 
     const tBoot = performance.now();
     await workbench.open();
-    await expect(page.getByTestId('spa-test-workflow')).toHaveAttribute('data-workflow-ready', 'true');
+    await expect(page.getByTestId('spa-test-workflow')).toHaveAttribute('data-island-state', 'ready');
     stageSamples.push(
       normalizeNavigationSample({
         stepId: 'p0-stage-1-workbench-boot',
@@ -396,7 +396,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
         pageId: 'page_responsive_lab',
         placeId: 'p_page_responsive_lab',
         transitionId: null,
-        readyCondition: '!body.lab-booting && [data-workflow-ready="true"]',
+        readyCondition: 'body[data-page-state]:not([data-page-state="loading"]) && [data-island-state="ready"]',
         readyMs: performance.now() - tBoot
       })
     );
@@ -423,7 +423,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
 
     await page.getByTestId('workflow-tab-step-evidence').click();
     const tCaptureStart = performance.now();
-    await page.getByTestId('workflow-rec-start').click();
+    await page.locator('#btn-rec-start').click();
     await expect(page.getByTestId('workflow-recorder-state')).toHaveText('RECORDING');
     const captureStartSample = normalizeNavigationSample({
       stepId: 'p0-stage-3-capture-start',
@@ -460,7 +460,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
     const saveRespPromise = page.waitForResponse(
       (res) => res.url().includes('/api/test-runs') && res.request().method() === 'POST'
     );
-    await page.getByTestId('workflow-rec-stop').click();
+    await page.locator('#btn-rec-stop').click();
     const saveResp = await saveRespPromise;
     expect([200, 201]).toContain(saveResp.status());
     const savedBody = await saveResp.json();
@@ -561,7 +561,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
       });
 
       await page.goto(`${baseURL}/responsive-lab.html`, { waitUntil: 'domcontentloaded' });
-      await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
+      await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
 
       const initialSnap = await readBrowserPerfSnapshot(page);
       const eagerNames = [
@@ -643,7 +643,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
       const tRedirect = performance.now();
       await page.goto(`${resolvedOrigin}/`, { waitUntil: 'domcontentloaded' });
       await expect(page).toHaveURL(/\/responsive-lab\.html/);
-      await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
+      await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
       recordedByKind.redirect = {
         transitionId: 't_redirect_index_to_lab',
         kind: 'redirect',
@@ -657,7 +657,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
       await expect(frame.locator('#spa-app-root')).toHaveAttribute('data-place-id', 'p_spa_overview');
 
       await page.getByTestId('workflow-tab-step-evidence').click();
-      await page.getByTestId('workflow-rec-start').click();
+      await page.locator('#btn-rec-start').click();
       await expect(page.getByTestId('workflow-recorder-state')).toHaveText('RECORDING');
       await frame.getByRole('button', { name: 'Open Service Details' }).click();
       await expect(frame.locator('#spa-app-root')).toHaveAttribute('data-place-id', 'p_spa_details');
@@ -675,7 +675,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
       );
 
       const tStopTrigger = performance.now();
-      await page.getByTestId('workflow-rec-stop').click();
+      await page.locator('#btn-rec-stop').click();
       await postReqPromise;
       const reqDispatchMs = Number(Math.max(0.05, postReqDispatchedAt - tStopTrigger).toFixed(3));
       const postRes = await postResPromise;
@@ -838,7 +838,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
       { placeId: 'p_page_sprint_registry', route: '/sprint-registry.html', isView: false },
       { placeId: 'p_page_fiber_inspector', route: '/fiber-inspector.html', isView: false },
       { placeId: 'p_page_fiber_conformance', route: '/fiber-conformance.html', isView: false },
-      { placeId: 'p_undecided_pkc_docs_index', route: '/pkc-docs-index.html', isUndecided: true },
+      { placeId: 'p_page_docs_index', route: '/pkc-docs-index.html', isUndecided: true },
       { placeId: 'p_page_responsive_lab', route: '/responsive-lab.html', isIslands: true }
     ];
 
@@ -873,7 +873,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
 
         await page.goto(`${baseURL}${item.route}`, { waitUntil: 'load' });
         if (item.isIslands) {
-          await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
+          await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
         }
 
         const domIslandCount = await page.locator('astro-island').count();

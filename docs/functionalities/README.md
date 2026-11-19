@@ -28,7 +28,7 @@ This directory contains the **authoritative, exhaustive functional documentation
 | **00** | [**Master Overview & Architecture Map**](00-OVERVIEW-AND-FUNCTIONALITY-MAP.md) | Platform topology, monorepo packages, capability taxonomy, master entry points. |
 | **01** | [**Mission Control & MCard Management**](01-MISSION-CONTROL-AND-MCARD-MANAGEMENT.md) | `app.html`, `ViewManager`, SQLite WAL backend, card lifecycle, PWA offline engine. |
 | **02** | [**Polymorphic Content Rendering Pipeline**](02-POLYMORPHIC-CONTENT-RENDERING-PIPELINE.md) | `RendererRegistry`, Markdown with alerts, KaTeX/MathJax, TikZ-CD, Tone.js audio, PDF.js. |
-| **03** | [**Cubical Logic Model (CLM) & Fiber Correctness**](03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md) | `clm-kernel@0.0.23`, iframe membrane isolation, Fiber Inspector, Redux CLM middleware. |
+| **03** | [**Cubical Logic Model (CLM) & Fiber Correctness**](03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md) | `clm-kernel@0.0.24`, iframe membrane isolation, Fiber Inspector, Redux CLM middleware. |
 | **04** | [**WebRTC P2P Mesh & Real-Time Collaboration**](04-WEBRTC-P2P-MESH-AND-REALTIME-COLLABORATION.md) | Dual-mode networking (serverless QR/SDP vs WebSocket signaling), `RoomService v3`, video meeting, STUN/TURN. |
 | **05** | [**Real-Time Multiplayer Board Games**](05-REALTIME-MULTIPLAYER-BOARD-GAMES.md) | P2P Tic-Tac-Toe, Authenticated Monopoly, Chess, Go, D&D Bali engine, move reconciliation. |
 | **06** | [**Authentication & Identity System**](06-AUTHENTICATION-AND-IDENTITY-SYSTEM.md) | Zitadel OAuth2/OIDC, PKCE code exchange, secure cookies, token rotation, Redux auth slice. |

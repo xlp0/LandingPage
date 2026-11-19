@@ -257,7 +257,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
       headerOutside: true,
       modalOutside: true,
       footerOutside: true,
-      backHref: '/',
+      backHref: '/index.html?noredirect=1',
       mcHref: 'app.html'
     });
   });
@@ -327,7 +327,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     await expect(modal).not.toHaveClass(/open/);
   });
 
-  test('Region 3 (ViewportStage): removes lab-booting, exposes window.__lab, scales large viewports, and shows blocked-target alert', async ({
+  test('Region 3 (ViewportStage): clears the loading page state, exposes window.__lab, scales large viewports, and shows blocked-target alert', async ({
     isolatedLabPage,
     workbench
   }) => {
@@ -335,7 +335,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     await page.setViewportSize({ width: 1280, height: 720 });
 
     await workbench.open({ targetPath: SPA_FIXTURE_PATH });
-    await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
+    await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
     await expect(page.locator('#viewport-scale-wrapper')).toBeVisible();
     await expect(page.locator('#controlled-panel-frame')).toBeVisible();
 
@@ -492,7 +492,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     });
 
     await page.goto(`/responsive-lab.html?target=${encodeURIComponent(SPA_FIXTURE_PATH)}`);
-    await page.waitForSelector('body:not(.lab-booting)', { timeout: 10000 });
+    await page.waitForSelector('body:not([data-page-state="loading"])', { timeout: 10000 });
     await page.waitForTimeout(250);
 
     const coldNames = downloadedScripts.map((entry) => new URL(entry.url).pathname);
@@ -542,7 +542,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     const page = await context.newPage();
 
     await page.goto(`/responsive-lab.html?target=${encodeURIComponent(SPA_FIXTURE_PATH)}`);
-    await page.waitForSelector('body:not(.lab-booting)', { timeout: 10000 });
+    await page.waitForSelector('body:not([data-page-state="loading"])', { timeout: 10000 });
     await page.locator('#conformance-disclosure summary').click();
     await page.locator('#mcard-result-disclosure summary').click();
 
@@ -550,7 +550,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
       page.evaluate(() => {
         const islands = [...document.querySelectorAll('astro-island')];
         const allHydrated = islands.length === 7 && islands.every((el) => !el.hasAttribute('ssr'));
-        const toolbarReady = document.getElementById('pane-url-bar')?.getAttribute('data-toolbar-ready') === 'true';
+        const toolbarReady = document.getElementById('pane-url-bar')?.getAttribute('data-island-state') === 'ready';
         return allHydrated && toolbarReady;
       })
     ).toBe(true);
@@ -563,7 +563,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     const cycleReport = await page.evaluate(async (spaPath) => {
       const waitToolbarReady = async () => {
         for (let attempt = 0; attempt < 100; attempt++) {
-          if (document.getElementById('pane-url-bar')?.getAttribute('data-toolbar-ready') === 'true') {
+          if (document.getElementById('pane-url-bar')?.getAttribute('data-island-state') === 'ready') {
             return;
           }
           await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -614,7 +614,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     await page.goto('/index.html?noredirect=1');
     await page.waitForLoadState('domcontentloaded');
     await page.goto(`/responsive-lab.html?target=${encodeURIComponent(SPA_FIXTURE_PATH)}`);
-    await page.waitForSelector('body:not(.lab-booting)', { timeout: 10000 });
+    await page.waitForSelector('body:not([data-page-state="loading"])', { timeout: 10000 });
     await page.locator('#conformance-disclosure summary').click();
     await page.locator('#mcard-result-disclosure summary').click();
 
@@ -622,7 +622,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
       page.evaluate(() => {
         const islands = [...document.querySelectorAll('astro-island')];
         const allHydrated = islands.length === 7 && islands.every((el) => !el.hasAttribute('ssr'));
-        const toolbarReady = document.getElementById('pane-url-bar')?.getAttribute('data-toolbar-ready') === 'true';
+        const toolbarReady = document.getElementById('pane-url-bar')?.getAttribute('data-island-state') === 'ready';
         return allHydrated && toolbarReady;
       })
     ).toBe(true);

@@ -193,7 +193,7 @@ export class AudioRenderer extends BaseRenderer {
               <i data-lucide="rotate-ccw" style="width: 16px; height: 16px;"></i>
               Restart
             </button>
-            <button class="audio-btn" onclick="window.downloadAudioBlob('${blobUrl}', '${this.escapeHtml(fileName)}')">
+            <button class="audio-btn" data-testid="audio-download" data-effect="download" onclick="window.downloadAudioBlob('${blobUrl}', '${this.escapeHtml(fileName)}')">
               <i data-lucide="download" style="width: 16px; height: 16px;"></i>
               Download
             </button>

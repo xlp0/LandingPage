@@ -45,7 +45,7 @@ ssh-add --apple-use-keychain ~/.ssh/id_ed25519
 ### Before
 ```
 git push origin main
-→ Enter passphrase for key '/Users/Henrykoo/.ssh/id_ed25519': ❌
+→ Enter passphrase for key '~/.ssh/id_ed25519': ❌
 → (You had to type it every time)
 ```
 

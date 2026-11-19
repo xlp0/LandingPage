@@ -14,7 +14,7 @@ This directory documents performance measurement contracts, per-Place JavaScript
 Sprint `SPRINT-GQC-06` established repeatable browser and static-manifest probes at trunk commit `e43ec38d146980cd4d7c27798da81d5c0b6c299d` and pre-Astro baseline commit `843cf652650746501d7ea270ecdd1a0f493ec559`.
 
 - **[gqc-06-spa-and-island-baselines.md](gqc-06-spa-and-island-baselines.md)** documents current metric definitions, ready conditions, probe commands, environment, budget owners, per-Place JavaScript bytes, per-island hydration, per-kind Transition latency, and the pre-Astro comparison.
-- **[../sprints/_active/evidence/GQC-06-performance-report.md](../sprints/_active/evidence/GQC-06-performance-report.md)** records the 21-sample interleaved paired distributions, CDP limiter attribution, 10 live verification lanes, and the verified no-change decision.
+- **[../sprints/programs/gqc/evidence/GQC-06-performance-report.md](../sprints/programs/gqc/evidence/GQC-06-performance-report.md)** records the 21-sample interleaved paired distributions, CDP limiter attribution, 10 live verification lanes, and the verified no-change decision.
 
 ### Reconciled Frame-Budget Tiers (`INV-DEV-04`)
 

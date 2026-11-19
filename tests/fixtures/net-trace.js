@@ -5,65 +5,11 @@ import {
   loadNetEnvelope,
   replayNetTrace
 } from '../../scripts/check-net.mjs';
+import { resolvePlaceForUrl, stripQuery } from '../../src/net/net-core.mjs';
 
 const THIS_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(THIS_DIR, '../..');
 export const DEFAULT_WORKBENCH_NET_PATH = path.join(REPO_ROOT, 'src/net/workbench-net.yaml');
-
-function stripQuery(routeStr) {
-  return String(routeStr || '').split('?')[0] || '/';
-}
-
-export function resolvePlaceForUrl(envelope, rawUrl) {
-  let parsed;
-  try {
-    parsed = new URL(rawUrl);
-  } catch {
-    return null;
-  }
-
-  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-    return null;
-  }
-
-  const placeBindings = envelope?.bindings?.places || {};
-  const pathname = parsed.pathname || '/';
-
-  for (const [placeId, binding] of Object.entries(placeBindings)) {
-    if (!binding || (binding.kind !== 'page' && binding.kind !== 'view')) continue;
-    if (!binding.queryFlag) continue;
-    if (!parsed.searchParams.has(binding.queryFlag)) continue;
-    const candidates = [binding.route, ...(binding.routeAliases || [])]
-      .filter(Boolean)
-      .map(stripQuery);
-    if (candidates.includes(pathname)) {
-      return { placeId, kind: binding.kind, binding, parsed };
-    }
-  }
-
-  for (const [placeId, binding] of Object.entries(placeBindings)) {
-    if (!binding || (binding.kind !== 'page' && binding.kind !== 'view')) continue;
-    if (binding.queryFlag) continue;
-    const candidates = [binding.route, ...(binding.routeAliases || [])]
-      .filter(Boolean)
-      .map(stripQuery);
-    if (candidates.includes(pathname)) {
-      return { placeId, kind: binding.kind, binding, parsed };
-    }
-  }
-
-  for (const [placeId, binding] of Object.entries(placeBindings)) {
-    if (!binding || binding.kind !== 'external') continue;
-    if (binding.routePrefix && pathname.startsWith(binding.routePrefix)) {
-      return { placeId, kind: 'external', binding, parsed };
-    }
-    if (binding.route && stripQuery(binding.route) === pathname) {
-      return { placeId, kind: 'external', binding, parsed };
-    }
-  }
-
-  return null;
-}
 
 function buildStaticAssetSet(envelope) {
   const set = new Set();

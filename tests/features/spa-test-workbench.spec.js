@@ -32,9 +32,14 @@ test.describe('SPRINT-GQC-04: Guided SPA Test Workflow Island and Dual-Net Repla
     await workbench.open();
     const guide = page.getByTestId('spa-test-workflow');
     await expect(guide).toBeVisible();
-    await expect(guide).toHaveAttribute('data-workflow-ready', 'true');
+    await expect(guide).toHaveAttribute('data-island-state', 'ready');
     await expect(page.getByTestId('mpa-status-badge')).toContainText('Optional / Deferred');
 
+    // The lab boots on the SPA fixture, its configured default (decision BPV-01).
+    await expect(page.getByTestId('workflow-target-type')).toHaveText('spa');
+    await expect(page.getByTestId('workflow-spa-eligibility')).toHaveText('Approved P0 SPA Target');
+
+    await workbench.selectPresetTarget('app.html');
     await expect(page.getByTestId('workflow-target-type')).toHaveText('webapp');
     await expect(page.getByTestId('workflow-spa-eligibility')).toHaveText('Not Classified as SPA');
 
@@ -90,7 +95,7 @@ test.describe('SPRINT-GQC-04: Guided SPA Test Workflow Island and Dual-Net Repla
     await page.getByTestId('workflow-next-evidence').click();
     await expect(page.getByTestId('incomplete-capture-badge')).toBeHidden();
 
-    await page.getByTestId('workflow-rec-start').click();
+    await page.locator('#btn-rec-start').click();
     await expect(page.getByTestId('workflow-recorder-state')).toHaveText('RECORDING');
     await expect(page.getByTestId('incomplete-capture-badge')).toBeVisible();
     await expect(page.getByTestId('incomplete-capture-badge')).toContainText('Incomplete Capture');
@@ -111,7 +116,7 @@ test.describe('SPRINT-GQC-04: Guided SPA Test Workflow Island and Dual-Net Repla
     const saveRespPromise = page.waitForResponse(
       (res) => res.url().includes('/api/test-runs') && res.request().method() === 'POST'
     );
-    await page.getByTestId('workflow-rec-stop').click();
+    await page.locator('#btn-rec-stop').click();
     const saveResp = await saveRespPromise;
     expect([200, 201]).toContain(saveResp.status());
     const savedBody = await saveResp.json();
@@ -207,7 +212,7 @@ test.describe('SPRINT-GQC-04: Guided SPA Test Workflow Island and Dual-Net Repla
     ]);
 
     await page.getByTestId('workflow-tab-step-evidence').click();
-    await page.getByTestId('workflow-rec-start').click();
+    await page.locator('#btn-rec-start').click();
     await expect(page.getByTestId('incomplete-capture-badge')).toBeVisible();
 
     await workbench.selectPresetTarget('https://github.com');
@@ -271,8 +276,8 @@ test.describe('SPRINT-GQC-04: Guided SPA Test Workflow Island and Dual-Net Repla
     await expect(page.getByTestId('workflow-panel-step-target')).toBeVisible();
 
     await page.reload();
-    await expect(page.locator('body')).not.toHaveClass(/lab-booting/);
-    await expect(page.getByTestId('spa-test-workflow')).toHaveAttribute('data-workflow-ready', 'true');
+    await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
+    await expect(page.getByTestId('spa-test-workflow')).toHaveAttribute('data-island-state', 'ready');
     await expect(page.getByTestId('spa-workflow-module-warnings')).toHaveCount(0);
     expect(dialogs).toEqual([]);
   });
@@ -346,14 +351,14 @@ test.describe('SPRINT-GQC-05: Layer 4 Trellis Navigation Receipts, Error Recover
     await expect(appRoot).toHaveAttribute('data-place-id', 'p_spa_overview');
 
     await page.getByTestId('workflow-tab-step-evidence').click();
-    await page.getByTestId('workflow-rec-start').click();
+    await page.locator('#btn-rec-start').click();
     await frame.getByRole('button', { name: 'Open Service Details' }).click();
     await expect(appRoot).toHaveAttribute('data-place-id', 'p_spa_details');
 
     const saveRespPromise = page.waitForResponse(
       (res) => res.url().endsWith('/api/test-runs') && res.request().method() === 'POST'
     );
-    await page.getByTestId('workflow-rec-stop').click();
+    await page.locator('#btn-rec-stop').click();
     const saveResp = await saveRespPromise;
     expect([200, 201]).toContain(saveResp.status());
     const savedBody = await saveResp.json();

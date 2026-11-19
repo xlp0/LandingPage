@@ -15,7 +15,16 @@ export default function RecordingRibbonIsland() {
     runtime.attachCaptureRibbon(ribbon);
     runtime.markBootParticipant('ribbon');
 
+    const root = document.getElementById('lab-recording-ribbon');
+    if (root) root.dataset.islandState = 'ready';
+    const applyState = () => {
+      if (root) root.dataset.recorderState = runtime.recorder.state;
+    };
+    applyState();
+    const unsubscribe = runtime.recorder.onChange(applyState);
+
     return () => {
+      unsubscribe();
       runtime.detachCaptureRibbon(ribbon);
       ribbon.destroy();
     };
@@ -26,6 +35,8 @@ export default function RecordingRibbonIsland() {
       id="lab-recording-ribbon"
       className="toolbar-group recording-ribbon"
       data-island="recording-ribbon"
+      data-island-state="mounting"
+      data-recorder-state="IDLE"
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -35,16 +46,16 @@ export default function RecordingRibbonIsland() {
       }}
     >
       <span className="group-label">Record:</span>
-      <button id="btn-rec-start" className="toolbar-btn" title="Start recording interactions">
+      <button id="btn-rec-start" className="toolbar-btn" title="Start recording interactions" data-testid="btn-rec-start">
         🔴 Start
       </button>
-      <button id="btn-rec-pause" className="toolbar-btn" style={{ display: 'none' }} title="Pause recording">
+      <button id="btn-rec-pause" className="toolbar-btn" hidden title="Pause recording" data-testid="btn-rec-pause">
         ⏸ Pause
       </button>
-      <button id="btn-rec-resume" className="toolbar-btn" style={{ display: 'none' }} title="Resume recording">
+      <button id="btn-rec-resume" className="toolbar-btn" hidden title="Resume recording" data-testid="btn-rec-resume">
         ▶ Resume
       </button>
-      <button id="btn-rec-stop" className="toolbar-btn" style={{ display: 'none' }} title="Stop recording">
+      <button id="btn-rec-stop" className="toolbar-btn" hidden title="Stop recording" data-testid="btn-rec-stop" data-effect="persist">
         ⏹ Stop
       </button>
 
@@ -84,15 +95,16 @@ export default function RecordingRibbonIsland() {
           className="toolbar-btn"
           style={{ padding: '0.1rem 0.35rem', fontSize: '0.68rem', display: 'none' }}
           title="Copy Handle"
-        >
+         data-testid="btn-copy-handle">
           📋
         </button>
         <a
           id="btn-download-json"
           href="#"
           download="session-recording.json"
+          data-effect="download"
           style={{ display: 'none', color: 'inherit', textDecoration: 'underline', fontSize: '0.75rem' }}
-        >
+         data-testid="btn-download-json">
           📥 Download JSON
         </a>
       </span>

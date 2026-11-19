@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import net from 'node:net';
 import os from 'node:os';
 import path from 'node:path';
 import http from 'node:http';
@@ -482,6 +483,154 @@ test('GQC-03-INT-01, GQC-03-INT-02, GQC-03-INT-03: configuration contracts, moun
     }
     if (prevDbPath === undefined) delete process.env.MCARD_DB_PATH;
     else process.env.MCARD_DB_PATH = prevDbPath;
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+async function getFreeTcpPort(host = '127.0.0.1') {
+  return await new Promise((resolve, reject) => {
+    const srv = net.createServer();
+    srv.unref();
+    srv.on('error', reject);
+    srv.listen(0, host, () => {
+      const addr = srv.address();
+      const port = typeof addr === 'object' && addr ? addr.port : 0;
+      srv.close((err) => (err ? reject(err) : resolve(port)));
+    });
+  });
+}
+
+test('shouldBypassAstroDevRouteGuard allows statically proxied targets and blocks unmounted root files', async () => {
+  const { shouldBypassAstroDevRouteGuard } = await import('../../astro.config.mjs');
+
+  for (const allowedPath of [
+    '/index.html',
+    '/index.html?view=lab',
+    '/tests/fixtures/spa-test-target.html',
+    '/tests/fixtures/spa-test-target.html?from=lab',
+    '/tests/bombadil/fixtures/never-ready.html',
+    '/pkc-docs-index.html',
+    '/pkc-viewer.html',
+    '/pkc-viewer.html?doc=PKC%20as%20the%20Network.md',
+    '/public/examples/games/monopoly.html',
+    '/components/welcome.html',
+    '/config/app-views.json',
+    '/images/PKC_Flat_Logo_TransparentBackground.png',
+    '/pkc-docs/PKC%20as%20the%20Network.md',
+    '/create-card-template.html',
+    '/create-latex-card.html',
+    '/latex-test.html',
+    '/modules.json',
+    '/api/config',
+    '/ws'
+  ]) {
+    assert.equal(
+      shouldBypassAstroDevRouteGuard(allowedPath),
+      true,
+      `Expected dev route guard bypass for ${allowedPath}`
+    );
+  }
+
+  for (const blockedPath of [
+    '/README.md',
+    '/package.json',
+    '/ws-server.js',
+    '/.env',
+    '/tests/../README.md',
+    '//tests/fixtures/spa-test-target.html',
+    '/%ff/tests/fixtures/spa-test-target.html',
+    '/responsive-lab.html'
+  ]) {
+    assert.equal(
+      shouldBypassAstroDevRouteGuard(blockedPath),
+      false,
+      `Expected dev route guard enforcement for ${blockedPath}`
+    );
+  }
+});
+
+test('Astro dev server serves statically defined iframe/page targets and pkc-viewer.html while keeping /README.md blocked', async () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gqc-dev-static-'));
+  const prevDbPath = process.env.MCARD_DB_PATH;
+  const prevNodeEnv = process.env.NODE_ENV;
+  process.env.MCARD_DB_PATH = path.join(tempDir, 'dev-static.db');
+
+  let wsListener = null;
+  let astroServer = null;
+  try {
+    const astroConfigModule = await import('../../astro.config.mjs');
+    const wsMod = await import('../../ws-server.js');
+    wsListener = await new Promise((resolve, reject) => {
+      const srv = wsMod.app.listen(0, '127.0.0.1', () => resolve(srv));
+      srv.on('error', reject);
+    });
+    const wsPort = wsListener.address().port;
+    const wsBaseUrl = `http://127.0.0.1:${wsPort}`;
+
+    const directViewerRes = await fetch(
+      `${wsBaseUrl}/pkc-viewer.html?doc=PKC%20as%20the%20Network.md`
+    );
+    assert.equal(directViewerRes.status, 200);
+    assert.equal(directViewerRes.headers.get('x-gqc-page-mount'), 'legacy-static');
+
+    const devCorsRes = await fetch(`${wsBaseUrl}/api/config`, {
+      headers: { Origin: 'http://127.0.0.1:4323' }
+    });
+    assert.equal(devCorsRes.headers.get('access-control-allow-origin'), 'http://127.0.0.1:4323');
+
+    const devPort = await getFreeTcpPort('127.0.0.1');
+    const { dev } = await import('astro');
+    astroServer = await dev({
+      root: ROOT_DIR,
+      logLevel: 'silent',
+      server: { host: '127.0.0.1', port: devPort },
+      vite: {
+        server: {
+          hmr: false,
+          strictPort: true,
+          proxy: astroConfigModule.createDevProxy(wsBaseUrl)
+        }
+      }
+    });
+    const devBaseUrl = `http://127.0.0.1:${astroServer.address.port}`;
+
+    const htmlHeaders = { Accept: 'text/html,application/xhtml+xml' };
+    for (const staticPath of [
+      '/tests/fixtures/spa-test-target.html',
+      '/tests/bombadil/fixtures/never-ready.html',
+      '/index.html',
+      '/responsive-lab.html',
+      '/pkc-docs-index.html',
+      '/pkc-viewer.html?doc=PKC%20as%20the%20Network.md',
+      '/public/examples/games/monopoly.html',
+      '/components/welcome.html',
+      '/config/app-views.json',
+      '/pkc-docs/PKC%20as%20the%20Network.md',
+      '/modules.json'
+    ]) {
+      const res = await fetch(`${devBaseUrl}${staticPath}`, { headers: htmlHeaders });
+      const body = await res.text();
+      assert.equal(res.status, 200, `Expected 200 for ${staticPath}, got ${res.status}`);
+      assert.equal(
+        body.includes('404: Not found'),
+        false,
+        `Unexpected Astro 404 body for ${staticPath}`
+      );
+    }
+
+    const readmeRes = await fetch(`${devBaseUrl}/README.md`, { headers: htmlHeaders });
+    assert.equal(readmeRes.status, 404);
+  } finally {
+    if (astroServer) {
+      await astroServer.stop();
+    }
+    if (wsListener) {
+      await new Promise((resolve) => wsListener.close(() => resolve()));
+    }
+    if (prevDbPath === undefined) delete process.env.MCARD_DB_PATH;
+    else process.env.MCARD_DB_PATH = prevDbPath;
+    if (prevNodeEnv === undefined) delete process.env.NODE_ENV;
+    else process.env.NODE_ENV = prevNodeEnv;
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });

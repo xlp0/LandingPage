@@ -1,7 +1,7 @@
 ---
 import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
 ---
-<WorkbenchLayout title="Fiber Conformance Harness" dir="ltr" viewport="width=device-width, initial-scale=1">
+<WorkbenchLayout placeIds={['p_page_fiber_conformance']} title="Fiber Conformance Harness" dir="ltr" viewport="width=device-width, initial-scale=1">
   <Fragment slot="head">
     <style is:inline>
   :root { --tone-fg: #111; --tone-bg: #fff; --tone-border: #767676; }
@@ -25,6 +25,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
 <div id="membrane-diagnostic" hidden role="status" aria-live="polite"></div>
 
 <script is:inline type="module">
+import { setPageState } from '/js/harness/page-state.js';
 import { FiberRegistry } from './public/js/fibers/registry.js';
 import { MCard } from './public/js/mcard-kernel/compat.js';
 
@@ -59,7 +60,7 @@ document.documentElement.dataset.power = power;
 
 function report(payload) {
   window.__FIBER_HARNESS__ = payload;
-  document.body.dataset.harnessReady = 'true';
+  setPageState('ready');
   let el = document.getElementById('harness-report');
   if (!el) {
     el = document.createElement('pre');

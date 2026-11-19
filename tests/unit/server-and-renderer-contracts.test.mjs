@@ -40,7 +40,7 @@ function findFreePort() {
 
 test('GQC-05.3: single-page MCard 4-modality contract covers media, Markdown/math, inert code, sandboxed webapp, unsupported MIME fallback, transclusion, and URL safety', () => {
   assert.deepEqual(MODALITY_TYPES, ['media', 'document', 'code', 'webapp']);
-  assert.equal(KERNEL_PROVENANCE, 'clm-kernel@0.0.23');
+  assert.equal(KERNEL_PROVENANCE, 'clm-kernel@0.0.24');
 
   const pngBytes = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x01]);
   const mediaClassified = classifyMCardContent(pngBytes, { mimeHint: 'image/png', filename: 'diagram.png' });
@@ -217,7 +217,7 @@ test('GQC-05.4: root ws-server.js and dormant packages/server variant match owne
       try {
         const r = await fetch(baseHttp + '/health');
         if (r.ok) { ready = true; break; }
-      } catch {}
+      } catch { }
       await new Promise((r) => setTimeout(r, 100));
     }
     assert.equal(ready, true);

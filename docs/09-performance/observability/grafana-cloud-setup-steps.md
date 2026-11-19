@@ -39,7 +39,7 @@ https://faro-collector-prod-us-central-0.grafana.net/collect/YOUR_APP_KEY
 
 #### 2.1 Add Faro SDK via CDN
 
-Open `/Users/Henrykoo/Documents/GovTech/THKMesh/LandingPage/index.html` and add this **before the closing `</body>` tag**:
+Open `<repo-root>/index.html` and add this **before the closing `</body>` tag**:
 
 ```html
 <!-- Grafana Faro Web SDK -->

@@ -7,6 +7,7 @@ import { describe, it } from 'node:test';
 import { loadNetEnvelope } from '../../scripts/check-net.mjs';
 import {
   DEFAULT_NET_PATH,
+  checkDeclaredPlaceIds,
   discoverAstroActions,
   evaluateNetParity,
   extractEndpointMethodsFromSource,
@@ -51,7 +52,7 @@ function buildBaselineHtmlMap() {
       '/',
       `<!DOCTYPE html><html><body>
         <a href="index.html">Home</a>
-        <a href="app.html">App</a>
+        <a href="pkc-docs-index.html">Docs Index</a>
         <a href="responsive-lab.html">Lab</a>
         <a href="#details">Anchor</a>
         <a href="https://example.org/docs">External</a>
@@ -61,7 +62,7 @@ function buildBaselineHtmlMap() {
     [
       '/responsive-lab.html',
       `<!DOCTYPE html><html><body>
-        <a href="/">Home</a>
+        <a href="/index.html?noredirect=1">Home</a>
         <a href="app.html">MCard Manager</a>
       </body></html>`
     ],
@@ -84,7 +85,7 @@ describe('Astro net-parity integration contracts (GQC-02B)', () => {
 
     assert.equal(report.valid, true, JSON.stringify(report.violations));
     assert.deepEqual(report.checkedPages.sort(), [...APPROVED_PAGE_PLACES].sort());
-    assert.ok(report.triggeredTransitionIds.includes('t_link_viewer_to_app'));
+    assert.ok(report.triggeredTransitionIds.includes('t_link_viewer_to_docs'));
     assert.ok(report.triggeredTransitionIds.includes('t_link_lab_to_index'));
     assert.ok(report.triggeredTransitionIds.includes('t_link_lab_to_app'));
     assert.ok(report.untriggeredTransitions.some((t) => t.transitionId === 't_link_app_to_index'));
@@ -329,6 +330,24 @@ describe('Astro net-parity integration contracts (GQC-02B)', () => {
       assert.deepEqual(discovered.map((a) => a.name), ['saveCard']);
     } finally {
       fs.rmSync(tmpRoot, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects a page whose declared placeIds are missing, undeclared or incomplete', () => {
+    const envelope = loadNetEnvelope(DEFAULT_NET_PATH);
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'gqc-place-ids-'));
+    try {
+      const write = (name, body) => fs.writeFileSync(path.join(tmp, name), body);
+      write('missing.astro', '<WorkbenchLayout title="x"></WorkbenchLayout>');
+      write('unknown.astro', "<WorkbenchLayout placeIds={['p_not_declared']}></WorkbenchLayout>");
+      write('partial.astro', "<WorkbenchLayout placeIds={['p_page_app']}></WorkbenchLayout>");
+      const violations = checkDeclaredPlaceIds({ rootDir: tmp, pagesDir: tmp, envelope });
+      const details = violations.map((v) => v.detail).join('\n');
+      assert.match(details, /does not declare placeIds/);
+      assert.match(details, /undeclared page or view place p_not_declared/);
+      assert.match(details, /p_page_app is bound to app\.html/);
+    } finally {
+      fs.rmSync(tmp, { recursive: true, force: true });
     }
   });
 });

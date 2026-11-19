@@ -9,13 +9,13 @@ import { validateLabConfig } from './target-membrane.js';
 const FALLBACK_TARGETS = Object.freeze([
   {
     id: 'local-ui-app',
-    url: 'app.html',
-    label: 'Local UI Target (app.html) - Iframe Compatible',
-    chipLabel: '⚡ app.html',
-    targetType: 'webapp',
+    url: '/tests/fixtures/spa-test-target.html',
+    label: 'SPA Test Fixture (/tests/fixtures/spa-test-target.html) - Iframe Compatible',
+    chipLabel: '🧭 SPA Fixture',
+    targetType: 'spa',
     status: 'allowed',
     quickLaunch: true,
-    desc: 'Local Responsive UI Target (Iframe Compatible)'
+    desc: 'Deterministic SPA Test Fixture (Iframe Compatible)'
   }
 ]);
 
@@ -41,9 +41,9 @@ const POLICY_LABELS = Object.freeze({
 });
 
 export function normalizeInputUrl(raw) {
-  if (!raw || typeof raw !== 'string') return 'app.html';
+  if (!raw || typeof raw !== 'string') return '/tests/fixtures/spa-test-target.html';
   const trimmed = raw.trim();
-  if (!trimmed) return 'app.html';
+  if (!trimmed) return '/tests/fixtures/spa-test-target.html';
 
   if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) {
     return trimmed;
@@ -79,7 +79,7 @@ export async function initLabToolbar(options = {}) {
 
   const cleanupFns = [];
   let chipCleanupFns = [];
-  let defaultTargetUrl = 'app.html';
+  let defaultTargetUrl = '/tests/fixtures/spa-test-target.html';
 
   function listen(target, eventName, handler) {
     if (!target) return;
@@ -144,6 +144,7 @@ export async function initLabToolbar(options = {}) {
       chip.className = 'target-chip';
       chip.setAttribute('data-url', item.url);
       if (item.id) chip.setAttribute('data-target-id', item.id);
+      chip.setAttribute('data-testid', `target-chip-${item.id || item.url}`);
       if (item.targetType) chip.setAttribute('data-target-type', item.targetType);
       chip.title = item.desc || item.label || item.url;
       chip.textContent = item.chipLabel || item.label || item.url;
@@ -464,7 +465,8 @@ export async function initLabToolbar(options = {}) {
 
   listen(popoutBtn, 'click', () => {
     const current = membrane?.getTarget()?.url || urlInput?.value || siteSelector?.value || defaultTargetUrl;
-    window.open(current, '_blank');
+    // The target can be any origin, so the new tab gets no handle back to the workbench.
+    window.open(current, '_blank', 'noopener,noreferrer');
   });
 
   if (typeof document !== 'undefined') {

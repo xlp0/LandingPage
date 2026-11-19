@@ -22,9 +22,9 @@ export const RETRY_POLICY = Object.freeze({
     }),
     features: Object.freeze({
       localRetries: 0,
-      ciRetries: 1,
-      owner: 'TEA (SPRINT-GQC-02)',
-      reason: 'Legacy feature journeys retain wall-clock waits and multi-context WebRTC handshakes until SPRINT-GQC-02 seam cleanup.',
+      ciRetries: 0,
+      owner: 'TEA',
+      reason: 'Deterministic feature journeys run with zero retries after SPRINT-GQC-02 seam cleanup.',
     }),
   }),
 });

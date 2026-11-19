@@ -167,7 +167,7 @@ console.log('Test event sent!');
 
 ### **4. Check Faro Initialization in index.html**
 
-**File:** `/Users/Henrykoo/Documents/GovTech/THKMesh/LandingPage/index.html`
+**File:** `<repo-root>/index.html`
 
 **Should have:**
 ```html

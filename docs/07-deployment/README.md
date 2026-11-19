@@ -5,7 +5,7 @@
 | Audience | DevOps engineers, operators, and release owners deploying LandingPage |
 | BMAD Owner | Architect (`bmad-agent-architect`) and Developer (`bmad-agent-dev`) |
 | Source of Truth | [`Dockerfile`](../../Dockerfile), [`docker-compose.yml`](../../docker-compose.yml), [`ws-server.js`](../../ws-server.js), and [`.github/workflows/playwright-quality.yml`](../../.github/workflows/playwright-quality.yml) |
-| Consensus Kernel | `clm-kernel@0.0.23` |
+| Consensus Kernel | `clm-kernel@0.0.24` |
 
 ## Runtime and Container Port Map
 

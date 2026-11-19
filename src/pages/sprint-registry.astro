@@ -1,7 +1,7 @@
 ---
 import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
 ---
-<WorkbenchLayout title={'CLM Sprint Registry \u2014 SSoT Display Projection'} dataTheme="dark" viewport="width=device-width, initial-scale=1">
+<WorkbenchLayout placeIds={['p_page_sprint_registry']} title={'CLM Sprint Registry \u2014 SSoT Display Projection'} dataTheme="dark" viewport="width=device-width, initial-scale=1">
   <Fragment slot="head">
     <link rel="stylesheet" href="/public/css/tokens.css" />
   <link rel="stylesheet" href="/public/css/semantic-tokens.css" />
@@ -123,7 +123,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
   <header>
     <h1>CLM Sprint Registry</h1>
     <p class="subtitle">Live browser projection of SSoT sprint manifests and DoD sealing contracts.</p>
-    <div id="registry-status" data-ready="false" data-count="0">Loading registry...</div>
+    <div id="registry-status" data-count="0">Loading registry...</div>
   </header>
 
   <main>
@@ -131,6 +131,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
   </main>
 
   <script is:inline type="module">
+import { setPageState } from '/js/harness/page-state.js';
     async function loadRegistry() {
       const statusEl = document.getElementById('registry-status');
       const gridEl = document.getElementById('sprint-grid');
@@ -163,12 +164,12 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
           gridEl.appendChild(card);
         }
 
-        statusEl.setAttribute('data-ready', 'true');
+        setPageState('ready');
         statusEl.setAttribute('data-count', sprints.length.toString());
         statusEl.textContent = `Loaded ${sprints.length} sprints from /api/clm/registry`;
       } catch (err) {
         statusEl.textContent = `Error: ${err.message}`;
-        statusEl.setAttribute('data-ready', 'error');
+        setPageState('error', err.message);
       }
     }
 

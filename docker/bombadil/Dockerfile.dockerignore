@@ -1,0 +1,8 @@
+# The image needs only the package manifests; the source is bind-mounted at run time.
+*
+!package.json
+!package-lock.json
+!packages/core/package.json
+!packages/markdown-renderer/package.json
+!packages/p2p/package.json
+!packages/server/package.json

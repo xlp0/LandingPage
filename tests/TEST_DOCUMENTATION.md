@@ -11,13 +11,13 @@ This reference describes the Playwright project layout, unit test runner, fixtur
 
 ## Project Partitioning
 
-[`playwright.config.js`](../playwright.config.js) partitions `48` E2E spec files (`644` tests total) into three non-overlapping category projects. Every spec uses pure ES modules (`*.spec.js`).
+[`playwright.config.js`](../playwright.config.js) partitions `53` E2E spec files (`666` tests total) into three non-overlapping category projects. Every spec uses pure ES modules (`*.spec.js`).
 
 | Project | Directory | Spec Files | Discovered Tests | Timeout | Local Retries | CI Retries | Retry Owner |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `smoke` | `tests/smoke/` | 11 | 30 | 30s | 0 | 0 | TEA |
+| `smoke` | `tests/smoke/` | 11 | 30 | 60s | 0 | 0 | TEA |
 | `components` | `tests/components/` | 14 | 18 | 60s | 0 | 0 | TEA |
-| `features` | `tests/features/` | 23 | 596 | 120s | 0 | 1 | TEA |
+| `features` | `tests/features/` | 28 | 618 | 120s | 0 | 0 | TEA |
 
 Global `retries` is `0` so project-level retries never compound. Unit and contract suites run via `node --test` (`npm run test:unit`) across `tests/*.test.*`, `tests/unit/*.test.mjs`, and `tests/observability/*.test.js`. Vitest is not used.
 
@@ -33,11 +33,11 @@ Global `retries` is `0` so project-level retries never compound. Unit and contra
 tests/
 ├── smoke/                        # 11 fast smoke and root page characterization specs (30 tests)
 ├── components/                   # 14 isolated CLM component iframe specs (18 tests)
-├── features/                     # 23 workbench, Astro island, SPA net, MCard, perf, and P2P specs (596 tests)
+├── features/                     # 28 workbench, Astro island, SPA net, MCard, perf, and P2P specs (618 tests)
 ├── conformance/                  # 15 modular device conformance checks and *.conformance.json specs
 ├── performance/                  # place-bytes.mjs, metrics-model.mjs, run-paired-benchmark.mjs
 ├── observability/                # alignment.test.js and correctness.test.js (node:test)
-├── unit/                         # Pure Node contract suites (net, recorder 0.0.23, Triad, docs gate)
+├── unit/                         # Pure Node contract suites (net, recorder 0.0.24, Triad, docs gate)
 ├── fixtures/                     # server-contract.js, app-fixtures.js, net-trace.js, spa-test-target.*
 └── gui-coverage.json             # Surface-to-spec coverage registry
 ```

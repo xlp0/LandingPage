@@ -28,19 +28,37 @@ npm run build
 | `npm run test:unit` | Runs `node --test` across `tests/*.test.*`, `tests/unit/**/*.test.*`, and `tests/observability/**/*.test.*` |
 | `npm run test:smoke` | Runs `--project=smoke` (11 spec files, 30 tests) |
 | `npm run test:components` | Runs `--project=components` (14 spec files, 18 tests) |
-| `npm run test:features` | Runs `--project=features` (23 spec files, 596 tests) |
-| `npm run test:smoke:cross-browser` | Runs `smoke`, `smoke-firefox`, and `smoke-webkit` when `PW_CROSS_BROWSER=1` |
-| `npm test` | Runs all three default Playwright category projects (`48` spec files, `644` tests total) |
+| `npm run test:features` | Runs `--project=features` (28 spec files, 618 tests) |
+| `npm run test:smoke:cross-browser` | Runs `smoke-firefox` and `smoke-webkit` when `PW_CROSS_BROWSER=1` |
+| `npm test` | Runs all three default Playwright category projects (`53` spec files, `666` tests total) |
 | `npm run test:responsive` | Runs the 16-combination multi-device systematic sweep |
 | `npm run test:replay` | Runs deterministic Playwright replay across 1x, 2x, 5x, and fast modes |
 | `npm run test:conformance` | Runs the 15-check device conformance suite and certification checks |
 | `npm run report` | Opens the HTML report from `playwright-report/` |
 
+### Bombadil exploration (local Docker nightly, not the PR gate)
+
+Build the Astro host first with `npm run build:astro`. Each command starts its own server on port 3021 and writes `bombadil-output/<target>-<timestamp>/`. The full guide is [`docs/08-testing/BOMBADIL_PROPERTY_TESTING.md`](../docs/08-testing/BOMBADIL_PROPERTY_TESTING.md).
+
+| Command | Scope |
+| --- | --- |
+| `npm run check:bombadil-nets` | Fails when `tests/bombadil/generated/workbench-net.ts` is stale (local gate and every nightly) |
+| `npm run check:explorable-gui` | Fails on an island control without `data-testid`, a native dialog, or an undeclared side effect (local gate and every nightly) |
+| `npm run bombadil:spa -- --time-limit 2m` | Explores the SPA fixture against its net |
+| `npm run bombadil:lab-smoke -- --time-limit 2m` | Explores the Responsive UI Lab with no stall and no error |
+| `npm run bombadil:page-load -- --time-limit 1m` | Runs the page-load properties on every generated entry URL |
+| `npm run bombadil:workbench -- --time-limit 10m` | Explores the lab with declared firings, the recorder lifecycle and the target mirror |
+| `node scripts/bombadil/trace-to-net.mjs <run> --min-firings 20` | Lists a run's firings and fails below the bound |
+| `node scripts/check-net.mjs --bombadil-traces bombadil-output` | Reports asserted, explored-only and never-fired transitions |
+| `npm run bombadil:nightly` | Runs every check and target once and writes `bombadil-output/nightly-<UTC time>/` |
+| `npm run bombadil:docker` | Runs the same nightly in the local `docker/bombadil` container (Chromium on Linux) |
+| `docker compose -f docker/bombadil/compose.yml up -d bombadil-scheduler` | Runs the nightly every day at `NIGHTLY_AT` (default `02:30` UTC) on local Docker |
+
 ## GUI Coverage Registry and Reusable Fixtures
 
 - [`tests/gui-coverage.json`](./gui-coverage.json) tracks supported workbench surfaces, target surfaces, and journey traceability without duplicating route graphs.
-- [`tests/unit/gui-coverage-registry.test.mjs`](./unit/gui-coverage-registry.test.mjs) validates the registry and checks [`tests/fixtures/spa-test-target.graph.json`](./fixtures/spa-test-target.graph.json) through `clm-kernel/petri` (`parsePetriNetYaml`, `IncidenceMatrix`, and `ColoredPetriVM`).
-- [`tests/fixtures/app-fixtures.js`](./fixtures/app-fixtures.js) provides isolated browser cleanup, external boundary stubs, an isolated Canonical Triad SQLite persistence harness (`clm-kernel@0.0.23`), and the Responsive Lab workbench helper.
+- [`tests/unit/gui-coverage-registry.test.mjs`](./unit/gui-coverage-registry.test.mjs) validates the registry and checks [`tests/fixtures/spa-test-target.graph.json`](./fixtures/spa-test-target.graph.json) through `clm-kernel/petri` (`parsePetriNetYaml`, `IncidenceMatrix`, and `ColoredPetriVM`) with `clm-kernel/store` (`MCardCollection`, `MemoryBackend`).
+- [`tests/fixtures/app-fixtures.js`](./fixtures/app-fixtures.js) provides isolated browser cleanup, external boundary stubs, an isolated Canonical Triad SQLite persistence harness (`clm-kernel@0.0.24`), and the Responsive Lab workbench helper.
 - [`tests/fixtures/spa-test-target.html`](./fixtures/spa-test-target.html) and [`tests/fixtures/spa-test-target.graph.json`](./fixtures/spa-test-target.graph.json) define the deterministic same-origin SPA target and its Petri net envelope (`p_spa_overview`, `p_spa_details`, and `p_spa_missing_transition`, with transitions `t_spa_open_details`, `t_spa_back_overview`, `t_spa_invalid_unmapped`, and `t_spa_recover_overview`).
 - [`tests/features/spa-workbench-journey.spec.js`](./features/spa-workbench-journey.spec.js), [`tests/features/spa-failure-recovery.spec.js`](./features/spa-failure-recovery.spec.js), and [`tests/features/spa-test-workbench.spec.js`](./features/spa-test-workbench.spec.js) exercise P0 SPA capture, device rotation, Layer 4 `FiringReceiptMCard` and `urn:gqc:navigation-run-link:v1` Triad linkage, deterministic replay, `p_error_modal` recovery, and keyboard-only navigation.
 

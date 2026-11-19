@@ -189,7 +189,7 @@ export class VideoRenderer extends BaseRenderer {
           </div>
           
           <!-- Download Button -->
-          <button onclick="window.downloadVideo('${url}', '${format}')" style="
+          <button data-testid="video-download" data-effect="download" onclick="window.downloadVideo('${url}', '${format}')" style="
             background: rgba(231, 76, 60, 0.2);
             border: 1px solid #e74c3c;
             color: #e74c3c;

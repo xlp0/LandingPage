@@ -144,7 +144,7 @@ export const ISLAND_HYDRATION_INIT_SCRIPT = () => {
   }
 
   function scanDocument() {
-    if (document.body && !document.body.classList.contains('lab-booting') && state.labReadyAtMs === null) {
+    if (document.body && document.body.dataset.pageState !== 'loading' && state.labReadyAtMs === null) {
       state.labReadyAtMs = Number(performance.now().toFixed(3));
       try {
         performance.mark('gqc06:lab:ready');

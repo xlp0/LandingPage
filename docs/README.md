@@ -17,8 +17,8 @@
 | **Architecture and Petri Net** | [`01-architecture/`](01-architecture/README.md) | Maintained architectural contracts and generated net reference (`workbench-net.md`) | Architect |
 | **Domain Engineering Tiers** | [`02-authentication/`](02-authentication/README.md) through [`11-standards/`](11-standards/README.md) | Maintained domain guides and performance baselines | Domain Lead per tier `README.md` |
 | **Capability Reference Library** | [`functionalities/`](functionalities/README.md) | Maintained capability reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts | Tech Writer and Architect |
-| **Graduated Sprint Archives** | [`sprints/01-architecture/`](sprints/01-architecture/INDEX.md), [`sprints/08-testing/`](sprints/08-testing/INDEX.md) | Immutable historical sprint records (`SMO-00..05`, `ERB-00..06`) | Scrum Master |
-| **Active Sprint Workspace** | [`sprints/_active/`](sprints/_active/INDEX.md) | Program GQC (`SPRINT-GQC-00..07`) specs, `DECISIONS.tsv`, and evidence reports awaiting operator graduation | Scrum Master |
+| **Graduated Sprint Archives** | [`sprints/01-architecture/`](sprints/01-architecture/INDEX.md), [`sprints/08-testing/`](sprints/08-testing/INDEX.md), [`sprints/programs/gqc/`](sprints/programs/gqc/INDEX.md), [`sprints/programs/bpv/`](sprints/programs/bpv/INDEX.md) | Sealed sprint records (`SMO-00..05`, `ERB-00..06`, `GQC-00..07`, `BPV-00..07`) | Scrum Master |
+| **Active Sprint Workspace** | [`sprints/_active/`](sprints/_active/INDEX.md) | Idle as of `2026-11-18`; retains canonical `DECISIONS.tsv` ledger | Scrum Master |
 | **Legacy Archive** | [`archive/`](archive/REORGANIZATION_PROPOSAL.md) | Historical pre-reorganization snapshots | Tech Writer |
 
 ---
@@ -33,7 +33,7 @@ docs/
 ├── 00-getting-started/               # Onboarding, quickstart, port map, status, lab usage
 ├── 01-architecture/                  # System architecture, Astro islands, generated workbench-net.md
 ├── 02-authentication/                # Zitadel OIDC, Google OAuth, PKCE, privacy redaction
-├── 03-data-management/               # SQLite Triad, clm-kernel@0.0.23, MCard rendering
+├── 03-data-management/               # SQLite Triad, clm-kernel@0.0.24, MCard rendering
 ├── 04-networking/                    # WebRTC P2P mesh, WebSocket /ws/ on port 3000, SSRF guards
 ├── 05-state-management/              # lab-runtime.js coordinator, isolated Redux stores, FSM
 ├── 06-components/                    # Preact islands, CLM components, 3D Theater, games
@@ -44,7 +44,7 @@ docs/
 ├── 11-standards/                     # CSS token contracts and coding standards
 ├── project/                          # Supplementary implementation notes and diagrams
 ├── rules/                            # Focused styling rules
-├── sprints/                          # Graduated archives (01-architecture, 08-testing) and _active/
+├── sprints/                          # Graduated archives (01-architecture, 08-testing, programs/gqc, programs/bpv) and idle _active/
 └── archive/                          # Historical reorganization records
 ```
 

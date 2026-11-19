@@ -33,7 +33,7 @@ graph TD
 
     subgraph "Execution & Rendering Engines"
         MC --> PR[Polymorphic Content Pipeline: RendererRegistry]
-        MC --> CLM[Cubical Logic Model: clm-kernel v0.0.23]
+        MC --> CLM[Cubical Logic Model: clm-kernel v0.0.24]
         MC --> WLLM[In-Browser AI: WebLLM / WebGPU]
         MC --> P2P[WebRTC Mesh: Serverless & WebSocket Signaled]
     end
@@ -85,7 +85,7 @@ mindmap
       Audio Synthesis (Tone.js) & Waveforms
       Video & PDF In-Browser Viewing
     Cubical Logic Model (CLM)
-      clm-kernel v0.0.23 Evaluation
+      clm-kernel v0.0.24 Evaluation
       Fault-Isolated Iframe Membrane
       Fiber Inspector & Conformance Harness
       Redux Type-Theoretic State Middleware
@@ -148,7 +148,7 @@ The functionalities extracted from the LandingPage codebase are organized into t
 2. [`02-POLYMORPHIC-CONTENT-RENDERING-PIPELINE.md`](./02-POLYMORPHIC-CONTENT-RENDERING-PIPELINE.md)  
    *RendererRegistry, Markdown with callouts, KaTeX/MathJax, TikZ-CD vectorization, and Tone.js audio synthesis.*
 3. [`03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md`](./03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md)  
-   *CLM kernel integration (v0.0.23), iframe membrane isolation, Redux CLM middleware, and Fiber conformance.*
+   *CLM kernel integration (v0.0.24), iframe membrane isolation, Redux CLM middleware, and Fiber conformance.*
 4. [`04-WEBRTC-P2P-MESH-AND-REALTIME-COLLABORATION.md`](./04-WEBRTC-P2P-MESH-AND-REALTIME-COLLABORATION.md)  
    *Dual-mode WebRTC (serverless QR/SDP vs WebSocket signaling), RoomService v3, video meetings, and STUN/TURN NAT traversal.*
 5. [`05-REALTIME-MULTIPLAYER-BOARD-GAMES.md`](./05-REALTIME-MULTIPLAYER-BOARD-GAMES.md)  
