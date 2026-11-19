@@ -675,6 +675,7 @@ export function checkDomainAndOwnershipContracts(rootDir = DEFAULT_ROOT_DIR) {
   const astroAbs = path.join(rootDir, astroRel);
   if (fs.existsSync(astroAbs)) {
     const astroText = fs.readFileSync(astroAbs, 'utf8');
+    // LandingPage itself uses node:test + Playwright; tools/ui-verify/ carries an isolated tool-local Vitest config.
     if (!/Vitest remains un-adopted|Vitest is not/i.test(astroText)) {
       errors.push(`${astroRel}:1: must state that Astro is adopted while Vitest remains un-adopted`);
     }

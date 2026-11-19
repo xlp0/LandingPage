@@ -42,7 +42,7 @@ describe('GQC-07 documentation alignment and gate contracts', () => {
     });
     assert.equal(repoResult.ok, true, repoResult.errors.join('\n'));
     assert.ok(repoResult.filesChecked >= 229);
-    assert.equal(repoResult.allowlistCount, 14);
+    assert.equal(repoResult.allowlistCount, 13);
 
     withTempDir((tmpDir) => {
       writeRel(

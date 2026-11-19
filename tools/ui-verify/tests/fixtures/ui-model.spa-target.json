@@ -1,0 +1,85 @@
+{
+  "schema": "urn:clm:ui-model:v1",
+  "kind": "ui_model_mcard",
+  "model_id": "spa-target",
+  "net_ref": "blake3:36e9d0f1133950a85f255ebd5baca1e36b6a8e96da5a93d0af56bbacf13656aa",
+  "projection": {
+    "mode": "single",
+    "extractor_namespace": "spa",
+    "place_key": "place",
+    "places": {
+      "p_spa_overview": "ext.spa.overview",
+      "p_spa_details": "ext.spa.details",
+      "p_spa_missing_transition": "ext.spa.missing_transition"
+    }
+  },
+  "properties": [
+    {
+      "id": "init_overview",
+      "template": "init",
+      "subject": "p_spa_overview",
+      "severity": "error",
+      "within_s": 0
+    },
+    {
+      "id": "place_is_declared",
+      "template": "always_point",
+      "subject": "p_spa_overview",
+      "severity": "error",
+      "within_s": 0
+    },
+    {
+      "id": "moves_follow_net",
+      "template": "always_arc",
+      "subject": "p_spa_overview",
+      "target_place": "p_spa_details",
+      "severity": "error",
+      "within_s": 0
+    },
+    {
+      "id": "recover_returns_overview",
+      "template": "now_next",
+      "subject": "p_spa_missing_transition",
+      "target_place": "p_spa_overview",
+      "severity": "error",
+      "within_s": 0
+    },
+    {
+      "id": "open_details_eventually",
+      "template": "eventually_fire",
+      "subject": "t_spa_open_details",
+      "severity": "warning",
+      "within_s": 30
+    }
+  ],
+  "actions": {
+    "t_spa_open_details": {
+      "generator_key": "gen.spa.open_details",
+      "weight": 10
+    },
+    "t_spa_back_overview": {
+      "generator_key": "gen.spa.back_overview",
+      "weight": 10
+    },
+    "t_spa_invalid_unmapped": {
+      "generator_key": "gen.spa.invalid_unmapped",
+      "weight": 5
+    },
+    "t_spa_recover_overview": {
+      "generator_key": "gen.spa.recover_overview",
+      "weight": 10
+    }
+  },
+  "coverage": {
+    "declared_unreachable": [],
+    "required": [
+      "t_spa_open_details",
+      "t_spa_back_overview"
+    ]
+  },
+  "engine": {
+    "name": "@antithesishq/bombadil",
+    "version": "0.7.10",
+    "time_budget_s": 120
+  }
+}

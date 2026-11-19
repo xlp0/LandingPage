@@ -74,7 +74,7 @@ k8s/secret-r2-credentials-real.yaml
 
 # Runtime PID files
 *.pid
-bin/
+/bin/
 # Runtime MCard API database artifacts
 /data/*.db
 /data/*.db-shm

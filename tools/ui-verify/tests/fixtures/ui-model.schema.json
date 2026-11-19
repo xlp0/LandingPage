@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:clm:ui-model:v1",
+  "title": "UI Model Envelope",
+  "description": "Hash-pinned Petri net UI verification model. Closed property templates: | template | meaning | subject | target_place | within_s |\n| always_point | invariant holds while marking holds subject place | place_id | omitted | 0 |\n| always_arc | leaving subject place lands in target_place or declared arc | place_id | optional place_id | 0 |\n| eventually_fire | subject transition fires within within_s seconds | transition_id | omitted | > 0 |\n| now_next | adjacent step relation from subject place to target_place | place_id | place_id | 0 |\n| init | initial observation projects to subject place | place_id | omitted | 0 |",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "kind",
+    "model_id",
+    "net_ref",
+    "projection",
+    "properties",
+    "actions",
+    "coverage",
+    "engine"
+  ],
+  "properties": {
+    "schema": {
+      "const": "urn:clm:ui-model:v1"
+    },
+    "kind": {
+      "const": "ui_model_mcard"
+    },
+    "model_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "net_ref": {
+      "type": "string",
+      "pattern": "^blake3:[0-9a-f]{64}$"
+    },
+    "projection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "extractor_namespace",
+        "place_key",
+        "places"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "single",
+            "multiset"
+          ]
+        },
+        "extractor_namespace": {
+          "type": "string",
+          "minLength": 1
+        },
+        "place_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "token_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "places": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "multiset"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "token_key"
+            ]
+          }
+        }
+      ]
+    },
+    "properties": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "template",
+          "subject",
+          "severity",
+          "within_s"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "template": {
+            "type": "string",
+            "enum": [
+              "always_point",
+              "always_arc",
+              "eventually_fire",
+              "now_next",
+              "init"
+            ]
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1
+          },
+          "target_place": {
+            "type": "string",
+            "minLength": 1
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "error",
+              "warning"
+            ]
+          },
+          "within_s": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "generator_key",
+          "weight"
+        ],
+        "properties": {
+          "generator_key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "weight": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "declared_unreachable",
+        "required"
+      ],
+      "properties": {
+        "declared_unreachable": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "time_budget_s"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "time_budget_s": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    }
+  }
+}

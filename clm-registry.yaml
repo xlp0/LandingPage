@@ -6517,7 +6517,7 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: e307d571aba186772b4b6250b6e01563189054ea7ea5b11bc53047cd1594a100
+  source_sha256: 498994493fecfed6b2bd99db33086583ab11cd9ebea0e888d1c2fb1d74f71b25
   projection_sha256: ea826a8fe83c929e28fdbabda768ef2b63e5a9751034de6fe18437a21089d200
   kernel_version: 0.0.24
   sprint_count: 324

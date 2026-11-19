@@ -1,0 +1,123 @@
+{
+  "kind": "net_mcard",
+  "marking": {
+    "p_spa_details": [],
+    "p_spa_missing_transition": [],
+    "p_spa_overview": [
+      {
+        "color_type": "any",
+        "hash": "7347e93f60cbab7646a7c4f48f3dcc4540dea01d6f9482b77e9a1e474636ad36",
+        "payload": {
+          "session": "spa_0"
+        },
+        "token_id": "p_spa_overview_0"
+      }
+    ]
+  },
+  "net_id": "spa-test-target-net",
+  "places": [
+    {
+      "capacity": null,
+      "hash": "6273e5358ce44812661309c02d978b45cc83f98382015ea4ae40660e1589535a",
+      "place_id": "p_spa_overview",
+      "role": "Initial",
+      "type_expr": "any"
+    },
+    {
+      "capacity": null,
+      "hash": "2696692180ea08b7d82f9ce2a7a029dd510c31662ebca6c2025555a919ac3bf9",
+      "place_id": "p_spa_details",
+      "role": "Intermediate",
+      "type_expr": "any"
+    },
+    {
+      "capacity": null,
+      "hash": "0d671716d48a3d1f4d35b21b49c47d5e72db668f333dc87a2c8d4f88b6d326a8",
+      "place_id": "p_spa_missing_transition",
+      "role": "Error",
+      "type_expr": "any"
+    }
+  ],
+  "transitions": [
+    {
+      "codomain_type": "any",
+      "coeffects": {
+        "filesystem": "none",
+        "network": "none",
+        "random": "none",
+        "sqlite": "none",
+        "time": "none"
+      },
+      "domain_type": "any",
+      "hash": "1481913a8adcb43d20ae1f8cb1a78c2cf4dde5454e870bde1c9c1674d47105d8",
+      "input_places": [
+        "p_spa_overview"
+      ],
+      "operation_expr": "identity",
+      "output_places": [
+        "p_spa_details"
+      ],
+      "transition_id": "t_spa_open_details"
+    },
+    {
+      "codomain_type": "any",
+      "coeffects": {
+        "filesystem": "none",
+        "network": "none",
+        "random": "none",
+        "sqlite": "none",
+        "time": "none"
+      },
+      "domain_type": "any",
+      "hash": "3b43df1fcaf805d297e69e985f56ea8f7d376683421e69bca3da392608742fbb",
+      "input_places": [
+        "p_spa_details"
+      ],
+      "operation_expr": "identity",
+      "output_places": [
+        "p_spa_overview"
+      ],
+      "transition_id": "t_spa_back_overview"
+    },
+    {
+      "codomain_type": "any",
+      "coeffects": {
+        "filesystem": "none",
+        "network": "none",
+        "random": "none",
+        "sqlite": "none",
+        "time": "none"
+      },
+      "domain_type": "any",
+      "hash": "72b94811e2a0993b94e716cdd9387bee07dc0e1681de85a7252075cf7df42f4d",
+      "input_places": [
+        "p_spa_overview"
+      ],
+      "operation_expr": "identity",
+      "output_places": [
+        "p_spa_missing_transition"
+      ],
+      "transition_id": "t_spa_invalid_unmapped"
+    },
+    {
+      "codomain_type": "any",
+      "coeffects": {
+        "filesystem": "none",
+        "network": "none",
+        "random": "none",
+        "sqlite": "none",
+        "time": "none"
+      },
+      "domain_type": "any",
+      "hash": "22cd09d0bd66a4fc8b7a6d089f92f7078772e12bf96d0126a893a69702713d84",
+      "input_places": [
+        "p_spa_missing_transition"
+      ],
+      "operation_expr": "identity",
+      "output_places": [
+        "p_spa_overview"
+      ],
+      "transition_id": "t_spa_recover_overview"
+    }
+  ]
+}
