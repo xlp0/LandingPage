@@ -332,11 +332,16 @@ test('(guard): LandingPage and mcard-studio resolve clm-kernel to the PUBLISHED 
     const spec = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, consumer, 'package.json'), 'utf8'))
       .dependencies['clm-kernel'];
     assert.ok(spec, `${consumer} must declare clm-kernel`);
-    const lock = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package-lock.json'), 'utf8')).packages;
-    // npm hoists identical versions to the root, so a consumer's copy may be either nested or
-    // hoisted. Both are valid resolutions; only a workspace link is not.
+    const consumerLockPath = path.join(REPO_ROOT, consumer, 'package-lock.json');
+    const lock = JSON.parse(
+      fs.readFileSync(
+        fs.existsSync(consumerLockPath) ? consumerLockPath : path.join(REPO_ROOT, 'package-lock.json'),
+        'utf8',
+      ),
+    ).packages;
+    // Consumers maintain standalone lockfiles after root workspace retirement; keep fallback for legacy checkouts.
     const resolved =
-      lock[`${consumer}/node_modules/clm-kernel`] || lock['node_modules/clm-kernel'] || {};
+      lock['node_modules/clm-kernel'] || lock[`${consumer}/node_modules/clm-kernel`] || {};
     assert.match(
       String(resolved.resolved || ''),
       /registry\.npmjs\.org\/clm-kernel/,

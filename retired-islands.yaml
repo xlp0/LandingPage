@@ -17,7 +17,7 @@ islands:
   - id: responsive-lab
     artifact: responsive-lab.html
     source: src/pages/responsive-lab.astro  # served at /responsive-lab.html; migrated by c7b78c6 (GQC-02B)
-    successor: "mcard-studio: pcard:render/viewport-lab (ResponsiveViewportLabViewlet)"
+    successor: "LandingPage: active Astro responsive lab (Program SSG); Studio portal import/card workbench"
     invariant: INV-SMR-06
     load_bearing: true
     disposition: tombstone
@@ -45,9 +45,10 @@ islands:
       - tests/features/style-audit.spec.js
       - tests/features/penpot-navigation.spec.js
     note: >-
-      The containment stage, orientation swap, and device registry are native
-      studio capabilities. The page itself is still reachable from the landing
-      page navigation and Playwright suites, so it stays until those links and specs are retired together.
+      LandingPage owns the sole active responsive viewport verification lab
+      under Program SSG; mcard-studio owns card workbench rendering and portal
+      sample import. The page itself stays reachable from landing page
+      navigation and Playwright suites during active Program SSG.
 
   - id: fiber-conformance
     artifact: fiber-conformance.html
@@ -154,6 +155,8 @@ islands:
       The multi-card workbench role moved to the studio. This page is the landing
       page's own "Mission Control" destination and is referenced by the Penpot
       navigation tooling, so it is retired as a build target, not as a route.
+      Transition note: src/pages/app.astro remains active during Program SSG, and
+      post-SSG cleanup is tracked in docs/sprints/_active/ssg-local-backlog.md.
 
   - id: pkc-docs-index
     artifact: pkc-docs-index.html

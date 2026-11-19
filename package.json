@@ -6,9 +6,6 @@
     "node": ">=22.15.0"
   },
   "main": "index.js",
-  "bin": {
-    "pkc-landing-page": "./bin/pkc-landing.js"
-  },
   "files": [
     "public",
     "js",

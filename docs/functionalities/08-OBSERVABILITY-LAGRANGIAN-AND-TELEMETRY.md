@@ -8,7 +8,7 @@
 | Operational Guide | [../09-performance/README.md](../09-performance/README.md) |
 > **Location**: [`LandingPage/docs/functionalities/08-OBSERVABILITY-LAGRANGIAN-AND-TELEMETRY.md`](./08-OBSERVABILITY-LAGRANGIAN-AND-TELEMETRY.md)  
 > **Source Directories**: [`js/observability/`](../../js/observability), [`js/telemetry/`](../../js/telemetry)  
-> **Key Implementations**: [`lagrangian.js`](../../js/observability/lagrangian.js), [`fibration-dashboard.js`](../../js/observability/fibration-dashboard.js), [`faro-collector.js`](../../js/telemetry/faro-collector.js)  
+> **Key Implementations**: `lagrangian.js` (retired in `FRO-05`; canonical engine lives in `mcard-studio` `lagrangianEngine.ts`), [`fibration-dashboard.js`](../../js/observability/fibration-dashboard.js), [`faro-collector.js`](../../js/telemetry/faro-collector.js)  
 > **Status**: Comprehensive Functional Specification
 
 ---
@@ -52,7 +52,7 @@ graph LR
 
 ---
 
-## 2. Lagrangian Scorer Implementation ([`lagrangian.js`](../../js/observability/lagrangian.js))
+## 2. Lagrangian Scorer Implementation (retired `lagrangian.js`; canonical `mcard-studio` `lagrangianEngine.ts`)
 
 The scorer takes raw metric telemetry and computes the normalized variational action:
 
