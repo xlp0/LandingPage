@@ -1402,7 +1402,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-386
-    title: "Sprint 386: Layer 2 \u2014 Content-Addressable Storage (CAS), Merkle Trees, VFS & Tri-Database"
+    title: 'Sprint 386: Layer 2 — Content-Addressable Storage (CAS), Merkle Trees, VFS & Tri-Database'
     dod:
       total: 0
       vcard_refs: []
@@ -1411,7 +1411,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-392
-    title: "Sprint 392: Layer 2 \u2014 Storage Engines, Tri-Database & CAS Collection Migration"
+    title: 'Sprint 392: Layer 2 — Storage Engines, Tri-Database & CAS Collection Migration'
     dod:
       total: 0
       vcard_refs: []
@@ -1453,7 +1453,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-384
-    title: "Sprint 384: Layer 1 \u2014 Coloured Petri Net (CPN) VM, Arrow Compiler & Execution Engine"
+    title: 'Sprint 384: Layer 1 — Coloured Petri Net (CPN) VM, Arrow Compiler & Execution Engine'
     dod:
       total: 0
       vcard_refs: []
@@ -1462,7 +1462,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-385
-    title: "Sprint 385: Layer 1 \u2014 Polyglot Runtime Adapters, Sandbox & Mathematical Operations"
+    title: 'Sprint 385: Layer 1 — Polyglot Runtime Adapters, Sandbox & Mathematical Operations'
     dod:
       total: 0
       vcard_refs: []
@@ -1521,7 +1521,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-383
-    title: "Sprint 383: Layer 0 \u2014 Stateless Kenotic Core Primitives & Parser Unification"
+    title: 'Sprint 383: Layer 0 — Stateless Kenotic Core Primitives & Parser Unification'
     dod:
       total: 0
       vcard_refs: []
@@ -1571,7 +1571,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-388
-    title: "Sprint 388: Layer 4 \u2014 Presentation Membrane, Headless Gateway & Zero-Runtime Purification"
+    title: 'Sprint 388: Layer 4 — Presentation Membrane, Headless Gateway & Zero-Runtime Purification'
     dod:
       total: 0
       vcard_refs: []
@@ -1580,7 +1580,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-394
-    title: "Sprint 394: Layer 4 \u2014 Presentation Membrane, Genesis Bootstrap & Gateway Servers"
+    title: 'Sprint 394: Layer 4 — Presentation Membrane, Genesis Bootstrap & Gateway Servers'
     dod:
       total: 0
       vcard_refs: []
@@ -1589,7 +1589,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-387
-    title: "Sprint 387: Layer 3 \u2014 Agency, Mesh Networking, LLM Capabilities, Satori Transport & Lambda Calculus"
+    title: 'Sprint 387: Layer 3 — Agency, Mesh Networking, LLM Capabilities, Satori Transport & Lambda Calculus'
     dod:
       total: 0
       vcard_refs: []
@@ -1598,7 +1598,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: SPRINT-393
-    title: "Sprint 393: Layer 3 \u2014 Cognitive Agency, Vector Store & Knowledge GraphRAG"
+    title: 'Sprint 393: Layer 3 — Cognitive Agency, Vector Store & Knowledge GraphRAG'
     dod:
       total: 0
       vcard_refs: []
@@ -1735,7 +1735,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-400
-    title: "Sprint 400: Test Fleet Rewiring \u2014 Layer 0 Kenotic Primitives & Layer 2 Storage Engines"
+    title: 'Sprint 400: Test Fleet Rewiring — Layer 0 Kenotic Primitives & Layer 2 Storage Engines'
     dod:
       total: 17
       vcard_refs:
@@ -1761,7 +1761,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SPRINT-401
-    title: "Sprint 401: Test Fleet Rewiring \u2014 Layer 3 Cognitive Agency & Layer 4 Membrane Gateways"
+    title: 'Sprint 401: Test Fleet Rewiring — Layer 3 Cognitive Agency & Layer 4 Membrane Gateways'
     dod:
       total: 15
       vcard_refs:
@@ -1948,11 +1948,293 @@ sprints:
         - vcard:sprint-407:update_docs_architecture_code_migration_to_clm_md
         - vcard:sprint-407:graduate_sprints_403_407_into_the_12_aspect_deployment_architect
       state: sealed
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-FRO-FOUR-ESTATE-ROLE-ORCHESTRATION
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-FRO-FOUR-ESTATE-ROLE-ORCHESTRATION
+    title: 'Program Charter: EPIC-FRO Four-Estate Role Orchestration'
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:FRO-00
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-00
+    title: Sprint FRO-00 Baseline Census, DEC-29, Ownership Manifest, and Clone Probe
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:fro-00:dod_fro_00_01_docs_decisions_dec_29_four_estate_role_orchestrati
+        - vcard:fro-00:dod_fro_00_02_frozen_evidence_fro_00_boundary_baseline_json_reco
+        - vcard:fro-00:dod_fro_00_03_boundary_scanner_tests_pass_and_verify_negative_co
+        - vcard:fro-00:dod_fro_00_04_standalone_clone_verifier_self_tests_and_path_reso
+        - vcard:fro-00:dod_fro_00_05_updated_scripts_ci_verify_rph_graduation_py_and_th
+      state: sealed
+  - handle: urn:pcard:sprint:FRO-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-01
+    title: Sprint FRO-01 SSOT Re-Anchoring for Consensus, DDL, and Root Config
+    dod:
+      total: 6
+      vcard_refs:
+        - vcard:fro-01:dod_fro_01_01_config_kernel_version_consensus_json_exists_mcard_
+        - vcard:fro-01:dod_fro_01_02_zero_references_to_mcard_studio_scripts_config_ker
+        - vcard:fro-01:dod_fro_01_03_clm_schema_mcard_schema_sql_is_the_sole_authored_s
+        - vcard:fro-01:dod_fro_01_04_signed_ddl_fingerprint_verification_passes_and_evi
+        - vcard:fro-01:dod_fro_01_05_root_schema_runtime_types_json_and_clm_schema_runt
+        - vcard:fro-01:dod_fro_01_06_full_coordinator_estate_suite_passes_after_all_fro
+      state: sealed
+  - handle: urn:pcard:sprint:FRO-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-02
+    title: Sprint FRO-02 Sever Cross-Repository Paths and Reverse Dependencies
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:fro-02:dod_fro_02_01_clm_tests_python_and_clm_tools_ops_launch_pkc_node
+        - vcard:fro-02:dod_fro_02_02_scripts_orc_sync_display_registry_py_emits_solely_
+        - vcard:fro-02:dod_fro_02_03_clm_docs_spec_60_verification_crd_landing_viewport
+        - vcard:fro-02:dod_fro_02_04_mcard_studio_scripts_check_all_sh_contains_zero_sc
+        - vcard:fro-02:dod_fro_02_05_both_cas_literal_checks_pass_unmerged_wip_branches
+      state: sealed
+  - handle: urn:pcard:sprint:FRO-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-03
+    title: Sprint FRO-03 Unify BMB UI Verification Pipeline in CLM
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:fro-03:dod_fro_03_01_clm_kernel_clm_py_core_clm_layer1_ui_model_py_and_
+        - vcard:fro-03:dod_fro_03_02_check_ui_kernel_vocabulary_py_passes_all_python_fi
+        - vcard:fro-03:dod_fro_03_03_mcard_studio_tests_ui_models_studio_status_ui_mode
+        - vcard:fro-03:dod_fro_03_04_evidence_bmb_graduation_json_passes_graduation_wit
+        - vcard:fro-03:dod_fro_03_05_full_coordinator_estate_suite_passes_after_all_fro
+      state: sealed
+  - handle: urn:pcard:sprint:FRO-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-04
+    title: Sprint FRO-04 Thin Root Coordinator and Retire Runtime Clutter
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:fro-04:dod_fro_04_01_libs_is_absent_mcard_studio_astro_config_mjs_and_m
+        - vcard:fro-04:dod_fro_04_02_root_package_json_sets_name_mcard_tdd_coordinator_
+        - vcard:fro-04:dod_fro_04_03_root_pyproject_toml_sets_name_mcard_tdd_coordinato
+        - vcard:fro-04:dod_fro_04_04_root_formal_lean_toolchain_and_scripts_ci_run_tla_
+        - vcard:fro-04:dod_fro_04_05_zero_db_files_remain_under_docs_sprints_programs_c
+      state: sealed
+  - handle: urn:pcard:sprint:FRO-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-05
+    title: Sprint FRO-05 Resolve UI Estate Overlap and Subtract Liabilities
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:fro-05:dod_fro_05_01_mcard_studio_holds_zero_hardcoded_credentials_lan_
+        - vcard:fro-05:dod_fro_05_02_mcard_studio_src_ui_viewlets_responsiveviewportlab
+        - vcard:fro-05:dod_fro_05_03_landingpage_routes_clm_api_js_is_absent_landingpag
+        - vcard:fro-05:dod_fro_05_04_mcard_studio_tests_unit_views_meshtopologyviewlet_
+        - vcard:fro-05:dod_fro_05_05_landingpage_js_observability_lagrangian_js_is_abse
+      state: sealed
+  - handle: urn:pcard:sprint:FRO-06
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-06
+    title: Sprint FRO-06 Close ADR-014 Boundary, Deprecations, and Release Truth
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:fro-06:dod_fro_06_01_zero_legacy_clm_kernel_and_clm_kernel_layer_browse
+        - vcard:fro-06:dod_fro_06_02_clm_tools_make_packaging_mk_holds_zero_false_publi
+        - vcard:fro-06:dod_fro_06_03_verified_npm_evidence_exists_for_prior_published_v
+        - vcard:fro-06:dod_fro_06_04_root_readme_md_docs_index_md_mcard_studio_readme_m
+        - vcard:fro-06:dod_fro_06_05_full_coordinator_estate_suite_passes_after_all_fro
+      state: sealed
+  - handle: urn:pcard:sprint:FRO-07
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-07
+    title: Sprint FRO-07 Consolidate Four-Estate Documentation Canon
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:fro-07:dod_fro_07_01_root_documentation_passes_estate_and_pkd_guide_val
+        - vcard:fro-07:dod_fro_07_02_non_destructive_handle_move_witnesses_validate_and
+        - vcard:fro-07:dod_fro_07_03_clm_docs_architecture_decision_register_md_defines
+        - vcard:fro-07:dod_fro_07_04_mcard_studio_docs_theory_clm_md_is_absent_mcard_st
+        - vcard:fro-07:dod_fro_07_05_landingpage_readme_md_states_estate_3_landingpage_
+      state: sealed
+  - handle: urn:pcard:sprint:FRO-08
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-08
+    title: Sprint FRO-08 Enforce Boundary Gates, Standalone Clones, and Graduation
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:fro-08:dod_fro_08_01_enforced_boundary_scanning_249_line_makefile_confo
+        - vcard:fro-08:dod_fro_08_02_standalone_clone_probe_passes_full_build_and_unit_
+        - vcard:fro-08:dod_fro_08_03_full_coordinator_gates_check_estate_check_all_npm_
+        - vcard:fro-08:dod_fro_08_04_docs_sprints_programs_fro_readme_md_and_docs_sprin
+        - vcard:fro-08:dod_fro_08_05_scripts_ci_verify_fro_graduation_py_verifies_evide
+      state: sealed
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-BMB-PROGRAMMABLE-UI-VERIFICATION
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-BMB-PROGRAMMABLE-UI-VERIFICATION
+    title: EPIC-BMB a programmable UI verification interface on a Petri oracle
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:BMB-00
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: BMB-00
+    title: Sprint `BMB-00` observation cadence census and pin
+    dod:
+      total: 6
+      vcard_refs:
+        - vcard:bmb-00:dod_bmb_00_01_every_run_directory_under_landingpage_bombadil_out
+        - vcard:bmb-00:dod_bmb_00_02_the_spa_census_reports_at_least_1_000_observations
+        - vcard:bmb-00:dod_bmb_00_03_the_workbench_census_states_its_fired_transitions_
+        - vcard:bmb-00:dod_bmb_00_04_every_target_without_a_usable_trace_is_named_and_t
+        - vcard:bmb-00:dod_bmb_00_05_the_census_records_exactly_one_verdict_value_deriv
+        - vcard:bmb-00:dod_bmb_00_06_the_bounded_sample_names_its_source_run_and_holds_
+      state: sealed
+  - handle: urn:pcard:sprint:BMB-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: BMB-01
+    title: Sprint `BMB-01` four envelopes and admission
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:bmb-01:dod_bmb_01_01_each_of_the_four_schemas_accepts_its_positive_exam
+        - vcard:bmb-01:dod_bmb_01_02_admission_of_a_model_pins_the_net_hash_and_the_mod
+        - vcard:bmb-01:dod_bmb_01_03_every_place_property_subject_action_transition_and
+        - vcard:bmb-01:dod_bmb_01_04_a_property_string_outside_the_five_templates_is_re
+        - vcard:bmb-01:dod_bmb_01_05_kernel_module_names_class_names_and_schema_field_n
+        - vcard:bmb-01:dod_bmb_01_06_a_live_lane_admits_a_real_model_for_the_spa_target
+        - vcard:bmb-01:dod_bmb_01_07_the_sprint_record_names_the_commit_the_commands_th
+      state: sealed
+  - handle: urn:pcard:sprint:BMB-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: BMB-02
+    title: Sprint `BMB-02` kernel judge and sealed verdict
+    dod:
+      total: 8
+      vcard_refs:
+        - vcard:bmb-02:dod_bmb_02_01_a_conformant_fixture_yields_conformant_and_one_fir
+        - vcard:bmb-02:dod_bmb_02_02_a_missing_place_at_step_7_yields_nonconformant_wit
+        - vcard:bmb-02:dod_bmb_02_03_an_undeclared_arc_yields_nonconformant_and_names_b
+        - vcard:bmb-02:dod_bmb_02_04_a_duplicated_observation_mints_no_receipt_and_keep
+        - vcard:bmb-02:dod_bmb_02_05_the_judge_reads_no_filesystem_no_clock_and_no_rand
+        - vcard:bmb-02:dod_bmb_02_06_judging_a_10_000_observation_trace_completes_withi
+        - vcard:bmb-02:dod_bmb_02_07_the_live_trace_from_bmb_00_is_judged_and_yields_a_
+        - vcard:bmb-02:dod_bmb_02_08_the_sprint_record_names_the_commit_the_commands_th
+      state: sealed
+  - handle: urn:pcard:sprint:BMB-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: BMB-03
+    title: Sprint `BMB-03` model to Bombadil emitter
+    dod:
+      total: 6
+      vcard_refs:
+        - vcard:bmb-03:dod_bmb_03_01_each_of_the_five_templates_emits_exactly_one_prope
+        - vcard:bmb-03:dod_bmb_03_02_the_emitted_spa_target_spec_matches_its_golden_fil
+        - vcard:bmb-03:dod_bmb_03_03_a_spec_refuses_a_model_whose_hash_differs_from_its
+        - vcard:bmb-03:dod_bmb_03_04_a_zero_weight_action_is_absent_from_the_generators
+        - vcard:bmb-03:dod_bmb_03_05_the_emitted_spec_runs_under_the_pinned_bombadil_bi
+        - vcard:bmb-03:dod_bmb_03_06_the_sprint_record_names_the_emitted_spec_hash_and_
+      state: sealed
+  - handle: urn:pcard:sprint:BMB-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: BMB-04
+    title: Sprint `BMB-04` trace adapter round trip
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:bmb-04:dod_bmb_04_01_the_probe_trace_survives_a_read_write_read_cycle_w
+        - vcard:bmb-04:dod_bmb_04_02_a_missing_projection_key_produces_a_step_carrying_
+        - vcard:bmb-04:dod_bmb_04_03_observation_order_is_preserved_when_two_steps_shar
+        - vcard:bmb-04:dod_bmb_04_04_a_terminal_trace_keeps_every_grid_field_through_th
+        - vcard:bmb-04:dod_bmb_04_05_a_real_bombadil_trace_from_the_pinned_engine_is_ad
+      state: sealed
+  - handle: urn:pcard:sprint:BMB-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: BMB-05
+    title: Sprint `BMB-05` coverage and reachability
+    dod:
+      total: 6
+      vcard_refs:
+        - vcard:bmb-05:dod_bmb_05_01_every_declared_transition_appears_in_exactly_one_c
+        - vcard:bmb-05:dod_bmb_05_02_a_false_unreachable_declaration_yields_model_defec
+        - vcard:bmb-05:dod_bmb_05_03_an_unfired_required_transition_yields_nonconforman
+        - vcard:bmb-05:dod_bmb_05_04_a_search_beyond_the_node_cap_returns_inconclusive_
+        - vcard:bmb-05:dod_bmb_05_05_the_workbench_net_ledger_reports_a_reachable_count
+        - vcard:bmb-05:dod_bmb_05_06_the_live_lane_produces_a_coverage_ledger_from_a_re
+      state: sealed
+  - handle: urn:pcard:sprint:BMB-06
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: BMB-06
+    title: Sprint `BMB-06` second model with more than one token
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:bmb-06:dod_bmb_06_01_two_sessions_with_distinct_keys_yield_conformant_w
+        - vcard:bmb-06:dod_bmb_06_02_two_sessions_sharing_one_key_yield_model_defect_wi
+        - vcard:bmb-06:dod_bmb_06_03_a_tampered_multiset_move_yields_nonconformant_and_
+        - vcard:bmb-06:dod_bmb_06_04_the_recorder_lifecycle_model_is_admitted_with_zero
+        - vcard:bmb-06:dod_bmb_06_05_a_real_two_session_run_against_the_hermetic_landin
+      state: sealed
+  - handle: urn:pcard:sprint:BMB-07
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: BMB-07
+    title: Sprint `BMB-07` shrink and replay as a hashed job
+    dod:
+      total: 6
+      vcard_refs:
+        - vcard:bmb-07:dod_bmb_07_01_a_shrunk_failing_trace_replays_to_the_same_verdict
+        - vcard:bmb-07:dod_bmb_07_02_a_trace_edited_after_hashing_is_refused_with_a_has
+        - vcard:bmb-07:dod_bmb_07_03_the_job_hash_changes_when_the_comparison_policy_ch
+        - vcard:bmb-07:dod_bmb_07_04_a_disagreeing_replay_returns_diverged_with_both_ve
+        - vcard:bmb-07:dod_bmb_07_05_a_real_bombadil_shrink_run_produces_a_trace_of_at_
+        - vcard:bmb-07:dod_bmb_07_06_the_replay_job_is_accepted_as_an_rph_job_spec_with
+      state: sealed
+  - handle: urn:pcard:sprint:BMB-08
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: BMB-08
+    title: Sprint `BMB-08` stable CLI, nightly lane and graduation
+    dod:
+      total: 7
+      vcard_refs:
+        - vcard:bmb-08:dod_bmb_08_01_the_three_commands_return_json_carrying_the_model_
+        - vcard:bmb-08:dod_bmb_08_02_a_step_request_is_refused_with_no_session_engine_o
+        - vcard:bmb-08:dod_bmb_08_03_submit_and_judge_produce_one_verdict_with_one_rece
+        - vcard:bmb-08:dod_bmb_08_04_the_nightly_workflow_uploads_the_trace_and_the_cov
+        - vcard:bmb-08:dod_bmb_08_05_every_fenced_command_in_the_how_to_guide_exits_zer
+        - vcard:bmb-08:dod_bmb_08_06_all_six_graduation_criteria_pass_and_the_receipt_n
+        - vcard:bmb-08:dod_bmb_08_07_the_kernel_word_test_reports_zero_ui_vocabulary_fi
+      state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-CAS
     card_type: mcard
     archetype: specification_mcard
     code: 00-PROGRAM-CHARTER-EPIC-CAS
-    title: "Program Charter: EPIC-CAS \u2014 The MCard Operating System on `clm-kernel`"
+    title: 'Program Charter: EPIC-CAS — The MCard Operating System on `clm-kernel`'
     dod:
       total: 0
       vcard_refs: []
@@ -1961,7 +2243,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CAS-00
-    title: "Sprint Specification: CAS-00 \u2014 Foundation: Parameterised Hash, `g_time` Codec & Self-Verifying Record"
+    title: 'Sprint Specification: CAS-00 — Foundation: Parameterised Hash, `g_time` Codec & Self-Verifying Record'
     dod:
       total: 20
       vcard_refs:
@@ -1990,7 +2272,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CAS-01
-    title: "Sprint Specification: CAS-01 \u2014 Studio on the Foundation: One Object Model & Kernel Delegation"
+    title: 'Sprint Specification: CAS-01 — Studio on the Foundation: One Object Model & Kernel Delegation'
     dod:
       total: 8
       vcard_refs:
@@ -2007,7 +2289,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CAS-02
-    title: "Sprint Specification: CAS-02 \u2014 Lineage-Aware Write Guard & Driver Conformance"
+    title: 'Sprint Specification: CAS-02 — Lineage-Aware Write Guard & Driver Conformance'
     dod:
       total: 5
       vcard_refs:
@@ -2021,7 +2303,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CAS-03
-    title: "Sprint Specification: CAS-03 \u2014 Name Plane: Transition Log, Heads & Retirement"
+    title: 'Sprint Specification: CAS-03 — Name Plane: Transition Log, Heads & Retirement'
     dod:
       total: 7
       vcard_refs:
@@ -2037,7 +2319,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: CAS-04
-    title: "Sprint Specification: CAS-04 \u2014 Lineage: Archive Tapes, Anchors, Pruning, Genesis & Legacy Reimport"
+    title: 'Sprint Specification: CAS-04 — Lineage: Archive Tapes, Anchors, Pruning, Genesis & Legacy Reimport'
     dod:
       total: 0
       vcard_refs: []
@@ -2046,7 +2328,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CAS-05
-    title: "Sprint Specification: CAS-05 \u2014 Replication, Browser Driver & Notifications"
+    title: 'Sprint Specification: CAS-05 — Replication, Browser Driver & Notifications'
     dod:
       total: 7
       vcard_refs:
@@ -2062,7 +2344,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CAS-06
-    title: "Sprint Specification: CAS-06 \u2014 Collections as Manifests, Scopes & Links"
+    title: 'Sprint Specification: CAS-06 — Collections as Manifests, Scopes & Links'
     dod:
       total: 7
       vcard_refs:
@@ -2078,7 +2360,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CAS-07
-    title: "Sprint Specification: CAS-07 \u2014 Remote Replica Drivers & Residency Receipts"
+    title: 'Sprint Specification: CAS-07 — Remote Replica Drivers & Residency Receipts'
     dod:
       total: 6
       vcard_refs:
@@ -2093,7 +2375,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CAS-08
-    title: "Sprint Specification: CAS-08 \u2014 Studio as Userland & Program Certification"
+    title: 'Sprint Specification: CAS-08 — Studio as Userland & Program Certification'
     dod:
       total: 12
       vcard_refs:
@@ -2114,7 +2396,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CAS-09
-    title: "Sprint Specification: CAS-09 \u2014 Kernel Conformance Closure"
+    title: 'Sprint Specification: CAS-09 — Kernel Conformance Closure'
     dod:
       total: 9
       vcard_refs:
@@ -2132,7 +2414,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CAS-10
-    title: "Sprint Specification: CAS-10 \u2014 Algorithm-Neutral Writers & Gate Closure"
+    title: 'Sprint Specification: CAS-10 — Algorithm-Neutral Writers & Gate Closure'
     dod:
       total: 8
       vcard_refs:
@@ -2149,7 +2431,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CAS-11
-    title: "Sprint Specification: CAS-11 \u2014 Polyglot Writer Census & Single Tape Entry"
+    title: 'Sprint Specification: CAS-11 — Polyglot Writer Census & Single Tape Entry'
     dod:
       total: 8
       vcard_refs:
@@ -2308,7 +2590,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-10
-    title: "Sprint CDO-10: The Fiber Base & Totality \u2014 MCard Kinds as Base Coordinates"
+    title: 'Sprint CDO-10: The Fiber Base & Totality — MCard Kinds as Base Coordinates'
     dod:
       total: 6
       vcard_refs:
@@ -2323,7 +2605,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-11
-    title: "Sprint CDO-11: The Fiber Registry & Data-Driven Dispatch \u2014 Any Card, Any Kind"
+    title: 'Sprint CDO-11: The Fiber Registry & Data-Driven Dispatch — Any Card, Any Kind'
     dod:
       total: 9
       vcard_refs:
@@ -2341,7 +2623,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CDO-12
-    title: "Sprint CDO-12: The Fiber Conformance Harness \u2014 Every Kind, Every Lattice Coordinate"
+    title: 'Sprint CDO-12: The Fiber Conformance Harness — Every Kind, Every Lattice Coordinate'
     dod:
       total: 7
       vcard_refs:
@@ -2743,7 +3025,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: 00-PROGRAM-CHARTER-EPIC-COL
-    title: "Program Charter: EPIC-COL \u2014 Git-First Functional Lineage under PTR"
+    title: 'Program Charter: EPIC-COL — Git-First Functional Lineage under PTR'
     dod:
       total: 0
       vcard_refs: []
@@ -2752,7 +3034,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: COL-01
-    title: "Sprint Specification: COL-01 \u2014 Git-Tree Function Inventory & PTR Source Locators"
+    title: 'Sprint Specification: COL-01 — Git-Tree Function Inventory & PTR Source Locators'
     dod:
       total: 6
       vcard_refs:
@@ -2767,7 +3049,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: COL-02
-    title: "Sprint Specification: COL-02 \u2014 Triad-Linked PCards & CLM-to-Studio Projection"
+    title: 'Sprint Specification: COL-02 — Triad-Linked PCards & CLM-to-Studio Projection'
     dod:
       total: 5
       vcard_refs:
@@ -2781,7 +3063,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: COL-03
-    title: "Sprint Specification: COL-03 \u2014 Polyglot PTR Execution and VCard Evidence"
+    title: 'Sprint Specification: COL-03 — Polyglot PTR Execution and VCard Evidence'
     dod:
       total: 8
       vcard_refs:
@@ -2798,7 +3080,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: COL-04
-    title: "Sprint Specification: COL-04 \u2014 Reference Retirement and Verifiable Archive MCards"
+    title: 'Sprint Specification: COL-04 — Reference Retirement and Verifiable Archive MCards'
     dod:
       total: 5
       vcard_refs:
@@ -2812,7 +3094,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: COL-05
-    title: "Sprint Specification: COL-05 \u2014 Studio-to-LandingPage Projection and Browser Evidence"
+    title: 'Sprint Specification: COL-05 — Studio-to-LandingPage Projection and Browser Evidence'
     dod:
       total: 5
       vcard_refs:
@@ -2826,7 +3108,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: COL-06
-    title: "Sprint Specification: COL-06 \u2014 Admitted-Cohort Lineage Audit and Program Certification"
+    title: 'Sprint Specification: COL-06 — Admitted-Cohort Lineage Audit and Program Certification'
     dod:
       total: 8
       vcard_refs:
@@ -2843,7 +3125,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: 00-PROGRAM-CHARTER-EPIC-CRD-SPATIOTEMPORAL-COMPOSITIONALITY
-    title: "Program Charter: EPIC-CRD \u2014 Cordis Spatiotemporal Compositionality & In-Memory Execution Engine"
+    title: 'Program Charter: EPIC-CRD — Cordis Spatiotemporal Compositionality & In-Memory Execution Engine'
     dod:
       total: 6
       vcard_refs:
@@ -2858,7 +3140,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CRD-00
-    title: "Sprint Specification: CRD-00 \u2014 Grounding, Taxonomy & Substrate Census"
+    title: 'Sprint Specification: CRD-00 — Grounding, Taxonomy & Substrate Census'
     dod:
       total: 8
       vcard_refs:
@@ -2875,7 +3157,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CRD-01
-    title: "Sprint Specification: CRD-01 \u2014 Tripartite Contract Enrichment (Coeffects & Fiber Specs)"
+    title: 'Sprint Specification: CRD-01 — Tripartite Contract Enrichment (Coeffects & Fiber Specs)'
     dod:
       total: 8
       vcard_refs:
@@ -2892,7 +3174,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CRD-02
-    title: "Sprint Specification: CRD-02 \u2014 Layer 1 CPN Transition Engine & Token Binding"
+    title: 'Sprint Specification: CRD-02 — Layer 1 CPN Transition Engine & Token Binding'
     dod:
       total: 8
       vcard_refs:
@@ -2909,7 +3191,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CRD-03
-    title: "Sprint Specification: CRD-03 \u2014 Reactive Coeffect Scheduler & Context Tree"
+    title: 'Sprint Specification: CRD-03 — Reactive Coeffect Scheduler & Context Tree'
     dod:
       total: 8
       vcard_refs:
@@ -2926,7 +3208,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CRD-04
-    title: "Sprint Specification: CRD-04 \u2014 Cross-Runtime SavepointGuard & Zero-Leak Rollback"
+    title: 'Sprint Specification: CRD-04 — Cross-Runtime SavepointGuard & Zero-Leak Rollback'
     dod:
       total: 8
       vcard_refs:
@@ -2943,7 +3225,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CRD-05
-    title: "Sprint Specification: CRD-05 \u2014 In-Process HMR, Epoch Migrations & Bitemporal Lineage"
+    title: 'Sprint Specification: CRD-05 — In-Process HMR, Epoch Migrations & Bitemporal Lineage'
     dod:
       total: 8
       vcard_refs:
@@ -2960,7 +3242,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CRD-06
-    title: "Sprint Specification: CRD-06 \u2014 DeepSeek Harness & Conversational Programming Loop"
+    title: 'Sprint Specification: CRD-06 — DeepSeek Harness & Conversational Programming Loop'
     dod:
       total: 8
       vcard_refs:
@@ -2977,7 +3259,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CRD-07
-    title: "Sprint Specification: CRD-07 \u2014 Architecture Documentation Review & As-Built Synthesis"
+    title: 'Sprint Specification: CRD-07 — Architecture Documentation Review & As-Built Synthesis'
     dod:
       total: 8
       vcard_refs:
@@ -2994,7 +3276,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: CRD-08
-    title: "Sprint Specification: CRD-08 \u2014 Orchestration Gate, Runbook & Program Graduation"
+    title: 'Sprint Specification: CRD-08 — Orchestration Gate, Runbook & Program Graduation'
     dod:
       total: 8
       vcard_refs:
@@ -3088,7 +3370,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: DCO-05
-    title: "Sprint DCO-05: Core Architecture, Function Catalog Navigation, and Di\xE1taxis"
+    title: 'Sprint DCO-05: Core Architecture, Function Catalog Navigation, and Diátaxis'
     dod:
       total: 8
       vcard_refs:
@@ -3250,7 +3532,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: 00-PROGRAM-CHARTER-EPIC-DWD-WASM-DECOMMISSION
-    title: "Program Charter: EPIC-DWD \u2014 Decommissioning of WebAssembly (WASM) Deployment Architecture"
+    title: 'Program Charter: EPIC-DWD — Decommissioning of WebAssembly (WASM) Deployment Architecture'
     dod:
       total: 0
       vcard_refs: []
@@ -3259,7 +3541,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: DWD-01
-    title: "Sprint Specification: DWD-01 \u2014 Pipeline & Packaging Decoupling"
+    title: 'Sprint Specification: DWD-01 — Pipeline & Packaging Decoupling'
     dod:
       total: 8
       vcard_refs:
@@ -3276,7 +3558,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: DWD-02
-    title: "Sprint Specification: DWD-02 \u2014 Rust Kernel WASM Surface Removal"
+    title: 'Sprint Specification: DWD-02 — Rust Kernel WASM Surface Removal'
     dod:
       total: 8
       vcard_refs:
@@ -3293,7 +3575,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: DWD-03
-    title: "Sprint Specification: DWD-03 \u2014 Test Fleet & Canary Purging"
+    title: 'Sprint Specification: DWD-03 — Test Fleet & Canary Purging'
     dod:
       total: 8
       vcard_refs:
@@ -3310,7 +3592,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: DWD-04
-    title: "Sprint Specification: DWD-04 \u2014 Documentation Reconciliation & Charter Graduation"
+    title: 'Sprint Specification: DWD-04 — Documentation Reconciliation & Charter Graduation'
     dod:
       total: 8
       vcard_refs:
@@ -3327,7 +3609,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: 00-PROGRAM-CHARTER-EPIC-EXP
-    title: "Program Charter: `EPIC-EXP` \u2014 The Portable Export Is a Kernel Capability"
+    title: 'Program Charter: `EPIC-EXP` — The Portable Export Is a Kernel Capability'
     dod:
       total: 0
       vcard_refs: []
@@ -3451,7 +3733,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: PY-02
-    title: "Sprint PY-02: The Readers \u2014 the EIGHTEEN Tombstone Joins, Across Two Engines"
+    title: 'Sprint PY-02: The Readers — the EIGHTEEN Tombstone Joins, Across Two Engines'
     dod:
       total: 4
       vcard_refs:
@@ -3464,7 +3746,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: PY-03
-    title: "Sprint PY-03: The Kind Moves to the Handle \u2014 the Six `change_type` Sites"
+    title: 'Sprint PY-03: The Kind Moves to the Handle — the Six `change_type` Sites'
     dod:
       total: 4
       vcard_refs:
@@ -3477,7 +3759,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: PY-04
-    title: "Sprint PY-04: `rowid` Supplies the Key \u2014 the Three `id` Dependencies"
+    title: 'Sprint PY-04: `rowid` Supplies the Key — the Three `id` Dependencies'
     dod:
       total: 3
       vcard_refs:
@@ -3489,7 +3771,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: PY-05
-    title: "Sprint PY-05: The Schema \u2014 ONE ATOMIC STEP, and it is LAST"
+    title: 'Sprint PY-05: The Schema — ONE ATOMIC STEP, and it is LAST'
     dod:
       total: 4
       vcard_refs:
@@ -3644,7 +3926,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: 00-PROGRAM-CHARTER-EPIC-LCLM-LAYER0-CAS-FIRST
-    title: "Program Charter: EPIC-LCLM \u2014 Layer 0 Function PCards & Correctness"
+    title: 'Program Charter: EPIC-LCLM — Layer 0 Function PCards & Correctness'
     dod:
       total: 0
       vcard_refs: []
@@ -3653,7 +3935,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: LCLM-00
-    title: "Sprint Specification: LCLM-00 \u2014 Logical Function Identity & Census"
+    title: 'Sprint Specification: LCLM-00 — Logical Function Identity & Census'
     dod:
       total: 8
       vcard_refs:
@@ -3670,7 +3952,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: LCLM-01
-    title: "Sprint Specification: LCLM-01 \u2014 Function PCard & Record-Set Contract"
+    title: 'Sprint Specification: LCLM-01 — Function PCard & Record-Set Contract'
     dod:
       total: 8
       vcard_refs:
@@ -3687,7 +3969,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: LCLM-02
-    title: "Sprint Specification: LCLM-02 \u2014 Correctness Annotation Model"
+    title: 'Sprint Specification: LCLM-02 — Correctness Annotation Model'
     dod:
       total: 8
       vcard_refs:
@@ -3704,7 +3986,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: LCLM-03
-    title: "Sprint Specification: LCLM-03 \u2014 Selector, Verdict & Receipt Contract"
+    title: 'Sprint Specification: LCLM-03 — Selector, Verdict & Receipt Contract'
     dod:
       total: 8
       vcard_refs:
@@ -3721,7 +4003,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: LCLM-04
-    title: "Sprint Specification: LCLM-04 \u2014 Canonical Function Records & Portable Pool Projection"
+    title: 'Sprint Specification: LCLM-04 — Canonical Function Records & Portable Pool Projection'
     dod:
       total: 8
       vcard_refs:
@@ -3738,7 +4020,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: LCLM-05
-    title: "Sprint Specification: LCLM-05 \u2014 Selector Harness & Individual Execution"
+    title: 'Sprint Specification: LCLM-05 — Selector Harness & Individual Execution'
     dod:
       total: 8
       vcard_refs:
@@ -3755,7 +4037,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: LCLM-06
-    title: "Sprint Specification: LCLM-06 \u2014 CAS Record Semantics Pilot"
+    title: 'Sprint Specification: LCLM-06 — CAS Record Semantics Pilot'
     dod:
       total: 8
       vcard_refs:
@@ -3772,7 +4054,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: LCLM-07
-    title: "Sprint Specification: LCLM-07 \u2014 CAS Storage Writers & Polyglot Truth"
+    title: 'Sprint Specification: LCLM-07 — CAS Storage Writers & Polyglot Truth'
     dod:
       total: 8
       vcard_refs:
@@ -3789,7 +4071,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: LCLM-08
-    title: "Sprint Specification: LCLM-08 \u2014 Core Primitive Cluster"
+    title: 'Sprint Specification: LCLM-08 — Core Primitive Cluster'
     dod:
       total: 8
       vcard_refs:
@@ -3806,7 +4088,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: LCLM-09
-    title: "Sprint Specification: LCLM-09 \u2014 Dependency Graph, CPN Projection & Coherence"
+    title: 'Sprint Specification: LCLM-09 — Dependency Graph, CPN Projection & Coherence'
     dod:
       total: 8
       vcard_refs:
@@ -3823,7 +4105,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: LCLM-10
-    title: "Sprint Specification: LCLM-10 \u2014 Coverage Gate, Batch Composition & As-Built Documentation Sync"
+    title: 'Sprint Specification: LCLM-10 — Coverage Gate, Batch Composition & As-Built Documentation Sync'
     dod:
       total: 8
       vcard_refs:
@@ -3840,7 +4122,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: 00-PROGRAM-CHARTER-EPIC-MKR-ROOT-MAKEFILE-MODERNIZATION-AND-SUBMODULE-DELEGATION
-    title: "Program Charter: EPIC-MKR \u2014 Root Makefile Modernization, Dead Surface Retirement & Submodule Delegation Architecture"
+    title: 'Program Charter: EPIC-MKR — Root Makefile Modernization, Dead Surface Retirement & Submodule Delegation Architecture'
     dod:
       total: 0
       vcard_refs: []
@@ -3849,7 +4131,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: MKR-01
-    title: "Sprint Specification: MKR-01 \u2014 LeanRea Evidence Census & Stale Target Inventory"
+    title: 'Sprint Specification: MKR-01 — LeanRea Evidence Census & Stale Target Inventory'
     dod:
       total: 8
       vcard_refs:
@@ -3866,7 +4148,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: MKR-02
-    title: "Sprint Specification: MKR-02 \u2014 Sovereign Submodule Delegation & Toolchain Realignment"
+    title: 'Sprint Specification: MKR-02 — Sovereign Submodule Delegation & Toolchain Realignment'
     dod:
       total: 8
       vcard_refs:
@@ -3883,7 +4165,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: MKR-03
-    title: "Sprint Specification: MKR-03 \u2014 Decommissioning Dead mcard Shims & Broken Chapter Runners"
+    title: 'Sprint Specification: MKR-03 — Decommissioning Dead mcard Shims & Broken Chapter Runners'
     dod:
       total: 8
       vcard_refs:
@@ -3900,7 +4182,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: MKR-04
-    title: "Sprint Specification: MKR-04 \u2014 Pruning Historical CDO Workflows & Modular Archival"
+    title: 'Sprint Specification: MKR-04 — Pruning Historical CDO Workflows & Modular Archival'
     dod:
       total: 8
       vcard_refs:
@@ -3917,7 +4199,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: MKR-05
-    title: "Sprint Specification: MKR-05 \u2014 Integrating ULR/SMR SSoT Gates & Unified Check Suite"
+    title: 'Sprint Specification: MKR-05 — Integrating ULR/SMR SSoT Gates & Unified Check Suite'
     dod:
       total: 8
       vcard_refs:
@@ -3934,7 +4216,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: MKR-06
-    title: "Sprint Specification: MKR-06 \u2014 Makefile Conformance Canary, Cross-Platform Gate & Program Certification"
+    title: 'Sprint Specification: MKR-06 — Makefile Conformance Canary, Cross-Platform Gate & Program Certification'
     dod:
       total: 8
       vcard_refs:
@@ -3951,7 +4233,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: 00-PROGRAM-CHARTER-EPIC-ORC-II
-    title: "Program Charter: EPIC-ORC-II \u2014 Closure: Making the Invariants Enforced"
+    title: 'Program Charter: EPIC-ORC-II — Closure: Making the Invariants Enforced'
     dod:
       total: 8
       vcard_refs:
@@ -3968,7 +4250,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: 00-PROGRAM-CHARTER-EPIC-ORC-III
-    title: "Program Charter: EPIC-ORC-III \u2014 The Mesh: Knowledge Topology for a PKC Platform"
+    title: 'Program Charter: EPIC-ORC-III — The Mesh: Knowledge Topology for a PKC Platform'
     dod:
       total: 8
       vcard_refs:
@@ -3985,7 +4267,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: 00-PROGRAM-CHARTER-EPIC-ORC-IV
-    title: "Program Charter: EPIC-ORC-IV \u2014 The Universal Monadic Triad: The Three-Tape Turing Architecture"
+    title: 'Program Charter: EPIC-ORC-IV — The Universal Monadic Triad: The Three-Tape Turing Architecture'
     dod:
       total: 18
       vcard_refs:
@@ -4012,7 +4294,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: 00-PROGRAM-CHARTER-EPIC-ORC
-    title: "Program Charter: EPIC-ORC \u2014 MCard_TDD as Protocol SSoT Orchestration Hub"
+    title: 'Program Charter: EPIC-ORC — MCard_TDD as Protocol SSoT Orchestration Hub'
     dod:
       total: 8
       vcard_refs:
@@ -4046,7 +4328,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-02
-    title: "Sprint ORC-02: Sprint-as-MCard \u2014 Triad Manifest Encoding & Handle Registration"
+    title: 'Sprint ORC-02: Sprint-as-MCard — Triad Manifest Encoding & Handle Registration'
     dod:
       total: 11
       vcard_refs:
@@ -4066,7 +4348,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-03
-    title: "Sprint ORC-03: The Coordination Loop \u2014 9-Phase REPL over Submodules"
+    title: 'Sprint ORC-03: The Coordination Loop — 9-Phase REPL over Submodules'
     dod:
       total: 8
       vcard_refs:
@@ -4100,7 +4382,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-05
-    title: "Sprint ORC-05: Display Parity \u2014 studio Membrane & LandingPage Registry"
+    title: 'Sprint ORC-05: Display Parity — studio Membrane & LandingPage Registry'
     dod:
       total: 10
       vcard_refs:
@@ -4319,7 +4601,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-17
-    title: "Sprint ORC-17: The Hub Is a Node \u2014 a Manifest and One Config"
+    title: 'Sprint ORC-17: The Hub Is a Node — a Manifest and One Config'
     dod:
       total: 9
       vcard_refs:
@@ -4552,7 +4834,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-29
-    title: "Sprint ORC-29: Nested Tapes Are Cards \u2014 the Lifecycle Sidecar"
+    title: 'Sprint ORC-29: Nested Tapes Are Cards — the Lifecycle Sidecar'
     dod:
       total: 10
       vcard_refs:
@@ -4571,7 +4853,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: ORC-30
-    title: "Sprint ORC-30: Estate Documentation Alignment \u2014 `README.md` and `docs/`"
+    title: 'Sprint ORC-30: Estate Documentation Alignment — `README.md` and `docs/`'
     dod:
       total: 11
       vcard_refs:
@@ -4591,7 +4873,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: 00-PROGRAM-CHARTER-EPIC-PFD-PURELY-FUNCTIONAL-DEPLOYMENT
-    title: "Program Charter: EPIC-PFD \u2014 Purely Functional Deployment & Epistemic Realignment"
+    title: 'Program Charter: EPIC-PFD — Purely Functional Deployment & Epistemic Realignment'
     dod:
       total: 0
       vcard_refs: []
@@ -4600,7 +4882,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: PFD-01
-    title: "Sprint Specification: PFD-01 \u2014 Epistemic Grounding & Lambda-Calculus Structural Correspondence"
+    title: 'Sprint Specification: PFD-01 — Epistemic Grounding & Lambda-Calculus Structural Correspondence'
     dod:
       total: 8
       vcard_refs:
@@ -4617,7 +4899,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: PFD-02
-    title: "Sprint Specification: PFD-02 \u2014 Cordis Purely Functional Fiber & Coeffect Architecture Specification"
+    title: 'Sprint Specification: PFD-02 — Cordis Purely Functional Fiber & Coeffect Architecture Specification'
     dod:
       total: 8
       vcard_refs:
@@ -4634,7 +4916,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: PFD-03
-    title: "Sprint Specification: PFD-03 \u2014 Developer Guides & Functional Playbook Workflows"
+    title: 'Sprint Specification: PFD-03 — Developer Guides & Functional Playbook Workflows'
     dod:
       total: 8
       vcard_refs:
@@ -4651,7 +4933,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: PFD-04
-    title: "Sprint Specification: PFD-04 \u2014 Estate Audit, Invariant Sealing & Long-Term Developmental Roadmap"
+    title: 'Sprint Specification: PFD-04 — Estate Audit, Invariant Sealing & Long-Term Developmental Roadmap'
     dod:
       total: 8
       vcard_refs:
@@ -4813,7 +5095,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: 00-PROGRAM-CHARTER-EPIC-PKG
-    title: "Program Charter: `EPIC-PKG` \u2014 Dual Deployment Orchestration, Hermetic Client Bundling, Three-Submodule Dependency Realignment & Submodule Release Synchronization"
+    title: 'Program Charter: `EPIC-PKG` — Dual Deployment Orchestration, Hermetic Client Bundling, Three-Submodule Dependency Realignment & Submodule Release Synchronization'
     dod:
       total: 0
       vcard_refs: []
@@ -5034,7 +5316,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: 00-PROGRAM-CHARTER-EPIC-RET-LEGACY-SURFACE-RETIREMENT
-    title: "Program Charter: EPIC-RET \u2014 Legacy Surface Retirement & Knowledge Quarantine Program"
+    title: 'Program Charter: EPIC-RET — Legacy Surface Retirement & Knowledge Quarantine Program'
     dod:
       total: 0
       vcard_refs: []
@@ -5043,7 +5325,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: RET-00
-    title: "Sprint Specification: RET-00 \u2014 Formal Inventory Census & Baseline-Aware Boundary Guard"
+    title: 'Sprint Specification: RET-00 — Formal Inventory Census & Baseline-Aware Boundary Guard'
     dod:
       total: 8
       vcard_refs:
@@ -5060,7 +5342,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: RET-01
-    title: "Sprint Specification: RET-01 \u2014 Live Dependency Decoupling & CI Hygiene"
+    title: 'Sprint Specification: RET-01 — Live Dependency Decoupling & CI Hygiene'
     dod:
       total: 8
       vcard_refs:
@@ -5077,7 +5359,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: RET-02
-    title: "Sprint Specification: RET-02 \u2014 Quarantine Relocation & Artifact Slimming"
+    title: 'Sprint Specification: RET-02 — Quarantine Relocation & Artifact Slimming'
     dod:
       total: 8
       vcard_refs:
@@ -5094,7 +5376,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: RET-03
-    title: "Sprint Specification: RET-03 \u2014 Registry Synchronization, Link Audit & CAS Sealing"
+    title: 'Sprint Specification: RET-03 — Registry Synchronization, Link Audit & CAS Sealing'
     dod:
       total: 8
       vcard_refs:
@@ -5248,7 +5530,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: 00-PROGRAM-CHARTER-EPIC-RVP
-    title: "Program Charter: EPIC-RVP \u2014 Responsive Viewport Rotation & Dynamic Device Registry"
+    title: 'Program Charter: EPIC-RVP — Responsive Viewport Rotation & Dynamic Device Registry'
     dod:
       total: 4
       vcard_refs:
@@ -5322,7 +5604,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: 00-PROGRAM-CHARTER-EPIC-SMR-SUBMODULE-FUNCTIONAL-REALIGNMENT
-    title: "Program Charter: EPIC-SMR \u2014 Cordis Spatiotemporal Compositionality, Three-Submodule Functional Realignment & Unified Studio Execution Architecture"
+    title: 'Program Charter: EPIC-SMR — Cordis Spatiotemporal Compositionality, Three-Submodule Functional Realignment & Unified Studio Execution Architecture'
     dod:
       total: 0
       vcard_refs: []
@@ -5331,7 +5613,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-00
-    title: "Sprint Specification: SMR-00 \u2014 Grounding, Taxonomy & Three-Submodule Functional Census"
+    title: 'Sprint Specification: SMR-00 — Grounding, Taxonomy & Three-Submodule Functional Census'
     dod:
       total: 8
       vcard_refs:
@@ -5348,7 +5630,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-01
-    title: "Sprint Specification: SMR-01 \u2014 Tripartite Contract Enrichment (Coeffects, Fiber Specs & Viewport Schemas)"
+    title: 'Sprint Specification: SMR-01 — Tripartite Contract Enrichment (Coeffects, Fiber Specs & Viewport Schemas)'
     dod:
       total: 8
       vcard_refs:
@@ -5365,7 +5647,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-02
-    title: "Sprint Specification: SMR-02 \u2014 Layer 1 CPN Transition Engine, Token Binding & Studio Execution Bridge"
+    title: 'Sprint Specification: SMR-02 — Layer 1 CPN Transition Engine, Token Binding & Studio Execution Bridge'
     dod:
       total: 8
       vcard_refs:
@@ -5382,7 +5664,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-03
-    title: "Sprint Specification: SMR-03 \u2014 Reactive Coeffect Scheduler & Merkle-DAG Context Tree"
+    title: 'Sprint Specification: SMR-03 — Reactive Coeffect Scheduler & Merkle-DAG Context Tree'
     dod:
       total: 8
       vcard_refs:
@@ -5399,7 +5681,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-04
-    title: "Sprint Specification: SMR-04 \u2014 Cross-Runtime SavepointGuard, Zero-Leak Rollback & Safe Refactoring"
+    title: 'Sprint Specification: SMR-04 — Cross-Runtime SavepointGuard, Zero-Leak Rollback & Safe Refactoring'
     dod:
       total: 8
       vcard_refs:
@@ -5416,7 +5698,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-05
-    title: "Sprint Specification: SMR-05 \u2014 In-Process HMR, Epoch Migrations & Bitemporal Lineage"
+    title: 'Sprint Specification: SMR-05 — In-Process HMR, Epoch Migrations & Bitemporal Lineage'
     dod:
       total: 8
       vcard_refs:
@@ -5433,7 +5715,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-06
-    title: "Sprint Specification: SMR-06 \u2014 DeepSeek Harness & Conversational Programming Loop"
+    title: 'Sprint Specification: SMR-06 — DeepSeek Harness & Conversational Programming Loop'
     dod:
       total: 8
       vcard_refs:
@@ -5450,7 +5732,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-07
-    title: "Sprint Specification: SMR-07 \u2014 Architecture Documentation Review & Three-Submodule Topology Synthesis"
+    title: 'Sprint Specification: SMR-07 — Architecture Documentation Review & Three-Submodule Topology Synthesis'
     dod:
       total: 8
       vcard_refs:
@@ -5467,7 +5749,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-08
-    title: "Sprint Specification: SMR-08 \u2014 Core Spatiotemporal Orchestration Gate & Layer 0/1 Operator Runbook"
+    title: 'Sprint Specification: SMR-08 — Core Spatiotemporal Orchestration Gate & Layer 0/1 Operator Runbook'
     dod:
       total: 8
       vcard_refs:
@@ -5484,7 +5766,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-09
-    title: "Sprint Specification: SMR-09 \u2014 LandingPage Single-Page MCard Distillation & External Portal Samples"
+    title: 'Sprint Specification: SMR-09 — LandingPage Single-Page MCard Distillation & External Portal Samples'
     dod:
       total: 8
       vcard_refs:
@@ -5501,7 +5783,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-10
-    title: "Sprint Specification: SMR-10 \u2014 mcard-studio Multi-Card Navigation, Registry Sharding & Supported Function Catalog"
+    title: 'Sprint Specification: SMR-10 — mcard-studio Multi-Card Navigation, Registry Sharding & Supported Function Catalog'
     dod:
       total: 8
       vcard_refs:
@@ -5518,7 +5800,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-11
-    title: "Sprint Specification: SMR-11 \u2014 mcard-studio Refinement Workflows: Lagrangian, Fibration, Petri-Net & Governance UIs"
+    title: 'Sprint Specification: SMR-11 — mcard-studio Refinement Workflows: Lagrangian, Fibration, Petri-Net & Governance UIs'
     dod:
       total: 8
       vcard_refs:
@@ -5535,7 +5817,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-12
-    title: "Sprint Specification: SMR-12 \u2014 Multi-Device Responsive UI Lab (Cellphone, Laptop, Desktop, Wearable) & Portal Sample Certification"
+    title: 'Sprint Specification: SMR-12 — Multi-Device Responsive UI Lab (Cellphone, Laptop, Desktop, Wearable) & Portal Sample Certification'
     dod:
       total: 8
       vcard_refs:
@@ -5552,7 +5834,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-13
-    title: "Sprint Specification: SMR-13 \u2014 Cross-Submodule Functional Realignment Gate & Program Graduation"
+    title: 'Sprint Specification: SMR-13 — Cross-Submodule Functional Realignment Gate & Program Graduation'
     dod:
       total: 8
       vcard_refs:
@@ -5569,7 +5851,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-14
-    title: "Sprint Specification: SMR-14 \u2014 Umbrella Documentation Canon, 3\xD74 Articulation Matrix & PlaceTypeLattice Realignment"
+    title: 'Sprint Specification: SMR-14 — Umbrella Documentation Canon, 3×4 Articulation Matrix & PlaceTypeLattice Realignment'
     dod:
       total: 8
       vcard_refs:
@@ -5586,7 +5868,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-15
-    title: "Sprint Specification: SMR-15 \u2014 Universal Namespace Protocol, 4-Place PetriProcessPCard & Anchored Chunk Pruning Specification Alignment"
+    title: 'Sprint Specification: SMR-15 — Universal Namespace Protocol, 4-Place PetriProcessPCard & Anchored Chunk Pruning Specification Alignment'
     dod:
       total: 8
       vcard_refs:
@@ -5603,7 +5885,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-16
-    title: "Sprint Specification: SMR-16 \u2014 mcard-studio 9-Op Namespace Mount, PlaceTypeLattice Inspector & 4-Place PetriProcessPCard Bridge"
+    title: 'Sprint Specification: SMR-16 — mcard-studio 9-Op Namespace Mount, PlaceTypeLattice Inspector & 4-Place PetriProcessPCard Bridge'
     dod:
       total: 8
       vcard_refs:
@@ -5620,7 +5902,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-17
-    title: "Sprint Specification: SMR-17 \u2014 Makefile DAG Efficiency, Gate 27\u201329 Ratchets & Umbrella ORC Estate Guard Harmonization"
+    title: 'Sprint Specification: SMR-17 — Makefile DAG Efficiency, Gate 27–29 Ratchets & Umbrella ORC Estate Guard Harmonization'
     dod:
       total: 8
       vcard_refs:
@@ -5637,7 +5919,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-18
-    title: "Sprint Specification: SMR-18 \u2014 Three-Submodule Convergence Gate, Cross-Estate Vocabulary Parity & EPIC-SMR Program Graduation"
+    title: 'Sprint Specification: SMR-18 — Three-Submodule Convergence Gate, Cross-Estate Vocabulary Parity & EPIC-SMR Program Graduation'
     dod:
       total: 8
       vcard_refs:
@@ -5654,7 +5936,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-19
-    title: "Sprint Specification: SMR-19 \u2014 Unifying MCard Ontology (`File \u2261 MCard \u2261 Function \u2261 PCard \u2261 Plug-in`) & Two Petri Net Representables Across `docs/theory/`"
+    title: 'Sprint Specification: SMR-19 — Unifying MCard Ontology (`File ≡ MCard ≡ Function ≡ PCard ≡ Plug-in`) & Two Petri Net Representables Across `docs/theory/`'
     dod:
       total: 8
       vcard_refs:
@@ -5671,7 +5953,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-20
-    title: "Sprint Specification: SMR-20 \u2014 System State as Marking Configurations in Constructive `PlaceTypeLattice` (`INV-508`) Across `docs/architecture/`"
+    title: 'Sprint Specification: SMR-20 — System State as Marking Configurations in Constructive `PlaceTypeLattice` (`INV-508`) Across `docs/architecture/`'
     dod:
       total: 8
       vcard_refs:
@@ -5688,7 +5970,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-21
-    title: "Sprint Specification: SMR-21 \u2014 Four-Tier Cordis Harness (`Plug-in`, `Bundle`, `Profile`, `Preset`), Seams & Brendan Fong's Decorated Cospans Across `docs/specifications/`"
+    title: 'Sprint Specification: SMR-21 — Four-Tier Cordis Harness (`Plug-in`, `Bundle`, `Profile`, `Preset`), Seams & Brendan Fong''s Decorated Cospans Across `docs/specifications/`'
     dod:
       total: 8
       vcard_refs:
@@ -5705,7 +5987,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-22
-    title: "Sprint Specification: SMR-22 \u2014 `mcard-studio` Five Architectural Directives, Preset Workspaces & Visual Cospan Pushout Wiring Across `docs/guides/`"
+    title: 'Sprint Specification: SMR-22 — `mcard-studio` Five Architectural Directives, Preset Workspaces & Visual Cospan Pushout Wiring Across `docs/guides/`'
     dod:
       total: 8
       vcard_refs:
@@ -5722,7 +6004,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-23
-    title: "Sprint Specification: SMR-23 \u2014 Conversational Development Orchestration (CDO), Two-Plane Creative Mode & Valk's *Nets-Within-Nets* Documentation Alignment"
+    title: 'Sprint Specification: SMR-23 — Conversational Development Orchestration (CDO), Two-Plane Creative Mode & Valk''s *Nets-Within-Nets* Documentation Alignment'
     dod:
       total: 8
       vcard_refs:
@@ -5739,7 +6021,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-24
-    title: "Sprint Specification: SMR-24 \u2014 Umbrella Documentation Ontological Parity Gate, Automated Vocabulary Verification & Canon Certification"
+    title: 'Sprint Specification: SMR-24 — Umbrella Documentation Ontological Parity Gate, Automated Vocabulary Verification & Canon Certification'
     dod:
       total: 8
       vcard_refs:
@@ -5756,7 +6038,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-25
-    title: "Sprint Specification: SMR-25 \u2014 Faithful vs. Unfaithful Representability, the Pentadic Threshold ($n \\le 4$ vs. $n = 5$) & Wittgenstein's Horizon Across `docs/theory/`"
+    title: 'Sprint Specification: SMR-25 — Faithful vs. Unfaithful Representability, the Pentadic Threshold ($n \le 4$ vs. $n = 5$) & Wittgenstein''s Horizon Across `docs/theory/`'
     dod:
       total: 8
       vcard_refs:
@@ -5773,7 +6055,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-26
-    title: "Sprint Specification: SMR-26 \u2014 Braided Polynomial Affordance UI, Swim-Lane Interaction Diagrams & Reidemeister Compression Across `docs/architecture/`"
+    title: 'Sprint Specification: SMR-26 — Braided Polynomial Affordance UI, Swim-Lane Interaction Diagrams & Reidemeister Compression Across `docs/architecture/`'
     dod:
       total: 8
       vcard_refs:
@@ -5790,7 +6072,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-27
-    title: "Sprint Specification: SMR-27 \u2014 Cordis\u2013Parikh Canonical Data Structures & the Four-Tier Possibility Funnel Across `docs/architecture/`"
+    title: 'Sprint Specification: SMR-27 — Cordis–Parikh Canonical Data Structures & the Four-Tier Possibility Funnel Across `docs/architecture/`'
     dod:
       total: 8
       vcard_refs:
@@ -5807,7 +6089,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-28
-    title: "Sprint Specification: SMR-28 \u2014 Burau Braid Invariants, 4-Lane UI Modularity & Bounded Representability Across `docs/specifications/`"
+    title: 'Sprint Specification: SMR-28 — Burau Braid Invariants, 4-Lane UI Modularity & Bounded Representability Across `docs/specifications/`'
     dod:
       total: 8
       vcard_refs:
@@ -5824,7 +6106,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-29
-    title: "Sprint Specification: SMR-29 \u2014 Braided UI Design Principles, `ParikhCordisEngine` & Non-Flaky Burau TDD Practitioner Guides Across `docs/guides/` & `docs/decisions/`"
+    title: 'Sprint Specification: SMR-29 — Braided UI Design Principles, `ParikhCordisEngine` & Non-Flaky Burau TDD Practitioner Guides Across `docs/guides/` & `docs/decisions/`'
     dod:
       total: 8
       vcard_refs:
@@ -5841,7 +6123,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: SMR-30
-    title: "Sprint Specification: SMR-30 \u2014 Faithful Representability, Braided UI Design Canon Gate & 22-Sprint Estate Certification"
+    title: 'Sprint Specification: SMR-30 — Faithful Representability, Braided UI Design Canon Gate & 22-Sprint Estate Certification'
     dod:
       total: 8
       vcard_refs:
@@ -5873,7 +6155,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: STY-02
-    title: "Sprint STY-02: The Layout Freeze \u2014 Making the Constraint Checkable"
+    title: 'Sprint STY-02: The Layout Freeze — Making the Constraint Checkable'
     dod:
       total: 5
       vcard_refs:
@@ -5958,7 +6240,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: 00-PROGRAM-CHARTER-EPIC-SYNC
-    title: "Program Charter: `EPIC-SYNC` \u2014 The Three Runtimes Say the Same Thing"
+    title: 'Program Charter: `EPIC-SYNC` — The Three Runtimes Say the Same Thing'
     dod:
       total: 0
       vcard_refs: []
@@ -6057,7 +6339,7 @@ sprints:
     card_type: mcard
     archetype: specification_mcard
     code: 00-PROGRAM-CHARTER-EPIC-ULR-UNIX-PLAN9-DUALITY-AND-ESTATE-REORGANIZATION
-    title: "Program Charter: EPIC-ULR \u2014 Four-Estate Boundary, Typed MCard Interop & Safe SPA Hosting"
+    title: 'Program Charter: EPIC-ULR — Four-Estate Boundary, Typed MCard Interop & Safe SPA Hosting'
     dod:
       total: 0
       vcard_refs: []
@@ -6066,7 +6348,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: ULR-01
-    title: "Sprint Specification: ULR-01 \u2014 LeanRea Evidence-Based Functional Census & Four-Estate Boundary Contract"
+    title: 'Sprint Specification: ULR-01 — LeanRea Evidence-Based Functional Census & Four-Estate Boundary Contract'
     dod:
       total: 8
       vcard_refs:
@@ -6083,7 +6365,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: ULR-02
-    title: "Sprint Specification: ULR-02 \u2014 `clm-kernel` Producer Consensus & Published Consumer Compatibility"
+    title: 'Sprint Specification: ULR-02 — `clm-kernel` Producer Consensus & Published Consumer Compatibility'
     dod:
       total: 8
       vcard_refs:
@@ -6100,7 +6382,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: ULR-03
-    title: "Sprint Specification: ULR-03 \u2014 Serializable PCard Descriptors & Namespace API Conformance"
+    title: 'Sprint Specification: ULR-03 — Serializable PCard Descriptors & Namespace API Conformance'
     dod:
       total: 8
       vcard_refs:
@@ -6117,7 +6399,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: ULR-04
-    title: "Sprint Specification: ULR-04 \u2014 Finite Petri Lattice Laws & Cross-Runtime Marking Contract"
+    title: 'Sprint Specification: ULR-04 — Finite Petri Lattice Laws & Cross-Runtime Marking Contract'
     dod:
       total: 8
       vcard_refs:
@@ -6134,7 +6416,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: ULR-05
-    title: "Sprint Specification: ULR-05 \u2014 Curated Portal Corpus, Sandbox Contract & Safe URL Probe"
+    title: 'Sprint Specification: ULR-05 — Curated Portal Corpus, Sandbox Contract & Safe URL Probe'
     dod:
       total: 8
       vcard_refs:
@@ -6151,7 +6433,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: ULR-06
-    title: "Sprint Specification: ULR-06 \u2014 `LandingPage` Legacy-Surface Retirement & Published-Kernel Boundary"
+    title: 'Sprint Specification: ULR-06 — `LandingPage` Legacy-Surface Retirement & Published-Kernel Boundary'
     dod:
       total: 8
       vcard_refs:
@@ -6168,7 +6450,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: ULR-07
-    title: "Sprint Specification: ULR-07 \u2014 Generated Portal Corpus Integration & Viewport Regression Tests"
+    title: 'Sprint Specification: ULR-07 — Generated Portal Corpus Integration & Viewport Regression Tests'
     dod:
       total: 8
       vcard_refs:
@@ -6185,7 +6467,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: ULR-08
-    title: "Sprint Specification: ULR-08 \u2014 Published-Kernel Workbench Contract & Preset Scope"
+    title: 'Sprint Specification: ULR-08 — Published-Kernel Workbench Contract & Preset Scope'
     dod:
       total: 8
       vcard_refs:
@@ -6202,7 +6484,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: ULR-09
-    title: "Sprint Specification: ULR-09 \u2014 Root Workspace, Compatibility & Submodule Retirement Audit"
+    title: 'Sprint Specification: ULR-09 — Root Workspace, Compatibility & Submodule Retirement Audit'
     dod:
       total: 8
       vcard_refs:
@@ -6219,7 +6501,7 @@ sprints:
     card_type: pcard
     archetype: ClmTriadManifest
     code: ULR-10
-    title: "Sprint Specification: ULR-10 \u2014 Four-Estate Convergence Gate & Evidence-Based Graduation"
+    title: 'Sprint Specification: ULR-10 — Four-Estate Convergence Gate & Evidence-Based Graduation'
     dod:
       total: 8
       vcard_refs:
@@ -6235,9 +6517,8 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: 6078f71542e983a5fe5f24ea86a7cf1fc8d783881088b6f384b7fe56329e9549
-  projection_sha256: fc4d2d1817171dc3090d9e564f6c65e43ea54e30dbe3c13cfe61c0bc84ecb63e
-  kernel_version: 0.0.25
-  landing_page_commit: 3fb2cb85662597649f82d92d31e05fd9f99d208f
-  sprint_count: 304
+  source_sha256: e307d571aba186772b4b6250b6e01563189054ea7ea5b11bc53047cd1594a100
+  projection_sha256: ea826a8fe83c929e28fdbabda768ef2b63e5a9751034de6fe18437a21089d200
+  kernel_version: 0.0.24
+  sprint_count: 324
   unresolved_trace_refs: 0

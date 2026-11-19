@@ -29,7 +29,7 @@ The Sovereign MCard portal (`src/pages/index.astro` when `?noredirect=1`) hosts 
 4. Mount the showcase inside `#portal-stageshow-showcase` in `src/pages/index.astro` between the GovTech hero and `#single-page-mcard-host`:
    - Render a static HTML/CSS poster inside `#portal-stageshow-showcase` immediately with `0` `<astro-island>` tags and `js/landing-page-mcard.js <= 250` lines.
    - Mount live scene upgrades into an open Shadow DOM root (`attachShadow({ mode: 'open' })`) appending `<link rel="stylesheet" href="/public/stageshow/workbench-bombadil-pair/scene.css">` inside `shadowRoot`, passing `<Stage cursor={{ at: ..., ripple: false }}>` (`stage.tsx:45`), keeping `data-cursor` attributes off shadow-mounted elements (`act.ts:206,222`), and binding reactive `<Stage theme={...}>` state from initial `document.documentElement.dataset.theme` + `lab:presentation-change` events (`'high-contrast' -> 'dark'` with `.ss-stage` `--ss-*` overrides) plus `data-power-mode`, gating auto-play when `window.self === window.top && !matchMedia('(prefers-reduced-motion: reduce)').matches && document.documentElement.dataset.powerMode !== 'energy-saving'` while preserving light-DOM `querySelectorAll('*')` invariance.
-5. Update `tests/features/layout-freeze.spec.js` `VOLATILE.index` (`:44`) to add `'#portal-stageshow-showcase *'` (masking internal light-DOM fallback poster descendants via `el.closest('#portal-stageshow-showcase *')` while keeping the outer `<section id="portal-stageshow-showcase">` container frozen), selectively re-capture parent-repo `../docs/sprints/programs/sty/style/layout-baseline.json` (`STY_FREEZE_PAGES=index`) with a `rebaselines` entry, and write `tests/features/portal-stageshow-showcase.spec.js`.
+5. Update `tests/features/layout-freeze.spec.js` `VOLATILE.index` (`:44`) to add `'#portal-stageshow-showcase *'` (masking internal light-DOM fallback poster descendants via `el.closest('#portal-stageshow-showcase *')` while keeping the outer `<section id="portal-stageshow-showcase">` container frozen), selectively re-capture `tests/baselines/layout-baseline.json` (`STY_FREEZE_PAGES=index`) with a `rebaselines` entry, and write `tests/features/portal-stageshow-showcase.spec.js`.
 6. Execute full mechanical rehearsal across every `film.mjs` mode against `'/public/stageshow/workbench-bombadil-pair/index.html'` (`wide --gate`, `--width 390 --gate`, `--dark --gate`, `--reduced --still --gate`, `--states --gate`, and `stageshow:jumps -- --strict`), sign `tools/stageshow/scenes/workbench-bombadil-pair/REHEARSAL.md`, and write `docs/sprints/_active/evidence/SSG-07-portal-showcase.md` + [`./DECISIONS.tsv`](./DECISIONS.tsv).
 
 ## Files
@@ -38,7 +38,7 @@ The Sovereign MCard portal (`src/pages/index.astro` when `?noredirect=1`) hosts 
 - Create compiled static scene artifacts (`index.html`, `scene.js`, `scene.css`) under `public/stageshow/workbench-bombadil-pair/` (built via `node tools/stageshow/build-scenes.mjs`)
 - Edit `tools/stageshow/build-scenes.mjs` (dual `index.html` + embeddable `scene.js`/`scene.css` emit) and `src/pages/index.astro`
 - Create `tests/features/portal-stageshow-showcase.spec.js`
-- Edit `tests/features/layout-freeze.spec.js` (`VOLATILE.index`) and parent-repo `../docs/sprints/programs/sty/style/layout-baseline.json`
+- Edit `tests/features/layout-freeze.spec.js` (`VOLATILE.index`) and `tests/baselines/layout-baseline.json`
 - Create `docs/sprints/_active/evidence/SSG-07-portal-showcase.md` and append row to [`./DECISIONS.tsv`](./DECISIONS.tsv)
 
 ## BMAD responsibilities

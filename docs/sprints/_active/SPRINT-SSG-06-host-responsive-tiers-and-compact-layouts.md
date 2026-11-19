@@ -34,14 +34,14 @@ Every host page adapts across unified breakpoints (`desktop >= 1280px`, `tablet 
 3. Create `tests/features/host-responsive-tiers.spec.js` and refine `tests/features/presentation-lattice.spec.js` (`lines 180-222`):
    - Update `presentation-lattice.spec.js` Test 5 to check bidirectional bounds (`r.left >= -1 && r.right <= vw + 1`) alongside `documentElement.scrollWidth <= vw + 1` across `358x800`, `390x844`, `768x1024`, `820x1180`, and `1440x900`.
    - Implement `tests/features/host-responsive-tiers.spec.js` iterating all `6` `SWEEP_ROUTES` (`/responsive-lab.html`, `/index.html?noredirect=1`, `/sprint-registry.html`, `/fiber-inspector.html`, `/fiber-conformance.html`, `/app.html`) x `4` viewports (`1440x900`, `820x1180`, `390x844`, `358x800`) plus `1280x720`, asserting `scrollWidth <= vw + 1`, `r.left >= -1 && r.right <= vw + 1` on visible controls, and union-over-modes reachability across `Stage | Explore | Guided | Bombadil | Verify` at `358px` (zero missing controls across tabs).
-4. Execute `npm run stageshow:sweep -- --strict` verifying all `24` captures pass (`findings=0`, `errors=0`, `clipped=0`, `overflows=0`), inspect generated PNGs under `stageshow-output/`, selectively re-capture parent-repo `../docs/sprints/programs/sty/style/layout-baseline.json` (`STY_FREEZE_PAGES=responsive-lab,index` if compact/Home layout alters frozen selectors) with `rebaselines` attribution, and record `docs/sprints/_active/evidence/SSG-06-host-tiers.md` + [`./DECISIONS.tsv`](./DECISIONS.tsv).
+4. Execute `npm run stageshow:sweep -- --strict` verifying all `24` captures pass (`findings=0`, `errors=0`, `clipped=0`, `overflows=0`), inspect generated PNGs under `stageshow-output/`, selectively re-capture `tests/baselines/layout-baseline.json` (`STY_FREEZE_PAGES=responsive-lab,index` if compact/Home layout alters frozen selectors) with `rebaselines` attribution, and record `docs/sprints/_active/evidence/SSG-06-host-tiers.md` + [`./DECISIONS.tsv`](./DECISIONS.tsv).
 
 ## Files
 
 - Edit `public/css/responsive-lab.css`, `js/harness/viewport-stage.js`, `js/harness/lab-runtime.js`, and `src/pages/responsive-lab.astro`
 - Edit `src/pages/index.astro` and `scripts/penpot-render.mjs` (add `id="main-content" tabindex="-1"` on `<div class="container">` `index.astro:350`, keep `<a href="index.html" aria-current="page" data-penpot-handle="mcard:route:/index.html">` with optional click `preventDefault()` focus on `#main-content` so `root-index.spec.js`, `penpot-navigation.spec.js`, and `check:net` stay green)
 - Create `tests/features/host-responsive-tiers.spec.js`
-- Edit `tests/features/presentation-lattice.spec.js` and parent-repo `../docs/sprints/programs/sty/style/layout-baseline.json`
+- Edit `tests/features/presentation-lattice.spec.js` and `tests/baselines/layout-baseline.json`
 - Create `docs/sprints/_active/evidence/SSG-06-host-tiers.md` and append row to [`./DECISIONS.tsv`](./DECISIONS.tsv)
 
 ## BMAD responsibilities
@@ -64,7 +64,7 @@ Every host page adapts across unified breakpoints (`desktop >= 1280px`, `tablet 
 
 ### TEA
 
-- Create `tests/features/host-responsive-tiers.spec.js`, prove union-over-modes reachability at `358px`, pass `npm run stageshow:sweep -- --strict` with `0` findings/clipped/overflows, and re-baseline parent-repo `layout-baseline.json`.
+- Create `tests/features/host-responsive-tiers.spec.js`, prove union-over-modes reachability at `358px`, pass `npm run stageshow:sweep -- --strict` with `0` findings/clipped/overflows, and re-baseline `tests/baselines/layout-baseline.json`.
 
 ## Acceptance criteria
 

@@ -450,7 +450,7 @@ test('DoD-SMR-09-04: the seed generator produces the 6-sample corpus with 4 view
 });
 
 test('DoD-SMR-09-04: the corpus validates against crd_landing_viewport.schema.json', () => {
-  const schemaPath = path.join(REPO_ROOT, 'clm/docs/spec/60-verification/crd_landing_viewport.schema.json');
+  const schemaPath = path.resolve(import.meta.dirname, '..', 'schemas/crd_landing_viewport.schema.json');
   assert.equal(fs.existsSync(schemaPath), true, 'the named viewport schema must exist');
   const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
   const manifest = yaml.load(
