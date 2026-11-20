@@ -1,6 +1,6 @@
 {
   "name": "pkc-landing-page-monorepo",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "PKC Landing Page & Server - A Personal Knowledge Container web application and server",
   "engines": {
     "node": ">=22.15.0"

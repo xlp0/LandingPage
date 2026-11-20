@@ -9,6 +9,10 @@ All notable changes to the PKC Landing Page are documented in this file. The for
 
 ## [Unreleased]
 
+## [0.0.1] - 2026-11-20
+
+Starts the official `package.json` (`0.0.1`) versioned release line, superseding earlier historical `0.1.0..0.3.0` program milestone labels.
+
 - **Vite 8 / Astro Dev Preact JSX Scan Fix (`2026-11-20`)**:
   - Added `vite.optimizeDeps.include` (`preact`, `preact/jsx-runtime`, `preact/jsx-dev-runtime`) and `vite.optimizeDeps.rolldownOptions.transform.jsx` (`runtime: 'automatic'`, `importSource: 'preact'`) in `astro.config.mjs` so Vite `8.3.5` (`astro@7.4.2`) dependency scanning no longer emits `react/jsx-dev-runtime` imports when scanning `src/islands/*.jsx`.
   - Added config regression assertion in `tests/unit/target-policy-and-config.test.mjs`.
