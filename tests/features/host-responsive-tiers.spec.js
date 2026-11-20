@@ -50,8 +50,6 @@ async function waitForRouteReady(page, route) {
   } else if (route.startsWith('/index.html')) {
     await page.waitForFunction(() => document.body?.dataset?.pageState === 'ready', null, { timeout: 15000 });
     await page.waitForSelector('#penpot-site-nav', { state: 'visible', timeout: 10000 });
-  } else if (route === '/app.html') {
-    await page.waitForFunction(() => document.body?.dataset?.pageState === 'ready', null, { timeout: 15000 });
   } else {
     await page.waitForTimeout(250);
   }
@@ -80,7 +78,7 @@ async function collectVisibleTestIds(page) {
 }
 
 test.describe('SPRINT-SSG-06: Host Responsive Tiers & Compact Architecture', () => {
-  test('all 6 sweep routes stay within bidirectional viewport bounds across desktop, tablet, and compact widths', async ({ isolatedLabPage }) => {
+  test('all 5 sweep routes stay within bidirectional viewport bounds across desktop, tablet, and compact widths', async ({ isolatedLabPage }) => {
     const { page } = isolatedLabPage;
 
     for (const route of SWEEP_ROUTES) {

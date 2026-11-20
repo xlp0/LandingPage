@@ -509,7 +509,7 @@ describe('Layer 4 target net, Layer 1 workbench net, and Canonical Triad persist
     assert.notEqual(buildBindingEdited.bindingsMCardHash, buildOriginal.bindingsMCardHash);
 
     const editedArc = structuredClone(wbEnvelope);
-    editedArc.topology.transitions[0].outputs = ['p_page_app'];
+    editedArc.topology.transitions[0].outputs = ['p_page_sprint_registry'];
     const buildArcEdited = buildWorkbenchNetMCard(editedArc);
     assert.notEqual(buildArcEdited.netMCard.card.hash, buildA.netMCard.card.hash);
   });

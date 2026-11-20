@@ -142,7 +142,7 @@ export function lintTree({
     violations.push(...lintText(fs.readFileSync(file, 'utf8'), { file, island, inScopePage: !island }));
   }
   for (const file of walk(pageDir)) {
-    const inScopePage = file.endsWith('.astro') && path.basename(file) !== 'app.astro';
+    const inScopePage = file.endsWith('.astro');
     violations.push(...lintText(fs.readFileSync(file, 'utf8'), { file, island: false, inScopePage }));
   }
   for (const file of walk(harnessDir)) {

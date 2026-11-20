@@ -9,7 +9,6 @@ import "./net-report.ts";
 // Controls an unattended run must not press. A new tab also starves this tab of animation frames,
 // which Bombadil's quiescence check waits on, so every later action would time out.
 // The last two rows keep the frame off targets scope.json puts outside the exploration boundary.
-// /app.html is one of them: it logs a console error when a target switch aborts its startup fetch.
 const SKIPPED_SELECTOR = [
   '[data-effect="external"]',
   '[data-effect="destructive"]',
@@ -17,7 +16,7 @@ const SKIPPED_SELECTOR = [
   '[data-effect="file-picker"]',
   'a[target="_blank"]',
   '[data-testid^="target-chip-"]:not([data-testid="target-chip-spa-test-target"])',
-  '[data-testid="workflow-select-app-html"]',
+  '[data-testid="workflow-select-portal-index"]',
   '[data-testid^="bombadil-"]',
   "#bombadil-transport-pill",
   "#bombadil-dashboard-panel button"

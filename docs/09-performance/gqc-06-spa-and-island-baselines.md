@@ -57,7 +57,7 @@ Static manifest analysis (`analyzePlaceBytes`) inspects `dist/client/` against `
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `p_page_index` | `page` | `/` | `astro-wrapped` | 0 | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `0 B` island JS | **Blocking** (`0 B` island JS) |
 | `p_page_responsive_lab` | `page` | `/responsive-lab.html` | `astro-islands` | 7 (5 eager, 2 `client:visible`) | `76,787 / 22,268 / 19,699 B` | `72,304 / 23,569 / 21,275 B` | `0 / 0 / 0 B` | `149,091 / 45,837 / 40,974 B` | `165,000 B` eager (`175,000 B` all islands) | Advisory pending PM approval |
-| `p_page_app` | `page` | `/app.html` | `astro-wrapped` | 0 | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `511,208 / 130,050 / 101,824 B` | `511,208 / 130,050 / 101,824 B` | `0 B` island JS, `550,000 B` page JS | **Blocking** (`0 B` island JS), total advisory |
+| p_page_app (retired `SLC-02`) | `page` | app.html (historical) | `astro-wrapped` | 0 | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `511,208 / 130,050 / 101,824 B` | `511,208 / 130,050 / 101,824 B` | Historical (`SLC-02`) | Retired in `SPRINT-SLC-02` |
 | `p_page_sprint_registry` | `page` | `/sprint-registry.html` | `astro-wrapped` | 0 | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `0 B` island JS | **Blocking** (`0 B` island JS) |
 | `p_page_fiber_inspector` | `page` | `/fiber-inspector.html` | `astro-wrapped` | 0 | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `42,111 / 14,757 / 12,651 B` | `42,111 / 14,757 / 12,651 B` | `0 B` island JS, `50,000 B` page JS | **Blocking** (`0 B` island JS), total advisory |
 | `p_page_fiber_conformance` | `page` | `/fiber-conformance.html` | `astro-wrapped` | 0 | `0 / 0 / 0 B` | `0 / 0 / 0 B` | `42,111 / 14,757 / 12,651 B` | `42,111 / 14,757 / 12,651 B` | `0 B` island JS, `50,000 B` page JS | **Blocking** (`0 B` island JS), total advisory |
@@ -115,7 +115,7 @@ Server-call Transitions report request dispatch and `ok` or `fail` completion se
 | Transition Kind | Representative Transition ID | From -> To Place | Head Median | Head p75 | Head p95 | Head Min to Max |
 | --- | --- | --- | --- | --- | --- | --- |
 | `redirect` | `t_redirect_index_to_lab` | `p_page_index -> p_page_responsive_lab` | `79.42 ms` | `80.39 ms` | `80.86 ms` | `77.07 .. 80.88 ms` |
-| `link` | `t_link_lab_to_app` | `p_page_responsive_lab -> p_page_app` | `109.99 ms` | `111.97 ms` | `113.66 ms` | `107.72 .. 114.27 ms` |
+| `link` | t_link_lab_to_app (retired `SLC-02`) | p_page_responsive_lab -> p_page_app (historical) | `109.99 ms` | `111.97 ms` | `113.66 ms` | `107.72 .. 114.27 ms` |
 | `server-call-request` | `t_req_post_test_runs` | `p_page_responsive_lab -> p_pending_post_test_runs` | `32.29 ms` | `33.00 ms` | `33.71 ms` | `30.93 .. 34.32 ms` |
 | `server-call-ok` | `t_ok_post_test_runs` | `p_pending_post_test_runs -> p_page_responsive_lab` | `16.52 ms` | `16.96 ms` | `17.27 ms` | `15.28 .. 18.34 ms` |
 | `server-call-fail` | `t_fail_get_conformance_latest` | `p_pending_get_conformance_latest -> p_page_responsive_lab` | `15.27 ms` | `16.63 ms` | `17.72 ms` | `13.80 .. 17.78 ms` |
@@ -132,7 +132,7 @@ Server-call Transitions report request dispatch and `ok` or `fail` completion se
 | `/` redirect to Lab | `p_page_index -> p_page_responsive_lab` | `75.85 ms` (`79.00 ms`) | `125.85 ms` (`126.57 ms`) | `112,756 B` | `149,091 B` | `+50.00 ms` and `+36,335 B` from Astro island bootstrap plus `SpaTestWorkflow` added in `GQC-01..03` |
 | `/index.html?noredirect=1` | `p_view_index_mcard_viewer` | `42.10 ms` (`43.57 ms`) | `41.03 ms` (`45.81 ms`) | `195,572 B` | `147,342 B` | `-1.07 ms` median and `-48,230 B` (`-24.7%`) decoded JS with `0 B` island overhead |
 | `/responsive-lab.html` | `p_page_responsive_lab` | `75.15 ms` (`99.10 ms`) | `121.11 ms` (`122.11 ms`) | `112,756 B` | `149,091 B` | `+45.96 ms` median (`IQR` narrowed from `24.43 ms` to `0.66 ms`) with `0` long tasks |
-| `/app.html` | `p_page_app` | `48.89 ms` (`49.44 ms`) | `49.39 ms` (`50.48 ms`) | `517,889 B` | `517,889 B` | Parity (`+0.50 ms`), `0 B` island JS, `0` WebLLM model requests before AI selection |
+| app.html (retired `SLC-02`) | p_page_app (retired `SLC-02`) | `48.89 ms` (`49.44 ms`) | `49.39 ms` (`50.48 ms`) | `517,889 B` | `517,889 B` | Historical parity before `SPRINT-SLC-02` retirement (`0` WebLLM model requests) |
 | `/sprint-registry.html` | `p_page_sprint_registry` | `19.81 ms` (`20.05 ms`) | `20.24 ms` (`20.54 ms`) | `0 B` | `0 B` | Parity (`+0.44 ms`), `0 B` client JS |
 | `/fiber-inspector.html` | `p_page_fiber_inspector` | `22.39 ms` (`22.75 ms`) | `23.03 ms` (`23.57 ms`) | `42,111 B` | `42,111 B` | Parity (`+0.65 ms`), `0 B` island JS |
 | `/fiber-conformance.html` | `p_page_fiber_conformance` | `16.53 ms` (`16.96 ms`) | `17.19 ms` (`18.14 ms`) | `42,111 B` | `42,111 B` | Parity (`+0.67 ms`), `0 B` island JS |

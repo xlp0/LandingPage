@@ -19,11 +19,6 @@
       "expectedKind": "page"
     },
     {
-      "url": "/app.html",
-      "expectedPlaceId": "p_page_app",
-      "expectedKind": "page"
-    },
-    {
       "url": "/sprint-registry.html",
       "expectedPlaceId": "p_page_sprint_registry",
       "expectedKind": "page"

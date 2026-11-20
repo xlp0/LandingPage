@@ -251,9 +251,9 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
     });
 
     try {
-      const appPage = await appContext.newPage();
-      await appPage.goto(`${baseURL}/app.html`, { waitUntil: 'domcontentloaded' });
-      await expect(appPage.locator('h1', { hasText: 'MCard Manager' })).toBeVisible();
+      const portalPage = await appContext.newPage();
+      await portalPage.goto(`${baseURL}/index.html?noredirect=1`, { waitUntil: 'domcontentloaded' });
+      await expect(portalPage.locator('#penpot-site-nav')).toBeVisible();
       expect(modelAssetRequests).toEqual([]);
     } finally {
       await appContext.close();
@@ -776,21 +776,17 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
       });
       expect(policyReplay.ok).toBe(true);
 
-      const appPopupPromise = page.waitForEvent('popup');
       const tLink = performance.now();
-      await page.locator('#btn-nav-mission-control').click();
-      const appPage = await appPopupPromise;
-      await appPage.waitForLoadState('domcontentloaded');
-      await expect(appPage).toHaveURL(/\/app\.html$/);
-      await expect(appPage.locator('h1', { hasText: 'MCard Manager' })).toBeVisible();
+      await page.locator('#btn-back-home').click();
+      await page.waitForURL(/\/index\.html\?noredirect=1$/);
+      await expect(page.locator('#penpot-site-nav')).toBeVisible();
       recordedByKind.link = {
-        transitionId: 't_link_lab_to_app',
+        transitionId: 't_link_lab_to_index',
         kind: 'link',
         fromPlaceId: 'p_page_responsive_lab',
-        toPlaceId: 'p_page_app',
+        toPlaceId: 'p_view_index_mcard_viewer',
         latencyMs: Number((performance.now() - tLink).toFixed(3))
       };
-      await appPage.close();
 
       const requiredKinds = [
         'redirect',
@@ -822,7 +818,6 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
 
     const routesToCheck = [
       { placeId: 'p_view_index_mcard_viewer', route: '/index.html?noredirect=1', isView: true },
-      { placeId: 'p_page_app', route: '/app.html', isView: false },
       { placeId: 'p_page_sprint_registry', route: '/sprint-registry.html', isView: false },
       { placeId: 'p_page_fiber_inspector', route: '/fiber-inspector.html', isView: false },
       { placeId: 'p_page_fiber_conformance', route: '/fiber-conformance.html', isView: false },

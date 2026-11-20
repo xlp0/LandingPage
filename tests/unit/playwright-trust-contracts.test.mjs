@@ -83,7 +83,7 @@ test('GQC-01-UNIT-01 configured Playwright projects partition specs cleanly, enf
   const expectedFeatureFiles = countSpecFiles('tests/features');
 
   const byName = new Map(projectResults.map((entry) => [entry.project, entry]));
-  assert.ok(expectedSmokeFiles >= 11);
+  assert.ok(expectedSmokeFiles >= 9);
   assert.ok(expectedComponentFiles >= 14);
   assert.ok(expectedFeatureFiles >= 17);
   assert.equal(byName.get('smoke')?.fileCount, expectedSmokeFiles);
@@ -131,7 +131,7 @@ test('GQC-01-UNIT-01 configured Playwright projects partition specs cleanly, enf
   }
 });
 
-test('GQC-01-UNIT-02 test-config and CLM helpers resolve URLs from TEST_PORT and BASE_URL and cover all seven root HTML surfaces', () => {
+test('GQC-01-UNIT-02 test-config and CLM helpers resolve URLs from TEST_PORT and BASE_URL and cover all six root HTML surfaces', () => {
   const defaultConfig = resolveTestConfig({});
   assert.equal(defaultConfig.TEST_PORT, 3001);
   assert.equal(defaultConfig.EXPRESS_DEFAULT_PORT, 3000);
@@ -149,7 +149,7 @@ test('GQC-01-UNIT-02 test-config and CLM helpers resolve URLs from TEST_PORT and
     portOverrideConfig.CLM_DASHBOARD_URL,
     'http://localhost:4123/archive/html/index-clm-dashboard.html'
   );
-  assert.equal(portOverrideConfig.APP_PAGE_URL, 'http://localhost:4123/app.html');
+  assert.equal(portOverrideConfig.RESPONSIVE_LAB_URL, 'http://localhost:4123/responsive-lab.html');
 
   const baseOverrideConfig = resolveTestConfig({
     TEST_PORT: '4123',
@@ -179,7 +179,7 @@ test('GQC-01-UNIT-02 test-config and CLM helpers resolve URLs from TEST_PORT and
   const workbenchPages = registry.workbenchSurfaces.map((surface) => surface.pagePath).sort();
   const characterizedPages = ROOT_PAGE_CHARACTERIZATIONS.map((entry) => entry.pagePath).sort();
   assert.deepEqual(characterizedPages, workbenchPages);
-  assert.equal(ROOT_PAGE_CHARACTERIZATIONS.length, 7);
+  assert.equal(ROOT_PAGE_CHARACTERIZATIONS.length, 6);
 
   const registeredSpecs = new Set();
   for (const journey of registry.journeys) {

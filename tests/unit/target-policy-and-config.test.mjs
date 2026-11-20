@@ -358,19 +358,19 @@ test('GQC-03-UNIT-06: TargetMembrane emits replayable Petri net traces across al
 
   membrane.bindTarget('https://github.com', 'dropdown-select');
   assert.equal(membrane.getPolicyPlaceId(), 'p_error_target_blocked');
-  membrane.recoverToDefault('app.html');
+  membrane.recoverToDefault('/tests/fixtures/spa-test-target.html');
   assert.equal(membrane.getPolicyPlaceId(), 'p_page_responsive_lab');
 
   membrane.bindTarget('pkc-docs-index.html', 'dropdown-select');
   assert.equal(membrane.getPolicyPlaceId(), 'p_error_capture_unavailable');
-  membrane.recoverToDefault('app.html');
+  membrane.recoverToDefault('/tests/fixtures/spa-test-target.html');
   assert.equal(membrane.getPolicyPlaceId(), 'p_page_responsive_lab');
 
   membrane.bindTarget('http://127.0.0.1:3001/tests/fixtures/probe-target-noagent.html', 'dropdown-select');
   assert.equal(membrane.getPolicyPlaceId(), 'p_pending_probe_handshake');
   membrane.notifyProbeHandshakeOutcome('timeout', '5000ms timeout');
   assert.equal(membrane.getPolicyPlaceId(), 'p_error_handshake_timeout');
-  membrane.recoverToDefault('app.html');
+  membrane.recoverToDefault('/tests/fixtures/spa-test-target.html');
   assert.equal(membrane.getPolicyPlaceId(), 'p_page_responsive_lab');
 
   assert.throws(() => membrane.bindTarget('javascript:alert(1)', 'user-input'));
@@ -515,7 +515,7 @@ test('shouldBypassAstroDevRouteGuard allows statically proxied targets and block
     '/pkc-viewer.html?doc=PKC%20as%20the%20Network.md',
     '/public/examples/location-map.html',
     '/components/welcome.html',
-    '/config/app-views.json',
+    '/config/pwa-config.json',
     '/images/PKC_Flat_Logo_TransparentBackground.png',
     '/pkc-docs/PKC%20as%20the%20Network.md',
     '/create-card-template.html',
@@ -605,7 +605,7 @@ test('Astro dev server serves statically defined iframe/page targets and pkc-vie
       '/pkc-viewer.html?doc=PKC%20as%20the%20Network.md',
       '/public/examples/location-map.html',
       '/components/welcome.html',
-      '/config/app-views.json',
+      '/config/pwa-config.json',
       '/pkc-docs/PKC%20as%20the%20Network.md',
       '/modules.json'
     ]) {

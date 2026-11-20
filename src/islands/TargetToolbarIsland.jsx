@@ -55,7 +55,7 @@ export default function TargetToolbarIsland() {
           type="text"
           id="target-url-input"
           className="target-url-input"
-          placeholder="Type target URL or path (e.g. app.html, http://localhost:5320)..."
+          placeholder="Type target URL or path (e.g. index.html, http://127.0.0.1:5320)..."
           autoComplete="off"
           spellCheck={false}
           aria-label="Test Target URL input"
@@ -79,7 +79,7 @@ export default function TargetToolbarIsland() {
         style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.35rem', flexWrap: 'wrap' }}
       >
         <span id="target-type-badge" data-testid="target-type-badge" className="lab-badge">
-          Type: webapp
+          Type: spa
         </span>
         <span
           id="target-policy-status"

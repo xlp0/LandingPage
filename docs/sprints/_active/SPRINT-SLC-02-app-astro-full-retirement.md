@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-SLC-02` |
 | Source of Truth | [`./slc-plan.md`](./slc-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-SLC-02` |
-| Status | `PLANNED` |
+| Status | `DONE` |
 | Depends on | `SPRINT-SLC-01` |
 | Unblocks | `SPRINT-SLC-03` |
 | Execution unit | `PR-SLC-02` |
@@ -44,6 +44,6 @@ Fully retire the legacy `/app.html` Mission Control page (`src/pages/app.astro`)
 
 ## Definition of done
 
-- [ ] **DoD-SLC-02-01.** `src/pages/app.astro` and Mission Control `MCardManager` UI assets are deleted while `compat.js` and `fiber-conformance.astro` remain intact.
-- [ ] **DoD-SLC-02-02.** `workbench-net.yaml`, `app-config.json`, PenPot nav, StageShow sweep (`20/20`), `check:explorable-gui`, `docs:check`, `test:unit`, and Playwright suites pass.
-- [ ] **DoD-SLC-02-03.** Closure evidence is recorded in `docs/sprints/_active/evidence/SLC-02-app-retirement.md` and `DECISIONS.tsv`.
+- [x] **DoD-SLC-02-01.** `src/pages/app.astro` and Mission Control `MCardManager` UI assets are deleted while `compat.js` and `fiber-conformance.astro` remain intact.
+- [x] **DoD-SLC-02-02.** `workbench-net.yaml`, `app-config.json`, PenPot nav, StageShow sweep (`20/20`), `check:explorable-gui`, `docs:check`, `test:unit`, and Playwright suites pass.
+- [x] **DoD-SLC-02-03.** Closure evidence is recorded in `docs/sprints/_active/evidence/SLC-02-app-retirement.md` and `DECISIONS.tsv`.

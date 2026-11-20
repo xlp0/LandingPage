@@ -12,14 +12,13 @@ const spaGraph = loadSpaFixtureGraph();
 const MIGRATED_PATHS = [
   { url: '/index.html', characterizationPath: '/index.html' },
   { url: '/responsive-lab.html', characterizationPath: '/responsive-lab.html' },
-  { url: '/app.html', characterizationPath: '/app.html' },
   { url: '/sprint-registry.html', characterizationPath: '/sprint-registry.html' },
   { url: '/fiber-inspector.html', characterizationPath: '/fiber-inspector.html' },
   { url: '/fiber-conformance.html', characterizationPath: '/fiber-conformance.html' }
 ];
 
 test.describe('SPRINT-GQC-02B: Astro Host Parity and Middleware Contracts', () => {
-  test('GQC-02B-INT-01: Astro middleware serves all 6 migrated Places with x-gqc-host meta while falling through cleanly for /health, /api/*, /app-config.json, legacy static pages, and 404s', async ({
+  test('GQC-02B-INT-01: Astro middleware serves all 5 migrated Places with x-gqc-host meta while falling through cleanly for /health, /api/*, /app-config.json, legacy static pages, and 404s', async ({
     request
   }) => {
     const rootRes = await request.get('/');
@@ -181,17 +180,16 @@ test.describe('SPRINT-GQC-02B: Astro Host Parity and Middleware Contracts', () =
     await page.goto('/');
     await page.waitForURL(/\/responsive-lab\.html(?:\?|$)/);
     await expect(page.locator('meta[name="x-gqc-host"]')).toHaveAttribute('content', 'astro');
-    await expect(page.locator('#btn-nav-mission-control')).toBeVisible();
+    await expect(page.locator('#btn-back-home')).toBeVisible();
 
-    const popupPromise = page.waitForEvent('popup');
-    await page.locator('#btn-nav-mission-control').click();
-    const appPage = await popupPromise;
-    await appPage.waitForURL(/\/app\.html(?:\?|$)/);
-    await expect(appPage.locator('meta[name="x-gqc-host"]')).toHaveAttribute('content', 'astro');
+    await page.locator('#btn-back-home').click();
+    await page.waitForURL(/\/index\.html\?noredirect=1$/);
+    await expect(page.locator('meta[name="x-gqc-host"]')).toHaveAttribute('content', 'astro');
+    await expect(page.locator('#penpot-site-nav')).toBeVisible();
 
-    await appPage.locator('button.header-btn[title="Back to Landing Page"]').click();
-    await appPage.waitForURL(/\/responsive-lab\.html(?:\?|$)/);
-    await expect(appPage.locator('meta[name="x-gqc-host"]')).toHaveAttribute('content', 'astro');
+    await page.locator('#responsive-ui-lab-btn').click();
+    await page.waitForURL(/\/responsive-lab\.html(?:\?|$)/);
+    await expect(page.locator('meta[name="x-gqc-host"]')).toHaveAttribute('content', 'astro');
 
     const trace = workbenchNetTracer.getTrace();
     expect(trace.unmappedNavigations).toEqual([]);
@@ -200,6 +198,7 @@ test.describe('SPRINT-GQC-02B: Astro Host Parity and Middleware Contracts', () =
     expect(replayResult.sessionInvariantHolds).toBe(true);
     expect(replayResult.finalPlaceId).toBe('p_page_responsive_lab');
     expect(replayResult.firedTransitionIds).toContain('t_redirect_index_to_lab');
-    expect(replayResult.firedTransitionIds).toContain('t_link_lab_to_app');
+    expect(replayResult.firedTransitionIds).toContain('t_link_lab_to_index');
+    expect(replayResult.firedTransitionIds).toContain('t_link_viewer_to_lab');
   });
 });

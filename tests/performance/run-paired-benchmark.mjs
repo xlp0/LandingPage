@@ -661,14 +661,11 @@ async function runPairATrial(browser, baseUrl) {
     await page.locator('#cors-block-alert').waitFor({ state: 'hidden' });
     out.transitions.recover = Number((performance.now() - tRecover).toFixed(3));
 
-    const appPopupP = page.waitForEvent('popup');
     const tNavLink = performance.now();
-    await page.locator('#btn-nav-mission-control').click();
-    const appPage = await appPopupP;
-    await appPage.waitForLoadState('domcontentloaded');
-    await appPage.locator('h1', { hasText: 'MCard Manager' }).waitFor({ state: 'visible' });
+    await page.locator('#btn-back-home').click();
+    await page.waitForURL(/\/index\.html\?noredirect=1$/);
+    await page.locator('#penpot-site-nav').waitFor({ state: 'visible' });
     out.transitions.link = Number((performance.now() - tNavLink).toFixed(3));
-    await appPage.close();
 
     const viewerPage = await coldCtx.newPage();
     const tViewer = performance.now();
@@ -724,19 +721,19 @@ async function runPairATrial(browser, baseUrl) {
     });
     await viewerPage.close();
 
-    const mcPage = await coldCtx.newPage();
+    const portalColdPage = await coldCtx.newPage();
     let modelReqs = 0;
-    mcPage.on('request', (req) => {
+    portalColdPage.on('request', (req) => {
       if (/huggingface\.co|mlc-ai|web-llm.*\.(wasm|bin)|ndarray-cache\.json|params_shard/i.test(req.url())) {
         modelReqs += 1;
       }
     });
     const tMc = performance.now();
-    await mcPage.goto(`${baseUrl}/app.html`, { waitUntil: 'domcontentloaded' });
-    await mcPage.locator('h1', { hasText: 'MCard Manager' }).waitFor({ state: 'visible' });
-    out.metrics.mission_control_cold_ms = Number((performance.now() - tMc).toFixed(3));
+    await portalColdPage.goto(`${baseUrl}/index.html?noredirect=1`, { waitUntil: 'domcontentloaded' });
+    await portalColdPage.locator('#penpot-site-nav').waitFor({ state: 'visible' });
+    out.metrics.portal_cold_ms = Number((performance.now() - tMc).toFixed(3));
     out.webllmModelRequests = modelReqs;
-    await mcPage.close();
+    await portalColdPage.close();
   } finally {
     await coldCtx.close();
   }
@@ -762,12 +759,6 @@ const SHARED_PRE_ASTRO_PLACES = [
     placeId: 'p_page_responsive_lab',
     route: '/responsive-lab.html',
     waitFn: () => document.body.dataset.pageState !== 'loading'
-  },
-  {
-    key: 'place_app_mission_control',
-    placeId: 'p_page_app',
-    route: '/app.html',
-    waitFn: () => document.title.includes('MCard Manager') && Boolean(document.querySelector('h1'))
   },
   {
     key: 'place_sprint_registry',
@@ -857,7 +848,6 @@ async function collectLiveNetworkPlaceReconciliation(browser, baseUrl, staticPla
   const routes = [
     { placeId: 'p_view_index_mcard_viewer', route: '/index.html?noredirect=1', isLab: false },
     { placeId: 'p_page_responsive_lab', route: '/responsive-lab.html', isLab: true },
-    { placeId: 'p_page_app', route: '/app.html', isLab: false },
     { placeId: 'p_page_sprint_registry', route: '/sprint-registry.html', isLab: false },
     { placeId: 'p_page_fiber_inspector', route: '/fiber-inspector.html', isLab: false },
     { placeId: 'p_page_fiber_conformance', route: '/fiber-conformance.html', isLab: false },

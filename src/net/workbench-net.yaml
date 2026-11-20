@@ -11,9 +11,6 @@ topology:
     - id: p_page_responsive_lab
       initialTokens: 0
       description: Primary P0 Responsive UI Lab full-window viewport workbench
-    - id: p_page_app
-      initialTokens: 0
-      description: Legacy Mission Control MCard Manager host page
     - id: p_page_sprint_registry
       initialTokens: 0
       description: Internal CLM sprint registry catalog page
@@ -133,16 +130,6 @@ topology:
         - p_page_responsive_lab
       outputs:
         - p_view_index_mcard_viewer
-    - id: t_link_lab_to_app
-      inputs:
-        - p_page_responsive_lab
-      outputs:
-        - p_page_app
-    - id: t_link_app_to_index
-      inputs:
-        - p_page_app
-      outputs:
-        - p_page_index
     - id: t_link_viewer_to_index
       inputs:
         - p_view_index_mcard_viewer
@@ -589,20 +576,6 @@ bindings:
       entry: false
       deepLinkEntry: true
       owner: Product Manager and TEA
-    p_page_app:
-      kind: page
-      surface: workbench
-      pageId: page_workbench_app
-      pagePath: app.html
-      route: /app.html
-      routeAliases: []
-      routeHandle: mcard:route:/app.html
-      clmTypeUri: clm://type/view/legacy/mission-control
-      mcardHash: null
-      migrationState: astro-wrapped
-      entry: false
-      deepLinkEntry: true
-      owner: Product Manager
     p_page_sprint_registry:
       kind: page
       surface: workbench
@@ -1084,34 +1057,6 @@ bindings:
         selector: "btn-back-home"
       ownerPage: responsive-lab.html
       owner: Product Manager and TEA
-    t_link_lab_to_app:
-      kind: link
-      surface: workbench
-      linkId: link_lab_to_app
-      fromPlaceId: p_page_responsive_lab
-      toPlaceId: p_page_app
-      route: /app.html
-      triggerHref: app.html
-      trigger: click a#btn-nav-mission-control[href="app.html"] at responsive-lab.html
-      triggerSource:
-        file: src/pages/responsive-lab.astro
-        selector: "btn-nav-mission-control"
-      ownerPage: responsive-lab.html
-      owner: Product Manager and TEA
-    t_link_app_to_index:
-      kind: link
-      surface: workbench
-      linkId: link_app_to_index
-      fromPlaceId: p_page_app
-      toPlaceId: p_page_index
-      route: /
-      triggerHref: /
-      trigger: click button.header-btn onclick window.location.href="/" at app.html
-      triggerSource:
-        file: src/pages/app.astro
-        selector: "location.href"
-      ownerPage: app.html
-      owner: Product Manager
     t_link_viewer_to_index:
       kind: link
       surface: workbench
@@ -2093,14 +2038,6 @@ bindings:
       ownerPage: index.html
       reason: Static sample fallback manifest loaded alongside GET /api/mcard/landing
     - httpMethod: GET
-      httpPath: /public/config/app-views.json
-      ownerPage: app.html
-      reason: Static view layout manifest under public/config
-    - httpMethod: GET
-      httpPath: /public/config/pwa-config.json
-      ownerPage: app.html
-      reason: Static PWA manifest config under public/config
-    - httpMethod: GET
       httpPath: /public/conformance/unit-lint.json
       ownerPage: fiber-inspector.html
       reason: Auxiliary static lint snapshot fetched alongside gating harness-data.json
@@ -2204,7 +2141,7 @@ bindings:
       source: server/mcard-api.mjs:314
       status: not-ui-reachable
       owner: Architect
-      reason: Programmatic MCard write endpoint; app.html persists locally via IndexedDB
+      reason: Programmatic MCard write endpoint; landing portal persists via canonical Triad store
     - httpMethod: GET
       httpPath: /api/mcard
       source: server/mcard-api.mjs:377

@@ -3,7 +3,6 @@ import { expect, test } from '@playwright/test';
 const SURFACES = [
   { route: '/responsive-lab.html', placeId: 'p_page_responsive_lab' },
   { route: '/?noredirect=1', placeId: 'p_view_index_mcard_viewer' },
-  { route: '/app.html', placeId: 'p_page_app' },
   { route: '/sprint-registry.html', placeId: 'p_page_sprint_registry' },
   { route: '/fiber-inspector.html', placeId: 'p_page_fiber_inspector' },
   { route: '/fiber-conformance.html', placeId: 'p_page_fiber_conformance' }

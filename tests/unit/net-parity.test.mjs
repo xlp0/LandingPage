@@ -19,7 +19,6 @@ import {
 const APPROVED_PAGE_PLACES = [
   'p_page_index',
   'p_page_responsive_lab',
-  'p_page_app',
   'p_page_sprint_registry',
   'p_page_fiber_inspector',
   'p_page_fiber_conformance'
@@ -37,7 +36,6 @@ function buildBaselineRoutes() {
   return [
     { origin: 'project', type: 'page', pattern: '/', entrypoint: 'src/pages/index.astro' },
     { origin: 'project', type: 'page', pattern: '/responsive-lab', entrypoint: 'src/pages/responsive-lab.astro' },
-    { origin: 'project', type: 'page', pattern: '/app', entrypoint: 'src/pages/app.astro' },
     { origin: 'project', type: 'page', pattern: '/sprint-registry', entrypoint: 'src/pages/sprint-registry.astro' },
     { origin: 'project', type: 'page', pattern: '/fiber-inspector', entrypoint: 'src/pages/fiber-inspector.astro' },
     { origin: 'project', type: 'page', pattern: '/fiber-conformance', entrypoint: 'src/pages/fiber-conformance.astro' },
@@ -63,10 +61,8 @@ function buildBaselineHtmlMap() {
       '/responsive-lab.html',
       `<!DOCTYPE html><html><body>
         <a href="/index.html?noredirect=1">Home</a>
-        <a href="app.html">MCard Manager</a>
       </body></html>`
     ],
-    ['/app.html', '<!DOCTYPE html><html><body><button onclick="window.location.href=\'/\'">Landing</button></body></html>'],
     ['/sprint-registry.html', '<!DOCTYPE html><html><body><main id="registry"></main></body></html>'],
     ['/fiber-inspector.html', '<!DOCTYPE html><html><body><main id="inspector"></main></body></html>'],
     ['/fiber-conformance.html', '<!DOCTYPE html><html><body><main id="conformance"></main></body></html>']
@@ -74,7 +70,7 @@ function buildBaselineHtmlMap() {
 }
 
 describe('Astro net-parity integration contracts (GQC-02B)', () => {
-  it('passes when all 6 astro-wrapped Places, routes, and declared internal hrefs match workbench-net.yaml', () => {
+  it('passes when all 5 astro-wrapped Places, routes, and declared internal hrefs match workbench-net.yaml', () => {
     const envelope = buildMigratedFixtureEnvelope();
     const report = evaluateNetParity({
       envelope,
@@ -87,8 +83,6 @@ describe('Astro net-parity integration contracts (GQC-02B)', () => {
     assert.deepEqual(report.checkedPages.sort(), [...APPROVED_PAGE_PLACES].sort());
     assert.ok(report.triggeredTransitionIds.includes('t_link_viewer_to_docs'));
     assert.ok(report.triggeredTransitionIds.includes('t_link_lab_to_index'));
-    assert.ok(report.triggeredTransitionIds.includes('t_link_lab_to_app'));
-    assert.ok(report.untriggeredTransitions.some((t) => t.transitionId === 't_link_app_to_index'));
     assert.ok(
       report.untriggeredTransitions.some((t) => t.transitionId === 't_redirect_index_to_lab'),
       'JS-driven redirect transition should appear in untriggeredTransitions report without failing build'
@@ -253,7 +247,7 @@ describe('Astro net-parity integration contracts (GQC-02B)', () => {
       fs.mkdirSync(pagesDir, { recursive: true });
       fs.mkdirSync(clientDir, { recursive: true });
 
-      const slugs = ['index', 'responsive-lab', 'app', 'sprint-registry', 'fiber-inspector', 'fiber-conformance'];
+      const slugs = ['index', 'responsive-lab', 'sprint-registry', 'fiber-inspector', 'fiber-conformance'];
       for (const slug of slugs) {
         fs.writeFileSync(path.join(pagesDir, `${slug}.astro`), '<html></html>');
       }
@@ -276,7 +270,7 @@ describe('Astro net-parity integration contracts (GQC-02B)', () => {
         logger: { info: (msg) => logs.push(msg) }
       });
       assert.equal(logs.length, 1);
-      assert.match(logs[0], /^PASS pages=6/);
+      assert.match(logs[0], /^PASS pages=5/);
 
       let capturedMw = null;
       integration.hooks['astro:server:setup']({
@@ -295,7 +289,7 @@ describe('Astro net-parity integration contracts (GQC-02B)', () => {
       assert.equal(reqLegacy.url, '/pkc-docs-index.html');
 
       fs.writeFileSync(
-        path.join(clientDir, 'app.html'),
+        path.join(clientDir, 'sprint-registry.html'),
         '<!DOCTYPE html><html><body><a href="/undeclared.html">Bad</a></body></html>'
       );
       await assert.rejects(
@@ -316,7 +310,7 @@ describe('Astro net-parity integration contracts (GQC-02B)', () => {
       'export async function GET() {}\nexport const POST = async () => {};'
     );
     assert.deepEqual(methods, ['GET', 'POST']);
-    assert.deepEqual(extractInternalHrefsFromHtml('<a href="#x"></a><a href="/app.html">App</a>'), ['/app.html']);
+    assert.deepEqual(extractInternalHrefsFromHtml('<a href="#x"></a><a href="/responsive-lab.html">Lab</a>'), ['/responsive-lab.html']);
 
     const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'gqc-actions-'));
     try {
@@ -340,12 +334,12 @@ describe('Astro net-parity integration contracts (GQC-02B)', () => {
       const write = (name, body) => fs.writeFileSync(path.join(tmp, name), body);
       write('missing.astro', '<WorkbenchLayout title="x"></WorkbenchLayout>');
       write('unknown.astro', "<WorkbenchLayout placeIds={['p_not_declared']}></WorkbenchLayout>");
-      write('partial.astro', "<WorkbenchLayout placeIds={['p_page_app']}></WorkbenchLayout>");
+      write('partial.astro', "<WorkbenchLayout placeIds={['p_page_sprint_registry']}></WorkbenchLayout>");
       const violations = checkDeclaredPlaceIds({ rootDir: tmp, pagesDir: tmp, envelope });
       const details = violations.map((v) => v.detail).join('\n');
       assert.match(details, /does not declare placeIds/);
       assert.match(details, /undeclared page or view place p_not_declared/);
-      assert.match(details, /p_page_app is bound to app\.html/);
+      assert.match(details, /p_page_sprint_registry is bound to sprint-registry\.html/);
     } finally {
       fs.rmSync(tmp, { recursive: true, force: true });
     }

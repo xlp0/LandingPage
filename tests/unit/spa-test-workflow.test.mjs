@@ -126,7 +126,7 @@ test('serializeTargetNetEnvelope preserves separate routeHandle and clmTypeUri a
   assert.equal(stepTrap.currentViewPlaceId, 'p_error_modal');
 });
 
-test('createSpaTestWorkflow classifies app.html as webapp, defers MPA, navigates steps by keyboard, and surfaces policy recovery', () => {
+test('createSpaTestWorkflow classifies webapp targets, defers MPA, navigates steps by keyboard, and surfaces policy recovery', () => {
   const spaTarget = loadNetEnvelope('tests/fixtures/spa-test-target.graph.json');
   const targetNets = {
     '/tests/fixtures/spa-test-target.html': serializeTargetNetEnvelope(spaTarget)
@@ -134,14 +134,14 @@ test('createSpaTestWorkflow classifies app.html as webapp, defers MPA, navigates
   const fakeDoc = createFakeDoc();
 
   let activeTarget = {
-    url: 'http://localhost:3001/app.html',
-    raw: 'app.html',
-    targetId: 'local-ui-app',
-    targetType: 'spa',
+    url: 'http://127.0.0.1:5320/',
+    raw: 'http://127.0.0.1:5320/',
+    targetId: 'mcard-studio-5320',
+    targetType: 'webapp',
     status: 'allowed',
-    sameOrigin: true,
-    captureAllowed: true,
-    policyState: 'approved-same-origin'
+    sameOrigin: false,
+    captureAllowed: false,
+    policyState: 'capture-unavailable'
   };
 
   const workflow = createSpaTestWorkflow({
@@ -181,12 +181,12 @@ test('createSpaTestWorkflow classifies app.html as webapp, defers MPA, navigates
     },
     recoverTarget: () => {
       activeTarget = {
-        url: 'http://localhost:3001/app.html',
-        raw: 'app.html',
-        targetId: 'local-ui-app',
+        url: 'http://127.0.0.1:5320/',
+        raw: 'http://127.0.0.1:5320/',
+        targetId: 'mcard-studio-5320',
         targetType: 'webapp',
         status: 'allowed',
-        sameOrigin: true,
+        sameOrigin: false,
         captureAllowed: true,
         policyState: 'approved-same-origin'
       };

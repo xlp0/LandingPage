@@ -250,7 +250,6 @@ test('GQC-06-UNIT-02: analyzePlaceBytes splits island bundles vs shared chunks, 
 
   const islandFreeIds = [
     'p_page_index',
-    'p_page_app',
     'p_page_sprint_registry',
     'p_page_fiber_inspector',
     'p_page_fiber_conformance'

@@ -11,16 +11,6 @@
   },
   "labTargets": [
     {
-      "id": "local-ui-app",
-      "url": "app.html",
-      "label": "Local UI Target (app.html) - Iframe Compatible",
-      "chipLabel": "app.html",
-      "targetType": "webapp",
-      "status": "allowed",
-      "quickLaunch": true,
-      "desc": "Local Responsive UI Target (Iframe Compatible)"
-    },
-    {
       "id": "spa-test-target",
       "url": "/tests/fixtures/spa-test-target.html",
       "label": "SPA Test Fixture (/tests/fixtures/spa-test-target.html) - Iframe Compatible",

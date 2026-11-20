@@ -629,7 +629,7 @@ async function main() {
       }
     }
 
-    console.log('[gqc-06-lanes] Running Lane 7 (Mission Control zero WebLLM model download)...');
+    console.log('[gqc-06-lanes] Running Lane 7 (Portal cold boot zero WebLLM model download)...');
     const lane7Shot = path.join(WORKER_OUT_DIR, 'lane-7.png');
     {
       const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
@@ -647,13 +647,13 @@ async function main() {
       });
       try {
         const page = await ctx.newPage();
-        await page.goto(`${headSrv.baseUrl}/app.html`, { waitUntil: 'domcontentloaded' });
-        await page.locator('h1', { hasText: 'MCard Manager' }).waitFor({ state: 'visible' });
+        await page.goto(`${headSrv.baseUrl}/index.html?noredirect=1`, { waitUntil: 'domcontentloaded' });
+        await page.locator('#penpot-site-nav').waitFor({ state: 'visible' });
         await page.screenshot({ path: lane7Shot });
-        fs.copyFileSync(lane7Shot, path.join(REVIEW_DIR, '05-mission-control-zero-webllm.png'));
+        fs.copyFileSync(lane7Shot, path.join(REVIEW_DIR, '05-portal-zero-webllm.png'));
         lanes.push({
           lane: 7,
-          name: 'Mission Control cold boot without eager WebLLM model asset downloads',
+          name: 'Portal cold boot without eager WebLLM model asset downloads',
           screenshot: lane7Shot,
           passed: modelRequests.length === 0,
           details: { modelRequestsCount: modelRequests.length }
@@ -727,21 +727,6 @@ async function main() {
         page.on('console', (m) => {
           if (m.type() === 'error') consoleErrors.push(m.text());
         });
-        await page.goto(`${headSrv.baseUrl}/app.html`, { waitUntil: 'domcontentloaded' });
-        await page.locator('h1', { hasText: 'MCard Manager' }).waitFor({ state: 'visible' });
-        const specJson = JSON.parse(
-          fs.readFileSync(
-            path.join(DEFAULT_ROOT_DIR, 'tests', 'conformance', 'localhost-3001-app-html.conformance.json'),
-            'utf8'
-          )
-        );
-        const appReport = await runConformance(page, specJson, {
-          profile: phoneProfile,
-          orientation: 'portrait',
-          fidelity: resolveFidelity(phoneProfile, 'playwright'),
-          consoleErrors
-        });
-
         await page.goto(`${headSrv.baseUrl}${SPA_FIXTURE_PATH}`, { waitUntil: 'domcontentloaded' });
         await page.waitForFunction(
           () => document.querySelector('#spa-app-root')?.getAttribute('data-place-id') === 'p_spa_overview'
@@ -751,16 +736,13 @@ async function main() {
         await page.screenshot({ path: lane9Shot });
         fs.copyFileSync(lane9Shot, path.join(REVIEW_DIR, '04-small-screen-conformance.png'));
 
-        const appFailed = appReport.results.filter((r) => r.status === 'fail');
         lanes.push({
           lane: 9,
           name: 'Small-screen viewport (393x852) layout overflow and tap-target conformance',
           screenshot: lane9Shot,
-          passed: appFailed.length === 0 && spaOverflow.status === 'pass' && spaTap.status === 'pass',
+          passed: spaOverflow.status === 'pass' && spaTap.status === 'pass',
           details: {
             viewport: '393x852',
-            appChecksTotal: appReport.results.length,
-            appFailedCount: appFailed.length,
             spaNoHorizontalOverflow: spaOverflow.status,
             spaTapTarget44px: spaTap.status
           }

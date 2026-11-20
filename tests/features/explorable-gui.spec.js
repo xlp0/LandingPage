@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 const EFFECTS = ['navigate', 'persist', 'destructive', 'external', 'download', 'file-picker'];
-const ROUTES = ['/responsive-lab.html', '/?noredirect=1', '/app.html', '/sprint-registry.html', '/fiber-inspector.html', '/fiber-conformance.html'];
+const ROUTES = ['/responsive-lab.html', '/?noredirect=1', '/sprint-registry.html', '/fiber-inspector.html', '/fiber-conformance.html'];
 
 for (const route of ROUTES) {
   test(`${route} exposes explorable controls`, async ({ page }) => {
@@ -20,9 +20,9 @@ for (const route of ROUTES) {
     nativeDialogs.push(await page.evaluate(() => window.__nativeDialog || null));
     expect(nativeDialogs.filter(Boolean)).toEqual([]);
 
-    const problems = await page.evaluate(({ allowed, routePath }) => {
+    const problems = await page.evaluate(({ allowed }) => {
       const issues = [];
-      const inScope = routePath !== '/app.html';
+      const inScope = true;
       const controlSelector = 'button, a, input, select, textarea';
 
       for (const island of document.querySelectorAll('[data-island]')) {

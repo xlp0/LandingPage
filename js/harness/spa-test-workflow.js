@@ -209,10 +209,6 @@ function normalizePathname(urlOrPath) {
   }
 }
 
-function isAppHtmlPath(pathname) {
-  return pathname === '/app.html' || pathname === 'app.html' || pathname.endsWith('/app.html');
-}
-
 export function resolveStepIdForKey(key, currentStepId) {
   const currentIdx = WORKFLOW_STEPS.findIndex((s) => s.id === currentStepId);
   if (currentIdx < 0) return WORKFLOW_STEPS[0].id;
@@ -590,22 +586,17 @@ export function createSpaTestWorkflow(options = {}) {
     const active = membrane?.getTarget?.() || null;
     const detail = rejection || active;
     const raw = detail?.raw || '';
-    const url = detail?.url || raw || 'app.html';
-    const pathname = normalizePathname(url || raw);
-    const appHtml = isAppHtmlPath(pathname);
-    let targetType = detail?.targetType || 'webapp';
-    if (appHtml && targetType === 'spa') {
-      targetType = 'webapp';
-    }
-    const isSpa = targetType === 'spa' && !appHtml;
+    const url = detail?.url || raw || '/tests/fixtures/spa-test-target.html';
+    const targetType = detail?.targetType || (detail ? 'webapp' : 'spa');
+    const isSpa = targetType === 'spa';
     const policyState = detail?.policyState || 'approved-same-origin';
     const recoverable = RECOVERABLE_POLICY_STATES.has(policyState);
     const matchedNet = resolveMatchedTargetNet(detail);
 
     let classificationNote = 'Approved P0 SPA target with checked GQC-02A target net.';
-    if (appHtml || targetType === 'webapp') {
+    if (targetType === 'webapp') {
       classificationNote =
-        'app.html and general webapps remain classified as webapp (astro-wrapped) and are not presented as SPA targets pending Product Manager approval.';
+        'General webapps remain classified as webapp and are not presented as SPA targets pending Product Manager approval.';
     } else if (targetType === 'mpa-candidate') {
       classificationNote =
         'PenPot MPA routes are optional and deferred outside the P0 SPA guide until Product Manager approval and live Playwright assertions.';

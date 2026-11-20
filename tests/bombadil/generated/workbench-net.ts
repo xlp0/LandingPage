@@ -23,14 +23,6 @@ export const PLACES = [
     "migrationState": "astro-islands"
   },
   {
-    "id": "p_page_app",
-    "kind": "page",
-    "route": "/app.html",
-    "routeAliases": [],
-    "queryFlag": null,
-    "migrationState": "astro-wrapped"
-  },
-  {
     "id": "p_page_sprint_registry",
     "kind": "page",
     "route": "/sprint-registry.html",
@@ -160,18 +152,6 @@ export const ARCS = [
     "kind": "link"
   },
   {
-    "transitionId": "t_link_lab_to_app",
-    "from": "p_page_responsive_lab",
-    "to": "p_page_app",
-    "kind": "link"
-  },
-  {
-    "transitionId": "t_link_app_to_index",
-    "from": "p_page_app",
-    "to": "p_page_index",
-    "kind": "link"
-  },
-  {
     "transitionId": "t_link_viewer_to_index",
     "from": "p_view_index_mcard_viewer",
     "to": "p_page_index",
@@ -280,18 +260,6 @@ export const HISTORY_ARCS = [
     "transitionId": "history:t_link_lab_to_index",
     "from": "p_view_index_mcard_viewer",
     "to": "p_page_responsive_lab",
-    "kind": "history"
-  },
-  {
-    "transitionId": "history:t_link_lab_to_app",
-    "from": "p_page_app",
-    "to": "p_page_responsive_lab",
-    "kind": "history"
-  },
-  {
-    "transitionId": "history:t_link_app_to_index",
-    "from": "p_page_index",
-    "to": "p_page_app",
     "kind": "history"
   },
   {

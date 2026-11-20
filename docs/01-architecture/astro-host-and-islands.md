@@ -42,7 +42,7 @@ npm start
 1. Request logging, narrowed CORS policy, and unified Content Security Policy headers (without `unsafe-eval`) attach first.
 2. Hoisted configuration routes (`/app-config.json` with schema `urn:gqc:lab-config:v1` and `/api/config` with schema `urn:gqc:runtime-config:v1`) and health checks respond before static or SSR handlers.
 3. Express API routers mount at `/api/mcard`, `/api/test-runs`, `/api/clm`, and `/api/auth`, alongside WebSocket signaling on `/ws/`.
-4. Built client assets under `dist/client/_astro` serve with immutable cache headers, followed by the `@astrojs/node` SSR handler (`dist/server/entry.mjs`) which renders the six workbench Places at both `/` and `.html` paths (`build.format: 'file'`).
+4. Built client assets under `dist/client/_astro` serve with immutable cache headers, followed by the `@astrojs/node` SSR handler (`dist/server/entry.mjs`) which renders the five workbench Places at both `/` and `.html` paths (`build.format: 'file'`).
 5. Static assets under `public/`, `js/`, `css/`, `tests/fixtures/`, and tombstoned non-workbench static files such as `pkc-docs-index.html` fall through to Express static middleware.
 
 Astro's client router remains disabled. Every workbench page switch executes as a full document navigation tracked in [`workbench-net.md`](./workbench-net.md).
@@ -53,7 +53,6 @@ Astro's client router remains disabled. Every workbench page switch executes as 
 | --- | --- | --- | --- | --- | --- |
 | `/` and `/index.html` | [`src/pages/index.astro`](../../src/pages/index.astro) | `p_page_index`, `p_view_index_mcard_viewer` | `astro-wrapped` | `0` | Redirects `/` to `/responsive-lab.html`. Mounts `js/landing-page-mcard.js`, `js/nav.js`, and Shadow DOM `#portal-stageshow-showcase` (`0` Astro islands, `0 B` `_astro/` JS) when `?noredirect=1` is present |
 | `/responsive-lab.html` | [`src/pages/responsive-lab.astro`](../../src/pages/responsive-lab.astro) | `p_page_responsive_lab` | `astro-islands` | `8` | `js/harness/lab-runtime.js` coordinator (`window.__lab`) |
-| `/app.html` | [`src/pages/app.astro`](../../src/pages/app.astro) | `p_page_app` | `astro-wrapped` | `0` | `public/js/app-bootstrap.js` and `MCardManager` (`window.mcardManager`) |
 | `/sprint-registry.html` | [`src/pages/sprint-registry.astro`](../../src/pages/sprint-registry.astro) | `p_page_sprint_registry` | `astro-wrapped` | `0` | Inline `/api/clm/registry` viewer owned by Scrum Master |
 | `/fiber-inspector.html` | [`src/pages/fiber-inspector.astro`](../../src/pages/fiber-inspector.astro) | `p_page_fiber_inspector` | `astro-wrapped` | `0` | `public/js/fibers/registry.js` inspector harness owned by Architect |
 | `/fiber-conformance.html` | [`src/pages/fiber-conformance.astro`](../../src/pages/fiber-conformance.astro) | `p_page_fiber_conformance` | `astro-wrapped` | `0` | `public/js/fibers/registry.js` conformance harness owned by Architect |

@@ -1,12 +1,14 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadNetEnvelope, replayNetTrace } from '../../scripts/check-net.mjs';
+import { TEST_PORT } from '../fixtures/test-config.js';
 import { test, expect } from '@playwright/test';
 
 const LAB_URL = '/responsive-lab.html';
 const SAME_ORIGIN_TARGET = '/tests/fixtures/probe-target.html';
-const CROSS_ORIGIN_TARGET = 'http://127.0.0.1:3001/tests/fixtures/probe-target.html';
-const NO_AGENT_TARGET = 'http://127.0.0.1:3001/tests/fixtures/probe-target-noagent.html';
+const CROSS_ORIGIN_ORIGIN = `http://127.0.0.1:${TEST_PORT}`;
+const CROSS_ORIGIN_TARGET = `${CROSS_ORIGIN_ORIGIN}/tests/fixtures/probe-target.html`;
+const NO_AGENT_TARGET = `${CROSS_ORIGIN_ORIGIN}/tests/fixtures/probe-target-noagent.html`;
 
 test.describe('SPRINT-ERB-02: Target Membrane Interceptor & Spatial Normalization', () => {
   test.beforeEach(async ({ page }) => {
@@ -450,7 +452,7 @@ test.describe('SPRINT-GQC-03: Target Policy Enforcement & Capture Lifecycle', ()
     await iframe.locator('[data-testid="target-top-left"]').click();
     await expect.poll(async () => page.evaluate(() => window.__lab.recorder.snapshot().length)).toBe(1);
 
-    await page.evaluate(() => {
+    await page.evaluate((crossOriginOrigin) => {
       const oldSource = window.__lab.recorder.source();
       const oldNonce = oldSource?._currentNonce;
       const oldWin = document.getElementById('mission-control-iframe')?.contentWindow;
@@ -466,7 +468,7 @@ test.describe('SPRINT-GQC-03: Target Policy Enforcement & Capture Lifecycle', ()
       );
       if (oldSource && typeof oldSource._handleMessage === 'function') {
         oldSource._handleMessage({
-          origin: 'http://127.0.0.1:3001',
+          origin: crossOriginOrigin,
           source: oldWin,
           data: {
             schema: 'lab-capture/v1',
@@ -476,7 +478,7 @@ test.describe('SPRINT-GQC-03: Target Policy Enforcement & Capture Lifecycle', ()
           }
         });
       }
-    });
+    }, CROSS_ORIGIN_ORIGIN);
 
     await expect(page.locator('#rec-source-pill')).toHaveText('Source: same-origin');
     const oldStateAfterSwitch = await page.evaluate(() => ({

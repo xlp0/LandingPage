@@ -20,19 +20,19 @@ function buildInitialSnapshot(targetNets = {}) {
       approvedForP0: false
     },
     target: {
-      url: 'app.html',
-      raw: 'app.html',
-      targetId: 'local-ui-app',
-      targetType: 'webapp',
-      isSpa: false,
+      url: '/tests/fixtures/spa-test-target.html',
+      raw: '/tests/fixtures/spa-test-target.html',
+      targetId: 'spa-test-target',
+      targetType: 'spa',
+      isSpa: true,
       policyState: 'approved-same-origin',
       captureAllowed: true,
       recoverable: false,
       errorPlaceId: null,
       reason: null,
-      hasCheckedTargetNet: false,
+      hasCheckedTargetNet: Boolean(defaultNet),
       classificationNote:
-        'app.html and general webapps remain classified as webapp (astro-wrapped) and are not presented as SPA targets pending Product Manager approval.'
+        'Approved P0 SPA target with checked GQC-02A target net.'
     },
     device: {
       deviceId: null,
@@ -43,7 +43,7 @@ function buildInitialSnapshot(targetNets = {}) {
       orientation: 'responsive',
       scale: 1
     },
-    targetNet: null,
+    targetNet: defaultNet,
     defaultSpaNet: defaultNet,
     liveSpa: {
       connected: false,
@@ -102,7 +102,7 @@ function buildInitialSnapshot(targetNets = {}) {
     },
     moduleWarnings: [],
     statusAnnouncement:
-      'Step 1 of 5: Select Target & Policy. Target app.html (webapp). Device Full (100%) (responsive).',
+      'Step 1 of 5: Select Target & Policy. Target /tests/fixtures/spa-test-target.html (spa). Device Full (100%) (responsive).',
     errorAnnouncement: '',
     guideInitMs: 0
   };
@@ -299,11 +299,11 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
           </button>
           <button
             type="button"
-            data-testid="workflow-select-app-html"
+            data-testid="workflow-select-portal-index"
             className="toolbar-btn"
-            onClick={() => workflowRef.current?.selectTarget('app.html', 'workflow-webapp-btn')}
+            onClick={() => workflowRef.current?.selectTarget('index.html', 'workflow-mpa-btn')}
           >
-            Inspect app.html (Webapp)
+            Inspect index.html (MPA)
           </button>
           {state.target.recoverable && (
             <button

@@ -38,7 +38,6 @@ npm start
 | `/responsive-lab.html` (`/` redirects here) | `p_page_responsive_lab` | **Primary Workbench** (`astro-islands`, 7 Preact islands) with device presets, viewport stage, 5-step SPA Petri net workflow, recorder, conformance matrix, and MCard result panel |
 | `/responsive-lab.html?target=/tests/fixtures/spa-test-target.html` | Workbench + target `spa-test-target-net` | Loads the deterministic SPA fixture target inside `#mission-control-iframe` |
 | `/?noredirect=1` or `/index.html?noredirect=1` | `p_view_index_mcard_viewer` | **Single-Page 4-Modality MCard Viewer** (`media`, `document`, `code`, `webapp`); `/index.html` also acts as an MPA candidate when embedded in the Lab iframe |
-| `/app.html` | `p_page_app` | **Mission Control** (`astro-wrapped`), legacy IndexedDB MCard host classified as an MCard `webapp` target |
 | `/sprint-registry.html` | `p_page_sprint_registry` | CLM sprint registry catalog backed by `/api/clm/registry` |
 | `/fiber-inspector.html` and `/fiber-conformance.html` | `p_page_fiber_inspector`, `p_page_fiber_conformance` | Internal CLM fiber diagnostics (`0 B` island JS) |
 | `/app-config.json` and `/api/config` | Config endpoints | `/app-config.json` serves `urn:gqc:lab-config:v1` target presets; `/api/config` serves `urn:gqc:runtime-config:v1` runtime environment config |
@@ -70,9 +69,9 @@ LandingPage/
 ├── app-config.json               # Approved Responsive Lab target URLs (urn:gqc:lab-config:v1)
 ├── retired-islands.yaml          # Tombstoned legacy surfaces
 ├── src/
-│   ├── pages/                    # Six Astro workbench pages (.astro -> .html routes)
-│   ├── islands/                  # Seven Preact islands mounted on responsive-lab.astro
-│   └── net/workbench-net.yaml    # Canonical 31-Place, 65-Transition workbench Petri net
+│   ├── pages/                    # Five Astro workbench pages (.astro -> .html routes)
+│   ├── islands/                  # Eight Preact islands mounted on responsive-lab.astro
+│   └── net/workbench-net.yaml    # Canonical 38-Place, 85-Transition workbench Petri net
 ├── js/
 │   ├── harness/                  # Viewport stage, membrane, ring buffer, recorder (0.0.24), SPA workflow
 │   ├── device-registry.js        # Schema v2 device profiles (8 presets)
@@ -92,6 +91,6 @@ LandingPage/
 ## Key Architectural Rules
 
 1. **Kernel Consensus (`clm-kernel@0.0.24`).** Server Triad hashing and modality classification delegate to `clm-kernel@0.0.24`, and `js/harness/recorder.js` stamps `lab.clmKernel: '0.0.24'` on new test runs while preserving readability of historical `0.0.10` records. Browser islands never import `clm-kernel`.
-2. **Three Distinct Hash Domains.** Server Triad Blake3 (`server/mcard-api.mjs`), browser compatibility SHA-256 (`public/js/mcard-kernel/compat.js` for `app.html` IndexedDB), and build-time PenPot graph SHA-256 (`scripts/penpot-zip.mjs`) never mix.
+2. **Three Distinct Hash Domains.** Server Triad Blake3 (`server/mcard-api.mjs`), browser compatibility SHA-256 (`public/js/mcard-kernel/compat.js` for `/fiber-inspector.html` and `/fiber-conformance.html`), and build-time PenPot graph SHA-256 (`scripts/penpot-zip.mjs`) never mix.
 3. **Declared Net Transitions.** Every UI-reachable client server call under `src/` or `js/harness/` must be declared in `src/net/workbench-net.yaml` and passes `node scripts/check-package-source-parity.mjs`.
 4. **PenPot Boundary.** `design/landing-navigation.penpot` drives LandingPage's own navigation (`js/nav.js`), while external PenPot MPA target assessment in the Lab remains Optional / Deferred pending Product Manager approval.

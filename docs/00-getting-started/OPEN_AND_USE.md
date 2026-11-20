@@ -30,7 +30,7 @@ http://localhost:3000/responsive-lab.html?target=http://localhost:4321/
 ```
 
 - **SPA Target (`/tests/fixtures/spa-test-target.html`)** activates full Petri net Place and Transition tracking against `tests/fixtures/spa-test-target.graph.json`.
-- **MPA Candidate (`/index.html`)** and **MCard `webapp` Target (`/app.html`)** run same-origin inside the stage without loop-redirecting.
+- **MPA Candidate (`/index.html`)** and same-origin test fixtures run inside the stage without loop-redirecting.
 - **Blocked or Unapproved Cross-Origin URLs** enter explicit recoverable workbench error Places (`p_error_target_blocked`, `p_error_target_unapproved`, `p_error_handshake_timeout`) with a one-click `#btn-cors-alert-recover` recovery action (`t_recover_*`).
 
 ## 3. Choose Device Geometry and Orientation (`INV-RVP-01`, `INV-RVP-02`)

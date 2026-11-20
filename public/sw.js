@@ -16,11 +16,7 @@ const CRITICAL_ASSETS = [
 // Only include files that actually exist
 // NOTE: CardViewer.js and ContentTypeDetector.js excluded to allow hot updates
 const APP_SHELL_ASSETS = [
-  '/public/css/mcard-manager.css',
   '/public/css/content-renderers.css',
-  '/public/js/app-bootstrap.js',
-  '/public/js/mcard/MCardManager.js',
-  '/public/js/mcard/UIComponents.js',
   '/public/js/renderers/MarkdownRenderer.js',
   '/public/vendor/lucide/lucide.min.js',
   '/public/vendor/js-yaml.min.js',

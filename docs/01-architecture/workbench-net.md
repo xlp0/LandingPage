@@ -18,8 +18,8 @@
 | Net ID | `landingpage-workbench-net` |
 | Target Handle | `mcard:workbench:landing-page` |
 | Entry Place | `p_page_index` |
-| Total Places | 39 |
-| Total Transitions | 87 |
+| Total Places | 38 |
+| Total Transitions | 85 |
 | Non-UI Programmatic Endpoints | 23 |
 
 Related architecture guides include [LandingPage Architecture](./landing-page-architecture.md) and [Astro Host and Preact Islands](./astro-host-and-islands.md).
@@ -29,7 +29,7 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | Place Kind | Count |
 | --- | --- |
 | `error` | 9 |
-| `page` | 7 |
+| `page` | 6 |
 | `pending` | 22 |
 | `view` | 1 |
 
@@ -38,7 +38,7 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | Transition Kind | Count |
 | --- | --- |
 | `client-route` | 3 |
-| `link` | 7 |
+| `link` | 5 |
 | `recover` | 9 |
 | `redirect` | 1 |
 | `server-call-fail` | 23 |
@@ -51,7 +51,6 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `p_page_index` | `page` | `/` | `mcard:route:/index.html` | `clm://type/view/workbench/landing-portal` | `astro-wrapped` | entry | Product Manager and UX Designer | Workbench root entry route that redirects top-level requests to Responsive UI Lab |
 | `p_page_responsive_lab` | `page` | `/responsive-lab.html` | `mcard:route:/responsive-lab.html` | `clm://type/view/workbench/responsive-lab` | `astro-islands` | deep-link | Product Manager and TEA | Primary P0 Responsive UI Lab full-window viewport workbench |
-| `p_page_app` | `page` | `/app.html` | `mcard:route:/app.html` | `clm://type/view/legacy/mission-control` | `astro-wrapped` | deep-link | Product Manager | Legacy Mission Control MCard Manager host page |
 | `p_page_sprint_registry` | `page` | `/sprint-registry.html` | `mcard:route:/sprint-registry.html` | `clm://type/view/diagnostic/sprint-registry` | `astro-wrapped` | deep-link | Scrum Master | Internal CLM sprint registry catalog page |
 | `p_page_fiber_inspector` | `page` | `/fiber-inspector.html` | `mcard:route:/fiber-inspector.html` | `clm://type/view/diagnostic/fiber-inspector` | `astro-wrapped` | deep-link | Architect | Internal fiber correctness and marking inspector page |
 | `p_page_fiber_conformance` | `page` | `/fiber-conformance.html` | `mcard:route:/fiber-conformance.html` | `clm://type/view/diagnostic/fiber-conformance` | `astro-wrapped` | deep-link | Architect | Internal fiber conformance harness page |
@@ -95,8 +94,6 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `t_redirect_index_to_lab` | `redirect` | `p_page_index` | `p_page_responsive_lab` | `/responsive-lab.html` | `index.html` | Product Manager and UX Designer | window.location.replace("responsive-lab.html") at index.html |
 | `t_link_lab_to_index` | `link` | `p_page_responsive_lab` | `p_view_index_mcard_viewer` | `/index.html?noredirect=1` | `responsive-lab.html` | Product Manager and TEA | click a#btn-back-home[href="/index.html?noredirect=1"] at responsive-lab.html |
-| `t_link_lab_to_app` | `link` | `p_page_responsive_lab` | `p_page_app` | `/app.html` | `responsive-lab.html` | Product Manager and TEA | click a#btn-nav-mission-control[href="app.html"] at responsive-lab.html |
-| `t_link_app_to_index` | `link` | `p_page_app` | `p_page_index` | `/` | `app.html` | Product Manager | click button.header-btn onclick window.location.href="/" at app.html |
 | `t_link_viewer_to_index` | `link` | `p_view_index_mcard_viewer` | `p_page_index` | `/index.html` | `index.html` | Product Manager and UX Designer | click a.penpot-nav-link[href="index.html"] at index.html |
 | `t_link_viewer_to_lab` | `link` | `p_view_index_mcard_viewer` | `p_page_responsive_lab` | `/responsive-lab.html` | `index.html` | Product Manager and UX Designer | click a[href="responsive-lab.html"] at index.html or openResponsiveUILab at index.html |
 | `t_link_viewer_to_docs` | `link` | `p_view_index_mcard_viewer` | `p_page_docs_index` | `/pkc-docs-index.html` | `index.html` | Tech Writer | click a.penpot-nav-link[href="pkc-docs-index.html"] at src/pages/index.astro |
@@ -200,7 +197,7 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | `GET` | `/api/clm/component/:id` | `routes/clm.js:63` | `not-ui-reachable` | Architect | CLM component lookup route with zero approved workbench callers |
 | `GET` | `/api/clm/health/:componentId` | `routes/clm.js:99` | `not-ui-reachable` | Architect | CLM component health route with zero approved workbench callers |
 | `POST` | `/api/clm/telemetry` | `routes/clm.js:116` | `not-ui-reachable` | Architect | Called only by js/clm-iframe-loader.js:285 which has zero root page importers |
-| `POST` | `/api/mcard` | `server/mcard-api.mjs:314` | `not-ui-reachable` | Architect | Programmatic MCard write endpoint; app.html persists locally via IndexedDB |
+| `POST` | `/api/mcard` | `server/mcard-api.mjs:314` | `not-ui-reachable` | Architect | Programmatic MCard write endpoint; landing portal persists via canonical Triad store |
 | `GET` | `/api/mcard` | `server/mcard-api.mjs:377` | `not-ui-reachable` | Architect | Programmatic MCard list endpoint with zero browser fetch callers |
 | `GET` | `/api/mcard/probe-url` | `server/mcard-api.mjs:372` | `not-ui-reachable` | Product Manager | Defined on createApiClient at js/landing-page-mcard.js:178 with zero UI callers |
 | `GET` | `/api/mcard/stats` | `server/mcard-api.mjs:391` | `not-ui-reachable` | Product Manager | Defined on createApiClient at js/landing-page-mcard.js:179 with zero UI callers |
@@ -215,7 +212,6 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 flowchart TD
   p_page_index["p_page_index (page)"]
   p_page_responsive_lab["p_page_responsive_lab (page)"]
-  p_page_app["p_page_app (page)"]
   p_page_sprint_registry["p_page_sprint_registry (page)"]
   p_page_fiber_inspector["p_page_fiber_inspector (page)"]
   p_page_fiber_conformance["p_page_fiber_conformance (page)"]
@@ -254,8 +250,6 @@ flowchart TD
   p_pending_bombadil_stream["p_pending_bombadil_stream (pending)"]
   p_page_index -->|"t_redirect_index_to_lab (redirect)"| p_page_responsive_lab
   p_page_responsive_lab -->|"t_link_lab_to_index (link)"| p_view_index_mcard_viewer
-  p_page_responsive_lab -->|"t_link_lab_to_app (link)"| p_page_app
-  p_page_app -->|"t_link_app_to_index (link)"| p_page_index
   p_view_index_mcard_viewer -->|"t_link_viewer_to_index (link)"| p_page_index
   p_view_index_mcard_viewer -->|"t_link_viewer_to_lab (link)"| p_page_responsive_lab
   p_view_index_mcard_viewer -->|"t_link_viewer_to_docs (link)"| p_page_docs_index

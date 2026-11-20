@@ -111,13 +111,13 @@ test('GQC-02A-UNIT-06 replays approved workbench, deep-link, open-external, and 
   assert.equal(replayLab.sessionInvariantHolds, true);
   assert.equal(replayLab.stepCount, 5);
 
-  const appAndExternalTrace = {
-    traceId: 'approved-deep-link-app-and-game',
-    entryPlaceId: 'p_page_app',
+  const deepLinkViewerTrace = {
+    traceId: 'approved-deep-link-viewer-to-lab',
+    entryPlaceId: 'p_view_index_mcard_viewer',
     events: [
       {
-        transitionId: 't_link_app_to_index',
-        fromPlaceId: 'p_page_app',
+        transitionId: 't_link_viewer_to_index',
+        fromPlaceId: 'p_view_index_mcard_viewer',
         toPlaceId: 'p_page_index',
         at: '2026-10-28T00:01:01.000Z'
       },
@@ -130,11 +130,11 @@ test('GQC-02A-UNIT-06 replays approved workbench, deep-link, open-external, and 
     ]
   };
 
-  const replayApp = await replayNetTrace(workbenchNet, appAndExternalTrace);
-  assert.equal(replayApp.ok, true);
-  assert.equal(replayApp.finalPlaceId, 'p_page_responsive_lab');
-  assert.equal(replayApp.finalMarking.p_page_responsive_lab, 1);
-  assert.equal(replayApp.sessionInvariantHolds, true);
+  const replayViewer = await replayNetTrace(workbenchNet, deepLinkViewerTrace);
+  assert.equal(replayViewer.ok, true);
+  assert.equal(replayViewer.finalPlaceId, 'p_page_responsive_lab');
+  assert.equal(replayViewer.finalMarking.p_page_responsive_lab, 1);
+  assert.equal(replayViewer.sessionInvariantHolds, true);
 
   const errorRecoveryTrace = {
     traceId: 'approved-error-and-recover',
@@ -188,9 +188,9 @@ test('GQC-02A-UNIT-07 rejects out-of-order, undeclared, and non-deep-link traces
     entryPlaceId: 'p_page_index',
     events: [
       {
-        transitionId: 't_link_lab_to_app',
+        transitionId: 't_link_lab_to_index',
         fromPlaceId: 'p_page_index',
-        toPlaceId: 'p_page_app',
+        toPlaceId: 'p_view_index_mcard_viewer',
         at: '2026-10-28T00:04:00.000Z'
       }
     ]
@@ -200,8 +200,8 @@ test('GQC-02A-UNIT-07 rejects out-of-order, undeclared, and non-deep-link traces
   assert.equal(skippedRes.ok, false);
   assert.equal(skippedRes.reason, 'disabled-transition');
   assert.equal(skippedRes.failedEventIndex, 0);
-  assert.equal(skippedRes.transitionId, 't_link_lab_to_app');
-  assert.match(skippedRes.message, /t_link_lab_to_app/);
+  assert.equal(skippedRes.transitionId, 't_link_lab_to_index');
+  assert.match(skippedRes.message, /t_link_lab_to_index/);
 
   const unmappedRes = await replayNetTrace(workbenchNet, {
     traceId: 'undecided-link-trace',
@@ -258,8 +258,8 @@ test('attachWorkbenchNetTracer derives FIFO server calls, popup promotions, open
   page.navigateMain('http://127.0.0.1:4100/responsive-lab.html');
   page.emitFetch('http://127.0.0.1:4100/app-config.json').respond(200);
 
-  const appPopup = page.openPopup('http://127.0.0.1:4100/app.html');
-  assert.equal(tracer.getActivePage(), appPopup);
+  const indexPopup = page.openPopup('http://127.0.0.1:4100/index.html?noredirect=1');
+  assert.equal(tracer.getActivePage(), indexPopup);
 
   const trace = tracer.getTrace();
   assert.equal(trace.entryPlaceId, 'p_view_index_mcard_viewer');
@@ -273,13 +273,13 @@ test('attachWorkbenchNetTracer derives FIFO server calls, popup promotions, open
       't_link_viewer_to_lab',
       't_req_get_app_config',
       't_ok_get_app_config',
-      't_link_lab_to_app'
+      't_link_lab_to_index'
     ]
   );
 
   const replay = await replayNetTrace(workbenchNet, trace);
   assert.equal(replay.ok, true);
-  assert.equal(replay.finalPlaceId, 'p_page_app');
+  assert.equal(replay.finalPlaceId, 'p_view_index_mcard_viewer');
 
   const coverage = computeTransitionCoverage(workbenchNet, {
     replayedTraces: [{ ...replay, asserted: true }]
@@ -300,7 +300,7 @@ test('attachWorkbenchNetTracer derives FIFO server calls, popup promotions, open
   assert.equal(md.includes('\u2014'), false);
   assert.equal(md.includes('\u2013'), false);
 
-  appPopup.navigateMain('http://127.0.0.1:4100/pkc-docs-index.html');
+  indexPopup.navigateMain('http://127.0.0.1:4100/undeclared-orphan-page.html');
   const dirtyTrace = tracer.getTrace();
   assert.equal(dirtyTrace.unmappedNavigations.length, 1);
   const rejected = await replayNetTrace(workbenchNet, dirtyTrace);

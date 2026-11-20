@@ -12,7 +12,7 @@
 
 ## 1. Surface Role and Operator Outcome
 
-`LandingPage` serves as **Estate 4 (Submodule 3)** of the `MCard_TDD` workspace. While `/responsive-lab.html` (`p_page_responsive_lab`) is the primary Responsive UI Lab workbench, `/?noredirect=1` and `/index.html?noredirect=1` (`p_view_index_mcard_viewer`) expose the **Single-Page Universal 4-Modality MCard Viewer**, distinct from the legacy Mission Control IndexedDB host at `/app.html` (`p_page_app`).
+`LandingPage` serves as **Estate 4 (Submodule 3)** of the `MCard_TDD` workspace. While `/responsive-lab.html` (`p_page_responsive_lab`) is the primary Responsive UI Lab workbench, `/?noredirect=1` and `/index.html?noredirect=1` (`p_view_index_mcard_viewer`) expose the **Single-Page Universal 4-Modality MCard Viewer** (the legacy Mission Control IndexedDB host `/app.html` was retired in `SPRINT-SLC-02`).
 
 Every artifact stored in the SQLite Triad (`card(hash, content, g_time)`) is browsable through one content-addressed pipeline across four modalities (`media`, `document`, `code`, `webapp`) while preserving Triad Blake3 integrity (`clm-kernel@0.0.24`) and strict execution isolation. Historical references to `clm-kernel@0.0.10` and `clm-kernel@0.0.23` in graduated SMO/GQC sprint records denote earlier baselines superseded by `clm-kernel@0.0.24`.
 

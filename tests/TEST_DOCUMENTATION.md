@@ -32,8 +32,9 @@ Global `retries` is `0` so project-level retries never compound. Unit and contra
 ```text
 tests/
 ├── smoke/                        # 11 fast smoke and root page characterization specs (30 tests)
+├── smoke/                        # 9 root page characterization & portal smoke specs
 ├── components/                   # 14 isolated CLM component iframe specs (18 tests)
-├── features/                     # 32 workbench, Astro island, StageShow, SPA net, MCard, perf, and P2P specs (651 tests)
+├── features/                     # 30 workbench, Astro island, StageShow, SPA net, perf, and P2P specs
 ├── conformance/                  # 15 modular device conformance checks and *.conformance.json specs
 ├── performance/                  # place-bytes.mjs, metrics-model.mjs, run-paired-benchmark.mjs
 ├── observability/                # alignment.test.js and correctness.test.js (node:test)
@@ -44,13 +45,12 @@ tests/
 
 ## Root Page Characterization Specs
 
-Each of the six Astro-hosted workbench routes plus the tombstoned static `pkc-docs-index.html` surface has a dedicated smoke characterization spec asserting HTTP status, document title, semantic landmarks, and outgoing same-origin links.
+Each of the five Astro-hosted workbench routes plus the tombstoned static `pkc-docs-index.html` surface has a dedicated smoke characterization spec asserting HTTP status, document title, semantic landmarks, and outgoing same-origin links.
 
 | Route | Host Mode | Characterization Spec | Registered Surface ID |
 | --- | --- | --- | --- |
 | `index.html` (`/` and `/?noredirect=1`) | `astro-wrapped` | [`tests/smoke/root-index.spec.js`](./smoke/root-index.spec.js) | `workbench-landing-portal` |
 | `responsive-lab.html` | `astro-islands` (`8` Preact islands) | [`tests/smoke/root-responsive-lab.spec.js`](./smoke/root-responsive-lab.spec.js) | `workbench-responsive-lab` |
-| `app.html` | `astro-wrapped` | [`tests/smoke/root-app.spec.js`](./smoke/root-app.spec.js) | `workbench-legacy-mission-control` |
 | `fiber-conformance.html` | `astro-wrapped` | [`tests/smoke/root-fiber-conformance.spec.js`](./smoke/root-fiber-conformance.spec.js) | `workbench-fiber-conformance` |
 | `fiber-inspector.html` | `astro-wrapped` | [`tests/smoke/root-fiber-inspector.spec.js`](./smoke/root-fiber-inspector.spec.js) | `workbench-fiber-inspector` |
 | `sprint-registry.html` | `astro-wrapped` | [`tests/smoke/root-sprint-registry.spec.js`](./smoke/root-sprint-registry.spec.js) | `workbench-sprint-registry` |

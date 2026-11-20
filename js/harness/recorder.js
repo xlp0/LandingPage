@@ -353,7 +353,7 @@ export class InteractionRecorder {
 
   buildTestRun(options = {}) {
     const {
-      target = { url: 'http://localhost:3001/app.html' },
+      target = { url: 'http://localhost:3001/tests/fixtures/spa-test-target.html' },
       device = null,
       selection = null,
       orientation = null,
@@ -378,7 +378,7 @@ export class InteractionRecorder {
       ...(ev.ergonomics ? { ergonomics: ev.ergonomics } : {})
     }));
 
-    const rawUrl = this._recordedTargetUrl || target?.url || target?.raw || 'http://localhost:3001/app.html';
+    const rawUrl = this._recordedTargetUrl || target?.url || target?.raw || 'http://localhost:3001/tests/fixtures/spa-test-target.html';
     const slug = target?.slug || targetSlug(rawUrl);
 
     const resolvedFullStage = measuredFullStage !== undefined

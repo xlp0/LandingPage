@@ -40,7 +40,14 @@ test.describe('SPRINT-GQC-04: Guided SPA Test Workflow Island and Dual-Net Repla
     await expect(page.getByTestId('workflow-target-type')).toHaveText('spa');
     await expect(page.getByTestId('workflow-spa-eligibility')).toHaveText('Approved P0 SPA Target');
 
-    await workbench.selectPresetTarget('app.html');
+    await page.route('http://127.0.0.1:5320/**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'text/html; charset=utf-8',
+        body: '<!DOCTYPE html><html><body><h1>MCard Studio Stub</h1></body></html>'
+      });
+    });
+    await workbench.selectPresetTarget('http://127.0.0.1:5320/');
     await expect(page.getByTestId('workflow-target-type')).toHaveText('webapp');
     await expect(page.getByTestId('workflow-spa-eligibility')).toHaveText('Not Classified as SPA');
 

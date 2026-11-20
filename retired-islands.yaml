@@ -119,44 +119,24 @@ islands:
 
   - id: app
     artifact: app.html
-    source: src/pages/app.astro  # served at /app.html; migrated by c7b78c6 (GQC-02B)
+    source: src/pages/app.astro  # retired in SPRINT-SLC-02 (SLC-D04)
     successor: "mcard-studio: the Dockview spatial workbench"
     invariant: INV-SMR-01
-    load_bearing: true
-    disposition: tombstone
+    load_bearing: false
+    disposition: retired
     owner: "LandingPage -> mcard-studio (Sally / Amelia)"
-    migration_test: "node --test LandingPage/tests/single-page-mcard.test.mjs"
-    routes:
-      - "index.html (nav link 'Mission Control', split-launch link, targetUrl)"
-      - "js/nav.js (destinationHandle mcard:route:/app.html)"
-    imports:
-      - "scripts/penpot-init.mjs"
-      - "scripts/penpot-screens.mjs"
-      - "scripts/penpot-render.mjs"
+    migration_test: "npm run check:net && npm run test:unit"
+    routes: []
+    imports: []
     package_inclusion: []
-    tests:
-      - "tests/features/presentation-lattice.spec.js"
-      - "tests/features/layout-freeze.spec.js"
-      - "tests/features/chat-panel.spec.js"
-      - "tests/features/new-text-card.spec.js"
-      - "tests/features/penpot-navigation.spec.js"
-      - "tests/features/style-audit.spec.js"
-    dependents:
-      - index.html (nav link 'Mission Control', split-launch link, targetUrl)
-      - js/nav.js (destinationHandle mcard:route:/app.html)
-      - tests/features/presentation-lattice.spec.js
-      - tests/features/layout-freeze.spec.js
-      - tests/features/chat-panel.spec.js
-      - tests/features/new-text-card.spec.js
-      - tests/features/penpot-navigation.spec.js
-      - tests/features/style-audit.spec.js
-      - scripts/penpot-init.mjs, scripts/penpot-screens.mjs, scripts/penpot-render.mjs
+    tests: []
+    dependents: []
     note: >-
-      The multi-card workbench role moved to the studio. This page is the landing
-      page's own "Mission Control" destination and is referenced by the Penpot
-      navigation tooling, so it is retired as a build target, not as a route.
-      Transition note: src/pages/app.astro remains active during Program SSG, and
-      post-SSG cleanup is tracked in docs/sprints/programs/ssg/ssg-local-backlog.md.
+      Legacy Mission Control /app.html (src/pages/app.astro, app-bootstrap.js,
+      MCardManager.js, UIComponents.js, mcard-manager.css, ViewManager.js,
+      app-views.json, ui-inline-handlers.js) was fully retired in SPRINT-SLC-02.
+      Shared mcard-kernel compatibility primitives (compat.js, bundle-entry.js,
+      indexeddb-backend.js, node-shims/) remain preserved for fiber conformance.
 
   - id: pkc-docs-index
     artifact: pkc-docs-index.html

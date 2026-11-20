@@ -211,11 +211,8 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
 
   test('RVP-T03c: corrupted storage degrades to the factory set', async ({ page }) => {
     // INV-RVP-04: unusable storage must not surface a runtime error.
-    // Only registry-path errors count here: the lab embeds app.html in its test
-    // iframe, and that page has two pre-existing module errors unrelated to
-    // storage ("Unexpected identifier 'ENABLE_PWA_SYSTEM'" and a missing
-    // 'clm-kernel' export). Asserting on every pageerror would make this test
-    // fail for a defect it does not govern.
+    // Assert on registry-path errors rather than unrelated pageerrors in the
+    // embedded target iframe.
     const errors = [];
     page.on('pageerror', (e) => errors.push(String(e.message)));
     await page.evaluate((k) => localStorage.setItem(k, '{not json'), STORAGE_KEY);
@@ -489,15 +486,15 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     expect(Math.max(...t.durations), 'the transition has a non-zero duration').toBeGreaterThan(0);
   });
 
-  test('RVP-T12: responsive-lab.html?target=app.html selects the matching option and loads it', async ({ page }) => {
-    await page.goto('/responsive-lab.html?target=app.html');
+  test('RVP-T12: responsive-lab.html?target=index.html selects the matching option and loads it', async ({ page }) => {
+    await page.goto('/responsive-lab.html?target=index.html');
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(300);
 
     const selVal = await page.locator('#public-site-selector').inputValue();
-    expect(selVal).toBe('app.html');
+    expect(selVal).toBe('index.html');
     const iframeSrc = await page.locator('#mission-control-iframe').getAttribute('src');
-    expect(iframeSrc).toBe('app.html');
+    expect(iframeSrc).toBe('index.html');
   });
 
   test('RVP-T13: an unknown ?target= prepends a Chosen Target option, selects it, and loads it', async ({ page }) => {

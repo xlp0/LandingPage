@@ -6,12 +6,13 @@
 import { test, expect } from '@playwright/test';
 import { deviceMatrix, toPlaywrightContext } from '../fixtures/device-matrix.js';
 import { ensureTargetReachable } from '../fixtures/target-preflight.js';
+import { BASE_URL } from '../fixtures/test-config.js';
 import { runConformance } from '../conformance/runner.js';
 import { resolveFidelity } from '../../js/harness/fidelity.js';
 
 test.describe.configure({ retries: 0 });
 
-const RAW_TARGET = process.env.TARGET_URL || 'app.html';
+const RAW_TARGET = process.env.TARGET_URL || '/tests/fixtures/spa-test-target.html';
 const FAST_MODE = process.env.FAST_MODE === '1';
 const KEY_SELECTORS = (process.env.SWEEP_KEY_SELECTORS || 'main,h1')
   .split(',')
@@ -27,7 +28,7 @@ test.describe('EPIC-SWEEP: Systematic Multi-Device Sweep', () => {
   test.beforeAll(async ({ request }) => {
     // If relative, qualify with base URL
     if (!resolvedTargetUrl.startsWith('http://') && !resolvedTargetUrl.startsWith('https://')) {
-      resolvedTargetUrl = `http://localhost:3001/${resolvedTargetUrl.replace(/^\//, '')}`;
+      resolvedTargetUrl = `${BASE_URL}/${resolvedTargetUrl.replace(/^\//, '')}`;
     }
     await ensureTargetReachable(request, resolvedTargetUrl);
   });

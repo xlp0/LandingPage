@@ -44,7 +44,7 @@ graph TD
 
 ## 2. Kernel Integration (`clm-kernel@0.0.24`)
 
-Server-side MCard hashing, modality classification, and Petri net evaluation use published `clm-kernel@0.0.24` via [`server/mcard-modality.mjs`](../../server/mcard-modality.mjs) and [`server/mcard-api.mjs`](../../server/mcard-api.mjs), while browser-local IndexedDB views in `app.html` use [`public/js/mcard-kernel/compat.js`](../../public/js/mcard-kernel/compat.js). Browser islands never import `clm-kernel`.
+Server-side MCard hashing, modality classification, and Petri net evaluation use published `clm-kernel@0.0.24` via [`server/mcard-modality.mjs`](../../server/mcard-modality.mjs) and [`server/mcard-api.mjs`](../../server/mcard-api.mjs), while browser compatibility views in `/fiber-inspector.html` and `/fiber-conformance.html` use [`public/js/mcard-kernel/compat.js`](../../public/js/mcard-kernel/compat.js). Browser islands never import `clm-kernel`.
 
 Key capabilities exposed:
 1. **Manifest Parsing & Validation**: Reads declarative YAML/JSON Petri net and CLM manifests (`examples/*.clm.yaml`).

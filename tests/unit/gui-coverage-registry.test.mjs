@@ -109,13 +109,6 @@ const REQUIRED_P0_SPA_STEPS = [
   'inspect-mcard-result'
 ];
 
-const REQUIRED_UNDECIDED_JOURNEY_IDS = [
-  'undecided-auth-zitadel',
-  'undecided-p2p-collaboration',
-  'undecided-webllm-inference',
-  'undecided-offline-pwa'
-];
-
 export function buildSessionWeights(placesBindings) {
   const weights = {};
   for (const [placeId, binding] of Object.entries(placesBindings || {})) {
@@ -542,9 +535,7 @@ export function validateGuiCoverageRegistry(registry, { rootDir = ROOT_DIR, chec
     }
 
     if (surface.pagePath === 'app.html') {
-      if (surface.p0 === true || surface.targetType === 'spa') {
-        errors.push('app.html must remain non-P0 and unclassified (not spa) until Product Manager approval');
-      }
+      errors.push('app.html was retired in SPRINT-SLC-02 and must not be registered');
     }
     if (surface.pagePath === 'index.html' && surface.targetType === 'spa') {
       errors.push('index.html single-page MCard viewer must not be classified as an spa target');
@@ -804,13 +795,6 @@ export function validateGuiCoverageRegistry(registry, { rootDir = ROOT_DIR, chec
     }
   }
 
-  for (const undecidedId of REQUIRED_UNDECIDED_JOURNEY_IDS) {
-    const row = registry.journeys.find((j) => j.journeyId === undecidedId);
-    if (!row || row.status !== 'undecided' || row.inP0SpaDenominator !== false) {
-      errors.push(`Capability journey "${undecidedId}" must exist with status="undecided" and inP0SpaDenominator=false`);
-    }
-  }
-
   if (registry.p0SpaDenominatorCount !== p0SpaCount) {
     errors.push(
       `p0SpaDenominatorCount (${registry.p0SpaDenominatorCount}) does not match P0 SPA journey count (${p0SpaCount})`
@@ -995,19 +979,34 @@ if (process.env.GQC_SKIP_TEST_REGISTRATION !== '1') {
     assert.equal(mutatedRunCheck.valid, false);
   });
 
-  test('validator rejects workbench/target conflation, app.html SPA promotion, mcard route handle as clmTypeUri, MPA in P0 denominator, and undecided promotion', () => {
+  test('validator rejects workbench/target conflation, retired app.html re-registration, mcard route handle as clmTypeUri, MPA in P0 denominator, and undecided promotion', () => {
     const conflatedWorkbench = structuredClone(loadCommittedRegistry());
     conflatedWorkbench.workbenchSurfaces[0].targetType = 'spa';
     const res1 = validateGuiCoverageRegistry(conflatedWorkbench, { checkDiskFiles: false });
     assert.equal(res1.valid, false);
     assert.ok(res1.errors.some((e) => e.includes('conflates workbench')));
 
-    const promotedApp = structuredClone(loadCommittedRegistry());
-    const appTarget = promotedApp.targetSurfaces.find((s) => s.pagePath === 'app.html');
-    appTarget.targetType = 'spa';
-    const res2 = validateGuiCoverageRegistry(promotedApp, { checkDiskFiles: false });
+    const revivedApp = structuredClone(loadCommittedRegistry());
+    revivedApp.targetSurfaces.push({
+      surfaceId: 'target-app-html-default',
+      surfaceKind: 'target',
+      targetType: 'spa',
+      locationKind: 'local-existing',
+      pagePath: 'app.html',
+      routeHandle: 'mcard:target:/app.html',
+      clmTypeUri: 'clm://type/view/target/unclassified-app',
+      placeId: 'p_target_unclassified_app',
+      role: 'Retired legacy app target',
+      owner: 'Product Manager',
+      p0: false,
+      status: 'unclassified',
+      approvalStatus: 'unclassified',
+      primaryJourneyId: 'legacy-mission-control-characterization',
+      docPath: 'docs/sprints/programs/gqc/SPRINT-GQC-00-project-census-and-behavior-baseline.md'
+    });
+    const res2 = validateGuiCoverageRegistry(revivedApp, { checkDiskFiles: false });
     assert.equal(res2.valid, false);
-    assert.ok(res2.errors.some((e) => e.includes('app.html must remain non-P0 and unclassified')));
+    assert.ok(res2.errors.some((e) => e.includes('app.html was retired in SPRINT-SLC-02')));
 
     const badTypeUri = structuredClone(loadCommittedRegistry());
     badTypeUri.workbenchSurfaces[1].clmTypeUri = 'mcard:route:/index.html';
@@ -1022,12 +1021,40 @@ if (process.env.GQC_SKIP_TEST_REGISTRATION !== '1') {
     assert.equal(res4.valid, false);
     assert.ok(res4.errors.some((e) => e.includes('excluded from P0 SPA denominator')));
 
-    const promotedAuth = structuredClone(loadCommittedRegistry());
-    const authRow = promotedAuth.journeys.find((j) => j.journeyId === 'undecided-auth-zitadel');
-    authRow.status = 'covered';
-    const res5 = validateGuiCoverageRegistry(promotedAuth, { checkDiskFiles: false });
+    const badUndecided = structuredClone(loadCommittedRegistry());
+    badUndecided.journeys.push({
+      journeyId: 'synthetic-undecided-probe',
+      surfaceKind: 'workbench',
+      surfaceId: 'workbench-landing-portal',
+      targetType: 'workbench',
+      targetHandle: 'mcard:route:/index.html#probe',
+      pageId: 'page_synthetic_probe',
+      placeId: null,
+      functionalLinkId: null,
+      transitionId: null,
+      firing_sequence: [],
+      sourceKind: 'undecided',
+      sourceRef: null,
+      workbenchPlaceId: null,
+      workbenchTransitionIds: [],
+      priority: 'undecided',
+      inP0SpaDenominator: true,
+      optional: true,
+      status: 'undecided',
+      targetSprint: 'SPRINT-GQC-05',
+      owner: 'Product Manager',
+      testLayer: 'none',
+      pagePath: 'index.html',
+      specPath: null,
+      playwrightProject: null,
+      command: null,
+      evidence: 'Synthetic negative control',
+      observableOutcome: 'Must fail undecided denominator invariant',
+      docPath: 'docs/sprints/programs/gqc/SPRINT-GQC-02-gui-journeys-and-test-seams.md'
+    });
+    const res5 = validateGuiCoverageRegistry(badUndecided, { checkDiskFiles: false });
     assert.equal(res5.valid, false);
-    assert.ok(res5.errors.some((e) => e.includes('undecided-auth-zitadel')));
+    assert.ok(res5.errors.some((e) => e.includes('synthetic-undecided-probe')));
   });
 
   test('Playwright discovery evaluator enforces non-empty category projects, zero exceptions, and zero category overlap', () => {

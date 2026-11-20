@@ -18,7 +18,7 @@
 | **Domain Engineering Tiers** | [`02-authentication/`](02-authentication/README.md) through [`11-standards/`](11-standards/README.md) | Maintained domain guides and performance baselines | Domain Lead per tier `README.md` |
 | **Capability Reference Library** | [`functionalities/`](functionalities/README.md) | Maintained capability reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts | Tech Writer and Architect |
 | **Graduated Sprint Archives** | [`sprints/01-architecture/`](sprints/01-architecture/INDEX.md), [`sprints/08-testing/`](sprints/08-testing/INDEX.md), [`sprints/programs/gqc/`](sprints/programs/gqc/INDEX.md), [`sprints/programs/bpv/`](sprints/programs/bpv/INDEX.md), [`sprints/programs/ssg/`](sprints/programs/ssg/INDEX.md) | Sealed sprint records (`SMO-00..05`, `ERB-00..06`, `GQC-00..07`, `BPV-00..07`, `SSG-00..08`) | Scrum Master |
-| **Active Sprint Workspace** | [`sprints/_active/`](sprints/_active/INDEX.md) | Active (`Program SLC` `SPRINT-SLC-00` `IN_PROGRESS`, `SPRINT-SLC-01..04` `PLANNED`); retains canonical `DECISIONS.tsv` ledger | Scrum Master |
+| **Active Sprint Workspace** | [`sprints/_active/`](sprints/_active/INDEX.md) | Active (`Program SLC` `SPRINT-SLC-00..02` `DONE`, `SPRINT-SLC-03..04` `PLANNED`); retains canonical `DECISIONS.tsv` ledger | Scrum Master |
 | **Legacy Archive** | [`archive/`](archive/REORGANIZATION_PROPOSAL.md) | Historical pre-reorganization snapshots | Tech Writer |
 
 ---
@@ -53,19 +53,22 @@ docs/
 ## Quick Navigation by Task
 
 ### Get Started
+
 - Developer onboarding in [00-getting-started/START_HERE.md](00-getting-started/START_HERE.md)
 - Five-minute local run in [00-getting-started/QUICKSTART.md](00-getting-started/QUICKSTART.md)
 - Interactive workbench walkthrough in [00-getting-started/OPEN_AND_USE.md](00-getting-started/OPEN_AND_USE.md)
 - Current program and gate status in [00-getting-started/STATUS.md](00-getting-started/STATUS.md)
 
 ### Understand the Architecture
+
 - Workbench vs target boundaries, three hash domains, and CLM Page-as-Place contracts in [01-architecture/landing-page-architecture.md](01-architecture/landing-page-architecture.md)
 - Astro 7 middleware, 8 Preact islands, and server-call policy in [01-architecture/astro-host-and-islands.md](01-architecture/astro-host-and-islands.md)
-- Generated `39`-Place / `87`-Transition Petri net reference in [01-architecture/workbench-net.md](01-architecture/workbench-net.md)
+- Generated `38`-Place / `85`-Transition Petri net reference in [01-architecture/workbench-net.md](01-architecture/workbench-net.md)
 - Universal 4-Modality MCard Browser in [01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md](01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md)
 - Package and kernel boundaries in [01-architecture/MCARD_MODULAR_ARCHITECTURE.md](01-architecture/MCARD_MODULAR_ARCHITECTURE.md)
 
 ### Verify, Measure, and Deploy
+
 - Device-sensitive testing and Playwright replay in [08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md](08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md)
 - Island byte budgets and navigation latency baselines in [09-performance/gqc-06-spa-and-island-baselines.md](09-performance/gqc-06-spa-and-island-baselines.md)
 - Container and ArgoCD deployment in [07-deployment/README.md](07-deployment/README.md)

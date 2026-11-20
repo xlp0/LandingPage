@@ -20,7 +20,6 @@ const here = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(here, '..', 'baselines', 'layout-baseline.json');
 
 const PAGES = [
-  { path: '/app.html', name: 'app' },
   { path: '/index.html?noredirect=1', name: 'index' },
   { path: '/responsive-lab.html', name: 'responsive-lab' },
   { path: '/fiber-inspector.html', name: 'fiber-inspector' },
@@ -40,7 +39,6 @@ const VIEWPORTS = {
 // Runtime-volatile regions: masked rather than excluded — each is an open
 // obligation, recorded in the baseline, never silently treated as frozen.
 const VOLATILE = {
-  app: ['#card-list', '#cards-container', '#mcardList', '.modal', '[id^="modal"]'],
   index: ['#nav-root', '#least-action-root', '[id^="inspector"]', '[id^="modal"]',
     '[class*="modal"]', '.target-status-badge', '.correctness-status-tag', '#power-icon',
     '#portal-stageshow-showcase *'],
@@ -89,10 +87,6 @@ async function run(page, p, vpName, vp, mutate) {
       await page
         .locator('#mcard-sovereign-pill-mount .mcard-sovereign-pill')
         .waitFor({ state: 'attached', timeout: 10000 });
-    } else if (p.name === 'app') {
-      await page.waitForLoadState('networkidle');
-      await page.locator('#mcardList').waitFor({ state: 'attached', timeout: 10000 });
-      await page.waitForFunction(() => window.mcardManager?.collection != null, null, { timeout: 10000 });
     }
   } else {
     await page.evaluate(() => document.fonts.ready);

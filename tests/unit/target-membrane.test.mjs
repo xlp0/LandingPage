@@ -4,8 +4,8 @@ import { resolveTarget, createTargetMembrane } from '../../js/harness/target-mem
 
 test('target-membrane: resolves relative URL against baseHref', () => {
   const base = 'http://localhost:3001/responsive-lab.html';
-  const resolved = resolveTarget('app.html', base);
-  assert.equal(resolved, 'http://localhost:3001/app.html');
+  const resolved = resolveTarget('index.html', base);
+  assert.equal(resolved, 'http://localhost:3001/index.html');
 });
 
 test('target-membrane: resolves absolute URL', () => {
@@ -53,10 +53,10 @@ test('target-membrane: bindTarget updates iframe and produces target detail', ()
     onTargetChange: (d) => { eventDetail = d; }
   });
 
-  const detail = membrane.bindTarget('app.html', 'boot-default');
-  assert.equal(mockIframe.src, 'app.html');
-  assert.equal(mockIframe.attrs['src'], 'app.html');
-  assert.equal(detail.url, 'http://localhost:3001/app.html');
+  const detail = membrane.bindTarget('index.html', 'boot-default');
+  assert.equal(mockIframe.src, 'index.html');
+  assert.equal(mockIframe.attrs['src'], 'index.html');
+  assert.equal(detail.url, 'http://localhost:3001/index.html');
   assert.equal(detail.cause, 'boot-default');
   assert.equal(detail.origin, 'http://localhost:3001');
   assert.equal(detail.sameOrigin, false); // in node test environment

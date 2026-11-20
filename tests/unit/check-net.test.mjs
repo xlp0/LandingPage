@@ -76,9 +76,9 @@ test('GQC-02A-UNIT-02 rejects duplicate Place IDs and duplicate Transition IDs w
 
   const dupTransition = structuredClone(base);
   dupTransition.topology.transitions.push({
-    id: 't_link_lab_to_app',
+    id: 't_link_lab_to_index',
     inputs: ['p_page_responsive_lab'],
-    outputs: ['p_page_app']
+    outputs: ['p_view_index_mcard_viewer']
   });
   const transRes = validateNetEnvelope(dupTransition, { filePath: 'dup-transition.yaml' });
   assert.equal(transRes.valid, false);
@@ -86,7 +86,7 @@ test('GQC-02A-UNIT-02 rejects duplicate Place IDs and duplicate Transition IDs w
     transRes.violations.some(
       (v) =>
         v.file === 'dup-transition.yaml' &&
-        v.id === 't_link_lab_to_app' &&
+        v.id === 't_link_lab_to_index' &&
         v.rule === 'duplicate-transition-id'
     )
   );

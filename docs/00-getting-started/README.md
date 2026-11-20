@@ -29,7 +29,7 @@ Open `http://localhost:3000/responsive-lab.html` in your browser.
 
 `LandingPage` operates as **Estate 4 (Submodule 3)** consuming published `clm-kernel@0.0.24`.
 
-1. **Responsive UI Lab Workbench (`/responsive-lab.html`)** certifies chosen web targets (such as `/tests/fixtures/spa-test-target.html`, `/index.html`, `/app.html`, or external `http://localhost:4321/`) across 8 device presets, orientation swap, Petri net Places/Transitions, Triad persistence, and Playwright replay.
+1. **Responsive UI Lab Workbench (`/responsive-lab.html`)** certifies chosen web targets (such as `/tests/fixtures/spa-test-target.html`, `/index.html`, or external `http://localhost:4321/`) across 12 device presets, orientation swap, Petri net Places/Transitions, Triad persistence, and Playwright replay.
 2. **Single-Page 4-Modality MCard Viewer (`/?noredirect=1`)** renders `urn:mcard:content:landing_page` and the 6-sample Triad corpus (`data/samples/portal_samples.mcard.db`) across `media`, `document`, `code`, and `webapp` modalities.
 3. **SSRF-Guarded External Portal Membrane** isolates untrusted URL probes behind DNS, private-IP, and framing guards (`server/mcard-probe-policy.mjs`, `js/external-portal-membrane.js`).
 

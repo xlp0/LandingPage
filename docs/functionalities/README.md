@@ -26,7 +26,7 @@ This directory contains the **authoritative, exhaustive functional documentation
 | Index | Functional Specification Document | Domain & Key Technologies |
 | :---: | :--- | :--- |
 | **00** | [**Master Overview & Architecture Map**](00-OVERVIEW-AND-FUNCTIONALITY-MAP.md) | Platform topology, monorepo packages, capability taxonomy, master entry points. |
-| **01** | [**Mission Control & MCard Management**](01-MISSION-CONTROL-AND-MCARD-MANAGEMENT.md) | `app.html`, `ViewManager`, SQLite WAL backend, card lifecycle, PWA offline engine. |
+| **01** | [**MCard Storage & Retired Mission Control**](01-MISSION-CONTROL-AND-MCARD-MANAGEMENT.md) | Canonical SQLite Triad API (`server/mcard-api.mjs`), single-page portal viewer (`index.html`), and retired Mission Control `app.html` notes. |
 | **02** | [**Polymorphic Content Rendering Pipeline**](02-POLYMORPHIC-CONTENT-RENDERING-PIPELINE.md) | `RendererRegistry`, Markdown with alerts, KaTeX/MathJax, TikZ-CD, Tone.js audio, PDF.js. |
 | **03** | [**Cubical Logic Model (CLM) & Fiber Correctness**](03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md) | `clm-kernel@0.0.24`, iframe membrane isolation, Fiber Inspector, Redux CLM middleware. |
 | **04** | [**WebRTC P2P Mesh & Real-Time Collaboration**](04-WEBRTC-P2P-MESH-AND-REALTIME-COLLABORATION.md) | Dual-mode networking (serverless QR/SDP vs WebSocket signaling), `RoomService v3`, video meeting, STUN/TURN. |
@@ -74,10 +74,10 @@ graph TD
 
 | Functional Domain | Primary Source Files | Key Tests | Configuration / Specs |
 | :--- | :--- | :--- | :--- |
-| **MCard Management** | [`app.html`](../../src/pages/app.astro), [`public/js/ViewManager.js`](../../public/js/ViewManager.js), [`server/mcard-api.mjs`](../../server/mcard-api.mjs) | `tests/smoke/landing-page.spec.js` | `public/config/app-views.json` |
-| **Content Renderers**| [`js/renderers/`](../../js/renderers), [`packages/markdown-renderer/`](../../packages/markdown-renderer/README.md) | `tests/components/` | `assets/tikz-diagrams/diagram-manifest.json` |
-| **Cubical Logic Model**| [`server/mcard-modality.mjs`](../../server/mcard-modality.mjs), [`js/clm-iframe-loader.js`](../../js/clm-iframe-loader.js) | `tests/features/fiber-conformance.spec.js` | `public/conformance/witness.json` |
-| **WebRTC Networking**| [`js/modules/p2p-serverless/`](../../js/modules/p2p-serverless/README.md), [`js/modules/webrtc-dashboard/`](../../js/modules/webrtc-dashboard/README.md), [`ws-server.js`](../../ws-server.js) | `tests/components/test-clm-p2p-status.spec.cjs` | `docker-compose.stun.yml` |
+| **MCard Management** | [`index.html`](../../src/pages/index.astro), [`server/mcard-api.mjs`](../../server/mcard-api.mjs) | `tests/smoke/single-page-mcard.spec.js` | `SPRINT-SLC-02` retired legacy `app.html` |
+| **Content Renderers** | [`js/renderers/`](../../js/renderers), [`packages/markdown-renderer/`](../../packages/markdown-renderer/README.md) | `tests/components/` | `assets/tikz-diagrams/diagram-manifest.json` |
+| **Cubical Logic Model** | [`server/mcard-modality.mjs`](../../server/mcard-modality.mjs), [`js/clm-iframe-loader.js`](../../js/clm-iframe-loader.js) | `tests/features/fiber-conformance.spec.js` | `public/conformance/witness.json` |
+| **WebRTC Networking** | [`js/modules/p2p-serverless/`](../../js/modules/p2p-serverless/README.md), [`js/modules/webrtc-dashboard/`](../../js/modules/webrtc-dashboard/README.md), [`ws-server.js`](../../ws-server.js) | `tests/components/test-clm-p2p-status.spec.cjs` | `docker-compose.stun.yml` |
 | **Board Games (Retired `SLC-01`)** | Retired (`public/examples/games/`, `3DGames/`, `tic-tac-toe-p2p/` removed in `SPRINT-SLC-01`) | None (retired) | [`05-REALTIME-MULTIPLAYER-BOARD-GAMES.md`](./05-REALTIME-MULTIPLAYER-BOARD-GAMES.md) |
 | **Authentication** | [`routes/auth.js`](../../routes/auth.js), [`js/modules/auth-manager.js`](../../js/modules/auth-manager.js) | `tests/components/AuthStatusComponent.js` | `public/config/zitadel-config.js` |
 | **In-Browser AI** | [`js/modules/web-llm/`](../../js/modules/web-llm) | Client WebGPU integration tests | `js/modules/web-llm/config.js` |

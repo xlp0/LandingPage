@@ -7,14 +7,16 @@
 | Classification | Maintained Capability Reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts |
 | Operational Guide | [../01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md](../01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md) |
 > **Location**: [`LandingPage/docs/functionalities/01-MISSION-CONTROL-AND-MCARD-MANAGEMENT.md`](./01-MISSION-CONTROL-AND-MCARD-MANAGEMENT.md)  
-> **Source Files**: [`app.html`](../../src/pages/app.astro), [`public/js/ViewManager.js`](../../public/js/ViewManager.js), [`server/mcard-api.mjs`](../../server/mcard-api.mjs), [`public/js/PWAManager.js`](../../public/js/PWAManager.js)  
-> **Status**: Comprehensive Functional Specification
+> **Source Files**: [`index.html`](../../src/pages/index.astro), [`server/mcard-api.mjs`](../../server/mcard-api.mjs), [`public/js/PWAManager.js`](../../public/js/PWAManager.js) (legacy `src/pages/app.astro`, `public/js/ViewManager.js`, and `public/config/app-views.json` retired in `SPRINT-SLC-02`)  
+> **Status**: Retired UI Specification (`app.html` retired `SLC-02`; Triad backend active)
 
 ---
 
 ## 1. Overview & Capabilities
 
-The **Mission Control / MCard Manager** (`app.html`) is the primary operational dashboard of the LandingPage platform. It provides a local-first interface for managing Personal Knowledge Cards (MCards), switching between embedded sub-applications and interactive portals, managing local SQLite databases, synchronizing with remote APIs, and supporting complete offline execution via Progressive Web App (PWA) primitives.
+> **Retirement Note (`SPRINT-SLC-02`)**: The legacy Mission Control `/app.html` shell (`src/pages/app.astro`, `public/js/app-bootstrap.js`, `public/js/mcard-kernel/MCardManager.js`, `public/js/mcard-kernel/UIComponents.js`, `public/css/mcard-manager.css`, `public/js/ViewManager.js`, and `public/config/app-views.json`) was retired in `SPRINT-SLC-02`. Single-page MCard viewing lives on `/index.html?noredirect=1` ([`src/pages/index.astro`](../../src/pages/index.astro)), and server-side SQLite Triad persistence remains active in [`server/mcard-api.mjs`](../../server/mcard-api.mjs).
+
+Previously, **Mission Control / MCard Manager** (`app.html`) provided a local-first dashboard for managing Personal Knowledge Cards (MCards), switching between embedded sub-applications and interactive portals, managing local databases, synchronizing with remote APIs, and supporting offline execution via Progressive Web App (PWA) primitives.
 
 ```mermaid
 graph LR
@@ -48,9 +50,9 @@ graph LR
 
 ---
 
-## 2. Dynamic View Management (`ViewManager.js`)
+## 2. Dynamic View Management (`ViewManager.js`, Retired `SLC-02`)
 
-View transitions and sub-application embeddings in [`app.html`](../../src/pages/app.astro) are governed by the declarative [`ViewManager`](../../public/js/ViewManager.js) class driven by [`public/config/app-views.json`](../../public/config/app-views.json).
+Historically, view transitions and sub-application embeddings in `app.html` (`src/pages/app.astro`, retired in `SPRINT-SLC-02`) were governed by `ViewManager` (`public/js/ViewManager.js`, retired) driven by `public/config/app-views.json` (retired).
 
 ### 2.1 View Lifecycle & Methods
 
@@ -63,9 +65,9 @@ View transitions and sub-application embeddings in [`app.html`](../../src/pages/
 | `hideAll()` | `hideAll()` | Reverts all views to hidden state; displays main content canvas. |
 | `_lazyLoadIframe()` | `_lazyLoadIframe(element)` | Reads `data-src` on embedded iframes, sets `src`, and deletes `data-src` to prevent re-fetching. |
 
-### 2.2 Registered View Catalog
+### 2.2 Historical View Catalog (Retired `SLC-02`)
 
-The view manager orchestrates specialized workspaces embedded in [`app.html`](../../src/pages/app.astro):
+The view manager previously orchestrated specialized workspaces embedded in `app.html` (`src/pages/app.astro`, retired):
 
 | View Identifier | Container ID | Description & Component Embed |
 | :--- | :--- | :--- |
@@ -125,7 +127,7 @@ Mission Control delivers full offline functionality through local storage fallba
 1. **Service Worker Architecture** ([`public/sw.js`](../../public/sw.js) & [`public/sw-clm.js`](../../public/sw-clm.js)):
    - **Static Asset Cache**: Caches core JavaScript, CSS tokens, fonts, and vendor libraries on installation (`install` event).
    - **Network-First with Cache Fallback**: Applies to dynamic data queries and MCard API requests.
-   - **Offline Indicator**: Monitored via `window.addEventListener('online')` and `window.addEventListener('offline')`, toggling the `#offline-indicator` badge in [`app.html`](../../src/pages/app.astro).
+   - **Offline Indicator**: Monitored via `window.addEventListener('online')` and `window.addEventListener('offline')`, previously toggling the `#offline-indicator` badge in retired `app.html` (`src/pages/app.astro`).
 2. **PWA Installation Modal** ([`public/js/PWAInstallModal.js`](../../public/js/PWAInstallModal.js)):
    - Captures browser `beforeinstallprompt` event.
    - Presents an unobtrusive UI prompt allowing users to add Mission Control as a standalone desktop application.

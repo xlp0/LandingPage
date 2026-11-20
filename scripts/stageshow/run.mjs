@@ -21,8 +21,7 @@ export const SWEEP_ROUTES = Object.freeze([
   '/index.html?noredirect=1',
   '/sprint-registry.html',
   '/fiber-inspector.html',
-  '/fiber-conformance.html',
-  '/app.html'
+  '/fiber-conformance.html'
 ]);
 
 export const SWEEP_WIDTHS = Object.freeze([1440, 820, 390, 358]);

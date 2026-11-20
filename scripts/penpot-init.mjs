@@ -22,15 +22,7 @@ export const DEFAULT_ROUTES = [
     handle: 'mcard:route:/index.html',
     frameId: 'd7570000-0000-8000-8000-000000000011',
     isStart: true,
-    destinations: ['d7570000-0000-8000-8000-000000000012', 'd7570000-0000-8000-8000-000000000013'],
-  },
-  {
-    path: 'app.html',
-    name: 'Mission Control',
-    handle: 'mcard:route:/app.html',
-    frameId: 'd7570000-0000-8000-8000-000000000012',
-    isStart: false,
-    destinations: ['d7570000-0000-8000-8000-000000000011'],
+    destinations: ['d7570000-0000-8000-8000-000000000013'],
   },
   {
     path: 'responsive-lab.html',
@@ -225,8 +217,6 @@ export function generatePenpotArchive(unitDir, options = {}) {
     let childShapes = [];
     if (r.path === 'index.html') {
       childShapes = buildIndexHtmlShapes(r, xOffset, PENPOT_PAGE_ID);
-    } else if (r.path === 'app.html') {
-      childShapes = buildAppHtmlShapes(r, xOffset, PENPOT_PAGE_ID);
     } else if (r.path === 'responsive-lab.html') {
       childShapes = buildResponsiveLabShapes(r, xOffset, PENPOT_PAGE_ID);
     }

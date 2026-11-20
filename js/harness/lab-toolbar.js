@@ -8,7 +8,7 @@ import { validateLabConfig } from './target-membrane.js';
 
 const FALLBACK_TARGETS = Object.freeze([
   {
-    id: 'local-ui-app',
+    id: 'spa-test-target',
     url: '/tests/fixtures/spa-test-target.html',
     label: 'SPA Test Fixture (/tests/fixtures/spa-test-target.html) - Iframe Compatible',
     chipLabel: 'SPA Fixture',

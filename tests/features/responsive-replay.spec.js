@@ -8,25 +8,26 @@ import { test, expect } from '@playwright/test';
 import { replayRun } from '../../scripts/playwright-replay-driver.mjs';
 import { toPlaywrightContext } from '../fixtures/device-matrix.js';
 import { ensureTargetReachable } from '../fixtures/target-preflight.js';
+import { SPA_FIXTURE_PATH } from '../fixtures/app-fixtures.js';
+import { BASE_URL } from '../fixtures/test-config.js';
 import { BUILTIN_DEVICES } from '../../js/device-registry.js';
 import { TEST_RUN_SCHEMA } from '../../js/harness/test-run-schema.js';
 
 test.describe.configure({ retries: 0 });
 
-const BASE_URL = 'http://localhost:3001';
-const TARGET_URL = process.env.TARGET_URL || `${BASE_URL}/app.html`;
+const TARGET_URL = process.env.TARGET_URL || `${BASE_URL}${SPA_FIXTURE_PATH}`;
 
 test.describe('SPRINT-ERB-04: Deterministic Playwright Replay Driver', () => {
   const phoneDevice = BUILTIN_DEVICES.find((d) => d.id === 'iphone-16-pro');
 
-  test('R1: Record -> Save -> Replay round-trip on app.html with verdict: pass at Tier 1', async ({ browser, request }) => {
+  test('R1: Record -> Save -> Replay round-trip on spa-test-target.html with verdict: pass at Tier 1', async ({ browser, request }) => {
     await ensureTargetReachable(request, TARGET_URL);
 
-    // 1. Create a synthetic valid test run on app.html with interactions
+    // 1. Create a synthetic valid test run on spa-test-target.html with interactions
     const syntheticRun = {
       schema: TEST_RUN_SCHEMA,
       sessionId: `tr_replay_roundtrip_${Date.now()}`,
-      target: { url: TARGET_URL, slug: 'app-html' },
+      target: { url: TARGET_URL, slug: 'spa-test-target-html' },
       captureSource: 'same-origin',
       device: phoneDevice,
       orientation: 'portrait',
@@ -116,7 +117,7 @@ test.describe('SPRINT-ERB-04: Deterministic Playwright Replay Driver', () => {
     const timedRun = {
       schema: TEST_RUN_SCHEMA,
       sessionId: `tr_paced_${Date.now()}`,
-      target: { url: TARGET_URL, slug: 'app-html' },
+      target: { url: TARGET_URL, slug: 'spa-test-target-html' },
       captureSource: 'same-origin',
       device: phoneDevice,
       orientation: 'portrait',
@@ -188,7 +189,7 @@ test.describe('SPRINT-ERB-04: Deterministic Playwright Replay Driver', () => {
     const fallbackRun = {
       schema: TEST_RUN_SCHEMA,
       sessionId: `tr_fallback_${Date.now()}`,
-      target: { url: TARGET_URL, slug: 'app-html' },
+      target: { url: TARGET_URL, slug: 'spa-test-target-html' },
       captureSource: 'same-origin',
       device: phoneDevice,
       orientation: 'portrait',
@@ -243,7 +244,7 @@ test.describe('SPRINT-ERB-04: Deterministic Playwright Replay Driver', () => {
     const runToMint = {
       schema: TEST_RUN_SCHEMA,
       sessionId: `tr_mint_${Date.now()}`,
-      target: { url: TARGET_URL, slug: 'app-html' },
+      target: { url: TARGET_URL, slug: 'spa-test-target-html' },
       captureSource: 'same-origin',
       device: phoneDevice,
       orientation: 'portrait',

@@ -38,7 +38,7 @@ async function loadModule(tag) {
 }
 
 test('setPageState writes the contract and rejects unknown states', async () => {
-  const { body, alert } = installDom({ dataset: { netId: 'landingpage-workbench-net', placeIds: 'p_page_app' } });
+  const { body, alert } = installDom({ dataset: { netId: 'landingpage-workbench-net', placeIds: 'p_page_sprint_registry' } });
   const { setPageState } = await loadModule('state');
   setPageState('ready');
   assert.equal(body.dataset.pageState, 'ready');
@@ -51,7 +51,7 @@ test('setPageState writes the contract and rejects unknown states', async () => 
 });
 
 test('setPlace rejects a place outside the declared list', async () => {
-  const { body } = installDom({ dataset: { placeIds: 'p_page_app,p_page_index' } });
+  const { body } = installDom({ dataset: { placeIds: 'p_page_sprint_registry,p_page_index' } });
   const { setPlace } = await loadModule('place');
   setPlace('p_page_index');
   assert.equal(body.dataset.placeId, 'p_page_index');
@@ -59,10 +59,10 @@ test('setPlace rejects a place outside the declared list', async () => {
 });
 
 test('the net report is bounded and assigns sequence numbers', async () => {
-  installDom({ dataset: { placeIds: 'p_page_app,p_page_index' } });
+  installDom({ dataset: { placeIds: 'p_page_sprint_registry,p_page_index' } });
   const { reportTransition, getReports } = await loadModule('report');
   for (let i = 0; i < 205; i += 1) {
-    reportTransition({ transitionId: `t_${i}`, fromPlaceId: 'p_page_app', toPlaceId: 'p_page_index' });
+    reportTransition({ transitionId: `t_${i}`, fromPlaceId: 'p_page_sprint_registry', toPlaceId: 'p_page_index' });
   }
   const reports = getReports();
   assert.equal(reports.length, 200);
@@ -74,20 +74,20 @@ test('the net report is bounded and assigns sequence numbers', async () => {
 test('a cross-document boot reports the single declared transition', async () => {
   const { store } = installDom({
     dataset: {
-      placeIds: 'p_page_app,p_page_index',
+      placeIds: 'p_page_responsive_lab,p_page_index',
       placeId: 'p_page_index',
-      navArcs: 'p_page_app>p_page_index>t_link_app_to_index;p_page_app>p_page_index>t_second_path'
+      navArcs: 'p_page_responsive_lab>p_page_index>t_link_lab_to_index;p_page_responsive_lab>p_page_index>t_second_path'
     }
   });
-  store.set('gqc:page-state:last', JSON.stringify({ placeId: 'p_page_app', bootNonce: 'older-nonce' }));
+  store.set('gqc:page-state:last', JSON.stringify({ placeId: 'p_page_responsive_lab', bootNonce: 'older-nonce' }));
   // Two arcs match, so the transition id must stay unresolved.
   const { getReports, setPlace } = await loadModule('handoff-ambiguous');
   assert.equal(getReports().length, 1);
   assert.equal(getReports()[0].transitionId, null);
-  assert.equal(getReports()[0].fromPlaceId, 'p_page_app');
+  assert.equal(getReports()[0].fromPlaceId, 'p_page_responsive_lab');
   assert.equal(document.body.dataset.placeId, 'p_page_index');
-  setPlace('p_page_app');
-  assert.equal(document.body.dataset.placeId, 'p_page_app');
+  setPlace('p_page_responsive_lab');
+  assert.equal(document.body.dataset.placeId, 'p_page_responsive_lab');
 });
 
 test('a page that names its place after boot still reports the hand-off once', async () => {
@@ -113,32 +113,32 @@ test('a page that names its place after boot still reports the hand-off once', a
 test('a framed document takes no part in the cross-document hand-off', async () => {
   // A same-origin target inside the lab shares the tab's sessionStorage. Its place must
   // neither produce a firing nor overwrite the hand-off of the top-level page.
-  const handoff = JSON.stringify({ placeId: 'p_page_app', bootNonce: 'lab-nonce' });
+  const handoff = JSON.stringify({ placeId: 'p_page_responsive_lab', bootNonce: 'lab-nonce' });
   const { store } = installDom({
     framed: true,
     dataset: {
-      placeIds: 'p_page_app,p_page_index',
-      placeId: 'p_page_index',
-      navArcs: 'p_page_app>p_page_index>t_link_app_to_index'
+      placeIds: 'p_page_responsive_lab,p_view_index_mcard_viewer',
+      placeId: 'p_view_index_mcard_viewer',
+      navArcs: 'p_page_responsive_lab>p_view_index_mcard_viewer>t_link_lab_to_index'
     }
   });
   store.set('gqc:page-state:last', handoff);
   const { getReports, setPlace } = await loadModule('handoff-framed');
   assert.equal(getReports().length, 0);
-  setPlace('p_page_app');
+  setPlace('p_page_responsive_lab');
   assert.equal(store.get('gqc:page-state:last'), handoff);
 });
 
 test('a boot with the same nonce reports nothing', async () => {
   const { store } = installDom({
     dataset: {
-      placeIds: 'p_page_app,p_page_index',
-      placeId: 'p_page_index',
+      placeIds: 'p_page_responsive_lab,p_view_index_mcard_viewer',
+      placeId: 'p_view_index_mcard_viewer',
       bootNonce: 'nonce-test',
-      navArcs: 'p_page_app>p_page_index>t_link_app_to_index'
+      navArcs: 'p_page_responsive_lab>p_view_index_mcard_viewer>t_link_lab_to_index'
     }
   });
-  store.set('gqc:page-state:last', JSON.stringify({ placeId: 'p_page_app', bootNonce: 'nonce-test' }));
+  store.set('gqc:page-state:last', JSON.stringify({ placeId: 'p_page_responsive_lab', bootNonce: 'nonce-test' }));
   const { getReports } = await loadModule('handoff-same');
   assert.equal(getReports().length, 0);
 });
@@ -148,13 +148,13 @@ test('a reverse cross-document navigation reports a history:<transitionId> arc',
     dataset: {
       placeIds: 'p_page_responsive_lab',
       placeId: 'p_page_responsive_lab',
-      navArcs: 'p_page_responsive_lab>p_page_app>t_link_lab_to_app'
+      navArcs: 'p_page_responsive_lab>p_view_index_mcard_viewer>t_link_lab_to_index'
     }
   });
-  store.set('gqc:page-state:last', JSON.stringify({ placeId: 'p_page_app', bootNonce: 'app-nonce' }));
+  store.set('gqc:page-state:last', JSON.stringify({ placeId: 'p_view_index_mcard_viewer', bootNonce: 'viewer-nonce' }));
   const { getReports } = await loadModule('handoff-history');
   assert.deepEqual(
     getReports().map(({ transitionId, fromPlaceId, toPlaceId }) => ({ transitionId, fromPlaceId, toPlaceId })),
-    [{ transitionId: 'history:t_link_lab_to_app', fromPlaceId: 'p_page_app', toPlaceId: 'p_page_responsive_lab' }]
+    [{ transitionId: 'history:t_link_lab_to_index', fromPlaceId: 'p_view_index_mcard_viewer', toPlaceId: 'p_page_responsive_lab' }]
   );
 });

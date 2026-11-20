@@ -32,7 +32,6 @@ export function renderNavigationArtifacts(penpotFilePath, unitDir) {
     if (routePath.startsWith('/')) routePath = routePath.slice(1);
     if (!routePath) {
       if (f.name.toLowerCase().includes('home')) routePath = 'index.html';
-      else if (f.name.toLowerCase().includes('mission')) routePath = 'app.html';
       else if (f.name.toLowerCase().includes('lab')) routePath = 'responsive-lab.html';
       else routePath = `${f.id}.html`;
     }

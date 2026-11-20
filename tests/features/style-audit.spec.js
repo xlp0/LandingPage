@@ -15,7 +15,6 @@ const here = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(here, '..', '..', 'style-audit');
 
 const PAGES = [
-  { path: '/app.html', name: 'app' },
   { path: '/index.html', name: 'index' },
   { path: '/responsive-lab.html', name: 'responsive-lab' },
   { path: '/fiber-inspector.html', name: 'fiber-inspector' },

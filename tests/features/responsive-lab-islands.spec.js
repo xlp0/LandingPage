@@ -244,21 +244,18 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
       const modal = document.getElementById('device-manager-modal');
       const footer = document.querySelector('footer.lab-footer');
       const backHome = document.getElementById('btn-back-home');
-      const missionControl = document.getElementById('btn-nav-mission-control');
       return {
         headerOutside: Boolean(header && !header.closest('astro-island')),
         modalOutside: Boolean(modal && !modal.closest('astro-island')),
         footerOutside: Boolean(footer && !footer.closest('astro-island')),
-        backHref: backHome?.getAttribute('href'),
-        mcHref: missionControl?.getAttribute('href')
+        backHref: backHome?.getAttribute('href')
       };
     });
     expect(staticOutsideIslands).toEqual({
       headerOutside: true,
       modalOutside: true,
       footerOutside: true,
-      backHref: '/index.html?noredirect=1',
-      mcHref: 'app.html'
+      backHref: '/index.html?noredirect=1'
     });
   });
 

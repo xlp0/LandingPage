@@ -129,8 +129,8 @@ mindmap
 
 | Entry Point / View | URL / File Path | Core Functionality |
 | :--- | :--- | :--- |
-| **Mission Control Portal** | [`index.html`](../../src/pages/index.astro) | System navigation hub, environment configuration loader, links to core apps. |
-| **MCard Manager** | [`app.html`](../../src/pages/app.astro) | Primary operational interface for card management, view switching, multimedia rendering, and authenticated games. |
+| **Mission Control Portal** | [`index.html`](../../src/pages/index.astro) | System navigation hub, environment configuration loader, single-page 4-modality MCard viewer (`?noredirect=1`). |
+| **MCard Manager (Retired `SLC-02`)** | app.html (retired in `SPRINT-SLC-02`) | Legacy IndexedDB dashboard retired; SQLite Triad API remains served via [`server/mcard-api.mjs`](../../server/mcard-api.mjs). |
 | **Responsive UI Lab** | [`responsive-lab.html`](../../src/pages/responsive-lab.astro) | Multi-device viewport testing workbench with device rotation, custom dimension scaling, and layout freeze analysis. |
 | **Fiber Inspector** | [`fiber-inspector.html`](../../src/pages/fiber-inspector.astro) | Observability and correctness panel evaluating epistemic capability ($S$) against axiomatic entropy ($H$). |
 | **Fiber Conformance Harness** | [`fiber-conformance.html`](../../src/pages/fiber-conformance.astro) | Automated test harness verifying Triad compliance and membrane isolation invariants. |
