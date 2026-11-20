@@ -66,7 +66,7 @@ test('toggle buttons on the workbench expose accurate aria-pressed state', async
   await page.goto('/responsive-lab.html', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading', { timeout: 15000 });
 
-  for (const selector of ['.arrangement-btn', '.orientation-btn-primary', '.size-preset-btn']) {
+  for (const selector of ['.arrangement-btn', '.orientation-btn-primary']) {
     const states = await page.locator(selector).evaluateAll((els) =>
       els.map((el) => ({ id: el.id, pressed: el.getAttribute('aria-pressed') }))
     );
@@ -76,7 +76,19 @@ test('toggle buttons on the workbench expose accurate aria-pressed state', async
     }
   }
 
-  await expect(page.getByTestId('btn-size-full')).toHaveAttribute('aria-pressed', 'true');
+  // Dimension presets are one single-select radiogroup: exactly one row is checked.
+  await expect(page.locator('#device-presets-container')).toHaveAttribute('role', 'radiogroup');
+  const presetStates = await page.locator('.size-preset-btn').evaluateAll((els) =>
+    els.map((el) => ({ role: el.getAttribute('role'), checked: el.getAttribute('aria-checked') }))
+  );
+  expect(presetStates.length).toBeGreaterThan(0);
+  for (const entry of presetStates) {
+    expect(entry.role).toBe('radio');
+    expect(['true', 'false']).toContain(entry.checked);
+  }
+  expect(presetStates.filter((entry) => entry.checked === 'true')).toHaveLength(1);
+
+  await expect(page.getByTestId('btn-size-full')).toHaveAttribute('aria-checked', 'true');
   await expect(page.getByTestId('btn-orient-vertical')).toBeDisabled();
   await expect(page.getByTestId('btn-orient-horizontal')).toBeDisabled();
   await expect(page.getByTestId('btn-orient-vertical')).toHaveAttribute('aria-pressed', 'false');
@@ -87,8 +99,8 @@ test('toggle buttons on the workbench expose accurate aria-pressed state', async
   await expect(page.getByTestId('btn-arrange-horizontal')).toHaveAttribute('aria-pressed', 'false');
 
   await page.getByTestId('btn-size-mobile').click();
-  await expect(page.getByTestId('btn-size-mobile')).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByTestId('btn-size-full')).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.getByTestId('btn-size-mobile')).toHaveAttribute('aria-checked', 'true');
+  await expect(page.getByTestId('btn-size-full')).toHaveAttribute('aria-checked', 'false');
   await expect(page.getByTestId('btn-orient-vertical')).toBeEnabled();
   await expect(page.getByTestId('btn-orient-vertical')).toHaveAttribute('aria-pressed', 'true');
 
@@ -101,8 +113,8 @@ test('toggle buttons on the workbench expose accurate aria-pressed state', async
   await expect(page.getByTestId('btn-orient-horizontal')).toHaveAttribute('aria-pressed', 'false');
 
   await page.getByTestId('btn-size-full').click();
-  await expect(page.getByTestId('btn-size-full')).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByTestId('btn-size-mobile')).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.getByTestId('btn-size-full')).toHaveAttribute('aria-checked', 'true');
+  await expect(page.getByTestId('btn-size-mobile')).toHaveAttribute('aria-checked', 'false');
   await expect(page.getByTestId('btn-orient-vertical')).toBeDisabled();
   await expect(page.getByTestId('btn-orient-vertical')).toHaveAttribute('aria-pressed', 'false');
   await expect(page.getByTestId('btn-orient-horizontal')).toHaveAttribute('aria-pressed', 'false');

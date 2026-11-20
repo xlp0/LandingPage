@@ -1,8 +1,15 @@
 import { useEffect } from 'preact/hooks';
 import LabIcon from '../components/LabIcon.jsx';
 import { BUILTIN_DEVICES } from '../../js/device-registry.js';
-import { chipIdFor, initDevicePresetsUI } from '../../js/harness/device-presets-ui.js';
-import { aspectRatio } from '../../js/harness/viewport-geometry.js';
+import {
+  FULL_PRESET_ID,
+  PRESET_CATEGORY_LABELS,
+  chipIdFor,
+  formatPresetDims,
+  groupDevices,
+  initDevicePresetsUI,
+  presetTitle
+} from '../../js/harness/device-presets-ui.js';
 import { getLabRuntime } from '../../js/harness/lab-runtime.js';
 
 export default function DevicePresetsIsland() {
@@ -58,9 +65,9 @@ export default function DevicePresetsIsland() {
         </div>
       </div>
 
-      <div className="toolbar-group">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
-          <span className="group-label">Dimension presets</span>
+      <div className="toolbar-group preset-picker-group">
+        <div className="preset-picker-header">
+          <span className="group-label" id="dimension-presets-label">Dimension presets</span>
           <button
             id="btn-open-device-manager"
             className="toolbar-btn"
@@ -73,33 +80,52 @@ export default function DevicePresetsIsland() {
         </div>
         <div
           id="device-presets-container"
-          className="toolbar-group-row preset-chips-scroll"
-          role="group"
-          aria-label="Device dimension presets"
+          className="preset-list"
+          role="radiogroup"
+          aria-labelledby="dimension-presets-label"
         >
-          {BUILTIN_DEVICES.map((device) => (
+          <div className="preset-group" role="none" data-category="responsive">
+            <div className="preset-group-label" aria-hidden="true">{PRESET_CATEGORY_LABELS.responsive}</div>
             <button
-              key={device.id}
               type="button"
-              id={chipIdFor(device)}
-              className="toolbar-btn size-preset-btn"
-              data-device-id={device.id}
-              title={`${device.name} — ${device.width} × ${device.height}px (${aspectRatio(device.width, device.height)})`}
-              aria-pressed="false"
-             data-testid={chipIdFor(device)}>
-              <span>{`${device.name} (${device.width}px)`}</span>
+              role="radio"
+              id={FULL_PRESET_ID}
+              className="size-preset-btn preset-row active"
+              data-category="responsive"
+              title="Fill the stage at 100% of its container"
+              aria-checked="true"
+              tabIndex={0}
+              data-testid={FULL_PRESET_ID}
+            >
+              <span className="preset-row-name"><LabIcon name="maximize" />Full stage</span>
+              <span className="preset-row-dims">100%</span>
+              <LabIcon name="check" className="preset-row-check" />
             </button>
+          </div>
+          {groupDevices(BUILTIN_DEVICES).map((group) => (
+            <div key={group.category} className="preset-group" role="none" data-category={group.category}>
+              <div className="preset-group-label" aria-hidden="true">{group.label}</div>
+              {group.devices.map((device) => (
+                <button
+                  key={device.id}
+                  type="button"
+                  role="radio"
+                  id={chipIdFor(device)}
+                  className="size-preset-btn preset-row"
+                  data-device-id={device.id}
+                  data-category={group.category}
+                  title={presetTitle(device)}
+                  aria-checked="false"
+                  tabIndex={-1}
+                  data-testid={chipIdFor(device)}
+                >
+                  <span className="preset-row-name">{device.name}</span>
+                  <span className="preset-row-dims">{formatPresetDims(device)}</span>
+                  <LabIcon name="check" className="preset-row-check" />
+                </button>
+              ))}
+            </div>
           ))}
-          <button
-            type="button"
-            id="btn-size-full"
-            className="toolbar-btn size-preset-btn active"
-            title="Reset to full container size (100%)"
-            aria-pressed="true"
-           data-testid="btn-size-full">
-            <LabIcon name="maximize" />
-            <span>Full (100%)</span>
-          </button>
         </div>
       </div>
 

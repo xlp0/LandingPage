@@ -199,30 +199,131 @@ button.nav-action-link {
   letter-spacing: 0.01em;
 }
 
-.size-preset-btn {
-  background: var(--lab-surface);
+/* Dimension presets: one single-select list (StageShow Segmented track + Menu rows). */
+.preset-picker-group {
+  flex-direction: column;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  gap: 6px;
+}
+
+.preset-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lab-gap-sm, 8px);
+}
+
+.preset-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 3px;
+  background: var(--lab-well);
   border: 1px solid var(--lab-control-border);
-  color: var(--color-text-secondary);
+  border-radius: var(--lab-radius-md, 8px);
+  max-height: 22rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.preset-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.preset-group-label {
+  position: sticky;
+  top: -3px;
+  z-index: 1;
+  padding: 6px 8px 3px;
+  background: var(--lab-well);
+  color: var(--color-text-muted);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.preset-group:first-child .preset-group-label {
+  padding-top: 3px;
+}
+
+.size-preset-btn {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 14px;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
   min-height: var(--lab-btn-compact, 28px);
-  padding: 0.25rem 0.6rem;
+  padding: 0 8px;
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: var(--lab-radius-sm, 6px);
-  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  font-family: inherit;
+  font-size: 0.74rem;
   font-weight: 500;
+  text-align: left;
   cursor: pointer;
-  transition: all var(--motion-duration-fast, 150ms) ease;
+  transition: background-color var(--motion-duration-fast, 150ms) ease, color var(--motion-duration-fast, 150ms) ease;
+}
+
+.preset-row-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preset-row-name .lab-icon {
+  flex: none;
+}
+
+.preset-row-dims {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.preset-row-check {
+  flex: none;
+  visibility: hidden;
+  color: var(--color-primary);
 }
 
 .size-preset-btn:hover {
-  background: var(--badge-info-bg-strong);
-  color: var(--panel-text);
-  border-color: var(--color-primary);
+  background: var(--overlay-faint);
+  color: var(--color-text-primary);
 }
 
+.size-preset-btn[aria-checked="true"],
 .size-preset-btn.active {
   background: var(--lab-raised);
-  border-color: var(--color-primary);
+  border-color: var(--lab-control-border);
   color: var(--color-text-primary);
-  box-shadow: inset 0 0 0 1px var(--badge-info-border);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+.size-preset-btn[aria-checked="true"] .preset-row-dims {
+  color: var(--color-text-secondary);
+}
+
+.size-preset-btn[aria-checked="true"] .preset-row-check {
+  visibility: visible;
+}
+
+.size-preset-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
 }
 
 /* Author display rules such as .toolbar-btn outrank the browser's [hidden] default. */
@@ -1513,22 +1614,13 @@ body[data-page-state="loading"] .viewport-scale-wrapper {
   color: var(--badge-success-text);
 }
 
-.preset-chips-scroll {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  max-height: 12rem;
-  overflow-y: auto;
-}
-
 .chip-custom-dot {
+  flex: none;
   display: inline-block;
   width: 6px;
   height: 6px;
-  margin-left: 0.3rem;
   border-radius: 50%;
   background: var(--badge-accent-text);
-  vertical-align: middle;
 }
 
 .device-manager-backdrop {
@@ -2115,7 +2207,7 @@ body[data-page-state="loading"] .viewport-scale-wrapper {
     max-width: 100%;
   }
 
-  .preset-chips-scroll {
+  .preset-list {
     max-height: none;
     overflow-y: visible;
   }

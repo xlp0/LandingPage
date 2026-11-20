@@ -266,7 +266,7 @@ test.describe('SPRINT-SSG-06: Host Responsive Tiers & Compact Architecture', () 
     // Step 3: Verify 1-column device manager modal at 358x800 and unwrapped preset chips
     await page.locator('#btn-mode-explore').click();
     await page.waitForTimeout(150);
-    const chipsScrollStyle = await page.locator('.preset-chips-scroll').evaluate((el) => {
+    const chipsScrollStyle = await page.locator('.preset-list').evaluate((el) => {
       const cs = window.getComputedStyle(el);
       return { maxHeight: cs.maxHeight, overflowY: cs.overflowY };
     });

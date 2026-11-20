@@ -1,6 +1,7 @@
 /**
  * Device Presets and Device Manager UI Controller
- * Manages preset chips, custom device persistence UI, and modal interactions.
+ * Renders the single-select dimension preset list (a radiogroup of grouped rows),
+ * custom device persistence UI, and modal interactions.
  */
 
 import { aspectRatio } from './viewport-geometry.js';
@@ -12,8 +13,39 @@ const BUILTIN_CHIP_IDS = {
   'macbook-air-13': 'btn-size-desktop',
 };
 
+export const FULL_PRESET_ID = 'btn-size-full';
+export const PRESET_CATEGORY_ORDER = ['phone', 'tablet', 'desktop', 'wearable', 'custom'];
+export const PRESET_CATEGORY_LABELS = {
+  responsive: 'Responsive',
+  phone: 'Phone',
+  tablet: 'Tablet',
+  desktop: 'Desktop',
+  wearable: 'Wearable',
+  custom: 'Custom',
+};
+
 export function chipIdFor(device) {
   return BUILTIN_CHIP_IDS[device.id] || `btn-size-${device.id}`;
+}
+
+export function formatPresetDims(device) {
+  return `${device.width} × ${device.height}`;
+}
+
+export function presetTitle(device) {
+  return `${device.name}, ${device.width} × ${device.height}px (${aspectRatio(device.width, device.height)})`;
+}
+
+/** Groups devices by category in a stable display order; unknown categories fall into custom. */
+export function groupDevices(devices = []) {
+  const buckets = new Map(PRESET_CATEGORY_ORDER.map((c) => [c, []]));
+  for (const d of devices) {
+    const key = buckets.has(d.category) ? d.category : 'custom';
+    buckets.get(key).push(d);
+  }
+  return PRESET_CATEGORY_ORDER
+    .filter((c) => buckets.get(c).length > 0)
+    .map((c) => ({ category: c, label: PRESET_CATEGORY_LABELS[c], devices: buckets.get(c) }));
 }
 
 
@@ -54,7 +86,7 @@ export function initDevicePresetsUI(options = {}) {
 
   let activeChipId = stage?.getGeometry?.()?.deviceId
     ? chipIdFor({ id: stage.getGeometry().deviceId })
-    : 'btn-size-full';
+    : FULL_PRESET_ID;
   const cleanupFns = [];
 
   function listen(target, eventName, handler) {
@@ -63,13 +95,39 @@ export function initDevicePresetsUI(options = {}) {
     cleanupFns.push(() => target.removeEventListener(eventName, handler));
   }
 
+  function presetRows() {
+    return presetsContainer ? [...presetsContainer.querySelectorAll('.size-preset-btn')] : [];
+  }
+
+  /** Keeps the visible selection inside the list's own scroll box without scrolling the page. */
+  function revealRow(row) {
+    if (!presetsContainer || !row) return;
+    const top = row.offsetTop;
+    const bottom = top + row.offsetHeight;
+    const viewTop = presetsContainer.scrollTop;
+    const viewBottom = viewTop + presetsContainer.clientHeight;
+    if (top < viewTop + 24) presetsContainer.scrollTop = Math.max(0, top - 24);
+    else if (bottom > viewBottom) presetsContainer.scrollTop = bottom - presetsContainer.clientHeight;
+  }
+
+  function syncCheckedRows({ reveal = false } = {}) {
+    const rows = presetRows();
+    let checkedRow = null;
+    for (const row of rows) {
+      const checked = Boolean(activeChipId && row.id === activeChipId);
+      row.classList.toggle('active', checked);
+      row.setAttribute('aria-checked', String(checked));
+      row.tabIndex = -1;
+      if (checked) checkedRow = row;
+    }
+    const focusTarget = checkedRow || rows[0];
+    if (focusTarget) focusTarget.tabIndex = 0;
+    if (reveal && checkedRow) revealRow(checkedRow);
+  }
+
   function markActiveChip(deviceId) {
-    activeChipId = deviceId === 'full' ? 'btn-size-full' : deviceId ? chipIdFor({ id: deviceId }) : null;
-    presetsContainer?.querySelectorAll('.size-preset-btn').forEach((b) => {
-      const pressed = Boolean(activeChipId && b.id === activeChipId);
-      b.classList.toggle('active', pressed);
-      b.setAttribute('aria-pressed', String(pressed));
-    });
+    activeChipId = deviceId === 'full' ? FULL_PRESET_ID : deviceId ? chipIdFor({ id: deviceId }) : null;
+    syncCheckedRows({ reveal: true });
   }
 
   function applyDevicePreset(device) {
@@ -85,59 +143,119 @@ export function initDevicePresetsUI(options = {}) {
     markActiveChip(device.id);
   }
 
+  function applyFullPreset() {
+    if (typeof stage?.selectFullViewport === 'function') {
+      stage.selectFullViewport('preset');
+    } else {
+      stage?.setViewportSize(100, 100, '%', 'Full (100%)', null, 'preset');
+    }
+    markActiveChip('full');
+  }
+
+  function buildGroup(text, category) {
+    const group = document.createElement('div');
+    group.className = 'preset-group';
+    group.setAttribute('role', 'none');
+    group.dataset.category = category;
+    const label = document.createElement('div');
+    label.className = 'preset-group-label';
+    label.setAttribute('aria-hidden', 'true');
+    label.textContent = text;
+    group.appendChild(label);
+    return group;
+  }
+
+  function buildRow({ id, name, dims, title, category, deviceId, isCustom, icon }) {
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.id = id;
+    row.className = 'size-preset-btn preset-row';
+    row.setAttribute('role', 'radio');
+    row.setAttribute('aria-checked', 'false');
+    row.tabIndex = -1;
+    row.dataset.testid = id;
+    row.dataset.category = category;
+    if (deviceId) row.dataset.deviceId = deviceId;
+    row.title = title;
+
+    const nameEl = document.createElement('span');
+    nameEl.className = 'preset-row-name';
+    const leadIcon = icon ? createIconElement(icon) : null;
+    if (leadIcon) nameEl.append(leadIcon);
+    nameEl.append(document.createTextNode(name));
+    if (isCustom) {
+      const dot = document.createElement('span');
+      dot.className = 'chip-custom-dot';
+      dot.setAttribute('aria-hidden', 'true');
+      nameEl.appendChild(dot);
+    }
+
+    const dimsEl = document.createElement('span');
+    dimsEl.className = 'preset-row-dims';
+    dimsEl.textContent = dims;
+
+    const check = createIconElement('check', { className: 'preset-row-check' }) || document.createElement('span');
+    check.classList.add('preset-row-check');
+    row.append(nameEl, dimsEl, check);
+    return row;
+  }
+
   function renderPresets() {
     if (!presetsContainer || !registry) return;
-    const devices = registry.getAll();
     presetsContainer.replaceChildren();
 
-    for (const d of devices) {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.id = chipIdFor(d);
-      btn.className = 'toolbar-btn size-preset-btn';
-      btn.dataset.deviceId = d.id;
-      btn.dataset.testid = chipIdFor(d);
-      btn.title = `${d.name} — ${d.width} × ${d.height}px (${aspectRatio(d.width, d.height)})`;
-      btn.innerHTML = `<span>${d.name} (${d.width}px)</span>`;
-
-      if (!d.isBuiltin) {
-        const dot = document.createElement('span');
-        dot.className = 'chip-custom-dot';
-        dot.setAttribute('aria-hidden', 'true');
-        btn.appendChild(dot);
-      }
-
-      btn.addEventListener('click', () => applyDevicePreset(d));
-      presetsContainer.appendChild(btn);
-    }
-
-    const full = document.createElement('button');
-    full.type = 'button';
-    full.id = 'btn-size-full';
-    full.dataset.testid = 'btn-size-full';
-    full.className = 'toolbar-btn size-preset-btn';
-    full.title = 'Reset to full container size (100%)';
-    const fullIcon = createIconElement('maximize');
-    const fullLabel = document.createElement('span');
-    fullLabel.textContent = 'Full (100%)';
-    if (fullIcon) full.append(fullIcon, fullLabel);
-    else full.append(fullLabel);
-    full.addEventListener('click', () => {
-      if (typeof stage?.selectFullViewport === 'function') {
-        stage.selectFullViewport('preset');
-      } else {
-        stage?.setViewportSize(100, 100, '%', 'Full (100%)', null, 'preset');
-      }
-      markActiveChip('full');
+    const responsiveGroup = buildGroup(PRESET_CATEGORY_LABELS.responsive, 'responsive');
+    const full = buildRow({
+      id: FULL_PRESET_ID,
+      name: 'Full stage',
+      dims: '100%',
+      title: 'Fill the stage at 100% of its container',
+      category: 'responsive',
+      icon: 'maximize',
     });
-    presetsContainer.appendChild(full);
+    full.addEventListener('click', applyFullPreset);
+    responsiveGroup.appendChild(full);
+    presetsContainer.appendChild(responsiveGroup);
 
-    for (const chip of presetsContainer.querySelectorAll('.size-preset-btn')) {
-      const isActive = Boolean(activeChipId && chip.id === activeChipId);
-      chip.classList.toggle('active', isActive);
-      chip.setAttribute('aria-pressed', String(isActive));
+    for (const group of groupDevices(registry.getAll())) {
+      const groupEl = buildGroup(group.label, group.category);
+      for (const d of group.devices) {
+        const row = buildRow({
+          id: chipIdFor(d),
+          name: d.name,
+          dims: formatPresetDims(d),
+          title: presetTitle(d),
+          category: group.category,
+          deviceId: d.id,
+          isCustom: !d.isBuiltin,
+        });
+        row.addEventListener('click', () => applyDevicePreset(d));
+        groupEl.appendChild(row);
+      }
+      presetsContainer.appendChild(groupEl);
     }
+
+    syncCheckedRows({ reveal: true });
   }
+
+  /** Radio-group keyboard model: arrows and Home/End move the selection and apply it. */
+  function onPresetKeydown(e) {
+    const keys = ['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft', 'Home', 'End'];
+    if (!keys.includes(e.key)) return;
+    const rows = presetRows();
+    if (rows.length === 0) return;
+    const current = rows.indexOf(document.activeElement);
+    let next = current < 0 ? 0 : current;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') next = (next + 1) % rows.length;
+    else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') next = (next - 1 + rows.length) % rows.length;
+    else if (e.key === 'Home') next = 0;
+    else next = rows.length - 1;
+    e.preventDefault();
+    rows[next].focus();
+    rows[next].click();
+  }
+
+  listen(presetsContainer, 'keydown', onPresetKeydown);
 
   function renderManagerList() {
     if (!managerList || !registry) return;
@@ -267,6 +385,7 @@ export function initDevicePresetsUI(options = {}) {
     closeDeviceManager,
     markActiveChip,
     applyDevicePreset,
+    applyFullPreset,
     destroy
   };
 }

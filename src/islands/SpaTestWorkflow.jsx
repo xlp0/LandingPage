@@ -395,7 +395,7 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
               runtime.setWorkbenchMode?.('explore');
               if (typeof document !== 'undefined') {
                 const container = document.getElementById('device-presets-container');
-                const firstChip = container?.querySelector('button') || container;
+                const firstChip = container?.querySelector('[aria-checked="true"]') || container?.querySelector('button') || container;
                 firstChip?.scrollIntoView?.({ block: 'nearest' });
                 firstChip?.focus?.();
               }

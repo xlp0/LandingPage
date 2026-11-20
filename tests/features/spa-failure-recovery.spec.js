@@ -112,7 +112,7 @@ test.describe('SPRINT-GQC-02: SPA Failure Recovery and Keyboard Operation', () =
     await expect(appRoot).toHaveAttribute('data-place-id', 'p_spa_overview');
     const bootNonce = await appRoot.getAttribute('data-boot-nonce');
 
-    const phoneBtn = page.getByRole('button', { name: /iPhone 16 Pro/i });
+    const phoneBtn = page.getByRole('radio', { name: /iPhone 16 Pro/i });
     await phoneBtn.focus();
     await expect(phoneBtn).toBeFocused();
     await page.keyboard.press('Enter');
