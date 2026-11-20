@@ -32,7 +32,7 @@ Open `http://localhost:3000/responsive-lab.html` in Chromium, Firefox, or WebKit
 
 ## Core Roles and Surface Boundaries
 
-`LandingPage` operates as **Estate 4 (Submodule 3)** of the `MCard_TDD` four-estate workspace (`ULR-01`). It maintains a strict boundary between the **workbench** and **targets under test**.
+`LandingPage` operates as **Estate 3 (Submodule 3)** of the `MCard_TDD` four-estate workspace (`ULR-01`). It maintains a strict boundary between the **workbench** and **targets under test**.
 
 1. **Responsive UI Lab Workbench (`/responsive-lab.html`, Place `p_page_responsive_lab`)**
    Hosted by [`src/pages/responsive-lab.astro`](src/pages/responsive-lab.astro) (`astro@7.4.2`, `@astrojs/node@11.1.9` middleware, `@astrojs/preact@6.1.1`, `preact@11.1.0`) with 8 Preact islands (`BombadilDashboardIsland` deferred with `client:visible`). Certifies a chosen target URL across 12 built-in device presets (`js/device-registry.js`), 2D orientation swap (`INV-RVP-01`), parametric `data-frame-style` bezels (`INV-SSG-GEOM`), scale-free interaction capture (`[0.0, 1.0]`, `INV-ERB-02`), 5-step guided SPA Petri net verification, Bombadil runner handles, Triad persistence, and deterministic Playwright replay.

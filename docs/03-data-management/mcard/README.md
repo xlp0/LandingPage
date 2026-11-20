@@ -15,7 +15,7 @@ This directory contains documentation for the **MCard** (Content-Addressable Sto
   - GraphRAG engine
   - Semantic versioning
 
-- **[CLM_Language_Specification_v2.md](./CLM_Language_Specification_v2.md)** - CLM Language Specification v2.1.0
+- **CLM Language Specification (Canonical Estate 1)** — Maintained upstream under `clm/docs/spec/` (legacy local `CLM_Language_Specification_v2.md` removed by `FRO-07`):
   - Cubical Type Theory-based DSL
   - Polynomial Cards (PCards)
   - PTR (Polynomial Type Runtime) integration

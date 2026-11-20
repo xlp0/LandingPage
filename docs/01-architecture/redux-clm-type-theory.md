@@ -551,7 +551,7 @@ This creates a system where:
 
 - [3D Theater README](../../public/examples/THREEJS_ANIMEJS/README.md) - ABC Theatre implementation
 - [Redux Architecture](../05-state-management/redux/REDUX_ARCHITECTURE.md) - Redux patterns
-- [CLM Language Specification](../03-data-management/mcard/CLM_Language_Specification_v2.md) - CLM syntax
+- Canonical CLM Specifications (Estate 1): `clm/docs/spec/` (CLM syntax)
 
 ---
 

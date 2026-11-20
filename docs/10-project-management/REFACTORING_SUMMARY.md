@@ -484,7 +484,7 @@ git push origin main
 
 - **mcard-js npm:** https://www.npmjs.com/package/mcard-js
 - **Browser README:** `/public/js/mcard/README.md`
-- **CLM Spec:** `/docs/mcard/CLM_Language_Specification_v2.md`
+- **CLM Spec (Estate 1 canonical):** `clm/docs/spec/` (historical `/docs/mcard/CLM_Language_Specification_v2.md` removed by `FRO-07`)
 - **mcard-js Guide:** `/docs/mcard/how_to_use_mcard_js.md`
 - **Commit:** `106fed9` (refactor branch)
 - **Merge:** `70ca40c` (main branch)

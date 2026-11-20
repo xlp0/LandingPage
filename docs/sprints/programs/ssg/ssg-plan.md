@@ -7,7 +7,7 @@
 | Source of Truth | This plan, [`./INDEX.md`](./INDEX.md), [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv), [`./evidence/SSG-pre-program-spike.md`](./evidence/SSG-pre-program-spike.md), and [`./evidence/SSG-egm-review.md`](./evidence/SSG-egm-review.md) |
 | Status | `ACTIVE` (`SPRINT-SSG-00`..`SPRINT-SSG-02` `DONE`; `SPRINT-SSG-03` through `SPRINT-SSG-08` `PLANNED`; Flag 1 and Flag 2 enabled, refined with StageShow layout architecture, Bombadil dashboard handles, and EGM review `2026-11-19`) |
 | Program | SSG, StageShow Craft, Bombadil Dashboard Handles, and Coherent Device, Orientation, and Mode Layout |
-| Consensus Kernel | `clm-kernel@0.0.23` |
+| Consensus Kernel | `clm-kernel@0.0.24` |
 | Drift Gate | `npm run docs:check` |
 
 ## Outcome
@@ -164,7 +164,7 @@ Each decision has a matching superseding `SSG-plan-r2` row in [`./DECISIONS.tsv`
 ## Non-goals
 
 - Adopting React inside `src/islands/` (Pre-existing Preact islands remain canonical).
-- Breaking closed `responsive_test_run:v1` compatibility or changing `clm-kernel@0.0.23` consensus rules.
+- Breaking closed `responsive_test_run:v1` compatibility or changing `clm-kernel@0.0.24` consensus rules.
 - Executing Bombadil inside GitHub Actions CI (`SSG-D13` keeps local Docker + on-demand dashboard handles).
 
 ## Graduation

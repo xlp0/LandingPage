@@ -20,4 +20,4 @@
 - [MCARD_LIBRARY_ISSUE.md](./MCARD_LIBRARY_ISSUE.md) records resolved binary-streaming, provenance, and closed-schema issues.
 - [MCARD-JS-SETUP.md](./MCARD-JS-SETUP.md) and [MCARD-UPDATE-2.1.13.md](./MCARD-UPDATE-2.1.13.md) cover `mcard-js` vendor bundle setup and history.
 - [CONTENT_RENDERING_SYSTEM.md](./CONTENT_RENDERING_SYSTEM.md), [full-text-search.md](./full-text-search.md), [DUAL-SEARCH-SUMMARY.md](./DUAL-SEARCH-SUMMARY.md), [SEARCH-IMPLEMENTATION-SUMMARY.md](./SEARCH-IMPLEMENTATION-SUMMARY.md), [EDIT-PANEL-FEATURE.md](./EDIT-PANEL-FEATURE.md), and [mcard-handles-filter.md](./mcard-handles-filter.md) cover search and rendering features.
-- [mcard/README.md](./mcard/README.md), [mcard/CLM_Language_Specification_v2.md](./mcard/CLM_Language_Specification_v2.md), and [mcard/how_to_use_mcard_js.md](./mcard/how_to_use_mcard_js.md) provide deep-dive tutorials and CLM specs.
+- [mcard/README.md](./mcard/README.md) and [mcard/how_to_use_mcard_js.md](./mcard/how_to_use_mcard_js.md) provide deep-dive tutorials; canonical CLM language specs live upstream in Estate 1 (`clm/docs/spec/`).
