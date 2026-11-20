@@ -5,12 +5,18 @@
 | Audience | Scrum masters, product managers, architects, developers, and operators |
 | BMAD Owner | Scrum Master (`bmad-agent-pm` / Scrum Master) |
 | Source of Truth | [`docs/sprints/_active/INDEX.md`](./_active/INDEX.md) and [`docs/sprints/_active/DECISIONS.tsv`](./_active/DECISIONS.tsv) |
-| Status | `IDLE` (`0` active sprints; `5` graduated programs archived) |
+| Status | `ACTIVE` (`Program SLC` in flight; `5` graduated programs archived) |
 | Drift Gate | `npm run docs:check` |
 
 ## Active program
 
-- [**Active Sprint Workspace (`docs/sprints/_active/`)**](./_active/INDEX.md) (Standby with `0` active sprints as of `2026-11-20`; retains [`_active/INDEX.md`](./_active/INDEX.md) and the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) ledger)
+- [**Active Sprint Workspace (`docs/sprints/_active/`)**](./_active/INDEX.md) (Active **Program SLC** `SPRINT-SLC-00..04` started `2026-11-20`; holds [`slc-plan.md`](./_active/slc-plan.md) and the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) ledger)
+  - [SLC Execution Plan](./_active/slc-plan.md)
+  - [SLC-00 Legacy Kubernetes, ArgoCD, and Grafana Metrics Subtraction](./_active/SPRINT-SLC-00-k8s-argocd-grafana-subtraction.md)
+  - [SLC-01 Legacy Example Games Subtraction](./_active/SPRINT-SLC-01-legacy-example-games-subtraction.md)
+  - [SLC-02 Full app.astro and Legacy Mission Control Retirement](./_active/SPRINT-SLC-02-app-astro-full-retirement.md)
+  - [SLC-03 Residual Redux Store and Dependencies Cleanup](./_active/SPRINT-SLC-03-redux-store-and-deps-cleanup.md)
+  - [SLC-04 Auth Route Retirement, Final Verification, and Graduation](./_active/SPRINT-SLC-04-auth-route-retirement-and-graduation.md)
 
 ## Graduated programs
 

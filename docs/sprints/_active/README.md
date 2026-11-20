@@ -4,21 +4,22 @@
 | --- | --- |
 | Audience | Scrum masters, BMAD role leads, developers, and operators |
 | BMAD Owner | Scrum Master |
-| Source of Truth | [`./INDEX.md`](./INDEX.md), [`./DECISIONS.tsv`](./DECISIONS.tsv), and [`../INDEX.md`](../INDEX.md) |
-| Status | `IDLE` (`0` active sprints; `Program SSG` graduated `2026-11-20`) |
+| Source of Truth | [`./INDEX.md`](./INDEX.md), [`./slc-plan.md`](./slc-plan.md), [`./DECISIONS.tsv`](./DECISIONS.tsv), and [`../INDEX.md`](../INDEX.md) |
+| Status | `ACTIVE` (`Program SLC`: `SPRINT-SLC-00` `IN_PROGRESS`; `SPRINT-SLC-01..04` `PLANNED`) |
 | Consensus Kernel | `clm-kernel@0.0.24` |
 | Drift Gate | `npm run docs:check` |
 
 ## Workspace status
 
-**Standby (`0` active sprints as of `2026-11-20`).**
+**Active program in flight (`2026-11-20`) is Program SLC (`SPRINT-SLC-00` through `SPRINT-SLC-04`).**
 
-Program SSG (`SPRINT-SSG-00` through `SPRINT-SSG-08`) completed and graduated with operator approval on `2026-11-20` into [`docs/sprints/programs/ssg/`](../programs/ssg/INDEX.md). Only [`./INDEX.md`](./INDEX.md), [`./README.md`](./README.md), and the canonical append-only [`./DECISIONS.tsv`](./DECISIONS.tsv) decision ledger remain here until a new sprint program begins.
+Program SLC executes the five deferred post-SSG local cleanup items tracked in [`../programs/ssg/ssg-local-backlog.md`](../programs/ssg/ssg-local-backlog.md): retiring `k8s/`, root ArgoCD YAML, and Grafana metrics collector dumps (`SPRINT-SLC-00`), legacy example games (`SPRINT-SLC-01`), `src/pages/app.astro` and `MCardManager` UI assets while keeping `compat.js` (`SPRINT-SLC-02`), residual Redux stores and dependencies (`SPRINT-SLC-03`), and `routes/auth.js` (`SPRINT-SLC-04`).
 
 ## Active artifacts
 
-- **Workspace status index.** [`./INDEX.md`](./INDEX.md)
-- **Canonical decision ledger.** [`./DECISIONS.tsv`](./DECISIONS.tsv)
+- **Program plan.** [`./slc-plan.md`](./slc-plan.md)
+- **Active sprint (`IN_PROGRESS`).** [`./SPRINT-SLC-00-k8s-argocd-grafana-subtraction.md`](./SPRINT-SLC-00-k8s-argocd-grafana-subtraction.md)
+- **Active decision ledger.** [`./DECISIONS.tsv`](./DECISIONS.tsv)
 
 ## Graduated archives
 
@@ -27,3 +28,5 @@ Program SSG (`SPRINT-SSG-00` through `SPRINT-SSG-08`) completed and graduated wi
 - **Program GQC.** [`docs/sprints/programs/gqc/INDEX.md`](../programs/gqc/INDEX.md) (`2026-11-18`)
 - **Program ERB.** [`docs/sprints/08-testing/INDEX.md`](../08-testing/INDEX.md) (`2026-10-21`)
 - **Program SMO.** [`docs/sprints/01-architecture/INDEX.md`](../01-architecture/INDEX.md) (`2026-10-21`)
+
+Review [`./INDEX.md`](./INDEX.md) for the full `SLC-00`..`SLC-04` dependency sequence and verified gate commands.

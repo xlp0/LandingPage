@@ -13,7 +13,7 @@ Welcome to the master documentation index for **PKC Landing Page, Universal 4-Mo
 
 ## Sprint Programs and Governance
 
-- **[Active Sprint Workspace (`docs/sprints/_active/`)](sprints/_active/INDEX.md)** (Standby with `0` active sprints as of `2026-11-20`; holds the canonical [`DECISIONS.tsv`](sprints/_active/DECISIONS.tsv) ledger)
+- **[Active Sprint Workspace (`docs/sprints/_active/`)](sprints/_active/INDEX.md)** (`Program SLC` active with `SPRINT-SLC-00` in progress and `SPRINT-SLC-01..04` planned; holds the canonical [`DECISIONS.tsv`](sprints/_active/DECISIONS.tsv) ledger)
 - **[Program SSG (`docs/sprints/programs/ssg/`)](sprints/programs/ssg/INDEX.md)** (Graduated `2026-11-20`)
   - [Program SSG Plan](sprints/programs/ssg/ssg-plan.md)
   - [SPRINT-SSG-08 Verification Baselines, Docker Gate, and Graduation](sprints/programs/ssg/SPRINT-SSG-08-verification-baselines-and-graduation.md)
