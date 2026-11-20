@@ -7,7 +7,7 @@
 | Classification | Maintained Capability Reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts |
 | Operational Guide | [../01-architecture/workbench-net.md](../01-architecture/workbench-net.md) |
 > **Location**: [`LandingPage/docs/functionalities/03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md`](./03-CUBICAL-LOGIC-MODEL-AND-FIBER-CORRECTNESS.md)  
-> **Source Files**: [`fiber-inspector.html`](../../src/pages/fiber-inspector.astro), [`fiber-conformance.html`](../../src/pages/fiber-conformance.astro), [`js/clm-iframe-loader.js`](../../js/clm-iframe-loader.js), [`js/redux/slices/clm-slice.js`](../../js/redux/slices/clm-slice.js), [`js/redux/middleware/clm-middleware.js`](../../js/redux/middleware/clm-middleware.js)  
+> **Source Files**: [`fiber-inspector.html`](../../src/pages/fiber-inspector.astro), [`fiber-conformance.html`](../../src/pages/fiber-conformance.astro), [`js/clm-iframe-loader.js`](../../js/clm-iframe-loader.js)  
 > **Kernel Version**: `clm-kernel@0.0.24` ([`server/mcard-modality.mjs`](../../server/mcard-modality.mjs))  
 > **Status**: Comprehensive Functional Specification
 

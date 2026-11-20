@@ -4,10 +4,9 @@
 import { Utils } from '../utils.js';
 
 export class RoomCreator {
-    constructor(roomState, broadcaster, reduxStore = null) {
+    constructor(roomState, broadcaster) {
         this.roomState = roomState;
         this.broadcaster = broadcaster;
-        this.store = reduxStore;
     }
     
     /**
@@ -19,7 +18,7 @@ export class RoomCreator {
         const room = {
             id: this._generateRoomId(),
             ...roomData,
-            createdAt: new Date().toISOString(), // Convert to ISO string for Redux serialization
+            createdAt: new Date().toISOString(),
             participants: [],
             status: 'active'
         };
@@ -31,39 +30,17 @@ export class RoomCreator {
             this.roomState.addRoom(room);
             this.roomState.addLocalRoom(room.id);
             
-            // Dispatch to Redux
-            if (this.store && window.reduxStore) {
-                const state = window.reduxStore.getState();
-                // Import actions dynamically (from shared store at root level)
-                import('../../../store/roomsSlice.js').then(module => {
-                    this.store.dispatch(module.addRoom(room));
-                    this.store.dispatch(module.markRoomAsLocal(room.id));
-                    console.log('[RoomCreator] ✅ Redux: Room added to store');
-                });
-            }
-            
             // CRITICAL: Add host to participants list immediately
             // This ensures duplicate username validation works for the host
             if (roomData.hostId && roomData.host) {
                 const hostParticipant = {
                     id: roomData.hostId,
                     name: roomData.host,
-                    joinedAt: new Date().toISOString(), // Convert to ISO string for Redux serialization
+                    joinedAt: new Date().toISOString(),
                     isHost: true
                 };
                 this.roomState.addParticipantToRoom(room.id, hostParticipant);
                 console.log('[RoomCreator] ✅ Added host to participants:', roomData.host);
-                
-                // Dispatch to Redux
-                if (this.store && window.reduxStore) {
-                    import('../../../store/roomsSlice.js').then(module => {
-                        this.store.dispatch(module.addParticipant({ 
-                            roomId: room.id, 
-                            participant: hostParticipant 
-                        }));
-                        console.log('[RoomCreator] ✅ Redux: Host participant added');
-                    });
-                }
             }
             
             // Broadcast room creation to network

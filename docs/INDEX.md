@@ -13,7 +13,7 @@ Welcome to the master documentation index for **PKC Landing Page, Universal 4-Mo
 
 ## Sprint Programs and Governance
 
-- **[Active Sprint Workspace (`docs/sprints/_active/`)](sprints/_active/INDEX.md)** (`Program SLC` active with `SPRINT-SLC-00..02` done and `SPRINT-SLC-03..04` planned; holds the canonical [`DECISIONS.tsv`](sprints/_active/DECISIONS.tsv) ledger)
+- **[Active Sprint Workspace (`docs/sprints/_active/`)](sprints/_active/INDEX.md)** (`Program SLC` active with `SPRINT-SLC-00..03` done and `SPRINT-SLC-04` planned; holds the canonical [`DECISIONS.tsv`](sprints/_active/DECISIONS.tsv) ledger)
 - **[Program SSG (`docs/sprints/programs/ssg/`)](sprints/programs/ssg/INDEX.md)** (Graduated `2026-11-20`)
   - [Program SSG Plan](sprints/programs/ssg/ssg-plan.md)
   - [SPRINT-SSG-08 Verification Baselines, Docker Gate, and Graduation](sprints/programs/ssg/SPRINT-SSG-08-verification-baselines-and-graduation.md)
@@ -72,7 +72,7 @@ Maintained capability reference documents (`DECISIONS.tsv` row 63), complementin
 | **02. Authentication** | Zitadel OIDC, Google OAuth setup, PKCE flow, privacy redaction (`INV-PRV-01`) | [02-authentication/README.md](02-authentication/README.md) |
 | **03. Data Management** | Canonical SQLite Triad, `clm-kernel@0.0.24` consensus, three hash domains, sample corpus | [03-data-management/README.md](03-data-management/README.md) |
 | **04. Networking** | WebRTC P2P data mesh, WebSocket `/ws/` signaling on port `3000`, SSRF membrane | [04-networking/README.md](04-networking/README.md) |
-| **05. State Management** | `lab-runtime.js` coordinator, isolated legacy Redux stores, 20-pair recording FSM | [05-state-management/README.md](05-state-management/README.md) |
+| **05. State Management** | `lab-runtime.js` coordinator, Astro Preact island state, 20-pair recording FSM | [05-state-management/README.md](05-state-management/README.md) |
 | **06. Components** | Preact islands, StageShow contract ([STAGESHOW_DESIGN_CONTRACT.md](06-components/STAGESHOW_DESIGN_CONTRACT.md)), Responsive Lab harness modules, CLM Three Sets, 3D Theater | [06-components/README.md](06-components/README.md) |
 | **07. Deployment** | Docker (`EXPOSE 3000`, compose `8765:3000`), local Bombadil compose, R2 CDN, CI gates | [07-deployment/README.md](07-deployment/README.md) |
 | **08. Testing** | `node:test` unit suites, Playwright `smoke`/`components`/`features` projects, replay, conformance | [08-testing/README.md](08-testing/README.md) |

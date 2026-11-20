@@ -1,37 +1,36 @@
-# 📊 State Management Architecture
+# State Management Architecture
 
 | Field | Value |
 | --- | --- |
 | Audience | Engineers, architects, and QA reviewers working in this documentation tier |
 | BMAD Owner | Architect (`bmad-agent-architect`) and Developer (`bmad-agent-dev`) |
 | Source of Truth | [`js/harness/lab-runtime.js`](../../js/harness/lab-runtime.js) and [`js/harness/recording-state-machine.js`](../../js/harness/recording-state-machine.js) |
-This directory documents state management in `LandingPage`, covering the Redux Toolkit application store, WebRTC connection state, and the deterministic Recording State Machine in the Responsive UI Lab.
+
+This directory documents active state management in `LandingPage`, centered on the `lab-runtime.js` coordinator, Astro Preact islands, the deterministic 20-pair `RecordingStateMachine`, and schema-validated `DeviceRegistry` persistence. Legacy Redux stores (`js/redux/` and `js/store/`) and Redux npm packages were retired in `SPRINT-SLC-03`.
 
 ---
 
-## 🎯 Dual State Architecture
+## Active State Architecture
 
-State management in `LandingPage` is divided into two distinct models:
-
-```
-┌────────────────────────────────────────────────────────┐
-│                   State Management                     │
-│                                                        │
-│  ┌──────────────────────────┐  ┌────────────────────┐  │
-│  │   Global Redux Store     │  │  Lab Recording FSM │  │
-│  │     (Redux Toolkit)      │  │ (Deterministic 20) │  │
-│  ├──────────────────────────┤  ├────────────────────┤  │
-│  │ • auth                   │  │ • IDLE             │  │
-│  │ • clm                    │  │ • RECORDING        │  │
-│  │ • rtcConnection          │  │ • PAUSED           │  │
-│  │ • participants           │  │ • STOPPED          │  │
-│  │ • invitations            │  │ (INV-ERB-03)       │  │
-│  └──────────────────────────┘  └────────────────────┘  │
-└────────────────────────────────────────────────────────┘
+```text
++-------------------------------------------------------------------+
+|                     LandingPage State Model                       |
+|                                                                   |
+|  +---------------------------+  +------------------------------+  |
+|  |   Lab Runtime Coordinator |  |     Recording FSM & Store    |  |
+|  |  (js/harness/lab-runtime) |  |      (Deterministic 20)      |  |
+|  +---------------------------+  +------------------------------+  |
+|  | - Astro Preact islands    |  | - IDLE                       |  |
+|  | - Target selection/fit    |  | - RECORDING                  |  |
+|  | - Conformance & Bombadil  |  | - PAUSED / STOPPED           |  |
+|  | - Triad MCard receipts    |  | - DeviceRegistry v2 profile  |  |
+|  +---------------------------+  +------------------------------+  |
++-------------------------------------------------------------------+
 ```
 
-1. **Global Application State (Redux Toolkit)**:
-   - Manages asynchronous user sessions, Zitadel OIDC identity, WebRTC peer connections, and CLM component state.
+1. **Lab Runtime & Astro Preact Islands (`js/harness/lab-runtime.js`, `src/islands/`)**:
+   - Coordinates target loading, viewport/device arrangement, conformance checks, and Bombadil test execution via `window.__lab` and DOM custom events (`lab:*`).
+   - Maintains in-memory stores for legacy harnesses (`archive/html/index-clm-dashboard.html`, `js/modules/auth-manager.js`) without external state libraries.
 2. **Deterministic Recording State Machine (`INV-ERB-03`)**:
    - Manages test interaction recording in the Responsive UI Lab.
    - Enforces a closed 20-pair `(state, action) -> nextState` transition table.
@@ -41,27 +40,13 @@ State management in `LandingPage` is divided into two distinct models:
 
 ---
 
-## 📚 Documents in This Section
+## Historical Reference Archives (`SPRINT-SLC-03` Retired)
 
-### Redux Documentation
-- **[redux/INDEX.md](redux/INDEX.md)** - Redux store overview and slice index.
-- **[redux/REDUX_ARCHITECTURE.md](redux/REDUX_ARCHITECTURE.md)** - Detailed state architecture and action flows.
-- **[redux/slices/](redux/slices/)** - Individual slice specifications:
-  - `auth-slice.md` - Authentication state, tokens, and user claims.
-  - `clm-slice.md` - Cubical Logic Model component registry and runtime state.
-  - `rtc-connection-slice.md` - WebRTC peer connections and signaling states.
-  - `participants-slice.md` - Presence and mesh participant tracking.
-  - `invitations-slice.md` - P2P session and game matchmaking invitations.
+The documents below remain only as historical design records from prior to `SPRINT-SLC-03` (`js/redux/` and `js/store/` removed):
 
-### Implementation & Testing
-- **[REDUX_SLICES_IMPLEMENTATION.md](REDUX_SLICES_IMPLEMENTATION.md)** - Implementation guide for building and extending Redux slices.
-- **[REDUX_AUTH_TESTING.md](REDUX_AUTH_TESTING.md)** - Unit and integration testing strategies for the auth slice.
-- **[REDUX_FIX_SUMMARY.md](REDUX_FIX_SUMMARY.md)** - History of bug fixes and reducer optimizations.
-
----
-
-## 🧭 Related Functional Tiers
-
-- [**02-authentication/**](../02-authentication/README.md) - Zitadel PKCE authentication integration.
-- [**04-networking/**](../04-networking/README.md) - WebRTC connection lifecycle and signaling.
-- [**08-testing/**](../08-testing/README.md) - Recording state machine verification and unit test suite.
+- **[redux/INDEX.md](redux/INDEX.md)** - Historical Redux store overview and slice index.
+- **[redux/REDUX_ARCHITECTURE.md](redux/REDUX_ARCHITECTURE.md)** - Historical state architecture and action flows.
+- **[redux/slices/](redux/slices/)** - Historical slice specifications (`auth-slice.md`, `clm-slice.md`, `rtc-connection-slice.md`, `participants-slice.md`, `invitations-slice.md`).
+- **[REDUX_SLICES_IMPLEMENTATION.md](REDUX_SLICES_IMPLEMENTATION.md)** - Historical slice implementation notes.
+- **[REDUX_AUTH_TESTING.md](REDUX_AUTH_TESTING.md)** - Historical auth slice test notes.
+- **[REDUX_FIX_SUMMARY.md](REDUX_FIX_SUMMARY.md)** - Historical reducer bug-fix summary.

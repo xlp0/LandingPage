@@ -97,7 +97,6 @@
     "@astrojs/node": "11.1.9",
     "@astrojs/preact": "6.1.1",
     "@mlc-ai/web-llm": "^0.2.80",
-    "@reduxjs/toolkit": "^1.9.7",
     "animejs": "^4.2.2",
     "astro": "7.4.2",
     "axios": "^1.6.0",
@@ -112,7 +111,6 @@
     "katex": "^0.16.25",
     "mathjax": "^4.0.0",
     "preact": "11.1.0",
-    "redux": "^5.0.1",
     "serve-index": "^1.9.1",
     "three": "^0.182.0",
     "ws": "^8.18.3"

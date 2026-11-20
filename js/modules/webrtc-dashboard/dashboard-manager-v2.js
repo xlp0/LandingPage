@@ -9,10 +9,7 @@ import { RoomManager } from './managers/room-manager.js';
 import { ParticipantManager } from './managers/participant-manager.js';
 
 export class DashboardManager {
-    constructor(reduxStore = null) {
-        // Redux Store
-        this.store = reduxStore;
-        
+    constructor() {
         // Core services
         this.roomService = null;
         this.accessControl = null;
@@ -27,34 +24,6 @@ export class DashboardManager {
         this.currentUser = null;
         this.elements = {};
         this.eventHandlers = new Map();
-        
-        // Subscribe to Redux state changes if store is available
-        if (this.store) {
-            this.store.subscribe(() => this._onReduxStateChange());
-            console.log('[Dashboard] ✅ Subscribed to Redux store');
-        } else {
-            console.warn('[Dashboard] ⚠️ No Redux store provided - running without Redux');
-        }
-    }
-    
-    _onReduxStateChange() {
-        if (!this.store) return;
-        
-        const state = this.store.getState();
-        
-        // Update current user from Redux auth state
-        if (state.auth && state.auth.user) {
-            const reduxUser = state.auth.user;
-            if (!this.currentUser || this.currentUser.email !== reduxUser.email) {
-                console.log('[Dashboard] Redux user state changed:', reduxUser);
-                // Update local user state if needed
-            }
-        }
-        
-        // Handle connection state changes
-        if (state.connection) {
-            console.log('[Dashboard] Redux connection state:', state.connection);
-        }
     }
     
     async init() {
@@ -64,8 +33,8 @@ export class DashboardManager {
             // Initialize UI references
             this._initializeElements();
             
-            // Initialize core services with Redux store
-            this.roomService = new RoomService(this.store);
+            // Initialize core services
+            this.roomService = new RoomService();
             await this.roomService.init();
             
             this.accessControl = new AccessControlManager();

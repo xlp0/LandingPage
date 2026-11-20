@@ -74,7 +74,7 @@ export class EnvDetector {
 
   /**
    * Get full URL for a vendor library
-   * @param {string} vendor - Vendor name (e.g., 'lucide', 'redux')
+   * @param {string} vendor - Vendor name (e.g., 'lucide')
    * @param {string} filename - File name (e.g., 'lucide.min.js')
    * @returns {string} Full vendor URL
    */
@@ -141,16 +141,8 @@ export class EnvDetector {
    * @returns {Object} Import map object
    */
   static generateImportMap() {
-    const vendorPath = this.getVendorPath();
-
     return {
-      imports: {
-        'redux': `${vendorPath}/redux/redux.esm.js`,
-        'redux-thunk': `${vendorPath}/redux/redux-thunk.esm.js`,
-        'immer': `${vendorPath}/redux/immer.esm.js`,
-        'reselect': `${vendorPath}/redux/reselect.esm.js`,
-        '@reduxjs/toolkit': `${vendorPath}/redux/toolkit.esm.js`
-      }
+      imports: {}
     };
   }
 

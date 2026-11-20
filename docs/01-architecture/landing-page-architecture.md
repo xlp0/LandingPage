@@ -120,9 +120,9 @@ Earlier phase notes stating that `LandingPage` did not adopt Astro or Vitest are
 | `fiber-inspector.html` | [`src/pages/fiber-inspector.astro`](../../src/pages/fiber-inspector.astro) | `p_page_fiber_inspector` | `astro-wrapped` | `public/js/fibers/registry.js` diagnostic harness owned by Architect |
 | `fiber-conformance.html` | [`src/pages/fiber-conformance.astro`](../../src/pages/fiber-conformance.astro) | `p_page_fiber_conformance` | `astro-wrapped` | `public/js/fibers/registry.js` conformance harness owned by Architect |
 
-Two legacy Redux stores remain intentionally separate because zero active workbench pages share user state across them.
-1. `js/redux/store.js` (`clm`, `auth`, `ui`, and `navigation` slices on `window.__REDUX_STORE__`) is imported only by `js/renderers/index.js` for CLM component isolation.
-2. `js/store/store.js` (`auth`, `music`, and `room` slices) is imported only by `js/modules/auth-manager.js`, `js/modules/webrtc-dashboard/index.html`, and standalone music demos under `public/examples/Music/`.
+Legacy Redux stores (`js/redux/` and `js/store/`) and npm Redux packages were retired in `SPRINT-SLC-03`:
+1. [`js/renderers/index.js`](../../js/renderers/index.js) exports `CONTENT_TYPES` directly, while `archive/html/index-clm-dashboard.html` and [`js/modules/auth-manager.js`](../../js/modules/auth-manager.js) use lightweight in-memory stores.
+2. Standalone music demos under `public/examples/Music/` remain isolated and self-contained.
 
 Standalone browser capability descriptors in [`modules.json`](../../modules.json) (`markdown-renderer`, `net-gateway`, and `p2p-serverless`) carry explicit `owner` and `required` metadata enforced by `PKC.init()` and `PKC.stop()` in [`js/pkc-core.js`](../../js/pkc-core.js).
 

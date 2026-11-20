@@ -6,16 +6,8 @@
     baseUrl += `:${port}`;
   }
 
-  const vendorPath = `${baseUrl}/public/vendor`;
-
   const importMap = {
-    imports: {
-      'redux': `${vendorPath}/redux/redux.esm.js`,
-      'redux-thunk': `${vendorPath}/redux/redux-thunk-esm.js`,
-      'immer': `${vendorPath}/redux/immer-esm.js`,
-      'reselect': `${vendorPath}/redux/reselect-esm.js`,
-      '@reduxjs/toolkit': `${vendorPath}/redux/toolkit.esm.js`
-    }
+    imports: {}
   };
 
   const script = document.createElement('script');

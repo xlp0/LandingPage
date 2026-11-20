@@ -5,7 +5,7 @@
 | Audience | Scrum masters, BMAD role owners, developers, and operators |
 | BMAD Owner | Product Manager (John) with Architect (Winston), UX Designer (Sally), Developer (Amelia), and TEA |
 | Source of Truth | [`./slc-plan.md`](./slc-plan.md), [`./DECISIONS.tsv`](./DECISIONS.tsv), [`../programs/ssg/ssg-local-backlog.md`](../programs/ssg/ssg-local-backlog.md), and [`../INDEX.md`](../INDEX.md) |
-| Status | `ACTIVE` (`Program SLC` `SPRINT-SLC-00..02` `DONE`; `SPRINT-SLC-03` `NEXT`, `SPRINT-SLC-04` `PLANNED`) |
+| Status | `ACTIVE` (`Program SLC` `SPRINT-SLC-00..03` `DONE`; `SPRINT-SLC-04` `NEXT`) |
 | Consensus Kernel | `clm-kernel@0.0.24` |
 | Drift Gate | `npm run docs:check` |
 
@@ -22,8 +22,8 @@ Program SLC executes the five deferred local subtraction items from [`../program
 | 1 | `SPRINT-SLC-00` | `DONE` | 1d | Remove legacy `k8s/`, root `argocd-*.yaml`, `deploy-k8s.yml`, and Grafana metrics collector dumps and scripts while keeping Docker and CI test workflows intact ([evidence](./evidence/SLC-00-infra-subtraction.md)). | [Legacy Kubernetes, ArgoCD, and Grafana subtraction](./SPRINT-SLC-00-k8s-argocd-grafana-subtraction.md) |
 | 2 | `SPRINT-SLC-01` | `DONE` | 1d | Remove legacy `public/examples/games/`, `3DGames/`, `tic-tac-toe-p2p/`, `docs/06-components/games/`, game net transitions, and game tests while preserving `Music`/`WaveVisualizers`/`THREEJS_ANIMEJS` ([evidence](./evidence/SLC-01-games-subtraction.md)). | [Legacy example games subtraction](./SPRINT-SLC-01-legacy-example-games-subtraction.md) |
 | 3 | `SPRINT-SLC-02` | `DONE` | 2d | Fully retire `src/pages/app.astro`, `MCardManager`, `app-bootstrap.js`, `mcard-manager.css`, legacy app net transitions, PenPot `app.html` link, and update StageShow `5`-route sweep while keeping `compat.js` for `fiber-conformance.astro` ([evidence](./evidence/SLC-02-app-retirement.md)). | [Full app.astro retirement](./SPRINT-SLC-02-app-astro-full-retirement.md) |
-| 4 | `SPRINT-SLC-03` | `NEXT` | 1d | Remove `js/redux/`, `js/store/`, `js/libs/redux*.js`, `public/vendor/redux/`, uninstall `@reduxjs/toolkit` and `redux`, and clean import maps and `webrtc-dashboard/` hooks. | [Residual Redux store cleanup](./SPRINT-SLC-03-redux-store-and-deps-cleanup.md) |
-| 5 | `SPRINT-SLC-04` | `PLANNED` | 1d | Retire `routes/auth.js`, unmount `/api/auth` in `ws-server.js`, update parity SHA manifest, run full host and Docker `bombadil-gate` suites, and archive to `docs/sprints/programs/slc/`. | [Auth route retirement and graduation](./SPRINT-SLC-04-auth-route-retirement-and-graduation.md) |
+| 4 | `SPRINT-SLC-03` | `DONE` | 1d | Remove `js/redux/`, `js/store/`, `js/libs/redux*.js`, `public/vendor/redux/`, uninstall `@reduxjs/toolkit` and `redux`, and clean import maps and `webrtc-dashboard/` hooks ([evidence](./evidence/SLC-03-redux-cleanup.md)). | [Residual Redux store cleanup](./SPRINT-SLC-03-redux-store-and-deps-cleanup.md) |
+| 5 | `SPRINT-SLC-04` | `NEXT` | 1d | Retire `routes/auth.js`, unmount `/api/auth` in `ws-server.js`, update parity SHA manifest, run full host and Docker `bombadil-gate` suites, and archive to `docs/sprints/programs/slc/`. | [Auth route retirement and graduation](./SPRINT-SLC-04-auth-route-retirement-and-graduation.md) |
 
 ## Key workspace artifacts
 

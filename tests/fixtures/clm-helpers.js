@@ -1,42 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { expect } from '@playwright/test';
-import esbuild from 'esbuild';
 import { CLM_DASHBOARD_PATH, CLM_DASHBOARD_URL } from './test-config.js';
 
 export { CLM_DASHBOARD_PATH, CLM_DASHBOARD_URL };
 
-const FIXTURES_DIR = path.dirname(fileURLToPath(import.meta.url));
 const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]']);
-const esmBundleCache = new Map();
-
-const ESM_PACKAGE_ENTRIES = Object.freeze({
-  'redux-thunk': 'import pkg from "redux-thunk"; const thunk = pkg?.default ?? pkg; export default thunk; export { thunk };',
-  immer: 'export * from "immer"; import pkg from "immer"; export default pkg?.default ?? pkg;',
-  reselect: 'export * from "reselect";',
-});
-
-function bundleLocalEsmPackage(pkgName) {
-  if (esmBundleCache.has(pkgName)) {
-    return esmBundleCache.get(pkgName);
-  }
-  const built = esbuild.buildSync({
-    stdin: {
-      contents: ESM_PACKAGE_ENTRIES[pkgName],
-      resolveDir: FIXTURES_DIR,
-      loader: 'js',
-    },
-    bundle: true,
-    format: 'esm',
-    platform: 'browser',
-    write: false,
-    define: { 'process.env.NODE_ENV': '"production"' },
-  });
-  const code = built.outputFiles[0].text;
-  esmBundleCache.set(pkgName, code);
-  return code;
-}
 
 export async function stubExternalComponentRequests(page) {
   await page.route(/^https?:\/\//, async (route) => {
@@ -45,16 +14,6 @@ export async function stubExternalComponentRequests(page) {
       const parsed = new URL(reqUrl);
       if (LOCAL_HOSTS.has(parsed.hostname)) {
         await route.continue();
-        return;
-      }
-
-      const jsdelivrPkg = parsed.pathname.match(/^\/npm\/(redux-thunk|immer|reselect)(?:@[^/]+)?/);
-      if (jsdelivrPkg) {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/javascript',
-          body: bundleLocalEsmPackage(jsdelivrPkg[1]),
-        });
         return;
       }
 

@@ -48,5 +48,5 @@ The networking tier in `LandingPage` encompasses two primary domains:
 ## 🧭 Related Functional Tiers
 
 - [**01-architecture/**](../01-architecture/README.md) - Monorepo estate boundaries and membrane architecture.
-- [**05-state-management/**](../05-state-management/README.md) - WebRTC connection Redux slice (`rtcConnectionSlice.js`).
+- [**05-state-management/**](../05-state-management/README.md) - `lab-runtime.js` coordinator and WebRTC room state services (`RoomState`).
 - [**08-testing/**](../08-testing/README.md) - Cross-origin telemetry and target membrane verification.

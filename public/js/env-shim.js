@@ -1,4 +1,4 @@
-// Redux Toolkit expects process.env.NODE_ENV
+// Browser process.env shim
 window.process = {
   env: {
     NODE_ENV: 'production'

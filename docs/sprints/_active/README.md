@@ -5,7 +5,7 @@
 | Audience | Scrum masters, BMAD role leads, developers, and operators |
 | BMAD Owner | Scrum Master |
 | Source of Truth | [`./INDEX.md`](./INDEX.md), [`./slc-plan.md`](./slc-plan.md), [`./DECISIONS.tsv`](./DECISIONS.tsv), and [`../INDEX.md`](../INDEX.md) |
-| Status | `ACTIVE` (`Program SLC`: `SPRINT-SLC-00..02` `DONE`; `SPRINT-SLC-03` `NEXT`; `SPRINT-SLC-04` `PLANNED`) |
+| Status | `ACTIVE` (`Program SLC`: `SPRINT-SLC-00..03` `DONE`; `SPRINT-SLC-04` `NEXT`) |
 | Consensus Kernel | `clm-kernel@0.0.24` |
 | Drift Gate | `npm run docs:check` |
 
@@ -18,8 +18,8 @@ Program SLC executes the five deferred post-SSG local cleanup items tracked in [
 ## Active artifacts
 
 - **Program plan.** [`./slc-plan.md`](./slc-plan.md)
-- **Completed (`DONE`).** [`./SPRINT-SLC-00-k8s-argocd-grafana-subtraction.md`](./SPRINT-SLC-00-k8s-argocd-grafana-subtraction.md) ([evidence](./evidence/SLC-00-infra-subtraction.md)), [`./SPRINT-SLC-01-legacy-example-games-subtraction.md`](./SPRINT-SLC-01-legacy-example-games-subtraction.md) ([evidence](./evidence/SLC-01-games-subtraction.md)), and [`./SPRINT-SLC-02-app-astro-full-retirement.md`](./SPRINT-SLC-02-app-astro-full-retirement.md) ([evidence](./evidence/SLC-02-app-retirement.md))
-- **Next sprint (`NEXT`).** [`./SPRINT-SLC-03-redux-store-and-deps-cleanup.md`](./SPRINT-SLC-03-redux-store-and-deps-cleanup.md)
+- **Completed (`DONE`).** [`./SPRINT-SLC-00-k8s-argocd-grafana-subtraction.md`](./SPRINT-SLC-00-k8s-argocd-grafana-subtraction.md) ([evidence](./evidence/SLC-00-infra-subtraction.md)), [`./SPRINT-SLC-01-legacy-example-games-subtraction.md`](./SPRINT-SLC-01-legacy-example-games-subtraction.md) ([evidence](./evidence/SLC-01-games-subtraction.md)), [`./SPRINT-SLC-02-app-astro-full-retirement.md`](./SPRINT-SLC-02-app-astro-full-retirement.md) ([evidence](./evidence/SLC-02-app-retirement.md)), and [`./SPRINT-SLC-03-redux-store-and-deps-cleanup.md`](./SPRINT-SLC-03-redux-store-and-deps-cleanup.md) ([evidence](./evidence/SLC-03-redux-cleanup.md))
+- **Next sprint (`NEXT`).** [`./SPRINT-SLC-04-auth-route-retirement-and-graduation.md`](./SPRINT-SLC-04-auth-route-retirement-and-graduation.md)
 - **Active decision ledger.** [`./DECISIONS.tsv`](./DECISIONS.tsv)
 
 ## Graduated archives

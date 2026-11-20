@@ -84,5 +84,5 @@ This directory documents the component specifications, the Responsive UI Lab har
 ## 🧭 Related Functional Tiers
 
 - [**01-architecture/**](../01-architecture/README.md) - System architecture and modularity principles.
-- [**05-state-management/**](../05-state-management/README.md) - Redux integration via `clmSlice.js`.
+- [**05-state-management/**](../05-state-management/README.md) - `lab-runtime.js` coordinator and Astro Preact island state.
 - [**08-testing/**](../08-testing/README.md) - Automated testing and Playwright replay.

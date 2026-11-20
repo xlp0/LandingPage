@@ -1,6 +1,6 @@
 /**
  * Authentication Manager
- * Handles OAuth2 flow, Redux state, and LocalStorage
+ * Handles OAuth2 flow, in-memory auth state, and LocalStorage
  */
 
 export class AuthManager {
@@ -14,7 +14,7 @@ export class AuthManager {
     async init() {
         if (this.initialized) return;
         
-        this.initRedux();
+        this.initStateStore();
         await this.loadOAuthConfig();
         await this.checkExistingAuth();
         
@@ -22,51 +22,65 @@ export class AuthManager {
         console.log('[AuthManager] Initialized');
     }
 
-    initRedux() {
-        const { configureStore, createSlice } = window.RTK;
+    initStateStore() {
+        let authState = {
+            isAuthenticated: false,
+            user: null,
+            token: null,
+            refreshToken: null,
+            loading: false,
+            error: null,
+            loginMethod: null
+        };
+        const listeners = new Set();
 
-        this.authSlice = createSlice({
-            name: 'auth',
-            initialState: {
-                isAuthenticated: false,
-                user: null,
-                token: null,
-                refreshToken: null,
-                loading: false,
-                error: null,
-                loginMethod: null
+        this.authSlice = {
+            actions: {
+                setAuth: (payload) => ({ type: 'auth/setAuth', payload }),
+                clearAuth: () => ({ type: 'auth/clearAuth' })
+            }
+        };
+
+        this.store = {
+            getState: () => ({ auth: authState }),
+            subscribe: (fn) => {
+                listeners.add(fn);
+                return () => listeners.delete(fn);
             },
-            reducers: {
-                setAuth: (state, action) => {
-                    state.isAuthenticated = action.payload.isAuthenticated;
-                    state.user = action.payload.user;
-                    state.token = action.payload.token;
-                    state.refreshToken = action.payload.refreshToken;
-                    state.loginMethod = action.payload.loginMethod;
-                },
-                clearAuth: (state) => {
-                    state.isAuthenticated = false;
-                    state.user = null;
-                    state.token = null;
-                    state.refreshToken = null;
-                    state.loginMethod = null;
+            dispatch: (action) => {
+                if (action?.type === 'auth/setAuth') {
+                    authState = {
+                        ...authState,
+                        isAuthenticated: action.payload.isAuthenticated,
+                        user: action.payload.user,
+                        token: action.payload.token,
+                        refreshToken: action.payload.refreshToken,
+                        loginMethod: action.payload.loginMethod
+                    };
+                } else if (action?.type === 'auth/clearAuth') {
+                    authState = {
+                        ...authState,
+                        isAuthenticated: false,
+                        user: null,
+                        token: null,
+                        refreshToken: null,
+                        loginMethod: null
+                    };
                 }
+                listeners.forEach((fn) => fn());
+                return action;
             }
-        });
-
-        this.store = configureStore({
-            reducer: {
-                auth: this.authSlice.reducer
-            }
-        });
+        };
 
         // Subscribe to store changes and emit events for UI
         this.store.subscribe(() => {
             const state = this.store.getState().auth;
-            const event = new CustomEvent('auth:status-changed', {
-                detail: { user: state.user, isAuthenticated: state.isAuthenticated }
-            });
-            document.dispatchEvent(event);
+            if (typeof document !== 'undefined') {
+                const event = new CustomEvent('auth:status-changed', {
+                    detail: { user: state.user, isAuthenticated: state.isAuthenticated }
+                });
+                document.dispatchEvent(event);
+            }
         });
     }
 

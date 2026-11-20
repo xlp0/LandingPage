@@ -8,22 +8,6 @@
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏢</text></svg>">
 
-  <!-- Process polyfill for Redux Toolkit ESM (browser compatibility) -->
-  <script>window.process = { env: { NODE_ENV: 'production' } };</script>
-
-  <!-- Import Map for ES Modules -->
-  <script type="importmap">
-    {
-      "imports": {
-        "redux": "/js/libs/redux.esm.js",
-        "@reduxjs/toolkit": "/js/libs/redux-toolkit.esm.js",
-        "redux-thunk": "https://cdn.jsdelivr.net/npm/redux-thunk@2.4.2/+esm",
-        "immer": "https://cdn.jsdelivr.net/npm/immer@9.0.21/+esm",
-        "reselect": "https://cdn.jsdelivr.net/npm/reselect@4.1.8/+esm"
-      }
-    }
-    </script>
-
   <style>
     * {
       margin: 0;
@@ -998,27 +982,162 @@
   <script src="/js/oauth-handler.js"></script>
   <script src="/js/local-storage-manager.js"></script>
 
-  <!-- Redux Store -->
+  <!-- Dashboard Store -->
   <script type="module">
-    import store from '/js/redux/store.js';
-    import {
-      fetchCLMRegistry,
-      loadCLMComponent,
-      componentLoaded,
-      setActiveComponent,
-      selectCLMState
-    } from '/js/redux/slices/clm-slice.js';
-    import {
-      loginWithZitadel,
-      logoutUser,
-      selectUser,
-      selectIsAuthenticated
-    } from '/js/redux/slices/auth-slice.js';
+    function resolveComponentURL(url, baseURL) {
+      if (!url) return url;
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        return url;
+      }
+      const cleanBaseURL = baseURL.replace(/\/$/, '');
+      const cleanURL = url.startsWith('/') ? url : `/${url}`;
+      return `${cleanBaseURL}${cleanURL}`;
+    }
 
-    console.log('[Dashboard] Initializing CLM Account Management Dashboard with Redux...');
+    const initialAuth = (() => {
+      try {
+        const token = localStorage.getItem('auth_token');
+        const userStr = localStorage.getItem('user');
+        if (token && userStr) {
+          return { isAuthenticated: true, user: JSON.parse(userStr), token };
+        }
+      } catch {}
+      return { isAuthenticated: false, user: null, token: null };
+    })();
 
-    // Make store globally available
+    const state = {
+      clm: {
+        registry: {
+          version: null,
+          components: [],
+          observability: null,
+          sidecar: null
+        },
+        activeComponent: null,
+        components: {},
+        events: [],
+        status: 'idle',
+        error: null,
+        metrics: {
+          loadedCount: 0,
+          totalEvents: 0
+        }
+      },
+      auth: initialAuth
+    };
+
+    const listeners = new Set();
+
+    function applyAction(action) {
+      if (!action || typeof action.type !== 'string') return;
+      if (action.type === 'clm/fetchRegistry/pending') {
+        state.clm.status = 'loading';
+        state.clm.error = null;
+      } else if (action.type === 'clm/fetchRegistry/fulfilled') {
+        state.clm.status = 'succeeded';
+        state.clm.registry = action.payload;
+        state.clm.error = null;
+      } else if (action.type === 'clm/fetchRegistry/rejected') {
+        state.clm.status = 'failed';
+        state.clm.error = action.payload;
+      } else if (action.type === 'clm/componentLoaded') {
+        const { componentId, iframeId, url } = action.payload;
+        state.clm.components[componentId] = {
+          id: componentId,
+          iframeId,
+          url,
+          status: 'loaded',
+          loadedAt: Date.now()
+        };
+        state.clm.events.push({ type: 'loaded', componentId, timestamp: Date.now() });
+        state.clm.metrics = {
+          loadedCount: Object.keys(state.clm.components).length,
+          totalEvents: state.clm.events.length
+        };
+      } else if (action.type === 'clm/setActiveComponent') {
+        state.clm.activeComponent = action.payload;
+      } else if (action.type === 'auth/logout') {
+        state.auth = { isAuthenticated: false, user: null, token: null };
+      }
+    }
+
+    const store = {
+      getState: () => state,
+      subscribe(fn) {
+        listeners.add(fn);
+        return () => listeners.delete(fn);
+      },
+      dispatch(action) {
+        if (typeof action === 'function') {
+          return action(store.dispatch, store.getState);
+        }
+        applyAction(action);
+        listeners.forEach((fn) => fn());
+        return action;
+      }
+    };
+
+    function fetchCLMRegistry() {
+      return async (dispatch) => {
+        dispatch({ type: 'clm/fetchRegistry/pending' });
+        try {
+          const envResponse = await fetch('/api/env');
+          const envData = await envResponse.json();
+          const baseURL = envData.BASE_URL || window.location.origin;
+
+          const response = await fetch('/api/clm/registry');
+          if (!response.ok) {
+            throw new Error(`API returned ${response.status}. Please check server logs.`);
+          }
+          const data = await response.json();
+          const registry = data.registry || data;
+
+          if (registry.components && Array.isArray(registry.components)) {
+            registry.components = registry.components.map((component) => {
+              if (component.concrete && component.concrete.implementation) {
+                const originalImpl = component.concrete.implementation;
+                return {
+                  ...component,
+                  concrete: {
+                    ...component.concrete,
+                    originalImplementation: originalImpl,
+                    implementation: resolveComponentURL(originalImpl, baseURL)
+                  }
+                };
+              }
+              return component;
+            });
+          }
+
+          return dispatch({ type: 'clm/fetchRegistry/fulfilled', payload: registry });
+        } catch (error) {
+          return dispatch({ type: 'clm/fetchRegistry/rejected', payload: error.message });
+        }
+      };
+    }
+    fetchCLMRegistry.fulfilled = {
+      match: (action) => Boolean(action && action.type === 'clm/fetchRegistry/fulfilled')
+    };
+
+    const componentLoaded = (payload) => ({ type: 'clm/componentLoaded', payload });
+    const setActiveComponent = (componentHash) => ({ type: 'clm/setActiveComponent', payload: componentHash });
+    const logoutUser = () => async (dispatch) => {
+      try {
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
+      } catch {}
+      return dispatch({ type: 'auth/logout' });
+    };
+    const selectCLMState = (s) => s.clm;
+    const selectUser = (s) => s.auth.user;
+    const selectIsAuthenticated = (s) => s.auth.isAuthenticated;
+
+    console.log('[Dashboard] Initializing CLM Account Management Dashboard...');
+
+    // Keep global store handle for component postMessage telemetry
     window.reduxStore = store;
+    window.store = store;
 
     // Fetch OAuth configuration from environment
     let oauth;

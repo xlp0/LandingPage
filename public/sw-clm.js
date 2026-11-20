@@ -15,13 +15,7 @@ const CRITICAL_ASSETS = [
 ];
 
 // CDN resources to cache
-const CDN_ASSETS = [
-  'https://cdn.jsdelivr.net/npm/redux@4.2.1/+esm',
-  'https://cdn.jsdelivr.net/npm/redux-thunk@2.4.2/+esm',
-  'https://cdn.jsdelivr.net/npm/immer@9.0.21/+esm',
-  'https://cdn.jsdelivr.net/npm/reselect@4.1.8/+esm',
-  'https://cdn.jsdelivr.net/npm/@reduxjs/toolkit@1.9.7/+esm'
-];
+const CDN_ASSETS = [];
 
 // Install event - cache critical assets
 self.addEventListener('install', (event) => {

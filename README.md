@@ -109,7 +109,7 @@ See **[`docs/INDEX.md`](docs/INDEX.md)** and **[`docs/README.md`](docs/README.md
 | **02** | **Authentication** | Zitadel OIDC with PKCE, Google OAuth setup, auth-gated CSP, privacy redaction (`INV-PRV-01`) | [docs/02-authentication/](docs/02-authentication/README.md) |
 | **03** | **Data Management** | Canonical SQLite Triad (`card`, `handle_registry`, `handle_history`), `clm-kernel@0.0.24`, 6-sample corpus | [docs/03-data-management/](docs/03-data-management/README.md) |
 | **04** | **Networking** | WebRTC P2P mesh, WebSocket `/ws/` signaling on port `3000`, SSRF membrane guards | [docs/04-networking/](docs/04-networking/README.md) |
-| **05** | **State Management** | `lab-runtime.js` coordinator, isolated legacy Redux stores, 20-pair `RecordingStateMachine` | [docs/05-state-management/](docs/05-state-management/README.md) |
+| **05** | **State Management** | `lab-runtime.js` coordinator, Astro Preact island state, 20-pair `RecordingStateMachine` | [docs/05-state-management/](docs/05-state-management/README.md) |
 | **06** | **Components** | Preact islands, Responsive Lab ES modules, CLM Three Sets framework, 3D Theater | [docs/06-components/](docs/06-components/README.md) |
 | **07** | **Deployment** | Docker (`EXPOSE 3000`, compose `8765:3000`), local Bombadil compose, R2 storage, CI gates | [docs/07-deployment/](docs/07-deployment/README.md) |
 | **08** | **Testing** | `node:test` unit suites, Playwright `smoke`/`components`/`features` projects, replay, conformance | [docs/08-testing/](docs/08-testing/README.md) |

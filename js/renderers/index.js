@@ -11,5 +11,17 @@ export { TextRenderer } from './TextRenderer.js';
 export { PDFRenderer } from './PDFRenderer.js';
 export { default as rendererRegistry, RendererRegistryClass } from './RendererRegistry.js';
 
-// Re-export CONTENT_TYPES from content renderer slice
-export { CONTENT_TYPES } from '../redux/slices/content-renderer-slice.js';
+// Supported content types for MCard content rendering
+export const CONTENT_TYPES = Object.freeze({
+  MARKDOWN: 'markdown',
+  IMAGE: 'image',
+  VIDEO: 'video',
+  AUDIO: 'audio',
+  PDF: 'pdf',
+  TEXT: 'text',
+  JSON: 'json',
+  HTML: 'html',
+  CODE: 'code',
+  BINARY: 'binary',
+  UNKNOWN: 'unknown',
+});

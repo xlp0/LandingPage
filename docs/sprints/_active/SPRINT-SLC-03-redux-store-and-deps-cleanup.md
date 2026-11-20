@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-SLC-03` |
 | Source of Truth | [`./slc-plan.md`](./slc-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-SLC-03` |
-| Status | `PLANNED` |
+| Status | `DONE` |
 | Depends on | `SPRINT-SLC-02` |
 | Unblocks | `SPRINT-SLC-04` |
 | Execution unit | `PR-SLC-03` |
@@ -44,6 +44,6 @@ Remove residual legacy Redux store trees (`js/redux/`, `js/store/`), vendored br
 
 ## Definition of done
 
-- [ ] **DoD-SLC-03-01.** `js/redux/`, `js/store/`, `js/libs/redux*.js`, `public/vendor/redux/`, and `@reduxjs/toolkit` + `redux` package dependencies are removed.
-- [ ] **DoD-SLC-03-02.** Import maps, `webrtc-dashboard/`, docs, build, unit tests, and Playwright smoke pass.
-- [ ] **DoD-SLC-03-03.** Closure evidence is recorded in `docs/sprints/_active/evidence/SLC-03-redux-cleanup.md` and `DECISIONS.tsv`.
+- [x] **DoD-SLC-03-01.** `js/redux/`, `js/store/`, `js/libs/redux*.js`, `public/vendor/redux/`, and `@reduxjs/toolkit` + `redux` package dependencies are removed.
+- [x] **DoD-SLC-03-02.** Import maps, `webrtc-dashboard/`, docs, build, unit tests, and Playwright smoke pass.
+- [x] **DoD-SLC-03-03.** Closure evidence is recorded in `docs/sprints/_active/evidence/SLC-03-redux-cleanup.md` and `DECISIONS.tsv`.
