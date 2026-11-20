@@ -1948,142 +1948,6 @@ sprints:
         - vcard:sprint-407:update_docs_architecture_code_migration_to_clm_md
         - vcard:sprint-407:graduate_sprints_403_407_into_the_12_aspect_deployment_architect
       state: sealed
-  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-FRO-FOUR-ESTATE-ROLE-ORCHESTRATION
-    card_type: mcard
-    archetype: specification_mcard
-    code: 00-PROGRAM-CHARTER-EPIC-FRO-FOUR-ESTATE-ROLE-ORCHESTRATION
-    title: 'Program Charter: EPIC-FRO Four-Estate Role Orchestration'
-    dod:
-      total: 0
-      vcard_refs: []
-      state: specification
-  - handle: urn:pcard:sprint:FRO-00
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: FRO-00
-    title: Sprint FRO-00 Baseline Census, DEC-29, Ownership Manifest, and Clone Probe
-    dod:
-      total: 5
-      vcard_refs:
-        - vcard:fro-00:dod_fro_00_01_docs_decisions_dec_29_four_estate_role_orchestrati
-        - vcard:fro-00:dod_fro_00_02_frozen_evidence_fro_00_boundary_baseline_json_reco
-        - vcard:fro-00:dod_fro_00_03_boundary_scanner_tests_pass_and_verify_negative_co
-        - vcard:fro-00:dod_fro_00_04_standalone_clone_verifier_self_tests_and_path_reso
-        - vcard:fro-00:dod_fro_00_05_updated_scripts_ci_verify_rph_graduation_py_and_th
-      state: sealed
-  - handle: urn:pcard:sprint:FRO-01
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: FRO-01
-    title: Sprint FRO-01 SSOT Re-Anchoring for Consensus, DDL, and Root Config
-    dod:
-      total: 6
-      vcard_refs:
-        - vcard:fro-01:dod_fro_01_01_config_kernel_version_consensus_json_exists_mcard_
-        - vcard:fro-01:dod_fro_01_02_zero_references_to_mcard_studio_scripts_config_ker
-        - vcard:fro-01:dod_fro_01_03_clm_schema_mcard_schema_sql_is_the_sole_authored_s
-        - vcard:fro-01:dod_fro_01_04_signed_ddl_fingerprint_verification_passes_and_evi
-        - vcard:fro-01:dod_fro_01_05_root_schema_runtime_types_json_and_clm_schema_runt
-        - vcard:fro-01:dod_fro_01_06_full_coordinator_estate_suite_passes_after_all_fro
-      state: sealed
-  - handle: urn:pcard:sprint:FRO-02
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: FRO-02
-    title: Sprint FRO-02 Sever Cross-Repository Paths and Reverse Dependencies
-    dod:
-      total: 5
-      vcard_refs:
-        - vcard:fro-02:dod_fro_02_01_clm_tests_python_and_clm_tools_ops_launch_pkc_node
-        - vcard:fro-02:dod_fro_02_02_scripts_orc_sync_display_registry_py_emits_solely_
-        - vcard:fro-02:dod_fro_02_03_clm_docs_spec_60_verification_crd_landing_viewport
-        - vcard:fro-02:dod_fro_02_04_mcard_studio_scripts_check_all_sh_contains_zero_sc
-        - vcard:fro-02:dod_fro_02_05_both_cas_literal_checks_pass_unmerged_wip_branches
-      state: sealed
-  - handle: urn:pcard:sprint:FRO-03
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: FRO-03
-    title: Sprint FRO-03 Unify BMB UI Verification Pipeline in CLM
-    dod:
-      total: 5
-      vcard_refs:
-        - vcard:fro-03:dod_fro_03_01_clm_kernel_clm_py_core_clm_layer1_ui_model_py_and_
-        - vcard:fro-03:dod_fro_03_02_check_ui_kernel_vocabulary_py_passes_all_python_fi
-        - vcard:fro-03:dod_fro_03_03_mcard_studio_tests_ui_models_studio_status_ui_mode
-        - vcard:fro-03:dod_fro_03_04_evidence_bmb_graduation_json_passes_graduation_wit
-        - vcard:fro-03:dod_fro_03_05_full_coordinator_estate_suite_passes_after_all_fro
-      state: sealed
-  - handle: urn:pcard:sprint:FRO-04
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: FRO-04
-    title: Sprint FRO-04 Thin Root Coordinator and Retire Runtime Clutter
-    dod:
-      total: 5
-      vcard_refs:
-        - vcard:fro-04:dod_fro_04_01_libs_is_absent_mcard_studio_astro_config_mjs_and_m
-        - vcard:fro-04:dod_fro_04_02_root_package_json_sets_name_mcard_tdd_coordinator_
-        - vcard:fro-04:dod_fro_04_03_root_pyproject_toml_sets_name_mcard_tdd_coordinato
-        - vcard:fro-04:dod_fro_04_04_root_formal_lean_toolchain_and_scripts_ci_run_tla_
-        - vcard:fro-04:dod_fro_04_05_zero_db_files_remain_under_docs_sprints_programs_c
-      state: sealed
-  - handle: urn:pcard:sprint:FRO-05
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: FRO-05
-    title: Sprint FRO-05 Resolve UI Estate Overlap and Subtract Liabilities
-    dod:
-      total: 5
-      vcard_refs:
-        - vcard:fro-05:dod_fro_05_01_mcard_studio_holds_zero_hardcoded_credentials_lan_
-        - vcard:fro-05:dod_fro_05_02_mcard_studio_src_ui_viewlets_responsiveviewportlab
-        - vcard:fro-05:dod_fro_05_03_landingpage_routes_clm_api_js_is_absent_landingpag
-        - vcard:fro-05:dod_fro_05_04_mcard_studio_tests_unit_views_meshtopologyviewlet_
-        - vcard:fro-05:dod_fro_05_05_landingpage_js_observability_lagrangian_js_is_abse
-      state: sealed
-  - handle: urn:pcard:sprint:FRO-06
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: FRO-06
-    title: Sprint FRO-06 Close ADR-014 Boundary, Deprecations, and Release Truth
-    dod:
-      total: 5
-      vcard_refs:
-        - vcard:fro-06:dod_fro_06_01_zero_legacy_clm_kernel_and_clm_kernel_layer_browse
-        - vcard:fro-06:dod_fro_06_02_clm_tools_make_packaging_mk_holds_zero_false_publi
-        - vcard:fro-06:dod_fro_06_03_verified_npm_evidence_exists_for_prior_published_v
-        - vcard:fro-06:dod_fro_06_04_root_readme_md_docs_index_md_mcard_studio_readme_m
-        - vcard:fro-06:dod_fro_06_05_full_coordinator_estate_suite_passes_after_all_fro
-      state: sealed
-  - handle: urn:pcard:sprint:FRO-07
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: FRO-07
-    title: Sprint FRO-07 Consolidate Four-Estate Documentation Canon
-    dod:
-      total: 5
-      vcard_refs:
-        - vcard:fro-07:dod_fro_07_01_root_documentation_passes_estate_and_pkd_guide_val
-        - vcard:fro-07:dod_fro_07_02_non_destructive_handle_move_witnesses_validate_and
-        - vcard:fro-07:dod_fro_07_03_clm_docs_architecture_decision_register_md_defines
-        - vcard:fro-07:dod_fro_07_04_mcard_studio_docs_theory_clm_md_is_absent_mcard_st
-        - vcard:fro-07:dod_fro_07_05_landingpage_readme_md_states_estate_3_landingpage_
-      state: sealed
-  - handle: urn:pcard:sprint:FRO-08
-    card_type: pcard
-    archetype: ClmTriadManifest
-    code: FRO-08
-    title: Sprint FRO-08 Enforce Boundary Gates, Standalone Clones, and Graduation
-    dod:
-      total: 5
-      vcard_refs:
-        - vcard:fro-08:dod_fro_08_01_enforced_boundary_scanning_249_line_makefile_confo
-        - vcard:fro-08:dod_fro_08_02_standalone_clone_probe_passes_full_build_and_unit_
-        - vcard:fro-08:dod_fro_08_03_full_coordinator_gates_check_estate_check_all_npm_
-        - vcard:fro-08:dod_fro_08_04_docs_sprints_programs_fro_readme_md_and_docs_sprin
-        - vcard:fro-08:dod_fro_08_05_scripts_ci_verify_fro_graduation_py_verifies_evide
-      state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-BMB-PROGRAMMABLE-UI-VERIFICATION
     card_type: mcard
     archetype: specification_mcard
@@ -3604,6 +3468,142 @@ sprints:
         - vcard:dwd-04:dod_dwd_04_06_documentation_coverage_and_estate_integrity_checks
         - vcard:dwd-04:dod_dwd_04_07_docs_sprints_active_certification_report_md_is_aut
         - vcard:dwd-04:dod_dwd_04_08_program_artifacts_graduate_to_docs_sprints_program
+      state: sealed
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-FRO-FOUR-ESTATE-ROLE-ORCHESTRATION
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-FRO-FOUR-ESTATE-ROLE-ORCHESTRATION
+    title: 'Program Charter: EPIC-FRO Four-Estate Role Orchestration'
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:FRO-00
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-00
+    title: Sprint FRO-00 Baseline Census, DEC-29, Ownership Manifest, and Clone Probe
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:fro-00:dod_fro_00_01_docs_decisions_dec_29_four_estate_role_orchestrati
+        - vcard:fro-00:dod_fro_00_02_frozen_evidence_fro_00_boundary_baseline_json_reco
+        - vcard:fro-00:dod_fro_00_03_boundary_scanner_tests_pass_and_verify_negative_co
+        - vcard:fro-00:dod_fro_00_04_standalone_clone_verifier_self_tests_and_path_reso
+        - vcard:fro-00:dod_fro_00_05_updated_scripts_ci_verify_rph_graduation_py_and_th
+      state: sealed
+  - handle: urn:pcard:sprint:FRO-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-01
+    title: Sprint FRO-01 SSOT Re-Anchoring for Consensus, DDL, and Root Config
+    dod:
+      total: 6
+      vcard_refs:
+        - vcard:fro-01:dod_fro_01_01_config_kernel_version_consensus_json_exists_mcard_
+        - vcard:fro-01:dod_fro_01_02_zero_references_to_mcard_studio_scripts_config_ker
+        - vcard:fro-01:dod_fro_01_03_clm_schema_mcard_schema_sql_is_the_sole_authored_s
+        - vcard:fro-01:dod_fro_01_04_signed_ddl_fingerprint_verification_passes_and_evi
+        - vcard:fro-01:dod_fro_01_05_root_schema_runtime_types_json_and_clm_schema_runt
+        - vcard:fro-01:dod_fro_01_06_full_coordinator_estate_suite_passes_after_all_fro
+      state: sealed
+  - handle: urn:pcard:sprint:FRO-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-02
+    title: Sprint FRO-02 Sever Cross-Repository Paths and Reverse Dependencies
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:fro-02:dod_fro_02_01_clm_tests_python_and_clm_tools_ops_launch_pkc_node
+        - vcard:fro-02:dod_fro_02_02_scripts_orc_sync_display_registry_py_emits_solely_
+        - vcard:fro-02:dod_fro_02_03_clm_docs_spec_60_verification_crd_landing_viewport
+        - vcard:fro-02:dod_fro_02_04_mcard_studio_scripts_check_all_sh_contains_zero_sc
+        - vcard:fro-02:dod_fro_02_05_both_cas_literal_checks_pass_unmerged_wip_branches
+      state: sealed
+  - handle: urn:pcard:sprint:FRO-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-03
+    title: Sprint FRO-03 Unify BMB UI Verification Pipeline in CLM
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:fro-03:dod_fro_03_01_clm_kernel_clm_py_core_clm_layer1_ui_model_py_and_
+        - vcard:fro-03:dod_fro_03_02_check_ui_kernel_vocabulary_py_passes_all_python_fi
+        - vcard:fro-03:dod_fro_03_03_mcard_studio_tests_ui_models_studio_status_ui_mode
+        - vcard:fro-03:dod_fro_03_04_evidence_bmb_graduation_json_passes_graduation_wit
+        - vcard:fro-03:dod_fro_03_05_full_coordinator_estate_suite_passes_after_all_fro
+      state: sealed
+  - handle: urn:pcard:sprint:FRO-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-04
+    title: Sprint FRO-04 Thin Root Coordinator and Retire Runtime Clutter
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:fro-04:dod_fro_04_01_libs_is_absent_mcard_studio_astro_config_mjs_and_m
+        - vcard:fro-04:dod_fro_04_02_root_package_json_sets_name_mcard_tdd_coordinator_
+        - vcard:fro-04:dod_fro_04_03_root_pyproject_toml_sets_name_mcard_tdd_coordinato
+        - vcard:fro-04:dod_fro_04_04_root_formal_lean_toolchain_and_scripts_ci_run_tla_
+        - vcard:fro-04:dod_fro_04_05_zero_db_files_remain_under_docs_sprints_programs_c
+      state: sealed
+  - handle: urn:pcard:sprint:FRO-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-05
+    title: Sprint FRO-05 Resolve UI Estate Overlap and Subtract Liabilities
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:fro-05:dod_fro_05_01_mcard_studio_holds_zero_hardcoded_credentials_lan_
+        - vcard:fro-05:dod_fro_05_02_mcard_studio_src_ui_viewlets_responsiveviewportlab
+        - vcard:fro-05:dod_fro_05_03_landingpage_routes_clm_api_js_is_absent_landingpag
+        - vcard:fro-05:dod_fro_05_04_mcard_studio_tests_unit_views_meshtopologyviewlet_
+        - vcard:fro-05:dod_fro_05_05_landingpage_js_observability_lagrangian_js_is_abse
+      state: sealed
+  - handle: urn:pcard:sprint:FRO-06
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-06
+    title: Sprint FRO-06 Close ADR-014 Boundary, Deprecations, and Release Truth
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:fro-06:dod_fro_06_01_pre_0_0_25_subpath_containment_fro_d13_compiled_cl
+        - vcard:fro-06:dod_fro_06_02_clm_tools_make_packaging_mk_holds_zero_false_publi
+        - vcard:fro-06:dod_fro_06_03_verified_npm_evidence_exists_for_prior_published_v
+        - vcard:fro-06:dod_fro_06_04_root_readme_md_docs_index_md_mcard_studio_readme_m
+        - vcard:fro-06:dod_fro_06_05_full_coordinator_estate_suite_passes_after_all_fro
+      state: sealed
+  - handle: urn:pcard:sprint:FRO-07
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-07
+    title: Sprint FRO-07 Consolidate Four-Estate Documentation Canon
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:fro-07:dod_fro_07_01_root_documentation_passes_estate_and_pkd_guide_val
+        - vcard:fro-07:dod_fro_07_02_non_destructive_handle_move_witnesses_validate_and
+        - vcard:fro-07:dod_fro_07_03_clm_docs_architecture_decision_register_md_defines
+        - vcard:fro-07:dod_fro_07_04_mcard_studio_docs_theory_clm_md_is_absent_mcard_st
+        - vcard:fro-07:dod_fro_07_05_landingpage_readme_md_states_estate_3_landingpage_
+      state: sealed
+  - handle: urn:pcard:sprint:FRO-08
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: FRO-08
+    title: Sprint FRO-08 Enforce Boundary Gates, Standalone Clones, and Graduation
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:fro-08:dod_fro_08_01_enforced_boundary_scanning_249_line_makefile_confo
+        - vcard:fro-08:dod_fro_08_02_standalone_clone_probe_passes_full_build_and_unit_
+        - vcard:fro-08:dod_fro_08_03_full_coordinator_gates_check_estate_check_all_npm_
+        - vcard:fro-08:dod_fro_08_04_docs_sprints_programs_fro_readme_md_and_docs_sprin
+        - vcard:fro-08:dod_fro_08_05_scripts_ci_verify_fro_graduation_py_verifies_evide
       state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-EXP
     card_type: mcard
@@ -6517,8 +6517,8 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: 498994493fecfed6b2bd99db33086583ab11cd9ebea0e888d1c2fb1d74f71b25
-  projection_sha256: ea826a8fe83c929e28fdbabda768ef2b63e5a9751034de6fe18437a21089d200
+  source_sha256: fe6d98a39bec5789746715ec39a6db44fb6b25b06c80bf9f878b76473bf70f89
+  projection_sha256: 2abb9de7849d63f5ab93f1f99f9e8ed50f92b0f85a105271675dc65733ae83a9
   kernel_version: 0.0.24
   sprint_count: 324
   unresolved_trace_refs: 0

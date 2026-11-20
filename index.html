@@ -397,27 +397,6 @@
     window.__deployment_inspector = inspector;
     window.__least_action_navigator = leastActionNavigator;
 
-    function openMissionControlSplit(e) {
-      if (e) e.preventDefault();
-      const targetUrl = 'app.html';
-      const win = window.open(targetUrl, 'GovTechMissionControl', 'noopener,noreferrer');
-      if (win) {
-        win.focus();
-        if (window.BroadcastChannel) {
-          const channel = new BroadcastChannel('govtech-mission-control-sync');
-          channel.postMessage({
-            type: 'SPLIT_TAB_LAUNCHED',
-            source: 'MetaPortal',
-            targetUrl: targetUrl,
-            crossOriginSafe: true,
-            timestamp: Date.now()
-          });
-        }
-        console.log('[Mission Control] Multi-tab split pane launched (CORS & frame-ancestors safe)');
-      }
-    }
-    window.__open_mission_control_split = openMissionControlSplit;
-
     function updateControlUI(state) {
       const themeLabel = document.getElementById('theme-label');
       const themeIcon = document.getElementById('theme-icon');
@@ -492,15 +471,6 @@
     document.getElementById('mission-control-sidepane-trigger')?.addEventListener('click', (e) => {
       e.stopPropagation();
       openResponsiveUILab();
-    });
-
-    // Sprint CDO-11: Mission Control Observability Cockpit
-    document.getElementById('mission-control-btn')?.addEventListener('click', openMissionControlSplit);
-    document.getElementById('mission-control-split-btn')?.addEventListener('click', openMissionControlSplit);
-    document.getElementById('mission-control-link')?.addEventListener('click', openMissionControlSplit);
-    document.getElementById('mission-control-card')?.addEventListener('click', (e) => {
-      if (e.target.closest('#mission-control-link')) return;
-      openMissionControlSplit();
     });
 
     // Sprint CDO-12: Responsive UI Lab Card
