@@ -39,7 +39,7 @@ graph TD
 ## 2. Containerization: [`Dockerfile`](../../Dockerfile) and Compose Stacks
 
 - **Runtime Container ([`Dockerfile`](../../Dockerfile) and [`docker-compose.yml`](../../docker-compose.yml))**:
-  - Serves unified HTTP web pages, Astro SSR middleware, REST APIs (`/api/mcard`, `/api/test-runs`, `/api/auth`, `/api/clm`), and WebSocket `/ws/` signaling on port `3000` (`docker-compose.yml` maps `8765:3000`), with `/health` liveness checks returning `{ status: "ok" }`.
+  - Serves unified HTTP web pages, Astro SSR middleware, REST APIs (`/api/mcard`, `/api/test-runs`, `/api/clm`), and WebSocket `/ws/` signaling on port `3000` (`docker-compose.yml` maps `8765:3000`), with `/health` liveness checks returning `{ status: "ok" }`.
   - Development runs `astro dev` on `4322` alongside `ws-server.js` on `3000`, while isolated Playwright suites bind `TEST_PORT=3001`.
 - **Local Verification Compose ([`docker/bombadil/compose.yml`](../../docker/bombadil/compose.yml))**:
   - **`bombadil-gate`**: Executes Astro build, scene `--check`, `stageshow:check-css`, Bombadil net checks, `check:explorable-gui`, `check:net`, `docs:check`, `test:unit`, and strict Linux Chromium `stageshow:sweep --strict`.

@@ -276,7 +276,7 @@ test('modules.json assigns explicit owner and optional flag to every manifest de
   }
 });
 
-test('AppEntry binds auth listener by component id and cleans up timer, listener, and PKC on destroy', async () => {
+test('AppEntry initializes stage components and cleans up timer and PKC on destroy', async () => {
   const prevDoc = globalThis.document;
   const prevWin = globalThis.window;
   const fakeDoc = createFakeDom();
@@ -284,48 +284,32 @@ test('AppEntry binds auth listener by component id and cleans up timer, listener
   globalThis.document = fakeDoc;
   globalThis.window = { location: { href: 'http://127.0.0.1:3001/' } };
 
+  let pkcInitCalls = 0;
   let pkcStopped = 0;
   const fakePkc = {
     async init() {
+      pkcInitCalls += 1;
       return { 'markdown-renderer': {} };
     },
     async stop() {
       pkcStopped += 1;
     }
   };
-  const fakeAuthManager = {
-    store: {
-      getState: () => ({ auth: { user: { profile: { name: 'Initial Operator' } } } })
-    },
-    async init() {},
-    login() {},
-    logout() {}
-  };
 
   try {
     const { AppEntry } = await import('../../js/app-entry.js');
     const entry = new AppEntry({
       rootId: 'app-root',
-      pkc: fakePkc,
-      authManager: fakeAuthManager
+      pkc: fakePkc
     });
 
     await entry.init();
-    const authComp = entry.app.components.get('auth-status-bar');
-    assert.ok(authComp, 'auth-status-bar should be registered by component id');
-    assert.equal(fakeDoc.listenerCount('auth:status-changed'), 1);
-    assert.equal(typeof globalThis.window.app.login, 'function');
-
-    let updatedName = null;
-    authComp.updateUser = (u) => {
-      updatedName = u?.name || null;
-    };
-    fakeDoc.dispatchEvent({ type: 'auth:status-changed', detail: { user: { name: 'Verified User' } } });
-    assert.equal(updatedName, 'Verified User');
+    assert.equal(pkcInitCalls, 1);
+    assert.ok(entry.app.components.size >= 4, 'stage components should be registered');
+    assert.equal(entry.app.components.has('auth-status-bar'), false);
 
     await entry.destroy();
-    assert.equal(fakeDoc.listenerCount('auth:status-changed'), 0);
-    assert.equal(globalThis.window.app, undefined);
+    assert.equal(entry.app.components.size, 0);
     assert.equal(pkcStopped, 1);
     assert.equal(entry._loaderTimer, null);
   } finally {

@@ -16,6 +16,7 @@
 | **Program GQC (`SPRINT-GQC-00..07`)** | Petri net topology (`32` Places, `66` Transitions), Astro `7.4.2` + `7` Preact islands, SPA workbench workflow, Layer 1/Layer 4 `NetMCard` + `FiringReceiptMCard` Triad persistence, performance baselines, and CI documentation gates | Graduated (2026-11-18) | [`docs/sprints/programs/gqc/`](../sprints/programs/gqc/INDEX.md) |
 | **Program BPV (`SPRINT-BPV-00..07`)** | Bombadil `0.7.10` property verification, shared page-state contract, explorable GUI checks, trace-to-net replay, and local Docker nightly scheduler | Graduated (2026-11-18) | [`docs/sprints/programs/bpv/`](../sprints/programs/bpv/INDEX.md) |
 | **Program SSG (`SPRINT-SSG-00..08`)** | StageShow `1.1.1` device frames and layout craft, Bombadil runner dashboard (`8th` island), `12` built-in device presets, responsive tiers, and Shadow DOM portal showcase | Graduated (2026-11-20) | [`docs/sprints/programs/ssg/`](../sprints/programs/ssg/INDEX.md) |
+| **Program SLC (`SPRINT-SLC-00..04`)** | Post-SSG local cleanup: retired Kubernetes/ArgoCD/Grafana collectors, legacy example games, `app.astro` Mission Control, Redux stores and packages, and `routes/auth.js` | Graduated (2026-11-20) | [`docs/sprints/programs/slc/`](../sprints/programs/slc/INDEX.md) |
 
 ## Certified Device-Sensitive and Petri Net Capabilities
 

@@ -41,13 +41,13 @@ graph TD
     subgraph "Host Services (Node.js)"
         CLM --> WS[Express & WebSocket Server: ws-server.js]
         P2P --> WS
-        WS --> AuthAPI[Zitadel OAuth PKCE: routes/auth.js]
         WS --> MCardAPI[SQLite Storage: server/mcard-api.mjs]
-        WS --> CLMAPI[Remote CLM Runner: routes/clm-api.js]
+        WS --> TestRunsAPI[Test Runs & Bombadil: server/test-run-api.mjs]
+        WS --> CLMAPI[CLM Registry API: routes/clm.js]
     end
 
     subgraph "Infrastructure & Delivery"
-        WS --> K8s[Kubernetes Cluster / ArgoCD GitOps]
+        WS --> Docker[Docker & Local Bombadil Compose]
         WS --> STUN[Coturn STUN/TURN Service]
         WS --> R2[Cloudflare R2 Object Storage]
     end

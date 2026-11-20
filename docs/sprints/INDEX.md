@@ -5,21 +5,24 @@
 | Audience | Scrum masters, product managers, architects, developers, and operators |
 | BMAD Owner | Scrum Master (`bmad-agent-pm` / Scrum Master) |
 | Source of Truth | [`docs/sprints/_active/INDEX.md`](./_active/INDEX.md) and [`docs/sprints/_active/DECISIONS.tsv`](./_active/DECISIONS.tsv) |
-| Status | `ACTIVE` (`Program SLC` in flight; `5` graduated programs archived) |
+| Status | `IDLE` (`0` active sprints; `6` graduated programs archived) |
 | Drift Gate | `npm run docs:check` |
 
 ## Active program
 
-- [**Active Sprint Workspace (`docs/sprints/_active/`)**](./_active/INDEX.md) (Active **Program SLC** `SPRINT-SLC-00..04` started `2026-11-20`; holds [`slc-plan.md`](./_active/slc-plan.md) and the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) ledger)
-  - [SLC Execution Plan](./_active/slc-plan.md)
-  - [SLC-00 Legacy Kubernetes, ArgoCD, and Grafana Metrics Subtraction](./_active/SPRINT-SLC-00-k8s-argocd-grafana-subtraction.md)
-  - [SLC-01 Legacy Example Games Subtraction](./_active/SPRINT-SLC-01-legacy-example-games-subtraction.md)
-  - [SLC-02 Full app.astro and Legacy Mission Control Retirement](./_active/SPRINT-SLC-02-app-astro-full-retirement.md)
-  - [SLC-03 Residual Redux Store and Dependencies Cleanup](./_active/SPRINT-SLC-03-redux-store-and-deps-cleanup.md)
-  - [SLC-04 Auth Route Retirement, Final Verification, and Graduation](./_active/SPRINT-SLC-04-auth-route-retirement-and-graduation.md)
+- [**Active Sprint Workspace (`docs/sprints/_active/`)**](./_active/INDEX.md) (Standby with `0` active sprints; holds the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) ledger)
 
 ## Graduated programs
 
+- [**Program SLC (`docs/sprints/programs/slc/`)**](./programs/slc/INDEX.md) (Graduated `2026-11-20`; retired legacy Kubernetes/ArgoCD/Grafana collectors, example games, `app.astro` Mission Control, Redux stores and packages, and `routes/auth.js`)
+  - [SLC Program Index](./programs/slc/INDEX.md)
+  - [SLC Execution Plan](./programs/slc/slc-plan.md)
+  - [SLC-00 Legacy Kubernetes, ArgoCD, and Grafana Metrics Subtraction](./programs/slc/SPRINT-SLC-00-k8s-argocd-grafana-subtraction.md)
+  - [SLC-01 Legacy Example Games Subtraction](./programs/slc/SPRINT-SLC-01-legacy-example-games-subtraction.md)
+  - [SLC-02 Full app.astro and Legacy Mission Control Retirement](./programs/slc/SPRINT-SLC-02-app-astro-full-retirement.md)
+  - [SLC-03 Residual Redux Store and Dependencies Cleanup](./programs/slc/SPRINT-SLC-03-redux-store-and-deps-cleanup.md)
+  - [SLC-04 Auth Route Retirement, Final Verification, and Graduation](./programs/slc/SPRINT-SLC-04-auth-route-retirement-and-graduation.md)
+  - [SLC-04 Graduation Report](./programs/slc/evidence/SLC-04-auth-and-graduation.md)
 - [**Program SSG (`docs/sprints/programs/ssg/`)**](./programs/ssg/INDEX.md) (Graduated `2026-11-20`; StageShow `1.1.1` device frames and layout craft, Bombadil runner dashboard `8th` island, `12` built-in device presets, responsive tiers, and Shadow DOM portal showcase)
   - [SSG Program Index](./programs/ssg/INDEX.md)
   - [SSG Execution Plan](./programs/ssg/ssg-plan.md)

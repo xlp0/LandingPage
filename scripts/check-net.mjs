@@ -550,7 +550,6 @@ export function extractMountedExpressEndpoints(rootDir = ROOT_DIR) {
 
   const routerMounts = [
     { prefix: '/api/test-runs', relFile: 'server/test-run-api.mjs' },
-    { prefix: '/api/auth', relFile: 'routes/auth.js' },
     { prefix: '/api/clm', relFile: 'routes/clm.js' },
     { prefix: '/api/mcard', relFile: 'server/mcard-api.mjs' }
   ];

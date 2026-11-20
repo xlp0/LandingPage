@@ -1,4 +1,4 @@
-# Authentication & Identity System
+# Authentication and Identity System
 
 | Field | Value |
 | --- | --- |
@@ -6,85 +6,21 @@
 | BMAD Owner | Architect (`bmad-agent-architect`) |
 | Classification | Maintained Capability Reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts |
 | Operational Guide | [../02-authentication/README.md](../02-authentication/README.md) |
-> **Location**: [`LandingPage/docs/functionalities/06-AUTHENTICATION-AND-IDENTITY-SYSTEM.md`](./06-AUTHENTICATION-AND-IDENTITY-SYSTEM.md)  
-> **Source Files**: [`routes/auth.js`](../../routes/auth.js), [`js/modules/auth-manager.js`](../../js/modules/auth-manager.js), [`public/config/zitadel-config.js`](../../public/config/zitadel-config.js), [`js/components/AuthStatusComponent.js`](../../js/components/AuthStatusComponent.js)  
-> **Identity Provider**: Zitadel OpenID Connect (OIDC)  
-> **Status**: Comprehensive Functional Specification
+| Status | Retired in `SPRINT-SLC-04` (active security invariants remain enforced in `ws-server.js` and `membrane-interceptor.js`) |
 
 ---
 
-## 1. Security Architecture & Threat Model
+## 1. Current Security Invariants
 
-The LandingPage identity subsystem is built on **OAuth 2.0 and OpenID Connect (OIDC)**, integrated with an enterprise Zitadel instance (`vpn.pkc.pub`). 
+Legacy backend OAuth/PKCE endpoints (`routes/auth.js`: `POST /api/auth/token`, `POST /api/auth/refresh`, `POST /api/auth/logout`) and orphaned client auth helpers (`js/modules/auth-manager.js`, `js/modules/auth-module.js`, `js/components/AuthStatusComponent.js`) were removed in `SPRINT-SLC-04`. Active runtime security guarantees in `LandingPage` consist of:
 
-The architecture strictly isolates secrets and tokens through a **Hybrid Backend-For-Frontend (BFF)** pattern:
-- **Client Application**: Operates using Authorization Code Flow with **Proof Key for Code Exchange (PKCE)**. The browser never holds or sees the `ZITADEL_CLIENT_SECRET`.
-- **Backend API Gateway** ([`routes/auth.js`](../../routes/auth.js)): Holds the confidential `CLIENT_SECRET` in server environment variables, appending it when exchanging authorization codes with Zitadel's token endpoint (`/oauth/v2/token`).
-- **Secure Session Cookies**: Sets `HttpOnly`, `SameSite=Lax`, and `Secure` (in production) cookies (`mcard_auth=1`) preventing Cross-Site Scripting (XSS) token exfiltration.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Browser as Web Browser (AuthManager)
-    participant Backend as Express Backend (routes/auth.js)
-    participant Zitadel as Zitadel Identity Provider
-
-    Browser->>Browser: Generate code_verifier & code_challenge (S256)
-    Browser->>Zitadel: Redirect to /oauth/v2/authorize with code_challenge
-    Zitadel->>Zitadel: Authenticate user & consent
-    Zitadel-->>Browser: Redirect to callback URL with auth_code
-    Browser->>Backend: POST /api/auth/token { code, code_verifier }
-    Backend->>Zitadel: POST /oauth/v2/token { code, verifier, client_id, client_secret }
-    Zitadel-->>Backend: Return { access_token, id_token, refresh_token, expires_in }
-    Backend->>Backend: Set-Cookie: mcard_auth=1 (HttpOnly, Secure)
-    Backend-->>Browser: Return sanitized token payload & user claims
-    Browser->>Browser: Update Redux auth-slice & localStorage
-```
+- **Unified Content Security Policy (CSP)**: [`ws-server.js`](../../ws-server.js) attaches `buildContentSecurityPolicy()` from [`js/harness/target-membrane.js`](../../js/harness/target-membrane.js) across all routes without `unsafe-eval`.
+- **Origin Allowlist Policy**: [`ws-server.js`](../../ws-server.js) restricts cross-origin access via `buildCorsAllowlist()`.
+- **Privacy Redaction by Construction (`INV-PRV-01`)**: [`js/harness/membrane-interceptor.js`](../../js/harness/membrane-interceptor.js) strips password inputs, PIN fields, and sensitive attributes before captured events enter `EventRingBuffer`.
+- **SSRF and Frame Membrane**: [`js/harness/target-membrane.js`](../../js/harness/target-membrane.js) enforces approved target origins and protocol allowlists before iframe or probe execution.
 
 ---
 
-## 2. Backend Authentication Endpoints ([`routes/auth.js`](../../routes/auth.js))
+## 2. Historical Background
 
-| Endpoint | Method | Input Parameters | Processing & Invariants |
-| :--- | :--- | :--- | :--- |
-| `/api/auth/token` | `POST` | `{ code, code_verifier, redirect_uri }` | Validates PKCE code against backend secret; issues auth cookie; returns access & ID tokens. |
-| `/api/auth/refresh`| `POST` | `{ refresh_token }` | Refreshes expired access tokens without re-prompting user; maintains session continuity. |
-| `/api/auth/logout` | `POST` | `{ token }` | Clears `mcard_auth` cookie; invalidates session on Zitadel if supported; returns success. |
-
----
-
-## 3. Client Authentication Manager ([`js/modules/auth-manager.js`](../../js/modules/auth-manager.js))
-
-The client manager maintains session state, handles token refreshes, and binds identity into Redux:
-
-### 3.1 Redux Auth Slice Schema
-```javascript
-{
-  name: 'auth',
-  initialState: {
-    isAuthenticated: false,
-    user: null,          // { sub, name, email, preferred_username, roles }
-    token: null,         // JWT access token
-    refreshToken: null,  // Token rotation string
-    loading: false,
-    error: null
-  }
-}
-```
-
-### 3.2 Key Methods
-
-| Method | Behavior |
-| :--- | :--- |
-| `init()` | Bootstraps Redux slice, loads configuration, checks existing tokens in `localStorage`. |
-| `login()` | Generates cryptographically secure 128-byte random `code_verifier`, computes SHA-256 `code_challenge`, stores verifier in `sessionStorage`, and redirects to Zitadel authorize URL. |
-| `handleCallback()` | Extracts `code` parameter from URL query string, retrieves `code_verifier`, posts to `/api/auth/token`, and populates Redux store. |
-| `refreshToken()` | Automatically called 60 seconds before token expiration (`expires_at`) to rotate JWT credentials seamlessly. |
-| `logout()` | Clears `sessionStorage`, `localStorage`, dispatches Redux reset, and posts to `/api/auth/logout`. |
-
----
-
-## 4. UI Components & Status Indicators
-
-- **Auth Status Badge** ([`components/auth-status.html`](../../components/auth-status.html) / [`js/components/AuthStatusComponent.js`](../../js/components/AuthStatusComponent.js)): Displays authenticated username, user avatar, roles, and a quick-action Sign In / Sign Out button in the navigation header.
-- **Role-Based Access Control (RBAC)**: Views like `monopolyAuthView` and administrative tabs inspect `state.auth.user.roles` before allowing room creation or game participation.
+Prior Zitadel OIDC / PKCE backend integration guides remain archived under [`docs/02-authentication/`](../02-authentication/README.md) and legacy component references (`components/auth-status.html`) for historical traceability.

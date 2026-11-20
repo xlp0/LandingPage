@@ -93,8 +93,9 @@ npm run bombadil:docker
 | **Program GQC** (`SPRINT-GQC-00..07`) | [`docs/sprints/programs/gqc/`](docs/sprints/programs/gqc/INDEX.md) | Petri net verification, Astro 7 + 7 Preact islands, SPA target workbench, Layer 1/Layer 4 `NetMCard` + `FiringReceiptMCard` Triad persistence, performance baselines, and living docs gate (`npm run docs:check`) | Graduated (`2026-11-18`) |
 | **Program BPV** (`SPRINT-BPV-00..07`) | [`docs/sprints/programs/bpv/`](docs/sprints/programs/bpv/INDEX.md) | Bombadil `0.7.10` property verification, page-state contract, explorable GUI checks, trace-to-net replay, and local Docker nightly scheduler | Graduated (`2026-11-18`) |
 | **Program SSG** (`SPRINT-SSG-00..08`) | [`docs/sprints/programs/ssg/`](docs/sprints/programs/ssg/INDEX.md) | StageShow `1.1.1` device frames and craft (`tools/stageshow/`, `.agents/skills/stageshow/`), Bombadil runner dashboard (`8th` island), `12` built-in device presets, responsive tiers, and Shadow DOM portal showcase | Graduated (`2026-11-20`) |
+| **Program SLC** (`SPRINT-SLC-00..04`) | [`docs/sprints/programs/slc/`](docs/sprints/programs/slc/INDEX.md) | Post-SSG local cleanup: retired `k8s/`/ArgoCD/Grafana collectors, legacy example games, `app.astro` Mission Control, Redux stores and packages, and `routes/auth.js` (`/api/auth`) | Graduated (`2026-11-20`) |
 
-Deferred post-SSG local cleanup items (`k8s/`/ArgoCD/Grafana manifests, legacy example games, `app.astro` transition, Redux store removal, and `routes/auth.js` retirement) are tracked in [`docs/sprints/programs/ssg/ssg-local-backlog.md`](docs/sprints/programs/ssg/ssg-local-backlog.md), and `clm-registry.yaml` projections refresh via `node scripts/pull-registry-projection.mjs`.
+All five post-SSG local cleanup items from [`docs/sprints/programs/ssg/ssg-local-backlog.md`](docs/sprints/programs/ssg/ssg-local-backlog.md) were executed in **Program SLC**, and `clm-registry.yaml` projections refresh via `node scripts/pull-registry-projection.mjs`.
 
 ---
 
@@ -106,7 +107,7 @@ See **[`docs/INDEX.md`](docs/INDEX.md)** and **[`docs/README.md`](docs/README.md
 | :---: | :--- | :--- | :--- |
 | **00** | **Getting Started** | Onboarding, 5-minute setup, port map, interactive lab controls | [docs/00-getting-started/](docs/00-getting-started/README.md) |
 | **01** | **Architecture** | [LandingPage Architecture](docs/01-architecture/landing-page-architecture.md), [Astro Host and Islands](docs/01-architecture/astro-host-and-islands.md), [Workbench Net](docs/01-architecture/workbench-net.md), [Universal 4-Modality MCard Browser](docs/01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md) | [docs/01-architecture/](docs/01-architecture/README.md) |
-| **02** | **Authentication** | Zitadel OIDC with PKCE, Google OAuth setup, auth-gated CSP, privacy redaction (`INV-PRV-01`) | [docs/02-authentication/](docs/02-authentication/README.md) |
+| **02** | **Authentication** | Unified CSP without `unsafe-eval`, privacy redaction (`INV-PRV-01`); legacy `/api/auth` retired in `SLC-04` | [docs/02-authentication/](docs/02-authentication/README.md) |
 | **03** | **Data Management** | Canonical SQLite Triad (`card`, `handle_registry`, `handle_history`), `clm-kernel@0.0.24`, 6-sample corpus | [docs/03-data-management/](docs/03-data-management/README.md) |
 | **04** | **Networking** | WebRTC P2P mesh, WebSocket `/ws/` signaling on port `3000`, SSRF membrane guards | [docs/04-networking/](docs/04-networking/README.md) |
 | **05** | **State Management** | `lab-runtime.js` coordinator, Astro Preact island state, 20-pair `RecordingStateMachine` | [docs/05-state-management/](docs/05-state-management/README.md) |

@@ -2100,24 +2100,6 @@ bindings:
       status: not-ui-reachable
       owner: TEA
       reason: Programmatic conformance diff endpoint with zero browser callers
-    - httpMethod: POST
-      httpPath: /api/auth/token
-      source: routes/auth.js:38
-      status: not-ui-reachable
-      owner: Product Manager and Security Owner
-      reason: Zitadel OAuth token exchange belongs to undecided auth capability
-    - httpMethod: POST
-      httpPath: /api/auth/refresh
-      source: routes/auth.js:126
-      status: not-ui-reachable
-      owner: Product Manager and Security Owner
-      reason: Zitadel OAuth refresh belongs to undecided auth capability
-    - httpMethod: POST
-      httpPath: /api/auth/logout
-      source: routes/auth.js:175
-      status: not-ui-reachable
-      owner: Product Manager and Security Owner
-      reason: Zitadel OAuth logout belongs to undecided auth capability
     - httpMethod: GET
       httpPath: /api/clm/component/:id
       source: routes/clm.js:63

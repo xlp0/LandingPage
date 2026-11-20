@@ -1,5 +1,6 @@
 # Program SSG Local Cleanup Backlog
 
+- **Status**: All 5 deferred local items (`1`..`5` below) were executed and graduated in `Program SLC` (`SPRINT-SLC-00` through `SPRINT-SLC-04`; archive at [`docs/sprints/programs/slc/INDEX.md`](../slc/INDEX.md)).
 - **Scope**: `LandingPage`-only post-SSG cleanup items deferred out of `EPIC-FRO` per `FRO-D09` so active `Program SSG` server SHA locks (`ws-server.js` at `15,799` bytes and `routes/auth.js`) remain undisturbed during cross-estate reorganization.
 - **Authority**: Recorded under `FRO-05` (`INV-FRO-06`).
 

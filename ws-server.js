@@ -15,7 +15,6 @@ import serveIndex from 'serve-index';
 
 import RoomRegistry from './room-registry.mjs';
 import RoomMessageHandler from './room-message-handler-server.mjs';
-import authRoutes from './routes/auth.js';
 import clmRoutes from './routes/clm.js';
 import mcardRoutes, { initMCardAPI } from './server/mcard-api.mjs';
 import { createTestRunRouter } from './server/test-run-api.mjs';
@@ -183,7 +182,6 @@ console.log('[Server] ✅ Test-Runs API enabled at /api/test-runs');
 app.use('/api', express.json());
 app.use('/api', express.urlencoded({ extended: true }));
 
-app.use('/api/auth', authRoutes);
 app.use('/api/clm', clmRoutes);
 app.use('/api/mcard', mcardRoutes);
 console.log('[Server] ✅ MCard API enabled');

@@ -31,7 +31,7 @@ Remove retired Kubernetes manifests (`k8s/`), root ArgoCD application/project ma
 3. Update documentation referencing deleted deployment/Grafana-collector paths:
    - Update `docs/functionalities/10-DEV-OPS-ARGO-CD-AND-INFRASTRUCTURE.md` and `docs/functionalities/README.md` (`DevOps & GitOps` row) to remove dead `k8s/` and `argocd-application.yaml` links and document the active Docker, Docker Compose, local `docker/bombadil/`, and Playwright CI pipelines alongside historical retirement note for `k8s/`.
    - Update `docs/07-deployment/README.md`, `docs/INDEX.md`, and `README.md` tier `07` descriptions so standalone Docker + `docker/bombadil/` is accurately described and `npm run docs:check` passes with zero broken links.
-4. Run full static, build, unit, and Playwright smoke verification (`ws-server.js`, `scripts/package-source-parity.json`, `src/pages/fiber-conformance.astro`, and `data/` untouched), write `docs/sprints/_active/evidence/SLC-00-infra-subtraction.md`, update `INDEX.md`/`README.md`, append `SLC-00` to [`./DECISIONS.tsv`](./DECISIONS.tsv), and commit.
+4. Run full static, build, unit, and Playwright smoke verification (`ws-server.js`, `scripts/package-source-parity.json`, `src/pages/fiber-conformance.astro`, and `data/` untouched), write `docs/sprints/_active/evidence/SLC-00-infra-subtraction.md`, update `INDEX.md`/`README.md`, append `SLC-00` to [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv), and commit.
 
 ## Files
 
@@ -55,4 +55,4 @@ Remove retired Kubernetes manifests (`k8s/`), root ArgoCD application/project ma
 
 - [x] **DoD-SLC-00-01.** Legacy `k8s/`, root `argocd-*.yaml`, `.github/workflows/deploy-k8s.yml`, and Grafana metrics collector dumps/scripts (`61` files) are deleted and active CI/Docker files are preserved. Verified by `test ! -e k8s && test ! -e argocd-application.yaml && test ! -e .github/workflows/deploy-k8s.yml && test ! -e .github/workflows/grafana-metrics-collector.yml && test -s Dockerfile && test -s docker/bombadil/compose.yml`.
 - [x] **DoD-SLC-00-02.** Living documentation links and tier summaries are updated with zero broken Markdown links, zero protected-file edits, and full build/unit/smoke pass (`300/300` unit, `30/30` smoke). Verified by `npm run docs:check && node scripts/check-package-source-parity.mjs && npm run check:net && npm run check:explorable-gui && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run stageshow:check-css && npm run build && npm run test:unit` plus `TEST_PORT=3011 npm run test:smoke`.
-- [x] **DoD-SLC-00-03.** Closure evidence is recorded in [`./evidence/SLC-00-infra-subtraction.md`](./evidence/SLC-00-infra-subtraction.md) and [`./DECISIONS.tsv`](./DECISIONS.tsv) with `npm run docs:check` passing.
+- [x] **DoD-SLC-00-03.** Closure evidence is recorded in [`./evidence/SLC-00-infra-subtraction.md`](./evidence/SLC-00-infra-subtraction.md) and [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv) with `npm run docs:check` passing.

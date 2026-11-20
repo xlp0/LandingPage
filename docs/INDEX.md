@@ -13,7 +13,11 @@ Welcome to the master documentation index for **PKC Landing Page, Universal 4-Mo
 
 ## Sprint Programs and Governance
 
-- **[Active Sprint Workspace (`docs/sprints/_active/`)](sprints/_active/INDEX.md)** (`Program SLC` active with `SPRINT-SLC-00..03` done and `SPRINT-SLC-04` planned; holds the canonical [`DECISIONS.tsv`](sprints/_active/DECISIONS.tsv) ledger)
+- **[Active Sprint Workspace (`docs/sprints/_active/`)](sprints/_active/INDEX.md)** (Standby with `0` active sprints; holds the canonical [`DECISIONS.tsv`](sprints/_active/DECISIONS.tsv) ledger)
+- **[Program SLC (`docs/sprints/programs/slc/`)](sprints/programs/slc/INDEX.md)** (Graduated `2026-11-20`)
+  - [Program SLC Plan](sprints/programs/slc/slc-plan.md)
+  - [SPRINT-SLC-04 Auth Route Retirement, Final Verification, and Graduation](sprints/programs/slc/SPRINT-SLC-04-auth-route-retirement-and-graduation.md)
+  - [SLC-04 Graduation Report](sprints/programs/slc/evidence/SLC-04-auth-and-graduation.md)
 - **[Program SSG (`docs/sprints/programs/ssg/`)](sprints/programs/ssg/INDEX.md)** (Graduated `2026-11-20`)
   - [Program SSG Plan](sprints/programs/ssg/ssg-plan.md)
   - [SPRINT-SSG-08 Verification Baselines, Docker Gate, and Graduation](sprints/programs/ssg/SPRINT-SSG-08-verification-baselines-and-graduation.md)

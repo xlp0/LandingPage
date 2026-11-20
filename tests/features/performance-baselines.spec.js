@@ -152,7 +152,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
 
       page.on('pageerror', (err) => pageErrors.push(err.message));
       page.on('response', async (res) => {
-        if (res.status() >= 400 && !res.url().includes('/api/auth/')) {
+        if (res.status() >= 400) {
           httpErrors += 1;
         }
         const ct = res.headers()['content-type'] || '';

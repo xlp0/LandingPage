@@ -20,7 +20,7 @@
 | Entry Place | `p_page_index` |
 | Total Places | 38 |
 | Total Transitions | 85 |
-| Non-UI Programmatic Endpoints | 23 |
+| Non-UI Programmatic Endpoints | 20 |
 
 Related architecture guides include [LandingPage Architecture](./landing-page-architecture.md) and [Astro Host and Preact Islands](./astro-host-and-islands.md).
 
@@ -191,9 +191,6 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | `GET` | `/api/test-runs/latest/history` | `server/test-run-api.mjs:268` | `not-ui-reachable` | TEA | Programmatic test-run history endpoint with zero browser callers |
 | `GET` | `/api/test-runs/navigation/link` | `server/test-run-api.mjs` | `not-ui-reachable` | Architect and TEA | Programmatic navigation-run-link reload and Triad verification endpoint for CLI and Playwright harnesses |
 | `GET` | `/api/test-runs/conformance/diff` | `server/test-run-api.mjs:157` | `not-ui-reachable` | TEA | Programmatic conformance diff endpoint with zero browser callers |
-| `POST` | `/api/auth/token` | `routes/auth.js:38` | `not-ui-reachable` | Product Manager and Security Owner | Zitadel OAuth token exchange belongs to undecided auth capability |
-| `POST` | `/api/auth/refresh` | `routes/auth.js:126` | `not-ui-reachable` | Product Manager and Security Owner | Zitadel OAuth refresh belongs to undecided auth capability |
-| `POST` | `/api/auth/logout` | `routes/auth.js:175` | `not-ui-reachable` | Product Manager and Security Owner | Zitadel OAuth logout belongs to undecided auth capability |
 | `GET` | `/api/clm/component/:id` | `routes/clm.js:63` | `not-ui-reachable` | Architect | CLM component lookup route with zero approved workbench callers |
 | `GET` | `/api/clm/health/:componentId` | `routes/clm.js:99` | `not-ui-reachable` | Architect | CLM component health route with zero approved workbench callers |
 | `POST` | `/api/clm/telemetry` | `routes/clm.js:116` | `not-ui-reachable` | Architect | Called only by js/clm-iframe-loader.js:285 which has zero root page importers |

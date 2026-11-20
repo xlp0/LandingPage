@@ -5,14 +5,15 @@
 | Audience | Scrum masters, product managers, developers, and operators |
 | BMAD Owner | Scrum Master |
 | Source of Truth | [`docs/sprints/INDEX.md`](./INDEX.md) and [`docs/sprints/_active/INDEX.md`](./_active/INDEX.md) |
-| Status | `ACTIVE` (`Program SLC` in flight; `5` graduated programs archived) |
+| Status | `IDLE` (`0` active sprints; `6` graduated programs archived) |
 | Drift Gate | `npm run docs:check` |
 
 This directory houses sprint planning, execution specifications, evidence reports, and graduated archives for the `LandingPage` repository.
 
 ## Directory Structure
 
-- [**`_active/`**](./_active/INDEX.md) hosts active **Program SLC** (`SPRINT-SLC-00..04`, started `2026-11-20`) alongside [`slc-plan.md`](./_active/slc-plan.md) and the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) decision ledger.
+- [**`_active/`**](./_active/INDEX.md) is in standby (`0` active sprints) and holds the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) decision ledger.
+- [**`programs/slc/`**](./programs/slc/INDEX.md) archives graduated **Program SLC** (`SPRINT-SLC-00..04`, graduated `2026-11-20` with operator approval; see [`SLC-04-auth-and-graduation.md`](./programs/slc/evidence/SLC-04-auth-and-graduation.md)).
 - [**`programs/ssg/`**](./programs/ssg/INDEX.md) archives graduated **Program SSG** (`SPRINT-SSG-00..08`, graduated `2026-11-20` with operator approval; see [`SSG-08-graduation.md`](./programs/ssg/evidence/SSG-08-graduation.md)).
 - [**`programs/bpv/`**](./programs/bpv/INDEX.md) archives graduated **Program BPV** (`SPRINT-BPV-00..07`, graduated `2026-11-18` with operator approval; see [`BPV-07-graduation.md`](./programs/bpv/evidence/BPV-07-graduation.md); `bombadil-scheduler` remains active daily at `02:30` UTC).
 - [**`programs/gqc/`**](./programs/gqc/INDEX.md) archives graduated **Program GQC** (`SPRINT-GQC-00..07`, graduated `2026-11-18` with operator approval; see [`GQC-07-docs-and-graduation.md`](./programs/gqc/evidence/GQC-07-docs-and-graduation.md)).
@@ -23,7 +24,7 @@ This directory houses sprint planning, execution specifications, evidence report
 
 | Program | Code | Sprints | Directory | Status |
 | :--- | :---: | :---: | :--- | :---: |
-| **Post-SSG Local Cleanup and Subtraction** | `SLC` | `SLC-00..SLC-04` | [_active](./_active/INDEX.md) | Active (`2026-11-20`) |
+| **Post-SSG Local Cleanup and Subtraction** | `SLC` | `SLC-00..SLC-04` | [programs/slc](./programs/slc/INDEX.md) | Graduated (`2026-11-20`) |
 | **StageShow Craft, Bombadil Dashboard, and Coherent Layout** | `SSG` | `SSG-00..SSG-08` | [programs/ssg](./programs/ssg/INDEX.md) | Graduated (`2026-11-20`) |
 | **Bombadil Property Verification and Explorable GUI** | `BPV` | `BPV-00..BPV-07` | [programs/bpv](./programs/bpv/INDEX.md) | Graduated (`2026-11-18`) |
 | **Guided SPA Workbench, Astro Islands, Petri Net, and Docs Gates** | `GQC` | `GQC-00..GQC-07` | [programs/gqc](./programs/gqc/INDEX.md) | Graduated (`2026-11-18`) |

@@ -41,7 +41,7 @@ npm start
 
 1. Request logging, narrowed CORS policy, and unified Content Security Policy headers (without `unsafe-eval`) attach first.
 2. Hoisted configuration routes (`/app-config.json` with schema `urn:gqc:lab-config:v1` and `/api/config` with schema `urn:gqc:runtime-config:v1`) and health checks respond before static or SSR handlers.
-3. Express API routers mount at `/api/mcard`, `/api/test-runs`, `/api/clm`, and `/api/auth`, alongside WebSocket signaling on `/ws/`.
+3. Express API routers mount at `/api/mcard`, `/api/test-runs`, and `/api/clm`, alongside WebSocket signaling on `/ws/`.
 4. Built client assets under `dist/client/_astro` serve with immutable cache headers, followed by the `@astrojs/node` SSR handler (`dist/server/entry.mjs`) which renders the five workbench Places at both `/` and `.html` paths (`build.format: 'file'`).
 5. Static assets under `public/`, `js/`, `css/`, `tests/fixtures/`, and tombstoned non-workbench static files such as `pkc-docs-index.html` fall through to Express static middleware.
 
@@ -80,7 +80,7 @@ Astro's client router remains disabled. Every workbench page switch executes as 
 
 Under the `SPRINT-GQC-05` server-call placement policy (`DECISIONS.tsv` row 51), four rules govern client network calls.
 
-1. Existing Express routes (`/api/mcard`, `/api/test-runs`, `/api/clm`, `/api/auth`, `/app-config.json`, `/api/config`) remain in place without gratuitous rewrites.
+1. Existing Express routes (`/api/mcard`, `/api/test-runs`, `/api/clm`, `/app-config.json`, `/api/config`) remain in place without gratuitous rewrites.
 2. New UI-reachable server calls default to Astro endpoints (`src/pages/api/*`) or Astro Actions unless the handler requires WebSocket `/ws/` signaling state, shared Express middleware state, or an existing Express router such as `/api/test-runs`.
 3. Every browser `fetch`, `navigator.sendBeacon`, or `XMLHttpRequest` inside `src/` or `js/harness/` must map to a declared `server-call-request`, `server-call-ok`, and `server-call-fail` Transition triple (plus pending and error/recovery Places) in [`src/net/workbench-net.yaml`](../../src/net/workbench-net.yaml).
 4. [`scripts/check-package-source-parity.mjs`](../../scripts/check-package-source-parity.mjs) statically scans client sources in CI and rejects any undeclared network endpoint.

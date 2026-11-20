@@ -121,7 +121,7 @@ Earlier phase notes stating that `LandingPage` did not adopt Astro or Vitest are
 | `fiber-conformance.html` | [`src/pages/fiber-conformance.astro`](../../src/pages/fiber-conformance.astro) | `p_page_fiber_conformance` | `astro-wrapped` | `public/js/fibers/registry.js` conformance harness owned by Architect |
 
 Legacy Redux stores (`js/redux/` and `js/store/`) and npm Redux packages were retired in `SPRINT-SLC-03`:
-1. [`js/renderers/index.js`](../../js/renderers/index.js) exports `CONTENT_TYPES` directly, while `archive/html/index-clm-dashboard.html` and [`js/modules/auth-manager.js`](../../js/modules/auth-manager.js) use lightweight in-memory stores.
+1. [`js/renderers/index.js`](../../js/renderers/index.js) exports `CONTENT_TYPES` directly, while `archive/html/index-clm-dashboard.html` uses an inline in-memory store.
 2. Standalone music demos under `public/examples/Music/` remain isolated and self-contained.
 
 Standalone browser capability descriptors in [`modules.json`](../../modules.json) (`markdown-renderer`, `net-gateway`, and `p2p-serverless`) carry explicit `owner` and `required` metadata enforced by `PKC.init()` and `PKC.stop()` in [`js/pkc-core.js`](../../js/pkc-core.js).

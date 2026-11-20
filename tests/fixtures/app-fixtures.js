@@ -87,15 +87,6 @@ export async function createIsolatedPersistenceHarness() {
 export async function installExternalBoundaryStubs(context) {
   const stubbedRequests = [];
 
-  await context.route('**/api/auth/**', async (route) => {
-    stubbedRequests.push({ boundary: 'oauth', url: route.request().url() });
-    await route.fulfill({
-      status: 503,
-      contentType: 'application/json',
-      body: JSON.stringify({ error: 'oauth_stubbed_in_test_boundary' })
-    });
-  });
-
   await context.route(/^https:\/\/(huggingface\.co|raw\.githubusercontent\.com)\/.*/i, async (route) => {
     stubbedRequests.push({ boundary: 'webllm', url: route.request().url() });
     await route.fulfill({

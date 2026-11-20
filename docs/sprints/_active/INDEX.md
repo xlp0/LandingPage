@@ -3,41 +3,25 @@
 | Field | Value |
 | --- | --- |
 | Audience | Scrum masters, BMAD role owners, developers, and operators |
-| BMAD Owner | Product Manager (John) with Architect (Winston), UX Designer (Sally), Developer (Amelia), and TEA |
-| Source of Truth | [`./slc-plan.md`](./slc-plan.md), [`./DECISIONS.tsv`](./DECISIONS.tsv), [`../programs/ssg/ssg-local-backlog.md`](../programs/ssg/ssg-local-backlog.md), and [`../INDEX.md`](../INDEX.md) |
-| Status | `ACTIVE` (`Program SLC` `SPRINT-SLC-00..03` `DONE`; `SPRINT-SLC-04` `NEXT`) |
+| BMAD Owner | Scrum Master |
+| Source of Truth | [`./DECISIONS.tsv`](./DECISIONS.tsv) and [`../INDEX.md`](../INDEX.md) |
+| Status | `IDLE` (`0` active sprints; `Program SLC` graduated `2026-11-20`) |
 | Consensus Kernel | `clm-kernel@0.0.24` |
 | Drift Gate | `npm run docs:check` |
 
 ## Active program status
 
-**Active. Program SLC (`Post-SSG Local Cleanup and Subtraction`, `2026-11-20`).**
+**Standby (`0` active sprints as of `2026-11-20`).**
 
-Program SLC executes the five deferred local subtraction items from [`../programs/ssg/ssg-local-backlog.md`](../programs/ssg/ssg-local-backlog.md) sequentially across `SPRINT-SLC-00` through `SPRINT-SLC-04`. Protected `src/pages/fiber-conformance.astro`, `public/js/mcard-kernel/compat.js`, `data/`, and `tools/stageshow/kit/` stay untouched throughout, while `ws-server.js` and `scripts/package-source-parity.json` stay locked until `SPRINT-SLC-04` unmounts `/api/auth`.
-
-## Active sprint series (`SPRINT-SLC-00` .. `SPRINT-SLC-04`)
-
-| Order | Sprint | Status | Effort | Goal | Specification |
-| ---: | --- | :---: | :---: | --- | --- |
-| 1 | `SPRINT-SLC-00` | `DONE` | 1d | Remove legacy `k8s/`, root `argocd-*.yaml`, `deploy-k8s.yml`, and Grafana metrics collector dumps and scripts while keeping Docker and CI test workflows intact ([evidence](./evidence/SLC-00-infra-subtraction.md)). | [Legacy Kubernetes, ArgoCD, and Grafana subtraction](./SPRINT-SLC-00-k8s-argocd-grafana-subtraction.md) |
-| 2 | `SPRINT-SLC-01` | `DONE` | 1d | Remove legacy `public/examples/games/`, `3DGames/`, `tic-tac-toe-p2p/`, `docs/06-components/games/`, game net transitions, and game tests while preserving `Music`/`WaveVisualizers`/`THREEJS_ANIMEJS` ([evidence](./evidence/SLC-01-games-subtraction.md)). | [Legacy example games subtraction](./SPRINT-SLC-01-legacy-example-games-subtraction.md) |
-| 3 | `SPRINT-SLC-02` | `DONE` | 2d | Fully retire `src/pages/app.astro`, `MCardManager`, `app-bootstrap.js`, `mcard-manager.css`, legacy app net transitions, PenPot `app.html` link, and update StageShow `5`-route sweep while keeping `compat.js` for `fiber-conformance.astro` ([evidence](./evidence/SLC-02-app-retirement.md)). | [Full app.astro retirement](./SPRINT-SLC-02-app-astro-full-retirement.md) |
-| 4 | `SPRINT-SLC-03` | `DONE` | 1d | Remove `js/redux/`, `js/store/`, `js/libs/redux*.js`, `public/vendor/redux/`, uninstall `@reduxjs/toolkit` and `redux`, and clean import maps and `webrtc-dashboard/` hooks ([evidence](./evidence/SLC-03-redux-cleanup.md)). | [Residual Redux store cleanup](./SPRINT-SLC-03-redux-store-and-deps-cleanup.md) |
-| 5 | `SPRINT-SLC-04` | `NEXT` | 1d | Retire `routes/auth.js`, unmount `/api/auth` in `ws-server.js`, update parity SHA manifest, run full host and Docker `bombadil-gate` suites, and archive to `docs/sprints/programs/slc/`. | [Auth route retirement and graduation](./SPRINT-SLC-04-auth-route-retirement-and-graduation.md) |
-
-## Key workspace artifacts
-
-- **Master program plan.** [`./slc-plan.md`](./slc-plan.md)
-- **Originating backlog.** [`../programs/ssg/ssg-local-backlog.md`](../programs/ssg/ssg-local-backlog.md)
-- **Canonical decision ledger.** [`./DECISIONS.tsv`](./DECISIONS.tsv)
+Program SLC (`SPRINT-SLC-00` through `SPRINT-SLC-04`) graduated with operator approval on `2026-11-20` and was archived into [`docs/sprints/programs/slc/`](../programs/slc/INDEX.md). This directory retains [`./DECISIONS.tsv`](./DECISIONS.tsv) as the canonical append-only decision ledger for future sprint programs.
 
 ## Verification gates for active work
 
 | Gate | Command | Scope |
 | --- | --- | --- |
 | StageShow CSS clash check | `npm run stageshow:check-css` | Verifies `0` class collisions across StageShow kit, examples, teaching pairs, and authored scene bundles (`85` CSS files, `4` explicit bundles) |
-| StageShow host layout sweep | `npm run stageshow:sweep` | Captures `20` Chromium snapshots across `5` active routes at `1440px`, `820px`, `390px`, and `358px` |
-| Unit, observability, and contract suite | `npm run test:unit` | Runs all unit, observability, and contract tests on `clm-kernel@0.0.24` (`300` tests across `20` suites passing at baseline) |
+| StageShow host layout sweep | `npm run stageshow:sweep` | Captures `20` Chromium snapshots across `5` routes at `1440px`, `820px`, `390px`, and `358px` using ephemeral SQLite storage |
+| Unit, observability, and contract suite | `npm run test:unit` | Runs all unit, observability, and contract tests on `clm-kernel@0.0.24` (`300` tests across `20` suites passing) |
 | Docs, net, GUI, and build parity | `npm run check:net`, `npm run docs:check`, `npm run check:explorable-gui`, `npm run check:bombadil-nets`, `npm run build` | Enforces Petri net P-invariants, living-doc drift checks, `data-testid` / `data-effect` lint, and bundle parity |
 | Playwright verification projects | `npm run test:smoke`, `npm run test:components`, `npm run test:features`, `npm run test:smoke:cross-browser` | Executes `--project=smoke`, `--project=components`, `--project=features`, `--project=smoke-firefox`, and `--project=smoke-webkit` |
 
@@ -45,6 +29,7 @@ Program SLC executes the five deferred local subtraction items from [`../program
 
 | Program | Code | Archive | Graduation date | Status |
 | --- | :---: | --- | :---: | :---: |
+| Post-SSG Local Cleanup and Subtraction | `SLC` | [programs/slc](../programs/slc/INDEX.md) | 2026-11-20 | Graduated |
 | StageShow Craft, Bombadil Dashboard Handles, and Coherent Layout | `SSG` | [programs/ssg](../programs/ssg/INDEX.md) | 2026-11-20 | Graduated |
 | Bombadil Property Verification and Explorable GUI | `BPV` | [programs/bpv](../programs/bpv/INDEX.md) | 2026-11-18 | Graduated |
 | Guided SPA Workbench, Astro Islands, Petri Net, and Docs Gates | `GQC` | [programs/gqc](../programs/gqc/INDEX.md) | 2026-11-18 | Graduated |

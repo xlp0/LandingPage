@@ -170,8 +170,8 @@
     "variants": {
       "rootServer": {
         "path": "ws-server.js",
-        "bytes": 15799,
-        "sha256": "d6ba0a7cc4ffd2855aadc0ecd43f3c0a8176e49bbf14068ff3003c9d7a81e292",
+        "bytes": 15722,
+        "sha256": "ac2012f4dc5547138f3127655c6ccb2171d2598cd13c7f507a51dcb885035864",
         "status": "supported-production-host",
         "owner": "Platform Host Owner",
         "deploymentCallers": [
@@ -186,7 +186,6 @@
           "/api/env",
           "/api/config",
           "/app-config.json",
-          "/api/auth/*",
           "/api/clm/*",
           "/api/mcard/*",
           "/api/test-runs/*"

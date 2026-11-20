@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-SLC-04` |
 | Source of Truth | [`./slc-plan.md`](./slc-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-SLC-04` |
-| Status | `PLANNED` |
+| Status | `GRADUATED` (`2026-11-20`) |
 | Depends on | `SPRINT-SLC-03` |
 | Unblocks | Graduation of `Program SLC` to `docs/sprints/programs/slc/` |
 | Execution unit | `PR-SLC-04` |
@@ -45,6 +45,8 @@ Retire the legacy backend OAuth/PKCE router (`routes/auth.js`), unmount `/api/au
 
 ## Definition of done
 
-- [ ] **DoD-SLC-04-01.** `routes/auth.js` is deleted, `/api/auth` is unmounted from `ws-server.js`, `scripts/package-source-parity.json` matches new SHA-256/routes, and `check:net` / `docs:check` / parity gates pass.
-- [ ] **DoD-SLC-04-02.** Full host verification matrix (`build`, `test:unit`, `stageshow:sweep --strict`, `canary.mjs`, `test:smoke`, `test:components`, `test:features`, `test:smoke:cross-browser`) and local Docker `bombadil-gate` exit `0`.
-- [ ] **DoD-SLC-04-03.** Operator graduation approval is recorded in `DECISIONS.tsv` (`SLC-graduation`), Program SLC is archived into `docs/sprints/programs/slc/`, and `docs/sprints/_active/` is restored to standby.
+- [x] **DoD-SLC-04-01.** `routes/auth.js` is deleted, `/api/auth` is unmounted from `ws-server.js`, `scripts/package-source-parity.json` matches new SHA-256/routes, and `check:net` / `docs:check` / parity gates pass.
+- [x] **DoD-SLC-04-02.** Full host verification matrix (`build`, `test:unit`, `stageshow:sweep --strict`, `canary.mjs`, `test:smoke`, `test:components`, `test:features`, `test:smoke:cross-browser`) and local Docker `bombadil-gate` exit `0`.
+- [x] **DoD-SLC-04-03.** Operator graduation approval is recorded in `DECISIONS.tsv` (`SLC-graduation`), Program SLC is archived into `docs/sprints/programs/slc/`, and `docs/sprints/_active/` is restored to standby.
+
+Closure evidence: [`./evidence/SLC-04-auth-and-graduation.md`](./evidence/SLC-04-auth-and-graduation.md).

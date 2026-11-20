@@ -9,6 +9,13 @@ All notable changes to the PKC Landing Page are documented in this file. The for
 
 ## [Unreleased]
 
+- **Program SLC Graduated (`SPRINT-SLC-00..04`, 2026-11-20)**:
+  - **Infrastructure Subtraction (`SPRINT-SLC-00`)**: Removed `61` unmaintained `k8s/`, root `argocd-*.yaml`, `.github/workflows/deploy-k8s.yml`, and Grafana metrics collector workflow/dump/script files while preserving `Dockerfile`, `docker-compose*.yml`, `docker/bombadil/`, and CI test workflows.
+  - **Legacy Example Games Subtraction (`SPRINT-SLC-01`)**: Deinitialized the `3DObjectViewer` submodule and removed `.gitmodules`, `public/examples/games/`, `public/examples/3DGames/`, `js/modules/tic-tac-toe-p2p/`, `docs/06-components/games/`, and game net transitions while keeping `Music/`, `WaveVisualizers/`, `THREEJS_ANIMEJS/`, and `location-map.html`.
+  - **Full `app.astro` and Mission Control Retirement (`SPRINT-SLC-02`)**: Retired `src/pages/app.astro`, `MCardManager`, `UIComponents`, `app-bootstrap.js`, `mcard-manager.css`, `ViewManager.js`, `app-views.json`, `ui-inline-handlers.js`, `local-ui-app`, PenPot `app.html` navigation, and `4` legacy Mission Control specs (`38` places, `85` transitions, `20` StageShow sweep snapshots) while preserving `public/js/mcard-kernel/compat.js` and `fiber-conformance.astro`.
+  - **Redux Store and Dependency Cleanup (`SPRINT-SLC-03`)**: Deleted `js/redux/`, `js/store/`, `public/vendor/redux/`, and `js/libs/redux*.js`, removed `@reduxjs/toolkit` and `redux` from `package.json`/`package-lock.json`, replaced remaining stores with vanilla JavaScript pub/sub stores, moved `CONTENT_TYPES` into `js/renderers/index.js`, and cleaned import maps and `webrtc-dashboard/` hooks.
+  - **Auth Router Retirement and Graduation (`SPRINT-SLC-04`)**: Deleted `routes/auth.js`, `js/modules/auth-manager.js`, `js/modules/auth-module.js`, and `js/components/AuthStatusComponent.js`, unmounted `/api/auth` from `ws-server.js`, updated `rootServer` `bytes`/`sha256`/routes in `scripts/package-source-parity.json`, removed `/api/auth/*` from `scripts/check-net.mjs` and `src/net/workbench-net.yaml`, passed host and Docker `bombadil-gate` matrices, and archived the program to `docs/sprints/programs/slc/`.
+
 ## [0.0.1] - 2026-11-20
 
 Starts the official `package.json` (`0.0.1`) versioned release line, superseding earlier historical `0.1.0..0.3.0` program milestone labels.

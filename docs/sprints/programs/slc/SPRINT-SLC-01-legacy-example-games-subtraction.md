@@ -51,4 +51,4 @@ Remove legacy standalone board-game and 3D game examples (`public/examples/games
 
 - [x] **DoD-SLC-01-01.** Legacy game directories and docs (`public/examples/games/`, `public/examples/3DGames/` including `3DObjectViewer` submodule, `js/modules/tic-tac-toe-p2p/`, `docs/06-components/games/`) are deleted while `Music`, `WaveVisualizers`, `THREEJS_ANIMEJS`, and `location-map.html` remain present.
 - [x] **DoD-SLC-01-02.** `workbench-net.yaml` (`39` places, `87` transitions), `workbench-net.md`, `workbench-net.ts`, `docs:check`, `check:net`, `build`, `test:unit` (`300/300`), `TEST_PORT=3011 test:smoke` (`29/29`), `performance-baselines.spec.js` (`7/7`), and `stageshow:sweep --strict` (`24/24`) pass.
-- [x] **DoD-SLC-01-03.** Closure evidence is recorded in [`./evidence/SLC-01-games-subtraction.md`](./evidence/SLC-01-games-subtraction.md) and [`./DECISIONS.tsv`](./DECISIONS.tsv).
+- [x] **DoD-SLC-01-03.** Closure evidence is recorded in [`./evidence/SLC-01-games-subtraction.md`](./evidence/SLC-01-games-subtraction.md) and [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv).

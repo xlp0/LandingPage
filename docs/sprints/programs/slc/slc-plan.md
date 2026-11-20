@@ -4,15 +4,15 @@
 | --- | --- |
 | Audience | Scrum masters, BMAD role owners, architects, developers, and TEA engineers |
 | BMAD Owner | Product Manager (John) with Architect (Winston), UX Designer (Sally), Developer (Amelia), TEA, and Tech Writer |
-| Source of Truth | This plan, [`./INDEX.md`](./INDEX.md), [`./DECISIONS.tsv`](./DECISIONS.tsv), and [`../programs/ssg/ssg-local-backlog.md`](../programs/ssg/ssg-local-backlog.md) |
-| Status | `ACTIVE` (`SPRINT-SLC-00` `IN_PROGRESS`; `SPRINT-SLC-01` through `SPRINT-SLC-04` `PLANNED`, started `2026-11-20`) |
+| Source of Truth | This plan, [`./INDEX.md`](./INDEX.md), [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv), and [`../programs/ssg/ssg-local-backlog.md`](../ssg/ssg-local-backlog.md) |
+| Status | **Graduated (`2026-11-20`)** (`SPRINT-SLC-00` through `SPRINT-SLC-04` `DONE`; archived to `docs/sprints/programs/slc/`) |
 | Program | SLC, Post-SSG Local Cleanup and Subtraction |
 | Consensus Kernel | `clm-kernel@0.0.24` |
 | Drift Gate | `npm run docs:check` |
 
 ## Outcome
 
-Program SLC executes the five deferred local subtraction items tracked in [`../programs/ssg/ssg-local-backlog.md`](../programs/ssg/ssg-local-backlog.md) sequentially across five self-contained sprints (`SPRINT-SLC-00` through `SPRINT-SLC-04`). Across five ordered commits, the repository retires dead Kubernetes/ArgoCD/Grafana-collector infrastructure, legacy browser example games (`games/`, `3DGames/`, `tic-tac-toe-p2p/`), the legacy Mission Control `app.astro` page and `MCardManager` stack, unreferenced Redux stores and `@reduxjs/toolkit` dependencies, and the orphaned `/api/auth` router (`routes/auth.js`), while keeping the Astro responsive workbench, Universal 4-Modality MCard viewer, `clm-kernel@0.0.24` SQLite Triad, `fiber-inspector.html`, protected `fiber-conformance.html`, Petri net P-invariants, and Linux Docker `bombadil-gate` green.
+Program SLC executes the five deferred local subtraction items tracked in [`../programs/ssg/ssg-local-backlog.md`](../ssg/ssg-local-backlog.md) sequentially across five self-contained sprints (`SPRINT-SLC-00` through `SPRINT-SLC-04`). Across five ordered commits, the repository retires dead Kubernetes/ArgoCD/Grafana-collector infrastructure, legacy browser example games (`games/`, `3DGames/`, `tic-tac-toe-p2p/`), the legacy Mission Control `app.astro` page and `MCardManager` stack, unreferenced Redux stores and `@reduxjs/toolkit` dependencies, and the orphaned `/api/auth` router (`routes/auth.js`), while keeping the Astro responsive workbench, Universal 4-Modality MCard viewer, `clm-kernel@0.0.24` SQLite Triad, `fiber-inspector.html`, protected `fiber-conformance.html`, Petri net P-invariants, and Linux Docker `bombadil-gate` green.
 
 ## Locked Program Decisions (`SLC-D01` .. `SLC-D06`)
 
@@ -47,6 +47,6 @@ Program SLC executes the five deferred local subtraction items tracked in [`../p
 ## Graduation Criteria
 
 Program SLC is eligible for graduation archival into `docs/sprints/programs/slc/` only after:
-1. All five sprints (`SPRINT-SLC-00` through `SPRINT-SLC-04`) show `Status: DONE`, checked DoDs, recorded evidence under `docs/sprints/_active/evidence/SLC-0N-*.md`, and completion rows in [`./DECISIONS.tsv`](./DECISIONS.tsv).
+1. All five sprints (`SPRINT-SLC-00` through `SPRINT-SLC-04`) show `Status: DONE`, checked DoDs, recorded evidence under `docs/sprints/_active/evidence/SLC-0N-*.md`, and completion rows in [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv).
 2. Host gates (`docs:check`, `check-package-source-parity.mjs`, `check:net`, `check:explorable-gui`, `check:bombadil-nets`, `check:playwright-discovery`, `stageshow:check-css`, `stageshow:sweep --strict`, `build`, `test:unit`, `test:smoke`, `test:components`, `test:features`, `test:smoke:cross-browser`) and local Docker `bombadil-gate` pass after final edits.
 3. Explicit operator graduation sign-off is recorded in `DECISIONS.tsv`.
