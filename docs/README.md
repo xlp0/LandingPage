@@ -37,7 +37,7 @@ docs/
 ├── 04-networking/                    # WebRTC P2P mesh, WebSocket /ws/ on port 3000, SSRF guards
 ├── 05-state-management/              # lab-runtime.js coordinator, isolated Redux stores, FSM
 ├── 06-components/                    # Preact islands, CLM components, 3D Theater, games
-├── 07-deployment/                    # Docker (EXPOSE 3000 / 8765:3000), ArgoCD, R2 CDN
+├── 07-deployment/                    # Docker (EXPOSE 3000 / 8765:3000), Bombadil compose, R2 CDN
 ├── 08-testing/                       # node:test, Playwright projects, replay, conformance
 ├── 09-performance/                   # GQC-06 island/place baselines, Grafana Faro/Loki
 ├── 10-project-management/            # BMAD workflow state, epics, stories

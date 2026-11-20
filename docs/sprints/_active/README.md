@@ -5,7 +5,7 @@
 | Audience | Scrum masters, BMAD role leads, developers, and operators |
 | BMAD Owner | Scrum Master |
 | Source of Truth | [`./INDEX.md`](./INDEX.md), [`./slc-plan.md`](./slc-plan.md), [`./DECISIONS.tsv`](./DECISIONS.tsv), and [`../INDEX.md`](../INDEX.md) |
-| Status | `ACTIVE` (`Program SLC`: `SPRINT-SLC-00` `IN_PROGRESS`; `SPRINT-SLC-01..04` `PLANNED`) |
+| Status | `ACTIVE` (`Program SLC`: `SPRINT-SLC-00` `DONE`; `SPRINT-SLC-01` `NEXT`; `SPRINT-SLC-02..04` `PLANNED`) |
 | Consensus Kernel | `clm-kernel@0.0.24` |
 | Drift Gate | `npm run docs:check` |
 
@@ -18,7 +18,8 @@ Program SLC executes the five deferred post-SSG local cleanup items tracked in [
 ## Active artifacts
 
 - **Program plan.** [`./slc-plan.md`](./slc-plan.md)
-- **Active sprint (`IN_PROGRESS`).** [`./SPRINT-SLC-00-k8s-argocd-grafana-subtraction.md`](./SPRINT-SLC-00-k8s-argocd-grafana-subtraction.md)
+- **Completed (`DONE`).** [`./SPRINT-SLC-00-k8s-argocd-grafana-subtraction.md`](./SPRINT-SLC-00-k8s-argocd-grafana-subtraction.md) ([evidence](./evidence/SLC-00-infra-subtraction.md))
+- **Next sprint (`NEXT`).** [`./SPRINT-SLC-01-legacy-example-games-subtraction.md`](./SPRINT-SLC-01-legacy-example-games-subtraction.md)
 - **Active decision ledger.** [`./DECISIONS.tsv`](./DECISIONS.tsv)
 
 ## Graduated archives

@@ -229,7 +229,7 @@ schedule:
 - [Workflow Diagrams](./PIPELINE-WORKFLOW-DIAGRAM.md)
 
 ### Scripts Documentation
-- [Scripts README](../../../.github/scripts/README.md)
+- Legacy Grafana metrics collector scripts (`.github/scripts/*metrics*.py`, `.github/scripts/README.md`) were retired in `SPRINT-SLC-00`; active CI test and commit helpers live in `.github/scripts/` and `.github/workflows/`.
 
 ### Troubleshooting
 Check the documentation files above for:

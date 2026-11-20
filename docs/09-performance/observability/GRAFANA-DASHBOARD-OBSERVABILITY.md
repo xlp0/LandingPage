@@ -1014,7 +1014,7 @@ Add observability metadata to components:
 - [Client-Side Tracking](./client-side-tracking.md)
 - [Grafana Faro Queries](./grafana-faro-queries.md)
 - [Troubleshooting Guide](./TROUBLESHOOTING.md)
-- [GitHub Actions README](../../../.github/workflows/README-GRAFANA-METRICS.md)
+- Legacy Grafana metrics collector workflow docs were retired in `SPRINT-SLC-00` (`README-GRAFANA-METRICS.md`)
 
 ### External Resources
 

@@ -83,4 +83,4 @@ graph TD
 | **In-Browser AI** | [`js/modules/web-llm/`](../../js/modules/web-llm) | Client WebGPU integration tests | `js/modules/web-llm/config.js` |
 | **Observability** | [`js/observability/`](../../js/observability), [`js/telemetry/faro-collector.js`](../../js/telemetry/faro-collector.js) | `tests/observability/correctness.test.js` | `mcard.yaml` (`lagrangian_weights`) |
 | **Responsive Lab** | [`responsive-lab.html`](../../src/pages/responsive-lab.astro), [`js/device-registry.js`](../../js/device-registry.js) | `tests/features/responsive-rotation-and-devices.spec.js` | `design/landing-navigation.penpot` |
-| **DevOps & GitOps** | [`Dockerfile`](../../Dockerfile), [`k8s/`](../../k8s/README.md), [`argocd-application.yaml`](../../argocd-application.yaml) | GitHub Actions CI pipelines | `k8s/kustomization.yaml` |
+| **DevOps & Containers** | [`Dockerfile`](../../Dockerfile), [`docker-compose.yml`](../../docker-compose.yml), [`docker/bombadil/compose.yml`](../../docker/bombadil/compose.yml) | GitHub Actions CI + `bombadil-gate` | [`docs/07-deployment/README.md`](../07-deployment/README.md) |

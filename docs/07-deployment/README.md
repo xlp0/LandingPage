@@ -19,6 +19,9 @@
 
 ## Pre-Deployment CI Verification Gates
 
+> [!NOTE]
+> Legacy `k8s/` manifests, root `argocd-*.yaml` definitions, `.github/workflows/deploy-k8s.yml`, and Grafana metrics collector snapshots under `.github/` were retired in `SPRINT-SLC-00`. Container runtime packaging (`Dockerfile`, `docker-compose.yml`), local Linux Docker verification (`docker/bombadil/compose.yml`), and GitHub Actions test workflows remain active.
+
 ```bash
 npm run check:net
 node scripts/check-package-source-parity.mjs

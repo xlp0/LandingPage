@@ -112,7 +112,7 @@ See **[`docs/INDEX.md`](docs/INDEX.md)** and **[`docs/README.md`](docs/README.md
 | **04** | **Networking** | WebRTC P2P mesh, WebSocket `/ws/` signaling on port `3000`, SSRF membrane guards | [docs/04-networking/](docs/04-networking/README.md) |
 | **05** | **State Management** | `lab-runtime.js` coordinator, isolated legacy Redux stores, 20-pair `RecordingStateMachine` | [docs/05-state-management/](docs/05-state-management/README.md) |
 | **06** | **Components** | Preact islands, Responsive Lab ES modules, CLM Three Sets framework, multiplayer games | [docs/06-components/](docs/06-components/README.md) |
-| **07** | **Deployment** | Docker (`EXPOSE 3000`, compose `8765:3000`), ArgoCD GitOps, R2 storage, CI gates | [docs/07-deployment/](docs/07-deployment/README.md) |
+| **07** | **Deployment** | Docker (`EXPOSE 3000`, compose `8765:3000`), local Bombadil compose, R2 storage, CI gates | [docs/07-deployment/](docs/07-deployment/README.md) |
 | **08** | **Testing** | `node:test` unit suites, Playwright `smoke`/`components`/`features` projects, replay, conformance | [docs/08-testing/](docs/08-testing/README.md) |
 | **09** | **Performance** | [GQC-06 SPA and Island Baselines](docs/09-performance/gqc-06-spa-and-island-baselines.md), place byte budgets, Grafana Faro/Loki | [docs/09-performance/](docs/09-performance/README.md) |
 | **10** | **Project Management** | BMAD ownership, agile workflows, epics, and stories | [docs/10-project-management/](docs/10-project-management/README.md) |
