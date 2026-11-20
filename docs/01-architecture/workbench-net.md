@@ -18,8 +18,8 @@
 | Net ID | `landingpage-workbench-net` |
 | Target Handle | `mcard:workbench:landing-page` |
 | Entry Place | `p_page_index` |
-| Total Places | 40 |
-| Total Transitions | 90 |
+| Total Places | 39 |
+| Total Transitions | 87 |
 | Non-UI Programmatic Endpoints | 23 |
 
 Related architecture guides include [LandingPage Architecture](./landing-page-architecture.md) and [Astro Host and Preact Islands](./astro-host-and-islands.md).
@@ -29,7 +29,6 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | Place Kind | Count |
 | --- | --- |
 | `error` | 9 |
-| `external` | 1 |
 | `page` | 7 |
 | `pending` | 22 |
 | `view` | 1 |
@@ -40,7 +39,6 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | --- | --- |
 | `client-route` | 3 |
 | `link` | 7 |
-| `open-external` | 3 |
 | `recover` | 9 |
 | `redirect` | 1 |
 | `server-call-fail` | 23 |
@@ -59,7 +57,6 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | `p_page_fiber_conformance` | `page` | `/fiber-conformance.html` | `mcard:route:/fiber-conformance.html` | `clm://type/view/diagnostic/fiber-conformance` | `astro-wrapped` | deep-link | Architect | Internal fiber conformance harness page |
 | `p_page_docs_index` | `page` | `/pkc-docs-index.html` | `mcard:route:/pkc-docs-index.html` | `clm://type/view/diagnostic/docs-index` | `legacy-static` | deep-link | Tech Writer | Internal PKC design-documents index page, declared by the Penpot portal flow |
 | `p_view_index_mcard_viewer` | `view` | `/index.html?noredirect=1` | `mcard:route:/index.html?noredirect=1` | `clm://type/view/workbench/mcard-viewer` | n/a | deep-link | Product Manager and UX Designer | Single-page 4-modality MCard viewer mode on index.html?noredirect=1 |
-| `p_external_games` | `external` | `/public/examples/games/*` | `mcard:external:/public/examples/games` | `clm://type/view/external/games` | n/a | reachable | Product Manager | External game popup windows launched from app.html via window.open |
 | `p_pending_get_app_config` | `pending` | `/responsive-lab.html` | `mcard:pending:get_app_config` | `clm://type/view/workbench/pending/get-app-config` | n/a | reachable | Product Manager and TEA | In-flight pending state for GET /app-config.json from p_page_responsive_lab |
 | `p_pending_post_test_runs` | `pending` | `/responsive-lab.html` | `mcard:pending:post_test_runs` | `clm://type/view/workbench/pending/post-test-runs` | n/a | reachable | Product Manager and TEA | In-flight pending state for POST /api/test-runs from p_page_responsive_lab |
 | `p_error_post_test_runs` | `error` | `/responsive-lab.html` | `mcard:error:post_test_runs` | `clm://type/view/workbench/error/post-test-runs` | n/a | reachable | Product Manager and TEA | Recoverable error state for POST /api/test-runs on responsive-lab.html |
@@ -104,9 +101,6 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | `t_link_viewer_to_lab` | `link` | `p_view_index_mcard_viewer` | `p_page_responsive_lab` | `/responsive-lab.html` | `index.html` | Product Manager and UX Designer | click a[href="responsive-lab.html"] at index.html or openResponsiveUILab at index.html |
 | `t_link_viewer_to_docs` | `link` | `p_view_index_mcard_viewer` | `p_page_docs_index` | `/pkc-docs-index.html` | `index.html` | Tech Writer | click a.penpot-nav-link[href="pkc-docs-index.html"] at src/pages/index.astro |
 | `t_link_docs_to_index` | `link` | `p_page_docs_index` | `p_page_index` | `/index.html` | `pkc-docs-index.html` | Tech Writer | Penpot flow link Docs Index -> Home in js/nav.js (legacy-static pkc-docs-index.html does not mount PENPOT-GENERATED-NAV) |
-| `t_open_external_monopoly` | `open-external` | `p_page_app` | `p_page_app` | `/public/examples/games/monopoly-auth.html` | `app.html` | Product Manager | window.open("/public/examples/games/monopoly-auth.html", "_blank") at app.html |
-| `t_open_external_chess` | `open-external` | `p_page_app` | `p_page_app` | `/public/examples/games/chess-auth.html` | `app.html` | Product Manager | window.open("/public/examples/games/chess-auth.html", "_blank") at app.html |
-| `t_open_external_go` | `open-external` | `p_page_app` | `p_page_app` | `/public/examples/games/go-auth.html` | `app.html` | Product Manager | window.open("/public/examples/games/go-auth.html", "_blank") at app.html |
 | `t_req_get_app_config` | `server-call-request` | `p_page_responsive_lab` | `p_pending_get_app_config` | `GET /app-config.json` | `responsive-lab.html` | Product Manager and TEA | fetch("/app-config.json") in js/harness/lab-toolbar.js |
 | `t_ok_get_app_config` | `server-call-ok` | `p_pending_get_app_config` | `p_page_responsive_lab` | `GET /app-config.json` | `responsive-lab.html` | Product Manager and TEA | HTTP 2xx response for GET /app-config.json |
 | `t_fail_get_app_config` | `server-call-fail` | `p_pending_get_app_config` | `p_page_responsive_lab` | `GET /app-config.json` | `responsive-lab.html` | Product Manager and TEA | HTTP 4xx/5xx or network failure for GET /app-config.json |
@@ -227,7 +221,6 @@ flowchart TD
   p_page_fiber_conformance["p_page_fiber_conformance (page)"]
   p_page_docs_index["p_page_docs_index (page)"]
   p_view_index_mcard_viewer["p_view_index_mcard_viewer (view)"]
-  p_external_games["p_external_games (external)"]
   p_pending_get_app_config["p_pending_get_app_config (pending)"]
   p_pending_post_test_runs["p_pending_post_test_runs (pending)"]
   p_error_post_test_runs["p_error_post_test_runs (error)"]
@@ -267,9 +260,6 @@ flowchart TD
   p_view_index_mcard_viewer -->|"t_link_viewer_to_lab (link)"| p_page_responsive_lab
   p_view_index_mcard_viewer -->|"t_link_viewer_to_docs (link)"| p_page_docs_index
   p_page_docs_index -->|"t_link_docs_to_index (link)"| p_page_index
-  p_page_app -->|"t_open_external_monopoly (open-external)"| p_page_app
-  p_page_app -->|"t_open_external_chess (open-external)"| p_page_app
-  p_page_app -->|"t_open_external_go (open-external)"| p_page_app
   p_page_responsive_lab -->|"t_req_get_app_config (server-call-request)"| p_pending_get_app_config
   p_pending_get_app_config -->|"t_ok_get_app_config (server-call-ok)"| p_page_responsive_lab
   p_pending_get_app_config -->|"t_fail_get_app_config (server-call-fail)"| p_page_responsive_lab

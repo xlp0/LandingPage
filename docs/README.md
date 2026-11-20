@@ -36,7 +36,7 @@ docs/
 ├── 03-data-management/               # SQLite Triad, clm-kernel@0.0.24, MCard rendering
 ├── 04-networking/                    # WebRTC P2P mesh, WebSocket /ws/ on port 3000, SSRF guards
 ├── 05-state-management/              # lab-runtime.js coordinator, isolated Redux stores, FSM
-├── 06-components/                    # Preact islands, CLM components, 3D Theater, games
+├── 06-components/                    # Preact islands, CLM components, 3D Theater
 ├── 07-deployment/                    # Docker (EXPOSE 3000 / 8765:3000), Bombadil compose, R2 CDN
 ├── 08-testing/                       # node:test, Playwright projects, replay, conformance
 ├── 09-performance/                   # GQC-06 island/place baselines, Grafana Faro/Loki
@@ -61,7 +61,7 @@ docs/
 ### Understand the Architecture
 - Workbench vs target boundaries, three hash domains, and CLM Page-as-Place contracts in [01-architecture/landing-page-architecture.md](01-architecture/landing-page-architecture.md)
 - Astro 7 middleware, 8 Preact islands, and server-call policy in [01-architecture/astro-host-and-islands.md](01-architecture/astro-host-and-islands.md)
-- Generated `40`-Place / `90`-Transition Petri net reference in [01-architecture/workbench-net.md](01-architecture/workbench-net.md)
+- Generated `39`-Place / `87`-Transition Petri net reference in [01-architecture/workbench-net.md](01-architecture/workbench-net.md)
 - Universal 4-Modality MCard Browser in [01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md](01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md)
 - Package and kernel boundaries in [01-architecture/MCARD_MODULAR_ARCHITECTURE.md](01-architecture/MCARD_MODULAR_ARCHITECTURE.md)
 

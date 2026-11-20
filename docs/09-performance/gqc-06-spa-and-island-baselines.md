@@ -121,7 +121,7 @@ Server-call Transitions report request dispatch and `ok` or `fail` completion se
 | `server-call-fail` | `t_fail_get_conformance_latest` | `p_pending_get_conformance_latest -> p_page_responsive_lab` | `15.27 ms` | `16.63 ms` | `17.72 ms` | `13.80 .. 17.78 ms` |
 | `client-route` | `t_enter_target_blocked` | `p_page_responsive_lab -> p_error_target_blocked` | `41.88 ms` | `42.48 ms` | `43.17 ms` | `39.63 .. 43.41 ms` |
 | `recover` | `t_recover_target_blocked` | `p_error_target_blocked -> p_page_responsive_lab` | `366.73 ms` | `368.25 ms` | `384.73 ms` | `362.24 .. 385.42 ms` |
-| `open-external` | `t_open_external_monopoly` | `p_page_app -> p_external_games` | `45.33 ms` | `46.38 ms` | `46.80 ms` | `42.37 .. 48.08 ms` |
+| `open-external` | t_open_external_monopoly (retired `SLC-01`) | p_page_app -> p_external_games (historical) | `45.33 ms` | `46.38 ms` | `46.80 ms` | `42.37 .. 48.08 ms` |
 
 ---
 

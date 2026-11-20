@@ -13,7 +13,7 @@ test.describe('Apps Menu Smoke Tests', () => {
   test('ViewManager registers expected app views and collapsible sidebar', async ({ page }) => {
     const registeredViews = await page.evaluate(() => [...window.viewManager.views.keys()]);
     expect(registeredViews).toEqual(
-      expect.arrayContaining(['music', 'map', 'threeD', 'monopoly-auth'])
+      expect.arrayContaining(['music', 'map', 'threeD'])
     );
 
     const sidebar = page.locator('#sidebar');
@@ -55,17 +55,6 @@ test.describe('Apps Menu Smoke Tests', () => {
 
     await viewerView.locator('button.header-btn', { hasText: 'Close' }).click();
     await expect(viewerView).toBeHidden();
-    await expect(page.locator('.main-content')).toBeVisible();
-  });
-
-  test('Monopoly view can be opened and closed', async ({ page }) => {
-    await page.evaluate(() => window.viewManager.show('monopoly-auth'));
-
-    const monopolyView = page.locator('#monopolyAuthView');
-    await expect(monopolyView).toBeVisible();
-
-    await monopolyView.locator('button.header-btn', { hasText: 'Close' }).click();
-    await expect(monopolyView).toBeHidden();
     await expect(page.locator('.main-content')).toBeVisible();
   });
 });

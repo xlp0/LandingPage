@@ -21,13 +21,7 @@ Audio waveform visualization and analysis:
 
 See [WaveVisualizers/README.md](./WaveVisualizers/README.md) for details.
 
-### 📁 **3DGames**
-Interactive 3D experiences and games:
-- **MorphismCube** - Category theory visualization using Three.js
-
-See [3DGames/README.md](./3DGames/README.md) for details.
-
-### 📁 **THREEJS_ANIMEJS**
+### **THREEJS_ANIMEJS**
 3D theater and visualization engine:
 - Interactive 3D object rendering
 - Animation system with Anime.js
@@ -35,9 +29,7 @@ See [3DGames/README.md](./3DGames/README.md) for details.
 
 See [THREEJS_ANIMEJS/README.md](./THREEJS_ANIMEJS/README.md) for details.
 
-### 📁 **games**
-Browser-based games:
-- **Bali Adventure** - Explore Ubud Rice Terraces in a 2D RPG
+> Note: Legacy `3DGames/` (`MorphismCube`, `3DObjectViewer`) and `games/` browser examples were retired in `SPRINT-SLC-01`.
 
 ## Running Examples
 

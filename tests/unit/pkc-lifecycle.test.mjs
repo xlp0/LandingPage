@@ -267,7 +267,7 @@ test('PKC.init rejects when a required module fails and names its id and owner',
 test('modules.json assigns explicit owner and optional flag to every manifest descriptor', async () => {
   const manifestRaw = fs.readFileSync(path.join(REPO_ROOT, 'modules.json'), 'utf8');
   const manifest = JSON.parse(manifestRaw);
-  assert.equal(manifest.modules.length, 4);
+  assert.equal(manifest.modules.length, 3);
   for (const mod of manifest.modules) {
     assert.equal(typeof mod.id, 'string');
     assert.equal(typeof mod.owner, 'string');

@@ -116,12 +116,6 @@ test('GQC-02A-UNIT-06 replays approved workbench, deep-link, open-external, and 
     entryPlaceId: 'p_page_app',
     events: [
       {
-        transitionId: 't_open_external_monopoly',
-        fromPlaceId: 'p_page_app',
-        toPlaceId: 'p_page_app',
-        at: '2026-10-28T00:01:00.000Z'
-      },
-      {
         transitionId: 't_link_app_to_index',
         fromPlaceId: 'p_page_app',
         toPlaceId: 'p_page_index',
@@ -139,7 +133,6 @@ test('GQC-02A-UNIT-06 replays approved workbench, deep-link, open-external, and 
   const replayApp = await replayNetTrace(workbenchNet, appAndExternalTrace);
   assert.equal(replayApp.ok, true);
   assert.equal(replayApp.finalPlaceId, 'p_page_responsive_lab');
-  assert.equal(replayApp.finalMarking.p_external_games, 1);
   assert.equal(replayApp.finalMarking.p_page_responsive_lab, 1);
   assert.equal(replayApp.sessionInvariantHolds, true);
 
@@ -267,8 +260,6 @@ test('attachWorkbenchNetTracer derives FIFO server calls, popup promotions, open
 
   const appPopup = page.openPopup('http://127.0.0.1:4100/app.html');
   assert.equal(tracer.getActivePage(), appPopup);
-  appPopup.openPopup('http://127.0.0.1:4100/public/examples/games/monopoly-auth.html');
-  assert.equal(tracer.getActivePage(), appPopup);
 
   const trace = tracer.getTrace();
   assert.equal(trace.entryPlaceId, 'p_view_index_mcard_viewer');
@@ -282,15 +273,13 @@ test('attachWorkbenchNetTracer derives FIFO server calls, popup promotions, open
       't_link_viewer_to_lab',
       't_req_get_app_config',
       't_ok_get_app_config',
-      't_link_lab_to_app',
-      't_open_external_monopoly'
+      't_link_lab_to_app'
     ]
   );
 
   const replay = await replayNetTrace(workbenchNet, trace);
   assert.equal(replay.ok, true);
   assert.equal(replay.finalPlaceId, 'p_page_app');
-  assert.equal(replay.finalMarking.p_external_games, 1);
 
   const coverage = computeTransitionCoverage(workbenchNet, {
     replayedTraces: [{ ...replay, asserted: true }]
@@ -299,8 +288,8 @@ test('attachWorkbenchNetTracer derives FIFO server calls, popup promotions, open
     coverage.declared,
     Object.keys(workbenchNet.bindings.transitions).length
   );
-  assert.equal(coverage.fired, 9);
-  assert.equal(coverage.asserted, 9);
+  assert.equal(coverage.fired, 8);
+  assert.equal(coverage.asserted, 8);
   assert.equal(coverage.policy, 'ADVISORY');
   assert.equal(coverage.blocking, false);
 

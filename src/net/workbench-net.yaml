@@ -29,9 +29,6 @@ topology:
     - id: p_view_index_mcard_viewer
       initialTokens: 0
       description: Single-page 4-modality MCard viewer mode on index.html?noredirect=1
-    - id: p_external_games
-      initialTokens: 0
-      description: External game popup windows launched from app.html via window.open
     - id: p_pending_get_app_config
       initialTokens: 0
       description: In-flight pending state for GET /app-config.json from p_page_responsive_lab
@@ -166,24 +163,6 @@ topology:
         - p_page_docs_index
       outputs:
         - p_page_index
-    - id: t_open_external_monopoly
-      inputs:
-        - p_page_app
-      outputs:
-        - p_page_app
-        - p_external_games
-    - id: t_open_external_chess
-      inputs:
-        - p_page_app
-      outputs:
-        - p_page_app
-        - p_external_games
-    - id: t_open_external_go
-      inputs:
-        - p_page_app
-      outputs:
-        - p_page_app
-        - p_external_games
     - id: t_req_get_app_config
       inputs:
         - p_page_responsive_lab
@@ -695,20 +674,6 @@ bindings:
       entry: false
       deepLinkEntry: true
       owner: Product Manager and UX Designer
-    p_external_games:
-      kind: external
-      surface: workbench
-      pageId: page_external_games
-      pagePath: public/examples/games
-      route: /public/examples/games/*
-      routeAliases: []
-      routePrefix: /public/examples/games/
-      routeHandle: mcard:external:/public/examples/games
-      clmTypeUri: clm://type/view/external/games
-      mcardHash: null
-      entry: false
-      deepLinkEntry: false
-      owner: Product Manager
     p_pending_get_app_config:
       kind: pending
       surface: workbench
@@ -1203,51 +1168,6 @@ bindings:
         selector: "mcard:route:/index.html"
       ownerPage: pkc-docs-index.html
       owner: Tech Writer
-    t_open_external_monopoly:
-      kind: open-external
-      surface: workbench
-      linkId: open_external_monopoly
-      fromPlaceId: p_page_app
-      toPlaceId: p_page_app
-      externalPlaceId: p_external_games
-      route: /public/examples/games/monopoly-auth.html
-      triggerHref: /public/examples/games/monopoly-auth.html
-      trigger: window.open("/public/examples/games/monopoly-auth.html", "_blank") at app.html
-      triggerSource:
-        file: src/pages/app.astro
-        selector: "monopoly-auth.html"
-      ownerPage: app.html
-      owner: Product Manager
-    t_open_external_chess:
-      kind: open-external
-      surface: workbench
-      linkId: open_external_chess
-      fromPlaceId: p_page_app
-      toPlaceId: p_page_app
-      externalPlaceId: p_external_games
-      route: /public/examples/games/chess-auth.html
-      triggerHref: /public/examples/games/chess-auth.html
-      trigger: window.open("/public/examples/games/chess-auth.html", "_blank") at app.html
-      triggerSource:
-        file: src/pages/app.astro
-        selector: "chess-auth.html"
-      ownerPage: app.html
-      owner: Product Manager
-    t_open_external_go:
-      kind: open-external
-      surface: workbench
-      linkId: open_external_go
-      fromPlaceId: p_page_app
-      toPlaceId: p_page_app
-      externalPlaceId: p_external_games
-      route: /public/examples/games/go-auth.html
-      triggerHref: /public/examples/games/go-auth.html
-      trigger: window.open("/public/examples/games/go-auth.html", "_blank") at app.html
-      triggerSource:
-        file: src/pages/app.astro
-        selector: "go-auth.html"
-      ownerPage: app.html
-      owner: Product Manager
     t_req_get_app_config:
       kind: server-call-request
       surface: workbench

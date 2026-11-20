@@ -790,24 +790,6 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
         toPlaceId: 'p_page_app',
         latencyMs: Number((performance.now() - tLink).toFixed(3))
       };
-
-      await appPage.waitForFunction(() => Boolean(window.viewManager?.show));
-      await appPage.evaluate(() => window.viewManager.show('monopoly-auth'));
-      await expect(appPage.locator('#monopolyAuthView')).toBeVisible();
-
-      const popupPromise = appPage.waitForEvent('popup');
-      const tExternal = performance.now();
-      await appPage.locator('#monopolyAuthView button.btn-cta').click();
-      const popup = await popupPromise;
-      await popup.waitForLoadState('domcontentloaded');
-      recordedByKind['open-external'] = {
-        transitionId: 't_open_external_monopoly',
-        kind: 'open-external',
-        fromPlaceId: 'p_page_app',
-        toPlaceId: 'p_external_games',
-        latencyMs: Number((performance.now() - tExternal).toFixed(3))
-      };
-      await popup.close();
       await appPage.close();
 
       const requiredKinds = [
@@ -817,8 +799,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
         'server-call-ok',
         'server-call-fail',
         'client-route',
-        'recover',
-        'open-external'
+        'recover'
       ];
       for (const kind of requiredKinds) {
         expect(recordedByKind[kind], `Missing Transition kind ${kind}`).toBeTruthy();

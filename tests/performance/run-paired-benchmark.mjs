@@ -668,17 +668,6 @@ async function runPairATrial(browser, baseUrl) {
     await appPage.waitForLoadState('domcontentloaded');
     await appPage.locator('h1', { hasText: 'MCard Manager' }).waitFor({ state: 'visible' });
     out.transitions.link = Number((performance.now() - tNavLink).toFixed(3));
-
-    await appPage.waitForFunction(() => Boolean(window.viewManager?.show));
-    await appPage.evaluate(() => window.viewManager.show('monopoly-auth'));
-    await appPage.locator('#monopolyAuthView').waitFor({ state: 'visible' });
-    const extPopupP = appPage.waitForEvent('popup');
-    const tExt = performance.now();
-    await appPage.locator('#monopolyAuthView button.btn-cta').click();
-    const extPopup = await extPopupP;
-    await extPopup.waitForLoadState('domcontentloaded');
-    out.transitions['open-external'] = Number((performance.now() - tExt).toFixed(3));
-    await extPopup.close();
     await appPage.close();
 
     const viewerPage = await coldCtx.newPage();

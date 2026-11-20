@@ -54,11 +54,6 @@
       "expectedKind": "view"
     },
     {
-      "url": "/public/examples/games/monopoly-auth.html",
-      "expectedPlaceId": "p_external_games",
-      "expectedKind": "external"
-    },
-    {
       "url": "/not-a-place",
       "expectedPlaceId": null,
       "expectedKind": null

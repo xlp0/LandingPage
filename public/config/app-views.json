@@ -41,46 +41,6 @@
       "icon": "bar-chart-3",
       "displayStyle": "flex",
       "logPrefix": "[Dashboard]"
-    },
-    {
-      "id": "morphismV1",
-      "elementId": "morphismV1View",
-      "label": "Morphism Cube v1",
-      "icon": "cube",
-      "displayStyle": "flex",
-      "logPrefix": "[Morphism]"
-    },
-    {
-      "id": "morphismV2",
-      "elementId": "morphismV2View",
-      "label": "Morphism Cube v2",
-      "icon": "cube",
-      "displayStyle": "flex",
-      "logPrefix": "[Morphism]"
-    },
-    {
-      "id": "monopoly-auth",
-      "elementId": "monopolyAuthView",
-      "label": "Monopoly",
-      "icon": "shield",
-      "displayStyle": "flex",
-      "logPrefix": "[Monopoly Auth]"
-    },
-    {
-      "id": "chess-auth",
-      "elementId": "chessAuthView",
-      "label": "Chess",
-      "icon": "shield",
-      "displayStyle": "flex",
-      "logPrefix": "[Chess Auth]"
-    },
-    {
-      "id": "go-auth",
-      "elementId": "goAuthView",
-      "label": "Go",
-      "icon": "shield",
-      "displayStyle": "flex",
-      "logPrefix": "[Go Auth]"
     }
   ],
   "submenus": [

@@ -73,14 +73,6 @@ export const PLACES = [
     "migrationState": null
   },
   {
-    "id": "p_external_games",
-    "kind": "external",
-    "route": "/public/examples/games/*",
-    "routeAliases": [],
-    "queryFlag": null,
-    "migrationState": null
-  },
-  {
     "id": "p_error_post_test_runs",
     "kind": "error",
     "route": "/responsive-lab.html",
