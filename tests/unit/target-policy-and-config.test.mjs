@@ -635,3 +635,14 @@ test('Astro dev server serves statically defined iframe/page targets and pkc-vie
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });
+
+test('Astro Vite config forces automatic preact JSX runtime during Vite 8 Rolldown optimizeDeps scan', async () => {
+  const astroConfigModule = await import('../../astro.config.mjs');
+  const optimizeDeps = astroConfigModule.default?.vite?.optimizeDeps;
+  assert.ok(optimizeDeps, 'expected vite.optimizeDeps configuration in astro.config.mjs');
+  assert.equal(optimizeDeps.include.includes('preact/jsx-dev-runtime'), true);
+  assert.deepEqual(optimizeDeps.rolldownOptions?.transform?.jsx, {
+    runtime: 'automatic',
+    importSource: 'preact'
+  });
+});

@@ -42,7 +42,7 @@ Open `http://localhost:3000/responsive-lab.html` in Chromium, Firefox, or WebKit
    - **MCard `webapp` Target** at `/app.html` (`src/pages/app.astro`, legacy Mission Control IndexedDB host).
    - **Cross-Origin and Policy Probe Fixtures** (`/tests/fixtures/probe-target.html`, `/tests/fixtures/no-probe-target.html`, and blocked cross-origin targets).
 3. **Single-Page 4-Modality MCard Content Browser (`/?noredirect=1`, Place `p_view_index_mcard_viewer`)**
-   Powered by [`server/mcard-api.mjs`](server/mcard-api.mjs), [`server/mcard-modality.mjs`](server/mcard-modality.mjs) (`clm-kernel@0.0.24`, supporting `KC-15`'s 95-type dictionary and compound extensions such as `.excalidraw.json`, `.mcard.petri.json`, `.url.txt`, `.jsx`, `.sh`, `font/*`, and `application/3d-obj`), and [`js/landing-page-mcard.js`](js/landing-page-mcard.js). Verifies raw bytes in the canonical 3-table SQLite Triad (`card`, `handle_registry`, `handle_history`) and renders `media`, `document`, inert `code` (`data-execution="inert"`), and sandboxed `webapp` payloads.
+   Powered by [`server/mcard-api.mjs`](server/mcard-api.mjs), [`server/mcard-modality.mjs`](server/mcard-modality.mjs) (`clm-kernel@0.0.24` via `clm-kernel/primitives` and `clm-kernel/browser` subpaths, supporting `KC-15`'s 95-type dictionary and compound extensions such as `.excalidraw.json`, `.mcard.petri.json`, `.url.txt`, `.jsx`, `.sh`, `font/*`, and `application/3d-obj`), [`schemas/crd_landing_viewport.schema.json`](schemas/crd_landing_viewport.schema.json), and [`js/landing-page-mcard.js`](js/landing-page-mcard.js). Verifies raw bytes in the canonical 3-table SQLite Triad (`card`, `handle_registry`, `handle_history`) and renders `media`, `document`, inert `code` (`data-execution="inert"`), and sandboxed `webapp` payloads.
 
 ---
 
@@ -55,7 +55,7 @@ Open `http://localhost:3000/responsive-lab.html` in Chromium, Firefox, or WebKit
   2. **Browser Compatibility Hash** in [`public/js/mcard-kernel/compat.js`](public/js/mcard-kernel/compat.js) (Web Crypto SHA-256 for local `app.html` IndexedDB keys only).
   3. **PenPot Graph Hash** in [`scripts/penpot-zip.mjs`](scripts/penpot-zip.mjs) (build-time SHA-256 over `design/landing-navigation.penpot` for `js/nav.js` drift checks).
 - **PenPot Scope.** [`design/landing-navigation.penpot`](design/landing-navigation.penpot) compiles LandingPage's own navigation bar into [`js/nav.js`](js/nav.js). Assessing an external PenPot MPA target in Responsive UI Lab is **Optional / Deferred** pending Product Manager approval and live Playwright verification.
-- **Stack Note.** Earlier statements saying `LandingPage` did not adopt Astro or Vitest are **superseded for Astro** (`astro@7.4.2` + Preact `11.1.0` islands are active), while **Vitest remains un-adopted** (`node:test` and Playwright are canonical).
+- **Stack Note.** Earlier statements saying `LandingPage` did not adopt Astro or Vitest are **superseded for Astro** (`astro@7.4.2` + Preact `11.1.0` islands are active), while **Vitest remains un-adopted** for `LandingPage` itself (with a single private tool-local Vitest exception scoped strictly to `tools/ui-verify/`). `node:test` and Playwright remain canonical.
 
 ---
 
@@ -76,9 +76,11 @@ npm run check:playwright-discovery
 npm run test:smoke
 npm run test:components
 npm run test:features
+npm run test:smoke:cross-browser
 npm run test:responsive
 npm run test:replay
 npm run test:conformance
+npm run bombadil:docker
 ```
 
 ---
@@ -92,6 +94,8 @@ npm run test:conformance
 | **Program GQC** (`SPRINT-GQC-00..07`) | [`docs/sprints/programs/gqc/`](docs/sprints/programs/gqc/INDEX.md) | Petri net verification, Astro 7 + 7 Preact islands, SPA target workbench, Layer 1/Layer 4 `NetMCard` + `FiringReceiptMCard` Triad persistence, performance baselines, and living docs gate (`npm run docs:check`) | Graduated (`2026-11-18`) |
 | **Program BPV** (`SPRINT-BPV-00..07`) | [`docs/sprints/programs/bpv/`](docs/sprints/programs/bpv/INDEX.md) | Bombadil `0.7.10` property verification, page-state contract, explorable GUI checks, trace-to-net replay, and local Docker nightly scheduler | Graduated (`2026-11-18`) |
 | **Program SSG** (`SPRINT-SSG-00..08`) | [`docs/sprints/programs/ssg/`](docs/sprints/programs/ssg/INDEX.md) | StageShow `1.1.1` device frames and craft (`tools/stageshow/`, `.agents/skills/stageshow/`), Bombadil runner dashboard (`8th` island), `12` built-in device presets, responsive tiers, and Shadow DOM portal showcase | Graduated (`2026-11-20`) |
+
+Deferred post-SSG local cleanup items (`k8s/`/ArgoCD/Grafana manifests, legacy example games, `app.astro` transition, Redux store removal, and `routes/auth.js` retirement) are tracked in [`docs/sprints/programs/ssg/ssg-local-backlog.md`](docs/sprints/programs/ssg/ssg-local-backlog.md), and `clm-registry.yaml` projections refresh via `node scripts/pull-registry-projection.mjs`.
 
 ---
 

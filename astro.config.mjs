@@ -190,6 +190,17 @@ export default defineConfig({
     }
   },
   vite: {
+    optimizeDeps: {
+      include: ['preact', 'preact/jsx-runtime', 'preact/jsx-dev-runtime'],
+      rolldownOptions: {
+        transform: {
+          jsx: {
+            runtime: 'automatic',
+            importSource: 'preact'
+          }
+        }
+      }
+    },
     plugins: [astroDevStaticProxyPlugin()],
     ssr: {
       noExternal: nestedDepNames

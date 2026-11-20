@@ -9,6 +9,14 @@ All notable changes to the PKC Landing Page are documented in this file. The for
 
 ## [Unreleased]
 
+- **Vite 8 / Astro Dev Preact JSX Scan Fix (`2026-11-20`)**:
+  - Added `vite.optimizeDeps.include` (`preact`, `preact/jsx-runtime`, `preact/jsx-dev-runtime`) and `vite.optimizeDeps.rolldownOptions.transform.jsx` (`runtime: 'automatic'`, `importSource: 'preact'`) in `astro.config.mjs` so Vite `8.3.5` (`astro@7.4.2`) dependency scanning no longer emits `react/jsx-dev-runtime` imports when scanning `src/islands/*.jsx`.
+  - Added config regression assertion in `tests/unit/target-policy-and-config.test.mjs`.
+
+- **Estate 3 Reorganization and Hygiene (`EPIC-FRO`, `fro-01..07`, 2026-11-19 to 2026-11-20)**:
+  - Aligned `LandingPage` as Estate 3 (`Submodule 3`) across `README.md` and `docs/`, migrated `server/mcard-modality.mjs` imports to `clm-kernel/primitives` and `clm-kernel/browser` subpaths, aligned remaining `ssg-plan.md` kernel references to `0.0.24`, and removed legacy `docs/03-data-management/mcard/CLM_Language_Specification_v2.md` (`fro-06`, `fro-07`).
+  - Added `schemas/crd_landing_viewport.schema.json` and `scripts/pull-registry-projection.mjs`, relocated private `tools/ui-verify/` with its own `package-lock.json` and scoped Vitest exception, removed legacy `routes/clm-api.js`, `js/observability/lagrangian.js`, and unused package bin entries, pruned relocated links from `scripts/docs-link-allowlist.json`, anchored `mcard.yaml`, aligned `retired-islands.yaml`, and tracked post-SSG local cleanup in `docs/sprints/programs/ssg/ssg-local-backlog.md` (`fro-01..05`).
+
 - **Program SSG Graduated (`SPRINT-SSG-00..08`, 2026-11-19 to 2026-11-20)**:
   - Installed StageShow `1.1.1` (`tools/stageshow/`, `.agents/skills/stageshow/`), added `postcss`, excluded `public/stageshow/` from npm tarballs, hardened `scripts/stageshow/run.mjs`, and documented transferable vs house-style craft in `docs/06-components/STAGESHOW_DESIGN_CONTRACT.md` (`SPRINT-SSG-00`).
   - Subtracted duplicate CSS tokens/rules and eliminated non-Lab mobile clip/overflow across `index.astro`, `sprint-registry.astro`, `fiber-inspector.astro`, `app.astro`, and `mcard-manager.css` (`SPRINT-SSG-01`).
