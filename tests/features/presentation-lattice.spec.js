@@ -22,8 +22,8 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     await page.waitForSelector('.top-controls', { state: 'visible', timeout: 10000 });
 
     // Wait for ES modules and presentation controller to hydrate
-    await page.waitForFunction(() => 
-      window.__presentation_controller !== undefined && 
+    await page.waitForFunction(() =>
+      window.__presentation_controller !== undefined &&
       window.__faro_collector !== undefined &&
       window.__least_action_navigator !== undefined
     );
@@ -70,7 +70,8 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     await themeBtn.click();
     await expect(html).toHaveAttribute('data-theme', 'light');
     await expect(themeBtn).toContainText('Light');
-    await expect(page.locator('#theme-icon')).toHaveText('☀️');
+    await expect(page.locator('#theme-icon')).toHaveAttribute('data-icon', 'sun');
+    await expect(page.locator('#theme-icon svg')).toBeVisible();
 
     // Verify light background semantic token applied
     const lightBg = await page.evaluate(() => {
@@ -85,7 +86,8 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     await themeBtn.click();
     await expect(html).toHaveAttribute('data-theme', 'high-contrast');
     await expect(themeBtn).toContainText('Contrast');
-    await expect(page.locator('#theme-icon')).toHaveText('👁️');
+    await expect(page.locator('#theme-icon')).toHaveAttribute('data-icon', 'eye');
+    await expect(page.locator('#theme-icon svg')).toBeVisible();
 
     // Verify high-contrast black background semantic token
     const contrastBg = await page.evaluate(() => {
@@ -100,7 +102,8 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     await themeBtn.click();
     await expect(html).toHaveAttribute('data-theme', 'dark');
     await expect(themeBtn).toContainText('Dark');
-    await expect(page.locator('#theme-icon')).toHaveText('🌙');
+    await expect(page.locator('#theme-icon')).toHaveAttribute('data-icon', 'moon');
+    await expect(page.locator('#theme-icon svg')).toBeVisible();
     await page.waitForTimeout(500);
   });
 
@@ -125,7 +128,8 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     await powerBtn.click();
     await expect(html).toHaveAttribute('data-power-mode', 'energy-saving');
     await expect(powerBtn).toContainText('Eco');
-    await expect(page.locator('#power-icon')).toHaveText('🔋');
+    await expect(page.locator('#power-icon')).toHaveAttribute('data-icon', 'battery');
+    await expect(page.locator('#power-icon svg')).toBeVisible();
 
     // Verify zero motion duration in eco mode
     const ecoDuration = await page.evaluate(() => {
@@ -147,7 +151,8 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     await powerBtn.click();
     await expect(html).toHaveAttribute('data-power-mode', 'balanced');
     await expect(powerBtn).toContainText('Normal');
-    await expect(page.locator('#power-icon')).toHaveText('⚡');
+    await expect(page.locator('#power-icon')).toHaveAttribute('data-icon', 'zap');
+    await expect(page.locator('#power-icon svg')).toBeVisible();
     await page.waitForTimeout(500);
   });
 
@@ -180,14 +185,37 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
         return Array.from(document.querySelectorAll('body *'))
           .filter((el) => {
             const r = el.getBoundingClientRect();
-            return r.width > 0 && r.right > vw + 1;
+            return r.width > 0 && (r.left < -1 || r.right > vw + 1);
           })
           .slice(0, 6)
           .map((el) => {
             const r = el.getBoundingClientRect();
-            return `${el.tagName.toLowerCase()}#${el.id || '-'}.${(el.className || '-').toString().split(' ')[0]} right=${Math.round(r.right)} vw=${vw}`;
+            return `${el.tagName.toLowerCase()}#${el.id || '-'}.${(el.className || '-').toString().split(' ')[0]} left=${Math.round(r.left)} right=${Math.round(r.right)} vw=${vw}`;
           });
       });
+
+    // Narrow Mobile Viewport (358x800) - checks no header collision or min-height: 1180px void
+    await page.setViewportSize({ width: 358, height: 800 });
+    await page.waitForTimeout(600);
+    const compactAudit = await page.evaluate(() => {
+      const vw = document.documentElement.clientWidth;
+      const topControls = document.querySelector('.top-controls');
+      const h1 = document.querySelector('h1');
+      const container = document.querySelector('.container');
+      const pill = document.querySelector('#mcard-sovereign-pill');
+      const topRect = topControls?.getBoundingClientRect();
+      const h1Rect = h1?.getBoundingClientRect();
+      return {
+        scrollOverflow: document.documentElement.scrollWidth > vw,
+        containerMinHeight: container ? getComputedStyle(container).minHeight : null,
+        pillDisplay: pill ? getComputedStyle(pill).display : null,
+        headerOverlapsH1: Boolean(topRect && h1Rect && topRect.bottom > h1Rect.top + 1),
+      };
+    });
+    expect(await overflowOffenders(), '358px viewport bidirectional overflow').toEqual([]);
+    expect(compactAudit.scrollOverflow).toBe(false);
+    expect(compactAudit.containerMinHeight).not.toBe('1180px');
+    expect(compactAudit.headerOverlapsH1).toBe(false);
 
     // Mobile Viewport (iPhone 14)
     console.log('[Test] Responsive check: Mobile (390x844)');
@@ -200,25 +228,31 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     expect(await overflowOffenders(), 'mobile viewport overflow').toEqual([]);
     expect(mobileOverflow).toBe(false);
 
-    // Tablet Viewport (iPad)
-    console.log('[Test] Responsive check: Tablet (768x1024)');
-    await page.setViewportSize({ width: 768, height: 1024 });
-    await page.waitForTimeout(600);
+    // Tablet Viewport (iPad 768x1024 & 820x1180)
+    for (const tabletSize of [
+      { label: 'Tablet (768x1024)', width: 768, height: 1024 },
+      { label: 'Tablet (820x1180)', width: 820, height: 1180 }
+    ]) {
+      console.log(`[Test] Responsive check: ${tabletSize.label}`);
+      await page.setViewportSize({ width: tabletSize.width, height: tabletSize.height });
+      await page.waitForTimeout(400);
 
-    const tabletOverflow = await page.evaluate(() => {
-      return document.documentElement.scrollWidth > document.documentElement.clientWidth;
-    });
-    expect(await overflowOffenders(), 'tablet viewport overflow').toEqual([]);
-    expect(tabletOverflow).toBe(false);
+      const tabletOverflow = await page.evaluate(() => {
+        return document.documentElement.scrollWidth > document.documentElement.clientWidth;
+      });
+      expect(await overflowOffenders(), `${tabletSize.label} overflow`).toEqual([]);
+      expect(tabletOverflow).toBe(false);
+    }
 
     // Desktop Viewport (1440x900)
     console.log('[Test] Responsive check: Desktop (1440x900)');
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.waitForTimeout(600);
+    await page.waitForTimeout(400);
 
     const desktopOverflow = await page.evaluate(() => {
       return document.documentElement.scrollWidth > document.documentElement.clientWidth;
     });
+    expect(await overflowOffenders(), 'desktop viewport overflow').toEqual([]);
     expect(desktopOverflow).toBe(false);
   });
 
@@ -303,78 +337,73 @@ test.describe('LandingPage Presentation Lattice & Observability', () => {
     await expect(btnArrangeHorizontal).toHaveClass(/active/);
     await expect(workspaceContainer).toHaveClass(/arrangement-horizontal/);
 
-    // Step 3: Test Horizontal (Landscape) Viewport Orientation & Capture Artifact
-    console.log('[Test] Step 3: Activating Horizontal (Landscape) Viewport Orientation');
-    await btnOrientHorizontal.click();
-    await page.waitForTimeout(400);
-    await expect(btnOrientHorizontal).toHaveClass(/active/);
-    await expect(controlledFrame).toHaveClass(/orientation-horizontal/);
-    await expect(controlledFrameDim).toContainText('Horizontal (Landscape)');
-    await expect(controlledStatus).toContainText('Horizontal (Landscape)');
+    // Step 3: Verify Full (100%) starts Responsive with orientation controls disabled, then select Desktop
+    await expect(btnOrientVertical).toBeDisabled();
+    await expect(btnOrientHorizontal).toBeDisabled();
+    await expect(btnRotate).toBeDisabled();
+    await expect(controlledFrameDim).toContainText('Responsive');
+    await expect(controlledStatus).toContainText('Responsive');
 
-    // RVP-03: presets are now real devices — Desktop is the MacBook Air 13" (1280px)
+    // RVP-03: Desktop is MacBook Air 13" (1280px) and initializes Landscape automatically
     await page.locator('#btn-size-desktop').click();
     await page.waitForTimeout(500);
     await expect(page.locator('#btn-size-desktop')).toHaveClass(/active/);
+    await expect(btnOrientHorizontal).toBeEnabled();
+    await expect(btnOrientHorizontal).toHaveClass(/active/);
+    await expect(controlledFrame).toHaveClass(/orientation-horizontal/);
     await expect(controlledFrameDim).toContainText('1280px');
+    await expect(controlledFrameDim).toContainText('Landscape');
+    await expect(controlledStatus).toContainText('Landscape');
 
-    // Save visual screenshot artifact for Horizontal orientation arrangement
-    await page.screenshot({ path: '/Users/bkoo/.gemini/antigravity-ide/brain/5a248492-2b93-4a68-b3a9-8cb161d32e58/responsive_ui_lab_horizontal_arrangement.png' });
-    console.log('[Test] Visual screenshot artifact saved: responsive_ui_lab_horizontal_arrangement.png');
-
-    // Step 4: Test Vertical (Portrait) Orientation Toggling
-    console.log('[Test] Step 4a: Switching to Vertical (Portrait) orientation');
+    // Step 4: Test Portrait / Rotate orientation toggling on a rotatable preset
     await btnOrientVertical.click();
     await page.waitForTimeout(400);
     await expect(btnOrientVertical).toHaveClass(/active/);
     await expect(controlledFrame).toHaveClass(/orientation-vertical/);
-    await expect(controlledFrameDim).toContainText('Vertical (Portrait)');
+    await expect(controlledFrameDim).toContainText('Portrait');
 
-    console.log('[Test] Step 4b: Testing Rotate button');
     await btnRotate.click();
     await page.waitForTimeout(400);
     await expect(btnOrientHorizontal).toHaveClass(/active/);
     await expect(controlledFrame).toHaveClass(/orientation-horizontal/);
+    await expect(controlledFrameDim).toContainText('Landscape');
 
-    await btnOrientVertical.click();
-    await page.waitForTimeout(300);
-
-    // Step 5: Test size presets on the full-window stage
-    console.log('[Test] Step 5a: Testing Mobile device preset (iPhone 16 Pro, 393px)');
+    // Step 5: Test size presets on the full-window stage (phone opens Portrait directly)
     await page.locator('#btn-size-mobile').click();
     await page.waitForTimeout(400);
     await expect(page.locator('#btn-size-mobile')).toHaveClass(/active/);
-    await expect(controlledFrame).toHaveCSS('width', '393px');
+    await expect(iframe).toHaveCSS('width', '393px');
     await expect(controlledFrameDim).toContainText('393px');
+    await expect(controlledFrameDim).toContainText('Portrait');
 
-    console.log('[Test] Step 5b: Testing Tablet device preset (iPad Air 11", 820px)');
     await page.locator('#btn-size-tablet').click();
     await page.waitForTimeout(400);
     await expect(page.locator('#btn-size-tablet')).toHaveClass(/active/);
-    await expect(controlledFrame).toHaveCSS('width', '820px');
+    await expect(iframe).toHaveCSS('width', '820px');
     await expect(controlledFrameDim).toContainText('820px');
 
-    console.log('[Test] Step 5c: Testing Full (100%) relative width');
     await page.locator('#btn-size-full').click();
     await page.waitForTimeout(400);
     await expect(page.locator('#btn-size-full')).toHaveClass(/active/);
     await expect(controlledFrameDim).toContainText('100%');
+    await expect(controlledFrameDim).toContainText('Responsive');
+    await expect(btnRotate).toBeDisabled();
 
-    console.log('[Test] Step 5d: Testing dual-axis Custom Geometry (850 x 900)');
     await customWidthInput.fill('850');
     await customHeightInput.fill('900');
     await expect(customWidthInput).toHaveValue('850');
     await applyCustomWidthBtn.click();
     await page.waitForTimeout(400);
-    await expect(controlledFrame).toHaveCSS('width', '850px');
-    await expect(controlledFrame).toHaveCSS('height', '900px');
+    await expect(iframe).toHaveCSS('width', '850px');
+    await expect(iframe).toHaveCSS('height', '900px');
     await expect(controlledFrameDim).toContainText('850px');
+    await expect(btnRotate).toBeEnabled();
 
-    console.log('[Test] Step 5e: Resetting to Full Container Width (100%)');
     await page.locator('#btn-size-full').click();
     await page.waitForTimeout(400);
     await expect(page.locator('#btn-size-full')).toHaveClass(/active/);
     await expect(controlledFrameDim).toContainText('100%');
+    await expect(controlledFrameDim).toContainText('Responsive');
 
     // Step 6: Test browser security boundary on iframe-incompatible pages
     console.log('[Test] Step 6: Testing browser sandbox boundary with GitHub (X-Frame-Options: DENY)');

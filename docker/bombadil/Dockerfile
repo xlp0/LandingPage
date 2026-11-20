@@ -8,7 +8,7 @@ FROM node:24-bookworm
 
 # Bombadil 0.7.10 looks for /usr/bin/chromium; Debian ships it for amd64 and arm64.
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends chromium fonts-liberation fonts-noto-color-emoji \
+  && apt-get install -y --no-install-recommends chromium fonts-liberation fonts-dejavu-core fonts-noto-color-emoji \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -23,6 +23,8 @@ RUN npm ci --no-audit --no-fund
 
 # Chromium's sandbox needs user namespaces that Docker's default profile does not grant.
 ENV BOMBADIL_EXTRA_ARGS=--no-sandbox \
+    CHROME_PATH=/usr/bin/chromium \
+    STAGESHOW_NO_SANDBOX=1 \
     TZ=UTC
 
 CMD ["bash", "scripts/bombadil/nightly.sh"]

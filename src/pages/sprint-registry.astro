@@ -1,21 +1,25 @@
 ---
 import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
+import PresentationControls from '../components/PresentationControls.astro';
 ---
-<WorkbenchLayout placeIds={['p_page_sprint_registry']} title={'CLM Sprint Registry \u2014 SSoT Display Projection'} dataTheme="dark" viewport="width=device-width, initial-scale=1">
+<WorkbenchLayout placeIds={['p_page_sprint_registry']} title={'CLM Sprint Registry \u2014 SSoT Display Projection'} dataTheme="dark" viewport="width=device-width, initial-scale=1" enablePresentationController={true}>
   <Fragment slot="head">
     <link rel="stylesheet" href="/public/css/tokens.css" />
   <link rel="stylesheet" href="/public/css/semantic-tokens.css" />
   <style is:inline>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
     :root {
-      --reg-bg: var(--color-background-primary, #0f172a);
+      --reg-bg: var(--color-bg, #0f172a);
       --reg-card-bg: var(--color-surface, #1e293b);
       --reg-text: var(--color-text-primary, #f8fafc);
       --reg-muted: var(--color-text-secondary, #94a3b8);
       --reg-border: var(--color-border, #334155);
-      --badge-sealed-bg: var(--color-badge-valid-bg, #065f46);
-      --badge-sealed-fg: var(--color-badge-valid-text, #34d399);
-      --badge-spec-bg: var(--color-badge-draft-bg, #78350f);
-      --badge-spec-fg: var(--color-badge-draft-text, #fbbf24);
+      --badge-sealed-bg: var(--badge-success-bg, #065f46);
+      --badge-sealed-fg: var(--badge-success-text, #34d399);
+      --badge-spec-bg: var(--badge-warning-bg, #78350f);
+      --badge-spec-fg: var(--badge-warning-text, #fbbf24);
     }
     body {
       margin: 0;
@@ -24,11 +28,49 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       color: var(--reg-text);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
     }
+    @media (max-width: 600px) {
+      body {
+        padding: 12px;
+      }
+    }
     header {
       max-width: 1200px;
       margin: 0 auto 24px;
       border-bottom: 1px solid var(--reg-border);
       padding-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .header-meta {
+      min-width: 0;
+      flex: 1 1 320px;
+    }
+    .presentation-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .presentation-control-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 28px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-strong, var(--reg-border));
+      background: var(--reg-card-bg);
+      color: var(--reg-text);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .presentation-control-btn:hover {
+      border-color: var(--color-primary, var(--reg-text));
     }
     h1 {
       margin: 0 0 8px;
@@ -49,7 +91,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
       gap: 16px;
       max-width: 1200px;
       margin: 0 auto;
@@ -121,9 +163,12 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
   </style>
   </Fragment>
   <header>
-    <h1>CLM Sprint Registry</h1>
-    <p class="subtitle">Live browser projection of SSoT sprint manifests and DoD sealing contracts.</p>
-    <div id="registry-status" data-count="0">Loading registry...</div>
+    <div class="header-meta">
+      <h1>CLM Sprint Registry</h1>
+      <p class="subtitle">Live browser projection of SSoT sprint manifests and DoD sealing contracts.</p>
+      <div id="registry-status" data-count="0">Loading registry...</div>
+    </div>
+    <PresentationControls defaultTheme="dark" />
   </header>
 
   <main>

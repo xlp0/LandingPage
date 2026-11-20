@@ -7,9 +7,155 @@
 import { EventRingBuffer } from './event-ring-buffer.js';
 import { RecordingStateMachine } from './recording-state-machine.js';
 import { UnavailableCaptureSource } from './capture-probe-agent.js';
-import { TEST_RUN_SCHEMA, targetSlug } from './test-run-schema.js';
+import { DIM_MIN, DIM_MAX, clampDimension } from './viewport-geometry.js';
+import {
+  TEST_RUN_SCHEMA,
+  INTERRUPTED_CAPTURE_SCHEMA,
+  targetSlug
+} from './test-run-schema.js';
 
 export const DEFAULT_CLM_KERNEL_VERSION = '0.0.24';
+const RECORDED_VIEWPORT_CAUSES = new Set(['preset', 'custom', 'rotate']);
+
+function stripDeviceUiFields(dev, width, height) {
+  const safeW = Math.min(DIM_MAX, Math.max(DIM_MIN, Math.round(Number(width))));
+  const safeH = Math.min(DIM_MAX, Math.max(DIM_MIN, Math.round(Number(height))));
+  const out = {
+    id: String(dev.id),
+    name: String(dev.name || dev.id).trim().slice(0, 40) || String(dev.id).slice(0, 40),
+    category: dev.category || 'custom',
+    width: safeW,
+    height: safeH,
+    pixelRatio: Number.isFinite(dev.pixelRatio) && dev.pixelRatio > 0 ? dev.pixelRatio : 1,
+    hasTouch: typeof dev.hasTouch === 'boolean' ? dev.hasTouch : false,
+    isMobile: typeof dev.isMobile === 'boolean' ? dev.isMobile : false,
+    pointer: dev.pointer === 'coarse' ? 'coarse' : 'fine',
+    hover: typeof dev.hover === 'boolean' ? dev.hover : true,
+    schemaVersion: 2
+  };
+  if (dev.safeAreaInsets) {
+    out.safeAreaInsets = { ...dev.safeAreaInsets };
+  }
+  if (typeof dev.userAgent === 'string') {
+    out.userAgent = dev.userAgent;
+  }
+  return out;
+}
+
+/**
+ * Pure closed-schema Persistence Projection Table (SPRINT-SSG-02 §3).
+ * Maps active selection / device / measured full stage to responsive_test_run:v1
+ * without leaking UI-only fields (frameStyle, defaultOrientation).
+ */
+export function projectViewportToRunDescriptor({
+  selection = null,
+  device = null,
+  orientation = null,
+  measuredFullStage = null
+} = {}) {
+  if (selection?.kind === 'custom') {
+    const w = clampDimension(Math.round(Number(selection.width)), 390);
+    const h = clampDimension(Math.round(Number(selection.height)), 852);
+    const runOrient = w > h ? 'landscape' : 'portrait';
+    return {
+      ok: true,
+      device: {
+        id: `custom-${w}x${h}`,
+        name: `Custom (${w}x${h})`.slice(0, 40),
+        category: 'custom',
+        width: w,
+        height: h,
+        pixelRatio: 1,
+        hasTouch: false,
+        isMobile: false,
+        pointer: 'fine',
+        hover: true,
+        schemaVersion: 2
+      },
+      orientation: runOrient
+    };
+  }
+
+  if ((selection?.kind === 'preset' || (!selection && device)) && device) {
+    const isSquare = device.width === device.height;
+    const rawOrient = selection?.orientation || orientation;
+    const runOrient = isSquare
+      ? 'portrait'
+      : rawOrient === 'landscape'
+        ? 'landscape'
+        : rawOrient === 'portrait'
+          ? 'portrait'
+          : device.width > device.height
+            ? 'landscape'
+            : 'portrait';
+    const minDim = Math.min(device.width, device.height);
+    const maxDim = Math.max(device.width, device.height);
+    const activeW = isSquare ? device.width : runOrient === 'landscape' ? maxDim : minDim;
+    const activeH = isSquare ? device.height : runOrient === 'landscape' ? minDim : maxDim;
+    return {
+      ok: true,
+      device: stripDeviceUiFields(device, activeW, activeH),
+      orientation: runOrient
+    };
+  }
+
+  if (measuredFullStage != null) {
+    const rawW = Math.round(Number(measuredFullStage.width));
+    const rawH = Math.round(Number(measuredFullStage.height));
+    if (!Number.isFinite(rawW) || !Number.isFinite(rawH) || rawW < DIM_MIN || rawH < DIM_MIN) {
+      return {
+        ok: false,
+        error: 'Full (100%) stage container is smaller than 100px; resize the window or select a device preset before saving.'
+      };
+    }
+    const w = Math.min(DIM_MAX, rawW);
+    const h = Math.min(DIM_MAX, rawH);
+    const runOrient = w >= h ? 'landscape' : 'portrait';
+    return {
+      ok: true,
+      device: {
+        id: 'viewport-full',
+        name: `Full (${w}x${h})`.slice(0, 40),
+        category: 'custom',
+        width: w,
+        height: h,
+        pixelRatio: 1,
+        hasTouch: false,
+        isMobile: false,
+        pointer: 'fine',
+        hover: true,
+        schemaVersion: 2
+      },
+      orientation: runOrient
+    };
+  }
+
+  if (selection?.kind === 'full') {
+    return {
+      ok: false,
+      error: 'Full (100%) stage dimensions unavailable (< 100px); resize the window or select a device preset before saving.'
+    };
+  }
+
+  // Bare Node caller fallback (e.g. GQC-07-UNIT-03): never forge desktop-fhd.
+  return {
+    ok: true,
+    device: {
+      id: 'viewport-full',
+      name: 'Full (1280x720)',
+      category: 'custom',
+      width: 1280,
+      height: 720,
+      pixelRatio: 1,
+      hasTouch: false,
+      isMobile: false,
+      pointer: 'fine',
+      hover: true,
+      schemaVersion: 2
+    },
+    orientation: 'landscape'
+  };
+}
 
 export function resolveClmKernelVersion(explicitVersion = null) {
   if (typeof explicitVersion === 'string' && explicitVersion.trim()) {
@@ -30,6 +176,8 @@ export class InteractionRecorder {
     this.buffer = new EventRingBuffer({ capacity: options.capacity || 2048 });
     this.fsm = new RecordingStateMachine({ now: options.now });
     this.source = options.source || null;
+    this._measureFullStage = typeof options.measureFullStage === 'function' ? options.measureFullStage : null;
+    this._lockedFullStage = null;
     this._clmKernelVersion = typeof options.clmKernelVersion === 'string' && options.clmKernelVersion.trim() ? options.clmKernelVersion.trim() : null;
     this._sourceEpoch = 0;
     this._boundTargetUrl = null;
@@ -52,6 +200,7 @@ export class InteractionRecorder {
     this._onViewportChange = (e) => {
       if (!this.fsm.canAccept()) return;
       const d = e.detail;
+      if (!d || !RECORDED_VIEWPORT_CAUSES.has(d.cause)) return;
       const type = d.cause === 'rotate' ? 'orientation_change' : 'viewport_change';
       this._recordInternalEvent({
         type,
@@ -170,6 +319,7 @@ export class InteractionRecorder {
     this.startedAt = new Date().toISOString();
     this._recordedTargetUrl = options.targetUrl || this._boundTargetUrl || this._recordedTargetUrl || null;
     this._recordedCaptureSourceKind = this.source?.kind === 'probe-agent' ? 'probe-agent' : 'same-origin';
+    this._lockedFullStage = this._measureFullStage ? this._measureFullStage() : (options.measuredFullStage || null);
     this.fsm.start();
     if (this.source) {
       this._bindSource(this.source, this._sourceEpoch);
@@ -194,6 +344,7 @@ export class InteractionRecorder {
     this.buffer.clear();
     this.undersizedTaps = 0;
     this.startedAt = null;
+    this._lockedFullStage = null;
     this._recordedTargetUrl = null;
     this._recordedCaptureSourceKind = null;
     this.lastSavedRun = null;
@@ -204,7 +355,9 @@ export class InteractionRecorder {
     const {
       target = { url: 'http://localhost:3001/app.html' },
       device = null,
-      orientation = 'portrait',
+      selection = null,
+      orientation = null,
+      measuredFullStage = undefined,
       fidelity = { tier: 0, runner: 'lab-iframe', emulated: ['viewport'], notEmulated: [] },
       finalState = null,
       telemetry = null,
@@ -228,19 +381,25 @@ export class InteractionRecorder {
     const rawUrl = this._recordedTargetUrl || target?.url || target?.raw || 'http://localhost:3001/app.html';
     const slug = target?.slug || targetSlug(rawUrl);
 
-    const safeDevice = device || {
-      id: 'desktop-fhd',
-      name: 'Desktop 1080p',
-      category: 'desktop',
-      width: 1920,
-      height: 1080,
-      pixelRatio: 1,
-      hasTouch: false,
-      isMobile: false,
-      pointer: 'fine',
-      hover: true,
-      schemaVersion: 2
-    };
+    const resolvedFullStage = measuredFullStage !== undefined
+      ? measuredFullStage
+      : (this._lockedFullStage ?? (this._measureFullStage ? this._measureFullStage() : null));
+
+    const projected = projectViewportToRunDescriptor({
+      selection,
+      device,
+      orientation,
+      measuredFullStage: resolvedFullStage
+    });
+
+    if (!projected.ok) {
+      const err = new Error(projected.error);
+      err.code = 'FULL_STAGE_TOO_SMALL';
+      throw err;
+    }
+
+    const safeDevice = projected.device;
+    const resolvedOrientation = projected.orientation;
 
     const stats = this.stats();
     const resolvedCaptureKind =
@@ -256,7 +415,7 @@ export class InteractionRecorder {
       },
       captureSource: resolvedCaptureKind,
       device: safeDevice,
-      orientation: orientation === 'horizontal' ? 'landscape' : (orientation === 'landscape' ? 'landscape' : 'portrait'),
+      orientation: resolvedOrientation,
       fidelity: {
         tier: fidelity.tier ?? 0,
         runner: fidelity.runner || 'lab-iframe',
@@ -288,9 +447,58 @@ export class InteractionRecorder {
     };
   }
 
-  async saveTestRun(options = {}) {
-    const run = this.buildTestRun(options);
+  buildInterruptedCapture(options = {}) {
+    const {
+      sessionId = `ic_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      target = { url: 'http://localhost:3001/tests/fixtures/spa-test-target.html' },
+      reason = 'Target policy invalidated active capture',
+      lifecycleState = this.fsm.state
+    } = options;
+    const rawUrl = this._recordedTargetUrl || target?.url || target?.raw || 'http://localhost:3001/tests/fixtures/spa-test-target.html';
+    const slug = target?.slug || targetSlug(rawUrl);
+    const safeState = lifecycleState && lifecycleState !== 'FINALIZED' ? lifecycleState : 'RECORDING';
+    return {
+      schema: INTERRUPTED_CAPTURE_SCHEMA,
+      sessionId,
+      target: {
+        url: rawUrl,
+        slug
+      },
+      reason: String(reason || 'Target policy invalidated active capture'),
+      lifecycleState: safeState,
+      capturedAt: new Date().toISOString(),
+      incomplete: true,
+      passing: false,
+      certified: false
+    };
+  }
+
+  async saveInterruptedCapture(options = {}) {
+    const record = this.buildInterruptedCapture(options);
     try {
+      const res = await fetch('/api/test-runs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(record)
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+      }
+      const data = await res.json();
+      this.lastSavedRun = { ok: true, incomplete: true, data, run: record };
+      this._emitChange('saved', this.lastSavedRun);
+      return this.lastSavedRun;
+    } catch (err) {
+      this.lastSavedRun = { ok: false, incomplete: true, error: err.message, run: record };
+      this._emitChange('save-failed', this.lastSavedRun);
+      return this.lastSavedRun;
+    }
+  }
+
+  async saveTestRun(options = {}) {
+    let run = null;
+    try {
+      run = this.buildTestRun(options);
       const res = await fetch('/api/test-runs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -304,7 +512,12 @@ export class InteractionRecorder {
       this._emitChange('saved', this.lastSavedRun);
       return this.lastSavedRun;
     } catch (err) {
-      this.lastSavedRun = { ok: false, error: err.message, run };
+      this.lastSavedRun = {
+        ok: false,
+        blocked: err.code === 'FULL_STAGE_TOO_SMALL',
+        error: err.message,
+        run
+      };
       this._emitChange('save-failed', this.lastSavedRun);
       return this.lastSavedRun;
     }

@@ -18,8 +18,8 @@
 | Net ID | `landingpage-workbench-net` |
 | Target Handle | `mcard:workbench:landing-page` |
 | Entry Place | `p_page_index` |
-| Total Places | 32 |
-| Total Transitions | 66 |
+| Total Places | 40 |
+| Total Transitions | 90 |
 | Non-UI Programmatic Endpoints | 23 |
 
 Related architecture guides include [LandingPage Architecture](./landing-page-architecture.md) and [Astro Host and Preact Islands](./astro-host-and-islands.md).
@@ -31,7 +31,7 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | `error` | 9 |
 | `external` | 1 |
 | `page` | 7 |
-| `pending` | 14 |
+| `pending` | 22 |
 | `view` | 1 |
 
 ### Transition Counts by Kind
@@ -43,9 +43,9 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | `open-external` | 3 |
 | `recover` | 9 |
 | `redirect` | 1 |
-| `server-call-fail` | 15 |
-| `server-call-ok` | 14 |
-| `server-call-request` | 14 |
+| `server-call-fail` | 23 |
+| `server-call-ok` | 22 |
+| `server-call-request` | 22 |
 
 ## Places
 
@@ -83,6 +83,14 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | `p_pending_post_nav_session` | `pending` | `/responsive-lab.html` | `mcard:pending:post_nav_session` | `clm://type/view/workbench/pending/post-nav-session` | n/a | reachable | Architect and TEA | In-flight pending state for POST /api/test-runs/navigation/session from p_page_responsive_lab |
 | `p_pending_post_nav_fire` | `pending` | `/responsive-lab.html` | `mcard:pending:post_nav_fire` | `clm://type/view/workbench/pending/post-nav-fire` | n/a | reachable | Architect and TEA | In-flight pending state for POST /api/test-runs/navigation/fire from p_page_responsive_lab |
 | `p_pending_post_nav_link` | `pending` | `/responsive-lab.html` | `mcard:pending:post_nav_link` | `clm://type/view/workbench/pending/post-nav-link` | n/a | reachable | Architect and TEA | In-flight pending state for POST /api/test-runs/navigation/link from p_page_responsive_lab |
+| `p_pending_bombadil_handles` | `pending` | `/responsive-lab.html` | `mcard:pending:bombadil_handles` | `clm://type/view/workbench/pending/bombadil-handles` | n/a | reachable | Architect and TEA | In-flight pending state for GET /api/test-runs/bombadil/handles from p_page_responsive_lab |
+| `p_pending_bombadil_trigger` | `pending` | `/responsive-lab.html` | `mcard:pending:bombadil_trigger` | `clm://type/view/workbench/pending/bombadil-trigger` | n/a | reachable | Architect and TEA | In-flight pending state for POST /api/test-runs/bombadil/trigger from p_page_responsive_lab |
+| `p_pending_bombadil_stop` | `pending` | `/responsive-lab.html` | `mcard:pending:bombadil_stop` | `clm://type/view/workbench/pending/bombadil-stop` | n/a | reachable | Architect and TEA | In-flight pending state for POST /api/test-runs/bombadil/stop from p_page_responsive_lab |
+| `p_pending_bombadil_shrink` | `pending` | `/responsive-lab.html` | `mcard:pending:bombadil_shrink` | `clm://type/view/workbench/pending/bombadil-shrink` | n/a | reachable | Architect and TEA | In-flight pending state for POST /api/test-runs/bombadil/shrink from p_page_responsive_lab |
+| `p_pending_bombadil_runs` | `pending` | `/responsive-lab.html` | `mcard:pending:bombadil_runs` | `clm://type/view/workbench/pending/bombadil-runs` | n/a | reachable | Architect and TEA | In-flight pending state for GET /api/test-runs/bombadil/runs from p_page_responsive_lab |
+| `p_pending_bombadil_run` | `pending` | `/responsive-lab.html` | `mcard:pending:bombadil_run` | `clm://type/view/workbench/pending/bombadil-run` | n/a | reachable | Architect and TEA | In-flight pending state for GET /api/test-runs/bombadil/run from p_page_responsive_lab |
+| `p_pending_bombadil_coverage` | `pending` | `/responsive-lab.html` | `mcard:pending:bombadil_coverage` | `clm://type/view/workbench/pending/bombadil-coverage` | n/a | reachable | Architect and TEA | In-flight pending state for GET /api/test-runs/bombadil/coverage from p_page_responsive_lab |
+| `p_pending_bombadil_stream` | `pending` | `/responsive-lab.html` | `mcard:pending:bombadil_stream` | `clm://type/view/workbench/pending/bombadil-stream` | n/a | reachable | Architect and TEA | In-flight pending state for GET /api/test-runs/bombadil/stream from p_page_responsive_lab |
 
 ## Transitions
 
@@ -154,6 +162,30 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | `t_recover_capture_unavailable` | `recover` | `p_error_capture_unavailable` | `p_page_responsive_lab` | `/responsive-lab.html` | `responsive-lab.html` | Product Manager and UX Designer | Click #btn-target-recover or select approved target on responsive-lab.html |
 | `t_enter_target_unapproved` | `client-route` | `p_page_responsive_lab` | `p_error_target_unapproved` | `/responsive-lab.html` | `responsive-lab.html` | Product Manager and Security Owner | Enter unapproved custom or malformed target URL in js/harness/target-membrane.js |
 | `t_recover_target_unapproved` | `recover` | `p_error_target_unapproved` | `p_page_responsive_lab` | `/responsive-lab.html` | `responsive-lab.html` | Product Manager and UX Designer | Click #btn-target-recover or select approved target on responsive-lab.html |
+| `t_req_bombadil_handles` | `server-call-request` | `p_page_responsive_lab` | `p_pending_bombadil_handles` | `GET /api/test-runs/bombadil/handles` | `responsive-lab.html` | Architect and TEA | fetch("/api/test-runs/bombadil/handles") in js/harness/bombadil-client.js |
+| `t_ok_bombadil_handles` | `server-call-ok` | `p_pending_bombadil_handles` | `p_page_responsive_lab` | `GET /api/test-runs/bombadil/handles` | `responsive-lab.html` | Architect and TEA | HTTP 2xx response for GET /api/test-runs/bombadil/handles |
+| `t_fail_bombadil_handles` | `server-call-fail` | `p_pending_bombadil_handles` | `p_page_responsive_lab` | `GET /api/test-runs/bombadil/handles` | `responsive-lab.html` | Architect and TEA | HTTP 4xx/5xx or network failure for GET /api/test-runs/bombadil/handles |
+| `t_req_bombadil_trigger` | `server-call-request` | `p_page_responsive_lab` | `p_pending_bombadil_trigger` | `POST /api/test-runs/bombadil/trigger` | `responsive-lab.html` | Architect and TEA | fetch("/api/test-runs/bombadil/trigger") in js/harness/bombadil-client.js |
+| `t_ok_bombadil_trigger` | `server-call-ok` | `p_pending_bombadil_trigger` | `p_page_responsive_lab` | `POST /api/test-runs/bombadil/trigger` | `responsive-lab.html` | Architect and TEA | HTTP 2xx response for POST /api/test-runs/bombadil/trigger |
+| `t_fail_bombadil_trigger` | `server-call-fail` | `p_pending_bombadil_trigger` | `p_page_responsive_lab` | `POST /api/test-runs/bombadil/trigger` | `responsive-lab.html` | Architect and TEA | HTTP 4xx/5xx or network failure for POST /api/test-runs/bombadil/trigger |
+| `t_req_bombadil_stop` | `server-call-request` | `p_page_responsive_lab` | `p_pending_bombadil_stop` | `POST /api/test-runs/bombadil/stop` | `responsive-lab.html` | Architect and TEA | fetch("/api/test-runs/bombadil/stop") in js/harness/bombadil-client.js |
+| `t_ok_bombadil_stop` | `server-call-ok` | `p_pending_bombadil_stop` | `p_page_responsive_lab` | `POST /api/test-runs/bombadil/stop` | `responsive-lab.html` | Architect and TEA | HTTP 2xx response for POST /api/test-runs/bombadil/stop |
+| `t_fail_bombadil_stop` | `server-call-fail` | `p_pending_bombadil_stop` | `p_page_responsive_lab` | `POST /api/test-runs/bombadil/stop` | `responsive-lab.html` | Architect and TEA | HTTP 4xx/5xx or network failure for POST /api/test-runs/bombadil/stop |
+| `t_req_bombadil_shrink` | `server-call-request` | `p_page_responsive_lab` | `p_pending_bombadil_shrink` | `POST /api/test-runs/bombadil/shrink` | `responsive-lab.html` | Architect and TEA | fetch("/api/test-runs/bombadil/shrink") in js/harness/bombadil-client.js |
+| `t_ok_bombadil_shrink` | `server-call-ok` | `p_pending_bombadil_shrink` | `p_page_responsive_lab` | `POST /api/test-runs/bombadil/shrink` | `responsive-lab.html` | Architect and TEA | HTTP 2xx response for POST /api/test-runs/bombadil/shrink |
+| `t_fail_bombadil_shrink` | `server-call-fail` | `p_pending_bombadil_shrink` | `p_page_responsive_lab` | `POST /api/test-runs/bombadil/shrink` | `responsive-lab.html` | Architect and TEA | HTTP 4xx/5xx or network failure for POST /api/test-runs/bombadil/shrink |
+| `t_req_bombadil_runs` | `server-call-request` | `p_page_responsive_lab` | `p_pending_bombadil_runs` | `GET /api/test-runs/bombadil/runs` | `responsive-lab.html` | Architect and TEA | fetch("/api/test-runs/bombadil/runs") in js/harness/bombadil-client.js |
+| `t_ok_bombadil_runs` | `server-call-ok` | `p_pending_bombadil_runs` | `p_page_responsive_lab` | `GET /api/test-runs/bombadil/runs` | `responsive-lab.html` | Architect and TEA | HTTP 2xx response for GET /api/test-runs/bombadil/runs |
+| `t_fail_bombadil_runs` | `server-call-fail` | `p_pending_bombadil_runs` | `p_page_responsive_lab` | `GET /api/test-runs/bombadil/runs` | `responsive-lab.html` | Architect and TEA | HTTP 4xx/5xx or network failure for GET /api/test-runs/bombadil/runs |
+| `t_req_bombadil_run` | `server-call-request` | `p_page_responsive_lab` | `p_pending_bombadil_run` | `GET /api/test-runs/bombadil/run` | `responsive-lab.html` | Architect and TEA | fetch("/api/test-runs/bombadil/run?runId=...") in js/harness/bombadil-client.js |
+| `t_ok_bombadil_run` | `server-call-ok` | `p_pending_bombadil_run` | `p_page_responsive_lab` | `GET /api/test-runs/bombadil/run` | `responsive-lab.html` | Architect and TEA | HTTP 2xx response for GET /api/test-runs/bombadil/run |
+| `t_fail_bombadil_run` | `server-call-fail` | `p_pending_bombadil_run` | `p_page_responsive_lab` | `GET /api/test-runs/bombadil/run` | `responsive-lab.html` | Architect and TEA | HTTP 4xx/5xx or network failure for GET /api/test-runs/bombadil/run |
+| `t_req_bombadil_coverage` | `server-call-request` | `p_page_responsive_lab` | `p_pending_bombadil_coverage` | `GET /api/test-runs/bombadil/coverage` | `responsive-lab.html` | Architect and TEA | fetch("/api/test-runs/bombadil/coverage") in js/harness/bombadil-client.js |
+| `t_ok_bombadil_coverage` | `server-call-ok` | `p_pending_bombadil_coverage` | `p_page_responsive_lab` | `GET /api/test-runs/bombadil/coverage` | `responsive-lab.html` | Architect and TEA | HTTP 2xx response for GET /api/test-runs/bombadil/coverage |
+| `t_fail_bombadil_coverage` | `server-call-fail` | `p_pending_bombadil_coverage` | `p_page_responsive_lab` | `GET /api/test-runs/bombadil/coverage` | `responsive-lab.html` | Architect and TEA | HTTP 4xx/5xx or network failure for GET /api/test-runs/bombadil/coverage |
+| `t_req_bombadil_stream` | `server-call-request` | `p_page_responsive_lab` | `p_pending_bombadil_stream` | `GET /api/test-runs/bombadil/stream` | `responsive-lab.html` | Architect and TEA | fetch("/api/test-runs/bombadil/stream") in js/harness/bombadil-client.js |
+| `t_ok_bombadil_stream` | `server-call-ok` | `p_pending_bombadil_stream` | `p_page_responsive_lab` | `GET /api/test-runs/bombadil/stream` | `responsive-lab.html` | Architect and TEA | HTTP 2xx or 204 response for GET /api/test-runs/bombadil/stream |
+| `t_fail_bombadil_stream` | `server-call-fail` | `p_pending_bombadil_stream` | `p_page_responsive_lab` | `GET /api/test-runs/bombadil/stream` | `responsive-lab.html` | Architect and TEA | HTTP 4xx/5xx or stream disconnect for GET /api/test-runs/bombadil/stream |
 
 ## Non-UI Programmatic Endpoints
 
@@ -219,6 +251,14 @@ flowchart TD
   p_pending_post_nav_session["p_pending_post_nav_session (pending)"]
   p_pending_post_nav_fire["p_pending_post_nav_fire (pending)"]
   p_pending_post_nav_link["p_pending_post_nav_link (pending)"]
+  p_pending_bombadil_handles["p_pending_bombadil_handles (pending)"]
+  p_pending_bombadil_trigger["p_pending_bombadil_trigger (pending)"]
+  p_pending_bombadil_stop["p_pending_bombadil_stop (pending)"]
+  p_pending_bombadil_shrink["p_pending_bombadil_shrink (pending)"]
+  p_pending_bombadil_runs["p_pending_bombadil_runs (pending)"]
+  p_pending_bombadil_run["p_pending_bombadil_run (pending)"]
+  p_pending_bombadil_coverage["p_pending_bombadil_coverage (pending)"]
+  p_pending_bombadil_stream["p_pending_bombadil_stream (pending)"]
   p_page_index -->|"t_redirect_index_to_lab (redirect)"| p_page_responsive_lab
   p_page_responsive_lab -->|"t_link_lab_to_index (link)"| p_view_index_mcard_viewer
   p_page_responsive_lab -->|"t_link_lab_to_app (link)"| p_page_app
@@ -285,4 +325,28 @@ flowchart TD
   p_error_capture_unavailable -->|"t_recover_capture_unavailable (recover)"| p_page_responsive_lab
   p_page_responsive_lab -->|"t_enter_target_unapproved (client-route)"| p_error_target_unapproved
   p_error_target_unapproved -->|"t_recover_target_unapproved (recover)"| p_page_responsive_lab
+  p_page_responsive_lab -->|"t_req_bombadil_handles (server-call-request)"| p_pending_bombadil_handles
+  p_pending_bombadil_handles -->|"t_ok_bombadil_handles (server-call-ok)"| p_page_responsive_lab
+  p_pending_bombadil_handles -->|"t_fail_bombadil_handles (server-call-fail)"| p_page_responsive_lab
+  p_page_responsive_lab -->|"t_req_bombadil_trigger (server-call-request)"| p_pending_bombadil_trigger
+  p_pending_bombadil_trigger -->|"t_ok_bombadil_trigger (server-call-ok)"| p_page_responsive_lab
+  p_pending_bombadil_trigger -->|"t_fail_bombadil_trigger (server-call-fail)"| p_page_responsive_lab
+  p_page_responsive_lab -->|"t_req_bombadil_stop (server-call-request)"| p_pending_bombadil_stop
+  p_pending_bombadil_stop -->|"t_ok_bombadil_stop (server-call-ok)"| p_page_responsive_lab
+  p_pending_bombadil_stop -->|"t_fail_bombadil_stop (server-call-fail)"| p_page_responsive_lab
+  p_page_responsive_lab -->|"t_req_bombadil_shrink (server-call-request)"| p_pending_bombadil_shrink
+  p_pending_bombadil_shrink -->|"t_ok_bombadil_shrink (server-call-ok)"| p_page_responsive_lab
+  p_pending_bombadil_shrink -->|"t_fail_bombadil_shrink (server-call-fail)"| p_page_responsive_lab
+  p_page_responsive_lab -->|"t_req_bombadil_runs (server-call-request)"| p_pending_bombadil_runs
+  p_pending_bombadil_runs -->|"t_ok_bombadil_runs (server-call-ok)"| p_page_responsive_lab
+  p_pending_bombadil_runs -->|"t_fail_bombadil_runs (server-call-fail)"| p_page_responsive_lab
+  p_page_responsive_lab -->|"t_req_bombadil_run (server-call-request)"| p_pending_bombadil_run
+  p_pending_bombadil_run -->|"t_ok_bombadil_run (server-call-ok)"| p_page_responsive_lab
+  p_pending_bombadil_run -->|"t_fail_bombadil_run (server-call-fail)"| p_page_responsive_lab
+  p_page_responsive_lab -->|"t_req_bombadil_coverage (server-call-request)"| p_pending_bombadil_coverage
+  p_pending_bombadil_coverage -->|"t_ok_bombadil_coverage (server-call-ok)"| p_page_responsive_lab
+  p_pending_bombadil_coverage -->|"t_fail_bombadil_coverage (server-call-fail)"| p_page_responsive_lab
+  p_page_responsive_lab -->|"t_req_bombadil_stream (server-call-request)"| p_pending_bombadil_stream
+  p_pending_bombadil_stream -->|"t_ok_bombadil_stream (server-call-ok)"| p_page_responsive_lab
+  p_pending_bombadil_stream -->|"t_fail_bombadil_stream (server-call-fail)"| p_page_responsive_lab
 ```

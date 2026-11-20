@@ -17,8 +17,8 @@
 | **Architecture and Petri Net** | [`01-architecture/`](01-architecture/README.md) | Maintained architectural contracts and generated net reference (`workbench-net.md`) | Architect |
 | **Domain Engineering Tiers** | [`02-authentication/`](02-authentication/README.md) through [`11-standards/`](11-standards/README.md) | Maintained domain guides and performance baselines | Domain Lead per tier `README.md` |
 | **Capability Reference Library** | [`functionalities/`](functionalities/README.md) | Maintained capability reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts | Tech Writer and Architect |
-| **Graduated Sprint Archives** | [`sprints/01-architecture/`](sprints/01-architecture/INDEX.md), [`sprints/08-testing/`](sprints/08-testing/INDEX.md), [`sprints/programs/gqc/`](sprints/programs/gqc/INDEX.md), [`sprints/programs/bpv/`](sprints/programs/bpv/INDEX.md) | Sealed sprint records (`SMO-00..05`, `ERB-00..06`, `GQC-00..07`, `BPV-00..07`) | Scrum Master |
-| **Active Sprint Workspace** | [`sprints/_active/`](sprints/_active/INDEX.md) | Idle as of `2026-11-18`; retains canonical `DECISIONS.tsv` ledger | Scrum Master |
+| **Graduated Sprint Archives** | [`sprints/01-architecture/`](sprints/01-architecture/INDEX.md), [`sprints/08-testing/`](sprints/08-testing/INDEX.md), [`sprints/programs/gqc/`](sprints/programs/gqc/INDEX.md), [`sprints/programs/bpv/`](sprints/programs/bpv/INDEX.md), [`sprints/programs/ssg/`](sprints/programs/ssg/INDEX.md) | Sealed sprint records (`SMO-00..05`, `ERB-00..06`, `GQC-00..07`, `BPV-00..07`, `SSG-00..08`) | Scrum Master |
+| **Active Sprint Workspace** | [`sprints/_active/`](sprints/_active/INDEX.md) | Standby (`0` active sprints as of `2026-11-20`); retains canonical `DECISIONS.tsv` ledger | Scrum Master |
 | **Legacy Archive** | [`archive/`](archive/REORGANIZATION_PROPOSAL.md) | Historical pre-reorganization snapshots | Tech Writer |
 
 ---
@@ -44,7 +44,7 @@ docs/
 ├── 11-standards/                     # CSS token contracts and coding standards
 ├── project/                          # Supplementary implementation notes and diagrams
 ├── rules/                            # Focused styling rules
-├── sprints/                          # Graduated archives (01-architecture, 08-testing, programs/gqc, programs/bpv) and idle _active/
+├── sprints/                          # Graduated archives (01-architecture, 08-testing, programs/gqc, programs/bpv, programs/ssg) and idle _active/
 └── archive/                          # Historical reorganization records
 ```
 
@@ -60,8 +60,8 @@ docs/
 
 ### Understand the Architecture
 - Workbench vs target boundaries, three hash domains, and CLM Page-as-Place contracts in [01-architecture/landing-page-architecture.md](01-architecture/landing-page-architecture.md)
-- Astro 7 middleware, 7 Preact islands, and server-call policy in [01-architecture/astro-host-and-islands.md](01-architecture/astro-host-and-islands.md)
-- Generated `31`-Place / `65`-Transition Petri net reference in [01-architecture/workbench-net.md](01-architecture/workbench-net.md)
+- Astro 7 middleware, 8 Preact islands, and server-call policy in [01-architecture/astro-host-and-islands.md](01-architecture/astro-host-and-islands.md)
+- Generated `40`-Place / `90`-Transition Petri net reference in [01-architecture/workbench-net.md](01-architecture/workbench-net.md)
 - Universal 4-Modality MCard Browser in [01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md](01-architecture/UNIVERSAL_MCARD_BROWSER_ARCHITECTURE.md)
 - Package and kernel boundaries in [01-architecture/MCARD_MODULAR_ARCHITECTURE.md](01-architecture/MCARD_MODULAR_ARCHITECTURE.md)
 

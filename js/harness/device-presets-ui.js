@@ -4,6 +4,7 @@
  */
 
 import { aspectRatio } from './viewport-geometry.js';
+import { createIconElement } from '../ui/icons.js';
 
 const BUILTIN_CHIP_IDS = {
   'iphone-16-pro': 'btn-size-mobile',
@@ -73,11 +74,14 @@ export function initDevicePresetsUI(options = {}) {
 
   function applyDevicePreset(device) {
     if (!stage) return;
-    const geom = stage.getGeometry();
-    const isLandscape = geom.internalOrientation === 'horizontal';
-    const w = isLandscape ? device.height : device.width;
-    const h = isLandscape ? device.width : device.height;
-    stage.setViewportSize(w, h, 'px', device.name, device.id, 'preset');
+    if (typeof stage.selectDevicePreset === 'function') {
+      stage.selectDevicePreset(device, 'preset');
+    } else {
+      const isLandscape = device.defaultOrientation === 'landscape';
+      const w = isLandscape ? Math.max(device.width, device.height) : Math.min(device.width, device.height);
+      const h = isLandscape ? Math.min(device.width, device.height) : Math.max(device.width, device.height);
+      stage.setViewportSize(w, h, 'px', device.name, device.id, 'preset');
+    }
     markActiveChip(device.id);
   }
 
@@ -113,9 +117,17 @@ export function initDevicePresetsUI(options = {}) {
     full.dataset.testid = 'btn-size-full';
     full.className = 'toolbar-btn size-preset-btn';
     full.title = 'Reset to full container size (100%)';
-    full.innerHTML = '<span>↔ Full (100%)</span>';
+    const fullIcon = createIconElement('maximize');
+    const fullLabel = document.createElement('span');
+    fullLabel.textContent = 'Full (100%)';
+    if (fullIcon) full.append(fullIcon, fullLabel);
+    else full.append(fullLabel);
     full.addEventListener('click', () => {
-      stage?.setViewportSize(100, 100, '%', 'Full (100%)', null, 'preset');
+      if (typeof stage?.selectFullViewport === 'function') {
+        stage.selectFullViewport('preset');
+      } else {
+        stage?.setViewportSize(100, 100, '%', 'Full (100%)', null, 'preset');
+      }
       markActiveChip('full');
     });
     presetsContainer.appendChild(full);
@@ -148,14 +160,18 @@ export function initDevicePresetsUI(options = {}) {
       if (d.isBuiltin) {
         const lock = document.createElement('span');
         lock.className = 'dm-lock';
-        lock.textContent = 'Built-in 🔒';
+        const lockIcon = createIconElement('lock');
+        if (lockIcon) lock.append(lockIcon, ' Built-in');
+        else lock.textContent = 'Built-in';
         row.appendChild(lock);
       } else {
         const del = document.createElement('button');
         del.type = 'button';
         del.className = 'dm-delete';
         del.dataset.deleteDevice = d.id;
-        del.textContent = '🗑️ Delete';
+        const trashIcon = createIconElement('trash');
+        if (trashIcon) del.append(trashIcon, ' Delete');
+        else del.textContent = 'Delete';
         del.dataset.testid = `preset-delete-${d.id}`;
         del.addEventListener('click', async () => {
           const confirmed = await confirmPresetDelete(d.name);
@@ -187,6 +203,13 @@ export function initDevicePresetsUI(options = {}) {
       if (e.key === 'Escape' && managerModal?.classList.contains('open')) closeDeviceManager();
     });
     listen(document.getElementById('btn-reset-devices'), 'click', () => registry?.resetToDefaults());
+    listen(document, 'lab:viewport-change', (e) => {
+      const detail = e?.detail;
+      if (!detail) return;
+      if (detail.kind === 'full') markActiveChip('full');
+      else if (detail.kind === 'preset' && detail.deviceId) markActiveChip(detail.deviceId);
+      else markActiveChip(null);
+    });
   }
 
   listen(managerModal, 'click', (e) => {
@@ -199,15 +222,18 @@ export function initDevicePresetsUI(options = {}) {
     const catEl = document.getElementById('select-device-category');
     const wEl = document.getElementById('input-device-width');
     const hEl = document.getElementById('input-device-height');
+    const frameStyleEl = document.getElementById('select-device-frame-style');
 
     const wRaw = wEl?.value.trim() ?? '';
     const hRaw = hEl?.value.trim() ?? '';
+    const rawFrameStyle = frameStyleEl?.value?.trim?.() || '';
     try {
       registry.add({
         name: nameEl?.value,
         category: catEl?.value,
         width: wRaw === '' ? NaN : Number(wRaw),
         height: hRaw === '' ? NaN : Number(hRaw),
+        ...(rawFrameStyle ? { frameStyle: rawFrameStyle } : {})
       });
       deviceForm.reset();
       if (deviceFormError) deviceFormError.textContent = '';
@@ -230,7 +256,7 @@ export function initDevicePresetsUI(options = {}) {
       const fn = cleanupFns.pop();
       try {
         fn();
-      } catch {}
+      } catch { }
     }
   }
 

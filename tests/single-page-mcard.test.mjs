@@ -64,7 +64,12 @@ import {
 } from '../js/external-portal-membrane.js';
 import { SAMPLES, STAMP, VIEWPORTS, seed, verify } from '../scripts/seed-portal-samples.mjs';
 
-const REPO_ROOT = path.resolve(import.meta.dirname, '..', '..');
+const LANDING_ROOT = path.resolve(import.meta.dirname, '..');
+const REPO_ROOT = path.resolve(LANDING_ROOT, '..');
+const HAS_SUPERPROJECT = fs.existsSync(path.join(REPO_ROOT, 'clm/kernel/clm_js_core/package.json'));
+const HAS_SMR_RECEIPT = fs.existsSync(
+  path.join(REPO_ROOT, 'docs/sprints/programs/smr/evidence/smr-09-landing-single-card-receipt.json')
+);
 
 function tempDb(name) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'smr09-'));
@@ -313,26 +318,32 @@ test('DoD-SMR-09-01 (guard): no legacy 4-table DDL survives in LandingPage', () 
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) walk(full);
       else if (/\.(mjs|js|cjs|ts)$/.test(entry.name) && legacy.test(fs.readFileSync(full, 'utf8'))) {
-        offenders.push(path.relative(REPO_ROOT, full));
+        offenders.push(path.relative(LANDING_ROOT, full));
       }
     }
   };
   for (const dir of ['server', 'scripts', 'js', 'packages']) {
-    const target = path.join(REPO_ROOT, 'LandingPage', dir);
+    const target = path.join(LANDING_ROOT, dir);
     if (fs.existsSync(target)) walk(target);
   }
   assert.deepEqual(offenders, [], `the 4-table rule is broken in: ${offenders.join(', ')}`);
 });
 
 test('(guard): LandingPage and mcard-studio resolve clm-kernel to the PUBLISHED package', () => {
-  const workspaceVersion = JSON.parse(
-    fs.readFileSync(path.join(REPO_ROOT, 'clm/kernel/clm_js_core/package.json'), 'utf8')
-  ).version;
-  for (const consumer of ['LandingPage', 'mcard-studio']) {
-    const spec = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, consumer, 'package.json'), 'utf8'))
+  const workspaceVersion = HAS_SUPERPROJECT
+    ? JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'clm/kernel/clm_js_core/package.json'), 'utf8')).version
+    : null;
+  const consumers = HAS_SUPERPROJECT
+    ? [
+        { name: 'LandingPage', root: LANDING_ROOT },
+        { name: 'mcard-studio', root: path.join(REPO_ROOT, 'mcard-studio') },
+      ]
+    : [{ name: 'LandingPage', root: LANDING_ROOT }];
+  for (const { name: consumer, root: consumerRoot } of consumers) {
+    const spec = JSON.parse(fs.readFileSync(path.join(consumerRoot, 'package.json'), 'utf8'))
       .dependencies['clm-kernel'];
     assert.ok(spec, `${consumer} must declare clm-kernel`);
-    const consumerLockPath = path.join(REPO_ROOT, consumer, 'package-lock.json');
+    const consumerLockPath = path.join(consumerRoot, 'package-lock.json');
     const lock = JSON.parse(
       fs.readFileSync(
         fs.existsSync(consumerLockPath) ? consumerLockPath : path.join(REPO_ROOT, 'package-lock.json'),
@@ -345,7 +356,7 @@ test('(guard): LandingPage and mcard-studio resolve clm-kernel to the PUBLISHED 
     assert.match(
       String(resolved.resolved || ''),
       /registry\.npmjs\.org\/clm-kernel/,
-      `${consumer} must resolve clm-kernel from the registry, not the ${workspaceVersion} workspace source (spec: ${spec})`
+      `${consumer} must resolve clm-kernel from the registry, not the ${workspaceVersion ?? 'workspace'} workspace source (spec: ${spec})`
     );
     // Version alone no longer discriminates: once the workspace version is published, a registry
     // install and a workspace link report the same number. A link is the thing to forbid.
@@ -358,7 +369,7 @@ test('(guard): LandingPage and mcard-studio resolve clm-kernel to the PUBLISHED 
 });
 
 test('DoD-SMR-09-02: index.html hosts the single page and the controller renders it', () => {
-  const html = fs.readFileSync(path.join(REPO_ROOT, 'LandingPage/index.html'), 'utf8');
+  const html = fs.readFileSync(path.join(LANDING_ROOT, 'index.html'), 'utf8');
   assert.match(html, /id="single-page-mcard-host"/, 'index.html must host the single page');
   assert.match(html, /data-handle="urn:mcard:content:landing_page"/, 'the host declares the active handle');
   assert.match(html, /id="mcard-sovereign-pill-mount"/, 'index.html must mount the HUD pill');
@@ -448,7 +459,7 @@ test('DoD-SMR-09-04: the seed generator produces the 6-sample corpus with 4 view
   const result = verify({ dbFile, manifestFile });
   assert.equal(result.ok, true, result.problems.join('; '));
   assert.deepEqual(
-    yaml.load(fs.readFileSync(path.join(REPO_ROOT, 'LandingPage/data/samples/portal_samples_manifest.yaml'), 'utf8')),
+    yaml.load(fs.readFileSync(path.join(LANDING_ROOT, 'data/samples/portal_samples_manifest.yaml'), 'utf8')),
     manifest,
     'the committed manifest must equal the generator output (the .db itself is generated and git-ignored)'
   );
@@ -459,7 +470,7 @@ test('DoD-SMR-09-04: the corpus validates against crd_landing_viewport.schema.js
   assert.equal(fs.existsSync(schemaPath), true, 'the named viewport schema must exist');
   const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
   const manifest = yaml.load(
-    fs.readFileSync(path.join(REPO_ROOT, 'LandingPage/data/samples/portal_samples_manifest.yaml'), 'utf8')
+    fs.readFileSync(path.join(LANDING_ROOT, 'data/samples/portal_samples_manifest.yaml'), 'utf8')
   );
 
   const ajv = new Ajv({ allErrors: true, strict: false, validateFormats: false });
@@ -533,7 +544,11 @@ test('DoD-SMR-09-05: the HUD pill renders hash, switcher, and the Studio deep li
   assert.equal(listeners.prevented, true, 'Cmd+K is intercepted');
 });
 
-test('DoD-SMR-09-08: the receipt and documentation delta are emitted and schema-shaped', () => {
+test('DoD-SMR-09-08: the receipt and documentation delta are emitted and schema-shaped', (t) => {
+  if (!HAS_SMR_RECEIPT) {
+    t.skip('requires parent MCard_TDD program archive mount');
+    return;
+  }
   const receiptPath = path.join(REPO_ROOT, 'docs/sprints/programs/smr/evidence/smr-09-landing-single-card-receipt.json');
   const deltaPath = path.join(REPO_ROOT, 'docs/sprints/programs/smr/evidence/smr-09-doc-delta.yaml');
   assert.equal(fs.existsSync(receiptPath), true, 'the receipt must exist');
@@ -558,11 +573,11 @@ test('DoD-SMR-09-08: the receipt and documentation delta are emitted and schema-
 
 test('DoD-SMR-09-07: the three SMR-09 modules stay within the 250-line ceiling', () => {
   for (const relative of [
-    'LandingPage/js/landing-page-mcard.js',
-    'LandingPage/js/external-portal-membrane.js',
-    'LandingPage/scripts/seed-portal-samples.mjs',
+    'js/landing-page-mcard.js',
+    'js/external-portal-membrane.js',
+    'scripts/seed-portal-samples.mjs',
   ]) {
-    const lines = fs.readFileSync(path.join(REPO_ROOT, relative), 'utf8').split('\n').length;
+    const lines = fs.readFileSync(path.join(LANDING_ROOT, relative), 'utf8').split('\n').length;
     assert.equal(lines <= 250, true, `${relative} is ${lines} lines`);
   }
 });
@@ -582,7 +597,7 @@ test('DoD-ULR-05-01 & DoD-ULR-05-02 (SCN-ULR-05-A): deterministic temp-seeded 6-
   assert.deepEqual(manifest1, manifest2, 're-seeding with pinned STAMP produces identical manifest');
 
   const canonicalManifest = yaml.load(
-    fs.readFileSync(path.join(REPO_ROOT, 'LandingPage/data/samples/portal_samples_manifest.yaml'), 'utf8')
+    fs.readFileSync(path.join(LANDING_ROOT, 'data/samples/portal_samples_manifest.yaml'), 'utf8')
   );
   assert.deepEqual(manifest1, canonicalManifest, 'temp-seeded manifest matches canonical manifest');
 
@@ -1046,7 +1061,7 @@ test('DoD-SMO-03: renderPage projects all 4 modalities with execution isolation 
 
   // Server Module Line Budget (Contract D <= 500 lines)
   for (const rel of ['server/mcard-api.mjs', 'server/mcard-modality.mjs', 'server/mcard-probe-policy.mjs']) {
-    const lines = fs.readFileSync(path.join(REPO_ROOT, 'LandingPage', rel), 'utf8').split('\n').length;
+    const lines = fs.readFileSync(path.join(LANDING_ROOT, rel), 'utf8').split('\n').length;
     assert.ok(lines <= 500, `${rel} is ${lines} lines (budget: 500)`);
   }
 });

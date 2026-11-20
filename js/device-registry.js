@@ -5,21 +5,21 @@
  * alongside 2D dimensions. Serves as single source of truth for device-sensitive sweeps (INV-DSF-02).
  */
 
+import { DIM_MIN, DIM_MAX, aspectRatio, FRAME_STYLES } from './harness/viewport-geometry.js';
+
+export { DIM_MIN, DIM_MAX, aspectRatio, FRAME_STYLES };
+
 export const STORAGE_KEY_V1 = 'pkc_responsive_lab_devices_v1';
 export const STORAGE_KEY = 'pkc_responsive_lab_devices_v2';
-
-/** INV-RVP-03: the closed dimension contract. */
-export const DIM_MIN = 100;
-export const DIM_MAX = 7680;
 
 export const CATEGORIES = ['phone', 'tablet', 'desktop', 'wearable', 'custom'];
 
 export const CATEGORY_DEFAULTS = Object.freeze({
-  phone: { hasTouch: true, isMobile: true, pointer: 'coarse', hover: false, defaultOrientation: 'portrait' },
-  tablet: { hasTouch: true, isMobile: true, pointer: 'coarse', hover: false, defaultOrientation: 'portrait' },
-  wearable: { hasTouch: true, isMobile: true, pointer: 'coarse', hover: false, defaultOrientation: 'portrait' },
-  desktop: { hasTouch: false, isMobile: false, pointer: 'fine', hover: true, defaultOrientation: 'landscape' },
-  custom: { hasTouch: false, isMobile: false, pointer: 'fine', hover: true, defaultOrientation: 'portrait' }
+  phone: { hasTouch: true, isMobile: true, pointer: 'coarse', hover: false, defaultOrientation: 'portrait', frameStyle: 'phone-android' },
+  tablet: { hasTouch: true, isMobile: true, pointer: 'coarse', hover: false, defaultOrientation: 'portrait', frameStyle: 'tablet' },
+  wearable: { hasTouch: true, isMobile: true, pointer: 'coarse', hover: false, defaultOrientation: 'portrait', frameStyle: 'hairline-ruler' },
+  desktop: { hasTouch: false, isMobile: false, pointer: 'fine', hover: true, defaultOrientation: 'landscape', frameStyle: 'browser-window' },
+  custom: { hasTouch: false, isMobile: false, pointer: 'fine', hover: true, defaultOrientation: 'portrait', frameStyle: 'hairline-ruler' }
 });
 
 /**
@@ -44,6 +44,7 @@ export function withCapabilityDefaults(device) {
     pointer: (device.pointer === 'coarse' || device.pointer === 'fine') ? device.pointer : defaults.pointer,
     hover: typeof device.hover === 'boolean' ? device.hover : defaults.hover,
     defaultOrientation,
+    frameStyle: device.frameStyle !== undefined ? device.frameStyle : defaults.frameStyle,
     schemaVersion: 2
   };
 }
@@ -65,6 +66,7 @@ export const BUILTIN_DEVICES = Object.freeze([
     hover: false,
     defaultOrientation: 'portrait',
     safeAreaInsets: { top: 59, right: 0, bottom: 34, left: 0 },
+    frameStyle: 'phone-ios',
     isBuiltin: true,
     schemaVersion: 2
   },
@@ -80,6 +82,8 @@ export const BUILTIN_DEVICES = Object.freeze([
     pointer: 'coarse',
     hover: false,
     defaultOrientation: 'portrait',
+    safeAreaInsets: { top: 20, right: 0, bottom: 0, left: 0 },
+    frameStyle: 'phone-ios',
     isBuiltin: true,
     schemaVersion: 2
   },
@@ -96,6 +100,7 @@ export const BUILTIN_DEVICES = Object.freeze([
     hover: false,
     defaultOrientation: 'portrait',
     safeAreaInsets: { top: 24, right: 0, bottom: 0, left: 0 },
+    frameStyle: 'phone-android',
     isBuiltin: true,
     schemaVersion: 2
   },
@@ -112,6 +117,24 @@ export const BUILTIN_DEVICES = Object.freeze([
     hover: false,
     defaultOrientation: 'portrait',
     safeAreaInsets: { top: 24, right: 0, bottom: 0, left: 0 },
+    frameStyle: 'phone-android',
+    isBuiltin: true,
+    schemaVersion: 2
+  },
+  {
+    id: 'mobile-large',
+    name: 'Large Mobile',
+    category: 'phone',
+    width: 430,
+    height: 932,
+    pixelRatio: 3,
+    hasTouch: true,
+    isMobile: true,
+    pointer: 'coarse',
+    hover: false,
+    defaultOrientation: 'portrait',
+    safeAreaInsets: { top: 59, right: 0, bottom: 34, left: 0 },
+    frameStyle: 'phone-ios',
     isBuiltin: true,
     schemaVersion: 2
   },
@@ -127,6 +150,7 @@ export const BUILTIN_DEVICES = Object.freeze([
     pointer: 'coarse',
     hover: false,
     defaultOrientation: 'portrait',
+    frameStyle: 'tablet',
     isBuiltin: true,
     schemaVersion: 2
   },
@@ -142,6 +166,23 @@ export const BUILTIN_DEVICES = Object.freeze([
     pointer: 'coarse',
     hover: false,
     defaultOrientation: 'portrait',
+    frameStyle: 'tablet',
+    isBuiltin: true,
+    schemaVersion: 2
+  },
+  {
+    id: 'tablet-standard',
+    name: 'Tablet Standard',
+    category: 'tablet',
+    width: 768,
+    height: 1024,
+    pixelRatio: 2,
+    hasTouch: true,
+    isMobile: true,
+    pointer: 'coarse',
+    hover: false,
+    defaultOrientation: 'portrait',
+    frameStyle: 'tablet',
     isBuiltin: true,
     schemaVersion: 2
   },
@@ -157,6 +198,23 @@ export const BUILTIN_DEVICES = Object.freeze([
     pointer: 'fine',
     hover: true,
     defaultOrientation: 'landscape',
+    frameStyle: 'browser-window',
+    isBuiltin: true,
+    schemaVersion: 2
+  },
+  {
+    id: 'desktop-standard',
+    name: 'Desktop Standard',
+    category: 'desktop',
+    width: 1440,
+    height: 900,
+    pixelRatio: 1,
+    hasTouch: false,
+    isMobile: false,
+    pointer: 'fine',
+    hover: true,
+    defaultOrientation: 'landscape',
+    frameStyle: 'browser-window',
     isBuiltin: true,
     schemaVersion: 2
   },
@@ -172,24 +230,27 @@ export const BUILTIN_DEVICES = Object.freeze([
     pointer: 'fine',
     hover: true,
     defaultOrientation: 'landscape',
+    frameStyle: 'browser-window',
+    isBuiltin: true,
+    schemaVersion: 2
+  },
+  {
+    id: 'desktop-ultrawide',
+    name: 'Desktop Ultrawide',
+    category: 'desktop',
+    width: 2560,
+    height: 1080,
+    pixelRatio: 1,
+    hasTouch: false,
+    isMobile: false,
+    pointer: 'fine',
+    hover: true,
+    defaultOrientation: 'landscape',
+    frameStyle: 'browser-window',
     isBuiltin: true,
     schemaVersion: 2
   }
 ]);
-
-const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
-
-/**
- * The aspect ratio of (w, h), derived — never hand-written.
- */
-export function aspectRatio(w, h) {
-  if (!Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) return '—';
-  const g = gcd(Math.round(w), Math.round(h));
-  const a = Math.round(w) / g;
-  const b = Math.round(h) / g;
-  if (a <= 40 && b <= 40) return `${a}:${b}`;
-  return `${(Math.max(w, h) / Math.min(w, h)).toFixed(2)}:1`;
-}
 
 /** Slugify a device name for use as an id. */
 export function slugify(name) {
@@ -261,6 +322,10 @@ export function validateDevice(data) {
     errors.push("defaultOrientation must be 'portrait' or 'landscape'");
   }
 
+  if (data.frameStyle !== undefined && !FRAME_STYLES.includes(data.frameStyle)) {
+    errors.push(`frameStyle must be one of ${FRAME_STYLES.join(', ')}`);
+  }
+
   if (data.userAgent !== undefined && typeof data.userAgent !== 'string') {
     errors.push('userAgent must be a string');
   }
@@ -327,6 +392,7 @@ export class DeviceRegistry {
       pointer: data?.pointer,
       hover: data?.hover,
       defaultOrientation: data?.defaultOrientation,
+      frameStyle: data?.frameStyle,
       userAgent: data?.userAgent,
       safeAreaInsets: data?.safeAreaInsets
     });
@@ -464,8 +530,16 @@ export class DeviceRegistry {
         });
 
       const byId = new Map(kept.map((d) => [d.id, { ...d }]));
-      for (const b of BUILTIN_DEVICES) byId.set(b.id, { ...b, ...(byId.get(b.id) ?? {}), isBuiltin: true });
-      const merged = [...byId.values()];
+      const builtinIds = new Set(BUILTIN_DEVICES.map((b) => b.id));
+      const mergedBuiltins = BUILTIN_DEVICES.map((b) => ({
+        ...(byId.get(b.id) ?? {}),
+        ...b,
+        isBuiltin: true
+      }));
+      const mergedCustom = [...byId.values()]
+        .filter((d) => !builtinIds.has(d.id) && !d.isBuiltin)
+        .map((d) => withCapabilityDefaults({ ...d, isBuiltin: false }));
+      const merged = [...mergedBuiltins, ...mergedCustom];
       this.#write(merged);
       return merged;
     } catch (e) {

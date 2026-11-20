@@ -13,7 +13,11 @@ Welcome to the master documentation index for **PKC Landing Page, Universal 4-Mo
 
 ## Sprint Programs and Governance
 
-- **[Active Sprint Workspace (`docs/sprints/_active/`)](sprints/_active/INDEX.md)** (Idle as of `2026-11-18`; holds the canonical [`DECISIONS.tsv`](sprints/_active/DECISIONS.tsv) ledger)
+- **[Active Sprint Workspace (`docs/sprints/_active/`)](sprints/_active/INDEX.md)** (Standby with `0` active sprints as of `2026-11-20`; holds the canonical [`DECISIONS.tsv`](sprints/_active/DECISIONS.tsv) ledger)
+- **[Program SSG (`docs/sprints/programs/ssg/`)](sprints/programs/ssg/INDEX.md)** (Graduated `2026-11-20`)
+  - [Program SSG Plan](sprints/programs/ssg/ssg-plan.md)
+  - [SPRINT-SSG-08 Verification Baselines, Docker Gate, and Graduation](sprints/programs/ssg/SPRINT-SSG-08-verification-baselines-and-graduation.md)
+  - [SSG-08 Graduation Report](sprints/programs/ssg/evidence/SSG-08-graduation.md)
 - **[Program GQC (`docs/sprints/programs/gqc/`)](sprints/programs/gqc/INDEX.md)** (Graduated `2026-11-18`)
   - [Program GQC Plan](sprints/programs/gqc/gqc-plan.md)
   - [SPRINT-GQC-07 Documentation Alignment and Gates](sprints/programs/gqc/SPRINT-GQC-07-documentation-alignment-and-gates.md)
@@ -69,7 +73,7 @@ Maintained capability reference documents (`DECISIONS.tsv` row 63), complementin
 | **03. Data Management** | Canonical SQLite Triad, `clm-kernel@0.0.24` consensus, three hash domains, sample corpus | [03-data-management/README.md](03-data-management/README.md) |
 | **04. Networking** | WebRTC P2P data mesh, WebSocket `/ws/` signaling on port `3000`, SSRF membrane | [04-networking/README.md](04-networking/README.md) |
 | **05. State Management** | `lab-runtime.js` coordinator, isolated legacy Redux stores, 20-pair recording FSM | [05-state-management/README.md](05-state-management/README.md) |
-| **06. Components** | Preact islands, Responsive Lab harness modules, CLM Three Sets, 3D Theater, games | [06-components/README.md](06-components/README.md) |
+| **06. Components** | Preact islands, StageShow contract ([STAGESHOW_DESIGN_CONTRACT.md](06-components/STAGESHOW_DESIGN_CONTRACT.md)), Responsive Lab harness modules, CLM Three Sets, 3D Theater, games | [06-components/README.md](06-components/README.md) |
 | **07. Deployment** | Docker (`EXPOSE 3000`, compose `8765:3000`), ArgoCD GitOps, R2 CDN, CI gates | [07-deployment/README.md](07-deployment/README.md) |
 | **08. Testing** | `node:test` unit suites, Playwright `smoke`/`components`/`features` projects, replay, conformance | [08-testing/README.md](08-testing/README.md) |
 | **09. Performance** | [GQC-06 SPA and Island Baselines](09-performance/gqc-06-spa-and-island-baselines.md), place byte budgets, Grafana Faro/Loki | [09-performance/README.md](09-performance/README.md) |

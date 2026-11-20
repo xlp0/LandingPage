@@ -4,6 +4,9 @@
  * Exposes a pluggable animation adapter interface (WAAPI vs Anime.js).
  */
 
+const VALID_THEMES = new Set(['dark', 'light', 'high-contrast']);
+const VALID_POWER_MODES = new Set(['balanced', 'energy-saving']);
+
 export class PresentationController {
   constructor(options = {}) {
     this.storageKeyTheme = options.storageKeyTheme || 'govtech_display_theme';
@@ -18,10 +21,20 @@ export class PresentationController {
   }
 
   init() {
-    // 1. Resolve Display Mode (Saved -> OS Media Query -> Default Dark)
-    const savedTheme = localStorage.getItem(this.storageKeyTheme);
-    if (savedTheme) {
+    // 1. Resolve Display Mode (?display_mode= -> Saved -> Host data-theme -> OS Media Query)
+    const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const urlTheme = params && params.has('display_mode') ? params.get('display_mode') : null;
+    const savedTheme = typeof localStorage !== 'undefined' ? localStorage.getItem(this.storageKeyTheme) : null;
+    const hostDefaultTheme = typeof document !== 'undefined' ? document.documentElement?.dataset?.theme : null;
+    const hasUrlTheme = Boolean(urlTheme && VALID_THEMES.has(urlTheme));
+    const hasHostTheme = Boolean(hostDefaultTheme && VALID_THEMES.has(hostDefaultTheme));
+
+    if (hasUrlTheme) {
+      this.setTheme(urlTheme, false);
+    } else if (savedTheme && VALID_THEMES.has(savedTheme)) {
       this.setTheme(savedTheme, false);
+    } else if (hasHostTheme) {
+      this.setTheme(hostDefaultTheme, false);
     } else {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const prefersContrast = window.matchMedia('(prefers-contrast: more)').matches;
@@ -33,8 +46,8 @@ export class PresentationController {
     }
 
     // 2. Resolve Power Mode (Saved -> Battery/Reduced Motion -> Balanced)
-    const savedPower = localStorage.getItem(this.storageKeyPower);
-    if (savedPower) {
+    const savedPower = typeof localStorage !== 'undefined' ? localStorage.getItem(this.storageKeyPower) : null;
+    if (savedPower && VALID_POWER_MODES.has(savedPower)) {
       this.setPowerMode(savedPower, false);
     } else {
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -48,7 +61,7 @@ export class PresentationController {
 
     // 3. Listen to OS preference changes
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-      if (!localStorage.getItem(this.storageKeyTheme)) {
+      if (!localStorage.getItem(this.storageKeyTheme) && !hasUrlTheme && !hasHostTheme) {
         this.setTheme(e.matches ? 'dark' : 'light', false);
       }
     });
@@ -144,12 +157,16 @@ export class PresentationController {
   }
 
   _notify() {
+    const detail = {
+      theme: this.currentTheme,
+      powerMode: this.currentPowerMode,
+      animationEngine: this.animationEngine
+    };
     if (typeof this.onStateChange === 'function') {
-      this.onStateChange({
-        theme: this.currentTheme,
-        powerMode: this.currentPowerMode,
-        animationEngine: this.animationEngine
-      });
+      this.onStateChange(detail);
+    }
+    if (typeof document !== 'undefined' && typeof CustomEvent === 'function') {
+      document.dispatchEvent(new CustomEvent('lab:presentation-change', { detail }));
     }
   }
 }

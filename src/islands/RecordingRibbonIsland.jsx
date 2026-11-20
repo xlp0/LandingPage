@@ -1,4 +1,5 @@
 import { useEffect } from 'preact/hooks';
+import LabIcon from '../components/LabIcon.jsx';
 import { initRecordingRibbon } from '../../js/harness/recording-ribbon.js';
 import { getLabRuntime } from '../../js/harness/lab-runtime.js';
 
@@ -10,7 +11,9 @@ export default function RecordingRibbonIsland() {
       getFidelity: () => runtime.getFidelity(),
       getTarget: () => runtime.membrane.getTarget(),
       getDevice: () => runtime.getActiveDevice(),
-      getOrientation: () => runtime.stage.getGeometry().orientation
+      getSelection: () => runtime.stage.getSelection(),
+      getOrientation: () => runtime.stage.getGeometry().orientation,
+      onOpenSavedRun: () => runtime.openSavedRunResult()
     });
     runtime.attachCaptureRibbon(ribbon);
     runtime.markBootParticipant('ribbon');
@@ -41,22 +44,21 @@ export default function RecordingRibbonIsland() {
         display: 'flex',
         alignItems: 'center',
         gap: '0.5rem',
-        borderLeft: '1px solid var(--border-subtle)',
-        paddingLeft: '0.75rem'
+        flexWrap: 'wrap'
       }}
     >
-      <span className="group-label">Record:</span>
+      <span className="group-label">Record</span>
       <button id="btn-rec-start" className="toolbar-btn" title="Start recording interactions" data-testid="btn-rec-start">
-        🔴 Start
+        <LabIcon name="circle-dot" /> Start
       </button>
       <button id="btn-rec-pause" className="toolbar-btn" hidden title="Pause recording" data-testid="btn-rec-pause">
-        ⏸ Pause
+        <LabIcon name="pause" /> Pause
       </button>
       <button id="btn-rec-resume" className="toolbar-btn" hidden title="Resume recording" data-testid="btn-rec-resume">
-        ▶ Resume
+        <LabIcon name="play" /> Resume
       </button>
       <button id="btn-rec-stop" className="toolbar-btn" hidden title="Stop recording" data-testid="btn-rec-stop" data-effect="persist">
-        ⏹ Stop
+        <LabIcon name="square" /> Stop
       </button>
 
       <span id="rec-source-pill" className="lab-badge" title="Active capture channel">
@@ -86,26 +88,29 @@ export default function RecordingRibbonIsland() {
         style={{ display: 'none', background: 'var(--badge-danger-bg)', color: 'var(--badge-danger-text)' }}
         title="Taps on targets < 44px"
       >
-        ⚠️ 0 undersized
+        <LabIcon name="alert-triangle" />
+        <span id="rec-undersized-text">0 undersized</span>
       </span>
-      <span id="rec-saved-pill" className="lab-badge" style={{ display: 'none', alignItems: 'center', gap: '0.35rem' }}>
-        <span id="rec-saved-label">💾 Saved</span>
+      <span id="rec-saved-pill" className="lab-badge" style={{ display: 'none', alignItems: 'center', gap: '0.35rem', cursor: 'pointer' }}>
+        <LabIcon name="save" />
+        <span id="rec-saved-label">Saved</span>
         <button
+          type="button"
           id="btn-copy-handle"
           className="toolbar-btn"
           style={{ padding: '0.1rem 0.35rem', fontSize: '0.68rem', display: 'none' }}
           title="Copy Handle"
-         data-testid="btn-copy-handle">
-          📋
+          data-testid="btn-copy-handle">
+          <LabIcon name="copy" />
         </button>
         <a
           id="btn-download-json"
           href="#"
           download="session-recording.json"
           data-effect="download"
-          style={{ display: 'none', color: 'inherit', textDecoration: 'underline', fontSize: '0.75rem' }}
-         data-testid="btn-download-json">
-          📥 Download JSON
+          style={{ display: 'none', color: 'inherit', textDecoration: 'underline', fontSize: '0.75rem', alignItems: 'center', gap: '0.25rem' }}
+          data-testid="btn-download-json">
+          <LabIcon name="download" /> Download JSON
         </a>
       </span>
     </div>

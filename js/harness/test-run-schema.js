@@ -12,13 +12,22 @@ export const CONFORMANCE_REPORT_SCHEMA = 'urn:mcard:schema:device_conformance_re
 export const CERTIFICATION_SCHEMA = 'urn:mcard:certification:responsive:v1';
 export const NAVIGATION_RUN_LINK_SCHEMA = 'urn:gqc:navigation-run-link:v1';
 export const INTERRUPTED_CAPTURE_SCHEMA = 'urn:gqc:interrupted-capture:v1';
+export const BOMBADIL_TRIGGER_SCHEMA = 'urn:ssg:bombadil-trigger:v1';
+export const BOMBADIL_RUN_SCHEMA = 'urn:ssg:bombadil-run:v1';
+export const BOMBADIL_COVERAGE_SCHEMA = 'urn:ssg:bombadil-coverage:v1';
+export const BOMBADIL_TARGETS = Object.freeze(['spa', 'spa-canary', 'lab-smoke', 'page-load', 'workbench']);
+export const BOMBADIL_RUN_STATUSES = Object.freeze(['queued', 'running', 'clean', 'violated', 'stopped', 'error']);
+export const BOMBADIL_TIME_LIMIT_RE = /^(?:(?:[1-9]\d|[1-8]\d{2}|900)s|(?:1[0-5]|[1-9])m)$/;
 export const RECOGNIZED_RUN_SCHEMAS = Object.freeze([
   TEST_RUN_SCHEMA,
   REPLAY_RESULT_SCHEMA,
   CONFORMANCE_REPORT_SCHEMA,
   CERTIFICATION_SCHEMA,
   NAVIGATION_RUN_LINK_SCHEMA,
-  INTERRUPTED_CAPTURE_SCHEMA
+  INTERRUPTED_CAPTURE_SCHEMA,
+  BOMBADIL_TRIGGER_SCHEMA,
+  BOMBADIL_RUN_SCHEMA,
+  BOMBADIL_COVERAGE_SCHEMA
 ]);
 export const MAX_EVENTS = 2048;
 
@@ -237,6 +246,122 @@ export function validateInterruptedCapture(cap) {
   return { valid: errors.length === 0, errors };
 }
 
+export function validateBombadilTrigger(payload) {
+  const errors = [];
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+    return { valid: false, errors: ['Bombadil trigger must be a non-null object'] };
+  }
+  if (payload.schema !== BOMBADIL_TRIGGER_SCHEMA) {
+    errors.push(`Invalid schema: expected '${BOMBADIL_TRIGGER_SCHEMA}', got '${payload.schema}'`);
+  }
+  if (typeof payload.triggerId !== 'string' || !payload.triggerId.trim()) {
+    errors.push('triggerId must be a non-empty string');
+  }
+  if (!BOMBADIL_TARGETS.includes(payload.target)) {
+    errors.push(`target must be one of ${BOMBADIL_TARGETS.join(', ')}`);
+  }
+  if (payload.handle !== `urn:mcard:bombadil:trigger:${payload.target}`) {
+    errors.push(`handle must equal 'urn:mcard:bombadil:trigger:${payload.target}'`);
+  }
+  if (typeof payload.timeLimit !== 'string' || !BOMBADIL_TIME_LIMIT_RE.test(payload.timeLimit)) {
+    errors.push('timeLimit must match 10s..900s or 1m..15m');
+  }
+  if (!Number.isInteger(payload.minFirings) || payload.minFirings < 0) {
+    errors.push('minFirings must be a non-negative integer');
+  }
+  if (typeof payload.requestedBy !== 'string' || !payload.requestedBy.trim()) {
+    errors.push('requestedBy must be a non-empty string');
+  }
+  if (typeof payload.requestedAt !== 'string' || Number.isNaN(Date.parse(payload.requestedAt))) {
+    errors.push('requestedAt must be a valid ISO date string');
+  }
+  return { valid: errors.length === 0, errors };
+}
+
+export function validateBombadilRun(payload) {
+  const errors = [];
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+    return { valid: false, errors: ['Bombadil run must be a non-null object'] };
+  }
+  if (payload.schema !== BOMBADIL_RUN_SCHEMA) {
+    errors.push(`Invalid schema: expected '${BOMBADIL_RUN_SCHEMA}', got '${payload.schema}'`);
+  }
+  if (typeof payload.runId !== 'string' || !payload.runId.trim()) {
+    errors.push('runId must be a non-empty string');
+  }
+  if (typeof payload.triggerHash !== 'string' || !HEX64_PATTERN.test(payload.triggerHash)) {
+    errors.push('triggerHash must be a 64-character lowercase hex digest');
+  }
+  if (!BOMBADIL_TARGETS.includes(payload.target)) {
+    errors.push(`target must be one of ${BOMBADIL_TARGETS.join(', ')}`);
+  }
+  if (!BOMBADIL_RUN_STATUSES.includes(payload.status)) {
+    errors.push(`status must be one of ${BOMBADIL_RUN_STATUSES.join(', ')}`);
+  }
+  if (payload.exitCode !== null && !Number.isInteger(payload.exitCode)) {
+    errors.push('exitCode must be null or an integer');
+  }
+  if (typeof payload.startedAt !== 'string' || Number.isNaN(Date.parse(payload.startedAt))) {
+    errors.push('startedAt must be a valid ISO date string');
+  }
+  if (
+    payload.finishedAt !== null &&
+    (typeof payload.finishedAt !== 'string' || Number.isNaN(Date.parse(payload.finishedAt)))
+  ) {
+    errors.push('finishedAt must be null or a valid ISO date string');
+  }
+  if (
+    payload.durationMs !== null &&
+    (typeof payload.durationMs !== 'number' || !Number.isFinite(payload.durationMs) || payload.durationMs < 0)
+  ) {
+    errors.push('durationMs must be null or a non-negative number');
+  }
+  for (const counter of ['actionsCount', 'firingsCount', 'distinctTransitions', 'quiescenceWarnings']) {
+    if (!Number.isInteger(payload[counter]) || payload[counter] < 0) {
+      errors.push(`${counter} must be a non-negative integer`);
+    }
+  }
+  if (!Array.isArray(payload.violations)) {
+    errors.push('violations must be an array');
+  }
+  if (typeof payload.outputDir !== 'string' || !payload.outputDir.trim()) {
+    errors.push('outputDir must be a non-empty string');
+  }
+  if (payload.shrunkTracePath !== null && typeof payload.shrunkTracePath !== 'string') {
+    errors.push('shrunkTracePath must be null or a string');
+  }
+  if (typeof payload.reproduceCommand !== 'string' || !payload.reproduceCommand.trim()) {
+    errors.push('reproduceCommand must be a non-empty string');
+  }
+  if (payload.shrinkCommand !== null && typeof payload.shrinkCommand !== 'string') {
+    errors.push('shrinkCommand must be null or a string');
+  }
+  return { valid: errors.length === 0, errors };
+}
+
+export function validateBombadilCoverage(payload) {
+  const errors = [];
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+    return { valid: false, errors: ['Bombadil coverage must be a non-null object'] };
+  }
+  if (payload.schema !== BOMBADIL_COVERAGE_SCHEMA) {
+    errors.push(`Invalid schema: expected '${BOMBADIL_COVERAGE_SCHEMA}', got '${payload.schema}'`);
+  }
+  if (typeof payload.generatedAt !== 'string' || Number.isNaN(Date.parse(payload.generatedAt))) {
+    errors.push('generatedAt must be a valid ISO date string');
+  }
+  if (typeof payload.sourceDir !== 'string' || !payload.sourceDir.trim()) {
+    errors.push('sourceDir must be a non-empty string');
+  }
+  if (!payload.nets || typeof payload.nets !== 'object' || Array.isArray(payload.nets)) {
+    errors.push('nets must be a non-null object');
+  }
+  if (!Array.isArray(payload.rejectedTraces)) {
+    errors.push('rejectedTraces must be an array');
+  }
+  return { valid: errors.length === 0, errors };
+}
+
 export function parseStoredTestRunRecord(record) {
   if (!record || typeof record !== 'object' || Array.isArray(record)) {
     return { ok: false, unsupportedVersion: false, errors: ['Stored record must be a JSON object'] };
@@ -292,6 +417,15 @@ export function validateTestRun(run) {
   }
   if (run?.schema === INTERRUPTED_CAPTURE_SCHEMA) {
     return validateInterruptedCapture(run);
+  }
+  if (run?.schema === BOMBADIL_TRIGGER_SCHEMA) {
+    return validateBombadilTrigger(run);
+  }
+  if (run?.schema === BOMBADIL_RUN_SCHEMA) {
+    return validateBombadilRun(run);
+  }
+  if (run?.schema === BOMBADIL_COVERAGE_SCHEMA) {
+    return validateBombadilCoverage(run);
   }
   if (
     run &&

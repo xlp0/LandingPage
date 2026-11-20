@@ -12,7 +12,7 @@
 - **[DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md](./DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md)** covers Responsive UI Lab target ingestion, fidelity tiers (`T0..T3`), 16-combination sweeps, deterministic Playwright replay, and `urn:mcard:certification:responsive:v1` certification.
 - **[BOMBADIL_PROPERTY_TESTING.md](./BOMBADIL_PROPERTY_TESTING.md)** describes how LandingPage runs Antithesis Bombadil. It covers the runner, the SPA, lab smoke, page-load and workbench specs, the page state contract, the `data-effect` filter, explored transition coverage (`check-net.mjs --bombadil-traces`), the local Docker nightly (`docker/bombadil/`), and how a violation is promoted to a Playwright spec.
 - **[VERIFICATION_CHECKLIST.md](./VERIFICATION_CHECKLIST.md)** provides the current pre-release gate checklist above a preserved historical THK Mesh archive record.
-- **[Test Suite Guide (`tests/README.md`)](../../tests/README.md)** and **[Playwright Test Documentation (`tests/TEST_DOCUMENTATION.md`)](../../tests/TEST_DOCUMENTATION.md)** document exact commands, `TEST_PORT=3001` isolation, and the `53` Playwright specs (`666` tests).
+- **[Test Suite Guide (`tests/README.md`)](../../tests/README.md)** and **[Playwright Test Documentation (`tests/TEST_DOCUMENTATION.md`)](../../tests/TEST_DOCUMENTATION.md)** document exact commands, `TEST_PORT=3001` isolation, and the `57` Playwright specs (`699` tests).
 - **[Program ERB Graduated Sprints (`docs/sprints/08-testing/`)](../sprints/08-testing/INDEX.md)** archives Sprints `ERB-00` through `ERB-06`.
 
 ## Standard Verification Commands
@@ -23,6 +23,9 @@ npm run check:bombadil-nets
 npm run check:explorable-gui
 node scripts/check-package-source-parity.mjs
 npm run docs:check
+npm run stageshow:check-css
+node tools/stageshow/build-scenes.mjs --check
+npm run stageshow:sweep -- --strict
 npm run build
 npm run test:unit
 npm run check:playwright-discovery

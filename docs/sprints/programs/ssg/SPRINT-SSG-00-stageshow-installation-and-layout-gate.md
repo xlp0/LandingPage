@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-SSG-00` |
 | Source of Truth | [`./ssg-plan.md`](./ssg-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-SSG-00` |
-| Status | `IN_PROGRESS` |
+| Status | `DONE` |
 | Depends on | None |
 | Unblocks | `SPRINT-SSG-01` |
 | Execution unit | `PR-SSG-00` |
@@ -37,12 +37,12 @@ StageShow `1.1.1` is installed inside `tools/stageshow/` and `.agents/skills/sta
 
 ## Files
 
-- Created [`../../../tools/stageshow/UPSTREAM.json`](../../../tools/stageshow/UPSTREAM.json), [`../../../.agents/skills/stageshow/SKILL.md`](../../../.agents/skills/stageshow/SKILL.md), and `tools/stageshow/scripts/browser.mjs`
-- Created [`../../../scripts/stageshow/run.mjs`](../../../scripts/stageshow/run.mjs), [`../../../tests/unit/stageshow-install.test.mjs`](../../../tests/unit/stageshow-install.test.mjs), and [`./evidence/SSG-pre-program-spike.md`](./evidence/SSG-pre-program-spike.md)
+- Created [`../../../tools/stageshow/UPSTREAM.json`](../../../../tools/stageshow/UPSTREAM.json), [`../../../.agents/skills/stageshow/SKILL.md`](../../../../.agents/skills/stageshow/SKILL.md), and `tools/stageshow/scripts/browser.mjs`
+- Created [`../../../scripts/stageshow/run.mjs`](../../../../scripts/stageshow/run.mjs), [`../../../tests/unit/stageshow-install.test.mjs`](../../../../tests/unit/stageshow-install.test.mjs), and [`./evidence/SSG-pre-program-spike.md`](./evidence/SSG-pre-program-spike.md)
 - Edit `package.json` (direct `postcss` in `devDependencies`, exclude `public/stageshow/**` from `"files"`), `package-lock.json`, `tools/stageshow/UPSTREAM.json` (`fileHashes` + `exempt`), `tools/stageshow/scripts/browser.mjs` (`STAGESHOW_NO_SANDBOX` / `getuid() === 0` `--no-sandbox` forwarding), `scripts/stageshow/run.mjs` (`withHermeticServer` auto-build + shared `seedPortalLanding`, default `--out stageshow-output/film.png`, single-browser `24`-context sweep, bidirectional `layout`/`sweep --strict`, positional + `--bundle` `check-css`), and `tests/unit/stageshow-install.test.mjs`
 - Create `tools/stageshow/shims/lucide-react.mjs`, `tools/stageshow/build-scenes.mjs`, `tools/stageshow/scenes/canary/index.tsx`, `tools/stageshow/scenes/canary/scene.css`, and `public/stageshow/canary/index.html`
 - Create `docs/06-components/STAGESHOW_DESIGN_CONTRACT.md` and edit `docs/06-components/README.md`
-- Create `docs/sprints/_active/evidence/SSG-00-stageshow-gate.md` and append row to [`./DECISIONS.tsv`](./DECISIONS.tsv)
+- Create `docs/sprints/_active/evidence/SSG-00-stageshow-gate.md` and append row to [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv)
 
 ## BMAD responsibilities
 
@@ -88,7 +88,7 @@ StageShow `1.1.1` is installed inside `tools/stageshow/` and `.agents/skills/sta
 - [x] **DoD-SSG-00-01.** Upstream StageShow `1.1.1` is installed under `tools/stageshow/` and `.agents/skills/stageshow/` with Chromium fallback and passes initial install tests. Verified by `node --test tests/unit/stageshow-install.test.mjs`.
 - [x] **DoD-SSG-00-02.** Upstream and teaching stylesheets pass static class namespace analysis. Verified by `npm run stageshow:check-css`.
 - [x] **DoD-SSG-00-03.** Baseline `24`-snapshot sweep across `6` routes and `4` widths is recorded in `SSG-pre-program-spike.md`. Verified by `npm run stageshow:sweep`.
-- [ ] **DoD-SSG-00-04.** Ephemeral JSON seeding (`seedPortalLanding`), `build:astro` pre-flight, offline `UPSTREAM.json` `fileHashes`, bidirectional bounds/`scrollWidth` checks in `layout` and `sweep`, and `git status` cleanliness work (`errors=0` on portal). Verified by `npm run stageshow:sweep` showing `errors=0` on `/index.html?noredirect=1`, `node --test tests/unit/stageshow-install.test.mjs`, and `npm pack --dry-run` excluding `public/stageshow/`.
-- [ ] **DoD-SSG-00-05.** Isolated `preact/compat` bundler (`jsx-runtime` + `lucide-react` shim) builds the StageShow canary scene to `public/stageshow/canary/index.html` and passes both wide and `390px` rehearsals (optional if `Flag 1` drops `SPRINT-SSG-07` at kickoff). Verified by `node tools/stageshow/build-scenes.mjs && node tools/stageshow/build-scenes.mjs --check && npm run stageshow:film -- '/public/stageshow/canary/index.html' --still --gate && npm run stageshow:film -- '/public/stageshow/canary/index.html' --width 390 --still --gate`.
-- [ ] **DoD-SSG-00-06.** `docs/06-components/STAGESHOW_DESIGN_CONTRACT.md` is authored and linked from `docs/06-components/README.md`. Verified by `test -s docs/06-components/STAGESHOW_DESIGN_CONTRACT.md && grep -q 'STAGESHOW_DESIGN_CONTRACT.md' docs/06-components/README.md`.
-- [ ] **DoD-SSG-00-07.** Sprint evidence and closure decision row (in addition to baseline row `136`) are recorded with all core static/unit gates passing. Verified by `test -s docs/sprints/_active/evidence/SSG-00-stageshow-gate.md && test "$(grep -cE $'\tSSG-00\t' docs/sprints/_active/DECISIONS.tsv)" -ge 2 && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run test:unit`.
+- [x] **DoD-SSG-00-04.** Ephemeral JSON seeding (`seedPortalLanding`), `build:astro` pre-flight, offline `UPSTREAM.json` `fileHashes`, bidirectional bounds/`scrollWidth` checks in `layout` and `sweep`, and `git status` cleanliness work (`errors=0` on portal). Verified by `npm run stageshow:sweep` showing `errors=0` on `/index.html?noredirect=1`, `node --test tests/unit/stageshow-install.test.mjs`, and `npm pack --dry-run` excluding `public/stageshow/`.
+- [x] **DoD-SSG-00-05.** Isolated `preact/compat` bundler (`jsx-runtime` + `lucide-react` shim) builds the StageShow canary scene to `public/stageshow/canary/index.html` and passes both wide and `390px` rehearsals (optional if `Flag 1` drops `SPRINT-SSG-07` at kickoff). Verified by `node tools/stageshow/build-scenes.mjs && node tools/stageshow/build-scenes.mjs --check && npm run stageshow:film -- '/public/stageshow/canary/index.html' --still --gate && npm run stageshow:film -- '/public/stageshow/canary/index.html' --width 390 --still --gate`.
+- [x] **DoD-SSG-00-06.** `docs/06-components/STAGESHOW_DESIGN_CONTRACT.md` is authored and linked from `docs/06-components/README.md`. Verified by `test -s docs/06-components/STAGESHOW_DESIGN_CONTRACT.md && grep -q 'STAGESHOW_DESIGN_CONTRACT.md' docs/06-components/README.md`.
+- [x] **DoD-SSG-00-07.** Sprint evidence and closure decision row (in addition to baseline row `136`) are recorded in [`./evidence/SSG-00-stageshow-gate.md`](./evidence/SSG-00-stageshow-gate.md) with all core static/unit gates passing. Verified by `test -s docs/sprints/_active/evidence/SSG-00-stageshow-gate.md && test "$(grep -cE $'\tSSG-00\t' docs/sprints/_active/DECISIONS.tsv)" -ge 2 && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run test:unit`.

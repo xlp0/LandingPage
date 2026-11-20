@@ -378,6 +378,7 @@ async function runPairATrial(browser, baseUrl) {
       };
     }
 
+    await page.locator('#btn-mode-verify').click();
     const tConfVis = performance.now();
     await page.locator('#conformance-disclosure > summary').click();
     await page.waitForFunction(() => {
@@ -428,6 +429,7 @@ async function runPairATrial(browser, baseUrl) {
     const frame = page.frameLocator('iframe[title="Responsive UI Lab Test Frame"]');
     const appRoot = frame.locator('#spa-app-root');
 
+    await page.locator('#btn-mode-guided-spa').click();
     const tSpaLoad = performance.now();
     await page.getByTestId('workflow-select-spa-fixture').click();
     await appRoot.waitFor({ state: 'visible' });
@@ -465,7 +467,7 @@ async function runPairATrial(browser, baseUrl) {
     await page.getByTestId('workflow-next-device').click();
     await page.getByTestId('workflow-device-phone').click();
     for (let r = 0; r < 4; r += 1) {
-      await page.getByTestId('workflow-rotate-device').click();
+      await page.locator('#btn-rotate-viewport').click();
       await page.evaluate(() => new Promise((res) => requestAnimationFrame(() => requestAnimationFrame(res))));
     }
     const rawFrameDeltas = await page.evaluate(() => {
@@ -618,6 +620,7 @@ async function runPairATrial(browser, baseUrl) {
     );
     out.transitions.redirect = Number((performance.now() - tRedir).toFixed(3));
 
+    await page.locator('#btn-mode-guided-spa').click();
     await page.getByTestId('workflow-select-spa-fixture').click();
     await page.getByTestId('workflow-next-device').click();
     await page.getByTestId('workflow-device-phone').click();
@@ -646,6 +649,7 @@ async function runPairATrial(browser, baseUrl) {
       Math.max(0.05, performance.now() - (failDispatchedAt ?? tFailStart)).toFixed(3)
     );
 
+    await page.locator('#btn-mode-explore').click();
     const tClientRoute = performance.now();
     await page.getByRole('textbox', { name: /Test Target URL input/i }).fill('https://github.com');
     await page.getByRole('button', { name: /Load Target/i }).click();

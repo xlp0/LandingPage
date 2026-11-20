@@ -1,4 +1,5 @@
 import { useEffect } from 'preact/hooks';
+import LabIcon from '../components/LabIcon.jsx';
 import { initLabToolbar } from '../../js/harness/lab-toolbar.js';
 import { getLabRuntime } from '../../js/harness/lab-runtime.js';
 
@@ -33,20 +34,23 @@ export default function TargetToolbarIsland() {
 
   return (
     <div className="url-selector-strip" id="pane-url-bar" data-island="target-toolbar" data-island-state="mounting">
-      <div className="target-omnibar-header">
+      <div className="target-omnibar-header" id="target-omnibar-header">
         <label
           htmlFor="target-url-input"
           className="group-label"
           style={{ fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem' }}
         >
-          <span>🌐 Test Target URL:</span>
+          <LabIcon name="globe" />
+          <span>Test target URL</span>
         </label>
         <span className="target-omnibar-hint" style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)' }}>
           Type URL &amp; press Enter
         </span>
       </div>
-      <div className="target-url-input-wrap">
-        <span className="target-url-icon" aria-hidden="true">🔗</span>
+      <div className="target-url-input-wrap" id="target-url-input-wrap">
+        <span className="target-url-icon" aria-hidden="true">
+          <LabIcon name="link" />
+        </span>
         <input
           type="text"
           id="target-url-input"
@@ -63,10 +67,11 @@ export default function TargetToolbarIsland() {
           title="Clear target URL"
           aria-label="Clear URL"
          data-testid="btn-clear-target-url">
-          ✕
+          <LabIcon name="x" />
         </button>
         <button id="btn-load-in-iframe" className="toolbar-btn load-target-btn" title="Load target into viewport (Enter)" data-testid="btn-load-in-iframe">
-          <span>▶ Load Target</span>
+          <LabIcon name="play" />
+          <span>Load Target</span>
         </button>
       </div>
       <div
@@ -93,13 +98,13 @@ export default function TargetToolbarIsland() {
           className="toolbar-btn"
           style={{ display: 'none', fontSize: '0.7rem', padding: '0.2rem 0.55rem' }}
         >
-          ↺ Reset to Default Target
+          <LabIcon name="rotate-ccw" /> Reset to Default Target
         </button>
       </div>
       <div className="target-presets-row">
         <div className="preset-dropdown-wrap">
           <span className="preset-label" style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>
-            Presets:
+            Presets
           </span>
           <select
             id="public-site-selector"
@@ -117,7 +122,7 @@ export default function TargetToolbarIsland() {
           className="footer-status-pill"
           style={{ marginTop: '0.05rem', width: '100%', justifyContent: 'center' }}
         >
-          ● Controlled Viewport Active (Iframe Compatible)
+          Controlled Viewport Active (Iframe Compatible)
         </span>
       </div>
     </div>

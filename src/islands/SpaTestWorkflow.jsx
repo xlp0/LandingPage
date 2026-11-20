@@ -40,7 +40,7 @@ function buildInitialSnapshot(targetNets = {}) {
       width: 100,
       height: 100,
       unit: '%',
-      orientation: 'landscape',
+      orientation: 'responsive',
       scale: 1
     },
     targetNet: null,
@@ -102,7 +102,7 @@ function buildInitialSnapshot(targetNets = {}) {
     },
     moduleWarnings: [],
     statusAnnouncement:
-      'Step 1 of 5: Select Target & Policy. Target app.html (webapp). Device Full (100%) (landscape).',
+      'Step 1 of 5: Select Target & Policy. Target app.html (webapp). Device Full (100%) (responsive).',
     errorAnnouncement: '',
     guideInitMs: 0
   };
@@ -334,6 +334,9 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
         hidden={state.activeStepId !== 'step-device'}
         className="spa-workflow-panel"
       >
+        <div data-testid="workflow-device-summary" className="lab-badge" style={{ marginBottom: '0.5rem' }}>
+          {`${state.device.deviceName} · ${state.device.width}x${state.device.height}${state.device.unit} (${state.device.orientation})`}
+        </div>
         <div className="spa-workflow-meta-grid">
           <div className="spa-workflow-kv">
             <span className="spa-workflow-k">Device:</span>
@@ -373,15 +376,32 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
             className="toolbar-btn"
             onClick={() => workflowRef.current?.selectDevicePreset('ipad-air-11')}
           >
-            iPad Air 11
+            iPad Air 11"
           </button>
           <button
             type="button"
-            data-testid="workflow-rotate-device"
+            data-testid="workflow-device-full"
             className="toolbar-btn"
-            onClick={() => workflowRef.current?.rotateDevice()}
+            onClick={() => workflowRef.current?.selectDevicePreset(null)}
           >
-            Rotate Orientation
+            Full (100%)
+          </button>
+          <button
+            type="button"
+            data-testid="workflow-browse-presets"
+            className="toolbar-btn"
+            onClick={() => {
+              const runtime = getLabRuntime();
+              runtime.setWorkbenchMode?.('explore');
+              if (typeof document !== 'undefined') {
+                const container = document.getElementById('device-presets-container');
+                const firstChip = container?.querySelector('button') || container;
+                firstChip?.scrollIntoView?.({ block: 'nearest' });
+                firstChip?.focus?.();
+              }
+            }}
+          >
+            Browse All Presets
           </button>
           <button
             type="button"
@@ -685,9 +705,9 @@ export default function SpaTestWorkflow({ targetNets = {} }) {
           <button
             type="button"
             data-testid="workflow-link-layer4-run"
-                data-effect="persist"
+            data-effect="persist"
             className="toolbar-btn"
-            disabled={!state.capture.savedRun?.ok || !activeNet || Boolean(state.layer4Session?.busy)}
+            disabled={!state.capture.savedRun?.ok || Boolean(state.capture.savedRun?.incomplete) || !activeNet || Boolean(state.layer4Session?.busy)}
             onClick={() => workflowRef.current?.linkSavedRunToLayer4()}
           >
             Link Graph &amp; Receipts MCard

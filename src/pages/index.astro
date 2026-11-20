@@ -1,9 +1,11 @@
 ---
 import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
+import { iconMarkup } from '../../js/ui/icons.js';
 ---
 <WorkbenchLayout
   title="GovTech Platform | Mission Control"
   placeIds={['p_page_index', 'p_view_index_mcard_viewer']}
+  enablePresentationController={true}
 >
   <script is:inline>
     if (window.self === window.top && !window.location.search.includes('noredirect')) {
@@ -32,23 +34,25 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: var(--color-bg);
       color: var(--color-text-primary);
-      
+
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
+      overflow-x: clip;
       background-image: radial-gradient(circle at top right, var(--color-bg-subtle) 0%, var(--color-bg) 100%);
       transition: background-color var(--motion-duration-normal) ease, color var(--motion-duration-normal) ease;
     }
 
     .top-controls {
-      position: absolute;
-      top: 1.25rem;
-      right: 1.5rem;
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      gap: 0.75rem;
+      justify-content: center;
+      gap: 0.5rem 0.75rem;
+      width: min(100% - 1.5rem, 860px);
+      margin: 0.75rem auto 0;
       z-index: 50;
     }
 
@@ -64,6 +68,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       display: flex;
       align-items: center;
       gap: 0.4rem;
+      max-width: 100%;
       backdrop-filter: blur(var(--blur-surface));
       transition: all var(--motion-duration-fast) ease;
     }
@@ -95,11 +100,10 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
 
     .container {
       text-align: center;
-      padding: 2rem;
+      padding: 1.5rem 1.5rem 1rem;
       max-width: 800px;
       width: 100%;
-      min-height: 1180px;
-      animation: fadeIn var(--motion-duration-slow) ease-out;
+      animation: fadeIn var(--motion-duration-fast) ease-out;
     }
 
     h1 {
@@ -131,10 +135,78 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
 
     .mcard-page-host {
       display: block;
-      width: 100%;
+      width: min(100% - 1.5rem, 800px);
       max-width: 100%;
-      margin-top: 2rem;
+      margin: 1.25rem auto 0;
+      padding: 1rem 1.25rem;
+      border-radius: var(--lab-radius-lg, 10px);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
       box-sizing: border-box;
+    }
+
+    #mcard-sovereign-pill-mount {
+      width: min(100% - 1.5rem, 800px);
+      max-width: 100%;
+      margin: 0.75rem auto 0;
+      box-sizing: border-box;
+    }
+
+    .mcard-sovereign-pill {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--lab-radius-md, 8px);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .mcard-sovereign-pill select,
+    .mcard-sovereign-pill button,
+    .mcard-sovereign-pill a {
+      max-width: 100%;
+      font-size: 0.78rem;
+    }
+
+    .mcard-sovereign-pill button,
+    .mcard-sovereign-pill a.pill-studio {
+      padding: 0.3rem 0.65rem;
+      border-radius: var(--lab-radius-sm, 6px);
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-subtle);
+      color: var(--color-text-primary);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .mcard-sovereign-pill select {
+      font-family: inherit;
+      width: 12.5rem;
+      box-sizing: border-box;
+      padding: 0.3rem 0.5rem;
+      border-radius: var(--lab-radius-sm, 6px);
+      border: 1px solid var(--color-border);
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     .mcard-page-host .mcard-page {
@@ -209,8 +281,9 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
     }
 
     .footer {
-      position: absolute;
-      bottom: 2rem;
+      margin: 1.5rem auto 2rem;
+      padding: 0 1rem;
+      text-align: center;
       font-size: 0.875rem;
       color: var(--color-text-secondary);
     }
@@ -246,7 +319,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
 
     @media (max-width: 640px) {
       h1 {
-        font-size: 2.5rem;
+        font-size: 2.25rem;
       }
 
       .card-grid {
@@ -254,18 +327,33 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       }
 
       .container {
-        padding: 1.5rem;
+        padding: 1rem;
+      }
+
+      .card {
+        padding: 1.25rem;
+      }
+
+      .control-btn {
+        padding: 0.35rem 0.65rem;
+        font-size: 0.8rem;
+      }
+
+      .penpot-nav-bar {
+        border-radius: var(--lab-radius-lg, 10px);
+        gap: 0.4rem 0.75rem;
       }
     }
-  
-    
+
+
     .penpot-nav-bar {
-      position: absolute;
-      top: 4.5rem;
-      left: 1.5rem;
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      gap: 1rem;
+      justify-content: center;
+      gap: 0.5rem 1rem;
+      width: min(100% - 1.5rem, 860px);
+      margin: 0.75rem auto 0;
       padding: 0.35rem 0.85rem;
       border-radius: 9999px;
       background: var(--color-surface);
@@ -303,13 +391,88 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       font-weight: 600;
     }
 
+    .portal-showcase {
+      width: min(100% - 1.5rem, 740px);
+      height: 340px;
+      margin: 0 auto 1.25rem;
+      position: relative;
+      z-index: 2;
+      box-sizing: border-box;
+      overflow: hidden;
+      border-radius: var(--lab-radius-lg, 12px);
+    }
+
+    @media (max-width: 599px) {
+      .portal-showcase {
+        height: 320px;
+      }
+    }
+
+    .portal-showcase-poster {
+      height: 100%;
+      box-sizing: border-box;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--lab-radius-lg, 12px);
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      align-content: center;
+      justify-content: space-between;
+      gap: 0.75rem 1rem;
+    }
+
+    .portal-showcase-poster-head {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      min-width: 0;
+    }
+
+    .portal-showcase-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+
+    .portal-showcase-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--color-text-secondary);
+    }
+
+    .portal-showcase-badges {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .portal-showcase-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      background: var(--badge-info-bg);
+      color: var(--badge-info-text);
+      border: 1px solid var(--badge-info-border);
+    }
+
+    .portal-showcase-pill[data-tone="success"] {
+      background: var(--badge-success-bg);
+      color: var(--badge-success-text);
+      border-color: var(--badge-success-border);
+    }
+
   </style>
   </Fragment>
   <!-- BEGIN: PENPOT-GENERATED-NAV (INV-CDO-11) -->
   <nav class="penpot-nav-bar" id="penpot-site-nav" aria-label="Penpot Navigation Flow" data-graph-hash="5c58f7d1f1cd48669f2fd504a6839151549a6176c5c3184e03d1eba5f7407ac7">
-    <span class="penpot-nav-title">🎨 Flow: main-nav</span>
+    <span class="penpot-nav-title"><Fragment set:html={iconMarkup('layers')} /> Flow: main-nav</span>
     <div class="penpot-nav-links">
-      <a class="penpot-nav-link penpot-nav-link-active" href="index.html" data-testid="penpot-nav-index-html" data-penpot-frame="d7570000-0000-8000-8000-000000000011" data-penpot-handle="mcard:route:/index.html">Home</a>
+      <a class="penpot-nav-link penpot-nav-link-active" href="index.html" aria-current="page" data-testid="penpot-nav-index-html" data-penpot-frame="d7570000-0000-8000-8000-000000000011" data-penpot-handle="mcard:route:/index.html">Home</a>
       <a class="penpot-nav-link" href="pkc-docs-index.html" data-testid="penpot-nav-pkc-docs-index-html" data-penpot-frame="d7570000-0000-8000-8000-000000000012" data-penpot-handle="mcard:route:/pkc-docs-index.html">Docs Index</a>
     </div>
   </nav>
@@ -333,21 +496,21 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
     
     
     <a class="control-btn" id="responsive-ui-lab-btn" data-testid="responsive-ui-lab-btn" href="responsive-lab.html" title="Open Responsive UI Lab (Full-Window Viewport & Orientation Workbench)">
-      <span id="sidepane-icon">📐</span>
+      <span id="sidepane-icon" data-icon="ruler" set:html={iconMarkup('ruler')} />
       <span id="sidepane-label">Responsive UI Lab</span>
     </a>
 
-    <button class="control-btn" id="theme-toggle-btn" data-testid="theme-toggle-btn" title="Toggle Display Theme (Dark / Light / High-Contrast)">
-      <span id="theme-icon">🌙</span>
+    <button type="button" class="control-btn" id="theme-toggle-btn" data-testid="theme-toggle-btn" title="Toggle Display Theme (Dark / Light / High-Contrast)">
+      <span id="theme-icon" data-icon="moon" set:html={iconMarkup('moon')} />
       <span id="theme-label">Dark</span>
     </button>
-    <button class="control-btn" id="power-toggle-btn" data-testid="power-toggle-btn" aria-pressed="false" title="Toggle Energy Saving Mode">
-      <span id="power-icon">⚡</span>
+    <button type="button" class="control-btn" id="power-toggle-btn" data-testid="power-toggle-btn" aria-pressed="false" title="Toggle Energy Saving Mode">
+      <span id="power-icon" data-icon="zap" set:html={iconMarkup('zap')} />
       <span id="power-label">Normal</span>
     </button>
   </div>
 
-  <div class="container">
+  <div class="container" id="main-content" tabindex="-1">
     <h1>GovTech OS</h1>
     <p class="subtitle">Computational Trinitarianism</p>
 
@@ -362,22 +525,40 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
         <p>Dedicated full-window workbench maximizing screen real-estate to test various sized windows in vertical (portrait) or horizontal (landscape) orientations with live iframe layout reflow.</p>
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.75rem;">
           <a id="responsive-ui-lab-fullpage-link" data-testid="responsive-ui-lab-fullpage-link" href="responsive-lab.html" class="split-launch-btn" title="Open Responsive UI Lab in dedicated full-window workbench">
-            <span>⧉ Open Full-Window Lab</span>
+            <span style="display: inline-flex; align-items: center; gap: 0.35rem;"><Fragment set:html={iconMarkup('external-link')} /> Open Full-Window Lab</span>
           </a>
         </div>
         <div style="display: flex; gap: 0.35rem; margin-top: 0.75rem; flex-wrap: wrap; justify-content: center;">
-          <span style="font-size: 0.7rem; background: var(--badge-success-bg); color: var(--badge-success-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">↕ Vertical (Portrait)</span>
-          <span style="font-size: 0.7rem; background: var(--badge-info-bg); color: var(--badge-info-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">↔ Horizontal (Landscape)</span>
-          <span style="font-size: 0.7rem; background: var(--badge-info-bg); color: var(--badge-info-text); padding: 0.2rem 0.5rem; border-radius: 9999px;">🖥️ Full-Window Real-Estate</span>
+          <span style="display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.7rem; background: var(--badge-success-bg); color: var(--badge-success-text); padding: 0.2rem 0.5rem; border-radius: 9999px;"><Fragment set:html={iconMarkup('smartphone')} /> Vertical (Portrait)</span>
+          <span style="display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.7rem; background: var(--badge-info-bg); color: var(--badge-info-text); padding: 0.2rem 0.5rem; border-radius: 9999px;"><Fragment set:html={iconMarkup('columns')} /> Horizontal (Landscape)</span>
+          <span style="display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.7rem; background: var(--badge-info-bg); color: var(--badge-info-text); padding: 0.2rem 0.5rem; border-radius: 9999px;"><Fragment set:html={iconMarkup('monitor')} /> Full-Window Real-Estate</span>
         </div>
       </div>
     </div>
 
     <div style="margin-top: 2rem; opacity: 0.7;">
-      <p style="font-size: 0.9rem; color: var(--color-text-secondary);">Status: <span style="color: var(--color-online);">● Online</span> | Ver:
+      <p style="font-size: 0.9rem; color: var(--color-text-secondary);">Status: <span style="color: var(--color-online);">Online</span> | Ver:
         0.1.0-alpha</p>
     </div>
   </div>
+
+  <section
+    id="portal-stageshow-showcase"
+    class="portal-showcase"
+    data-showcase-mode="poster"
+    aria-label="Interactive Workbench Showcase"
+  >
+    <div class="portal-showcase-poster">
+      <div class="portal-showcase-poster-head">
+        <div class="portal-showcase-title">Bombadil Workbench Verification</div>
+        <div class="portal-showcase-meta">1280 × 832 desktop • 393 × 852 phone</div>
+      </div>
+      <div class="portal-showcase-badges">
+        <span class="portal-showcase-pill">p_spa_overview → p_spa_details</span>
+        <span class="portal-showcase-pill" data-tone="success">Verified</span>
+      </div>
+    </div>
+  </section>
 
   <div class="footer">
     &copy; 2026 GovTech Research Group
@@ -405,26 +586,24 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
   </script>
 
   <script is:inline type="module">
-    import { PresentationController } from './js/runtime/presentation-controller.js';
     import { FaroDeploymentUnitCollector } from './js/telemetry/faro-collector.js';
     import { DeploymentUnitInspector } from './js/runtime/deployment-inspector.js';
     import { LeastActionNavigator } from './js/runtime/least-action-navigator.js';
 
-    let faro;
-    const presentation = new PresentationController({
-      onStateChange: (state) => {
-        updateControlUI(state);
-        if (faro) faro.setLatticeCoordinate(state);
-      }
-    });
-
-    faro = new FaroDeploymentUnitCollector({
+    const faro = new FaroDeploymentUnitCollector({
       appName: 'landing-page-deployment-unit',
       appVersion: '1.0.0'
     });
-    faro.setLatticeCoordinate({
-      theme: presentation.currentTheme,
-      powerMode: presentation.currentPowerMode
+    const presentation = window.__presentation_controller;
+    if (presentation) {
+      faro.setLatticeCoordinate({
+        theme: presentation.currentTheme,
+        powerMode: presentation.currentPowerMode,
+        animationEngine: presentation.animationEngine
+      });
+    }
+    document.addEventListener('lab:presentation-change', (ev) => {
+      if (ev?.detail) faro.setLatticeCoordinate(ev.detail);
     });
 
     const inspector = new DeploymentUnitInspector();
@@ -432,51 +611,8 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
     leastActionNavigator.mount();
 
     window.__faro_collector = faro;
-    window.__presentation_controller = presentation;
     window.__deployment_inspector = inspector;
     window.__least_action_navigator = leastActionNavigator;
-
-    function updateControlUI(state) {
-      const themeLabel = document.getElementById('theme-label');
-      const themeIcon = document.getElementById('theme-icon');
-      const powerLabel = document.getElementById('power-label');
-      const powerIcon = document.getElementById('power-icon');
-
-      if (themeLabel && themeIcon) {
-        if (state.theme === 'light') {
-          themeLabel.textContent = 'Light';
-          themeIcon.textContent = '☀️';
-        } else if (state.theme === 'high-contrast') {
-          themeLabel.textContent = 'Contrast';
-          themeIcon.textContent = '👁️';
-        } else {
-          themeLabel.textContent = 'Dark';
-          themeIcon.textContent = '🌙';
-        }
-      }
-
-      if (powerLabel && powerIcon) {
-        if (state.powerMode === 'energy-saving') {
-          powerLabel.textContent = 'Eco';
-          powerIcon.textContent = '🔋';
-        } else {
-          powerLabel.textContent = 'Normal';
-          powerIcon.textContent = '⚡';
-        }
-      }
-      document.getElementById('power-toggle-btn')?.setAttribute(
-        'aria-pressed',
-        String(state.powerMode === 'energy-saving')
-      );
-    }
-
-    document.getElementById('theme-toggle-btn')?.addEventListener('click', () => {
-      presentation.toggleTheme();
-    });
-
-    document.getElementById('power-toggle-btn')?.addEventListener('click', () => {
-      presentation.toggleEnergySaving();
-    });
 
     function openResponsiveUILab() {
       window.location.href = 'responsive-lab.html';
@@ -484,11 +620,93 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
 
     window.__open_responsive_ui_lab = openResponsiveUILab;
 
-    updateControlUI({ theme: presentation.currentTheme, powerMode: presentation.currentPowerMode });
+    const currentNavLink = document.querySelector('#penpot-site-nav a[aria-current="page"]');
+    const mainContentTarget = document.getElementById('main-content');
+    if (currentNavLink && mainContentTarget) {
+      currentNavLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        mainContentTarget.focus({ preventScroll: false });
+      });
+    }
   </script>
   <script is:inline type="module" src="js/nav.js"></script>
 
   
+  <script is:inline type="module">
+    const host = document.getElementById('portal-stageshow-showcase');
+    if (host && typeof host.attachShadow === 'function') {
+      const shadow = host.shadowRoot || host.attachShadow({ mode: 'open' });
+      const slot = document.createElement('slot');
+      while (shadow.firstChild) shadow.removeChild(shadow.firstChild);
+      shadow.appendChild(slot);
+
+      let mountedHandle = null;
+      let mountToken = 0;
+
+      const canAnimate = () => {
+        const framed = window.self !== window.top;
+        const reduced =
+          typeof window.matchMedia === 'function' &&
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const eco = document.documentElement?.dataset?.powerMode === 'energy-saving';
+        return !framed && !reduced && !eco;
+      };
+
+      const unmountToPoster = () => {
+        mountToken += 1;
+        if (mountedHandle) {
+          try {
+            mountedHandle.unmount();
+          } catch {}
+          mountedHandle = null;
+        }
+        while (shadow.firstChild) shadow.removeChild(shadow.firstChild);
+        shadow.appendChild(slot);
+        host.dataset.showcaseMode = 'poster';
+      };
+
+      const syncShowcase = async () => {
+        if (!canAnimate()) {
+          unmountToPoster();
+          return;
+        }
+        if (mountedHandle) return;
+        const token = ++mountToken;
+        try {
+          const mod = await import('/public/stageshow/workbench-bombadil-pair/scene.js');
+          if (token !== mountToken || !canAnimate()) return;
+          while (shadow.firstChild) shadow.removeChild(shadow.firstChild);
+          const linkEl = document.createElement('link');
+          linkEl.rel = 'stylesheet';
+          linkEl.href = '/public/stageshow/workbench-bombadil-pair/scene.css';
+          const mountEl = document.createElement('div');
+          mountEl.className = 'ssg-shadow-mount';
+          shadow.appendChild(linkEl);
+          shadow.appendChild(mountEl);
+          mountedHandle = mod.mountStageShowScene(mountEl, {
+            still: false,
+            initialTheme: document.documentElement?.dataset?.theme || 'dark'
+          });
+          host.dataset.showcaseMode = 'live';
+        } catch (error) {
+          console.warn('[SSG-07] showcase poster fallback:', error?.message || error);
+          unmountToPoster();
+        }
+      };
+
+      document.addEventListener('lab:presentation-change', () => {
+        syncShowcase();
+      });
+      if (typeof window.matchMedia === 'function') {
+        const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (typeof mq.addEventListener === 'function') {
+          mq.addEventListener('change', () => syncShowcase());
+        }
+      }
+      syncShowcase();
+    }
+  </script>
+
   <section id="single-page-mcard-host" class="mcard-page-host"
            data-handle="urn:mcard:content:landing_page"
            aria-label="Active LandingPage MCard"></section>

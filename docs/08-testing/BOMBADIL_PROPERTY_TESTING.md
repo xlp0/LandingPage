@@ -189,14 +189,14 @@ unexpected shape.
 Nightly runs happen on this machine's Docker, not on GitHub. [`scripts/bombadil/nightly.sh`](../../scripts/bombadil/nightly.sh) does one run:
 
 1. It builds the Astro host.
-2. It runs `check:bombadil-nets` and `check:explorable-gui`.
+2. It runs `check:bombadil-nets`, `check:explorable-gui`, `stageshow:check-css`, `stageshow:sweep -- --strict`, and guarded portal `stageshow:film -- --gate` when `public/stageshow/workbench-bombadil-pair/index.html` exists.
 3. It runs the canary, `spa`, `lab-smoke`, `page-load` and `workbench`.
 4. It applies the workbench's 20-firing bound.
 5. It replays this nightly's traces for coverage.
 
 Every step runs even when an earlier one fails, and the script exits 1 if any step failed. Each run writes `bombadil-output/nightly-<UTC time>/`, with `summary.md`, `coverage.md`, one log per step and one Bombadil output directory per target.
 
-[`docker/bombadil/`](../../docker/bombadil/) wraps it in a Linux image. The image is Node 24 on Debian bookworm with Chromium and the Linux `node_modules`. The repository is bind-mounted, so results land in the host's `bombadil-output/`. The container builds its own `dist/` in a volume and never overwrites the host's. It sets `BOMBADIL_EXTRA_ARGS=--no-sandbox`, which the runner passes to every run, the canary's included.
+[`docker/bombadil/`](../../docker/bombadil/) wraps it in a Linux image. The image is Node 24 on Debian bookworm with Chromium, `fonts-liberation`, `fonts-dejavu-core`, `fonts-noto-color-emoji`, and the Linux `node_modules`. The repository is bind-mounted alongside a read-only mount of `../../../docs/sprints/programs` at `/docs/sprints/programs:ro` for `/api/clm/program-artifact`, so results land in the host's `bombadil-output/`. The container builds its own `dist/` in a volume and never overwrites the host's. It sets `BOMBADIL_EXTRA_ARGS=--no-sandbox`, `CHROME_PATH=/usr/bin/chromium`, and `STAGESHOW_NO_SANDBOX=1`, so both Bombadil and StageShow (`stageshow:check-css`, `stageshow:sweep -- --strict`, `build-scenes.mjs --check`) execute reliably inside `bombadil-gate` and `bombadil-nightly`.
 
 ```bash
 docker compose -f docker/bombadil/compose.yml build
@@ -245,6 +245,14 @@ After `package-lock.json` changes, rebuild the image and drop its dependency vol
 | The root `registerCustomAction` never runs in the page. | Import it from `@antithesishq/bombadil/browser`. |
 | A framed same-origin page shares `sessionStorage` with the lab. | Keep page-state's top-level check. |
 | Layout freeze: a new visible element fails `tests/features/layout-freeze.spec.js`. | Re-capture with a `rebaselines` record that attributes the change (see `docs/sprints/programs/sty/style/layout-baseline.json` in the root repository). |
+
+## 10. Bombadil Dashboard Control Plane and Handles
+
+Responsive UI Lab exposes a subprocess-isolated Bombadil dashboard (`BombadilDashboardIsland`, `client:visible` under the `Bombadil` mode tab) backed by [`server/bombadil-runner-service.mjs`](../../server/bombadil-runner-service.mjs), [`js/harness/bombadil-client.js`](../../js/harness/bombadil-client.js), and `window.__lab.bombadil`.
+
+- **HTTP and SSE Endpoints (`server/test-run-api.mjs`)** mount eight literal routes under `/api/test-runs/bombadil/*` above the parameterised `/:hash` catch-all (`GET /handles`, `POST /trigger`, `POST /stop`, `POST /shrink`, `GET /runs`, `GET /run`, `GET /coverage`, and `GET /stream`).
+- **Triad Handles and Schemas (`js/harness/test-run-schema.js`)** register target trigger URNs (`urn:mcard:bombadil:trigger:<target>` for `spa`, `spa-canary`, `lab-smoke`, `page-load`, and `workbench`), `urn:mcard:bombadil:stop`, `urn:mcard:bombadil:shrink`, and `urn:mcard:bombadil:coverage`, emitting immutable records under `urn:ssg:bombadil-trigger:v1`, `urn:ssg:bombadil-run:v1`, and `urn:ssg:bombadil-coverage:v1` while leaving `urn:mcard:schema:responsive_test_run:v1` closed.
+- **Event Handles and Isolation** expose `lab:bombadil-command` and `lab:bombadil-state` CustomEvents, enforce a single active subprocess mutex (`HTTP 409` on concurrent trigger), restrict callers to loopback by default, spawn `node scripts/bombadil/run.mjs` on ephemeral free ports with `stripServerContractImport()` and `PW_*`/`NODE_OPTIONS` scrubbing, and guard against recursive self-exploration via `BOMBADIL_CHILD_RUN=1` and `BOMBADIL_ENABLE_RUNNER=0`.
 
 ## References
 

@@ -55,6 +55,11 @@ if [ "${SKIP_BUILD:-0}" != "1" ]; then
 fi
 step check-bombadil-nets npm run check:bombadil-nets
 step check-explorable-gui npm run check:explorable-gui
+step stageshow-check-css npm run stageshow:check-css
+step stageshow-sweep env SKIP_BUILD=1 npm run stageshow:sweep -- --strict
+if [ -f public/stageshow/workbench-bombadil-pair/index.html ]; then
+  step stageshow-portal-film env SKIP_BUILD=1 npm run stageshow:film -- '/public/stageshow/workbench-bombadil-pair/index.html' --out stageshow-output/portal-film.png --gate
+fi
 step canary node scripts/bombadil/canary.mjs --time-limit "${CANARY_TIME_LIMIT:-2m}"
 step spa node scripts/bombadil/run.mjs spa --time-limit "$TIME_LIMIT" --output-path "$NIGHTLY_DIR/spa"
 step lab-smoke node scripts/bombadil/run.mjs lab-smoke --time-limit "$TIME_LIMIT" --output-path "$NIGHTLY_DIR/lab-smoke"

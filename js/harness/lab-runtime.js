@@ -5,8 +5,10 @@ import { installLabApi } from './lab-api.js';
 import { createCaptureSource } from './membrane-interceptor.js';
 import { InteractionRecorder } from './recorder.js';
 import { resolveFidelity } from './fidelity.js';
+import { createBombadilClient } from './bombadil-client.js';
 
 const REQUIRED_BOOT_PARTICIPANTS = ['stage', 'toolbar', 'presets', 'ribbon', 'workflow'];
+const WORKBENCH_MODES = ['explore', 'guided-spa', 'bombadil', 'verify'];
 let singletonRuntime = null;
 
 function unregisterLocalServiceWorkers() {
@@ -18,17 +20,16 @@ function unregisterLocalServiceWorkers() {
     .getRegistrations()
     .then((registrations) => {
       for (const reg of registrations) {
-        reg.unregister().catch(() => {});
+        reg.unregister().catch(() => { });
       }
     })
-    .catch(() => {});
+    .catch(() => { });
 }
 
 function createLabRuntimeInstance() {
   unregisterLocalServiceWorkers();
 
   const registry = new DeviceRegistry();
-  const recorder = new InteractionRecorder();
   const bootReadySet = new Set();
   let bootFinished = false;
   let outerRafId = null;
@@ -41,7 +42,15 @@ function createLabRuntimeInstance() {
   let sameOriginLoadCleanup = null;
 
   const stage = createViewportStage({
+    registry,
     onPresetDeactivate: () => activePresetsUI?.markActiveChip(null)
+  });
+
+  const recorder = new InteractionRecorder({
+    measureFullStage: () => {
+      const geom = stage.getGeometry();
+      return { width: geom.measuredWidth, height: geom.measuredHeight };
+    }
   });
 
   function getActiveDevice() {
@@ -57,21 +66,21 @@ function createLabRuntimeInstance() {
     if (sameOriginLoadCleanup) {
       try {
         sameOriginLoadCleanup();
-      } catch {}
+      } catch { }
       sameOriginLoadCleanup = null;
     }
   }
 
   async function handleMidSessionRedirectInvalidation(preRedirectTarget, reason) {
-    const wasActive = recorder.state === 'RECORDING' || recorder.state === 'PAUSED';
+    const priorState = recorder.state;
+    const wasActive = priorState === 'RECORDING' || priorState === 'PAUSED';
     recorder.invalidateActiveCapture(reason);
     membrane.notifyProbeHandshakeOutcome('unavailable', reason);
     if (wasActive && preRedirectTarget?.url) {
-      await recorder.saveTestRun({
+      await recorder.saveInterruptedCapture({
         target: preRedirectTarget,
-        device: getActiveDevice(),
-        orientation: stage.getGeometry().orientation,
-        fidelity: getFidelity()
+        reason,
+        lifecycleState: priorState
       });
     }
   }
@@ -177,8 +186,8 @@ function createLabRuntimeInstance() {
 
   function selectDevicePreset(deviceId) {
     if (!deviceId) {
-      stage.setViewportSize(100, 100, '%', 'Full (100%)', null, 'preset');
-      activePresetsUI?.markActiveChip(null);
+      stage.selectFullViewport('preset');
+      activePresetsUI?.markActiveChip('full');
       return null;
     }
     const device = registry.getById(deviceId);
@@ -187,16 +196,206 @@ function createLabRuntimeInstance() {
       activePresetsUI.applyDevicePreset(device);
       return device;
     }
-    const geom = stage.getGeometry();
-    const isLandscape = geom.internalOrientation === 'horizontal';
-    const w = isLandscape ? device.height : device.width;
-    const h = isLandscape ? device.width : device.height;
-    stage.setViewportSize(w, h, 'px', device.name, device.id, 'preset');
+    stage.selectDevicePreset(device, 'preset');
     return device;
   }
 
+  const bombadil = createBombadilClient({ selectTarget });
+
+  let workbenchMode = 'explore';
+  let compactPane = 'stage';
+
+  function isCompactViewport() {
+    if (typeof window === 'undefined') return false;
+    return Number(window.innerWidth) > 0 && Number(window.innerWidth) < 600;
+  }
+
+  function formatBombadilPillText(bState) {
+    const status = bState?.status || 'idle';
+    if (status === 'queued' || status === 'running') {
+      return `Bombadil: Running ${bState.target || 'spa'} ${bState.actionsCount ?? 0}`;
+    }
+    if (status === 'violated') {
+      const count = Array.isArray(bState.violations) ? bState.violations.length : 1;
+      return `Bombadil: Violated ${count}`;
+    }
+    if (status === 'clean') {
+      return `Bombadil: Clean (${bState.actionsCount ?? 0})`;
+    }
+    if (status === 'stopped') {
+      return 'Bombadil: Stopped';
+    }
+    if (status === 'error') {
+      return 'Bombadil: Error';
+    }
+    return 'Bombadil: Idle';
+  }
+
+  function syncBombadilChrome(bState = bombadil.status()) {
+    if (typeof document === 'undefined') return;
+    const status = bState?.status || 'idle';
+    const pill = document.getElementById('bombadil-transport-pill');
+    if (pill) {
+      pill.textContent = formatBombadilPillText(bState);
+      pill.dataset.status = status;
+    }
+    const verifyBombadil = document.getElementById('verify-summary-bombadil');
+    if (verifyBombadil) {
+      const place = bState?.currentPlaceId ? ` • ${bState.currentPlaceId}` : '';
+      verifyBombadil.textContent = `${formatBombadilPillText(bState)}${place}`;
+      verifyBombadil.dataset.status = status;
+    }
+  }
+
+  function syncVerifySummary() {
+    if (typeof document === 'undefined') return;
+    const targetEl = document.getElementById('verify-summary-target');
+    const deviceEl = document.getElementById('verify-summary-device');
+    const target = membrane.getTarget();
+    const geom = stage.getGeometry();
+    if (targetEl) {
+      targetEl.textContent = target?.raw || 'None';
+    }
+    if (deviceEl) {
+      const dims = geom.unit === '%' ? '100% × 100%' : `${geom.width}×${geom.height}${geom.unit}`;
+      const scalePct = `${Math.round((geom.scale ?? 1) * 100)}%`;
+      deviceEl.textContent = `${geom.label || 'Full (100%)'} (${dims}, ${geom.orientation}, ${scalePct})`;
+    }
+    syncBombadilChrome();
+  }
+
+  function applyDockSlotVisibility(mode = workbenchMode) {
+    if (typeof document === 'undefined') return;
+    const dock = document.getElementById('workbench-controls-dock');
+    if (dock) {
+      dock.dataset.workbenchMode = mode;
+    }
+
+    const showTargetToolbar = mode === 'explore' || mode === 'guided-spa';
+    const showPresets = mode === 'explore';
+    const showWorkflow = mode === 'guided-spa';
+    const showBombadil = mode === 'bombadil';
+    const showVerify = mode === 'verify';
+    const showDisclosures = mode === 'guided-spa' || mode === 'verify';
+    const compactTarget = mode === 'guided-spa';
+
+    const toggleHidden = (id, shouldHide) => {
+      const el = document.getElementById(id);
+      if (el) el.hidden = Boolean(shouldHide);
+    };
+
+    toggleHidden('target-toolbar-dock-slot', !showTargetToolbar);
+    toggleHidden('device-presets-dock-slot', !showPresets);
+    toggleHidden('spa-workflow-dock-slot', !showWorkflow);
+    toggleHidden('bombadil-panel-shell', !showBombadil);
+    toggleHidden('verify-summary-shell', !showVerify);
+    toggleHidden('conformance-panel-group', !showDisclosures);
+    toggleHidden('mcard-result-panel-group', !showDisclosures);
+
+    toggleHidden('target-omnibar-header', compactTarget);
+    toggleHidden('target-url-input-wrap', compactTarget);
+    toggleHidden('target-quick-chips', compactTarget);
+
+    if (showVerify) {
+      syncVerifySummary();
+    }
+  }
+
+  function syncModeTabsDom() {
+    if (typeof document === 'undefined') return;
+    const workspace = document.getElementById('lab-workspace-container');
+    if (workspace) {
+      workspace.dataset.compactPane = compactPane;
+    }
+    const activeTabMode = isCompactViewport() ? compactPane : workbenchMode;
+    const tabs = document.querySelectorAll('#workbench-mode-tabs .workbench-mode-tab');
+    tabs.forEach((btn) => {
+      const active = btn.dataset.mode === activeTabMode;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-selected', String(active));
+      btn.setAttribute('tabindex', active ? '0' : '-1');
+    });
+  }
+
+  function setCompactPane(nextPane = 'stage') {
+    const valid = nextPane === 'stage' || WORKBENCH_MODES.includes(nextPane);
+    compactPane = valid ? nextPane : 'stage';
+    if (WORKBENCH_MODES.includes(compactPane)) {
+      return setWorkbenchMode(compactPane);
+    }
+    syncModeTabsDom();
+    if (compactPane === 'stage') {
+      if (typeof requestAnimationFrame === 'function') {
+        requestAnimationFrame(() => stage.recomputeScale('compact-pane'));
+      } else {
+        stage.recomputeScale('compact-pane');
+      }
+    }
+    if (typeof CustomEvent === 'function' && typeof document !== 'undefined') {
+      document.dispatchEvent(
+        new CustomEvent('lab:compact-pane-change', { detail: { pane: compactPane, mode: workbenchMode } })
+      );
+    }
+    return compactPane;
+  }
+
+  function setWorkbenchMode(nextMode = 'explore', options = {}) {
+    if (nextMode === 'stage') {
+      return setCompactPane('stage');
+    }
+    const mode = WORKBENCH_MODES.includes(nextMode) ? nextMode : 'explore';
+    workbenchMode = mode;
+    if (!options.preserveCompactPane) {
+      compactPane = mode;
+    }
+
+    if (typeof document !== 'undefined') {
+      applyDockSlotVisibility(mode);
+      syncModeTabsDom();
+
+      if (typeof CustomEvent === 'function') {
+        document.dispatchEvent(new CustomEvent('lab:workbench-mode-change', { detail: { mode, compactPane } }));
+      }
+    }
+    return workbenchMode;
+  }
+
+  function getWorkbenchMode() {
+    return workbenchMode;
+  }
+
+  function getCompactPane() {
+    return compactPane;
+  }
+
+  function openSavedRunResult() {
+    setWorkbenchMode('verify');
+    if (typeof document === 'undefined') return;
+    const disclosure = document.getElementById('mcard-result-disclosure');
+    if (disclosure) {
+      disclosure.open = true;
+      if (typeof disclosure.scrollIntoView === 'function') {
+        if (typeof requestAnimationFrame === 'function') {
+          requestAnimationFrame(() => {
+            if (disclosure.open) disclosure.scrollIntoView({ block: 'nearest' });
+          });
+        } else {
+          disclosure.scrollIntoView({ block: 'nearest' });
+        }
+      }
+    }
+  }
+
   function syncLabApi() {
-    const api = installLabApi({ stage, membrane, registry, recorder, workflow: activeWorkflow });
+    const api = installLabApi({
+      stage,
+      membrane,
+      registry,
+      recorder,
+      workflow: activeWorkflow,
+      bombadil,
+      modeController: { get: getWorkbenchMode, set: setWorkbenchMode }
+    });
     api.policy = {
       placeId: () => membrane.getPolicyPlaceId(),
       trace: () => membrane.getPolicyTrace(),
@@ -208,20 +407,93 @@ function createLabRuntimeInstance() {
 
   syncLabApi();
 
-  const disclosureCleanups = [];
+  const runtimeCleanups = [];
   if (typeof document !== 'undefined') {
     for (const id of ['conformance-disclosure', 'mcard-result-disclosure']) {
       const el = document.getElementById(id);
       if (el) {
         const onDisclosureToggle = () => {
           if (el.open && typeof el.scrollIntoView === 'function') {
-            el.scrollIntoView({ block: 'nearest' });
+            if (typeof requestAnimationFrame === 'function') {
+              requestAnimationFrame(() => {
+                if (el.open) el.scrollIntoView({ block: 'nearest' });
+              });
+            } else {
+              el.scrollIntoView({ block: 'nearest' });
+            }
           }
         };
         el.addEventListener('toggle', onDisclosureToggle);
-        disclosureCleanups.push(() => el.removeEventListener('toggle', onDisclosureToggle));
+        runtimeCleanups.push(() => el.removeEventListener('toggle', onDisclosureToggle));
       }
     }
+
+    const modeTabsContainer = document.getElementById('workbench-mode-tabs');
+    if (modeTabsContainer) {
+      const tabButtons = [...modeTabsContainer.querySelectorAll('.workbench-mode-tab')];
+      for (const btn of tabButtons) {
+        const onModeClick = () => {
+          const targetMode = btn.dataset.mode;
+          if (targetMode === 'stage') setCompactPane('stage');
+          else if (targetMode) setWorkbenchMode(targetMode);
+        };
+        const onModeKeyDown = (ev) => {
+          const visibleTabs = tabButtons.filter((candidate) => {
+            if (typeof window === 'undefined') return true;
+            return window.getComputedStyle(candidate).display !== 'none';
+          });
+          const currentIdx = visibleTabs.indexOf(btn);
+          if (currentIdx === -1) return;
+          let nextIdx = -1;
+          if (ev.key === 'ArrowRight') nextIdx = (currentIdx + 1) % visibleTabs.length;
+          else if (ev.key === 'ArrowLeft') nextIdx = (currentIdx - 1 + visibleTabs.length) % visibleTabs.length;
+          else if (ev.key === 'Home') nextIdx = 0;
+          else if (ev.key === 'End') nextIdx = visibleTabs.length - 1;
+          if (nextIdx >= 0) {
+            ev.preventDefault();
+            const targetBtn = visibleTabs[nextIdx];
+            if (targetBtn.dataset.mode === 'stage') setCompactPane('stage');
+            else setWorkbenchMode(targetBtn.dataset.mode);
+            targetBtn.focus();
+          }
+        };
+        btn.addEventListener('click', onModeClick);
+        btn.addEventListener('keydown', onModeKeyDown);
+        runtimeCleanups.push(() => {
+          btn.removeEventListener('click', onModeClick);
+          btn.removeEventListener('keydown', onModeKeyDown);
+        });
+      }
+    }
+
+    if (typeof window !== 'undefined') {
+      const onWindowResize = () => syncModeTabsDom();
+      window.addEventListener('resize', onWindowResize);
+      runtimeCleanups.push(() => window.removeEventListener('resize', onWindowResize));
+    }
+
+    const bombadilPill = document.getElementById('bombadil-transport-pill');
+    if (bombadilPill) {
+      const onPillClick = () => setWorkbenchMode('bombadil');
+      bombadilPill.addEventListener('click', onPillClick);
+      runtimeCleanups.push(() => bombadilPill.removeEventListener('click', onPillClick));
+    }
+
+    const unsubBombadil = bombadil.subscribe((ev) => syncBombadilChrome(ev));
+    runtimeCleanups.push(unsubBombadil);
+
+    const onVerifySync = () => {
+      if (workbenchMode === 'verify') syncVerifySummary();
+    };
+    document.addEventListener('lab:viewport-change', onVerifySync);
+    document.addEventListener('lab:target-change', onVerifySync);
+    runtimeCleanups.push(() => {
+      document.removeEventListener('lab:viewport-change', onVerifySync);
+      document.removeEventListener('lab:target-change', onVerifySync);
+    });
+
+    setWorkbenchMode('explore', { preserveCompactPane: true });
+    syncBombadilChrome();
   }
 
   function cancelBootRafs() {
@@ -327,14 +599,15 @@ function createLabRuntimeInstance() {
   function destroy() {
     cancelBootRafs();
     clearSameOriginLoadGuard();
-    while (disclosureCleanups.length > 0) {
-      const cleanup = disclosureCleanups.pop();
+    while (runtimeCleanups.length > 0) {
+      const cleanup = runtimeCleanups.pop();
       try {
         cleanup();
-      } catch {}
+      } catch { }
     }
     stageAttached = false;
     activeWorkflow?.destroy?.();
+    bombadil.destroy();
     stage.destroy();
     membrane.destroy();
     recorder.destroy();
@@ -349,11 +622,17 @@ function createLabRuntimeInstance() {
     stage,
     membrane,
     recorder,
+    bombadil,
     getActiveDevice,
     getFidelity,
     selectTarget,
     recoverTarget,
     selectDevicePreset,
+    getWorkbenchMode,
+    setWorkbenchMode,
+    getCompactPane,
+    setCompactPane,
+    openSavedRunResult,
     updateCaptureSource,
     markBootParticipant,
     attachPresetsUI,

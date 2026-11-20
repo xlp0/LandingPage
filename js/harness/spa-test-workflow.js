@@ -643,11 +643,11 @@ export function createSpaTestWorkflow(options = {}) {
     const dev = geom.deviceId && registry?.getById ? registry.getById(geom.deviceId) : null;
     return {
       deviceId: geom.deviceId || null,
-      deviceName: dev?.name || geom.presetName || 'Full (100%)',
+      deviceName: dev?.name || geom.label || geom.presetName || 'Full (100%)',
       width: geom.width,
       height: geom.height,
       unit: geom.unit || 'px',
-      orientation: geom.orientation || (geom.internalOrientation === 'vertical' ? 'portrait' : 'landscape'),
+      orientation: geom.orientation || 'responsive',
       scale: geom.scale ?? 1
     };
   }
@@ -661,9 +661,15 @@ export function createSpaTestWorkflow(options = {}) {
     let completeness = 'idle';
     let completenessLabel = 'Idle (Ready to Record)';
 
-    if (invalidatedReason) {
+    const isInterrupted = Boolean(
+      saved?.incomplete ||
+      saved?.run?.incomplete === true ||
+      saved?.run?.schema === 'urn:gqc:interrupted-capture:v1'
+    );
+
+    if (invalidatedReason || isInterrupted) {
       completeness = 'incomplete';
-      completenessLabel = `Incomplete Capture (Interrupted: ${invalidatedReason})`;
+      completenessLabel = `Incomplete Capture (Interrupted: ${invalidatedReason || saved?.run?.reason || 'Target policy invalidated active capture'})`;
     } else if (recorderState === 'RECORDING') {
       completeness = 'incomplete';
       completenessLabel = 'Incomplete Capture (Recording In Progress)';
@@ -695,6 +701,8 @@ export function createSpaTestWorkflow(options = {}) {
       savedRun: saved
         ? {
             ok: Boolean(saved.ok),
+            incomplete: isInterrupted,
+            reason: saved.run?.reason || invalidatedReason || null,
             handle: saved.data?.handle || null,
             hash: saved.data?.hash || null,
             error: saved.error || null,
@@ -828,14 +836,14 @@ export function createSpaTestWorkflow(options = {}) {
   function selectDevicePreset(deviceId) {
     if (selectDeviceFn) {
       selectDeviceFn(deviceId);
-    } else if (stage && registry) {
-      const dev = deviceId ? registry.getById(deviceId) : null;
-      if (dev) {
-        const geom = stage.getGeometry();
-        const isLandscape = geom.internalOrientation === 'horizontal';
-        const w = isLandscape ? dev.height : dev.width;
-        const h = isLandscape ? dev.width : dev.height;
-        stage.setViewportSize(w, h, 'px', dev.name, dev.id, 'preset');
+    } else if (stage) {
+      if (!deviceId) {
+        stage.selectFullViewport?.('preset');
+      } else if (registry) {
+        const dev = registry.getById(deviceId);
+        if (dev) {
+          stage.selectDevicePreset?.(dev, 'preset');
+        }
       }
     }
     syncTargetDom();
@@ -843,7 +851,7 @@ export function createSpaTestWorkflow(options = {}) {
   }
 
   function rotateDevice() {
-    stage?.rotate?.('rotate');
+    stage?.rotateStageViewport?.('rotate');
     syncTargetDom();
     emit();
   }

@@ -17,7 +17,10 @@ const SKIPPED_SELECTOR = [
   '[data-effect="file-picker"]',
   'a[target="_blank"]',
   '[data-testid^="target-chip-"]:not([data-testid="target-chip-spa-test-target"])',
-  '[data-testid="workflow-select-app-html"]'
+  '[data-testid="workflow-select-app-html"]',
+  '[data-testid^="bombadil-"]',
+  "#bombadil-transport-pill",
+  "#bombadil-dashboard-panel button"
 ].join(",");
 
 // A click point can be a fraction of a pixel outside a control and still press it.

@@ -34,7 +34,7 @@ for (const route of ROUTES) {
       }
 
       if (inScope) {
-        const shellRoots = 'header, nav, .top-controls, .container, #device-manager-modal, [data-island], #mcard-sovereign-pill-mount';
+        const shellRoots = 'header, nav, .top-controls, .container, .stage-toolbar, .stage-transport, #device-manager-modal, [data-island], #mcard-sovereign-pill-mount';
         for (const root of document.querySelectorAll(shellRoots)) {
           for (const control of root.querySelectorAll(controlSelector)) {
             if (!control.getAttribute('data-testid')) {
@@ -76,9 +76,25 @@ test('toggle buttons on the workbench expose accurate aria-pressed state', async
     }
   }
 
+  await expect(page.getByTestId('btn-size-full')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('btn-orient-vertical')).toBeDisabled();
+  await expect(page.getByTestId('btn-orient-horizontal')).toBeDisabled();
+  await expect(page.getByTestId('btn-orient-vertical')).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.getByTestId('btn-orient-horizontal')).toHaveAttribute('aria-pressed', 'false');
+
   await page.getByTestId('btn-arrange-vertical').click();
   await expect(page.getByTestId('btn-arrange-vertical')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByTestId('btn-arrange-horizontal')).toHaveAttribute('aria-pressed', 'false');
+
+  await page.getByTestId('btn-size-mobile').click();
+  await expect(page.getByTestId('btn-size-mobile')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('btn-size-full')).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.getByTestId('btn-orient-vertical')).toBeEnabled();
+  await expect(page.getByTestId('btn-orient-vertical')).toHaveAttribute('aria-pressed', 'true');
+
+  await page.getByTestId('btn-orient-horizontal').click();
+  await expect(page.getByTestId('btn-orient-horizontal')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('btn-orient-vertical')).toHaveAttribute('aria-pressed', 'false');
 
   await page.getByTestId('btn-orient-vertical').click();
   await expect(page.getByTestId('btn-orient-vertical')).toHaveAttribute('aria-pressed', 'true');
@@ -87,10 +103,9 @@ test('toggle buttons on the workbench expose accurate aria-pressed state', async
   await page.getByTestId('btn-size-full').click();
   await expect(page.getByTestId('btn-size-full')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByTestId('btn-size-mobile')).toHaveAttribute('aria-pressed', 'false');
-
-  await page.getByTestId('btn-size-mobile').click();
-  await expect(page.getByTestId('btn-size-mobile')).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByTestId('btn-size-full')).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.getByTestId('btn-orient-vertical')).toBeDisabled();
+  await expect(page.getByTestId('btn-orient-vertical')).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.getByTestId('btn-orient-horizontal')).toHaveAttribute('aria-pressed', 'false');
 });
 
 test('the preset delete flow uses an in-page dialog and cancels without deleting', async ({ page }) => {

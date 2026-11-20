@@ -375,8 +375,9 @@ test('GQC-03-UNIT-06: TargetMembrane emits replayable Petri net traces across al
 
   assert.throws(() => membrane.bindTarget('javascript:alert(1)', 'user-input'));
   assert.equal(membrane.getPolicyPlaceId(), 'p_error_target_unapproved');
-  membrane.recoverToDefault('app.html');
+  const recoveredDefault = membrane.recoverToDefault();
   assert.equal(membrane.getPolicyPlaceId(), 'p_page_responsive_lab');
+  assert.equal(recoveredDefault.url, 'http://localhost:3001/tests/fixtures/spa-test-target.html');
 
   const events = membrane.getPolicyTrace();
   assert.equal(events.length, 9);

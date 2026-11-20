@@ -4,7 +4,7 @@
 | --- | --- |
 | Audience | Scrum masters, BMAD role owners, UX designers, architects, developers, and TEA engineers |
 | BMAD Owner | Product Manager (John), Architect (Winston), UX Designer (Sally), Developer (Amelia), and TEA |
-| Source of Truth | [`../ssg-plan.md`](../ssg-plan.md), [`../INDEX.md`](../INDEX.md), [`../DECISIONS.tsv`](../DECISIONS.tsv), and [`./SSG-pre-program-spike.md`](./SSG-pre-program-spike.md) |
+| Source of Truth | [`../ssg-plan.md`](../ssg-plan.md), [`../INDEX.md`](../INDEX.md), [`../DECISIONS.tsv`](../../../_active/DECISIONS.tsv), and [`./SSG-pre-program-spike.md`](./SSG-pre-program-spike.md) |
 | Consensus Kernel | `clm-kernel@0.0.23` |
 | Review Dates | `2026-11-19` (Round 1 and Round 2 full 5-stage EGM cycles) |
 

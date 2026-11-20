@@ -1,0 +1,35 @@
+---
+import { iconMarkup } from '../../js/ui/icons.js';
+
+const {
+  className = '',
+  buttonClass = 'presentation-control-btn',
+  defaultTheme = 'dark'
+} = Astro.props;
+
+const initialThemeIcon = defaultTheme === 'light' ? 'sun' : defaultTheme === 'high-contrast' ? 'eye' : 'moon';
+const initialThemeLabel = defaultTheme === 'light' ? 'Light' : defaultTheme === 'high-contrast' ? 'Contrast' : 'Dark';
+---
+<div class={`presentation-controls${className ? ` ${className}` : ''}`} role="group" aria-label="Display and power controls">
+  <button
+    type="button"
+    class={buttonClass}
+    id="theme-toggle-btn"
+    data-testid="theme-toggle-btn"
+    title="Toggle Display Theme (Dark / Light / High-Contrast)"
+  >
+    <span id="theme-icon" data-icon={initialThemeIcon} set:html={iconMarkup(initialThemeIcon)} />
+    <span id="theme-label">{initialThemeLabel}</span>
+  </button>
+  <button
+    type="button"
+    class={buttonClass}
+    id="power-toggle-btn"
+    data-testid="power-toggle-btn"
+    aria-pressed="false"
+    title="Toggle Energy Saving Mode"
+  >
+    <span id="power-icon" data-icon="zap" set:html={iconMarkup('zap')} />
+    <span id="power-label">Normal</span>
+  </button>
+</div>

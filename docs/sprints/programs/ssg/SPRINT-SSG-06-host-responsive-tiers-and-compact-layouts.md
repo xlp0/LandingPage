@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-SSG-06` |
 | Source of Truth | [`./ssg-plan.md`](./ssg-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-SSG-06` |
-| Status | `PLANNED` |
+| Status | `DONE` |
 | Depends on | `SPRINT-SSG-05` |
 | Unblocks | `SPRINT-SSG-07` |
 | Execution unit | `PR-SSG-06` |
@@ -34,7 +34,7 @@ Every host page adapts across unified breakpoints (`desktop >= 1280px`, `tablet 
 3. Create `tests/features/host-responsive-tiers.spec.js` and refine `tests/features/presentation-lattice.spec.js` (`lines 180-222`):
    - Update `presentation-lattice.spec.js` Test 5 to check bidirectional bounds (`r.left >= -1 && r.right <= vw + 1`) alongside `documentElement.scrollWidth <= vw + 1` across `358x800`, `390x844`, `768x1024`, `820x1180`, and `1440x900`.
    - Implement `tests/features/host-responsive-tiers.spec.js` iterating all `6` `SWEEP_ROUTES` (`/responsive-lab.html`, `/index.html?noredirect=1`, `/sprint-registry.html`, `/fiber-inspector.html`, `/fiber-conformance.html`, `/app.html`) x `4` viewports (`1440x900`, `820x1180`, `390x844`, `358x800`) plus `1280x720`, asserting `scrollWidth <= vw + 1`, `r.left >= -1 && r.right <= vw + 1` on visible controls, and union-over-modes reachability across `Stage | Explore | Guided | Bombadil | Verify` at `358px` (zero missing controls across tabs).
-4. Execute `npm run stageshow:sweep -- --strict` verifying all `24` captures pass (`findings=0`, `errors=0`, `clipped=0`, `overflows=0`), inspect generated PNGs under `stageshow-output/`, selectively re-capture `tests/baselines/layout-baseline.json` (`STY_FREEZE_PAGES=responsive-lab,index` if compact/Home layout alters frozen selectors) with `rebaselines` attribution, and record `docs/sprints/_active/evidence/SSG-06-host-tiers.md` + [`./DECISIONS.tsv`](./DECISIONS.tsv).
+4. Execute `npm run stageshow:sweep -- --strict` verifying all `24` captures pass (`findings=0`, `errors=0`, `clipped=0`, `overflows=0`), inspect generated PNGs under `stageshow-output/`, selectively re-capture `tests/baselines/layout-baseline.json` (`STY_FREEZE_PAGES=responsive-lab,index` if compact/Home layout alters frozen selectors) with `rebaselines` attribution, and record `docs/sprints/_active/evidence/SSG-06-host-tiers.md` + [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv).
 
 ## Files
 
@@ -42,7 +42,7 @@ Every host page adapts across unified breakpoints (`desktop >= 1280px`, `tablet 
 - Edit `src/pages/index.astro` and `scripts/penpot-render.mjs` (add `id="main-content" tabindex="-1"` on `<div class="container">` `index.astro:350`, keep `<a href="index.html" aria-current="page" data-penpot-handle="mcard:route:/index.html">` with optional click `preventDefault()` focus on `#main-content` so `root-index.spec.js`, `penpot-navigation.spec.js`, and `check:net` stay green)
 - Create `tests/features/host-responsive-tiers.spec.js`
 - Edit `tests/features/presentation-lattice.spec.js` and `tests/baselines/layout-baseline.json`
-- Create `docs/sprints/_active/evidence/SSG-06-host-tiers.md` and append row to [`./DECISIONS.tsv`](./DECISIONS.tsv)
+- Create `docs/sprints/_active/evidence/SSG-06-host-tiers.md` and append row to [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv)
 
 ## BMAD responsibilities
 
@@ -85,6 +85,6 @@ Every host page adapts across unified breakpoints (`desktop >= 1280px`, `tablet 
 
 ## Definition of done
 
-- [ ] **DoD-SSG-06-01.** `npm run stageshow:sweep -- --strict` passes all `24` captures (`6` routes × `1440`, `820`, `390`, `358`) with `findings=0`, `errors=0`, `clipped=0`, and `overflows=0`. Verified by `npm run stageshow:sweep -- --strict`.
-- [ ] **DoD-SSG-06-02.** Multi-route bidirectional bounds, `1280x720` default horizontal dock, compact `358px` union-over-modes reachability, and updated `layout-freeze` baselines pass. Verified by `npx playwright test tests/features/host-responsive-tiers.spec.js tests/features/presentation-lattice.spec.js tests/features/layout-freeze.spec.js tests/features/penpot-navigation.spec.js --project=features`.
-- [ ] **DoD-SSG-06-03.** Evidence in `evidence/SSG-06-host-tiers.md` and `DECISIONS.tsv` row are recorded with all core gates green. Verified by `test -s docs/sprints/_active/evidence/SSG-06-host-tiers.md && grep -qE $'\tSSG-06\t' docs/sprints/_active/DECISIONS.tsv && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run build && npm run test:unit && npm run test:smoke && npm run test:components`.
+- [x] **DoD-SSG-06-01.** `npm run stageshow:sweep -- --strict` passes all `24` captures (`6` routes × `1440`, `820`, `390`, `358`) with `findings=0`, `errors=0`, `clipped=0`, and `overflows=0`. Verified by `npm run stageshow:sweep -- --strict`.
+- [x] **DoD-SSG-06-02.** Multi-route bidirectional bounds, `1280x720` default horizontal dock, compact `358px` union-over-modes reachability, and updated `layout-freeze` baselines pass. Verified by `npx playwright test tests/features/host-responsive-tiers.spec.js tests/features/presentation-lattice.spec.js tests/features/layout-freeze.spec.js tests/features/penpot-navigation.spec.js --project=features`.
+- [x] **DoD-SSG-06-03.** Evidence in `evidence/SSG-06-host-tiers.md` and `DECISIONS.tsv` row are recorded with all core gates green. Verified by `test -s docs/sprints/_active/evidence/SSG-06-host-tiers.md && grep -qE $'\tSSG-06\t' docs/sprints/_active/DECISIONS.tsv && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run build && npm run test:unit && npm run test:smoke && npm run test:components`.

@@ -4,48 +4,21 @@
  * and touch-target health indicators styled with semantic tokens.
  */
 
+import { setIcon } from '../ui/icons.js';
+
 export function initRecordingRibbon(options = {}) {
   const {
     recorder,
-    container = options.container || document.getElementById('lab-recording-bar') || document.querySelector('.workbench-toolbar') || document.body,
     getFidelity = () => ({ tier: 0, runner: 'lab-iframe', emulated: [], notEmulated: [] }),
     getTarget = () => null,
     getDevice = () => null,
-    getOrientation = () => 'portrait'
+    getSelection = () => null,
+    getOrientation = () => 'portrait',
+    onOpenSavedRun = null
   } = options;
 
-  let ribbon = document.getElementById('lab-recording-ribbon');
-  if (!ribbon) {
-    ribbon = document.createElement('div');
-    ribbon.id = 'lab-recording-ribbon';
-    ribbon.className = 'toolbar-group recording-ribbon';
-    ribbon.style.display = 'flex';
-    ribbon.style.alignItems = 'center';
-    ribbon.style.gap = '0.5rem';
-    ribbon.style.borderLeft = '1px solid var(--border-subtle)';
-    ribbon.style.paddingLeft = '0.75rem';
-
-    ribbon.innerHTML = `
-      <span class="group-label">Record:</span>
-      <button id="btn-rec-start" class="toolbar-btn" title="Start recording interactions">🔴 Start</button>
-      <button id="btn-rec-pause" class="toolbar-btn" style="display:none;" title="Pause recording">⏸ Pause</button>
-      <button id="btn-rec-resume" class="toolbar-btn" style="display:none;" title="Resume recording">▶ Resume</button>
-      <button id="btn-rec-stop" class="toolbar-btn" style="display:none;" title="Stop recording">⏹ Stop</button>
-      
-      <span id="rec-source-pill" class="lab-badge" title="Active capture channel">Source: same-origin</span>
-      <span id="rec-fidelity-badge" class="lab-badge" style="background:var(--overlay-subtle);" title="Emulation fidelity tier">T0 · viewport only</span>
-      <span id="rec-event-count" class="group-label" style="font-size:0.75rem;">0 ev</span>
-      <span id="rec-drop-count" class="group-label" style="font-size:0.75rem; color:var(--color-danger); display:none;">0 drop</span>
-      <span id="rec-undersized-pill" class="lab-badge" style="display:none; background:var(--badge-danger-bg); color:var(--badge-danger-text);" title="Taps on targets < 44px">⚠️ 0 undersized</span>
-      <span id="rec-saved-pill" class="lab-badge" style="display:none; align-items:center; gap:0.35rem;">
-        <span id="rec-saved-label">💾 Saved</span>
-        <button id="btn-copy-handle" class="toolbar-btn" style="padding:0.1rem 0.35rem; font-size:0.68rem; display:none;" title="Copy Handle">📋</button>
-        <a id="btn-download-json" href="#" download="session-recording.json" style="display:none; color:inherit; text-decoration:underline; font-size:0.75rem;">📥 Download JSON</a>
-      </span>
-    `;
-
-    container.appendChild(ribbon);
-  }
+  const ribbon = document.getElementById('lab-recording-ribbon');
+  if (!ribbon) return null;
 
   const btnStart = ribbon.querySelector('#btn-rec-start');
   const btnPause = ribbon.querySelector('#btn-rec-pause');
@@ -56,6 +29,7 @@ export function initRecordingRibbon(options = {}) {
   const eventCount = ribbon.querySelector('#rec-event-count');
   const dropCount = ribbon.querySelector('#rec-drop-count');
   const undersizedPill = ribbon.querySelector('#rec-undersized-pill');
+  const undersizedText = ribbon.querySelector('#rec-undersized-text');
   const savedPill = ribbon.querySelector('#rec-saved-pill');
   const savedLabel = ribbon.querySelector('#rec-saved-label');
   const copyBtn = ribbon.querySelector('#btn-copy-handle');
@@ -127,7 +101,8 @@ export function initRecordingRibbon(options = {}) {
     if (undersizedPill) {
       if (stats.undersizedTaps > 0) {
         undersizedPill.style.display = 'inline-flex';
-        undersizedPill.textContent = `⚠️ ${stats.undersizedTaps} undersized`;
+        const target = undersizedText || undersizedPill;
+        target.textContent = `${stats.undersizedTaps} undersized`;
       } else {
         undersizedPill.style.display = 'none';
       }
@@ -158,13 +133,23 @@ export function initRecordingRibbon(options = {}) {
     updateUI();
   });
 
-  listen(savedLabel, 'click', () => {
+  function openSavedResult() {
     if (!recorder?.lastSavedRun) return;
+    if (typeof onOpenSavedRun === 'function') {
+      onOpenSavedRun();
+      return;
+    }
     const disclosure = typeof document !== 'undefined' ? document.getElementById('mcard-result-disclosure') : null;
     if (disclosure) {
       disclosure.open = true;
-      disclosure.scrollIntoView({ block: 'nearest' });
+      disclosure.scrollIntoView?.({ block: 'nearest' });
     }
+  }
+
+  listen(savedPill, 'click', (e) => {
+    if (copyBtn && (e.target === copyBtn || copyBtn.contains?.(e.target))) return;
+    if (downloadLink && (e.target === downloadLink || downloadLink.contains?.(e.target))) return;
+    openSavedResult();
   });
 
   listen(btnStop, 'click', async () => {
@@ -180,6 +165,7 @@ export function initRecordingRibbon(options = {}) {
       const saveResult = await recorder?.saveTestRun({
         target: getTarget(),
         device: getDevice(),
+        selection: getSelection(),
         orientation: getOrientation(),
         fidelity: getFidelity()
       });
@@ -190,15 +176,15 @@ export function initRecordingRibbon(options = {}) {
           savedPill.style.background = 'var(--badge-success-bg)';
           savedPill.style.color = 'var(--badge-success-text)';
           const shortHandle = saveResult.data.handle.length > 32 ? `${saveResult.data.handle.slice(0, 32)}…` : saveResult.data.handle;
-          savedLabel.textContent = `💾 ${shortHandle} (${saveResult.data.hash.slice(0, 8)})`;
+          savedLabel.textContent = `${shortHandle} (${saveResult.data.hash.slice(0, 8)})`;
           if (copyBtn) {
-            copyBtn.style.display = 'inline-block';
+            copyBtn.style.display = 'inline-flex';
             copyBtn.onclick = () => {
               navigator.clipboard?.writeText(saveResult.data.handle);
-              copyBtn.textContent = '✓';
+              setIcon(copyBtn, 'check');
               if (copyResetTimer) clearTimeout(copyResetTimer);
               copyResetTimer = setTimeout(() => {
-                copyBtn.textContent = '📋';
+                setIcon(copyBtn, 'copy');
                 copyResetTimer = null;
               }, 1500);
             };
@@ -210,17 +196,29 @@ export function initRecordingRibbon(options = {}) {
           savedPill.style.display = 'inline-flex';
           savedPill.style.background = 'var(--badge-danger-bg)';
           savedPill.style.color = 'var(--badge-danger-text)';
-          savedLabel.textContent = '⚠️ Offline';
+          savedLabel.textContent = saveResult?.blocked ? `${saveResult.error || 'Viewport < 100px'}` : 'Offline';
           if (copyBtn) copyBtn.style.display = 'none';
           if (downloadLink && saveResult?.run) {
-            downloadLink.style.display = 'inline';
+            downloadLink.style.display = 'inline-flex';
             if (activeBlobUrl) {
               URL.revokeObjectURL(activeBlobUrl);
             }
             const blob = new Blob([JSON.stringify(saveResult.run, null, 2)], { type: 'application/json' });
             activeBlobUrl = URL.createObjectURL(blob);
             downloadLink.href = activeBlobUrl;
+          } else if (downloadLink) {
+            downloadLink.style.display = 'none';
           }
+        }
+        if (saveResult?.blocked && typeof document !== 'undefined') {
+          if (typeof onOpenSavedRun === 'function') {
+            onOpenSavedRun();
+          } else {
+            const disclosure = document.getElementById('mcard-result-disclosure');
+            if (disclosure) disclosure.open = true;
+          }
+          const pageStatus = document.getElementById('page-status');
+          if (pageStatus) pageStatus.textContent = saveResult.error;
         }
       }
     } catch (err) {
@@ -255,7 +253,7 @@ export function initRecordingRibbon(options = {}) {
       const fn = cleanupFns.pop();
       try {
         fn();
-      } catch {}
+      } catch { }
     }
   }
 

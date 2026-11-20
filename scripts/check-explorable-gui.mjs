@@ -13,6 +13,8 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ISLAND_DIR = path.join(ROOT_DIR, 'src', 'islands');
+const LAYOUT_DIR = path.join(ROOT_DIR, 'src', 'layouts');
+const COMPONENT_DIR = path.join(ROOT_DIR, 'src', 'components');
 const PAGE_DIR = path.join(ROOT_DIR, 'src', 'pages');
 const HARNESS_DIR = path.join(ROOT_DIR, 'js', 'harness');
 const EFFECTS = new Set(['navigate', 'persist', 'destructive', 'external', 'download', 'file-picker']);
@@ -123,12 +125,21 @@ export function lintText(text, { file = 'inline', island = false, inScopePage = 
 
 export function lintTree({
   islandDir = ISLAND_DIR,
+  layoutDir = LAYOUT_DIR,
+  componentDir = COMPONENT_DIR,
   pageDir = PAGE_DIR,
   harnessDir = HARNESS_DIR
 } = {}) {
   const violations = [];
   for (const file of walk(islandDir)) {
     violations.push(...lintText(fs.readFileSync(file, 'utf8'), { file, island: true }));
+  }
+  for (const file of walk(layoutDir)) {
+    violations.push(...lintText(fs.readFileSync(file, 'utf8'), { file, island: false, inScopePage: true }));
+  }
+  for (const file of walk(componentDir)) {
+    const island = !file.endsWith('.astro');
+    violations.push(...lintText(fs.readFileSync(file, 'utf8'), { file, island, inScopePage: !island }));
   }
   for (const file of walk(pageDir)) {
     const inScopePage = file.endsWith('.astro') && path.basename(file) !== 'app.astro';

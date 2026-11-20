@@ -131,7 +131,7 @@ test.describe('SPRINT-GQC-02B: Astro Host Parity and Middleware Contracts', () =
     expect(bootNonce).toBeTruthy();
 
     await workbench.selectBuiltinDevice('iphone-16-pro');
-    await workbench.rotateViewport();
+    await workbench.rotateStageViewport();
     await expect(appRoot).toHaveAttribute('data-boot-nonce', bootNonce);
 
     await workbench.startRecording();

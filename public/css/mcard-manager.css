@@ -180,6 +180,8 @@ body {
 
 .chat-panel.hidden {
   transform: translateX(100%);
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /* Sidebar - File Types */
@@ -564,7 +566,7 @@ input[type="file"] {
 }
 
 .modal-content {
-  background: white;
+  background: var(--color-surface);
   border-radius: 16px;
   max-width: 600px;
   width: 90%;
@@ -967,8 +969,8 @@ input[type="file"] {
    RESPONSIVE DESIGN - Mobile & Tablet
    ======================================== */
 
-/* Tablet (Portrait) - 768px and below */
-@media (max-width: 768px) {
+/* Tablet (Portrait) - 1024px and below */
+@media (max-width: 1024px) {
   .sidebar {
     width: 200px;
   }
@@ -1038,38 +1040,54 @@ input[type="file"] {
   .sidebar {
     transform: translateX(0) !important;
     z-index: 3 !important;
+    visibility: visible;
+    pointer-events: auto;
   }
   
   .middle-column {
     transform: translateX(100%) !important;
     z-index: 2 !important;
+    visibility: hidden;
+    pointer-events: none;
   }
   
   .viewer-column {
     transform: translateX(100%) !important;
     z-index: 1 !important;
+    visibility: hidden;
+    pointer-events: none;
   }
   
   /* When showing card list */
   .main-content.show-cards .sidebar {
     transform: translateX(-100%) !important;
+    visibility: hidden;
+    pointer-events: none;
   }
   
   .main-content.show-cards .middle-column {
     transform: translateX(0) !important;
+    visibility: visible;
+    pointer-events: auto;
   }
   
   /* When showing viewer */
   .main-content.show-viewer .sidebar {
     transform: translateX(-100%) !important;
+    visibility: hidden;
+    pointer-events: none;
   }
   
   .main-content.show-viewer .middle-column {
     transform: translateX(-100%) !important;
+    visibility: hidden;
+    pointer-events: none;
   }
   
   .main-content.show-viewer .viewer-column {
     transform: translateX(0) !important;
+    visibility: visible;
+    pointer-events: auto;
   }
   
   .header-left h1 {
@@ -1158,7 +1176,7 @@ input[type="file"] {
    ======================================== */
 
 /* Tablet - Simplify viewer header */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .viewer-header h3 > div {
     gap: 8px !important;
   }
@@ -1328,7 +1346,7 @@ input[type="file"] {
 .calendar-container {
   flex: 1;
   overflow: hidden;
-  background: white;
+  background: var(--color-surface);
   position: relative;
 }
 
@@ -1343,7 +1361,7 @@ input[type="file"] {
 
 /* Calendar View Animations */
 .calendar-view {
-  animation: fadeIn var(--motion-duration-slow) var(--motion-ease)-out;
+  animation: fadeIn var(--motion-duration-slow) var(--motion-ease);
 }
 
 @keyframes fadeIn {

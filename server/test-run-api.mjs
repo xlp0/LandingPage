@@ -10,12 +10,16 @@ import {
   TEST_RUN_SCHEMA,
   NAVIGATION_RUN_LINK_SCHEMA,
   INTERRUPTED_CAPTURE_SCHEMA,
+  BOMBADIL_TRIGGER_SCHEMA,
+  BOMBADIL_RUN_SCHEMA,
+  BOMBADIL_COVERAGE_SCHEMA,
   validateTestRun,
   validateNavigationRunLink,
   parseStoredTestRunRecord,
   canonicalJson,
   targetSlug
 } from '../js/harness/test-run-schema.js';
+import { createBombadilRunnerService } from './bombadil-runner-service.mjs';
 import { loadNetEnvelope } from '../scripts/check-net.mjs';
 import { createLayer4TargetAdapter } from '../scripts/net-to-netmcard.mjs';
 
@@ -32,13 +36,25 @@ import {
  * Creates the test-run Express router mounted on /api/test-runs.
  * @param {{ storage: import('./mcard-api.mjs').CanonicalTriadBackend }} options
  */
-export function createTestRunRouter({ storage, targetEnvelopes = null, beforeLinkHandleBind = null }) {
+export function createTestRunRouter({
+  storage,
+  targetEnvelopes = null,
+  beforeLinkHandleBind = null,
+  runnerService = null
+}) {
   if (!storage) {
     throw new Error('createTestRunRouter requires a valid storage backend instance');
   }
 
   const router = express.Router();
   const targetAdapters = new Map();
+  let lazyRunnerService = runnerService;
+  function getBombadilRunner() {
+    if (!lazyRunnerService) {
+      lazyRunnerService = createBombadilRunnerService({ storage });
+    }
+    return lazyRunnerService;
+  }
 
   function getOrCreateTargetAdapter(netId = 'spa-test-target-net', customEnvelope = null) {
     if (customEnvelope) {
@@ -72,6 +88,15 @@ export function createTestRunRouter({ storage, targetEnvelopes = null, beforeLin
     if (run?.schema === NAVIGATION_RUN_LINK_SCHEMA) {
       return res.status(400).json({
         error: 'Use POST /api/test-runs/navigation/link to verify and bind graph-to-run links'
+      });
+    }
+    if (
+      run?.schema === BOMBADIL_TRIGGER_SCHEMA ||
+      run?.schema === BOMBADIL_RUN_SCHEMA ||
+      run?.schema === BOMBADIL_COVERAGE_SCHEMA
+    ) {
+      return res.status(400).json({
+        error: 'Use /api/test-runs/bombadil/* endpoints for Bombadil handles and runs'
       });
     }
 
@@ -631,6 +656,118 @@ export function createTestRunRouter({ storage, targetEnvelopes = null, beforeLin
       linkHash: linkCard.hash,
       link,
       receipts
+    });
+  });
+
+  router.get('/bombadil/handles', (_req, res) => {
+    try {
+      return res.json(getBombadilRunner().getHandles());
+    } catch (err) {
+      return res.status(err?.statusCode || 500).json({ error: err?.message || 'Failed to resolve Bombadil handles' });
+    }
+  });
+
+  router.post('/bombadil/trigger', async (req, res) => {
+    try {
+      const receipt = await getBombadilRunner().triggerRun(req.body || {});
+      return res.status(202).json(receipt);
+    } catch (err) {
+      return res.status(err?.statusCode || 500).json({
+        error: err?.message || 'Failed to trigger Bombadil run',
+        code: err?.code || 'BOMBADIL_TRIGGER_FAILED'
+      });
+    }
+  });
+
+  router.post('/bombadil/stop', async (req, res) => {
+    try {
+      const stopped = await getBombadilRunner().stopRun(req.body?.runId || null);
+      return res.status(200).json(stopped);
+    } catch (err) {
+      return res.status(err?.statusCode || 500).json({
+        error: err?.message || 'Failed to stop Bombadil run',
+        code: err?.code || 'BOMBADIL_STOP_FAILED'
+      });
+    }
+  });
+
+  router.post('/bombadil/shrink', async (req, res) => {
+    try {
+      const shrunk = await getBombadilRunner().shrinkRun(req.body || {});
+      return res.status(200).json(shrunk);
+    } catch (err) {
+      return res.status(err?.statusCode || 500).json({
+        error: err?.message || 'Failed to shrink Bombadil trace',
+        code: err?.code || 'BOMBADIL_SHRINK_FAILED'
+      });
+    }
+  });
+
+  router.get('/bombadil/runs', (_req, res) => {
+    try {
+      return res.json({ runs: getBombadilRunner().listRuns() });
+    } catch (err) {
+      return res.status(err?.statusCode || 500).json({ error: err?.message || 'Failed to list Bombadil runs' });
+    }
+  });
+
+  router.get('/bombadil/run', (req, res) => {
+    const runId = typeof req.query?.runId === 'string' ? req.query.runId.trim() : '';
+    if (!runId) {
+      return res.status(400).json({ error: 'Query parameter runId is required' });
+    }
+    const found = getBombadilRunner().getRun(runId);
+    if (!found) {
+      return res.status(404).json({ error: `No Bombadil run found for "${runId}"` });
+    }
+    return res.json(found);
+  });
+
+  router.get('/bombadil/coverage', (_req, res) => {
+    try {
+      return res.json(getBombadilRunner().getCoverage());
+    } catch (err) {
+      return res.status(err?.statusCode || 500).json({ error: err?.message || 'Failed to read Bombadil coverage' });
+    }
+  });
+
+  router.get('/bombadil/stream', (req, res) => {
+    const runner = getBombadilRunner();
+    if (!runner.isActive()) {
+      return res.status(204).end();
+    }
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders?.();
+
+    const writeSse = (eventName, data) => {
+      if (res.writableEnded) return;
+      res.write(`event: ${eventName}\ndata: ${JSON.stringify(data)}\n\n`);
+    };
+
+    const active = runner.getHandles()?.activeJob;
+    if (active) {
+      writeSse('progress', active);
+    }
+
+    let unsubscribe = () => {};
+    const cleanup = () => {
+      unsubscribe();
+      unsubscribe = () => {};
+      if (!res.writableEnded) res.end();
+    };
+
+    unsubscribe = runner.subscribe(({ event, data }) => {
+      writeSse(event, data);
+      if (event === 'complete' || event === 'job-error') {
+        cleanup();
+      }
+    });
+
+    req.on('close', () => {
+      unsubscribe();
+      unsubscribe = () => {};
     });
   });
 

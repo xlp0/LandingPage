@@ -1,6 +1,14 @@
 import { resolveFidelity } from './fidelity.js';
 
-export function installLabApi({ stage, membrane, registry, recorder, workflow = null }) {
+export function installLabApi({
+  stage,
+  membrane,
+  registry,
+  recorder,
+  workflow = null,
+  bombadil = null,
+  modeController = null
+}) {
   const api = {
     version: 1,
     geometry: {
@@ -14,13 +22,13 @@ export function installLabApi({ stage, membrane, registry, recorder, workflow = 
       },
       rotate() {
         if (stage) {
-          stage.rotate('rotate');
+          stage.rotateStageViewport('rotate');
         }
       },
       setOrientation(orientation) {
         if (stage) {
-          const internal = (orientation === 'portrait' || orientation === 'vertical') ? 'vertical' : 'horizontal';
-          stage.setOrientation(internal, 'rotate');
+          const normalized = orientation === 'landscape' ? 'landscape' : 'portrait';
+          stage.setOrientation(normalized, 'rotate');
         }
       }
     },
@@ -73,31 +81,85 @@ export function installLabApi({ stage, membrane, registry, recorder, workflow = 
     },
     workflow: workflow
       ? {
-          state() {
-            return workflow.getState();
-          },
-          setStep(stepId) {
-            return workflow.setStep(stepId);
-          },
-          targetTrace() {
-            return workflow.getTargetTrace();
-          },
-          clearTargetTrace() {
-            return workflow.clearTargetTrace();
-          },
-          syncTargetDom() {
-            return workflow.syncTargetDom();
-          },
-          reportModuleFailure(failure) {
-            return workflow.reportModuleFailure(failure);
-          },
-          loadOptionalModules(descriptors, options) {
-            return workflow.loadOptionalModules(descriptors, options);
-          },
-          metrics() {
-            return workflow.getMetrics();
-          }
+        state() {
+          return workflow.getState();
+        },
+        setStep(stepId) {
+          return workflow.setStep(stepId);
+        },
+        targetTrace() {
+          return workflow.getTargetTrace();
+        },
+        clearTargetTrace() {
+          return workflow.clearTargetTrace();
+        },
+        syncTargetDom() {
+          return workflow.syncTargetDom();
+        },
+        reportModuleFailure(failure) {
+          return workflow.reportModuleFailure(failure);
+        },
+        loadOptionalModules(descriptors, options) {
+          return workflow.loadOptionalModules(descriptors, options);
+        },
+        metrics() {
+          return workflow.getMetrics();
         }
+      }
+      : null,
+    bombadil: bombadil
+      ? {
+        handles() {
+          return bombadil.handles();
+        },
+        trigger(options) {
+          return bombadil.trigger(options);
+        },
+        stop(runId) {
+          return bombadil.stop(runId);
+        },
+        shrink(options) {
+          return bombadil.shrink(options);
+        },
+        openTarget(targetOrHandle) {
+          return bombadil.openTarget(targetOrHandle);
+        },
+        status() {
+          return bombadil.status();
+        },
+        runs() {
+          return bombadil.runs();
+        },
+        run(runId) {
+          return bombadil.run(runId);
+        },
+        coverage() {
+          return bombadil.coverage();
+        },
+        subscribe(listener) {
+          return bombadil.subscribe(listener);
+        }
+      }
+      : null,
+    mode: modeController
+      ? {
+        get() {
+          return modeController.get();
+        },
+        set(mode) {
+          return modeController.set(mode);
+        }
+      }
+      : null,
+    arrangement: stage
+      ? {
+        get() {
+          return stage.getArrangement ? stage.getArrangement() : null;
+        },
+        set(arrangement) {
+          stage.setArrangement(arrangement);
+        }
+      }
       : null
   };
 

@@ -4,8 +4,8 @@
 | --- | --- |
 | Audience | Scrum masters, BMAD role owners, UX designers, architects, developers, and TEA engineers |
 | BMAD Owner | Product Manager (John) with UX Designer (Sally), Architect (Winston), Developer (Amelia), and TEA |
-| Source of Truth | This plan, [`./INDEX.md`](./INDEX.md), [`./DECISIONS.tsv`](./DECISIONS.tsv), [`./evidence/SSG-pre-program-spike.md`](./evidence/SSG-pre-program-spike.md), and [`./evidence/SSG-egm-review.md`](./evidence/SSG-egm-review.md) |
-| Status | `ACTIVE` (`SPRINT-SSG-00` `IN_PROGRESS` with install and baseline sweep complete, seeding and bundler pending; `SPRINT-SSG-01` through `SPRINT-SSG-08` `PLANNED`; refined with StageShow layout architecture, Bombadil dashboard handles, and EGM review `2026-11-19`) |
+| Source of Truth | This plan, [`./INDEX.md`](./INDEX.md), [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv), [`./evidence/SSG-pre-program-spike.md`](./evidence/SSG-pre-program-spike.md), and [`./evidence/SSG-egm-review.md`](./evidence/SSG-egm-review.md) |
+| Status | `ACTIVE` (`SPRINT-SSG-00`..`SPRINT-SSG-02` `DONE`; `SPRINT-SSG-03` through `SPRINT-SSG-08` `PLANNED`; Flag 1 and Flag 2 enabled, refined with StageShow layout architecture, Bombadil dashboard handles, and EGM review `2026-11-19`) |
 | Program | SSG, StageShow Craft, Bombadil Dashboard Handles, and Coherent Device, Orientation, and Mode Layout |
 | Consensus Kernel | `clm-kernel@0.0.23` |
 | Drift Gate | `npm run docs:check` |
@@ -106,7 +106,7 @@ LandingPage elevates Responsive UI Lab into the control dashboard for `@antithes
 
 ## Design decisions
 
-Each decision has a matching superseding `SSG-plan-r2` row in [`./DECISIONS.tsv`](./DECISIONS.tsv) (appended after Round-2 EGM adjudication with zero `exception.expiresSprint` fields on `SPRINT-SSG-*`).
+Each decision has a matching superseding `SSG-plan-r2` row in [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv) (appended after Round-2 EGM adjudication with zero `exception.expiresSprint` fields on `SPRINT-SSG-*`).
 
 | ID | Decision | Rationale | Alternatives rejected |
 | --- | --- | --- | --- |
@@ -133,11 +133,11 @@ Each decision has a matching superseding `SSG-plan-r2` row in [`./DECISIONS.tsv`
 
 | Order | Sprint | Goal | Depends on | Effort | Status |
 | ---: | --- | --- | --- | :---: | :---: |
-| 1 | [SSG-00](./SPRINT-SSG-00-stageshow-installation-and-layout-gate.md) | Complete StageShow `1.1.1` install, `lucide-react` shim + `postcss`, `PUT /api/mcard/landing` + auto-build + strict bounds in `run.mjs`, `preact/compat` scene bundler, npm pack exclusion, and design contract. | None | 2d | `IN_PROGRESS` |
-| 2 | [SSG-01](./SPRINT-SSG-01-css-and-chrome-subtraction.md) | Clean `tokens.css` and `semantic-tokens.css`, introduce StageShow surface tokens, fix `.orientation-*` / `mcard-manager.css` / `app.astro`, and fix non-Lab layout voids/overflows. | SSG-00 | 2d | `PLANNED` |
-| 3 | [SSG-02](./SPRINT-SSG-02-viewport-and-device-domain-model.md) | Unify presets, orientation math, memoized conformance fetches, `Full`/`Custom` Persistence Projection, `interrupted-capture:v1`, `window.__lab.geometry`, and Test 11 alignment. | SSG-01 | 3d | `PLANNED` |
-| 4 | [SSG-03](./SPRINT-SSG-03-stageshow-device-frames-and-stage.md) | Build StageShow playground `.stage-toolbar`/`.stage-well`/`.stage-transport` layout and `6` parametric bezels across `3` CSS archetypes around `1:1` inner pixels + `4`-corner `1:1` pan. | SSG-02 | 3d | `PLANNED` |
-| 5 | [SSG-04](./SPRINT-SSG-04-bombadil-handles-and-runner-api.md) | Build Bombadil runner service spawning `scripts/bombadil/run.mjs`, `/api/test-runs/bombadil/*` endpoints + `fetch` SSE, Triad MCard handle schemas, `window.__lab.bombadil`, env isolation + `tmpdir` output, and CustomEvent handles. | SSG-02 | 3d | `PLANNED` |
+| 1 | [SSG-00](./SPRINT-SSG-00-stageshow-installation-and-layout-gate.md) | Complete StageShow `1.1.1` install, `lucide-react` shim + `postcss`, `PUT /api/mcard/landing` + auto-build + strict bounds in `run.mjs`, `preact/compat` scene bundler, npm pack exclusion, and design contract. | None | 2d | `DONE` |
+| 2 | [SSG-01](./SPRINT-SSG-01-css-and-chrome-subtraction.md) | Clean `tokens.css` and `semantic-tokens.css`, introduce StageShow surface tokens, fix `.orientation-*` / `mcard-manager.css` / `app.astro`, and fix non-Lab layout voids/overflows. | SSG-00 | 2d | `DONE` |
+| 3 | [SSG-02](./SPRINT-SSG-02-viewport-and-device-domain-model.md) | Unify presets, orientation math, memoized conformance fetches, `Full`/`Custom` Persistence Projection, `interrupted-capture:v1`, `window.__lab.geometry`, and Test 11 alignment. | SSG-01 | 3d | `DONE` |
+| 4 | [SSG-03](./SPRINT-SSG-03-stageshow-device-frames-and-stage.md) | Build StageShow playground `.stage-toolbar`/`.stage-well`/`.stage-transport` layout and `6` parametric bezels across `3` CSS archetypes around `1:1` inner pixels + `4`-corner `1:1` pan. | SSG-02 | 3d | `DONE` |
+| 5 | [SSG-04](./SPRINT-SSG-04-bombadil-handles-and-runner-api.md) | Build Bombadil runner service spawning `scripts/bombadil/run.mjs`, `/api/test-runs/bombadil/*` endpoints + `fetch` SSE, Triad MCard handle schemas, `window.__lab.bombadil`, env isolation + `tmpdir` output, and CustomEvent handles. | SSG-02 | 3d | `DONE` |
 | 6 | [SSG-05](./SPRINT-SSG-05-stageshow-workbench-and-bombadil-dashboard.md) | Ship StageShow workbench shell (`js/ui/icons.js`, `Explore | Guided | Bombadil | Verify` tabs), `BombadilDashboardIsland`, and shared `PresentationController`. | SSG-03, SSG-04 | 3d | `PLANNED` |
 | 7 | [SSG-06](./SPRINT-SSG-06-host-responsive-tiers-and-compact-layouts.md) | Ship `desktop >= 1280px`, `tablet 600..1279px`, and `compact < 600px` (`358px`) tiers plus multi-route bidirectional Playwright suite and strict sweep. | SSG-05 | 2d | `PLANNED` |
 | 8 | [SSG-07](./SPRINT-SSG-07-portal-stageshow-showcase-and-rehearsal.md) | Compile `1` `preact/compat` StageShow `Device pair` portal showcase illustrating Bombadil handles on `index.astro?noredirect=1`, rehearsed via `film --gate`. | SSG-06 | 2d | `PLANNED` |
@@ -148,7 +148,7 @@ Each decision has a matching superseding `SSG-plan-r2` row in [`./DECISIONS.tsv`
 - Sync `src/net/workbench-net.yaml`, `tests/bombadil/generated/workbench-net.ts`, `tests/gui-coverage.json`, `tests/bombadil/scope.json`, `tests/bombadil/workbench.bombadil.ts`, and `docs/01-architecture/astro-host-and-islands.md` inside the exact sprint PR that alters routes, controls, fetches, modes, or islands.
 - Seed ephemeral StageShow DBs inside `withHermeticServer` in `scripts/stageshow/run.mjs` via shared `seedPortalLanding` JSON `PUT /api/mcard/landing` (omitting `url` so relative-URL validation never fails) and run `npm run build:astro` unless `SKIP_BUILD=1`.
 - Selectively re-capture `tests/baselines/layout-baseline.json` using `STY_FREEZE_PAGES=...` (`SSG-01` updates `tests/features/layout-freeze.spec.js:42-50, 70-74, 151-176` with `STY_FREEZE_PAGES` partial merge + `'#mcardList'` in `VOLATILE.app` + `body[data-page-state="ready"]` + per-page async mount settle on `index` (`#single-page-mcard-host`) and `app` (`#mcardList` with `window.mcardManager?.collection != null`) while preserving `pkc-docs-index` `load` wait, capturing `index,fiber-inspector,app`; `SSG-02` & `SSG-03` & `SSG-06` capture affected routes; `SSG-05` captures `responsive-lab,index,fiber-inspector`; `SSG-07` captures `index`; `SSG-08` verifies all) with a `rebaselines` entry `{ date, program: "Program SSG (LandingPage), SPRINT-SSG-0N", pages, reason, effect, authority }`.
-- Save per-sprint verification evidence in `docs/sprints/_active/evidence/SSG-0N-<slug>.md`, append a row to [`./DECISIONS.tsv`](./DECISIONS.tsv), and pass `npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run test:unit`.
+- Save per-sprint verification evidence in `docs/sprints/_active/evidence/SSG-0N-<slug>.md`, append a row to [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv), and pass `npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run test:unit`.
 
 ## Scope
 

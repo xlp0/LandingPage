@@ -18,7 +18,7 @@
 5. **Frame Budget and Layout Stability (`INV-DEV-04`)** tracks $16.6\text{ms}$ ($60\text{fps}$) frame budgets and Cumulative Layout Shift (CLS).
 
 > [!NOTE]
-> Sprints `ERB-00..06` ([`docs/sprints/08-testing/`](../sprints/08-testing/INDEX.md)), `SPRINT-GQC-00..07` ([`docs/sprints/programs/gqc/`](../sprints/programs/gqc/INDEX.md)), and `SPRINT-BPV-00..07` ([`docs/sprints/programs/bpv/`](../sprints/programs/bpv/INDEX.md)) are implemented, verified, and graduated. Every run declares its emulation fidelity tier (`INV-DSF-01`) across **T0** (in-browser Lab iframe emulating CSS viewport), **T1/T2** (Playwright browser context adding DPR, touch, mobile UA, media features, and CDP throttling at T2), and **T3** (physical LAN hardware).
+> Sprints `ERB-00..06` ([`docs/sprints/08-testing/`](../sprints/08-testing/INDEX.md)), `SPRINT-GQC-00..07` ([`docs/sprints/programs/gqc/`](../sprints/programs/gqc/INDEX.md)), `SPRINT-BPV-00..07` ([`docs/sprints/programs/bpv/`](../sprints/programs/bpv/INDEX.md)), and `SPRINT-SSG-00..08` ([`docs/sprints/programs/ssg/`](../sprints/programs/ssg/INDEX.md)) are implemented, verified, and graduated. Every run declares its emulation fidelity tier (`INV-DSF-01`) across **T0** (in-browser Lab iframe emulating CSS viewport), **T1/T2** (Playwright browser context adding DPR, touch, mobile UA, media features, and CDP throttling at T2), and **T3** (physical LAN hardware).
 
 ---
 
@@ -46,7 +46,7 @@ TARGET_URL=http://localhost:4321/ npm run test:replay
 
 ---
 
-## 3. Architecture Progression (`Program ERB` + `Program GQC`)
+## 3. Architecture Progression (`Program ERB` + `Program GQC` + `Program SSG`)
 
 1. **[SPRINT-ERB-00](../sprints/08-testing/SPRINT-ERB-00-infrastructure-refactoring.md)** extracted `viewport-stage.js`, `target-membrane.js`, and `lab-toolbar.js` with single-writer `iframe.src` (`INV-STU-01`) and `/app-config.json` target registry (`INV-STU-02`).
 2. **[SPRINT-ERB-01](../sprints/08-testing/SPRINT-ERB-01-ring-buffer-core.md)** implemented `event-ring-buffer.js` ($N \le 2048$) and the 20-pair `recording-state-machine.js`.
@@ -55,13 +55,14 @@ TARGET_URL=http://localhost:4321/ npm run test:replay
 5. **[SPRINT-ERB-03](../sprints/08-testing/SPRINT-ERB-03-mcard-clm-persistence.md)** added `telemetry-collector.js` and SQLite Triad persistence (`server/test-run-api.mjs`) using `clm-kernel` Blake3 hashing.
 6. **[SPRINT-ERB-04](../sprints/08-testing/SPRINT-ERB-04-playwright-deterministic-replay.md)** added `scripts/playwright-replay-driver.mjs` and the 16-case multi-device sweep (`tests/features/systematic-landing-test.spec.js`).
 7. **[SPRINT-ERB-06](../sprints/08-testing/SPRINT-ERB-06-device-sensitive-conformance.md)** added the 15-check conformance catalog (`tests/conformance/checks/`) and `urn:mcard:certification:responsive:v1`.
-8. **[Program GQC (`SPRINT-GQC-00..07`)](../sprints/programs/gqc/INDEX.md)** wrapped the workbench in `astro@7.4.2` with 7 Preact islands (`SpaTestWorkflow`), formalized Page-as-Place (`PlaceMCard`) and Functional-Link-as-Transition (`TransitionMCard` + `FiringReceiptMCard`), linked runs via `urn:gqc:navigation-run-link:v1`, aligned `recorder.js` to historical `clm-kernel@0.0.13` (now `0.0.24`), and enforced `npm run docs:check`.
+8. **[Program GQC (`SPRINT-GQC-00..07`)](../sprints/programs/gqc/INDEX.md)** wrapped the workbench in `astro@7.4.2` with Preact islands (`SpaTestWorkflow`), formalized Page-as-Place (`PlaceMCard`) and Functional-Link-as-Transition (`TransitionMCard` + `FiringReceiptMCard`), linked runs via `urn:gqc:navigation-run-link:v1`, aligned `recorder.js` to historical `clm-kernel@0.0.13` (now `0.0.24`), and enforced `npm run docs:check`.
+9. **[Program SSG (`SPRINT-SSG-00..08`)](../sprints/programs/ssg/INDEX.md)** installed StageShow `1.1.1`, consolidated 2D geometry inside `js/harness/viewport-geometry.js` across `12` built-in device presets (`js/device-registry.js`), separated 6 parametric device bezels strictly outside `.stage-screen-slot` (`INV-SSG-GEOM`), added subprocess-isolated Bombadil dashboard handles (`BombadilDashboardIsland`, 8th island), and standardized desktop (`>= 1280px`), tablet (`600..1279px`), and compact (`< 600px`) workbench tiers.
 
 ---
 
 ## 4. Standard Device Sweep Matrix
 
-Every sweep derives dimensions from [`js/device-registry.js`](../../js/device-registry.js) via `tests/fixtures/device-matrix.js` (`8` devices x `2` orientations = `16` cases):
+Every Playwright sweep derives device contexts from [`js/device-registry.js`](../../js/device-registry.js) via `tests/fixtures/device-matrix.js` (`deviceMatrix()`, which covers all `12` built-in presets x `2` orientations = `24` combinations, while the workbench includes `4` additional reconciled `mcard.yaml` presets `mobile-large`, `tablet-standard`, `desktop-standard`, and `desktop-ultrawide` alongside the initial `8` presets below):
 
 | Preset Identifier | Device Model | CSS Dimensions (W x H) | DPR | Category |
 | :--- | :--- | :--- | :--- | :--- |
@@ -100,4 +101,4 @@ Conformance specs live under `tests/conformance/<slug>.conformance.json` (note t
 }
 ```
 
-When all 16 device and orientation combinations pass `INV-DEV-01` (`no-horizontal-overflow`) and `INV-DEV-03` (`orientation-preserves-state`), the conformance runner mints `urn:mcard:certification:responsive:v1` hashed with Triad Blake3 (`clm-kernel@0.0.24`) and bound to `urn:mcard:certification_latest:<slug>`.
+When all device and orientation combinations across the matrix pass `INV-DEV-01` (`no-horizontal-overflow`) and `INV-DEV-03` (`orientation-preserves-state`), the conformance runner mints `urn:mcard:certification:responsive:v1` hashed with Triad Blake3 (`clm-kernel@0.0.24`) and bound to `urn:mcard:certification_latest:<slug>`.

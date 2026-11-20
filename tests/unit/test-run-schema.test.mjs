@@ -5,15 +5,27 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   validateTestRun,
+  validateInterruptedCapture,
+  validateBombadilTrigger,
+  validateBombadilRun,
+  validateBombadilCoverage,
   parseStoredTestRunRecord,
   canonicalJson,
   targetSlug,
-  TEST_RUN_SCHEMA
+  TEST_RUN_SCHEMA,
+  INTERRUPTED_CAPTURE_SCHEMA,
+  BOMBADIL_TRIGGER_SCHEMA,
+  BOMBADIL_RUN_SCHEMA,
+  BOMBADIL_COVERAGE_SCHEMA,
+  RECOGNIZED_RUN_SCHEMAS
 } from '../../js/harness/test-run-schema.js';
 import {
   InteractionRecorder,
+  projectViewportToRunDescriptor,
   DEFAULT_CLM_KERNEL_VERSION
 } from '../../js/harness/recorder.js';
+import { BUILTIN_DEVICES } from '../../js/device-registry.js';
+import { applyCustomViewport, selectDevicePreset, createFullSelection } from '../../js/harness/viewport-geometry.js';
 import { KERNEL_PROVENANCE } from '../../server/mcard-modality.mjs';
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -165,8 +177,110 @@ describe('GQC-07-UNIT-03: clmKernel provenance alignment and historical record c
         target: { url: 'http://localhost:3000/tests/fixtures/spa-test-target.html' }
       });
       assert.equal(run.lab.clmKernel, '0.0.24');
+      assert.equal(run.device.id, 'viewport-full');
       const validation = validateTestRun(run);
       assert.equal(validation.valid, true, validation.errors.join(', '));
+    });
+
+    test('Persistence Projection Table maps preset, custom, square, and full modes while stripping UI-only fields', async () => {
+      const iphone = BUILTIN_DEVICES.find((d) => d.id === 'iphone-16-pro');
+      const presetProj = projectViewportToRunDescriptor({
+        selection: selectDevicePreset(iphone),
+        device: iphone
+      });
+      assert.equal(presetProj.ok, true);
+      assert.equal(presetProj.device.id, 'iphone-16-pro');
+      assert.equal(presetProj.device.frameStyle, undefined);
+      assert.equal(presetProj.device.defaultOrientation, undefined);
+      assert.equal(presetProj.orientation, 'portrait');
+
+      const customProj = projectViewportToRunDescriptor({
+        selection: applyCustomViewport(640, 480)
+      });
+      assert.equal(customProj.device.id, 'custom-640x480');
+      assert.equal(customProj.orientation, 'landscape');
+
+      const squareProj = projectViewportToRunDescriptor({
+        selection: applyCustomViewport(500, 500)
+      });
+      assert.equal(squareProj.device.id, 'custom-500x500');
+      assert.equal(squareProj.orientation, 'portrait');
+
+      // Full stage locks start() dimensions and ignores subsequent resizes
+      let liveStage = { width: 1000, height: 700 };
+      const recorder = new InteractionRecorder({
+        measureFullStage: () => ({ ...liveStage })
+      });
+      recorder.start({ targetUrl: 'http://localhost:3001/tests/fixtures/spa-test-target.html' });
+      liveStage = { width: 1400, height: 900 };
+      const fullRun = recorder.buildTestRun({ selection: createFullSelection() });
+      assert.equal(fullRun.device.id, 'viewport-full');
+      assert.equal(fullRun.device.width, 1000);
+      assert.equal(fullRun.device.height, 700);
+      assert.equal(fullRun.orientation, 'landscape');
+      assert.equal(validateTestRun(fullRun).valid, true);
+
+      // < 100px Full stage blocks persist without calling fetch
+      let fetchCalled = false;
+      const prevFetch = globalThis.fetch;
+      globalThis.fetch = async () => {
+        fetchCalled = true;
+        return { ok: true, async json() { return {}; } };
+      };
+      try {
+        const tinyRecorder = new InteractionRecorder({
+          measureFullStage: () => ({ width: 80, height: 600 })
+        });
+        tinyRecorder.start({ targetUrl: 'http://localhost:3001/tests/fixtures/spa-test-target.html' });
+        const blockedRes = await tinyRecorder.saveTestRun({ selection: createFullSelection() });
+        assert.equal(blockedRes.ok, false);
+        assert.equal(blockedRes.blocked, true);
+        assert.equal(fetchCalled, false);
+      } finally {
+        globalThis.fetch = prevFetch;
+      }
+    });
+
+    test('InteractionRecorder filters noise viewport causes and builds valid urn:gqc:interrupted-capture:v1 payloads', () => {
+      const listeners = new Map();
+      const prevDoc = globalThis.document;
+      globalThis.document = {
+        addEventListener(type, fn) {
+          if (!listeners.has(type)) listeners.set(type, new Set());
+          listeners.get(type).add(fn);
+        },
+        removeEventListener(type, fn) {
+          listeners.get(type)?.delete(fn);
+        },
+        querySelector: () => null
+      };
+
+      try {
+        const recorder = new InteractionRecorder();
+        recorder.start({ targetUrl: 'http://localhost:3001/tests/fixtures/spa-test-target.html' });
+
+        for (const cause of ['resize', 'arrangement', 'scale-mode', 'boot']) {
+          recorder._onViewportChange({ detail: { cause, width: 800, height: 600, scale: 1, orientation: 'landscape' } });
+        }
+        assert.equal(recorder.snapshot().length, 0);
+
+        for (const cause of ['preset', 'custom', 'rotate']) {
+          recorder._onViewportChange({ detail: { cause, width: 393, height: 852, scale: 1, orientation: 'portrait' } });
+        }
+        assert.equal(recorder.snapshot().length, 3);
+        assert.equal(recorder.snapshot()[2].type, 'orientation_change');
+
+        const interrupted = recorder.buildInterruptedCapture({
+          reason: 'Cross-origin redirect',
+          lifecycleState: 'RECORDING'
+        });
+        assert.equal(interrupted.schema, INTERRUPTED_CAPTURE_SCHEMA);
+        assert.equal(validateInterruptedCapture(interrupted).valid, true);
+        recorder.destroy();
+      } finally {
+        if (prevDoc === undefined) delete globalThis.document;
+        else globalThis.document = prevDoc;
+      }
     });
 
     test('InteractionRecorder honors explicit clmKernelVersion injection option', () => {
@@ -191,5 +305,66 @@ describe('GQC-07-UNIT-03: clmKernel provenance alignment and historical record c
       assert.equal(parsed.record.schema, TEST_RUN_SCHEMA);
       assert.equal(parsed.record.lab.clmKernel, '0.0.10');
       assert.equal(canonicalJson(parsed.record), storedBytes);
+    });
+
+    test('Bombadil trigger, run, and coverage schemas validate cleanly while keeping responsive_test_run:v1 closed', () => {
+      for (const s of [BOMBADIL_TRIGGER_SCHEMA, BOMBADIL_RUN_SCHEMA, BOMBADIL_COVERAGE_SCHEMA]) {
+        assert.ok(RECOGNIZED_RUN_SCHEMAS.includes(s));
+      }
+
+      const validTrigger = {
+        schema: BOMBADIL_TRIGGER_SCHEMA,
+        triggerId: 'trig_1',
+        handle: 'urn:mcard:bombadil:trigger:spa',
+        target: 'spa',
+        timeLimit: '30s',
+        minFirings: 1,
+        requestedBy: 'workbench',
+        requestedAt: '2026-11-20T00:00:00.000Z'
+      };
+      assert.equal(validateBombadilTrigger(validTrigger).valid, true);
+      assert.equal(validateTestRun(validTrigger).valid, true);
+      assert.equal(validateBombadilTrigger({ ...validTrigger, timeLimit: '10s;rm' }).valid, false);
+      assert.equal(validateBombadilTrigger({ ...validTrigger, handle: 'urn:mcard:bombadil:trigger:workbench' }).valid, false);
+
+      const validRun = {
+        schema: BOMBADIL_RUN_SCHEMA,
+        runId: 'run_1',
+        triggerHash: 'a'.repeat(64),
+        target: 'spa',
+        status: 'clean',
+        exitCode: 0,
+        startedAt: '2026-11-20T00:00:00.000Z',
+        finishedAt: '2026-11-20T00:00:10.000Z',
+        durationMs: 10000,
+        actionsCount: 12,
+        firingsCount: 4,
+        distinctTransitions: 4,
+        quiescenceWarnings: 0,
+        violations: [],
+        outputDir: '/tmp/bombadil-run-1',
+        shrunkTracePath: null,
+        reproduceCommand: 'node scripts/bombadil/run.mjs spa --time-limit 30s',
+        shrinkCommand: null
+      };
+      assert.equal(validateBombadilRun(validRun).valid, true);
+      assert.equal(validateTestRun(validRun).valid, true);
+      assert.equal(validateBombadilRun({ ...validRun, status: 'unknown' }).valid, false);
+      assert.equal(validateBombadilRun({ ...validRun, triggerHash: 'short' }).valid, false);
+
+      const validCoverage = {
+        schema: BOMBADIL_COVERAGE_SCHEMA,
+        generatedAt: '2026-11-20T00:00:11.000Z',
+        sourceDir: '/tmp/bombadil-run-1',
+        nets: { 'landingpage-workbench-net': { declared: 90, asserted: 19, exploredOnly: 2, neverFired: 69 } },
+        rejectedTraces: []
+      };
+      assert.equal(validateBombadilCoverage(validCoverage).valid, true);
+      assert.equal(validateTestRun(validCoverage).valid, true);
+      assert.equal(validateBombadilCoverage({ ...validCoverage, rejectedTraces: null }).valid, false);
+
+      const closedRun = createValidRunFixture();
+      closedRun.unexpectedExtraField = 'rejected';
+      assert.equal(validateTestRun(closedRun).valid, false);
     });
   });

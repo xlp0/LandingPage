@@ -34,7 +34,7 @@ test('islands report their own state and the recorder state is visible', async (
 
   const islands = page.locator('[data-island]');
   const count = await islands.count();
-  expect(count).toBeGreaterThanOrEqual(7);
+  expect(count).toBeGreaterThanOrEqual(8);
   for (let i = 0; i < count; i += 1) {
     const island = islands.nth(i);
     await expect(island).toHaveAttribute('data-island-state', /^(mounting|ready|busy|empty|error)$/);

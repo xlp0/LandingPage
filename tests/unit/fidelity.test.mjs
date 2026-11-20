@@ -51,10 +51,10 @@ describe('Fidelity Model (INV-DSF-01)', () => {
     assert.equal(f.notEmulated.includes('safeAreaInsets'), false);
   });
 
-  test('deviceMatrix generates 16 combinations from 8 built-ins and 2 orientations', async () => {
-    const { deviceMatrix, toPlaywrightContext } = await import('../../tests/fixtures/device-matrix.js');
+  test('deviceMatrix generates 24 combinations from 12 built-ins and 2 orientations', async () => {
+    const { deviceMatrix } = await import('../../tests/fixtures/device-matrix.js');
     const matrix = deviceMatrix();
-    assert.equal(matrix.length, 16);
+    assert.equal(matrix.length, 24);
 
     const first = matrix[0];
     assert.ok(first.profile);

@@ -51,7 +51,7 @@ export function toPlaywrightContext(profile, orientation = null) {
  * @returns {Array<{ profile: Object, orientation: string, context: Object }>}
  */
 export function deviceMatrix({
-  categories = null,
+  categories = ['phone', 'tablet', 'desktop'],
   orientations = ['portrait', 'landscape']
 } = {}) {
   const devices = categories

@@ -35,7 +35,7 @@ Open `http://localhost:3000/responsive-lab.html` in Chromium, Firefox, or WebKit
 `LandingPage` operates as **Estate 4 (Submodule 3)** of the `MCard_TDD` four-estate workspace (`ULR-01`). It maintains a strict boundary between the **workbench** and **targets under test**.
 
 1. **Responsive UI Lab Workbench (`/responsive-lab.html`, Place `p_page_responsive_lab`)**
-   Hosted by [`src/pages/responsive-lab.astro`](src/pages/responsive-lab.astro) (`astro@7.4.2`, `@astrojs/node@11.1.9` middleware, `@astrojs/preact@6.1.1`, `preact@11.1.0`) with 7 Preact islands. Certifies a chosen target URL across 8 device presets, 2D orientation swap (`INV-RVP-01`), scale-free interaction capture (`[0.0, 1.0]`, `INV-ERB-02`), 5-step guided SPA Petri net verification, Triad persistence, and deterministic Playwright replay.
+   Hosted by [`src/pages/responsive-lab.astro`](src/pages/responsive-lab.astro) (`astro@7.4.2`, `@astrojs/node@11.1.9` middleware, `@astrojs/preact@6.1.1`, `preact@11.1.0`) with 8 Preact islands (`BombadilDashboardIsland` deferred with `client:visible`). Certifies a chosen target URL across 12 built-in device presets (`js/device-registry.js`), 2D orientation swap (`INV-RVP-01`), parametric `data-frame-style` bezels (`INV-SSG-GEOM`), scale-free interaction capture (`[0.0, 1.0]`, `INV-ERB-02`), 5-step guided SPA Petri net verification, Bombadil runner handles, Triad persistence, and deterministic Playwright replay.
 2. **Targets Under Test (Distinct from the Workbench)**
    - **Approved SPA Target** at [`/tests/fixtures/spa-test-target.html`](tests/fixtures/spa-test-target.html) modeled by [`tests/fixtures/spa-test-target.graph.json`](tests/fixtures/spa-test-target.graph.json) (`spa-test-target-net`).
    - **MPA Candidate** at `/index.html` when embedded inside `#mission-control-iframe`.
@@ -48,7 +48,7 @@ Open `http://localhost:3000/responsive-lab.html` in Chromium, Firefox, or WebKit
 
 ## CLM Petri Net, Three Hash Domains, and PenPot Scope
 
-- **Page-as-Place and Functional-Link-as-Transition.** Workbench routes (`31` Places, `65` Transitions in [`src/net/workbench-net.yaml`](src/net/workbench-net.yaml)) and SPA target views map Pages to `PlaceMCard` nodes (`clm://type/view/...` and `clm/views/petri/v1`, kept separate from `mcard:route:/...` and `mcard:target:/...` handles in `urn:gqc:net-bindings:v1`) and Functional Links to `TransitionMCard` edges producing `FiringReceiptMCard` receipts. Petri net validation and trace replay consume `ADR-014` (`KC-18`) host-free capability subpaths (`clm-kernel/petri` and `clm-kernel/store`), verified alongside `KC-01`/`KC-02` SQLite `runConsumerConformance` in [`tests/unit/clm-kernel-024-contracts.test.mjs`](tests/unit/clm-kernel-024-contracts.test.mjs). Invalid target transitions enter `p_error_modal` (`p_spa_missing_transition`) and require explicit recovery (`t_spa_recover_overview`).
+- **Page-as-Place and Functional-Link-as-Transition.** Workbench routes (`40` Places, `90` Transitions in [`src/net/workbench-net.yaml`](src/net/workbench-net.yaml)) and SPA target views map Pages to `PlaceMCard` nodes (`clm://type/view/...` and `clm/views/petri/v1`, kept separate from `mcard:route:/...` and `mcard:target:/...` handles in `urn:gqc:net-bindings:v1`) and Functional Links to `TransitionMCard` edges producing `FiringReceiptMCard` receipts. Petri net validation and trace replay consume `ADR-014` (`KC-18`) host-free capability subpaths (`clm-kernel/petri` and `clm-kernel/store`), verified alongside `KC-01`/`KC-02` SQLite `runConsumerConformance` in [`tests/unit/clm-kernel-024-contracts.test.mjs`](tests/unit/clm-kernel-024-contracts.test.mjs). Invalid target transitions enter `p_error_modal` (`p_spa_missing_transition`) and require explicit recovery (`t_spa_recover_overview`).
 - **Closed `responsive_test_run:v1` Schema.** `urn:mcard:schema:responsive_test_run:v1` stays closed at 12 keys (`js/harness/recorder.js` stamps `lab.clmKernel: '0.0.24'`, while historical `0.0.10` records remain readable without rewriting). Navigation receipts attach via a separate `urn:gqc:navigation-run-link:v1` MCard (`nav_run_link_<runHash>`), and interrupted captures persist as `urn:gqc:interrupted-capture:v1`.
 - **Three Distinct Hash Domains.**
   1. **Triad Blake3** in [`server/mcard-api.mjs`](server/mcard-api.mjs) via `clm-kernel@0.0.24` (`clm-kernel/primitives` `computeHash`, sole server MCard and receipt authority).
@@ -63,14 +63,19 @@ Open `http://localhost:3000/responsive-lab.html` in Chromium, Firefox, or WebKit
 
 ```bash
 npm run check:net
+npm run check:explorable-gui
+npm run check:bombadil-nets
 node scripts/check-package-source-parity.mjs
 npm run docs:gen-net
 npm run docs:check
+npm run stageshow:check-css
+npm run stageshow:sweep -- --strict
 npm run build
 npm run test:unit
 npm run check:playwright-discovery
 npm run test:smoke
 npm run test:components
+npm run test:features
 npm run test:responsive
 npm run test:replay
 npm run test:conformance
@@ -86,7 +91,7 @@ npm run test:conformance
 | **Program ERB** (`ERB-00..06`) | [`docs/sprints/08-testing/`](docs/sprints/08-testing/INDEX.md) | Viewport stage, ring buffer, membrane normalization, Triad test-run persistence, Playwright replay, 15-check conformance | Graduated |
 | **Program GQC** (`SPRINT-GQC-00..07`) | [`docs/sprints/programs/gqc/`](docs/sprints/programs/gqc/INDEX.md) | Petri net verification, Astro 7 + 7 Preact islands, SPA target workbench, Layer 1/Layer 4 `NetMCard` + `FiringReceiptMCard` Triad persistence, performance baselines, and living docs gate (`npm run docs:check`) | Graduated (`2026-11-18`) |
 | **Program BPV** (`SPRINT-BPV-00..07`) | [`docs/sprints/programs/bpv/`](docs/sprints/programs/bpv/INDEX.md) | Bombadil `0.7.10` property verification, page-state contract, explorable GUI checks, trace-to-net replay, and local Docker nightly scheduler | Graduated (`2026-11-18`) |
-| **Program SSG** (`SPRINT-SSG-00..08`) | [`docs/sprints/_active/`](docs/sprints/_active/README.md) | StageShow `1.1.1` device frames and craft (`tools/stageshow/`, `.agents/skills/stageshow/`), Bombadil runner dashboard, and responsive tiers | Active (`SPRINT-SSG-00` in progress) |
+| **Program SSG** (`SPRINT-SSG-00..08`) | [`docs/sprints/programs/ssg/`](docs/sprints/programs/ssg/INDEX.md) | StageShow `1.1.1` device frames and craft (`tools/stageshow/`, `.agents/skills/stageshow/`), Bombadil runner dashboard (`8th` island), `12` built-in device presets, responsive tiers, and Shadow DOM portal showcase | Graduated (`2026-11-20`) |
 
 ---
 

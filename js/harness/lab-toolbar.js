@@ -11,7 +11,7 @@ const FALLBACK_TARGETS = Object.freeze([
     id: 'local-ui-app',
     url: '/tests/fixtures/spa-test-target.html',
     label: 'SPA Test Fixture (/tests/fixtures/spa-test-target.html) - Iframe Compatible',
-    chipLabel: '🧭 SPA Fixture',
+    chipLabel: 'SPA Fixture',
     targetType: 'spa',
     status: 'allowed',
     quickLaunch: true,
@@ -252,26 +252,26 @@ export async function initLabToolbar(options = {}) {
       if (corsBlockReason) corsBlockReason.textContent = reason || 'Blocked by frame policy';
       if (corsBlockTargetName) corsBlockTargetName.textContent = name;
       if (corsStatusPill) {
-        corsStatusPill.textContent = `⚠️ Iframe Blocked (${reason || 'Frame Policy'})`;
+        corsStatusPill.textContent = `Iframe Blocked (${reason || 'Frame Policy'})`;
         corsStatusPill.style.color = 'var(--badge-danger-text)';
       }
     } else {
       if (corsBlockAlert) corsBlockAlert.style.display = 'none';
       if (corsStatusPill) {
         if (RECOVERABLE_STATES.has(policyState)) {
-          corsStatusPill.textContent = `⚠️ ${reason || POLICY_LABELS[policyState] || 'Capture Unavailable'}`;
+          corsStatusPill.textContent = `${reason || POLICY_LABELS[policyState] || 'Capture Unavailable'}`;
           corsStatusPill.style.color = 'var(--badge-danger-text)';
         } else if (policyState === 'pending-handshake') {
-          corsStatusPill.textContent = '● Cross-Origin Target (Awaiting Probe Handshake…)';
+          corsStatusPill.textContent = 'Cross-Origin Target (Awaiting Probe Handshake…)';
           corsStatusPill.style.color = 'var(--badge-info-text)';
         } else if (policyState === 'approved-probe') {
-          corsStatusPill.textContent = '● Controlled Viewport Active (Probe Agent Connected)';
+          corsStatusPill.textContent = 'Controlled Viewport Active (Probe Agent Connected)';
           corsStatusPill.style.color = 'var(--badge-success-text)';
         } else if (membraneTarget?.sameOrigin) {
-          corsStatusPill.textContent = '● Controlled Viewport Active (Same-Origin Target)';
+          corsStatusPill.textContent = 'Controlled Viewport Active (Same-Origin Target)';
           corsStatusPill.style.color = 'var(--badge-success-text)';
         } else {
-          corsStatusPill.textContent = '● Controlled Viewport Active (Iframe Compatible)';
+          corsStatusPill.textContent = 'Controlled Viewport Active (Iframe Compatible)';
           corsStatusPill.style.color = 'var(--badge-success-text)';
         }
       }

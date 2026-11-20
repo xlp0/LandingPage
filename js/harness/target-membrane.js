@@ -668,7 +668,7 @@ export function createTargetMembrane(options = {}) {
     }
   }
 
-  function recoverToDefault(defaultTarget = 'app.html') {
+  function recoverToDefault(defaultTarget = '/tests/fixtures/spa-test-target.html') {
     settlePolicyPlaceToBase();
     lastPolicyRejection = null;
     return bindTarget(defaultTarget, 'policy-recover');

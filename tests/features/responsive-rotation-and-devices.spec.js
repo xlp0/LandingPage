@@ -33,13 +33,13 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
   // ──────────────────────────────────────────────────────────────────────────
   test('RVP-T01: rotation physically swaps width and height, and twice is identity', async ({ page }) => {
     const frame = page.locator(FRAME);
+    const iframe = page.locator('#mission-control-iframe');
 
-    // portrait device, portrait orientation
-    await page.locator('#btn-orient-vertical').click();
+    // phone preset opens in portrait via defaultOrientation
     await page.locator('#btn-size-mobile').click();
     await page.waitForTimeout(500);
 
-    const portrait = await frame.boundingBox();
+    const portrait = await iframe.boundingBox();
     expect(portrait.width, 'portrait width is the device width').toBeCloseTo(393, 0);
     expect(portrait.height, 'portrait height is the device height').toBeCloseTo(852, 0);
     expect(portrait.height).toBeGreaterThan(portrait.width);
@@ -48,7 +48,7 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     await page.locator('#btn-rotate-viewport').click();
     await page.waitForTimeout(500);
 
-    const landscape = await frame.boundingBox();
+    const landscape = await iframe.boundingBox();
     expect(landscape.width, 'landscape width is the former height').toBeCloseTo(852, 0);
     expect(landscape.height, 'landscape height is the former width').toBeCloseTo(393, 0);
     expect(landscape.width).toBeGreaterThan(landscape.height);
@@ -58,7 +58,7 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     await page.locator('#btn-rotate-viewport').click();
     await page.waitForTimeout(500);
 
-    const back = await frame.boundingBox();
+    const back = await iframe.boundingBox();
     expect(back.width, 'double rotation restores the width').toBeCloseTo(portrait.width, 0);
     expect(back.height, 'double rotation restores the height').toBeCloseTo(portrait.height, 0);
 
@@ -74,8 +74,7 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     const frame = page.locator(FRAME);
     const stage = page.locator(STAGE);
 
-    // 1920x1080 exceeds the stage, so auto-fit must bound it
-    await page.locator('#btn-orient-horizontal').click();
+    // MacBook Air 13" (1280x832) opens in landscape automatically and exceeds docked stage width
     await page.locator('#btn-size-desktop').click();
     await page.waitForTimeout(600);
 
@@ -122,34 +121,34 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(400);
 
-    await page.locator('#btn-orient-vertical').click();
     await page.locator('#btn-size-tablet').click();   // 820 x 1180 portrait
     await page.waitForTimeout(700);
 
     const m = await page.evaluate(() => {
-      const stage = document.querySelector('#lab-stage-container');
+      const well = document.querySelector('#stage-well') || document.querySelector('#lab-stage-container');
       const frame = document.querySelector('#controlled-panel-frame');
-      const host = stage.getBoundingClientRect();
+      const iframe = document.querySelector('#mission-control-iframe');
+      const host = well.getBoundingClientRect();
       const fb = frame.getBoundingClientRect();
+      const ib = iframe.getBoundingClientRect();
       return {
         docOverflow: document.documentElement.scrollHeight - window.innerHeight,
         frameVisible: Math.min(fb.bottom, host.bottom) - Math.max(fb.top, host.top),
         frameHeight: fb.height,
         scale: Number(frame.style.getPropertyValue('--frame-scale-factor')),
-        aspect: fb.width / fb.height,
+        aspect: ib.width / ib.height,
       };
     });
 
     expect(m.docOverflow, 'the page does not scroll').toBeLessThanOrEqual(1);
     expect(m.frameVisible, 'the whole frame height is visible').toBeGreaterThanOrEqual(m.frameHeight - 1);
     expect(m.scale, 'the device is scaled down, not left at 100%').toBeLessThan(1);
-    expect(m.aspect, 'the rendered frame keeps the device aspect').toBeCloseTo(820 / 1180, 2);
+    expect(m.aspect, 'the rendered screen keeps the device aspect').toBeCloseTo(820 / 1180, 2);
   });
 
   test('RVP-T02b: a device that fits is never upscaled by the margin', async ({ page }) => {
     // INV-RVP-02: s = min(1, ...). The 5% margin lives inside the scaled branch
     // only, so a fitting device must render at exactly 1:1.
-    await page.locator('#btn-orient-vertical').click();
     await page.locator('#btn-size-mobile').click();
     await page.waitForTimeout(500);
 
@@ -176,11 +175,10 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     const chip = page.locator('.size-preset-btn').filter({ hasText: 'Playwright Ultra' });
     await expect(chip).toBeVisible();
 
-    // and applies its dimensions
-    await page.locator('#btn-orient-vertical').click();
+    // and applies its dimensions in its default orientation
     await chip.click();
     await page.waitForTimeout(500);
-    const box = await page.locator(FRAME).boundingBox();
+    const box = await page.locator('#mission-control-iframe').boundingBox();
     expect(box.width).toBeCloseTo(420, 0);
 
     // persists across a reload
@@ -325,9 +323,8 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     await page.selectOption('#public-site-selector', 'index.html');
     await page.locator('#btn-load-in-iframe').click();
     await page.waitForTimeout(1200);
-    await page.locator('#btn-orient-vertical').click();
     await page.fill('#controlled-width-input', '832');
-    await page.fill('#controlled-height-input', '1133');
+    await page.fill('#controlled-height-input', '480');
     await page.locator('#btn-apply-custom-dim').click();
     await page.waitForTimeout(1500);
 
@@ -346,7 +343,7 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     // and it actually scrolls
     const after = await page.evaluate(() => {
       const doc = document.querySelector('#mission-control-iframe').contentDocument;
-      doc.documentElement.scrollTop = 400;
+      doc.documentElement.scrollTop = 200;
       return doc.documentElement.scrollTop;
     });
     expect(after, 'the tested page scrolls inside the device viewport').toBeGreaterThan(0);
@@ -427,29 +424,27 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     const dim = page.locator('#controlled-frame-dim');
     const status = page.locator('#controlled-panel-status');
 
-    await page.locator('#btn-orient-vertical').click();
     await page.locator('#btn-size-mobile').click();
     await page.waitForTimeout(500);
 
     await expect(dim).toContainText('393px × 852px');
     await expect(dim).toContainText('(2.17:1)');
-    await expect(dim).toContainText('↕ Vertical (Portrait)');
+    await expect(dim).toContainText('Portrait');
     await expect(dim).toContainText('100% Scale');
 
     await expect(status).toContainText('393px × 852px');
     await expect(status).toContainText('(2.17:1)');
-    await expect(status).toContainText('↕ Vertical (Portrait)');
+    await expect(status).toContainText('Portrait');
 
     // a device that does not fit reports its real factor, not "100%"
-    await page.locator('#btn-orient-horizontal').click();
-    await page.locator('#btn-size-desktop').click(); // 1920 × 1080
+    await page.locator('#btn-size-desktop').click(); // MacBook Air 13" 1280 × 832 opens landscape
     await page.waitForTimeout(600);
 
     const scale = await page.evaluate(() =>
       Number(document.querySelector('#controlled-panel-frame').style.getPropertyValue('--frame-scale-factor')));
     expect(scale).toBeLessThan(1);
     await expect(dim).toContainText(`${Math.round(scale * 100)}% Scale`);
-    await expect(dim).toContainText('↔ Horizontal (Landscape)');
+    await expect(dim).toContainText('Landscape');
   });
 
   test('RVP-T10: applying custom W×H resizes the frame to exactly those dims', async ({ page }) => {
@@ -459,7 +454,7 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     await page.locator('#btn-apply-custom-dim').click();
     await page.waitForTimeout(600);
 
-    let box = await page.locator(FRAME).boundingBox();
+    let box = await page.locator('#mission-control-iframe').boundingBox();
     expect(box.width).toBeCloseTo(500, 0);
     expect(box.height).toBeCloseTo(700, 0);
 
@@ -468,7 +463,7 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     await page.locator('#controlled-height-input').press('Enter');
     await page.waitForTimeout(600);
 
-    box = await page.locator(FRAME).boundingBox();
+    box = await page.locator('#mission-control-iframe').boundingBox();
     expect(box.width).toBeCloseTo(600, 0);
     expect(box.height).toBeCloseTo(400, 0);
   });
@@ -515,5 +510,48 @@ test.describe('EPIC-RVP: Responsive Viewport Rotation & Dynamic Device Registry'
     expect(selVal).toBe(customUrl);
     const iframeSrc = await page.locator('#mission-control-iframe').getAttribute('src');
     expect(iframeSrc).toBe(customUrl);
+  });
+
+  test('RVP-T14: presets initialize defaultOrientation and Full/square modes disable orientation controls', async ({ page }) => {
+    const btnRotate = page.locator('#btn-rotate-viewport');
+    const btnPortrait = page.locator('#btn-orient-vertical');
+    const btnLandscape = page.locator('#btn-orient-horizontal');
+    const frame = page.locator(FRAME);
+    const dim = page.locator('#controlled-frame-dim');
+
+    // Initial Full (100%) is responsive and non-rotatable
+    await expect(btnRotate).toBeDisabled();
+    await expect(btnPortrait).toBeDisabled();
+    await expect(btnLandscape).toBeDisabled();
+    await expect(btnPortrait).toHaveAttribute('aria-pressed', 'false');
+    await expect(btnLandscape).toHaveAttribute('aria-pressed', 'false');
+    await expect(dim).toContainText('Responsive');
+
+    // Mobile opens portrait, then switching to Desktop opens landscape regardless of prior portrait state
+    await page.locator('#btn-size-mobile').click();
+    await expect(frame).toHaveClass(/orientation-vertical/);
+    await expect(btnPortrait).toHaveAttribute('aria-pressed', 'true');
+
+    await page.locator('#btn-size-desktop').click();
+    await expect(frame).toHaveClass(/orientation-horizontal/);
+    await expect(btnLandscape).toHaveAttribute('aria-pressed', 'true');
+    const desktopBox = await frame.boundingBox();
+    expect(desktopBox.width).toBeGreaterThan(desktopBox.height);
+
+    // Custom square 500x500 marks non-rotatable Square and unpresses orientation buttons
+    await page.fill('#controlled-width-input', '500');
+    await page.fill('#controlled-height-input', '500');
+    await page.locator('#btn-apply-custom-dim').click();
+    await expect(dim).toContainText('Square');
+    await expect(btnRotate).toBeDisabled();
+    await expect(btnPortrait).toBeDisabled();
+    await expect(btnLandscape).toBeDisabled();
+    await expect(btnPortrait).toHaveAttribute('aria-pressed', 'false');
+    await expect(btnLandscape).toHaveAttribute('aria-pressed', 'false');
+
+    // Switching back to Full (100%) stays disabled and reports Responsive
+    await page.locator('#btn-size-full').click();
+    await expect(dim).toContainText('Responsive');
+    await expect(btnRotate).toBeDisabled();
   });
 });

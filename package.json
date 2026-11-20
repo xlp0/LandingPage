@@ -8,6 +8,8 @@
   "main": "index.js",
   "files": [
     "public",
+    "!public/stageshow",
+    "!public/stageshow/**",
     "js",
     "server",
     "routes",
@@ -88,7 +90,8 @@
     "@antithesishq/bombadil": "0.7.10",
     "@playwright/test": "^1.57.0",
     "ajv": "^8.20.0",
-    "esbuild": "^0.27.1"
+    "esbuild": "^0.27.1",
+    "postcss": "^8.5.33"
   },
   "dependencies": {
     "@astrojs/node": "11.1.9",

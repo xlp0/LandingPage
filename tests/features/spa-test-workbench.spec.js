@@ -30,6 +30,7 @@ test.describe('SPRINT-GQC-04: Guided SPA Test Workflow Island and Dual-Net Repla
     expect(await ensureTargetReachable(request, SPA_FIXTURE_PATH)).toBe(true);
 
     await workbench.open();
+    await page.locator('#btn-mode-guided-spa').click();
     const guide = page.getByTestId('spa-test-workflow');
     await expect(guide).toBeVisible();
     await expect(guide).toHaveAttribute('data-island-state', 'ready');
@@ -66,14 +67,14 @@ test.describe('SPRINT-GQC-04: Guided SPA Test Workflow Island and Dual-Net Repla
     const phoneDims = await workbench.readStageDimensions();
     expect([393, 852]).toContain(phoneDims.width);
 
-    await page.getByTestId('workflow-rotate-device').click();
+    await page.locator('#btn-rotate-viewport').click();
     const rotatedDims = await workbench.readStageDimensions();
     expect(rotatedDims.width).toBe(phoneDims.height);
     await expect(page.getByTestId('workflow-device-place')).toHaveText('p_spa_overview');
     await expect(appRoot).toHaveAttribute('data-boot-nonce', initialNonce);
 
     if (rotatedDims.width > rotatedDims.height) {
-      await page.getByTestId('workflow-rotate-device').click();
+      await page.locator('#btn-rotate-viewport').click();
     }
 
     await page.getByTestId('workflow-next-places').click();
@@ -182,6 +183,7 @@ test.describe('SPRINT-GQC-04: Guided SPA Test Workflow Island and Dual-Net Repla
     await page.setViewportSize({ width: 1440, height: 960 });
 
     await workbench.open({ targetPath: SPA_FIXTURE_PATH });
+    await page.locator('#btn-mode-guided-spa').click();
     const frame = workbench.targetFrame();
     const appRoot = frame.locator('#spa-app-root');
     await expect(appRoot).toHaveAttribute('data-place-id', 'p_spa_overview');
@@ -234,6 +236,7 @@ test.describe('SPRINT-GQC-04: Guided SPA Test Workflow Island and Dual-Net Repla
     await page.setViewportSize({ width: 1440, height: 960 });
 
     await workbench.open({ targetPath: SPA_FIXTURE_PATH });
+    await page.locator('#btn-mode-guided-spa').click();
     const tabTarget = page.getByTestId('workflow-tab-step-target');
     const tabDevice = page.getByTestId('workflow-tab-step-device');
     const tabEvidence = page.getByTestId('workflow-tab-step-evidence');
@@ -294,6 +297,7 @@ test.describe('SPRINT-GQC-05: Layer 4 Trellis Navigation Receipts, Error Recover
     await page.setViewportSize({ width: 1440, height: 960 });
 
     await workbench.open({ targetPath: SPA_FIXTURE_PATH });
+    await page.locator('#btn-mode-guided-spa').click();
     const frame = workbench.targetFrame();
     const appRoot = frame.locator('#spa-app-root');
     await expect(appRoot).toHaveAttribute('data-place-id', 'p_spa_overview');
@@ -422,6 +426,7 @@ test.describe('SPRINT-GQC-05: Layer 4 Trellis Navigation Receipts, Error Recover
     await page.setViewportSize({ width: 1440, height: 960 });
 
     await workbench.open({ targetPath: SPA_FIXTURE_PATH });
+    await page.locator('#btn-mode-guided-spa').click();
     await page.getByTestId('workflow-tab-step-transitions').click();
 
     const firstFirePromise = page.waitForResponse(

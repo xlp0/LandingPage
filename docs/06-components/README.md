@@ -30,9 +30,9 @@ This directory documents the component specifications, the Responsive UI Lab har
 └────────────────────────────────────────────────────────┘
 ```
 
-1. **Responsive UI Lab Harness Modules (`js/harness/`)**:
-   - Modular ES components extracted during ERB-00.
-   - Strictly encapsulated: single-writer target membrane (`INV-STU-01`), layout-box scaling (`INV-RVP-02`), scale-free coordinate normalization (`INV-ERB-02`), tap ergonomics (`INV-DEV-02`), and live telemetry collectors (`INV-DEV-01..04`).
+1. **Responsive UI Lab Harness and Islands (`js/harness/`, `src/islands/`)**:
+   - Modular ES components (`viewport-geometry.js`, `viewport-stage.js`, `target-membrane.js`, `bombadil-client.js`, `conformance-panel.js`) coordinated by `js/harness/lab-runtime.js` and exposed across 8 Preact islands including `BombadilDashboardIsland` (`client:visible`).
+   - Single-writer target membrane (`INV-STU-01`), inset-aware frame geometry (`INV-RVP-02`, `INV-SSG-GEOM`), scale-free coordinate normalization (`INV-ERB-02`), tap ergonomics (`INV-DEV-02`), local single-stroke SVG chrome icons (`js/ui/icons.js`), and live telemetry collectors (`INV-DEV-01..04`).
 2. **Cubical Logic Model (CLM) Components (`js/components/`)**:
    - Components structured around the Three Sets (三套東西) principle:
      - **Abstract Dimension**: Problem definition, interface contracts, and invariants.
@@ -47,8 +47,9 @@ This directory documents the component specifications, the Responsive UI Lab har
 
 ## 📚 Documents in This Section
 
-### Responsive Lab Harness
+### Responsive Lab Harness & StageShow Contract
 - See [**08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md**](../08-testing/DEVICE_SENSITIVE_TESTING_INFRASTRUCTURE.md) for full harness API documentation (`ViewportStage`, `TargetMembrane`, `LabToolbar`, `MembraneInterceptor`, `TelemetryCollector`).
+- **[STAGESHOW_DESIGN_CONTRACT.md](./STAGESHOW_DESIGN_CONTRACT.md)** - StageShow layout craft, five-surface depth tokens, single-stroke SVG icon rules, `INV-SSG-GEOM` `1:1` frame boundary, and transferable vs house-style separation.
 
 ### CLM Framework & Architecture
 - **[CLM_Language_Specification.md](CLM_Language_Specification.md)** - Formal specification of the Cubical Logic Model language.

@@ -131,7 +131,10 @@ const SKIPPED_SELECTOR = [
   '[data-effect="file-picker"]',
   'a[target="_blank"]',
   '[data-testid^="target-chip-"]:not([data-testid="target-chip-spa-test-target"])',
-  '[data-testid="workflow-select-app-html"]'
+  '[data-testid="workflow-select-app-html"]',
+  '[data-testid^="bombadil-"]',
+  "#bombadil-transport-pill",
+  "#bombadil-dashboard-panel button"
 ].join(",");
 
 const RECT_MARGIN_PX = 2;
@@ -177,10 +180,13 @@ const exploration = defaultActions.filter((action) => {
 });
 
 const WORKFLOW_SELECTOR = [
+  "#btn-mode-explore",
+  "#btn-mode-guided-spa",
+  "#btn-mode-bombadil",
+  "#btn-mode-verify",
   '[data-testid^="workflow-tab-"]',
   '[data-testid^="workflow-next-"]',
   '[data-testid^="workflow-device-"]',
-  '[data-testid="workflow-rotate-device"]',
   '[data-testid="workflow-select-spa-fixture"]',
   '[data-testid="target-chip-spa-test-target"]',
   "#btn-rec-start",

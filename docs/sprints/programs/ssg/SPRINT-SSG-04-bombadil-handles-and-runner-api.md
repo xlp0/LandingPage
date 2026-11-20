@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-SSG-04` |
 | Source of Truth | [`./ssg-plan.md`](./ssg-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-SSG-04` |
-| Status | `PLANNED` |
+| Status | `DONE` |
 | Depends on | `SPRINT-SSG-02` |
 | Unblocks | `SPRINT-SSG-05` |
 | Execution unit | `PR-SSG-04` |
@@ -44,7 +44,7 @@ LandingPage gains the complete backend, MCard handle storage, Petri net declarat
    - Listen for inbound DOM `CustomEvent('lab:bombadil-command')` (`detail.action` in `'trigger' | 'stop' | 'shrink' | 'refresh' | 'open-target'`) and emit outbound DOM `CustomEvent('lab:bombadil-state')` (`detail: { runId, target, status, actionsCount, currentPlaceId, violations, triggerHandle }`).
    - Stream `/api/test-runs/bombadil/stream` via `fetch('/api/test-runs/bombadil/stream', { signal })` with `ReadableStream` SSE line framing **only** while `status === 'queued' || status === 'running'` (`AbortController` closes immediately on terminal state), ensuring every `fetch(...)` inside `js/harness/bombadil-client.js` passes explicit literal endpoint strings/templates (`/api/test-runs/bombadil/run?...`) and inline literal `method: 'POST'` inside POST calls (`scripts/check-package-source-parity.mjs:162-173,366-367`).
 5. Model all `8` Bombadil API endpoints in `src/net/workbench-net.yaml` anchored on `p_page_responsive_lab` via explicit `kind: pending` Places (`p_pending_bombadil_handles`, `p_pending_bombadil_trigger`, `p_pending_bombadil_stop`, `p_pending_bombadil_shrink`, `p_pending_bombadil_runs`, `p_pending_bombadil_run`, `p_pending_bombadil_coverage`, `p_pending_bombadil_stream`) and `server-call-request` / `server-call-ok` / `server-call-fail` triples `(t_req_bombadil_<op>, t_ok_bombadil_<op>, t_fail_bombadil_<op>)` returning directly to `p_page_responsive_lab` (keeping client run states `idle | queued | running` inside `bombadil-client.js` and preserving 1-safe `sessionPInvariant: true` without unreached `p_error_*` places), regenerate `tests/bombadil/generated/workbench-net.ts` (`npm run bombadil:nets`) and `docs/01-architecture/workbench-net.md` (`npm run docs:gen-net`), and write `tests/unit/bombadil-dashboard-api.test.mjs`.
-6. Record verification metrics in `docs/sprints/_active/evidence/SSG-04-bombadil-handles.md` and append completion row to [`./DECISIONS.tsv`](./DECISIONS.tsv).
+6. Record verification metrics in `docs/sprints/_active/evidence/SSG-04-bombadil-handles.md` and append completion row to [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv).
 
 ## Files
 
@@ -52,7 +52,7 @@ LandingPage gains the complete backend, MCard handle storage, Petri net declarat
 - Edit `scripts/bombadil/run.mjs`, `server/test-run-api.mjs`, `js/harness/test-run-schema.js`, and `js/harness/lab-api.js`
 - Edit `src/net/workbench-net.yaml`, `docs/01-architecture/workbench-net.md`, `tests/bombadil/generated/workbench-net.ts`, and `tests/unit/test-run-schema.test.mjs`
 - Create `tests/unit/bombadil-dashboard-api.test.mjs` and `docs/sprints/_active/evidence/SSG-04-bombadil-handles.md`
-- Append row to [`./DECISIONS.tsv`](./DECISIONS.tsv)
+- Append row to [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv)
 
 ## BMAD responsibilities
 
@@ -91,6 +91,6 @@ LandingPage gains the complete backend, MCard handle storage, Petri net declarat
 
 ## Definition of done
 
-- [ ] **DoD-SSG-04-01.** MCard schemas, `run.mjs` env isolation, runner service (`409` mutex, `403` + `{ childRun, triggerEnabled: false }`, ephemeral ports, hermetic `shrink`), and `/api/test-runs/bombadil/*` REST + `fetch` SSE routes pass unit/integration verification. Verified by `node --test tests/unit/bombadil-dashboard-api.test.mjs tests/unit/test-run-schema.test.mjs`.
-- [ ] **DoD-SSG-04-02.** `window.__lab.bombadil` and `lab:bombadil-*` CustomEvent handles align with `workbench-net.yaml` and pass package/UI-call parity checks (`ws-server.js` SHA unchanged). Verified by `node scripts/check-package-source-parity.mjs && npm run check:net && npm run check:bombadil-nets`.
-- [ ] **DoD-SSG-04-03.** Evidence in `evidence/SSG-04-bombadil-handles.md` and `DECISIONS.tsv` row are recorded with all core gates passing. Verified by `test -s docs/sprints/_active/evidence/SSG-04-bombadil-handles.md && grep -qE $'\tSSG-04\t' docs/sprints/_active/DECISIONS.tsv && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run test:unit`.
+- [x] **DoD-SSG-04-01.** MCard schemas, `run.mjs` env isolation, runner service (`409` mutex, `403` + `{ childRun, triggerEnabled: false }`, ephemeral ports, hermetic `shrink`), and `/api/test-runs/bombadil/*` REST + `fetch` SSE routes pass unit/integration verification. Verified by `node --test tests/unit/bombadil-dashboard-api.test.mjs tests/unit/test-run-schema.test.mjs`.
+- [x] **DoD-SSG-04-02.** `window.__lab.bombadil` and `lab:bombadil-*` CustomEvent handles align with `workbench-net.yaml` and pass package/UI-call parity checks (`ws-server.js` SHA unchanged). Verified by `node scripts/check-package-source-parity.mjs && npm run check:net && npm run check:bombadil-nets`.
+- [x] **DoD-SSG-04-03.** Evidence in `evidence/SSG-04-bombadil-handles.md` and `DECISIONS.tsv` row are recorded with all core gates passing. Verified by `test -s docs/sprints/_active/evidence/SSG-04-bombadil-handles.md && grep -qE $'\tSSG-04\t' docs/sprints/_active/DECISIONS.tsv && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run test:unit`.

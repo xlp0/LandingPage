@@ -1,24 +1,45 @@
-export function initConformancePanel({ getTarget, getDevice, getOrientation }) {
+import { iconMarkup } from '../ui/icons.js';
+
+export function initConformancePanel({ getTarget, getDevice, getOrientation, getSelectionKey }) {
   const container = typeof document !== 'undefined' ? document.getElementById('conformance-details') : null;
   const badge = typeof document !== 'undefined' ? document.getElementById('conformance-status-badge') : null;
 
   if (!container || !badge) return null;
 
-  async function refresh() {
+  let lastTuple = null;
+
+  async function refresh(arg = false) {
+    const force = typeof arg === 'object' && arg !== null && Boolean(arg.force);
     const target = getTarget ? getTarget() : null;
     const targetUrl = target?.url || '';
     const device = getDevice ? getDevice() : null;
-    const orientation = getOrientation ? getOrientation() : 'portrait';
+    const orientation = getOrientation ? getOrientation() : 'responsive';
+    const selectionKey = getSelectionKey
+      ? (getSelectionKey() || 'viewport-full')
+      : (device?.id || 'viewport-full');
 
-    if (!targetUrl || !device) {
-      badge.textContent = 'Standby';
-      container.innerHTML = '<span style="color: var(--color-text-muted);">No active target or device selected.</span>';
+    const tupleKey = `${targetUrl}|${selectionKey}|${orientation}`;
+    if (!force && lastTuple === tupleKey) {
       return;
     }
+
+    if (!targetUrl || !device) {
+      lastTuple = tupleKey;
+      badge.textContent = 'Uncertified';
+      badge.style.color = 'var(--color-text-muted)';
+      const scopeLabel = selectionKey === 'viewport-full'
+        ? 'Full (100%) responsive stage'
+        : selectionKey;
+      container.innerHTML = `<span style="color: var(--color-text-muted);">No conformance certification recorded for ${scopeLabel} (${orientation}). Select a certified device preset or run conformance suite.</span>`;
+      return;
+    }
+
+    lastTuple = tupleKey;
 
     try {
       const res = await fetch(`/api/test-runs/conformance/latest?target=${encodeURIComponent(targetUrl)}`);
       if (!res.ok) {
+        lastTuple = null;
         badge.textContent = 'Offline';
         container.innerHTML = '<span style="color: var(--color-text-muted);">Conformance service unavailable.</span>';
         return;
@@ -46,32 +67,32 @@ export function initConformancePanel({ getTarget, getDevice, getOrientation }) {
       badge.style.color = allPassed ? 'var(--badge-success-text)' : 'var(--badge-danger-text)';
 
       const summaryHtml = `
-        <div style="display: flex; gap: 0.5rem; margin-bottom: 0.35rem; font-weight: 600;">
-          <span style="color: var(--badge-success-text);">✓ ${pass}</span>
-          <span style="color: var(--badge-danger-text);">✗ ${fail}</span>
-          <span style="color: var(--badge-warning-text);">⚠ ${skipped}</span>
-          <span style="color: var(--color-text-muted);">○ ${notApplicable}</span>
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 0.35rem; font-weight: 600; flex-wrap: wrap;">
+          <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: var(--badge-success-text);">${iconMarkup('check-circle')} ${pass}</span>
+          <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: var(--badge-danger-text);">${iconMarkup('x-circle')} ${fail}</span>
+          <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: var(--badge-warning-text);">${iconMarkup('alert-triangle')} ${skipped}</span>
+          <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: var(--color-text-muted);">${iconMarkup('minus-circle')} ${notApplicable}</span>
         </div>
       `;
 
       const resultsList = (report.results || [])
         .map((r) => {
-          let icon = '✓';
+          let icon = iconMarkup('check-circle');
           let color = 'var(--badge-success-text)';
           if (r.status === 'fail') {
-            icon = '✗';
+            icon = iconMarkup('x-circle');
             color = 'var(--badge-danger-text)';
           } else if (r.status === 'skipped') {
-            icon = '⚠';
+            icon = iconMarkup('alert-triangle');
             color = 'var(--badge-warning-text)';
           } else if (r.status === 'not-applicable') {
-            icon = '○';
+            icon = iconMarkup('minus-circle');
             color = 'var(--color-text-muted)';
           }
           const reasonText = r.reason ? ` (${r.reason})` : '';
-          return `<div style="display: flex; justify-content: space-between; font-size: 0.68rem; padding: 1px 0;">
+          return `<div style="display: flex; justify-content: space-between; font-size: 0.68rem; padding: 1px 0; gap: 0.5rem;">
             <span style="color: var(--color-text-primary);">${r.id}</span>
-            <span style="color: ${color}; font-weight: 500;">${icon} ${r.status}${reasonText}</span>
+            <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: ${color}; font-weight: 500;">${icon} ${r.status}${reasonText}</span>
           </div>`;
         })
         .join('');
@@ -83,22 +104,29 @@ export function initConformancePanel({ getTarget, getDevice, getOrientation }) {
         </div>
       `;
     } catch (err) {
+      lastTuple = null;
       badge.textContent = 'Error';
       container.innerHTML = `<span style="color: var(--badge-danger-text);">${err.message}</span>`;
     }
   }
 
+  const onViewportChange = () => refresh({ force: false });
+  const onTargetChange = () => {
+    lastTuple = null;
+    refresh({ force: true });
+  };
+
   if (typeof document !== 'undefined') {
-    document.addEventListener('lab:viewport-change', refresh);
-    document.addEventListener('lab:target-change', refresh);
+    document.addEventListener('lab:viewport-change', onViewportChange);
+    document.addEventListener('lab:target-change', onTargetChange);
   }
 
-  refresh();
+  refresh({ force: true });
 
   function destroy() {
     if (typeof document !== 'undefined') {
-      document.removeEventListener('lab:viewport-change', refresh);
-      document.removeEventListener('lab:target-change', refresh);
+      document.removeEventListener('lab:viewport-change', onViewportChange);
+      document.removeEventListener('lab:target-change', onTargetChange);
     }
   }
 

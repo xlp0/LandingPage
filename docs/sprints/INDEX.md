@@ -5,25 +5,20 @@
 | Audience | Scrum masters, product managers, architects, developers, and operators |
 | BMAD Owner | Scrum Master (`bmad-agent-pm` / Scrum Master) |
 | Source of Truth | [`docs/sprints/_active/INDEX.md`](./_active/INDEX.md) and [`docs/sprints/_active/DECISIONS.tsv`](./_active/DECISIONS.tsv) |
-| Status | `ACTIVE` (`Program SSG` in flight; `4` graduated programs archived) |
+| Status | `IDLE` (`0` active sprints; `5` graduated programs archived) |
 | Drift Gate | `npm run docs:check` |
 
 ## Active program
 
-- [**Active Sprint Workspace (`docs/sprints/_active/`)**](./_active/INDEX.md) (Active **Program SSG** `SPRINT-SSG-00..08` started `2026-11-19`; holds [`ssg-plan.md`](./_active/ssg-plan.md), [`SSG-pre-program-spike.md`](./_active/evidence/SSG-pre-program-spike.md), [`SSG-egm-review.md`](./_active/evidence/SSG-egm-review.md), and the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) ledger)
-  - [SSG Execution Plan](./_active/ssg-plan.md)
-  - [SSG-00 StageShow Installation and Layout Gate](./_active/SPRINT-SSG-00-stageshow-installation-and-layout-gate.md)
-  - [SSG-01 CSS and Chrome Subtraction](./_active/SPRINT-SSG-01-css-and-chrome-subtraction.md)
-  - [SSG-02 Viewport and Device Domain Model](./_active/SPRINT-SSG-02-viewport-and-device-domain-model.md)
-  - [SSG-03 StageShow Device Frames and Stage Geometry](./_active/SPRINT-SSG-03-stageshow-device-frames-and-stage.md)
-  - [SSG-04 Bombadil Handles and Runner API](./_active/SPRINT-SSG-04-bombadil-handles-and-runner-api.md)
-  - [SSG-05 StageShow Workbench Shell and Bombadil Dashboard](./_active/SPRINT-SSG-05-stageshow-workbench-and-bombadil-dashboard.md)
-  - [SSG-06 Host Responsive Tiers and Compact Layouts](./_active/SPRINT-SSG-06-host-responsive-tiers-and-compact-layouts.md)
-  - [SSG-07 Portal StageShow Showcase and Rehearsal](./_active/SPRINT-SSG-07-portal-stageshow-showcase-and-rehearsal.md)
-  - [SSG-08 Verification Baselines, Docker Gate, and Graduation](./_active/SPRINT-SSG-08-verification-baselines-and-graduation.md)
+- [**Active Sprint Workspace (`docs/sprints/_active/`)**](./_active/INDEX.md) (Standby with `0` active sprints as of `2026-11-20`; retains [`_active/INDEX.md`](./_active/INDEX.md) and the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) ledger)
 
 ## Graduated programs
 
+- [**Program SSG (`docs/sprints/programs/ssg/`)**](./programs/ssg/INDEX.md) (Graduated `2026-11-20`; StageShow `1.1.1` device frames and layout craft, Bombadil runner dashboard `8th` island, `12` built-in device presets, responsive tiers, and Shadow DOM portal showcase)
+  - [SSG Program Index](./programs/ssg/INDEX.md)
+  - [SSG Execution Plan](./programs/ssg/ssg-plan.md)
+  - [SSG-08 Verification Baselines, Docker Gate, and Graduation](./programs/ssg/SPRINT-SSG-08-verification-baselines-and-graduation.md)
+  - [SSG-08 Graduation Report](./programs/ssg/evidence/SSG-08-graduation.md)
 - [**Program BPV (`docs/sprints/programs/bpv/`)**](./programs/bpv/INDEX.md) (Graduated `2026-11-18`; local Docker nightly scheduler continues daily at `02:30` UTC)
   - [BPV Program Index](./programs/bpv/INDEX.md)
   - [BPV Execution Plan](./programs/bpv/bpv-plan.md)

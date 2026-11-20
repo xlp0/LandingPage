@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-SSG-01` |
 | Source of Truth | [`./ssg-plan.md`](./ssg-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-SSG-01` |
-| Status | `PLANNED` |
+| Status | `DONE` |
 | Depends on | `SPRINT-SSG-00` |
 | Unblocks | `SPRINT-SSG-02` |
 | Execution unit | `PR-SSG-01` |
@@ -38,7 +38,7 @@ Duplicate CSS declarations, unused legacy selector blocks, redundant conformance
 5. Harden `tests/features/layout-freeze.spec.js` and selectively re-capture non-Lab frozen host routes:
    - Update `tests/features/layout-freeze.spec.js:42-50, 70-74, 151-176` (`VOLATILE`, `run()`, and `capture baseline`) to support `STY_FREEZE_PAGES=<comma-list>` partial merges (reading existing `OUT` so unmodified `pages`, `tagVocab`, and `clsVocab` entries stay intact instead of resetting `pages = {}`), add `'#mcardList'` to `VOLATILE.app` (`:43`) and mask `#controlled-panel-status`, `#stage-target-place`, and `#bombadil-transport-pill` inside `VOLATILE['responsive-lab']`, and wait for `body[data-page-state="ready"]` + `document.fonts.ready` plus per-page async mount settle (`#single-page-mcard-host .mcard-page, #single-page-mcard-host .mcard-error` and `#mcard-sovereign-pill-mount .mcard-sovereign-pill` on `index`; `networkidle`, `#mcardList` present (`app.astro:452`), and `window.mcardManager?.collection != null` on `app`) when `p.name !== 'pkc-docs-index'` while preserving `load` + `document.fonts.ready` waits on `pkc-docs-index`.
    - Run `STY_FREEZE_PAGES=index,fiber-inspector,app STY_FREEZE=capture npx playwright test tests/features/layout-freeze.spec.js --project=features` against `tests/baselines/layout-baseline.json` (`/sprint-registry.html` is covered by `sprint-registry.spec.js` and `stageshow:layout`) and append an attributed `rebaselines` JSON entry (`{ date, program: "Program SSG (LandingPage), SPRINT-SSG-01", pages, reason, effect, authority }`), add `/api/test-runs/conformance/latest` single-fetch counting assertions (`=== 1` per preset switch) in `tests/features/responsive-lab-islands.spec.js`, and extend `tests/features/presentation-lattice.spec.js` portal layout checks.
-6. Record verification metrics in `docs/sprints/_active/evidence/SSG-01-subtraction.md` and append completion row to [`./DECISIONS.tsv`](./DECISIONS.tsv).
+6. Record verification metrics in `docs/sprints/_active/evidence/SSG-01-subtraction.md` and append completion row to [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv).
 
 ## Files
 
@@ -46,7 +46,7 @@ Duplicate CSS declarations, unused legacy selector blocks, redundant conformance
 - Edit `src/pages/index.astro`, `src/pages/sprint-registry.astro`, `src/pages/fiber-inspector.astro`, and `src/pages/app.astro` (zero edits to `src/pages/fiber-conformance.astro`)
 - Edit `src/islands/ConformancePanelIsland.jsx`, `js/harness/conformance-panel.js`, and `js/harness/recording-ribbon.js`
 - Edit `tests/features/layout-freeze.spec.js` (`STY_FREEZE_PAGES` partial merge + readiness sync), `tests/features/responsive-lab-islands.spec.js`, `tests/features/presentation-lattice.spec.js`, `tests/features/responsive-rotation-and-devices.spec.js`, and `tests/baselines/layout-baseline.json`
-- Create `docs/sprints/_active/evidence/SSG-01-subtraction.md` and append row to [`./DECISIONS.tsv`](./DECISIONS.tsv)
+- Create `docs/sprints/_active/evidence/SSG-01-subtraction.md` and append row to [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv)
 
 ## BMAD responsibilities
 
@@ -90,8 +90,8 @@ Duplicate CSS declarations, unused legacy selector blocks, redundant conformance
 
 ## Definition of done
 
-- [ ] **DoD-SSG-01-01.** Duplicate `--color-border-hover` overrides in `tokens.css` (`7 -> 4`) and unused `.controlled-*` / `.desktop-split-*` / `.orientation-toggle-row` blocks in `semantic-tokens.css` are deleted while `.size-preset-btn` and `.orientation-btn-primary` styling is preserved. Verified by `! grep -rnE '^[[:space:]]*\.controlled-' public/css/semantic-tokens.css && test "$(grep -c -- '--color-border-hover' public/css/tokens.css)" -eq 4`.
-- [ ] **DoD-SSG-01-02.** Duplicate conformance listeners and dead recorder template HTML are deleted, keeping `/api/test-runs/conformance/latest` at `1` fetch per preset/target event. Verified by `npx playwright test tests/features/responsive-lab-islands.spec.js --project=features`.
-- [ ] **DoD-SSG-01-03.** Portal `1180px` dead space, `position: absolute` footer collision, and non-Lab mobile overflows (`index`, `sprint-registry`, `fiber-inspector`, `app`) pass across `358px`, `390px`, `820px`, and `1440px` while leaving `fiber-conformance.astro` untouched. Verified by running `(set -e; for w in 358 390 820 1440; do for r in '/index.html?noredirect=1' '/sprint-registry.html' '/fiber-inspector.html' '/app.html'; do npm run stageshow:layout -- "$r" --width "$w" --strict; done; done)`.
-- [ ] **DoD-SSG-01-04.** `tests/baselines/layout-baseline.json` selective re-baseline, `RVP-T06`, Darwin conformance visuals, Playwright suites, and build parity pass. Verified by `npm run build && npm run test:smoke && npm run test:components && npm run test:features`.
-- [ ] **DoD-SSG-01-05.** Evidence in `evidence/SSG-01-subtraction.md` and `DECISIONS.tsv` row are recorded with all core gates green. Verified by `test -s docs/sprints/_active/evidence/SSG-01-subtraction.md && grep -qE $'\tSSG-01\t' docs/sprints/_active/DECISIONS.tsv && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run test:unit`.
+- [x] **DoD-SSG-01-01.** Duplicate `--color-border-hover` overrides in `tokens.css` (`7 -> 4`) and unused `.controlled-*` / `.desktop-split-*` / `.orientation-toggle-row` blocks in `semantic-tokens.css` are deleted while `.size-preset-btn` and `.orientation-btn-primary` styling is preserved. Verified by `! grep -rnE '^[[:space:]]*\.controlled-' public/css/semantic-tokens.css && test "$(grep -c -- '--color-border-hover' public/css/tokens.css)" -eq 4`.
+- [x] **DoD-SSG-01-02.** Duplicate conformance listeners and dead recorder template HTML are deleted, keeping `/api/test-runs/conformance/latest` at `1` fetch per preset/target event. Verified by `npx playwright test tests/features/responsive-lab-islands.spec.js --project=features`.
+- [x] **DoD-SSG-01-03.** Portal `1180px` dead space, `position: absolute` footer collision, and non-Lab mobile overflows (`index`, `sprint-registry`, `fiber-inspector`, `app`) pass across `358px`, `390px`, `820px`, and `1440px` while leaving `fiber-conformance.astro` untouched. Verified by running `(set -e; for w in 358 390 820 1440; do for r in '/index.html?noredirect=1' '/sprint-registry.html' '/fiber-inspector.html' '/app.html'; do npm run stageshow:layout -- "$r" --width "$w" --strict; done; done)`.
+- [x] **DoD-SSG-01-04.** `tests/baselines/layout-baseline.json` selective re-baseline, `RVP-T06`, Darwin conformance visuals, Playwright suites, and build parity pass. Verified by `npm run build && npm run test:smoke && npm run test:components && npm run test:features`.
+- [x] **DoD-SSG-01-05.** Evidence in `evidence/SSG-01-subtraction.md` and `DECISIONS.tsv` row are recorded with all core gates green. Verified by `test -s docs/sprints/_active/evidence/SSG-01-subtraction.md && grep -qE $'\tSSG-01\t' docs/sprints/_active/DECISIONS.tsv && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run test:unit`.

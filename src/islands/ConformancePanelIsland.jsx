@@ -8,32 +8,20 @@ export default function ConformancePanelIsland() {
     const panel = initConformancePanel({
       getTarget: () => runtime.membrane.getTarget(),
       getDevice: () => runtime.getActiveDevice(),
-      getOrientation: () => runtime.stage.getGeometry().orientation
+      getOrientation: () => runtime.stage.getGeometry().orientation,
+      getSelectionKey: () => runtime.stage.getGeometry().selectionKey
     });
 
-    const onRefresh = () => {
-      panel?.refresh();
-    };
     const disclosure = typeof document !== 'undefined' ? document.getElementById('conformance-disclosure') : null;
-    const scrollOpen = () => {
-      if (disclosure?.open && typeof requestAnimationFrame === 'function') {
-        requestAnimationFrame(() => disclosure.scrollIntoView({ block: 'nearest' }));
-      }
-    };
-    scrollOpen();
     const onToggle = () => {
       if (disclosure?.open) {
-        Promise.resolve(panel?.refresh()).finally(scrollOpen);
+        panel?.refresh();
       }
     };
 
-    document.addEventListener('lab:viewport-change', onRefresh);
-    document.addEventListener('lab:target-change', onRefresh);
     disclosure?.addEventListener('toggle', onToggle);
 
     return () => {
-      document.removeEventListener('lab:viewport-change', onRefresh);
-      document.removeEventListener('lab:target-change', onRefresh);
       disclosure?.removeEventListener('toggle', onToggle);
       panel?.destroy();
     };

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'preact/hooks';
+import LabIcon from '../components/LabIcon.jsx';
 import { getLabRuntime } from '../../js/harness/lab-runtime.js';
 
 export default function ViewportStageIsland() {
@@ -23,7 +24,7 @@ export default function ViewportStageIsland() {
   return (
     <>
       <div className="cors-alert-toast" id="cors-block-alert" role="alert" aria-live="assertive" style={{ display: 'none' }}>
-        <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>⚠️</span>
+        <LabIcon name="alert-triangle" size={16} />
         <div id="cors-block-alert-content" style={{ flex: 1 }}>
           <strong>Browser Sandbox Boundary:</strong> <span id="cors-block-target-name">GitHub</span> enforces{' '}
           <code id="cors-block-reason">X-Frame-Options: DENY</code>. Capture is disabled for blocked targets.
@@ -34,37 +35,52 @@ export default function ViewportStageIsland() {
           className="toolbar-btn"
           onClick={handleRecoverClick}
          data-testid="btn-cors-alert-recover">
-          ↺ Reset to Default Target
+          <LabIcon name="rotate-ccw" /> Reset to Default Target
         </button>
       </div>
 
-      <div className="viewport-scale-wrapper" id="viewport-scale-wrapper" data-island="viewport-stage" data-island-state="mounting">
+      <div
+        className="viewport-scale-wrapper stage-scale-rig"
+        id="viewport-scale-wrapper"
+        data-island="viewport-stage"
+        data-island-state="mounting"
+        data-unit="%"
+        data-scale-mode="auto"
+        data-frame-style="unframed"
+      >
         <div
-          className="viewport-frame orientation-horizontal"
+          className="viewport-frame"
           id="controlled-panel-frame"
-          style={{ '--frame-target-width': '100%', '--frame-target-height': '100%' }}
+          data-testid="viewport-frame"
+          data-orientation="responsive"
+          data-frame-style="unframed"
+          data-safe-area="off"
+          data-unit="%"
+          style={{
+            '--frame-inner-width': '100%',
+            '--frame-inner-height': '100%',
+            '--frame-outer-width': '100%',
+            '--frame-outer-height': '100%',
+            '--frame-target-width': '100%',
+            '--frame-target-height': '100%',
+            '--frame-scale-factor': '1'
+          }}
         >
-          <div className="viewport-frame-bar">
-            <div className="frame-controls-dots">
+          <div className="stage-window-bar viewport-frame-bar" id="stage-window-bar">
+            <div className="frame-controls-dots" aria-hidden="true">
               <span className="dot dot-red" />
               <span className="dot dot-yellow" />
               <span className="dot dot-green" />
-              <span style={{ fontWeight: 600, color: 'var(--color-text-primary)', marginLeft: '0.5rem' }}>
-                Responsive Iframe Surface
-              </span>
             </div>
-            <span
-              className="frame-target-place-pill"
-              id="stage-target-place"
-              data-testid="stage-target-place"
-              aria-live="polite"
-              hidden
-            />
-            <span className="frame-dimension-pill" id="controlled-frame-dim">
-              100% × 100% • ↔ Horizontal (Landscape)
+            <span className="stage-window-title" id="stage-window-title">
+              Responsive Iframe Surface
             </span>
           </div>
-          <div className="viewport-iframe-wrapper">
+          <div
+            className="viewport-iframe-wrapper stage-screen-slot"
+            id="stage-screen-slot"
+            data-testid="viewport-screen"
+          >
             <iframe
               ref={iframeRef}
               id="mission-control-iframe"
@@ -72,6 +88,18 @@ export default function ViewportStageIsland() {
               loading="lazy"
               className="viewport-iframe"
             />
+            <div
+              className="stage-safe-area-overlay"
+              id="stage-safe-area-overlay"
+              data-testid="stage-safe-area-overlay"
+              aria-hidden="true"
+              hidden
+            >
+              <span className="safe-area-band safe-area-top" />
+              <span className="safe-area-band safe-area-right" />
+              <span className="safe-area-band safe-area-bottom" />
+              <span className="safe-area-band safe-area-left" />
+            </div>
           </div>
         </div>
       </div>

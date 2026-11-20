@@ -17,7 +17,7 @@ export function createCaptureSource(targetDetail = {}, options = {}) {
     onHandshakeStatus = null,
     onRedirectInvalidate = null,
     getDeviceProfile = () => null,
-    getViewport = () => ({ w: 800, h: 600, dpr: 1, orientation: 'portrait' })
+    getViewport = () => ({ w: 800, h: 600, dpr: 1, orientation: 'landscape' })
   } = options;
 
   if (!targetDetail || !targetDetail.url) {

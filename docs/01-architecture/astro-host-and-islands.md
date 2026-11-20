@@ -14,7 +14,7 @@
 | Stack Layer | Package and Version | Current Status | Notes |
 | --- | --- | --- | --- |
 | Page Host and SSR Middleware | `astro@7.4.2`, `@astrojs/node@11.1.9` (`mode: 'middleware'`) | Active in production and development | Mounted inside `ws-server.js` after Express API and security middleware |
-| Interactive Client Islands | `@astrojs/preact@6.1.1`, `preact@11.1.0` | Active on `responsive-lab.html` (`7` islands) | Zero island JS is emitted on `astro-wrapped` pages |
+| Interactive Client Islands | `@astrojs/preact@6.1.1`, `preact@11.1.0` | Active on `responsive-lab.html` (`8` islands) | Zero island JS is emitted on `astro-wrapped` pages |
 | Petri Net and MCard Kernel | `clm-kernel@0.0.24` | Server and build-time Node only | Never imported inside browser islands or client bundles |
 | Unit and Integration Runner | `node:test` (`npm run test:unit`) | Canonical | Earlier statements saying `LandingPage` did not adopt Astro or Vitest are superseded for Astro, while **Vitest remains un-adopted** for `LandingPage` itself (with a single private tool-local Vitest exception scoped strictly to `tools/ui-verify/`) |
 | Browser E2E and Replay Runner | `@playwright/test@^1.57.0` (`1.64.1` locked) (`npm test`) | Canonical | Runs against `ws-server.js` on isolated `TEST_PORT=3001` |
@@ -51,8 +51,8 @@ Astro's client router remains disabled. Every workbench page switch executes as 
 
 | Route | Astro Page Source | Workbench Place(s) | Migration State | Island Count | Client Runtime Owner |
 | --- | --- | --- | --- | --- | --- |
-| `/` and `/index.html` | [`src/pages/index.astro`](../../src/pages/index.astro) | `p_page_index`, `p_view_index_mcard_viewer` | `astro-wrapped` | `0` | Redirects `/` to `/responsive-lab.html`. Mounts `js/landing-page-mcard.js` and `js/nav.js` when `?noredirect=1` is present |
-| `/responsive-lab.html` | [`src/pages/responsive-lab.astro`](../../src/pages/responsive-lab.astro) | `p_page_responsive_lab` | `astro-islands` | `7` | `js/harness/lab-runtime.js` coordinator (`window.__lab`) |
+| `/` and `/index.html` | [`src/pages/index.astro`](../../src/pages/index.astro) | `p_page_index`, `p_view_index_mcard_viewer` | `astro-wrapped` | `0` | Redirects `/` to `/responsive-lab.html`. Mounts `js/landing-page-mcard.js`, `js/nav.js`, and Shadow DOM `#portal-stageshow-showcase` (`0` Astro islands, `0 B` `_astro/` JS) when `?noredirect=1` is present |
+| `/responsive-lab.html` | [`src/pages/responsive-lab.astro`](../../src/pages/responsive-lab.astro) | `p_page_responsive_lab` | `astro-islands` | `8` | `js/harness/lab-runtime.js` coordinator (`window.__lab`) |
 | `/app.html` | [`src/pages/app.astro`](../../src/pages/app.astro) | `p_page_app` | `astro-wrapped` | `0` | `public/js/app-bootstrap.js` and `MCardManager` (`window.mcardManager`) |
 | `/sprint-registry.html` | [`src/pages/sprint-registry.astro`](../../src/pages/sprint-registry.astro) | `p_page_sprint_registry` | `astro-wrapped` | `0` | Inline `/api/clm/registry` viewer owned by Scrum Master |
 | `/fiber-inspector.html` | [`src/pages/fiber-inspector.astro`](../../src/pages/fiber-inspector.astro) | `p_page_fiber_inspector` | `astro-wrapped` | `0` | `public/js/fibers/registry.js` inspector harness owned by Architect |
@@ -60,21 +60,22 @@ Astro's client router remains disabled. Every workbench page switch executes as 
 
 `node tests/performance/place-bytes.mjs --enforce-zero-island-places` verifies in CI that every `astro-wrapped` Place downloads `0 B` of `_astro/` island JavaScript.
 
-## Responsive Lab 7-Island Ownership Map
+## Responsive Lab 8-Island Ownership Map
 
 `src/pages/responsive-lab.astro` validates `src/net/workbench-net.yaml` and `tests/fixtures/spa-test-target.graph.json` in Node frontmatter via `scripts/check-net.mjs`, `assertDisjointNetIds()`, and `scripts/net-to-netmcard.mjs`. Frontmatter passes plain JSON `targetNets` props to `SpaTestWorkflow`. Zero client files import `clm-kernel` or Node `crypto`.
 
 | Island | Source File | DOM Container | Hydration Directive | Wrapped Vanilla Modules | Cold Load vs Deferred | BMAD Owner | Unmount Cleanup Path |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `TargetToolbarIsland` | [`src/islands/TargetToolbarIsland.jsx`](../../src/islands/TargetToolbarIsland.jsx) | `#lab-toolbar` | `client:load` | `js/harness/lab-toolbar.js`, `js/harness/target-membrane.js` | Eager (`~12.5 KB`) | Architect and Dev | `toolbar.destroy()` and `runtime.unregisterIsland('TargetToolbarIsland')` |
-| `DevicePresetsIsland` | [`src/islands/DevicePresetsIsland.jsx`](../../src/islands/DevicePresetsIsland.jsx) | `#device-presets-region` | `client:load` | `js/harness/device-presets-ui.js`, `js/device-registry.js` | Eager (`~8.2 KB`) | UX Designer and Dev | `presetsUi.destroy()` and `runtime.unregisterIsland('DevicePresetsIsland')` |
-| `ViewportStageIsland` | [`src/islands/ViewportStageIsland.jsx`](../../src/islands/ViewportStageIsland.jsx) | `#viewport-stage-island-root` | `client:only="preact"` | `js/harness/viewport-stage.js`, `#mission-control-iframe` | Eager client-only (`~2.0 KB`) | Architect and TEA | `runtime.detachStageSurface()` and `runtime.unregisterIsland('ViewportStageIsland')` |
-| `RecordingRibbonIsland` | [`src/islands/RecordingRibbonIsland.jsx`](../../src/islands/RecordingRibbonIsland.jsx) | `#recording-ribbon` | `client:load` | `js/harness/recording-ribbon.js`, `js/harness/recorder.js` | Eager (`~8.5 KB`) | TEA and Dev | `ribbon.destroy()` and `runtime.unregisterIsland('RecordingRibbonIsland')` |
+| `TargetToolbarIsland` | [`src/islands/TargetToolbarIsland.jsx`](../../src/islands/TargetToolbarIsland.jsx) | `#pane-url-bar` | `client:load` | `js/harness/lab-toolbar.js`, `js/harness/target-membrane.js` | Eager (`~12.5 KB`) | Architect and Dev | `runtime.detachToolbar(controller)` and `controller.destroy()` |
+| `DevicePresetsIsland` | [`src/islands/DevicePresetsIsland.jsx`](../../src/islands/DevicePresetsIsland.jsx) | `#controlled-size-controller` | `client:load` | `js/harness/device-presets-ui.js`, `js/device-registry.js` | Eager (`~8.2 KB`) | UX Designer and Dev | `runtime.detachPresetsUI(presetsUI)` and `presetsUI.destroy()` |
+| `ViewportStageIsland` | [`src/islands/ViewportStageIsland.jsx`](../../src/islands/ViewportStageIsland.jsx) | `#viewport-scale-wrapper` | `client:only="preact"` | `js/harness/viewport-stage.js`, `#mission-control-iframe` | Eager client-only (`~2.0 KB`) | Architect and TEA | `runtime.detachStageSurface()` |
+| `RecordingRibbonIsland` | [`src/islands/RecordingRibbonIsland.jsx`](../../src/islands/RecordingRibbonIsland.jsx) | `#lab-recording-ribbon` | `client:load` | `js/harness/recording-ribbon.js`, `js/harness/recorder.js` | Eager (`~8.5 KB`) | TEA and Dev | `runtime.detachCaptureRibbon(ribbon)` and `ribbon.destroy()` |
 | `SpaTestWorkflow` | [`src/islands/SpaTestWorkflow.jsx`](../../src/islands/SpaTestWorkflow.jsx) | `#spa-test-workflow` | `client:load` | `js/harness/spa-test-workflow.js` | Eager (`~33.7 KB`) | Product Manager, Architect, TEA, and UX Designer | `unsub()`, `runtime.detachWorkflow(workflow)`, and `workflow.destroy()` |
-| `ConformancePanelIsland` | [`src/islands/ConformancePanelIsland.jsx`](../../src/islands/ConformancePanelIsland.jsx) | `#conformance-panel-root` | `client:visible` | `js/harness/conformance-panel.js` | Deferred until `<details id="conformance-disclosure">` opens (`~4.0 KB`) | TEA and UX Designer | `panel.destroy()`, disclosure `toggle` listener removal, and `runtime.unregisterIsland('ConformancePanelIsland')` |
-| `MCardResultIsland` | [`src/islands/MCardResultIsland.jsx`](../../src/islands/MCardResultIsland.jsx) | `#mcard-result-panel` | `client:visible` | `runtime.recorder.lastSavedRun`, `runtime.subscribeSavedRun` | Deferred until `<details id="mcard-result-disclosure">` opens (`~3.0 KB`) | Product Manager and Dev | Saved-run unsubscribe, disclosure `toggle` listener removal, and `runtime.unregisterIsland('MCardResultIsland')` |
+| `ConformancePanelIsland` | [`src/islands/ConformancePanelIsland.jsx`](../../src/islands/ConformancePanelIsland.jsx) | `#conformance-details` | `client:visible` | `js/harness/conformance-panel.js` | Deferred until `<details id="conformance-disclosure">` opens (`~4.0 KB`) | TEA and UX Designer | Disclosure `toggle` listener removal and `panel.destroy()` |
+| `MCardResultIsland` | [`src/islands/MCardResultIsland.jsx`](../../src/islands/MCardResultIsland.jsx) | `#mcard-result-details` | `client:visible` | `runtime.recorder.lastSavedRun` | Deferred until `<details id="mcard-result-disclosure">` opens (`~3.0 KB`) | Product Manager and Dev | Recorder unsubscribe and disclosure `toggle` listener removal |
+| `BombadilDashboardIsland` | [`src/islands/BombadilDashboardIsland.jsx`](../../src/islands/BombadilDashboardIsland.jsx) | `#bombadil-dashboard-panel` | `client:visible` | `js/harness/bombadil-client.js` | Deferred until `Bombadil` mode tab opens (`~4.5 KB`) | Architect, TEA, and Dev | Bombadil subscription cleanup and copy feedback timeout clear |
 
-`body.lab-booting` clears after two `requestAnimationFrame` ticks once the eager boot islands mount and apply the initial device preset and `?target=` parameter, while `[data-testid="spa-test-workflow"][data-workflow-ready="true"]` marks the five-step guided workflow ready.
+`body[data-page-state="loading"]` clears to `ready` after two `requestAnimationFrame` ticks once the eager boot islands mount and apply the initial device preset and `?target=` parameter, while `[data-testid="spa-test-workflow"][data-island-state="ready"]` marks the five-step guided workflow ready.
 
 ## UI Server-Call Placement Policy
 

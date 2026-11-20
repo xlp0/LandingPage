@@ -40,11 +40,20 @@ const VIEWPORTS = {
 // Runtime-volatile regions: masked rather than excluded — each is an open
 // obligation, recorded in the baseline, never silently treated as frozen.
 const VOLATILE = {
-  app: ['#card-list', '#cards-container', '.modal', '[id^="modal"]'],
+  app: ['#card-list', '#cards-container', '#mcardList', '.modal', '[id^="modal"]'],
   index: ['#nav-root', '#least-action-root', '[id^="inspector"]', '[id^="modal"]',
-          '[class*="modal"]', '.target-status-badge', '.correctness-status-tag'],
-  'responsive-lab': ['#lab-workspace-container iframe', '.frame-dimension-pill', '.footer-status-pill'],
-  'fiber-inspector': [],
+    '[class*="modal"]', '.target-status-badge', '.correctness-status-tag', '#power-icon',
+    '#portal-stageshow-showcase *'],
+  'responsive-lab': [
+    '#lab-workspace-container iframe',
+    '.frame-dimension-pill',
+    '.footer-status-pill',
+    '#controlled-panel-status',
+    '#stage-target-place',
+    '#bombadil-transport-pill',
+    '#power-icon'
+  ],
+  'fiber-inspector': ['#power-icon'],
   'fiber-conformance': [],
   'pkc-docs-index': [],
 };
@@ -69,8 +78,26 @@ const capture = (volatileSelectors) => {
 
 async function run(page, p, vpName, vp, mutate) {
   await page.setViewportSize(vp);
-  await page.goto(p.path);
-  await page.waitForTimeout(2500);
+  await page.goto(p.path, { waitUntil: 'load' });
+  if (p.name !== 'pkc-docs-index') {
+    await page.waitForFunction(() => document.body?.dataset?.pageState === 'ready', null, { timeout: 15000 });
+    await page.evaluate(() => document.fonts.ready);
+    if (p.name === 'index') {
+      await page
+        .locator('#single-page-mcard-host .mcard-page, #single-page-mcard-host .mcard-error')
+        .waitFor({ state: 'attached', timeout: 10000 });
+      await page
+        .locator('#mcard-sovereign-pill-mount .mcard-sovereign-pill')
+        .waitFor({ state: 'attached', timeout: 10000 });
+    } else if (p.name === 'app') {
+      await page.waitForLoadState('networkidle');
+      await page.locator('#mcardList').waitFor({ state: 'attached', timeout: 10000 });
+      await page.waitForFunction(() => window.mcardManager?.collection != null, null, { timeout: 10000 });
+    }
+  } else {
+    await page.evaluate(() => document.fonts.ready);
+  }
+  await page.waitForTimeout(300);
   // Mutations must mutate, not insert — an injected <style> node would shift the
   // element indices and fool the diff into detecting itself.
   if (mutate === 'padding-1px') {
@@ -152,19 +179,40 @@ test.describe('Layout freeze', () => {
     test.setTimeout(300000);
     test.skip(mode !== 'capture', 'capture mode only');
     mkdirSync(dirname(OUT), { recursive: true });
-    const tagVocab = [], clsVocab = [];
+    const onlyPagesRaw = process.env.STY_FREEZE_PAGES?.trim();
+    const onlyPages = onlyPagesRaw
+      ? new Set(onlyPagesRaw.split(',').map((s) => s.trim()).filter(Boolean))
+      : null;
+    if (onlyPages) {
+      const valid = new Set(PAGES.map((p) => p.name));
+      for (const name of onlyPages) {
+        if (!valid.has(name)) throw new Error(`Unknown STY_FREEZE_PAGES entry: ${name}`);
+      }
+    }
+
+    const existing = onlyPages && existsSync(OUT) ? JSON.parse(readFileSync(OUT, 'utf8')) : null;
+    const tagVocab = existing ? [...existing.tag_vocab] : [];
+    const clsVocab = existing ? [...existing.cls_vocab] : [];
     // A re-capture replaces the measurements but must not erase the record of
     // *why* earlier re-baselines happened — that history is the only thing that
     // distinguishes a sanctioned change from a laundered one.
-    let rebaselines = [];
-    try {
-      rebaselines = JSON.parse(readFileSync(OUT, 'utf8')).rebaselines ?? [];
-    } catch { /* first capture */ }
+    let rebaselines = existing?.rebaselines ?? [];
+    if (!existing) {
+      try {
+        rebaselines = JSON.parse(readFileSync(OUT, 'utf8')).rebaselines ?? [];
+      } catch { /* first capture */ }
+    }
     const baseline = {
-      captured: '2026-10-07', viewports: Object.keys(VIEWPORTS), format: 'compact-v1',
-      tag_vocab: tagVocab, cls_vocab: clsVocab, rebaselines, pages: {},
+      captured: existing?.captured ?? '2026-10-07',
+      viewports: existing?.viewports ?? Object.keys(VIEWPORTS),
+      format: existing?.format ?? 'compact-v1',
+      tag_vocab: tagVocab,
+      cls_vocab: clsVocab,
+      rebaselines,
+      pages: existing ? { ...existing.pages } : {},
     };
-    for (const p of PAGES) {
+    const pagesToCapture = onlyPages ? PAGES.filter((p) => onlyPages.has(p.name)) : PAGES;
+    for (const p of pagesToCapture) {
       baseline.pages[p.name] = { masked_regions: VOLATILE[p.name], viewports: {} };
       for (const [vn, vp] of Object.entries(VIEWPORTS)) {
         const els = await run(page, p, vn, vp, null);
@@ -183,7 +231,7 @@ test.describe('Layout freeze', () => {
         test.skip(!!mutate && (p.name !== 'index' || vn !== 'web'), 'mutation controls run on index@web only');
         const baseline = JSON.parse(readFileSync(OUT, 'utf8'));
         const before = decode(baseline.pages[p.name].viewports[vn],
-                              baseline.tag_vocab, baseline.cls_vocab);
+          baseline.tag_vocab, baseline.cls_vocab);
         const after = await run(page, p, vn, vp, mutate);
         const moved = diffBoxes(before, after);
         if (moved.length) {

@@ -228,9 +228,9 @@ test('GQC-06-UNIT-02: analyzePlaceBytes splits island bundles vs shared chunks, 
   const lab = byId.get('p_page_responsive_lab');
   assert.ok(lab, 'Expected p_page_responsive_lab in pagePlaces');
   assert.equal(lab.expectedIslandFree, false);
-  assert.equal(lab.islandCount, 7);
+  assert.equal(lab.islandCount, 8);
   assert.equal(lab.islandBundles.eager.fileCount, 5);
-  assert.equal(lab.islandBundles.deferred.fileCount, 2);
+  assert.equal(lab.islandBundles.deferred.fileCount, 3);
   assert.ok(lab.islandBundles.eager.rawBytes > 0);
   assert.ok(lab.islandBundles.eager.gzipBytes > 0);
   assert.ok(lab.islandBundles.eager.brotliBytes > 0);

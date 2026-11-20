@@ -9,12 +9,18 @@ import {
   redactValue,
   computeNormalizedCoords
 } from './normalize-event.js';
+import { deriveOrientation } from './viewport-geometry.js';
 
 export class CaptureSameOriginSource {
   constructor(options = {}) {
     this.iframe = options.iframe || document.getElementById('mission-control-iframe');
     this.getDeviceProfile = options.getDeviceProfile || (() => null);
-    this.getViewport = options.getViewport || (() => ({ w: window.innerWidth, h: window.innerHeight, dpr: 1, orientation: 'portrait' }));
+    this.getViewport = options.getViewport || (() => ({
+      w: window.innerWidth,
+      h: window.innerHeight,
+      dpr: 1,
+      orientation: deriveOrientation(window.innerWidth, window.innerHeight)
+    }));
     this.kind = 'same-origin';
     this._onEvent = null;
     this._listeners = [];
@@ -36,7 +42,7 @@ export class CaptureSameOriginSource {
         w: win.innerWidth,
         h: win.innerHeight,
         dpr: win.devicePixelRatio || 1,
-        orientation: win.innerWidth > win.innerHeight ? 'landscape' : 'portrait'
+        orientation: deriveOrientation(win.innerWidth, win.innerHeight)
       };
       const normalized = normalizePointerEvent(e, {
         viewport: vp,

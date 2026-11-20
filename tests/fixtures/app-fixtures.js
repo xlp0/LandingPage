@@ -24,7 +24,7 @@ export function loadSpaFixtureGraph() {
 
 export function parseSavedRunBadge(text) {
   const raw = String(text || '').trim();
-  const match = /💾\s+(.+?)\s+\(([0-9a-f]{8})\)/i.exec(raw);
+  const match = /^(?:\u{1F4BE}\s+)?(.+?)\s+\(([0-9a-f]{8})\)$/iu.exec(raw);
   if (!match) {
     return null;
   }
@@ -151,7 +151,7 @@ export function createResponsiveLabWorkbench(page, request) {
     if (!device) {
       throw new Error(`Unknown builtin deviceId "${deviceId}"`);
     }
-    await page.getByRole('button', { name: new RegExp(device.name, 'i') }).click();
+    await page.locator(`#device-presets-container [data-device-id="${deviceId}"]`).click();
     const widthInput = page.locator('#controlled-width-input');
     const heightInput = page.locator('#controlled-height-input');
     await expect(widthInput).toHaveValue(new RegExp(`^(${device.width}|${device.height})$`));
@@ -165,7 +165,7 @@ export function createResponsiveLabWorkbench(page, request) {
     return { width, height };
   }
 
-  async function rotateViewport() {
+  async function rotateStageViewport() {
     const before = await readStageDimensions();
     await page.getByRole('button', { name: /Rotate \(90°\)/i }).click();
     await expect(page.locator('#controlled-width-input')).toHaveValue(String(before.height));
@@ -210,7 +210,7 @@ export function createResponsiveLabWorkbench(page, request) {
     selectPresetTarget,
     selectBuiltinDevice,
     readStageDimensions,
-    rotateViewport,
+    rotateStageViewport,
     startRecording,
     stopAndSaveRecording,
     fetchPersistedRun,

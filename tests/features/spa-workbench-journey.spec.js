@@ -48,13 +48,13 @@ test.describe('SPRINT-GQC-02: Guided SPA Workbench Journey', () => {
       (initialDims.width === phoneProfile.height && initialDims.height === phoneProfile.width)
     ).toBe(true);
 
-    const rotatedDims = await workbench.rotateViewport();
+    const rotatedDims = await workbench.rotateStageViewport();
     expect(rotatedDims.width).toBe(initialDims.height);
     expect(rotatedDims.height).toBe(initialDims.width);
     await expect(appRoot).toHaveAttribute('data-boot-nonce', initialBootNonce);
 
     if (rotatedDims.width > rotatedDims.height) {
-      await workbench.rotateViewport();
+      await workbench.rotateStageViewport();
     }
 
     await workbench.startRecording();

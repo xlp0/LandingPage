@@ -156,7 +156,7 @@ islands:
       page's own "Mission Control" destination and is referenced by the Penpot
       navigation tooling, so it is retired as a build target, not as a route.
       Transition note: src/pages/app.astro remains active during Program SSG, and
-      post-SSG cleanup is tracked in docs/sprints/_active/ssg-local-backlog.md.
+      post-SSG cleanup is tracked in docs/sprints/programs/ssg/ssg-local-backlog.md.
 
   - id: pkc-docs-index
     artifact: pkc-docs-index.html

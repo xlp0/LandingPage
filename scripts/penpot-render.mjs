@@ -10,6 +10,7 @@ import * as path from 'node:path';
 import { extractNavigationGraph } from './penpot-nav.mjs';
 import { sha256 } from './penpot-zip.mjs';
 import { resolveUnitDir } from './penpot-init.mjs';
+import { iconMarkup } from '../js/ui/icons.js';
 
 export function renderNavigationArtifacts(penpotFilePath, unitDir) {
   const resolvedUnit = resolveUnitDir(unitDir);
@@ -102,13 +103,14 @@ export function getOutgoingLinks(frameId) {
 
   const navHtmlItems = routesList.map(r => {
     const activeClass = r.isStartingFrame ? ' penpot-nav-link-active' : '';
+    const ariaCurrent = r.isStartingFrame ? ' aria-current="page"' : '';
     const testId = `penpot-nav-${r.path.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase()}`;
-    return `      <a class="penpot-nav-link${activeClass}" href="${r.path}" data-testid="${testId}" data-penpot-frame="${r.frameId}" data-penpot-handle="${r.handle}">${r.name}</a>`;
+    return `      <a class="penpot-nav-link${activeClass}" href="${r.path}"${ariaCurrent} data-testid="${testId}" data-penpot-frame="${r.frameId}" data-penpot-handle="${r.handle}">${r.name}</a>`;
   }).join('\n');
 
   const penpotNavBlock = `<!-- BEGIN: PENPOT-GENERATED-NAV (INV-CDO-11) -->
   <nav class="penpot-nav-bar" id="penpot-site-nav" aria-label="Penpot Navigation Flow" data-graph-hash="${graph.meta.graphHash}">
-    <span class="penpot-nav-title">🎨 Flow: ${flow.name}</span>
+    <span class="penpot-nav-title">${iconMarkup('layers')} Flow: ${flow.name}</span>
     <div class="penpot-nav-links">
 ${navHtmlItems}
     </div>

@@ -1,4 +1,5 @@
 import { useEffect } from 'preact/hooks';
+import LabIcon from '../components/LabIcon.jsx';
 import { BUILTIN_DEVICES } from '../../js/device-registry.js';
 import { chipIdFor, initDevicePresetsUI } from '../../js/harness/device-presets-ui.js';
 import { aspectRatio } from '../../js/harness/viewport-geometry.js';
@@ -28,39 +29,46 @@ export default function DevicePresetsIsland() {
     <div className="workbench-toolbar" id="controlled-size-controller" data-island="device-presets" data-island-state="mounting">
 
       <div className="toolbar-group">
-        <span className="group-label">Viewport Orientation:</span>
+        <span className="group-label">Viewport orientation</span>
         <div className="toolbar-group-row">
           <button
             id="btn-orient-vertical"
             className="toolbar-btn orientation-btn-primary"
-            data-orientation="vertical"
-            title="Switch to Vertical (Portrait) layout"
+            data-orientation="portrait"
+            title="Switch to Portrait orientation"
             aria-pressed="false"
+            aria-disabled="true"
+            disabled
            data-testid="btn-orient-vertical">
-            <span>↕ Portrait</span>
+            <LabIcon name="smartphone" />
+            <span>Portrait</span>
           </button>
           <button
             id="btn-orient-horizontal"
-            className="toolbar-btn orientation-btn-primary active"
-            data-orientation="horizontal"
-            title="Switch to Horizontal (Landscape) layout"
-            aria-pressed="true"
+            className="toolbar-btn orientation-btn-primary"
+            data-orientation="landscape"
+            title="Switch to Landscape orientation"
+            aria-pressed="false"
+            aria-disabled="true"
+            disabled
            data-testid="btn-orient-horizontal">
-            <span>↔ Landscape</span>
+            <LabIcon name="columns" />
+            <span>Landscape</span>
           </button>
         </div>
       </div>
 
       <div className="toolbar-group">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
-          <span className="group-label">Dimension Presets:</span>
+          <span className="group-label">Dimension presets</span>
           <button
             id="btn-open-device-manager"
             className="toolbar-btn"
             title="Open Device Preset Manager"
             aria-label="Open Device Preset Manager"
            data-testid="btn-open-device-manager">
-            <span>⚙️ Manage</span>
+            <LabIcon name="settings" />
+            <span>Manage</span>
           </button>
         </div>
         <div
@@ -76,7 +84,7 @@ export default function DevicePresetsIsland() {
               id={chipIdFor(device)}
               className="toolbar-btn size-preset-btn"
               data-device-id={device.id}
-              title={`${device.name} \u2014 ${device.width} \u00d7 ${device.height}px (${aspectRatio(device.width, device.height)})`}
+              title={`${device.name} — ${device.width} × ${device.height}px (${aspectRatio(device.width, device.height)})`}
               aria-pressed="false"
              data-testid={chipIdFor(device)}>
               <span>{`${device.name} (${device.width}px)`}</span>
@@ -89,13 +97,14 @@ export default function DevicePresetsIsland() {
             title="Reset to full container size (100%)"
             aria-pressed="true"
            data-testid="btn-size-full">
-            <span>↔ Full (100%)</span>
+            <LabIcon name="maximize" />
+            <span>Full (100%)</span>
           </button>
         </div>
       </div>
 
       <div className="toolbar-group">
-        <span className="group-label">Custom Geometry:</span>
+        <span className="group-label">Custom geometry</span>
         <div
           className="custom-dim-form"
           style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto 1fr auto', gap: '0.25rem', alignItems: 'center' }}
@@ -126,25 +135,6 @@ export default function DevicePresetsIsland() {
           data-testid="controlled-height-input" />
           <button id="btn-apply-custom-dim" type="button" className="toolbar-btn" style={{ padding: '0.2rem 0.5rem' }} data-testid="btn-apply-custom-dim">
             Apply
-          </button>
-        </div>
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.35rem' }}>
-          <button
-            id="btn-rotate-viewport"
-            type="button"
-            className="toolbar-btn"
-            style={{ flex: 1 }}
-            title="Swap Width and Height (90° Rotation)"
-           data-testid="btn-rotate-viewport">
-            🔄 Rotate (90°)
-          </button>
-          <button
-            id="btn-scale-toggle"
-            type="button"
-            className="toolbar-btn"
-            title="Toggle between 100% Actual Size and Fit-to-Screen"
-           data-testid="btn-scale-toggle">
-            🔍 Fit: Auto
           </button>
         </div>
       </div>

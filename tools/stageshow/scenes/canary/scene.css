@@ -1,0 +1,128 @@
+.ssg-canary .ss-stage {
+  --gutter: 32px;
+  overflow: hidden;
+  background: var(--ss-well);
+}
+
+.ssg-canary-window {
+  position: absolute;
+  top: var(--gutter);
+  left: var(--gutter);
+  width: 496px;
+  height: 460px;
+  background: var(--ss-surface);
+  border-radius: 10px;
+  box-shadow: var(--ss-shadow-hero);
+}
+
+.ssg-canary-window .ss-window__body {
+  display: flex;
+}
+
+.ssg-canary-sidebar {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 4px;
+  width: 112px;
+  padding: 16px 10px;
+  border-right: 1px solid var(--ss-line);
+  background: var(--ss-canvas);
+}
+
+.ssg-canary-wordmark {
+  display: flex;
+  align-items: center;
+  height: 20px;
+  margin: 0 0 12px 6px;
+  color: var(--ss-text-strong);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ssg-canary-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 6px;
+}
+
+.ssg-canary-nav[data-active] {
+  background: var(--ss-surface);
+  box-shadow: 0 0 0 1px var(--ss-line);
+}
+
+.ssg-canary-main {
+  flex: 1;
+  min-width: 0;
+  padding: 20px 22px;
+}
+
+.ssg-canary-hero {
+  display: grid;
+  grid-template-columns: 224px;
+}
+
+.ssg-canary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ssg-canary-label {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ss-text);
+}
+
+.ssg-canary-figure {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0 10px;
+}
+
+.ssg-canary-metric {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--ss-text-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.ssg-canary-list {
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid var(--ss-line);
+}
+
+.ssg-canary-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 34px;
+  border-bottom: 1px solid var(--ss-line-faint);
+}
+
+.ssg-canary-phone {
+  position: absolute;
+  top: 84px;
+  right: var(--gutter);
+  box-shadow: var(--ss-shadow-satellite), 0 30px 50px -20px rgba(50, 50, 93, 0.35);
+}
+
+.ssg-canary .ss-stage[data-layout='compact'] {
+  --gutter: 16px;
+}
+
+.ssg-canary .ss-stage[data-layout='compact'] .ssg-canary-sidebar {
+  display: none;
+}
+
+.ssg-canary .ss-stage[data-layout='compact'] .ssg-canary-window {
+  width: 420px;
+}

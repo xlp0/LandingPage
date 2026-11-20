@@ -12,7 +12,8 @@ const {
   bodyClass,
   netId = 'landingpage-workbench-net',
   placeIds = [],
-  viewport = 'width=device-width, initial-scale=1.0'
+  viewport = 'width=device-width, initial-scale=1.0',
+  enablePresentationController = false
 } = Astro.props;
 const isDev = import.meta.env.DEV;
 
@@ -62,6 +63,9 @@ const singlePlace = (placeIds || []).length === 1 ? placeIds[0] : undefined;
       }
     </style>
     <script type="module" src="/js/harness/page-state.js"></script>
+    {enablePresentationController && (
+      <script type="module" src="/js/runtime/presentation-bootstrap.js"></script>
+    )}
     <slot name="head" />
   </head>
   <body

@@ -1097,6 +1097,10 @@ if (process.env.GQC_SKIP_TEST_REGISTRATION !== '1') {
 
   test('app-fixtures isolated persistence harness stores and retrieves responsive_test_run:v1 without touching data/mcard-api.db', async () => {
     assert.deepEqual(
+      parseSavedRunBadge('mcard:test-run:spa (a1b2c3d4)'),
+      { handleSummary: 'mcard:test-run:spa', hashPrefix: 'a1b2c3d4' }
+    );
+    assert.deepEqual(
       parseSavedRunBadge('💾 mcard:test-run:spa (a1b2c3d4)'),
       { handleSummary: 'mcard:test-run:spa', hashPrefix: 'a1b2c3d4' }
     );

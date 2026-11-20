@@ -101,6 +101,30 @@ topology:
     - id: p_pending_post_nav_link
       initialTokens: 0
       description: In-flight pending state for POST /api/test-runs/navigation/link from p_page_responsive_lab
+    - id: p_pending_bombadil_handles
+      initialTokens: 0
+      description: In-flight pending state for GET /api/test-runs/bombadil/handles from p_page_responsive_lab
+    - id: p_pending_bombadil_trigger
+      initialTokens: 0
+      description: In-flight pending state for POST /api/test-runs/bombadil/trigger from p_page_responsive_lab
+    - id: p_pending_bombadil_stop
+      initialTokens: 0
+      description: In-flight pending state for POST /api/test-runs/bombadil/stop from p_page_responsive_lab
+    - id: p_pending_bombadil_shrink
+      initialTokens: 0
+      description: In-flight pending state for POST /api/test-runs/bombadil/shrink from p_page_responsive_lab
+    - id: p_pending_bombadil_runs
+      initialTokens: 0
+      description: In-flight pending state for GET /api/test-runs/bombadil/runs from p_page_responsive_lab
+    - id: p_pending_bombadil_run
+      initialTokens: 0
+      description: In-flight pending state for GET /api/test-runs/bombadil/run from p_page_responsive_lab
+    - id: p_pending_bombadil_coverage
+      initialTokens: 0
+      description: In-flight pending state for GET /api/test-runs/bombadil/coverage from p_page_responsive_lab
+    - id: p_pending_bombadil_stream
+      initialTokens: 0
+      description: In-flight pending state for GET /api/test-runs/bombadil/stream from p_page_responsive_lab
   transitions:
     - id: t_redirect_index_to_lab
       inputs:
@@ -433,6 +457,126 @@ topology:
     - id: t_recover_target_unapproved
       inputs:
         - p_error_target_unapproved
+      outputs:
+        - p_page_responsive_lab
+    - id: t_req_bombadil_handles
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_pending_bombadil_handles
+    - id: t_ok_bombadil_handles
+      inputs:
+        - p_pending_bombadil_handles
+      outputs:
+        - p_page_responsive_lab
+    - id: t_fail_bombadil_handles
+      inputs:
+        - p_pending_bombadil_handles
+      outputs:
+        - p_page_responsive_lab
+    - id: t_req_bombadil_trigger
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_pending_bombadil_trigger
+    - id: t_ok_bombadil_trigger
+      inputs:
+        - p_pending_bombadil_trigger
+      outputs:
+        - p_page_responsive_lab
+    - id: t_fail_bombadil_trigger
+      inputs:
+        - p_pending_bombadil_trigger
+      outputs:
+        - p_page_responsive_lab
+    - id: t_req_bombadil_stop
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_pending_bombadil_stop
+    - id: t_ok_bombadil_stop
+      inputs:
+        - p_pending_bombadil_stop
+      outputs:
+        - p_page_responsive_lab
+    - id: t_fail_bombadil_stop
+      inputs:
+        - p_pending_bombadil_stop
+      outputs:
+        - p_page_responsive_lab
+    - id: t_req_bombadil_shrink
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_pending_bombadil_shrink
+    - id: t_ok_bombadil_shrink
+      inputs:
+        - p_pending_bombadil_shrink
+      outputs:
+        - p_page_responsive_lab
+    - id: t_fail_bombadil_shrink
+      inputs:
+        - p_pending_bombadil_shrink
+      outputs:
+        - p_page_responsive_lab
+    - id: t_req_bombadil_runs
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_pending_bombadil_runs
+    - id: t_ok_bombadil_runs
+      inputs:
+        - p_pending_bombadil_runs
+      outputs:
+        - p_page_responsive_lab
+    - id: t_fail_bombadil_runs
+      inputs:
+        - p_pending_bombadil_runs
+      outputs:
+        - p_page_responsive_lab
+    - id: t_req_bombadil_run
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_pending_bombadil_run
+    - id: t_ok_bombadil_run
+      inputs:
+        - p_pending_bombadil_run
+      outputs:
+        - p_page_responsive_lab
+    - id: t_fail_bombadil_run
+      inputs:
+        - p_pending_bombadil_run
+      outputs:
+        - p_page_responsive_lab
+    - id: t_req_bombadil_coverage
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_pending_bombadil_coverage
+    - id: t_ok_bombadil_coverage
+      inputs:
+        - p_pending_bombadil_coverage
+      outputs:
+        - p_page_responsive_lab
+    - id: t_fail_bombadil_coverage
+      inputs:
+        - p_pending_bombadil_coverage
+      outputs:
+        - p_page_responsive_lab
+    - id: t_req_bombadil_stream
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_pending_bombadil_stream
+    - id: t_ok_bombadil_stream
+      inputs:
+        - p_pending_bombadil_stream
+      outputs:
+        - p_page_responsive_lab
+    - id: t_fail_bombadil_stream
+      inputs:
+        - p_pending_bombadil_stream
       outputs:
         - p_page_responsive_lab
 bindings:
@@ -850,6 +994,102 @@ bindings:
       entry: false
       deepLinkEntry: false
       owner: Product Manager and Security Owner
+    p_pending_bombadil_handles:
+      kind: pending
+      surface: workbench
+      pageId: pending_bombadil_handles
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:pending:bombadil_handles
+      clmTypeUri: clm://type/view/workbench/pending/bombadil-handles
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Architect and TEA
+    p_pending_bombadil_trigger:
+      kind: pending
+      surface: workbench
+      pageId: pending_bombadil_trigger
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:pending:bombadil_trigger
+      clmTypeUri: clm://type/view/workbench/pending/bombadil-trigger
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Architect and TEA
+    p_pending_bombadil_stop:
+      kind: pending
+      surface: workbench
+      pageId: pending_bombadil_stop
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:pending:bombadil_stop
+      clmTypeUri: clm://type/view/workbench/pending/bombadil-stop
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Architect and TEA
+    p_pending_bombadil_shrink:
+      kind: pending
+      surface: workbench
+      pageId: pending_bombadil_shrink
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:pending:bombadil_shrink
+      clmTypeUri: clm://type/view/workbench/pending/bombadil-shrink
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Architect and TEA
+    p_pending_bombadil_runs:
+      kind: pending
+      surface: workbench
+      pageId: pending_bombadil_runs
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:pending:bombadil_runs
+      clmTypeUri: clm://type/view/workbench/pending/bombadil-runs
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Architect and TEA
+    p_pending_bombadil_run:
+      kind: pending
+      surface: workbench
+      pageId: pending_bombadil_run
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:pending:bombadil_run
+      clmTypeUri: clm://type/view/workbench/pending/bombadil-run
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Architect and TEA
+    p_pending_bombadil_coverage:
+      kind: pending
+      surface: workbench
+      pageId: pending_bombadil_coverage
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:pending:bombadil_coverage
+      clmTypeUri: clm://type/view/workbench/pending/bombadil-coverage
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Architect and TEA
+    p_pending_bombadil_stream:
+      kind: pending
+      surface: workbench
+      pageId: pending_bombadil_stream
+      pagePath: responsive-lab.html
+      route: /responsive-lab.html
+      routeHandle: mcard:pending:bombadil_stream
+      clmTypeUri: clm://type/view/workbench/pending/bombadil-stream
+      mcardHash: null
+      entry: false
+      deepLinkEntry: false
+      owner: Architect and TEA
   transitions:
     t_redirect_index_to_lab:
       kind: redirect
@@ -1230,6 +1470,302 @@ bindings:
       ownerPage: responsive-lab.html
       owner: Architect and TEA
       errorPresentation: '#spa-workflow-error visible link verification alert on responsive-lab.html'
+    t_req_bombadil_handles:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_bombadil_handles
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_pending_bombadil_handles
+      httpMethod: GET
+      httpPath: /api/test-runs/bombadil/handles
+      trigger: fetch("/api/test-runs/bombadil/handles") in js/harness/bombadil-client.js
+      triggerSource:
+        file: js/harness/bombadil-client.js
+        selector: "bombadil/handles"
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_ok_bombadil_handles:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_bombadil_handles
+      fromPlaceId: p_pending_bombadil_handles
+      toPlaceId: p_page_responsive_lab
+      httpMethod: GET
+      httpPath: /api/test-runs/bombadil/handles
+      trigger: HTTP 2xx response for GET /api/test-runs/bombadil/handles
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_fail_bombadil_handles:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_bombadil_handles
+      fromPlaceId: p_pending_bombadil_handles
+      toPlaceId: p_page_responsive_lab
+      httpMethod: GET
+      httpPath: /api/test-runs/bombadil/handles
+      trigger: HTTP 4xx/5xx or network failure for GET /api/test-runs/bombadil/handles
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+      errorPresentation: 'lab:bombadil-state error notice on #bombadil-dashboard-panel and #bombadil-transport-pill'
+    t_req_bombadil_trigger:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_bombadil_trigger
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_pending_bombadil_trigger
+      httpMethod: POST
+      httpPath: /api/test-runs/bombadil/trigger
+      trigger: fetch("/api/test-runs/bombadil/trigger") in js/harness/bombadil-client.js
+      triggerSource:
+        file: js/harness/bombadil-client.js
+        selector: "bombadil/trigger"
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_ok_bombadil_trigger:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_bombadil_trigger
+      fromPlaceId: p_pending_bombadil_trigger
+      toPlaceId: p_page_responsive_lab
+      httpMethod: POST
+      httpPath: /api/test-runs/bombadil/trigger
+      trigger: HTTP 2xx response for POST /api/test-runs/bombadil/trigger
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_fail_bombadil_trigger:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_bombadil_trigger
+      fromPlaceId: p_pending_bombadil_trigger
+      toPlaceId: p_page_responsive_lab
+      httpMethod: POST
+      httpPath: /api/test-runs/bombadil/trigger
+      trigger: HTTP 4xx/5xx or network failure for POST /api/test-runs/bombadil/trigger
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+      errorPresentation: 'lab:bombadil-state error notice on #bombadil-dashboard-panel and #bombadil-transport-pill'
+    t_req_bombadil_stop:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_bombadil_stop
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_pending_bombadil_stop
+      httpMethod: POST
+      httpPath: /api/test-runs/bombadil/stop
+      trigger: fetch("/api/test-runs/bombadil/stop") in js/harness/bombadil-client.js
+      triggerSource:
+        file: js/harness/bombadil-client.js
+        selector: "bombadil/stop"
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_ok_bombadil_stop:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_bombadil_stop
+      fromPlaceId: p_pending_bombadil_stop
+      toPlaceId: p_page_responsive_lab
+      httpMethod: POST
+      httpPath: /api/test-runs/bombadil/stop
+      trigger: HTTP 2xx response for POST /api/test-runs/bombadil/stop
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_fail_bombadil_stop:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_bombadil_stop
+      fromPlaceId: p_pending_bombadil_stop
+      toPlaceId: p_page_responsive_lab
+      httpMethod: POST
+      httpPath: /api/test-runs/bombadil/stop
+      trigger: HTTP 4xx/5xx or network failure for POST /api/test-runs/bombadil/stop
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+      errorPresentation: 'lab:bombadil-state error notice on #bombadil-dashboard-panel and #bombadil-transport-pill'
+    t_req_bombadil_shrink:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_bombadil_shrink
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_pending_bombadil_shrink
+      httpMethod: POST
+      httpPath: /api/test-runs/bombadil/shrink
+      trigger: fetch("/api/test-runs/bombadil/shrink") in js/harness/bombadil-client.js
+      triggerSource:
+        file: js/harness/bombadil-client.js
+        selector: "bombadil/shrink"
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_ok_bombadil_shrink:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_bombadil_shrink
+      fromPlaceId: p_pending_bombadil_shrink
+      toPlaceId: p_page_responsive_lab
+      httpMethod: POST
+      httpPath: /api/test-runs/bombadil/shrink
+      trigger: HTTP 2xx response for POST /api/test-runs/bombadil/shrink
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_fail_bombadil_shrink:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_bombadil_shrink
+      fromPlaceId: p_pending_bombadil_shrink
+      toPlaceId: p_page_responsive_lab
+      httpMethod: POST
+      httpPath: /api/test-runs/bombadil/shrink
+      trigger: HTTP 4xx/5xx or network failure for POST /api/test-runs/bombadil/shrink
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+      errorPresentation: 'lab:bombadil-state error notice on #bombadil-dashboard-panel and #bombadil-transport-pill'
+    t_req_bombadil_runs:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_bombadil_runs
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_pending_bombadil_runs
+      httpMethod: GET
+      httpPath: /api/test-runs/bombadil/runs
+      trigger: fetch("/api/test-runs/bombadil/runs") in js/harness/bombadil-client.js
+      triggerSource:
+        file: js/harness/bombadil-client.js
+        selector: "bombadil/runs"
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_ok_bombadil_runs:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_bombadil_runs
+      fromPlaceId: p_pending_bombadil_runs
+      toPlaceId: p_page_responsive_lab
+      httpMethod: GET
+      httpPath: /api/test-runs/bombadil/runs
+      trigger: HTTP 2xx response for GET /api/test-runs/bombadil/runs
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_fail_bombadil_runs:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_bombadil_runs
+      fromPlaceId: p_pending_bombadil_runs
+      toPlaceId: p_page_responsive_lab
+      httpMethod: GET
+      httpPath: /api/test-runs/bombadil/runs
+      trigger: HTTP 4xx/5xx or network failure for GET /api/test-runs/bombadil/runs
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+      errorPresentation: 'lab:bombadil-state error notice on #bombadil-dashboard-panel and #bombadil-transport-pill'
+    t_req_bombadil_run:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_bombadil_run
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_pending_bombadil_run
+      httpMethod: GET
+      httpPath: /api/test-runs/bombadil/run
+      trigger: fetch("/api/test-runs/bombadil/run?runId=...") in js/harness/bombadil-client.js
+      triggerSource:
+        file: js/harness/bombadil-client.js
+        selector: "bombadil/run"
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_ok_bombadil_run:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_bombadil_run
+      fromPlaceId: p_pending_bombadil_run
+      toPlaceId: p_page_responsive_lab
+      httpMethod: GET
+      httpPath: /api/test-runs/bombadil/run
+      trigger: HTTP 2xx response for GET /api/test-runs/bombadil/run
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_fail_bombadil_run:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_bombadil_run
+      fromPlaceId: p_pending_bombadil_run
+      toPlaceId: p_page_responsive_lab
+      httpMethod: GET
+      httpPath: /api/test-runs/bombadil/run
+      trigger: HTTP 4xx/5xx or network failure for GET /api/test-runs/bombadil/run
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+      errorPresentation: 'lab:bombadil-state error notice on #bombadil-dashboard-panel and #bombadil-transport-pill'
+    t_req_bombadil_coverage:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_bombadil_coverage
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_pending_bombadil_coverage
+      httpMethod: GET
+      httpPath: /api/test-runs/bombadil/coverage
+      trigger: fetch("/api/test-runs/bombadil/coverage") in js/harness/bombadil-client.js
+      triggerSource:
+        file: js/harness/bombadil-client.js
+        selector: "bombadil/coverage"
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_ok_bombadil_coverage:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_bombadil_coverage
+      fromPlaceId: p_pending_bombadil_coverage
+      toPlaceId: p_page_responsive_lab
+      httpMethod: GET
+      httpPath: /api/test-runs/bombadil/coverage
+      trigger: HTTP 2xx response for GET /api/test-runs/bombadil/coverage
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_fail_bombadil_coverage:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_bombadil_coverage
+      fromPlaceId: p_pending_bombadil_coverage
+      toPlaceId: p_page_responsive_lab
+      httpMethod: GET
+      httpPath: /api/test-runs/bombadil/coverage
+      trigger: HTTP 4xx/5xx or network failure for GET /api/test-runs/bombadil/coverage
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+      errorPresentation: 'lab:bombadil-state error notice on #bombadil-dashboard-panel and #bombadil-transport-pill'
+    t_req_bombadil_stream:
+      kind: server-call-request
+      surface: workbench
+      linkId: call_req_bombadil_stream
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_pending_bombadil_stream
+      httpMethod: GET
+      httpPath: /api/test-runs/bombadil/stream
+      trigger: fetch("/api/test-runs/bombadil/stream") in js/harness/bombadil-client.js
+      triggerSource:
+        file: js/harness/bombadil-client.js
+        selector: "bombadil/stream"
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_ok_bombadil_stream:
+      kind: server-call-ok
+      surface: workbench
+      linkId: call_ok_bombadil_stream
+      fromPlaceId: p_pending_bombadil_stream
+      toPlaceId: p_page_responsive_lab
+      httpMethod: GET
+      httpPath: /api/test-runs/bombadil/stream
+      trigger: HTTP 2xx or 204 response for GET /api/test-runs/bombadil/stream
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+    t_fail_bombadil_stream:
+      kind: server-call-fail
+      surface: workbench
+      linkId: call_fail_bombadil_stream
+      fromPlaceId: p_pending_bombadil_stream
+      toPlaceId: p_page_responsive_lab
+      httpMethod: GET
+      httpPath: /api/test-runs/bombadil/stream
+      trigger: HTTP 4xx/5xx or stream disconnect for GET /api/test-runs/bombadil/stream
+      ownerPage: responsive-lab.html
+      owner: Architect and TEA
+      errorPresentation: 'lab:bombadil-state error notice on #bombadil-dashboard-panel and #bombadil-transport-pill'
     t_req_get_env:
       kind: server-call-request
       surface: workbench

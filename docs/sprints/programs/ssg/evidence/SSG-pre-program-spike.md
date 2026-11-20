@@ -4,7 +4,7 @@
 | --- | --- |
 | Audience | Scrum masters, UX designers, architects, developers, and TEA engineers |
 | BMAD Owner | Product Manager, Architect, UX Designer, and Developer |
-| Source of Truth | [`../ssg-plan.md`](../ssg-plan.md), [`../DECISIONS.tsv`](../DECISIONS.tsv), [`../../../../tools/stageshow/UPSTREAM.json`](../../../../tools/stageshow/UPSTREAM.json), and [`../../../../scripts/stageshow/run.mjs`](../../../../scripts/stageshow/run.mjs) |
+| Source of Truth | [`../ssg-plan.md`](../ssg-plan.md), [`../DECISIONS.tsv`](../../../_active/DECISIONS.tsv), [`../../../../tools/stageshow/UPSTREAM.json`](../../../../../tools/stageshow/UPSTREAM.json), and [`../../../../scripts/stageshow/run.mjs`](../../../../../scripts/stageshow/run.mjs) |
 | Consensus Kernel | `clm-kernel@0.0.23` |
 | Spike Date | `2026-11-19` |
 
@@ -14,10 +14,10 @@ StageShow `1.1.1` from `benjitaylor/skills` (commit `299140fafd08df55a9c234e610c
 
 | Location | Contents | Verification role |
 | --- | --- | --- |
-| [`.agents/skills/stageshow/`](../../../../.agents/skills/stageshow/SKILL.md) | `SKILL.md`, `LICENSE`, `NOTICE.md`, `README.md`, and `15` reference files (`craft.md`, `framing.md`, `kit.md`, `looks.md`, `motion.md`, `rehearse.md`, `verify.md`, etc.) | Supplies agent craft, framing, choreography, and rehearsal rubrics during UI sprints |
-| [`tools/stageshow/`](../../../../tools/stageshow/UPSTREAM.json) | Upstream `kit/` (`Stage`, `Window`, fixed-screen portrait `Phone`), `examples/`, `teaching/`, `playground/`, `references/`, `scripts/`, and `UPSTREAM.json` | Supplies visual chrome tokens, `playground/viewer.tsx` reference layout, and `layout.mjs`, `film.mjs`, `jumps.mjs`, and `class-clash.mjs` scripts |
-| [`scripts/stageshow/run.mjs`](../../../../scripts/stageshow/run.mjs) | Hermetic server lifecycle runner for `layout`, `sweep`, `film`, `jumps`, and `check-css` | Refuses `data/mcard-api.db`, binds ephemeral ports, and resolves Playwright Chromium when Chrome is absent |
-| [`tests/unit/stageshow-install.test.mjs`](../../../../tests/unit/stageshow-install.test.mjs) | `node:test` verification suite (`5` tests) | Locks pinned SHA, skill mirror parity, kit/script presence, and `check-css` execution |
+| [`.agents/skills/stageshow/`](../../../../../.agents/skills/stageshow/SKILL.md) | `SKILL.md`, `LICENSE`, `NOTICE.md`, `README.md`, and `15` reference files (`craft.md`, `framing.md`, `kit.md`, `looks.md`, `motion.md`, `rehearse.md`, `verify.md`, etc.) | Supplies agent craft, framing, choreography, and rehearsal rubrics during UI sprints |
+| [`tools/stageshow/`](../../../../../tools/stageshow/UPSTREAM.json) | Upstream `kit/` (`Stage`, `Window`, fixed-screen portrait `Phone`), `examples/`, `teaching/`, `playground/`, `references/`, `scripts/`, and `UPSTREAM.json` | Supplies visual chrome tokens, `playground/viewer.tsx` reference layout, and `layout.mjs`, `film.mjs`, `jumps.mjs`, and `class-clash.mjs` scripts |
+| [`scripts/stageshow/run.mjs`](../../../../../scripts/stageshow/run.mjs) | Hermetic server lifecycle runner for `layout`, `sweep`, `film`, `jumps`, and `check-css` | Refuses `data/mcard-api.db`, binds ephemeral ports, and resolves Playwright Chromium when Chrome is absent |
+| [`tests/unit/stageshow-install.test.mjs`](../../../../../tests/unit/stageshow-install.test.mjs) | `node:test` verification suite (`5` tests) | Locks pinned SHA, skill mirror parity, kit/script presence, and `check-css` execution |
 
 Verified commands recorded during spike and baseline verification follow.
 
@@ -69,7 +69,7 @@ The baseline sweep exposed two measurement gaps (`[Observed-Source]`). First, `l
 
 ## StageShow craft lessons mapped from external StudyNotes
 
-Based on external operator study notes (`StudyNotes/Hub/Tech/Stageshow - Design Judgment Encoded as a Skill.md` outside this repository), [`../../../../tools/stageshow/SKILL.md`](../../../../tools/stageshow/SKILL.md), [`../../../../tools/stageshow/playground/viewer.tsx`](../../../../tools/stageshow/playground/viewer.tsx), [`../../../../tools/stageshow/references/kit.md`](../../../../tools/stageshow/references/kit.md), [`../../../../tools/stageshow/references/motion.md`](../../../../tools/stageshow/references/motion.md), and [`../../../../tools/stageshow/references/craft.md`](../../../../tools/stageshow/references/craft.md), Program SSG separates **transferable craft** from StageShow's **house style**.
+Based on external operator study notes (`StudyNotes/Hub/Tech/Stageshow - Design Judgment Encoded as a Skill.md` outside this repository), [`../../../../tools/stageshow/SKILL.md`](../../../../../tools/stageshow/SKILL.md), [`../../../../tools/stageshow/playground/viewer.tsx`](../../../../../tools/stageshow/playground/viewer.tsx), [`../../../../tools/stageshow/references/kit.md`](../../../../../tools/stageshow/references/kit.md), [`../../../../tools/stageshow/references/motion.md`](../../../../../tools/stageshow/references/motion.md), and [`../../../../tools/stageshow/references/craft.md`](../../../../../tools/stageshow/references/craft.md), Program SSG separates **transferable craft** from StageShow's **house style**.
 
 | Category | Principles and rules | Application in Program SSG |
 | --- | --- | --- |

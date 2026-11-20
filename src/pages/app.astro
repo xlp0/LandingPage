@@ -77,7 +77,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
         <button class="header-btn" onclick="window.location.href='/'" style="margin-right: 12px;"
           title="Back to Landing Page">
           <i data-lucide="home" style="width: 16px; height: 16px;"></i>
-          Home
+          <span>Home</span>
         </button>
         <i data-lucide="package" style="width: 20px; height: 20px;"></i>
         <h1>MCard Manager</h1>
@@ -85,15 +85,15 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       <div class="header-right">
         <button class="header-btn" onclick="document.getElementById('fileInput').click()">
           <i data-lucide="upload" style="width: 16px; height: 16px;"></i>
-          Upload
+          <span>Upload</span>
         </button>
         <button class="header-btn" onclick="createTextCard()">
           <i data-lucide="file-text" style="width: 16px; height: 16px;"></i>
-          New Text
+          <span>New Text</span>
         </button>
         <button class="header-btn" onclick="toggleChat()">
           <i data-lucide="message-square" style="width: 16px; height: 16px;"></i>
-          Chat
+          <span>Chat</span>
         </button>
       </div>
       <input type="file" id="fileInput" multiple style="display: none;">
@@ -104,7 +104,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('calendar')">
           <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close Calendar
+          <span>Close Calendar</span>
         </button>
         <h2 style="margin: 0; flex: 1; text-align: center;">
           <i data-lucide="calendar" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
@@ -125,7 +125,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('map')">
           <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close Map
+          <span>Close Map</span>
         </button>
         <h2 style="margin: 0; flex: 1; text-align: center;">
           <i data-lucide="map-pin" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
@@ -145,7 +145,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('threeD')">
           <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close Viewer
+          <span>Close Viewer</span>
         </button>
         <h2 style="margin: 0; flex: 1; text-align: center;">
           <i data-lucide="box" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
@@ -165,7 +165,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('music')">
           <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close Music
+          <span>Close Music</span>
         </button>
         <h2 style="margin: 0; flex: 1; text-align: center;">
           <i data-lucide="music" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
@@ -185,7 +185,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('dashboard')">
           <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close Dashboard
+          <span>Close Dashboard</span>
         </button>
         <h2 style="margin: 0; flex: 1; text-align: center;">
           <i data-lucide="bar-chart-3"
@@ -207,7 +207,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('morphismV1')">
           <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close Morphism
+          <span>Close Morphism</span>
         </button>
         <h2 style="margin: 0; flex: 1; text-align: center;">
           <i data-lucide="cube" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
@@ -227,7 +227,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('morphismV2')">
           <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close Morphism
+          <span>Close Morphism</span>
         </button>
         <h2 style="margin: 0; flex: 1; text-align: center;">
           <i data-lucide="box" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
@@ -247,7 +247,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('monopoly')">
           <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close Monopoly
+          <span>Close Monopoly</span>
         </button>
         <h2 style="margin: 0; flex: 1; text-align: center;">
           <i data-lucide="dice-5" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
@@ -267,7 +267,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('monopoly-auth')">
           <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close
+          <span>Close</span>
         </button>
         <h2 style="margin: 0; flex: 1; text-align: center;">
           <i data-lucide="shield" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
@@ -299,7 +299,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('chess-auth')">
           <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close
+          <span>Close</span>
         </button>
         <h2 style="margin: 0; flex: 1; text-align: center;">
           <i data-lucide="shield" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
@@ -331,7 +331,7 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
       <div class="calendar-header">
         <button class="header-btn" onclick="window.viewManager.hide('go-auth')">
           <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-          Close
+          <span>Close</span>
         </button>
         <h2 style="margin: 0; flex: 1; text-align: center;">
           <i data-lucide="shield" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>

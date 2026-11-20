@@ -9,8 +9,12 @@ All notable changes to the PKC Landing Page are documented in this file. The for
 
 ## [Unreleased]
 
-- **Program SSG Staged (`SPRINT-SSG-00..08`, 2026-11-19)**:
-  - Installed StageShow `1.1.1` (`tools/stageshow/`, `.agents/skills/stageshow/`) alongside hermetic runner `scripts/stageshow/run.mjs`, CSS clash checks (`npm run stageshow:check-css`), `docker/bombadil/` runner configuration, and active sprint plans (`SPRINT-SSG-00` in progress; `SPRINT-SSG-01..08` planned) under `docs/sprints/_active/`.
+- **Program SSG Graduated (`SPRINT-SSG-00..08`, 2026-11-19 to 2026-11-20)**:
+  - Installed StageShow `1.1.1` (`tools/stageshow/`, `.agents/skills/stageshow/`), added `postcss`, excluded `public/stageshow/` from npm tarballs, hardened `scripts/stageshow/run.mjs`, and documented transferable vs house-style craft in `docs/06-components/STAGESHOW_DESIGN_CONTRACT.md` (`SPRINT-SSG-00`).
+  - Subtracted duplicate CSS tokens/rules and eliminated non-Lab mobile clip/overflow across `index.astro`, `sprint-registry.astro`, `fiber-inspector.astro`, `app.astro`, and `mcard-manager.css` (`SPRINT-SSG-01`).
+  - Consolidated viewport geometry (`js/harness/viewport-geometry.js`) and reconciled `12` built-in device presets (`js/device-registry.js`) alongside closed `responsive_test_run:v1` persistence projections and memoized conformance fetches (`SPRINT-SSG-02`), then wrapped exact `1:1` `.stage-screen-slot` pixels inside 6 parametric StageShow `data-frame-style` bezels (`SPRINT-SSG-03`).
+  - Built subprocess-isolated Bombadil runner APIs and Triad handle contracts (`server/bombadil-runner-service.mjs`, `/api/test-runs/bombadil/*`, `urn:mcard:bombadil:*`, `js/harness/bombadil-client.js`, `workbench-net.yaml` `40` Places / `90` Transitions) plus `BombadilDashboardIsland` (`8th` Astro island), StageShow 4-mode workbench shell, `js/ui/icons.js`, local WOFF2 fonts, shared `PresentationController`, and responsive `desktop`/`tablet`/`compact` tiers (`SPRINT-SSG-04..06`).
+  - Authored and rehearsed the `workbench-bombadil-pair` Device Pair StageShow showcase (`REHEARSAL.md`, `35,331 B` gzipped embed) mounted inside open Shadow DOM on `index.astro?noredirect=1` with `0` Astro islands (`SPRINT-SSG-07`), wired StageShow checks into `docker/bombadil/` and `scripts/bombadil/nightly.sh`, aligned maintained documentation, and graduated `Program SSG` from `docs/sprints/_active/` to `docs/sprints/programs/ssg/` on operator approval (`SPRINT-SSG-08`).
 
 - **Published `clm-kernel@0.0.24` Consumer Consensus (2026-11-19)**:
   - Install and lock published `clm-kernel@0.0.24` (`sha512-Ew88il...`) in `package.json`, `package-lock.json`, and rebuilt `public/js/vendor/mcard-bundle.js` while tracking active `clm/` workspace `0.0.25` (`01edfca1`, additive "One interpreter, one fiber" `Sprints 624..632` release with zero breaking export removals).

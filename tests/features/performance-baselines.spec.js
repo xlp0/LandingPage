@@ -289,20 +289,21 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
       requestAnimationFrame(tick);
     });
 
+    await page.locator('#btn-mode-guided-spa').click();
     await page.getByTestId('workflow-next-device').click();
     await page.getByTestId('workflow-device-phone').click();
     const portraitDims = await workbench.readStageDimensions();
     expect([393, 852]).toContain(portraitDims.width);
 
     for (let i = 0; i < 6; i += 1) {
-      await page.getByTestId('workflow-rotate-device').click();
+      await page.locator('#btn-rotate-viewport').click();
       await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
     }
 
     await page.getByTestId('workflow-device-tablet').click();
-    await page.getByTestId('workflow-rotate-device').click();
+    await page.locator('#btn-rotate-viewport').click();
     await page.getByTestId('workflow-device-phone').click();
-    await page.getByTestId('workflow-rotate-device').click();
+    await page.locator('#btn-rotate-viewport').click();
     await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
 
     const rawDeltas = await page.evaluate(() => {
@@ -402,6 +403,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
     );
 
     const tTarget = performance.now();
+    await page.locator('#btn-mode-guided-spa').click();
     await page.getByTestId('workflow-select-spa-fixture').click();
     const frame = workbench.targetFrame();
     const appRoot = frame.locator('#spa-app-root');
@@ -543,7 +545,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
     expect(wbReplay.ok).toBe(true);
   });
 
-  test('GQC-06-E2E-05: records cold hydration time, performance marks, directive, and long tasks for all 7 Responsive Lab islands', async ({
+  test('GQC-06-E2E-05: records cold hydration time, performance marks, directive, and long tasks for all 8 Responsive Lab islands', async ({
     browser,
     baseURL
   }) => {
@@ -571,7 +573,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
         'SpaTestWorkflow',
         'ViewportStageIsland'
       ];
-      const deferredNames = ['ConformancePanelIsland', 'MCardResultIsland'];
+      const deferredNames = ['ConformancePanelIsland', 'MCardResultIsland', 'BombadilDashboardIsland'];
 
       for (const name of eagerNames) {
         const rec = initialSnap.islands[name];
@@ -598,15 +600,18 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
         expect(astroJsRequests.some((p) => p.includes(name))).toBe(false);
       }
 
+      await page.locator('#btn-mode-verify').click();
       await page.locator('#conformance-disclosure > summary').click();
       await page.locator('#mcard-result-disclosure > summary').click();
+      await page.locator('#btn-mode-bombadil').click();
 
       await expect
         .poll(async () => {
           const snap = await readBrowserPerfSnapshot(page);
           return (
             Boolean(snap.islands.ConformancePanelIsland?.hydrated) &&
-            Boolean(snap.islands.MCardResultIsland?.hydrated)
+            Boolean(snap.islands.MCardResultIsland?.hydrated) &&
+            Boolean(snap.islands.BombadilDashboardIsland?.hydrated)
           );
         })
         .toBe(true);
@@ -652,6 +657,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
         latencyMs: Number((performance.now() - tRedirect).toFixed(3))
       };
 
+      await page.locator('#btn-mode-guided-spa').click();
       await page.getByTestId('workflow-select-spa-fixture').click();
       const frame = workbench.targetFrame();
       await expect(frame.locator('#spa-app-root')).toHaveAttribute('data-place-id', 'p_spa_overview');
@@ -738,6 +744,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
       };
 
       await page.evaluate(() => window.__lab.policy.clearTrace());
+      await page.locator('#btn-mode-explore').click();
       const tClientRoute = performance.now();
       await workbench.loadTargetByUrl('https://github.com');
       await expect(page.locator('#cors-block-alert')).toBeVisible();
@@ -888,7 +895,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
           expect(rec.networkAstroDecodedBytes).toBe(0);
           expect(rec.networkAstroFileCount).toBe(0);
         } else {
-          expect(domIslandCount).toBe(7);
+          expect(domIslandCount).toBe(8);
           expect(rec.astroEagerDeltaBytes).toBe(0);
         }
         expect(rec.matchesWithinDocumentedChunkDifference).toBe(true);

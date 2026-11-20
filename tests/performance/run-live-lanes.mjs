@@ -117,7 +117,7 @@ async function waitForHttpReady(baseUrl, timeoutMs = 15000) {
     try {
       const res = await fetch(`${baseUrl}/responsive-lab.html`);
       if (res.status === 200) return;
-    } catch {}
+    } catch { }
     await new Promise((r) => setTimeout(r, 60));
   }
   throw new Error(`Server at ${baseUrl} did not become ready`);
@@ -146,7 +146,7 @@ async function startServer({ label, cwd, port, dbCopyPath }) {
         const timer = setTimeout(() => {
           try {
             child.kill('SIGKILL');
-          } catch {}
+          } catch { }
           resolve();
         }, 3000);
         child.once('exit', () => {
@@ -182,6 +182,7 @@ async function runP0JourneyOnce(browser, baseUrl, screenshotPath = null) {
         document.body.dataset.pageState !== 'loading' &&
         document.querySelector('[data-testid="spa-test-workflow"]')?.getAttribute('data-island-state') === 'ready'
     );
+    await page.locator('#btn-mode-guided-spa').click();
     await page.getByTestId('workflow-select-spa-fixture').click();
     const frame = page.frameLocator('iframe[title="Responsive UI Lab Test Frame"]');
     await page.waitForFunction(() => {
@@ -254,6 +255,7 @@ async function recordReviewVideo(browser, baseUrl, outVideoPath, disclosureShotP
   );
   await pause(3500);
 
+  await page.locator('#btn-mode-guided-spa').click();
   await page.getByTestId('workflow-select-spa-fixture').click();
   const frame = page.frameLocator('iframe[title="Responsive UI Lab Test Frame"]');
   await page.waitForFunction(() => {
@@ -266,9 +268,9 @@ async function recordReviewVideo(browser, baseUrl, outVideoPath, disclosureShotP
   await pause(2000);
   await page.getByTestId('workflow-device-phone').click();
   await pause(2500);
-  await page.getByTestId('workflow-rotate-device').click();
+  await page.locator('#btn-rotate-viewport').click();
   await pause(2500);
-  await page.getByTestId('workflow-rotate-device').click();
+  await page.locator('#btn-rotate-viewport').click();
   await pause(2500);
 
   await page.getByTestId('workflow-tab-step-evidence').click();
@@ -318,7 +320,7 @@ async function main() {
   if (fs.existsSync(wtLane1)) {
     try {
       execFileSync('git', ['worktree', 'remove', '--force', wtLane1], { cwd: DEFAULT_ROOT_DIR, stdio: 'ignore' });
-    } catch {}
+    } catch { }
     fs.rmSync(wtLane1, { recursive: true, force: true });
   }
 
@@ -468,6 +470,7 @@ async function main() {
           requestAnimationFrame(loop);
         });
 
+        await page.locator('#btn-mode-guided-spa').click();
         await page.getByTestId('workflow-next-device').click();
         const devices = ['workflow-device-phone', 'workflow-device-tablet'];
         const start60 = performance.now();
@@ -475,7 +478,7 @@ async function main() {
         while (performance.now() - start60 < 60000) {
           const devTestId = devices[ops % devices.length];
           await page.getByTestId(devTestId).click();
-          await page.getByTestId('workflow-rotate-device').click();
+          await page.locator('#btn-rotate-viewport').click();
           const customW = 390 + ((ops * 37) % 650);
           const customH = 680 + ((ops * 29) % 240);
           await page.evaluate(([w, h]) => window.__lab.geometry.set(w, h), [customW, customH]);
@@ -836,20 +839,20 @@ async function main() {
     if (browser) {
       try {
         await browser.close();
-      } catch {}
+      } catch { }
     }
     for (const s of servers) {
       await s.stop();
     }
     try {
       execFileSync('git', ['worktree', 'remove', '--force', wtLane1], { cwd: DEFAULT_ROOT_DIR, stdio: 'ignore' });
-    } catch {}
+    } catch { }
     try {
       fs.rmSync(wtLane1, { recursive: true, force: true });
-    } catch {}
+    } catch { }
     try {
       execFileSync('git', ['worktree', 'prune'], { cwd: DEFAULT_ROOT_DIR, stdio: 'ignore' });
-    } catch {}
+    } catch { }
   }
 }
 

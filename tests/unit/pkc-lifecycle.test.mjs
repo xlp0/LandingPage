@@ -363,20 +363,45 @@ test('initConformancePanel listens on document for lab:viewport-change and lab:t
   };
 
   try {
+    let activeDevice = { id: 'iphone-16-pro', name: 'iPhone 16 Pro' };
+    let activeOrientation = 'portrait';
+    let activeSelectionKey = 'iphone-16-pro';
+
     const panel = initConformancePanel({
       getTarget: () => ({ url: 'http://127.0.0.1:3001/tests/fixtures/spa-test-target.html' }),
-      getDevice: () => ({ id: 'iphone-16-pro', name: 'iPhone 16 Pro' }),
-      getOrientation: () => 'portrait'
+      getDevice: () => activeDevice,
+      getOrientation: () => activeOrientation,
+      getSelectionKey: () => activeSelectionKey
     });
 
     await new Promise((r) => setTimeout(r, 10));
     assert.equal(fetchCalls, 1);
     assert.equal(fakeDoc.getElementById('conformance-status-badge').textContent, 'Passed');
 
-    fakeDoc.dispatchEvent({ type: 'lab:viewport-change', detail: {} });
+    // Unchanged tuple on lab:viewport-change (e.g. host resize) performs 0 extra fetches
+    fakeDoc.dispatchEvent({ type: 'lab:viewport-change', detail: { cause: 'resize' } });
+    await new Promise((r) => setTimeout(r, 10));
+    assert.equal(fetchCalls, 1);
+
+    // Changing device or orientation invalidates tuple and re-fetches
+    activeOrientation = 'landscape';
+    fakeDoc.dispatchEvent({ type: 'lab:viewport-change', detail: { cause: 'rotate' } });
     await new Promise((r) => setTimeout(r, 10));
     assert.equal(fetchCalls, 2);
 
+    // Selecting Full (100%) / null device reports Uncertified without fetching
+    activeDevice = null;
+    activeSelectionKey = 'viewport-full';
+    activeOrientation = 'responsive';
+    fakeDoc.dispatchEvent({ type: 'lab:viewport-change', detail: { cause: 'preset' } });
+    await new Promise((r) => setTimeout(r, 10));
+    assert.equal(fetchCalls, 2);
+    assert.equal(fakeDoc.getElementById('conformance-status-badge').textContent, 'Uncertified');
+
+    // Restore preset and test lab:target-change invalidation even on same URL
+    activeDevice = { id: 'iphone-16-pro', name: 'iPhone 16 Pro' };
+    activeSelectionKey = 'iphone-16-pro';
+    activeOrientation = 'portrait';
     fakeDoc.dispatchEvent({ type: 'lab:target-change', detail: {} });
     await new Promise((r) => setTimeout(r, 10));
     assert.equal(fetchCalls, 3);

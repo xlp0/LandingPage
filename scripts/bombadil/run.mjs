@@ -86,9 +86,40 @@ export function resolveBombadilBin(repoRoot, env = process.env) {
   }
 }
 
+export function stripServerContractImport(nodeOptions) {
+  if (typeof nodeOptions !== 'string' || !nodeOptions.trim()) return '';
+  const tokens = nodeOptions.trim().split(/\s+/);
+  const kept = [];
+  for (let i = 0; i < tokens.length; i += 1) {
+    const tok = tokens[i];
+    if (tok === '--import' && i + 1 < tokens.length && tokens[i + 1].includes('server-contract.js')) {
+      i += 1;
+      continue;
+    }
+    if (tok.startsWith('--import=') && tok.includes('server-contract.js')) {
+      continue;
+    }
+    kept.push(tok);
+  }
+  return kept.join(' ');
+}
+
 export function resolveRunPlan(options, { env = process.env, repoRoot = REPO_ROOT, now } = {}) {
+  const cleanEnv = { ...env };
+  delete cleanEnv.PORT;
+  delete cleanEnv.PW_REUSE_SERVER;
+  delete cleanEnv.PW_EPHEMERAL_MCARD_DB;
+  delete cleanEnv.PW_SERVER_BOOT_GUARD;
+  const cleanedNodeOpts = stripServerContractImport(cleanEnv.NODE_OPTIONS);
+  if (cleanedNodeOpts) cleanEnv.NODE_OPTIONS = cleanedNodeOpts;
+  else delete cleanEnv.NODE_OPTIONS;
+
   // BASE_URL is cleared so the start URL always points at the server this runner starts.
-  const contract = resolvePlaywrightServerContract({ ...env, BASE_URL: '', TEST_PORT: env.BOMBADIL_PORT ?? DEFAULT_PORT });
+  const contract = resolvePlaywrightServerContract({
+    ...cleanEnv,
+    BASE_URL: '',
+    TEST_PORT: cleanEnv.BOMBADIL_PORT ?? DEFAULT_PORT
+  });
   const target = TARGETS[options.target];
   const outputDir = prepareOutputDir(options.outputPath, { repoRoot, target: options.target, now });
   const entries = target.path === null
@@ -108,7 +139,7 @@ export function resolveRunPlan(options, { env = process.env, repoRoot = REPO_ROO
         '--time-limit', options.timeLimit,
         '--output-path', entry.outputDir,
         ...entry.allowUrls.flatMap((pattern) => ['--allow-url', pattern]),
-        ...envExtraArgs(env),
+        ...envExtraArgs(cleanEnv),
         ...options.extra,
         entry.startUrl,
         path.join(repoRoot, target.spec)
@@ -116,12 +147,12 @@ export function resolveRunPlan(options, { env = process.env, repoRoot = REPO_ROO
     };
   });
   return {
-    bombadilBin: resolveBombadilBin(repoRoot, env),
+    bombadilBin: resolveBombadilBin(repoRoot, cleanEnv),
     runs,
     bombadilArgs: runs[0].args,
     serverArgv: contract.command.split(/\s+/),
-    serverEnv: { ...env, ...contract.env },
-    bombadilEnv: { ...env },
+    serverEnv: { ...cleanEnv, ...contract.env, BOMBADIL_CHILD_RUN: '1' },
+    bombadilEnv: { ...cleanEnv },
     healthUrl: contract.url,
     outputDir,
     repoRoot

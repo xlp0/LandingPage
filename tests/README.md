@@ -28,9 +28,14 @@ npm run build
 | `npm run test:unit` | Runs `node --test` across `tests/*.test.*`, `tests/unit/**/*.test.*`, and `tests/observability/**/*.test.*` |
 | `npm run test:smoke` | Runs `--project=smoke` (11 spec files, 30 tests) |
 | `npm run test:components` | Runs `--project=components` (14 spec files, 18 tests) |
-| `npm run test:features` | Runs `--project=features` (28 spec files, 618 tests) |
+| `npm run test:features` | Runs `--project=features` (32 spec files, 651 tests) |
 | `npm run test:smoke:cross-browser` | Runs `smoke-firefox` and `smoke-webkit` when `PW_CROSS_BROWSER=1` |
-| `npm test` | Runs all three default Playwright category projects (`53` spec files, `666` tests total) |
+| `npm test` | Runs all three default Playwright category projects (`57` spec files, `699` tests total) |
+| `npm run stageshow:check-css` | Audits `85` StageShow and authored CSS files (`4` explicit bundles) for namespace collisions |
+| `npm run stageshow:sweep -- --strict` | Sweeps all `6` host routes across `1440px`, `820px`, `390px`, and `358px` (`24` snapshots) with strict bounds and overflow checks |
+| `npm run stageshow:film` | Captures StageShow film contact sheets (`--gate`, `--width 390`, `--dark`, `--reduced --still`, `--states`) |
+| `npm run stageshow:jumps -- --strict` | Verifies 60fps continuous rAF stability on StageShow motion scenes without screenshot stalls |
+| `node tools/stageshow/build-scenes.mjs --check` | Verifies built `public/stageshow/` standalone and embed artifacts match committed sources |
 | `npm run test:responsive` | Runs the 16-combination multi-device systematic sweep |
 | `npm run test:replay` | Runs deterministic Playwright replay across 1x, 2x, 5x, and fast modes |
 | `npm run test:conformance` | Runs the 15-check device conformance suite and certification checks |

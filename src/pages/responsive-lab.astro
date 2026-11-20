@@ -9,6 +9,9 @@ import RecordingRibbonIsland from '../islands/RecordingRibbonIsland.jsx';
 import ConformancePanelIsland from '../islands/ConformancePanelIsland.jsx';
 import MCardResultIsland from '../islands/MCardResultIsland.jsx';
 import SpaTestWorkflow from '../islands/SpaTestWorkflow.jsx';
+import BombadilDashboardIsland from '../islands/BombadilDashboardIsland.jsx';
+import PresentationControls from '../components/PresentationControls.astro';
+import { iconMarkup } from '../../js/ui/icons.js';
 import { loadNetEnvelope, validateNetEnvelope } from '../../scripts/check-net.mjs';
 import { createLayer4TargetAdapter } from '../../scripts/net-to-netmcard.mjs';
 import { assertDisjointNetIds, serializeTargetNetEnvelope } from '../../js/harness/spa-test-workflow.js';
@@ -89,75 +92,167 @@ const targetNets = {
   })
 };
 ---
-<WorkbenchLayout placeIds={['p_page_responsive_lab']} title="GovTech OS - Responsive UI Lab (Full-Window Viewport Workbench)" dataTheme="dark">
+<WorkbenchLayout placeIds={['p_page_responsive_lab']} title="GovTech OS - Responsive UI Lab (Full-Window Viewport Workbench)" dataTheme="dark" enablePresentationController={true}>
   <Fragment slot="head">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/public/css/semantic-tokens.css">
-
-  <link rel="stylesheet" href="/public/css/responsive-lab.css">
+    <link rel="stylesheet" href="/public/css/semantic-tokens.css">
+    <link rel="stylesheet" href="/public/css/responsive-lab.css">
   </Fragment>
   <header class="lab-navbar">
     <div class="lab-nav-left">
       <a href="/index.html?noredirect=1" class="back-home-btn" id="btn-back-home" data-testid="btn-back-home" title="Return to GovTech OS Portal">
-        <span>← GovTech OS</span>
+        <Fragment set:html={iconMarkup('arrow-left')} />
+        <span>GovTech OS</span>
       </a>
       <div class="lab-title-group">
         <h1 id="lab-main-heading">
-          <span>📐 Responsive UI Lab</span>
+          <Fragment set:html={iconMarkup('ruler', { size: 16 })} />
+          <span>Responsive UI Lab</span>
         </h1>
       </div>
     </div>
 
     <div class="lab-nav-right">
-      <div class="arrangement-toggle-group" style="display: flex; gap: 0.25rem; background: var(--color-scrim); padding: 0.2rem; border-radius: 8px; border: 1px solid var(--color-border);">
-        <span style="font-size: 0.72rem; color: var(--color-text-muted); align-self: center; margin: 0 0.35rem; font-weight: 500;">Arrangement:</span>
-        <button id="btn-arrange-horizontal" class="toolbar-btn arrangement-btn active" data-arrangement="horizontal" data-testid="btn-arrange-horizontal" aria-pressed="true" title="Horizontal arrangement (Controls in left sidebar, canvas beside)">
-          <span>☲ Sidebar</span>
+      <div class="arrangement-toggle-group">
+        <span class="arrangement-toggle-label">Arrangement</span>
+        <button type="button" id="btn-arrange-horizontal" class="toolbar-btn arrangement-btn active" data-arrangement="horizontal" data-testid="btn-arrange-horizontal" aria-pressed="true" title="Horizontal arrangement (Controls in left sidebar, canvas beside)">
+          <Fragment set:html={iconMarkup('columns')} />
+          <span>Sidebar</span>
         </button>
-        <button id="btn-arrange-vertical" class="toolbar-btn arrangement-btn" data-arrangement="vertical" data-testid="btn-arrange-vertical" aria-pressed="false" title="Vertical arrangement (Controls stacked at top, canvas below)">
-          <span>☰ Stacked</span>
+        <button type="button" id="btn-arrange-vertical" class="toolbar-btn arrangement-btn" data-arrangement="vertical" data-testid="btn-arrange-vertical" aria-pressed="false" title="Vertical arrangement (Controls stacked at top, canvas below)">
+          <Fragment set:html={iconMarkup('rows')} />
+          <span>Stacked</span>
         </button>
       </div>
 
+      <PresentationControls buttonClass="toolbar-btn presentation-control-btn" defaultTheme="dark" />
+
       <a href="app.html" target="_blank" class="nav-action-link secondary" id="btn-nav-mission-control" data-testid="btn-nav-mission-control" data-effect="navigate" title="Open Mission Control Observability Cockpit">
-        <span>🎛️ Mission Control</span>
+        <Fragment set:html={iconMarkup('sliders')} />
+        <span>Mission Control</span>
       </a>
       <button type="button" class="nav-action-link primary" id="mission-control-popout-btn" data-testid="mission-control-popout-btn" data-effect="external" title="Open the current target in a new tab">
-        <span>⧉ Pop Out Tab</span>
+        <Fragment set:html={iconMarkup('external-link')} />
+        <span>Pop Out Tab</span>
       </button>
     </div>
   </header>
 
-  <div class="lab-recording-strip" id="lab-recording-strip" style="background: var(--panel-deep-strong); border-bottom: 1px solid var(--border-subtle); padding: 0.5rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; z-index: 50;">
-    <div id="lab-recording-bar" style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-      <RecordingRibbonIsland client:load />
-    </div>
-  </div>
+  <div class="lab-workspace-container arrangement-horizontal" id="lab-workspace-container" data-compact-pane="stage">
+    <aside class="workbench-controls-dock" id="workbench-controls-dock" data-workbench-mode="explore">
+      <div class="workbench-mode-tabs" id="workbench-mode-tabs" role="tablist" aria-label="Workbench modes">
+        <button
+          type="button"
+          role="tab"
+          id="btn-mode-stage"
+          data-testid="btn-mode-stage"
+          data-mode="stage"
+          aria-selected="false"
+          aria-controls="lab-stage-container"
+          tabindex="-1"
+          class="workbench-mode-tab workbench-mode-tab--compact-only"
+        >
+          Stage
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="btn-mode-explore"
+          data-testid="btn-mode-explore"
+          data-mode="explore"
+          aria-selected="true"
+          aria-controls="device-presets-dock-slot"
+          tabindex="0"
+          class="workbench-mode-tab active"
+        >
+          Explore
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="btn-mode-guided-spa"
+          data-testid="btn-mode-guided-spa"
+          data-mode="guided-spa"
+          aria-selected="false"
+          aria-controls="spa-workflow-dock-slot"
+          tabindex="-1"
+          class="workbench-mode-tab"
+        >
+          Guided
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="btn-mode-bombadil"
+          data-testid="btn-mode-bombadil"
+          data-mode="bombadil"
+          aria-selected="false"
+          aria-controls="bombadil-panel-shell"
+          tabindex="-1"
+          class="workbench-mode-tab"
+        >
+          Bombadil
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="btn-mode-verify"
+          data-testid="btn-mode-verify"
+          data-mode="verify"
+          aria-selected="false"
+          aria-controls="verify-summary-shell"
+          tabindex="-1"
+          class="workbench-mode-tab"
+        >
+          Verify
+        </button>
+      </div>
 
-  <div class="lab-workspace-container arrangement-horizontal" id="lab-workspace-container">
-    <aside class="workbench-controls-dock" id="workbench-controls-dock">
-      <DevicePresetsIsland client:load />
+      <div id="target-toolbar-dock-slot" class="dock-mode-slot">
+        <TargetToolbarIsland client:load />
+      </div>
 
-      <TargetToolbarIsland client:load />
+      <div id="device-presets-dock-slot" class="dock-mode-slot">
+        <DevicePresetsIsland client:load />
+      </div>
 
-      <SpaTestWorkflow client:load targetNets={targetNets} />
+      <div id="spa-workflow-dock-slot" class="dock-mode-slot" hidden>
+        <SpaTestWorkflow client:load targetNets={targetNets} />
+      </div>
 
-      <div class="toolbar-group" id="conformance-panel-group">
+      <div id="bombadil-panel-shell" data-testid="bombadil-panel-shell" class="dock-mode-slot" hidden>
+        <BombadilDashboardIsland client:visible />
+      </div>
+
+      <div id="verify-summary-shell" data-testid="verify-summary-shell" class="verify-summary-shell" hidden>
+        <div class="group-label">Verification summary</div>
+        <div class="mcard-result-row">
+          <span class="mcard-result-key">Target</span>
+          <code id="verify-summary-target" class="mcard-result-val">/tests/fixtures/spa-test-target.html</code>
+        </div>
+        <div class="mcard-result-row">
+          <span class="mcard-result-key">Preset</span>
+          <span id="verify-summary-device" class="mcard-result-val">Full (100%)</span>
+        </div>
+        <div class="mcard-result-row">
+          <span class="mcard-result-key">Bombadil verdict</span>
+          <span id="verify-summary-bombadil" class="mcard-result-val" data-status="idle">Bombadil: Idle</span>
+        </div>
+      </div>
+
+      <div class="toolbar-group" id="conformance-panel-group" hidden>
         <details id="conformance-disclosure" class="lab-disclosure">
           <summary class="lab-disclosure-summary">
-            <span class="group-label">Conformance:</span>
-            <span id="conformance-status-badge" class="footer-status-pill" style="font-size: 0.7rem; color: var(--color-text-muted);">Standby</span>
+            <span class="group-label">Conformance</span>
+            <span id="conformance-status-badge" class="footer-status-pill" style="font-size: 0.7rem; color: var(--color-text-muted);">Uncertified</span>
           </summary>
           <ConformancePanelIsland client:visible />
         </details>
       </div>
 
-      <div class="toolbar-group" id="mcard-result-panel-group">
+      <div class="toolbar-group" id="mcard-result-panel-group" hidden>
         <details id="mcard-result-disclosure" class="lab-disclosure">
           <summary class="lab-disclosure-summary">
-            <span class="group-label">MCard Run Result:</span>
+            <span class="group-label">MCard run result</span>
             <span id="mcard-result-summary-badge" class="footer-status-pill" style="font-size: 0.7rem; color: var(--color-text-muted);">Idle</span>
           </summary>
           <MCardResultIsland client:visible />
@@ -166,15 +261,88 @@ const targetNets = {
     </aside>
 
     <main class="lab-stage-container" id="lab-stage-container">
-      <ViewportStageIsland client:only="preact" />
+      <div class="stage-toolbar" id="stage-toolbar" role="toolbar" aria-label="Viewport stage controls">
+        <div class="stage-toolbar-readout">
+          <span
+            class="frame-target-place-pill"
+            id="stage-target-place"
+            data-testid="stage-target-place"
+            aria-live="polite"
+            hidden
+          ></span>
+          <span class="frame-dimension-pill" id="controlled-frame-dim">
+            100% × 100% • Responsive
+          </span>
+        </div>
+        <div class="stage-toolbar-actions">
+          <button
+            id="btn-rotate-viewport"
+            type="button"
+            class="toolbar-btn"
+            title="Swap Width and Height (90° Rotation)"
+            aria-label="Rotate (90°)"
+            aria-disabled="true"
+            disabled
+            data-testid="btn-rotate-viewport"
+          >
+            <Fragment set:html={iconMarkup('rotate-cw')} />
+            <span>Rotate (90°)</span>
+          </button>
+          <button
+            id="btn-scale-toggle"
+            type="button"
+            class="toolbar-btn"
+            title="Toggle between Fit and 1:1 Actual pixel scale"
+            aria-pressed="false"
+            data-testid="btn-scale-toggle"
+          >
+            Scale: Fit
+          </button>
+          <button
+            id="btn-safe-area-toggle"
+            type="button"
+            class="toolbar-btn"
+            title="Toggle device safe-area guide overlay"
+            aria-pressed="false"
+            disabled
+            aria-disabled="true"
+            data-testid="btn-safe-area-toggle"
+          >
+            Safe-area: Off
+          </button>
+        </div>
+      </div>
+
+      <div class="stage-well" id="stage-well" data-testid="stage-well">
+        <ViewportStageIsland client:only="preact" />
+      </div>
+
+      <div class="stage-transport" id="stage-transport" data-testid="stage-transport">
+        <div id="lab-recording-bar" class="stage-transport-ribbon">
+          <RecordingRibbonIsland client:load />
+        </div>
+        <button
+          type="button"
+          id="bombadil-transport-pill"
+          class="bombadil-transport-pill"
+          data-testid="bombadil-transport-pill"
+          data-status="idle"
+          aria-live="polite"
+          title="Open Bombadil dashboard"
+        >
+          Bombadil: Idle
+        </button>
+      </div>
     </main>
   </div>
 
   <div class="device-manager-backdrop" id="device-manager-modal" role="dialog" aria-modal="true" aria-labelledby="device-manager-title">
     <div class="device-manager-modal">
       <div class="dm-header">
-        <h2 id="device-manager-title">⚙️ Device Preset Manager</h2>
-        <button id="btn-close-modal" class="toolbar-btn" data-testid="btn-close-modal" aria-label="Close Device Preset Manager">✕</button>
+        <h2 id="device-manager-title"><Fragment set:html={iconMarkup('settings', { size: 16 })} /> Device Preset Manager</h2>
+        <button type="button" id="btn-close-modal" class="toolbar-btn" data-testid="btn-close-modal" aria-label="Close Device Preset Manager">
+          <Fragment set:html={iconMarkup('x')} />
+        </button>
       </div>
 
       <p class="dm-hint">Manage standard and custom screen sizes for responsive viewport testing.</p>
@@ -198,6 +366,17 @@ const targetNets = {
         <label class="dm-field" for="input-device-height">Height (px)
           <input id="input-device-height" data-testid="input-device-height" type="number" placeholder="956" />
         </label>
+        <label class="dm-field" for="select-device-frame-style">Frame Style
+          <select id="select-device-frame-style" data-testid="select-device-frame-style">
+            <option value="">Auto (category)</option>
+            <option value="phone-ios">Phone iOS</option>
+            <option value="phone-android">Phone Android</option>
+            <option value="tablet">Tablet</option>
+            <option value="browser-window">Browser Window</option>
+            <option value="hairline-ruler">Hairline Ruler</option>
+            <option value="unframed">Unframed</option>
+          </select>
+        </label>
         <button id="btn-save-device" data-testid="btn-save-device" type="submit" class="toolbar-btn">Add Device Preset</button>
       </form>
 
@@ -206,7 +385,9 @@ const targetNets = {
       <div class="dm-list" id="device-manager-list" role="list"></div>
 
       <div class="dm-actions">
-        <button id="btn-reset-devices" class="toolbar-btn" type="button" data-testid="btn-reset-devices" data-effect="destructive">↺ Reset All to Defaults</button>
+        <button id="btn-reset-devices" class="toolbar-btn" type="button" data-testid="btn-reset-devices" data-effect="destructive">
+          <Fragment set:html={iconMarkup('rotate-ccw')} /> Reset All to Defaults
+        </button>
         <button id="btn-close-modal-footer" class="toolbar-btn" type="button" data-testid="btn-close-modal-footer">Close</button>
       </div>
     </div>
@@ -214,7 +395,7 @@ const targetNets = {
 
   <footer class="lab-footer">
     <div style="display: flex; align-items: center; gap: 1rem;">
-      <span id="controlled-panel-status">● Viewport: Full (100%) • ↔ Horizontal (Landscape) • [☲ Side-by-Side Arrangement]</span>
+      <span id="controlled-panel-status">Viewport: Full (100%) • Responsive • [Side-by-Side Dock]</span>
     </div>
     <div style="display: flex; align-items: center; gap: 1rem;">
       <span>GovTech OS • Responsive Layout Lab</span>

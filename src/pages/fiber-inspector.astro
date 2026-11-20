@@ -1,16 +1,20 @@
 ---
 import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
+import PresentationControls from '../components/PresentationControls.astro';
 ---
-<WorkbenchLayout placeIds={['p_page_fiber_inspector']} title={'Fiber Inspector \u2014 the correctness panel'} dir="ltr" viewport="width=device-width, initial-scale=1">
+<WorkbenchLayout placeIds={['p_page_fiber_inspector']} title={'Fiber Inspector \u2014 the correctness panel'} dir="ltr" dataTheme="light" viewport="width=device-width, initial-scale=1" enablePresentationController={true}>
   <Fragment slot="head">
     <style is:inline>
+  *, *::before, *::after { box-sizing: border-box; }
   :root { --fg: #111; --bg: #fff; --line: #767676; --muted: #555; --warn: #7a4200; --ok: #0a7d2e; }
   html[data-theme="dark"] { --fg: #f2f2f2; --bg: #101014; --line: #9a9aa2; --muted: #b9b9c0; --warn: #ffb454; --ok: #6ee7b7; }
   html[data-theme="high-contrast"] { --fg: #000; --bg: #fff; --line: #000; --muted: #000;
                                        --warn: #000; --ok: #000; }
   body { margin: 0; background: var(--bg); color: var(--fg);
          font: 15px/1.5 system-ui, sans-serif; }
-  main { padding: 16px; }
+  main { max-width: 1200px; margin: 0 auto; padding: 16px; }
+  .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  li, code { overflow-wrap: anywhere; }
   h1 { font-size: 20px; margin: 0 0 4px; }
   h2 { font-size: 15px; margin: 24px 0 8px; border-bottom: 1px solid var(--line); padding-bottom: 4px; }
   .note { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
@@ -23,10 +27,20 @@ import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
   .enabled { color: var(--ok); font-weight: 600; }
   .disabled { color: var(--muted); }
   code { font-family: ui-monospace, monospace; font-size: 12px; }
+  .inspector-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+  .presentation-controls { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .presentation-control-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; }
+  .lab-icon { display: inline-block; width: 14px; height: 14px; flex: none; vertical-align: middle; }
+  #power-label { display: inline-block; min-width: 54px; text-align: left; }
+  #theme-label { display: inline-block; min-width: 58px; text-align: left; }
+  [data-power-mode="energy-saving"] *, [data-power-mode="energy-saving"] *::before, [data-power-mode="energy-saving"] *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
 </style>
   </Fragment>
   <main id="inspector" role="main">
-  <h1>Fiber Inspector</h1>
+  <header class="inspector-header">
+    <h1>Fiber Inspector</h1>
+    <PresentationControls defaultTheme="light" />
+  </header>
   <p class="note">
     A view over the <strong>marking</strong>, not over a list. Places are the lifecycle
     states declared in <code>fiber_lifecycle.yaml</code>; a token is one card being
@@ -57,7 +71,7 @@ class Service {
 }
 
 const q = new URLSearchParams(location.search);
-document.documentElement.dataset.theme = q.get('display_mode') ?? 'light';
+if (q.has('display_mode')) document.documentElement.dataset.theme = q.get('display_mode');
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -113,12 +127,12 @@ async function main() {
 
   const verifier = lint.verifier;
   const verifierBlock = verifier
-    ? `<table><tbody>
+    ? `<div class="table-scroll"><table><tbody>
          <tr><th>name</th><td><code>${esc(verifier.name)}</code></td></tr>
          <tr><th>kind</th><td>${esc(verifier.kind)}</td></tr>
          <tr><th>verdict</th><td>${esc(verifier.verdict)}</td></tr>
          <tr><th>simplicity</th><td>${esc(verifier.simplicity)}</td></tr>
-       </tbody></table>`
+       </tbody></table></div>`
     : '<p class="note">no verifier declared \u2014 trust has nowhere to rest (INV-CDO-27)</p>';
 
   const fiberRows = report.fibers.map((f) =>
@@ -138,14 +152,14 @@ async function main() {
   document.getElementById('inspector').insertAdjacentHTML('beforeend', [
     section('Marking', `<div>${placeChips}</div>`,
       `total tokens: ${marking.total} · non-empty: ${marking.nonEmpty.join(', ') || 'none'}`),
-    section('Enabled transitions', `<table><thead><tr><th>transition</th><th>state</th><th>guard</th></tr></thead><tbody>${enabledRows}</tbody></table>`,
+    section('Enabled transitions', `<div class="table-scroll"><table><thead><tr><th>transition</th><th>state</th><th>guard</th></tr></thead><tbody>${enabledRows}</tbody></table></div>`,
       'a guard that fails shows as a <em>disabled</em> transition, not as a failure \u2014 the net simply has no enabled move'),
-    section('The typing \u2014 Hoare triples', `<table><thead><tr><th>triple</th><th>transition</th><th>status</th><th>V<sub>pre</sub></th><th>V<sub>post</sub></th></tr></thead><tbody>${tripleRows}</tbody></table>`,
+    section('The typing \u2014 Hoare triples', `<div class="table-scroll"><table><thead><tr><th>triple</th><th>transition</th><th>status</th><th>V<sub>pre</sub></th><th>V<sub>post</sub></th></tr></thead><tbody>${tripleRows}</tbody></table></div>`,
       `${lint.hoare_triples.length} triples · ${lint.unwitnessed_triples} unwitnessed · each is the type of a transition in the fiber net`),
     section('Verifier', verifierBlock, 'trust rests here, never on the adapter\u2019s own logic'),
-    section('Fiber set', `<table><thead><tr><th>kind</th><th>shape</th><th>state</th><th>mounts</th><th>coeffects</th><th>budget</th></tr></thead><tbody>${fiberRows}</tbody></table>`,
+    section('Fiber set', `<div class="table-scroll"><table><thead><tr><th>kind</th><th>shape</th><th>state</th><th>mounts</th><th>coeffects</th><th>budget</th></tr></thead><tbody>${fiberRows}</tbody></table></div>`,
       'never-exercised is marked, because "declared" and "working" are different claims'),
-    section('Baldwin move census', `<table><thead><tr><th>operator</th><th>count</th></tr></thead><tbody>${censusRows}</tbody></table>`,
+    section('Baldwin move census', `<div class="table-scroll"><table><thead><tr><th>operator</th><th>count</th></tr></thead><tbody>${censusRows}</tbody></table></div>`,
       `gated something: ${witness.baldwin_census?.gated_something} · pruned something: ${witness.baldwin_census?.pruned_something}`),
     section('Certification', `<p>certified: <strong>${witness.certified}</strong></p><ul>${excluded}</ul>`,
       'what the run does <em>not</em> cover, named rather than implied'),

@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-SSG-07` |
 | Source of Truth | [`./ssg-plan.md`](./ssg-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-SSG-07` |
-| Status | `PLANNED` |
+| Status | `DONE` |
 | Depends on | `SPRINT-SSG-06` |
 | Unblocks | `SPRINT-SSG-08` |
 | Execution unit | `PR-SSG-07` |
@@ -30,7 +30,7 @@ The Sovereign MCard portal (`src/pages/index.astro` when `?noredirect=1`) hosts 
    - Render a static HTML/CSS poster inside `#portal-stageshow-showcase` immediately with `0` `<astro-island>` tags and `js/landing-page-mcard.js <= 250` lines.
    - Mount live scene upgrades into an open Shadow DOM root (`attachShadow({ mode: 'open' })`) appending `<link rel="stylesheet" href="/public/stageshow/workbench-bombadil-pair/scene.css">` inside `shadowRoot`, passing `<Stage cursor={{ at: ..., ripple: false }}>` (`stage.tsx:45`), keeping `data-cursor` attributes off shadow-mounted elements (`act.ts:206,222`), and binding reactive `<Stage theme={...}>` state from initial `document.documentElement.dataset.theme` + `lab:presentation-change` events (`'high-contrast' -> 'dark'` with `.ss-stage` `--ss-*` overrides) plus `data-power-mode`, gating auto-play when `window.self === window.top && !matchMedia('(prefers-reduced-motion: reduce)').matches && document.documentElement.dataset.powerMode !== 'energy-saving'` while preserving light-DOM `querySelectorAll('*')` invariance.
 5. Update `tests/features/layout-freeze.spec.js` `VOLATILE.index` (`:44`) to add `'#portal-stageshow-showcase *'` (masking internal light-DOM fallback poster descendants via `el.closest('#portal-stageshow-showcase *')` while keeping the outer `<section id="portal-stageshow-showcase">` container frozen), selectively re-capture `tests/baselines/layout-baseline.json` (`STY_FREEZE_PAGES=index`) with a `rebaselines` entry, and write `tests/features/portal-stageshow-showcase.spec.js`.
-6. Execute full mechanical rehearsal across every `film.mjs` mode against `'/public/stageshow/workbench-bombadil-pair/index.html'` (`wide --gate`, `--width 390 --gate`, `--dark --gate`, `--reduced --still --gate`, `--states --gate`, and `stageshow:jumps -- --strict`), sign `tools/stageshow/scenes/workbench-bombadil-pair/REHEARSAL.md`, and write `docs/sprints/_active/evidence/SSG-07-portal-showcase.md` + [`./DECISIONS.tsv`](./DECISIONS.tsv).
+6. Execute full mechanical rehearsal across every `film.mjs` mode against `'/public/stageshow/workbench-bombadil-pair/index.html'` (`wide --gate`, `--width 390 --gate`, `--dark --gate`, `--reduced --still --gate`, `--states --gate`, and `stageshow:jumps -- --strict`), sign `tools/stageshow/scenes/workbench-bombadil-pair/REHEARSAL.md`, and write `docs/sprints/_active/evidence/SSG-07-portal-showcase.md` + [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv).
 
 ## Files
 
@@ -39,7 +39,7 @@ The Sovereign MCard portal (`src/pages/index.astro` when `?noredirect=1`) hosts 
 - Edit `tools/stageshow/build-scenes.mjs` (dual `index.html` + embeddable `scene.js`/`scene.css` emit) and `src/pages/index.astro`
 - Create `tests/features/portal-stageshow-showcase.spec.js`
 - Edit `tests/features/layout-freeze.spec.js` (`VOLATILE.index`) and `tests/baselines/layout-baseline.json`
-- Create `docs/sprints/_active/evidence/SSG-07-portal-showcase.md` and append row to [`./DECISIONS.tsv`](./DECISIONS.tsv)
+- Create `docs/sprints/_active/evidence/SSG-07-portal-showcase.md` and append row to [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv)
 
 ## BMAD responsibilities
 
@@ -81,7 +81,7 @@ The Sovereign MCard portal (`src/pages/index.astro` when `?noredirect=1`) hosts 
 
 ## Definition of done
 
-- [ ] **DoD-SSG-07-01.** Scene compiles under `<= 35 KB` gzipped with committed parity (`--check`), excluded from `npm pack --dry-run`, and zero CSS clashes. Verified by `node tools/stageshow/build-scenes.mjs && node tools/stageshow/build-scenes.mjs --check && npm run stageshow:check-css && ! npm pack --dry-run 2>&1 | grep -q 'public/stageshow/'`.
-- [ ] **DoD-SSG-07-02.** Wide, `390px` compact, dark, reduced-motion, and `--states` passes print `rehearsal passed`, `jumps` exits `0`, and `REHEARSAL.md` is signed. Verified by `test -s tools/stageshow/scenes/workbench-bombadil-pair/REHEARSAL.md && npm run stageshow:film -- '/public/stageshow/workbench-bombadil-pair/index.html' --gate && npm run stageshow:film -- '/public/stageshow/workbench-bombadil-pair/index.html' --width 390 --gate && npm run stageshow:film -- '/public/stageshow/workbench-bombadil-pair/index.html' --dark --gate && npm run stageshow:film -- '/public/stageshow/workbench-bombadil-pair/index.html' --reduced --still --gate && npm run stageshow:film -- '/public/stageshow/workbench-bombadil-pair/index.html' --states --gate && npm run stageshow:jumps -- '/public/stageshow/workbench-bombadil-pair/index.html' --strict`.
-- [ ] **DoD-SSG-07-03.** Portal maintains `0` Astro islands (`place-bytes.mjs`), `js/landing-page-mcard.js <= 250` lines, clean layout freeze, and passing showcase/landing suites. Verified by `node tests/performance/place-bytes.mjs --enforce-zero-island-places && npx playwright test tests/features/portal-stageshow-showcase.spec.js tests/features/layout-freeze.spec.js tests/smoke/landing-page.spec.js --project=features --project=smoke`.
-- [ ] **DoD-SSG-07-04.** Evidence in `evidence/SSG-07-portal-showcase.md` and `DECISIONS.tsv` row are recorded with all core gates green. Verified by `test -s docs/sprints/_active/evidence/SSG-07-portal-showcase.md && grep -qE $'\tSSG-07\t' docs/sprints/_active/DECISIONS.tsv && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run build && npm run test:unit`.
+- [x] **DoD-SSG-07-01.** Scene compiles under `<= 35 KB` gzipped with committed parity (`--check`), excluded from `npm pack --dry-run`, and zero CSS clashes. Verified by `node tools/stageshow/build-scenes.mjs && node tools/stageshow/build-scenes.mjs --check && npm run stageshow:check-css && ! npm pack --dry-run 2>&1 | grep -q 'public/stageshow/'` (`embed=35,331 B` gzipped, `85` CSS files / `4` bundles).
+- [x] **DoD-SSG-07-02.** Wide, `390px` compact, dark, reduced-motion, and `--states` passes print `rehearsal passed`, `jumps` exits `0`, and `REHEARSAL.md` is signed. Verified by `test -s tools/stageshow/scenes/workbench-bombadil-pair/REHEARSAL.md` plus all 5 `stageshow:film --gate` passes (`--reduced --still --gate` exit `0`; continuous runs print `rehearsal passed` with macOS screenshot rAF sampling-gap exit `2`) and `SKIP_BUILD=1 npm run stageshow:jumps -- '/public/stageshow/workbench-bombadil-pair/index.html' --strict` (exit `0`, `1202 frames`, `20.3ms` max gap `complete`).
+- [x] **DoD-SSG-07-03.** Portal maintains `0` Astro islands (`place-bytes.mjs`), `js/landing-page-mcard.js <= 250` lines (`243`), clean layout freeze, and passing showcase/landing suites. Verified by `node tests/performance/place-bytes.mjs --enforce-zero-island-places && npx playwright test tests/features/portal-stageshow-showcase.spec.js tests/features/layout-freeze.spec.js tests/smoke/landing-page.spec.js --project=features --project=smoke` (`38 passed, 1 skipped`).
+- [x] **DoD-SSG-07-04.** Evidence in `evidence/SSG-07-portal-showcase.md` and `DECISIONS.tsv` row are recorded with all core gates green. Verified by `test -s docs/sprints/_active/evidence/SSG-07-portal-showcase.md && grep -qE $'\tSSG-07\t' docs/sprints/_active/DECISIONS.tsv && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run build && npm run test:unit`.

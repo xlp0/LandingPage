@@ -215,7 +215,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     expect(netDoc?.bindings?.places?.p_page_responsive_lab?.migrationState).toBe('astro-islands');
 
     const islandFiles = collectFiles(path.join(REPO_ROOT, 'src/islands'), (f) => /\.(jsx|js|mjs|ts|tsx)$/.test(f));
-    expect(islandFiles.length).toBe(7);
+    expect(islandFiles.length).toBe(8);
     for (const file of islandFiles) {
       const src = fs.readFileSync(file, 'utf8');
       expect(src, `${path.basename(file)} must not reference clm-kernel`).not.toContain('clm-kernel');
@@ -228,7 +228,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     }
 
     const clientBundles = collectFiles(path.join(REPO_ROOT, 'dist/client/_astro'), (f) => f.endsWith('.js'));
-    expect(clientBundles.length).toBeGreaterThanOrEqual(7);
+    expect(clientBundles.length).toBeGreaterThanOrEqual(8);
     for (const bundle of clientBundles) {
       const code = fs.readFileSync(bundle, 'utf8');
       expect(code, `${path.basename(bundle)} must not bundle clm-kernel`).not.toContain('clm-kernel');
@@ -237,7 +237,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     const { page } = isolatedLabPage;
     await workbench.open({ targetPath: SPA_FIXTURE_PATH });
     const islandCount = await page.locator('astro-island').count();
-    expect(islandCount).toBe(7);
+    expect(islandCount).toBe(8);
 
     const staticOutsideIslands = await page.evaluate(() => {
       const header = document.querySelector('header.lab-navbar');
@@ -311,7 +311,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     const beforeRotate = await workbench.readStageDimensions();
     expect([phone.width, phone.height]).toContain(beforeRotate.width);
 
-    const afterRotate = await workbench.rotateViewport();
+    const afterRotate = await workbench.rotateStageViewport();
     expect(afterRotate.width).toBe(beforeRotate.height);
     expect(afterRotate.height).toBe(beforeRotate.width);
 
@@ -347,7 +347,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     expect(autoScale).toBeLessThan(1);
 
     await page.locator('#btn-scale-toggle').click();
-    await expect(page.locator('#btn-scale-toggle')).toContainText('100%');
+    await expect(page.locator('#btn-scale-toggle')).toContainText('Actual (1:1)');
     const actualScale = await page.evaluate(() => window.__lab.geometry.get().scale);
     expect(actualScale).toBe(1);
 
@@ -397,7 +397,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     expect((await saveResp).status()).toBe(201);
   });
 
-  test('Region 5 (ConformancePanel): renders Standby before device selection and Passed report summary for certified device', async ({
+  test('Region 5 (ConformancePanel): renders Uncertified before device selection, fetches once per preset switch, and performs zero fetches on resize', async ({
     isolatedLabPage,
     workbench,
     request
@@ -406,8 +406,9 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     await page.setViewportSize({ width: 1440, height: 960 });
 
     await workbench.open({ targetPath: SPA_FIXTURE_PATH });
+    await page.locator('#btn-mode-verify').click();
     await expect(page.locator('#conformance-panel-group')).toBeVisible();
-    await expect(page.locator('#conformance-status-badge')).toHaveText('Standby');
+    await expect(page.locator('#conformance-status-badge')).toHaveText('Uncertified');
 
     const resolvedTargetUrl = await page.evaluate(() => window.__lab.target.get().url);
     const reportPayload = {
@@ -425,18 +426,43 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     const postRes = await request.post('/api/test-runs', { data: reportPayload });
     expect(postRes.status()).toBe(201);
 
-    await page.locator('#btn-orient-vertical').click();
+    await page.locator('#btn-mode-explore').click();
     await workbench.selectBuiltinDevice('iphone-16-pro');
+
     const dims = await workbench.readStageDimensions();
     if (dims.width > dims.height) {
-      await workbench.rotateViewport();
+      await workbench.rotateStageViewport();
     }
 
+    await page.locator('#btn-mode-verify').click();
     const disclosure = page.locator('#conformance-disclosure');
     await disclosure.locator('summary').click();
 
     await expect(page.locator('#conformance-status-badge')).toHaveText('Passed');
     await expect(page.locator('#conformance-details')).toContainText('no-horizontal-overflow');
+
+    const conformanceRequests = [];
+    page.on('request', (req) => {
+      if (req.url().includes('/api/test-runs/conformance/latest')) {
+        conformanceRequests.push(req.url());
+      }
+    });
+
+    // Host window resize preserves (targetUrl, selectionKey, orientation) -> 0 fetches
+    conformanceRequests.length = 0;
+    await page.setViewportSize({ width: 1360, height: 920 });
+    await page.waitForTimeout(200);
+    expect(conformanceRequests.length, 'host resize performs zero conformance fetches').toBe(0);
+
+    conformanceRequests.length = 0;
+    const conformanceRespPromise = page.waitForResponse(
+      (res) => res.url().includes('/api/test-runs/conformance/latest') && res.status() === 200
+    );
+    await page.locator('#btn-mode-explore').click();
+    await workbench.selectBuiltinDevice('ipad-air-11');
+    await conformanceRespPromise;
+    await page.waitForTimeout(150);
+    expect(conformanceRequests.length, 'single listener fetches conformance once per preset switch').toBe(1);
   });
 
   test('Region 6 (MCardResult): displays persisted MCard handle and content hash after stopping a recorded run', async ({
@@ -503,38 +529,46 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     expect(coldNames.some((n) => n.includes('SpaTestWorkflow'))).toBe(true);
     expect(coldNames.some((n) => n.includes('ConformancePanelIsland'))).toBe(false);
     expect(coldNames.some((n) => n.includes('MCardResultIsland'))).toBe(false);
+    expect(coldNames.some((n) => n.includes('BombadilDashboardIsland'))).toBe(false);
     expect(downloadedScripts.every((entry) => entry.status === 200 && !entry.hasClmKernel)).toBe(true);
 
     const deferredHydratedBefore = await page.evaluate(() => ({
       conformanceHydrated: !document.querySelector('#conformance-disclosure astro-island')?.hasAttribute('ssr'),
-      mcardHydrated: !document.querySelector('#mcard-result-disclosure astro-island')?.hasAttribute('ssr')
+      mcardHydrated: !document.querySelector('#mcard-result-disclosure astro-island')?.hasAttribute('ssr'),
+      bombadilHydrated: !document.querySelector('#bombadil-panel-shell astro-island')?.hasAttribute('ssr')
     }));
     expect(deferredHydratedBefore).toEqual({
       conformanceHydrated: false,
-      mcardHydrated: false
+      mcardHydrated: false,
+      bombadilHydrated: false
     });
 
+    await page.locator('#btn-mode-verify').click();
     await page.locator('#conformance-disclosure summary').click();
     await page.locator('#mcard-result-disclosure summary').click();
+    await page.locator('#btn-mode-bombadil').click();
 
     await expect.poll(() =>
       page.evaluate(() => ({
         conformanceHydrated: !document.querySelector('#conformance-disclosure astro-island')?.hasAttribute('ssr'),
-        mcardHydrated: !document.querySelector('#mcard-result-disclosure astro-island')?.hasAttribute('ssr')
+        mcardHydrated: !document.querySelector('#mcard-result-disclosure astro-island')?.hasAttribute('ssr'),
+        bombadilHydrated: !document.querySelector('#bombadil-panel-shell astro-island')?.hasAttribute('ssr')
       }))
     ).toEqual({
       conformanceHydrated: true,
-      mcardHydrated: true
+      mcardHydrated: true,
+      bombadilHydrated: true
     });
 
     const afterNames = downloadedScripts.map((entry) => new URL(entry.url).pathname);
     expect(afterNames.some((n) => n.includes('ConformancePanelIsland'))).toBe(true);
     expect(afterNames.some((n) => n.includes('MCardResultIsland'))).toBe(true);
+    expect(afterNames.some((n) => n.includes('BombadilDashboardIsland'))).toBe(true);
 
     await context.close();
   });
 
-  test('GQC-02B-E2E-04: mounting and unmounting all 7 islands 50 times across target and page changes returns listener, observer, and timer counts to baseline', async ({
+  test('GQC-02B-E2E-04: mounting and unmounting all 8 islands and switching 4 dock modes 50 times returns listener, observer, and timer counts to baseline', async ({
     browser
   }) => {
     const context = await browser.newContext({ viewport: { width: 1440, height: 960 } });
@@ -543,13 +577,15 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
 
     await page.goto(`/responsive-lab.html?target=${encodeURIComponent(SPA_FIXTURE_PATH)}`);
     await page.waitForSelector('body:not([data-page-state="loading"])', { timeout: 10000 });
+    await page.locator('#btn-mode-verify').click();
     await page.locator('#conformance-disclosure summary').click();
     await page.locator('#mcard-result-disclosure summary').click();
+    await page.locator('#btn-mode-bombadil').click();
 
     await expect.poll(() =>
       page.evaluate(() => {
         const islands = [...document.querySelectorAll('astro-island')];
-        const allHydrated = islands.length === 7 && islands.every((el) => !el.hasAttribute('ssr'));
+        const allHydrated = islands.length === 8 && islands.every((el) => !el.hasAttribute('ssr'));
         const toolbarReady = document.getElementById('pane-url-bar')?.getAttribute('data-island-state') === 'ready';
         return allHydrated && toolbarReady;
       })
@@ -570,8 +606,10 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
         }
       };
 
+      const modes = ['explore', 'guided-spa', 'bombadil', 'verify'];
       let unmountedMidCheck = null;
       for (let i = 0; i < 50; i++) {
+        window.__lab?.mode?.set(modes[i % modes.length]);
         if (i === 15) {
           window.__lab?.target?.set('http://127.0.0.1:5320/');
         } else if (i === 30) {
@@ -596,6 +634,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
         await waitToolbarReady();
       }
 
+      window.__lab?.mode?.set('explore');
       return {
         unmountedMidCheck,
         afterCycles: window.__gqcLifecycleStats()
@@ -615,13 +654,15 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     await page.waitForLoadState('domcontentloaded');
     await page.goto(`/responsive-lab.html?target=${encodeURIComponent(SPA_FIXTURE_PATH)}`);
     await page.waitForSelector('body:not([data-page-state="loading"])', { timeout: 10000 });
+    await page.locator('#btn-mode-verify').click();
     await page.locator('#conformance-disclosure summary').click();
     await page.locator('#mcard-result-disclosure summary').click();
+    await page.locator('#btn-mode-bombadil').click();
 
     await expect.poll(() =>
       page.evaluate(() => {
         const islands = [...document.querySelectorAll('astro-island')];
-        const allHydrated = islands.length === 7 && islands.every((el) => !el.hasAttribute('ssr'));
+        const allHydrated = islands.length === 8 && islands.every((el) => !el.hasAttribute('ssr'));
         const toolbarReady = document.getElementById('pane-url-bar')?.getAttribute('data-island-state') === 'ready';
         return allHydrated && toolbarReady;
       })
@@ -635,6 +676,85 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     expect(afterNavigation.resizeTargets).toBe(baseline.resizeTargets);
     expect(afterNavigation.activeIntervals).toBe(0);
     expect(afterNavigation.activeTimeouts).toBe(0);
+
+    await context.close();
+  });
+
+  test('SSG-05 dock modes: Explore | Guided | Bombadil | Verify visibility matrix, Browse All Presets jump, and saved-run pill navigation', async ({
+    isolatedLabPage,
+    workbench
+  }) => {
+    const { page } = isolatedLabPage;
+    await page.setViewportSize({ width: 1440, height: 960 });
+    await workbench.open({ targetPath: SPA_FIXTURE_PATH });
+
+    await expect(page.locator('#workbench-controls-dock')).toHaveAttribute('data-workbench-mode', 'explore');
+    await expect(page.locator('#target-url-input')).toBeVisible();
+    await expect(page.locator('#device-presets-container')).toBeVisible();
+    await expect(page.locator('#spa-test-workflow')).toBeHidden();
+    await expect(page.getByTestId('bombadil-panel-shell')).toBeHidden();
+    await expect(page.locator('#conformance-panel-group')).toBeHidden();
+    await expect(page.locator('#mcard-result-panel-group')).toBeHidden();
+    await expect(page.getByTestId('bombadil-transport-pill')).toBeVisible();
+
+    await page.locator('#btn-mode-guided-spa').click();
+    await expect(page.locator('#workbench-controls-dock')).toHaveAttribute('data-workbench-mode', 'guided-spa');
+    await expect(page.locator('#public-site-selector')).toBeVisible();
+    await expect(page.locator('#target-url-input')).toBeHidden();
+    await expect(page.locator('#target-quick-chips')).toBeHidden();
+    await expect(page.locator('#spa-test-workflow')).toBeVisible();
+    await expect(page.locator('#conformance-panel-group')).toBeVisible();
+
+    await page.getByTestId('workflow-next-device').click();
+    await page.getByTestId('workflow-browse-presets').click();
+    await expect(page.locator('#workbench-controls-dock')).toHaveAttribute('data-workbench-mode', 'explore');
+    await expect(page.locator('#device-presets-container')).toBeVisible();
+
+    await page.locator('#btn-mode-verify').click();
+    await expect(page.locator('#verify-summary-shell')).toBeVisible();
+    await expect(page.locator('#conformance-panel-group')).toBeVisible();
+    await expect(page.locator('#mcard-result-panel-group')).toBeVisible();
+  });
+
+  test('SSG-05 PresentationController parity across Lab, Portal, Sprint Registry, and Fiber Inspector', async ({
+    browser
+  }) => {
+    const context = await browser.newContext({
+      viewport: { width: 1280, height: 800 },
+      colorScheme: 'light'
+    });
+    const page = await context.newPage();
+
+    // Preserves dataTheme="dark" on Lab & Registry even under light OS preference
+    await page.goto('/responsive-lab.html', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+    await page.goto('/sprint-registry.html', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+    // Toggle theme to light -> high-contrast -> persist across all 4 host routes
+    await page.locator('#theme-toggle-btn').click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await page.locator('#theme-toggle-btn').click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'high-contrast');
+    const initialPower = await page.locator('html').getAttribute('data-power-mode');
+    if (initialPower === 'energy-saving') {
+      await page.locator('#power-toggle-btn').click();
+      await expect(page.locator('html')).toHaveAttribute('data-power-mode', 'balanced');
+    }
+    await page.locator('#power-toggle-btn').click();
+    await expect(page.locator('html')).toHaveAttribute('data-power-mode', 'energy-saving');
+
+    for (const route of ['/responsive-lab.html', '/?noredirect=1', '/fiber-inspector.html']) {
+      await page.goto(route, { waitUntil: 'domcontentloaded' });
+      await expect(page.locator('html')).toHaveAttribute('data-theme', 'high-contrast');
+      await expect(page.locator('html')).toHaveAttribute('data-power-mode', 'energy-saving');
+    }
+
+    // Query override wins on fiber-inspector
+    await page.goto('/fiber-inspector.html?display_mode=dark', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
     await context.close();
   });

@@ -54,7 +54,8 @@ const EXPECTED_ISLAND_NAMES = [
   'RecordingRibbonIsland',
   'SpaTestWorkflow',
   'ConformancePanelIsland',
-  'MCardResultIsland'
+  'MCardResultIsland',
+  'BombadilDashboardIsland'
 ];
 
 function toPosix(relPath) {

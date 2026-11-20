@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-SSG-03` |
 | Source of Truth | [`./ssg-plan.md`](./ssg-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-SSG-03` |
-| Status | `PLANNED` |
+| Status | `DONE` |
 | Depends on | `SPRINT-SSG-02` |
 | Unblocks | `SPRINT-SSG-05` |
 | Execution unit | `PR-SSG-03` |
@@ -43,15 +43,15 @@ The Responsive UI Lab stage adopts StageShow's playground preview structure (`to
 4. Fix `computeScale` in `js/harness/viewport-geometry.js` and `Scale: Actual (1:1)` pan in `public/css/responsive-lab.css`:
    - Pass `(innerWidth + chromeInsets.x, innerHeight + chromeInsets.y)` into `computeScale` so outer bezel chrome never overflows `.stage-well` when scaled to fit.
    - Relabel `#btn-scale-toggle` to `Scale: Fit` (`'auto'`) versus `Scale: Actual (1:1)` (`'actual'`). When `'actual'`, remove `max-width: 100%; max-height: 100%` from `.viewport-scale-wrapper` and center `.stage-scale-rig` with `margin: auto` inside `.stage-well { display: flex; overflow: auto }` so **all `4` corners** (`(0,0)`, `(w,0)`, `(0,h)`, `(w,h)`) remain scroll-reachable on oversized targets.
-5. Migrate `tests/features/presentation-lattice.spec.js` Test 11 (`#controlled-panel-frame` -> `#mission-control-iframe` `clientWidth`/`clientHeight`), `tests/features/responsive-rotation-and-devices.spec.js` (`RVP-T01` through `RVP-T11`), `tests/features/responsive-lab-islands.spec.js:350` (`toContainText('100%')`), `tests/features/explorable-gui.spec.js`, and `tests/fixtures/app-fixtures.js:170`, create `tests/features/stage-frame-geometry.spec.js`, selectively update `tests/baselines/layout-baseline.json` (`STY_FREEZE_PAGES=responsive-lab` with `rebaselines` attribution), and record `docs/sprints/_active/evidence/SSG-03-stage-frames.md` + [`./DECISIONS.tsv`](./DECISIONS.tsv).
+5. Migrate `tests/features/presentation-lattice.spec.js` Test 11 (`#controlled-panel-frame` -> `#mission-control-iframe` `clientWidth`/`clientHeight`), `tests/features/responsive-rotation-and-devices.spec.js` (`RVP-T01` through `RVP-T11`), `tests/features/responsive-lab-islands.spec.js:350` (`toContainText('100%')`), `tests/features/explorable-gui.spec.js`, and `tests/fixtures/app-fixtures.js:170`, create `tests/features/stage-frame-geometry.spec.js`, selectively update parent-repo `../docs/sprints/programs/sty/style/layout-baseline.json` (`STY_FREEZE_PAGES=responsive-lab` with `rebaselines` attribution), and record `docs/sprints/_active/evidence/SSG-03-stage-frames.md` + [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv).
 
 ## Files
 
 - Edit `src/islands/ViewportStageIsland.jsx`, `src/islands/DevicePresetsIsland.jsx`, and `src/pages/responsive-lab.astro`
 - Edit `js/harness/viewport-geometry.js`, `js/harness/viewport-stage.js`, `js/device-registry.js`, and `public/css/responsive-lab.css`
 - Create `tests/features/stage-frame-geometry.spec.js`
-- Edit `tests/fixtures/app-fixtures.js`, `tests/unit/viewport-geometry.test.mjs`, `tests/features/presentation-lattice.spec.js`, `tests/features/responsive-rotation-and-devices.spec.js`, `tests/features/responsive-lab-islands.spec.js`, `tests/features/explorable-gui.spec.js`, `tests/features/responsive-capture.spec.js`, and `tests/baselines/layout-baseline.json`
-- Create `docs/sprints/_active/evidence/SSG-03-stage-frames.md` and append row to [`./DECISIONS.tsv`](./DECISIONS.tsv)
+- Edit `tests/fixtures/app-fixtures.js`, `tests/unit/viewport-geometry.test.mjs`, `tests/features/presentation-lattice.spec.js`, `tests/features/responsive-rotation-and-devices.spec.js`, `tests/features/responsive-lab-islands.spec.js`, `tests/features/explorable-gui.spec.js`, `tests/features/responsive-capture.spec.js`, and parent-repo `../docs/sprints/programs/sty/style/layout-baseline.json`
+- Create `docs/sprints/_active/evidence/SSG-03-stage-frames.md` and append row to [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv)
 
 ## BMAD responsibilities
 
@@ -90,6 +90,6 @@ The Responsive UI Lab stage adopts StageShow's playground preview structure (`to
 
 ## Definition of done
 
-- [ ] **DoD-SSG-03-01.** Inner iframe layout dimensions match selected viewport px (`393x852`, `430x932`, `360x780`, `1280x832`, `500x500`) across all `6` `data-frame-style` bezels with `4`-corner `Actual (1:1)` scroll reachability and click-through safe-area guides. Verified by `npx playwright test tests/features/stage-frame-geometry.spec.js --project=features`.
-- [ ] **DoD-SSG-03-02.** StageShow layout check on Responsive UI Lab and updated island/rotation/capture/GUI/Test-11 Playwright checks pass. Verified by `npm run stageshow:layout -- /responsive-lab.html --strict && npx playwright test tests/features/presentation-lattice.spec.js tests/features/responsive-rotation-and-devices.spec.js tests/features/responsive-lab-islands.spec.js tests/features/responsive-capture.spec.js tests/features/explorable-gui.spec.js tests/features/layout-freeze.spec.js --project=features`.
-- [ ] **DoD-SSG-03-03.** Evidence in `evidence/SSG-03-stage-frames.md` and `DECISIONS.tsv` row are recorded with all core gates green. Verified by `test -s docs/sprints/_active/evidence/SSG-03-stage-frames.md && grep -qE $'\tSSG-03\t' docs/sprints/_active/DECISIONS.tsv && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run test:unit`.
+- [x] **DoD-SSG-03-01.** Inner iframe layout dimensions match selected viewport px (`393x852`, `430x932`, `360x780`, `1280x832`, `500x500`) across all `6` `data-frame-style` bezels with `4`-corner `Actual (1:1)` scroll reachability and click-through safe-area guides. Verified by `npx playwright test tests/features/stage-frame-geometry.spec.js --project=features`.
+- [x] **DoD-SSG-03-02.** StageShow layout check on Responsive UI Lab and updated island/rotation/capture/GUI/Test-11 Playwright checks pass. Verified by `npm run stageshow:layout -- /responsive-lab.html --strict && npx playwright test tests/features/presentation-lattice.spec.js tests/features/responsive-rotation-and-devices.spec.js tests/features/responsive-lab-islands.spec.js tests/features/responsive-capture.spec.js tests/features/explorable-gui.spec.js tests/features/layout-freeze.spec.js --project=features`.
+- [x] **DoD-SSG-03-03.** Evidence in `evidence/SSG-03-stage-frames.md` and `DECISIONS.tsv` row are recorded with all core gates green. Verified by `test -s docs/sprints/_active/evidence/SSG-03-stage-frames.md && grep -qE $'\tSSG-03\t' docs/sprints/_active/DECISIONS.tsv && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run test:unit`.

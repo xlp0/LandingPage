@@ -57,7 +57,6 @@ test.describe('SPRINT-ERB-02: Target Membrane Interceptor & Spatial Normalizatio
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(400);
 
-    await page.locator('#btn-orient-vertical').click();
     await page.locator('#btn-size-mobile').click();
     await page.waitForTimeout(300);
 
@@ -428,11 +427,17 @@ test.describe('SPRINT-GQC-03: Target Policy Enforcement & Capture Lifecycle', ()
     expect(storedRes.status()).toBe(200);
     const storedEnvelope = await storedRes.json();
     expect(storedEnvelope.verified).toBe(true);
+    expect(storedEnvelope.incomplete).toBe(true);
+    expect(storedEnvelope.passing).toBe(false);
+    expect(storedEnvelope.certified).toBe(false);
     const storedRun = storedEnvelope.run;
 
+    expect(storedRun.schema).toBe('urn:gqc:interrupted-capture:v1');
     expect(storedRun.target.url).toBe(CROSS_ORIGIN_TARGET);
-    expect(storedRun.events.filter((ev) => ev.type === 'pointer').length).toBe(1);
-    expect(storedRun.events.some((ev) => ev.target?.selector === '#unapproved-btn')).toBe(false);
+    expect(storedRun.incomplete).toBe(true);
+    expect(storedRun.passing).toBe(false);
+    expect(storedRun.certified).toBe(false);
+    expect(storedRun.lifecycleState).toBe('RECORDING');
   });
 
   test('GQC-03-E2E-06: switching targets while a probe message is in flight fences out late events from the new target run', async ({ page }) => {
@@ -514,14 +519,17 @@ test.describe('SPRINT-GQC-03: Target Policy Enforcement & Capture Lifecycle', ()
 
     await expect(page.locator('body')).not.toHaveAttribute('data-page-state', 'loading');
 
+    await page.locator('#btn-mode-verify').click();
     await page.locator('#conformance-disclosure > summary').click();
     await page.locator('#mcard-result-disclosure > summary').click();
+    await page.locator('#btn-mode-bombadil').click();
 
-    await expect(page.locator('astro-island')).toHaveCount(7);
+    await expect(page.locator('astro-island')).toHaveCount(8);
     await expect.poll(async () =>
       page.locator('astro-island').evaluateAll((els) => els.every((el) => !el.hasAttribute('ssr')))
     ).toBe(true);
 
+    await page.locator('#btn-mode-explore').click();
     await page.locator('#public-site-selector').selectOption('https://github.com');
     await expect(page.locator('#cors-block-alert')).toBeVisible();
     await page.locator('#btn-target-recover').click();

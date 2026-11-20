@@ -11,13 +11,13 @@ This reference describes the Playwright project layout, unit test runner, fixtur
 
 ## Project Partitioning
 
-[`playwright.config.js`](../playwright.config.js) partitions `53` E2E spec files (`666` tests total) into three non-overlapping category projects. Every spec uses pure ES modules (`*.spec.js`).
+[`playwright.config.js`](../playwright.config.js) partitions `57` E2E spec files (`699` tests total) into three non-overlapping category projects. Every spec uses pure ES modules (`*.spec.js`).
 
 | Project | Directory | Spec Files | Discovered Tests | Timeout | Local Retries | CI Retries | Retry Owner |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `smoke` | `tests/smoke/` | 11 | 30 | 60s | 0 | 0 | TEA |
 | `components` | `tests/components/` | 14 | 18 | 60s | 0 | 0 | TEA |
-| `features` | `tests/features/` | 28 | 618 | 120s | 0 | 0 | TEA |
+| `features` | `tests/features/` | 32 | 651 | 120s | 0 | 0 | TEA |
 
 Global `retries` is `0` so project-level retries never compound. Unit and contract suites run via `node --test` (`npm run test:unit`) across `tests/*.test.*`, `tests/unit/*.test.mjs`, and `tests/observability/*.test.js`. Vitest is not used.
 
@@ -33,7 +33,7 @@ Global `retries` is `0` so project-level retries never compound. Unit and contra
 tests/
 ├── smoke/                        # 11 fast smoke and root page characterization specs (30 tests)
 ├── components/                   # 14 isolated CLM component iframe specs (18 tests)
-├── features/                     # 28 workbench, Astro island, SPA net, MCard, perf, and P2P specs (618 tests)
+├── features/                     # 32 workbench, Astro island, StageShow, SPA net, MCard, perf, and P2P specs (651 tests)
 ├── conformance/                  # 15 modular device conformance checks and *.conformance.json specs
 ├── performance/                  # place-bytes.mjs, metrics-model.mjs, run-paired-benchmark.mjs
 ├── observability/                # alignment.test.js and correctness.test.js (node:test)
@@ -49,7 +49,7 @@ Each of the six Astro-hosted workbench routes plus the tombstoned static `pkc-do
 | Route | Host Mode | Characterization Spec | Registered Surface ID |
 | --- | --- | --- | --- |
 | `index.html` (`/` and `/?noredirect=1`) | `astro-wrapped` | [`tests/smoke/root-index.spec.js`](./smoke/root-index.spec.js) | `workbench-landing-portal` |
-| `responsive-lab.html` | `astro-islands` (`7` Preact islands) | [`tests/smoke/root-responsive-lab.spec.js`](./smoke/root-responsive-lab.spec.js) | `workbench-responsive-lab` |
+| `responsive-lab.html` | `astro-islands` (`8` Preact islands) | [`tests/smoke/root-responsive-lab.spec.js`](./smoke/root-responsive-lab.spec.js) | `workbench-responsive-lab` |
 | `app.html` | `astro-wrapped` | [`tests/smoke/root-app.spec.js`](./smoke/root-app.spec.js) | `workbench-legacy-mission-control` |
 | `fiber-conformance.html` | `astro-wrapped` | [`tests/smoke/root-fiber-conformance.spec.js`](./smoke/root-fiber-conformance.spec.js) | `workbench-fiber-conformance` |
 | `fiber-inspector.html` | `astro-wrapped` | [`tests/smoke/root-fiber-inspector.spec.js`](./smoke/root-fiber-inspector.spec.js) | `workbench-fiber-inspector` |

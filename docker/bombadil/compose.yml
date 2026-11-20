@@ -26,6 +26,8 @@ x-bombadil: &bombadil
     MIN_FIRINGS: ${MIN_FIRINGS:-20}
   volumes:
     - ../..:/app
+    # Read-only parent graduated program archives served by routes/clm.js (/api/clm/program-artifact).
+    - ../../../docs/sprints/programs:/docs/sprints/programs:ro
     # Linux dependencies from the image, kept apart from the host's macOS node_modules.
     - node_modules:/app/node_modules
     # The container builds its own Astro output so it never overwrites the host's dist/.
@@ -41,7 +43,7 @@ services:
   bombadil-gate:
     <<: *bombadil
     profiles: ["manual"]
-    command: ["bash", "-c", "npm run check:bombadil-nets && npm run check:explorable-gui && npm run check:net && npm run docs:check && npm run test:unit"]
+    command: ["bash", "-c", "npm run build:astro && (if [ -f tools/stageshow/build-scenes.mjs ]; then node tools/stageshow/build-scenes.mjs --check; fi) && npm run stageshow:check-css && npm run check:bombadil-nets && npm run check:explorable-gui && npm run check:net && npm run docs:check && npm run test:unit && env SKIP_BUILD=1 npm run stageshow:sweep -- --strict"]
 
   bombadil-scheduler:
     <<: *bombadil
