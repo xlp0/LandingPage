@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-DCI-05` |
 | Source of Truth | [`./dci-plan.md`](./dci-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-DCI-05` |
-| Status | `PLANNED` |
+| Status | `IN_PROGRESS` |
 | Depends on | `SPRINT-DCI-01`, `SPRINT-DCI-02`, `SPRINT-DCI-03`, `SPRINT-DCI-04` |
 | Unblocks | Graduation of Program DCI |
 | Execution unit | `PR-DCI-05` |
@@ -95,8 +95,8 @@ The program ends with one run of every gate on one commit, a comparison of that 
 
 ## Definition of done
 
-- [ ] **DoD-DCI-05-01.** Thirteen of the fourteen graduation gates exit `0` on one commit. Verified by `npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:net && npm run check:explorable-gui && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run build && npm run test:unit && npm run test:smoke && npm run test:components && npm run test:features && npm run test:smoke:cross-browser`.
-- [ ] **DoD-DCI-05-02.** The fourteenth gate passes. The layout holds on every route at four widths. Verified by `npm run stageshow:sweep -- --strict`.
-- [ ] **DoD-DCI-05-03.** The four feature sprints each have a completion row, and the registry page writes no markup. Verified by `test "$(grep -cE $'\tDCI-0[1-4]-complete\t' docs/sprints/_active/DECISIONS.tsv)" -eq 4 && ! grep -n 'innerHTML' src/pages/sprint-registry.astro`.
+- [x] **DoD-DCI-05-01.** Thirteen of the fourteen graduation gates exit `0` on one commit. Verified by `npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:net && npm run check:explorable-gui && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run build && npm run test:unit && npm run test:smoke && npm run test:components && npm run test:features && npm run test:smoke:cross-browser`.
+- [x] **DoD-DCI-05-02.** The fourteenth gate passes. The layout holds on every route at four widths. Verified by `npm run stageshow:sweep -- --strict`.
+- [x] **DoD-DCI-05-03.** The four feature sprints each have a completion row, and the registry page writes no markup. Verified by `test "$(grep -cE $'\tDCI-0[1-4]-complete\t' docs/sprints/_active/DECISIONS.tsv)" -eq 4 && ! grep -n 'innerHTML' src/pages/sprint-registry.astro`.
 - [ ] **DoD-DCI-05-04.** The archive holds the program and its evidence, and every doc link resolves. Verified by `test -s docs/sprints/programs/dci/INDEX.md && test -s docs/sprints/programs/dci/dci-plan.md && test -s docs/sprints/programs/dci/evidence/DCI-05-graduation.md && npm run docs:check`.
 - [ ] **DoD-DCI-05-05.** The operator approval is recorded, and the workspace status line reads idle. Verified by `grep -qE $'\tDCI-graduation\t' docs/sprints/_active/DECISIONS.tsv && grep -qE '^\| Status \| .IDLE. \(.*Program DCI. graduated' docs/sprints/_active/INDEX.md`.
