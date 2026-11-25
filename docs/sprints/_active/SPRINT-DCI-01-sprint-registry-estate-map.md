@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-DCI-01` |
 | Source of Truth | [`./dci-plan.md`](./dci-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-DCI-01` |
-| Status | `IN_PROGRESS` |
+| Status | `DONE` |
 | Depends on | `PR-DCI-01A` depends on nothing. `PR-DCI-01B` depends on `PR-DCI-01A` and on `SPRINT-DCI-00` |
 | Unblocks | `SPRINT-DCI-02` |
 | Execution unit | `PR-DCI-01A`, then `PR-DCI-01B` |
@@ -123,8 +123,8 @@ The page also builds each card by writing registry text into `innerHTML`. No tit
 
 ## Definition of done
 
-- [ ] **DoD-DCI-01-01.** The page script writes no registry text as markup, and a title with a tag in it shows as text. Verified by `! grep -n 'innerHTML' src/pages/sprint-registry.astro && npx playwright test tests/features/sprint-registry.spec.js --project=features`.
-- [ ] **DoD-DCI-01-02.** Grouping, filtering, and URL state follow the stated rules on a hand-written registry. Verified by `node --test tests/unit/registry-view.test.mjs`.
-- [ ] **DoD-DCI-01-03.** The page groups sprints by program, filters them, links to one sprint, and keeps the view across a reload, with every feature spec green. Verified by `grep -q 'registry-filter-query' src/pages/sprint-registry.astro && npm run test:features`.
-- [ ] **DoD-DCI-01-04.** The page ships no `_astro/` script, and its layout holds at four widths. Verified by `npm run build && node tests/performance/place-bytes.mjs --enforce-zero-island-places && npm run stageshow:sweep -- --strict`.
-- [ ] **DoD-DCI-01-05.** Evidence and the completion row are recorded with the remaining core gates green. Verified by `test -s docs/sprints/_active/evidence/DCI-01-registry-estate-map.md && grep -qE $'\tDCI-01-complete\t' docs/sprints/_active/DECISIONS.tsv && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run test:unit && npm run test:smoke`.
+- [x] **DoD-DCI-01-01.** The page script writes no registry text as markup, and a title with a tag in it shows as text. Verified by `! grep -n 'innerHTML' src/pages/sprint-registry.astro && npx playwright test tests/features/sprint-registry.spec.js --project=features`.
+- [x] **DoD-DCI-01-02.** Grouping, filtering, and URL state follow the stated rules on a hand-written registry. Verified by `node --test tests/unit/registry-view.test.mjs`.
+- [x] **DoD-DCI-01-03.** The page groups sprints by program, filters them, links to one sprint, and keeps the view across a reload, with every feature spec green. Verified by `grep -q 'registry-filter-query' src/pages/sprint-registry.astro && npm run test:features`.
+- [x] **DoD-DCI-01-04.** The page ships no `_astro/` script, and its layout holds at four widths. Verified by `npm run build && node tests/performance/place-bytes.mjs --enforce-zero-island-places && npm run stageshow:sweep -- --strict`.
+- [x] **DoD-DCI-01-05.** Evidence and the completion row are recorded with the remaining core gates green. Verified by `test -s docs/sprints/_active/evidence/DCI-01-registry-estate-map.md && grep -qE $'\tDCI-01-complete\t' docs/sprints/_active/DECISIONS.tsv && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run test:unit && npm run test:smoke`.

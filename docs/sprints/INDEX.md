@@ -11,7 +11,7 @@
 ## Active program
 
 - [**Active Sprint Workspace (`docs/sprints/_active/`)**](./_active/INDEX.md) (`ACTIVE` with `Program DCI`; holds the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) ledger)
-- [**Program DCI (`docs/sprints/_active/dci-plan.md`)**](./_active/dci-plan.md) (`SPRINT-DCI-00` complete on `7837fab`; `SPRINT-DCI-01` in progress)
+- [**Program DCI (`docs/sprints/_active/dci-plan.md`)**](./_active/dci-plan.md) (`SPRINT-DCI-00..01` complete; `SPRINT-DCI-02` in progress)
 
 ## Graduated programs
 

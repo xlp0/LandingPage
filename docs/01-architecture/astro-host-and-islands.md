@@ -89,6 +89,7 @@ Astro's client router remains disabled. Every workbench page switch executes as 
 | Theme override, parameter `display_mode` | URL | Read only, by `js/runtime/presentation-controller.js` and by `src/pages/fiber-inspector.astro` | Kept | Kept when the URL is copied | Kept when the URL is copied |
 | Redirect switch, parameter `noredirect` | URL | Read only, by `src/pages/index.astro` | Kept | Kept when the URL is copied | Kept when the URL is copied |
 | Harness parameters of the conformance page | URL | Read only, by `src/pages/fiber-conformance.astro` | Kept | Kept when the URL is copied | Kept when the URL is copied |
+| Sprint registry filters, parameters `state`, `program`, and `q` | URL | `src/pages/sprint-registry.astro` (`js/ui/registry-view.js`) | Kept | Kept when the URL is copied | Kept when the URL is copied |
 | Lab device, size, orientation, mode, arrangement, scale mode, and safe-area flag | Memory | `js/harness/viewport-stage.js` and `js/harness/lab-runtime.js` | Lost | Lost | Lost |
 | Selection in the `PKC-06` island | Memory | `src/islands/PkcCardIsland.jsx` | Lost | Lost | Lost |
 

@@ -5,7 +5,7 @@
 | Audience | Scrum masters, BMAD role owners, developers, and operators |
 | BMAD Owner | Scrum Master |
 | Source of Truth | [`./DECISIONS.tsv`](./DECISIONS.tsv) and [`../INDEX.md`](../INDEX.md) |
-| Status | `ACTIVE` (`Program DCI`, `SPRINT-DCI-00` complete, `SPRINT-DCI-01` in progress) |
+| Status | `ACTIVE` (`Program DCI`, `SPRINT-DCI-00` and `SPRINT-DCI-01` complete, `SPRINT-DCI-02` starting) |
 | Consensus Kernel | `clm-kernel@0.0.26` |
 | Drift Gate | `npm run docs:check` |
 
@@ -17,14 +17,14 @@ Program SLC (`SPRINT-SLC-00` through `SPRINT-SLC-04`) graduated with operator ap
 
 ## Active program: Program DCI
 
-Program DCI (Declared reach, Closed navigation, and Interface state) was proposed on `2026-11-24`, confirmed for six-sprint scope on `2026-11-25`, and started on pinned commit `7837fab779360ee8daaeb941ee06f809465e6260` on `2026-11-26` after Flag 1 (`DCI-D04`) and Flag 2 approval. `SPRINT-DCI-00` is `DONE`; `SPRINT-DCI-01` is `IN_PROGRESS`.
+Program DCI (Declared reach, Closed navigation, and Interface state) was proposed on `2026-11-24`, confirmed for six-sprint scope on `2026-11-25`, and started on pinned commit `7837fab779360ee8daaeb941ee06f809465e6260` on `2026-11-26` after Flag 1 (`DCI-D04`) and Flag 2 approval. `SPRINT-DCI-00` and `SPRINT-DCI-01` are `DONE`; `SPRINT-DCI-02` is `IN_PROGRESS`.
 
 | Order | Sprint | Goal | Status |
 | ---: | --- | --- | :---: |
 | Plan | [`dci-plan.md`](./dci-plan.md) | Outcome, design decisions, scope flags, risks, sequence, and graduation rules | `ACTIVE` |
 | 1 | [`SPRINT-DCI-00`](./SPRINT-DCI-00-pinned-baseline-and-stored-state.md) | Pinned start commit, a run of every gate, and the stored-state table | `DONE` |
-| 2 | [`SPRINT-DCI-01`](./SPRINT-DCI-01-sprint-registry-estate-map.md) | Groups, filters, search, and deep links on the sprint registry, with safe rendering | `IN_PROGRESS` |
-| 3 | [`SPRINT-DCI-02`](./SPRINT-DCI-02-navigation-closure.md) | A nav on four pages and a net rule for pages without links | `PLANNED` |
+| 2 | [`SPRINT-DCI-01`](./SPRINT-DCI-01-sprint-registry-estate-map.md) | Groups, filters, search, and deep links on the sprint registry, with safe rendering | `DONE` |
+| 3 | [`SPRINT-DCI-02`](./SPRINT-DCI-02-navigation-closure.md) | A nav on four pages and a net rule for pages without links | `IN_PROGRESS` |
 | 4 | [`SPRINT-DCI-03`](./SPRINT-DCI-03-linkable-lab-state.md) | Device, size, orientation, and mode in the Lab URL | `PLANNED` |
 | 5 | [`SPRINT-DCI-04`](./SPRINT-DCI-04-refusal-reasons-and-native-dialogs.md) | A visible reason for each disabled stage control, and no native dialog | `PLANNED` |
 | 6 | [`SPRINT-DCI-05`](./SPRINT-DCI-05-verification-and-graduation.md) | Full gate matrix, living docs, and the archive | `PLANNED` |

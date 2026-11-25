@@ -5,7 +5,7 @@
 | Audience | Scrum masters, BMAD role owners, UX designers, architects, developers, and TEA engineers |
 | BMAD Owner | Product Manager with UX Designer, Architect, Developer, Tech Writer, and TEA |
 | Source of Truth | This plan, [`./INDEX.md`](./INDEX.md), [`./DECISIONS.tsv`](./DECISIONS.tsv), [`./dci-local-backlog.md`](./dci-local-backlog.md), [`./evidence/DCI-pre-program-study.md`](./evidence/DCI-pre-program-study.md), and [`./evidence/DCI-egm-review.md`](./evidence/DCI-egm-review.md) |
-| Status | `ACTIVE` (`SPRINT-DCI-00` complete on `7837fab`; `SPRINT-DCI-01` in progress; Flag 1 and Flag 2 approved `2026-11-26`) |
+| Status | `ACTIVE` (`SPRINT-DCI-00` and `SPRINT-DCI-01` complete; `SPRINT-DCI-02` next; Flag 1 and Flag 2 approved `2026-11-26`) |
 | Program | DCI, Declared reach, Closed navigation, and Interface state |
 | Consensus Kernel | `clm-kernel@0.0.26` |
 | Drift Gate | `npm run docs:check` |
@@ -121,8 +121,8 @@ The scope changed twice, and both changes are part of the record.
 | Order | Sprint | Goal | Depends on | Effort | Status |
 | ---: | --- | --- | --- | :---: | :---: |
 | 1 | [DCI-00](./SPRINT-DCI-00-pinned-baseline-and-stored-state.md) | Pin the start commit, run every gate, measure the baseline again, and write the stored-state table. | Flag 2 | 0.5d | `DONE` |
-| 2 | [DCI-01](./SPRINT-DCI-01-sprint-registry-estate-map.md) | Safe rendering in `PR-DCI-01A`. Groups, filters, search, and deep links in `PR-DCI-01B`. | None for `PR-DCI-01A`. DCI-00 for `PR-DCI-01B` | 2d | `IN_PROGRESS` |
-| 3 | [DCI-02](./SPRINT-DCI-02-navigation-closure.md) | A nav on four pages and a net rule for pages without links. | DCI-01 | 2d | `PLANNED` |
+| 2 | [DCI-01](./SPRINT-DCI-01-sprint-registry-estate-map.md) | Safe rendering in `PR-DCI-01A`. Groups, filters, search, and deep links in `PR-DCI-01B`. | None for `PR-DCI-01A`. DCI-00 for `PR-DCI-01B` | 2d | `DONE` |
+| 3 | [DCI-02](./SPRINT-DCI-02-navigation-closure.md) | A nav on four pages and a net rule for pages without links. | DCI-01 | 2d | `IN_PROGRESS` |
 | 4 | [DCI-03](./SPRINT-DCI-03-linkable-lab-state.md) | Device, size, orientation, and mode in the Lab URL, with a copy-link control. | DCI-02 | 2d | `PLANNED` |
 | 5 | [DCI-04](./SPRINT-DCI-04-refusal-reasons-and-native-dialogs.md) | A visible reason for each disabled stage control, and no native dialog on the workbench pages. | DCI-03 | 1.5d | `PLANNED` |
 | 6 | [DCI-05](./SPRINT-DCI-05-verification-and-graduation.md) | Full gate matrix, living docs, and the archive to `docs/sprints/programs/dci/`. | DCI-01, DCI-02, DCI-03, DCI-04 | 1d | `PLANNED` |

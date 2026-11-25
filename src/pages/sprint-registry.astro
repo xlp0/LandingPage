@@ -89,12 +89,96 @@ import PresentationControls from '../components/PresentationControls.astro';
       font-family: ui-monospace, monospace;
       color: var(--reg-muted);
     }
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .registry-filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .filter-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+      flex: 1 1 180px;
+    }
+    .filter-field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--reg-muted);
+    }
+    .filter-field select,
+    .filter-field input {
+      min-height: 36px;
+      width: 100%;
+      max-width: 100%;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--reg-border);
+      background: var(--reg-card-bg);
+      color: var(--reg-text);
+      font-family: inherit;
+      font-size: 13px;
+    }
+    .registry-legend {
+      margin: 0 0 12px;
+      padding: 10px 12px;
+      border: 1px solid var(--reg-border);
+      border-radius: 6px;
+      background: var(--reg-card-bg);
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--reg-muted);
+    }
+    .registry-legend p {
+      margin: 0;
+    }
+    .registry-legend p + p {
+      margin-top: 4px;
+    }
+    .registry-result-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    #registry-result {
+      margin: 0;
+      font-size: 13px;
+      color: var(--reg-muted);
+    }
     .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .program-section {
+      min-width: 0;
+    }
+    .program-heading {
+      margin: 0 0 12px;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--reg-text);
+      border-bottom: 1px solid var(--reg-border);
+      padding-bottom: 6px;
+      overflow-wrap: anywhere;
+    }
+    .program-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
       gap: 16px;
-      max-width: 1200px;
-      margin: 0 auto;
+    }
+    .program-section[hidden],
+    .sprint-card[hidden],
+    #registry-filters-clear[hidden] {
+      display: none !important;
     }
     .sprint-card {
       background: var(--reg-card-bg);
@@ -121,6 +205,19 @@ import PresentationControls from '../components/PresentationControls.astro';
       font-family: ui-monospace, monospace;
       font-weight: 700;
       font-size: 14px;
+      color: inherit;
+      text-decoration: none;
+    }
+    .sprint-code:hover,
+    .sprint-code:focus-visible {
+      text-decoration: underline;
+    }
+    .sprint-code:focus-visible,
+    .filter-field select:focus-visible,
+    .filter-field input:focus-visible,
+    #registry-filters-clear:focus-visible {
+      outline: 2px solid var(--color-primary, #60a5fa);
+      outline-offset: 2px;
     }
     .state-badge {
       display: inline-block;
@@ -172,46 +269,259 @@ import PresentationControls from '../components/PresentationControls.astro';
   </header>
 
   <main>
+    <form id="registry-filters" data-testid="registry-filters" class="registry-filters">
+      <div class="filter-field">
+        <label for="registry-filter-state">State</label>
+        <select id="registry-filter-state" data-testid="registry-filter-state" name="state">
+          <option value="">All</option>
+          <option value="sealed">sealed</option>
+          <option value="specification">specification</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label for="registry-filter-program">Program</label>
+        <select id="registry-filter-program" data-testid="registry-filter-program" name="program">
+          <option value="">All</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label for="registry-filter-query">Search</label>
+        <input id="registry-filter-query" data-testid="registry-filter-query" name="q" type="search" placeholder="Filter by code, title, or reference" />
+      </div>
+    </form>
+
+    <div class="registry-legend" aria-label="Sprint state definitions">
+      <p>Sealed. A sprint manifest whose Definition of done conditions are sealed as a contract. Sealed does not mean finished.</p>
+      <p>Specification. A specification card, such as a program charter. It carries no Definition of done conditions.</p>
+    </div>
+
+    <div class="registry-result-bar">
+      <p id="registry-result" data-testid="registry-result" role="status"></p>
+      <button type="button" id="registry-filters-clear" data-testid="registry-filters-clear" class="presentation-control-btn" hidden>Clear filters</button>
+    </div>
+
     <div id="sprint-grid" class="grid"></div>
   </main>
 
   <script is:inline type="module">
 import { setPageState } from '/js/harness/page-state.js';
+import {
+  programOf,
+  filterSprints,
+  groupSprints,
+  parseRegistryUrlState,
+  mergeRegistryUrlState
+} from '/js/ui/registry-view.js';
+
+    function createSprintCard(s) {
+      const card = document.createElement('article');
+      const state = s.dod?.state || 'specification';
+      const code = s.code || 'UNKNOWN';
+      const program = programOf(code);
+      card.id = `sprint-${code}`;
+      card.className = `sprint-card state-${state}`;
+      card.setAttribute('data-state', state);
+      card.setAttribute('data-code', code);
+      card.setAttribute('data-program', program);
+
+      const topEl = document.createElement('div');
+      topEl.className = 'card-top';
+
+      const linkEl = document.createElement('a');
+      linkEl.className = 'sprint-code';
+      linkEl.href = `#sprint-${code}`;
+      linkEl.setAttribute('data-testid', `sprint-link-${code}`);
+      linkEl.textContent = code;
+
+      const badgeEl = document.createElement('span');
+      badgeEl.className = `state-badge badge-${state}`;
+      badgeEl.textContent = state.toUpperCase();
+
+      topEl.append(linkEl, badgeEl);
+
+      const titleEl = document.createElement('h3');
+      titleEl.className = 'sprint-title';
+      titleEl.textContent = s.title || '';
+
+      const handleEl = document.createElement('div');
+      handleEl.className = 'sprint-handle';
+      handleEl.textContent = s.handle || '';
+
+      const footerEl = document.createElement('div');
+      footerEl.className = 'card-footer';
+
+      const dodSpan = document.createElement('span');
+      dodSpan.textContent = `DoD: ${s.dod?.total ?? 0} conditions`;
+
+      const typeSpan = document.createElement('span');
+      typeSpan.textContent = `Type: ${s.card_type || 'pcard'}`;
+
+      footerEl.append(dodSpan, typeSpan);
+      card.append(topEl, titleEl, handleEl, footerEl);
+      return card;
+    }
+
     async function loadRegistry() {
       const statusEl = document.getElementById('registry-status');
       const gridEl = document.getElementById('sprint-grid');
+      const formEl = document.getElementById('registry-filters');
+      const stateEl = document.getElementById('registry-filter-state');
+      const programEl = document.getElementById('registry-filter-program');
+      const queryEl = document.getElementById('registry-filter-query');
+      const resultEl = document.getElementById('registry-result');
+      const clearEl = document.getElementById('registry-filters-clear');
+
       try {
         const res = await fetch('/api/clm/registry');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         const sprints = data.registry?.sprints || [];
+        const groups = groupSprints(sprints);
+        const programs = groups.map((g) => g.program);
 
-        gridEl.innerHTML = '';
-        for (const s of sprints) {
-          const card = document.createElement('article');
-          const state = s.dod?.state || 'specification';
-          card.className = `sprint-card state-${state}`;
-          card.setAttribute('data-state', state);
-          card.setAttribute('data-code', s.code || '');
-
-          card.innerHTML = `
-            <div class="card-top">
-              <span class="sprint-code">${s.code || 'UNKNOWN'}</span>
-              <span class="state-badge badge-${state}">${state.toUpperCase()}</span>
-            </div>
-            <h3 class="sprint-title">${s.title || ''}</h3>
-            <div class="sprint-handle">${s.handle || ''}</div>
-            <div class="card-footer">
-              <span>DoD: ${s.dod?.total ?? 0} conditions</span>
-              <span>Type: ${s.card_type || 'pcard'}</span>
-            </div>
-          `;
-          gridEl.appendChild(card);
+        const programOptions = [new Option('All', '')];
+        for (const g of groups) {
+          programOptions.push(new Option(g.program, g.program));
         }
+        programEl.replaceChildren(...programOptions);
+
+        const cardByCode = new Map();
+        const sectionEntries = [];
+
+        for (const g of groups) {
+          const section = document.createElement('section');
+          section.className = 'program-section';
+          section.setAttribute('data-testid', `program-${g.program}`);
+          section.setAttribute('data-program', g.program);
+
+          const heading = document.createElement('h2');
+          heading.id = `program-${g.program}`;
+          heading.className = 'program-heading';
+          heading.textContent = `${g.program} (${g.sprints.length} total, ${g.sealed} sealed, ${g.specification} specification)`;
+
+          const groupGrid = document.createElement('div');
+          groupGrid.className = 'program-grid';
+
+          const cards = [];
+          for (const s of g.sprints) {
+            const card = createSprintCard(s);
+            cardByCode.set(s.code || '', card);
+            cards.push({ sprint: s, card });
+            groupGrid.appendChild(card);
+          }
+
+          section.append(heading, groupGrid);
+          sectionEntries.push({ section, cards });
+        }
+
+        gridEl.replaceChildren(...sectionEntries.map((entry) => entry.section));
+
+        const initial = parseRegistryUrlState(window.location.search, { programs });
+        stateEl.value = initial.state;
+        programEl.value = initial.program;
+        queryEl.value = initial.query;
+
+        function currentFilters() {
+          return {
+            state: stateEl.value,
+            program: programEl.value,
+            query: queryEl.value
+          };
+        }
+
+        function applyFilters({ syncUrl = false } = {}) {
+          const filters = currentFilters();
+          const matching = new Set(filterSprints(sprints, filters));
+          let visiblePrograms = 0;
+          for (const entry of sectionEntries) {
+            let sectionVisible = 0;
+            for (const item of entry.cards) {
+              const show = matching.has(item.sprint);
+              item.card.hidden = !show;
+              if (show) sectionVisible += 1;
+            }
+            entry.section.hidden = sectionVisible === 0;
+            if (sectionVisible > 0) visiblePrograms += 1;
+          }
+
+          const shownCount = matching.size;
+          resultEl.setAttribute('data-shown', String(shownCount));
+          if (shownCount === 0) {
+            resultEl.textContent = 'No sprint matches these filters';
+            clearEl.hidden = false;
+          } else {
+            resultEl.textContent = `Showing ${shownCount} of ${sprints.length} sprints in ${visiblePrograms} programs`;
+            clearEl.hidden = true;
+          }
+
+          if (syncUrl) {
+            const merged = mergeRegistryUrlState(window.location.search, filters);
+            if (merged !== window.location.search) {
+              window.history.replaceState(
+                window.history.state,
+                '',
+                window.location.pathname + merged + window.location.hash
+              );
+            }
+          }
+        }
+
+        function handleHashTarget() {
+          const hash = window.location.hash;
+          if (!hash || !hash.startsWith('#sprint-')) return;
+          let targetId = hash.slice(1);
+          try {
+            targetId = decodeURIComponent(targetId);
+          } catch {}
+          const card = document.getElementById(targetId);
+          if (!card || !card.classList.contains('sprint-card')) return;
+          if (card.hidden) {
+            stateEl.value = '';
+            programEl.value = '';
+            queryEl.value = '';
+            applyFilters({ syncUrl: true });
+          }
+          card.scrollIntoView({ block: 'nearest' });
+          const link = card.querySelector('a.sprint-code');
+          if (link) link.focus({ preventScroll: true });
+        }
+
+        applyFilters({ syncUrl: false });
+
+        let searchTimer = null;
+        formEl.addEventListener('submit', (event) => {
+          event.preventDefault();
+          if (searchTimer) {
+            clearTimeout(searchTimer);
+            searchTimer = null;
+          }
+          applyFilters({ syncUrl: true });
+        });
+        stateEl.addEventListener('change', () => applyFilters({ syncUrl: true }));
+        programEl.addEventListener('change', () => applyFilters({ syncUrl: true }));
+        queryEl.addEventListener('input', () => {
+          if (searchTimer) clearTimeout(searchTimer);
+          searchTimer = setTimeout(() => {
+            searchTimer = null;
+            applyFilters({ syncUrl: true });
+          }, 300);
+        });
+        clearEl.addEventListener('click', () => {
+          if (searchTimer) {
+            clearTimeout(searchTimer);
+            searchTimer = null;
+          }
+          stateEl.value = '';
+          programEl.value = '';
+          queryEl.value = '';
+          applyFilters({ syncUrl: true });
+        });
+        window.addEventListener('hashchange', handleHashTarget);
 
         setPageState('ready');
         statusEl.setAttribute('data-count', sprints.length.toString());
         statusEl.textContent = `Loaded ${sprints.length} sprints from /api/clm/registry`;
+        handleHashTarget();
       } catch (err) {
         statusEl.textContent = `Error: ${err.message}`;
         setPageState('error', err.message);
