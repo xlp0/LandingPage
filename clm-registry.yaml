@@ -1948,6 +1948,146 @@ sprints:
         - vcard:sprint-407:update_docs_architecture_code_migration_to_clm_md
         - vcard:sprint-407:graduate_sprints_403_407_into_the_12_aspect_deployment_architect
       state: sealed
+  - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-PKC-PORTABLE-KNOWLEDGE-CONTAINER-COMPOSABLE-OS
+    card_type: mcard
+    archetype: specification_mcard
+    code: 00-PROGRAM-CHARTER-EPIC-PKC-PORTABLE-KNOWLEDGE-CONTAINER-COMPOSABLE-OS
+    title: Program charter for EPIC-PKC portable knowledge container and composable OS
+    dod:
+      total: 0
+      vcard_refs: []
+      state: specification
+  - handle: urn:pcard:sprint:PKC-00
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKC-00
+    title: Sprint PKC-00 kernel lifecycle defects and regression guards
+    dod:
+      total: 4
+      vcard_refs:
+        - vcard:pkc-00:dod_pkc_00_01_paused_teardown_proves_one_cleanup_shared_completi
+        - vcard:pkc-00:dod_pkc_00_02_lifo_cleanup_combined_error_ordering_repeated_call
+        - vcard:pkc-00:dod_pkc_00_03_detached_failure_opens_zero_savepoints_and_seals_z
+        - vcard:pkc-00:dod_pkc_00_04_shared_vectors_execute_in_all_three_real_runtimes_
+      state: sealed
+  - handle: urn:pcard:sprint:PKC-01
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKC-01
+    title: Sprint PKC-01 subtraction census, DEC-30, and handle taxonomy
+    dod:
+      total: 4
+      vcard_refs:
+        - vcard:pkc-01:dod_pkc_01_01_clm_types_lattice_literal_ledger_json_is_absent_fr
+        - vcard:pkc-01:dod_pkc_01_02_registry_handle_taxonomy_yaml_routes_sector_teleme
+        - vcard:pkc-01:dod_pkc_01_03_clm_docs_spec_30_interfaces_external_resource_netw
+        - vcard:pkc-01:dod_pkc_01_04_docs_decisions_dec_30_sqlite_tape_classes_hash_ver
+      state: sealed
+  - handle: urn:pcard:sprint:PKC-02
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKC-02
+    title: Sprint PKC-02 tri-runtime INV-TAPE-01 purge and storage classes
+    dod:
+      total: 4
+      vcard_refs:
+        - vcard:pkc-02:dod_pkc_02_01_typescript_drivers_syncsqldriver_ts_sqlepochmonito
+        - vcard:pkc-02:dod_pkc_02_02_rust_drivers_record_sqlite_guard_rs_db_connection_
+        - vcard:pkc-02:dod_pkc_02_03_python_drivers_clm_kernel_clm_py_core_clm_layer2_p
+        - vcard:pkc-02:dod_pkc_02_04_live_clm_db_execution_log_db_passes_three_table_tr
+      state: sealed
+  - handle: urn:pcard:sprint:PKC-03
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKC-03
+    title: Sprint PKC-03 universal tape parity, storage claims, and PyO3 safety
+    dod:
+      total: 4
+      vcard_refs:
+        - vcard:pkc-03:dod_pkc_03_01_cargo_tree_manifest_path_clm_kernel_clm_rust_core_
+        - vcard:pkc-03:dod_pkc_03_02_all_12_clm_tests_conformance_vectors_handle_cas_v1
+        - vcard:pkc-03:dod_pkc_03_03_clm_types_lattice_storage_claims_json_and_layer_1_
+        - vcard:pkc-03:dod_pkc_03_04_clm_pyproject_toml_excludes_sqlalchemy_across_core
+      state: sealed
+  - handle: urn:pcard:sprint:PKC-04
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKC-04
+    title: Sprint PKC-04 browser purity, three-scheme URIs, and accountability
+    dod:
+      total: 4
+      vcard_refs:
+        - vcard:pkc-04:dod_pkc_04_01_concrete_sqlite_drivers_leave_l0_source_layer_boun
+        - vcard:pkc-04:dod_pkc_04_02_all_three_runtimes_preserve_schemes_and_agree_on_c
+        - vcard:pkc-04:dod_pkc_04_03_cross_runtime_byte_vectors_and_receipt_signatures_
+        - vcard:pkc-04:dod_pkc_04_04_root_cross_estate_tests_strict_browser_probe_host_
+      state: sealed
+  - handle: urn:pcard:sprint:PKC-05
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKC-05
+    title: Sprint PKC-05 token claims, three-phase isolation, and kernel publish
+    dod:
+      total: 4
+      vcard_refs:
+        - vcard:pkc-05:dod_pkc_05_01_unified_tokeninstance_claim_win_pending_obligation
+        - vcard:pkc-05:dod_pkc_05_02_three_phase_isolation_across_clm_kernel_clm_js_cor
+        - vcard:pkc-05:dod_pkc_05_03_fail_closed_tla_verification_passes_on_both_clm_to
+        - vcard:pkc-05:dod_pkc_05_04_pkc_d01_pkc_d03_and_pkc_d04_resolve_out_of_open_in
+      state: sealed
+  - handle: urn:pcard:sprint:PKC-06
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKC-06
+    title: Sprint PKC-06 dragology algebra, MPA-SPA unification, and TFZ LLM
+    dod:
+      total: 4
+      vcard_refs:
+        - vcard:pkc-06:dod_pkc_06_01_mcard_studio_poly_and_mcard_studio_ports_mcard_stu
+        - vcard:pkc-06:dod_pkc_06_02_studio_host_integration_dragexecutionadapter_ts_tf
+        - vcard:pkc-06:dod_pkc_06_03_landingpage_consumes_published_mcard_studio_and_cl
+        - vcard:pkc-06:dod_pkc_06_04_four_estate_version_consensus_updated_scripts_ci_c
+      state: sealed
+  - handle: urn:pcard:sprint:PKC-07
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKC-07
+    title: Sprint PKC-07 willow mesh sync, lineage-anchor-v2, and CKR libraries
+    dod:
+      total: 4
+      vcard_refs:
+        - vcard:pkc-07:dod_pkc_07_01_five_node_deltabundlev1_partition_tests_converge_o
+        - vcard:pkc-07:dod_pkc_07_02_epoch_rollover_emits_lineage_anchor_v2_and_signed_
+        - vcard:pkc-07:dod_pkc_07_03_mock_map_and_std_fs_s3_code_is_removed_from_s3_ts_
+        - vcard:pkc-07:dod_pkc_07_04_clm_types_lattice_network_protocol_contract_json_d
+      state: sealed
+  - handle: urn:pcard:sprint:PKC-08
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKC-08
+    title: Sprint PKC-08 acyclic Rust layers, dead-code purge, and pure adaptation
+    dod:
+      total: 4
+      vcard_refs:
+        - vcard:pkc-08:dod_pkc_08_01_clm_kernel_clm_rust_core_src_contains_zero_directo
+        - vcard:pkc-08:dod_pkc_08_02_every_candidate_marked_for_deletion_in_clm_types_l
+        - vcard:pkc-08:dod_pkc_08_03_positional_port_keyed_pure_memoization_clm_kernel_
+        - vcard:pkc-08:dod_pkc_08_04_clm_tools_guards_check_500_line_ceiling_py_clm_too
+      state: sealed
+  - handle: urn:pcard:sprint:PKC-09
+    card_type: pcard
+    archetype: ClmTriadManifest
+    code: PKC-09
+    title: Sprint PKC-09 cross-estate certification, clones, and PKC graduation
+    dod:
+      total: 5
+      vcard_refs:
+        - vcard:pkc-09:dod_pkc_09_01_standalone_clean_clones_of_clm_mcard_studio_and_la
+        - vcard:pkc-09:dod_pkc_09_02_scripts_ci_verify_pkc_graduation_py_passes_self_te
+        - vcard:pkc-09:dod_pkc_09_03_docs_sprints_active_pkc_is_removed_docs_sprints_pr
+        - vcard:pkc-09:dod_pkc_09_04_documentation_hubs_docs_index_md_docs_sprints_acti
+        - vcard:pkc-09:dod_pkc_09_05_scripts_ci_verify_pkc_graduation_py_verify_certifi
+      state: sealed
   - handle: urn:pcard:sprint:00-PROGRAM-CHARTER-EPIC-BMB-PROGRAMMABLE-UI-VERIFICATION
     card_type: mcard
     archetype: specification_mcard
@@ -6517,8 +6657,8 @@ sprints:
 
 projection_provenance:
   generated_from: registry/sprints.yaml
-  source_sha256: fe6d98a39bec5789746715ec39a6db44fb6b25b06c80bf9f878b76473bf70f89
-  projection_sha256: 2abb9de7849d63f5ab93f1f99f9e8ed50f92b0f85a105271675dc65733ae83a9
-  kernel_version: 0.0.24
-  sprint_count: 324
+  source_sha256: d4562b0987e71387b75ab01697bdffb3be57ee8ac8148227927edd32fe80ebb9
+  projection_sha256: 369ae5142242587dba1ff9681f9f9b5a4e3465f9fdef8b88d9d1beb309a9b65b
+  kernel_version: 0.0.26
+  sprint_count: 335
   unresolved_trace_refs: 0

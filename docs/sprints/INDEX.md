@@ -11,6 +11,7 @@
 ## Active program
 
 - [**Active Sprint Workspace (`docs/sprints/_active/`)**](./_active/INDEX.md) (Standby with `0` active sprints; holds the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) ledger)
+- [**Program DCI plan (proposed `2026-11-24`)**](./_active/dci-plan.md) (`SPRINT-DCI-00` through `SPRINT-DCI-05`, all `PLANNED`; scope confirmed by the operator on `2026-11-25` local time; waits for Flag 1 and Flag 2 of the plan before any sprint starts)
 
 ## Graduated programs
 
@@ -47,7 +48,7 @@
   - [SPRINT-ERB-03 Device Telemetry Collector and Triad Persistence](./08-testing/SPRINT-ERB-03-mcard-clm-persistence.md)
   - [SPRINT-ERB-04 Deterministic Playwright Replay Driver and Sweeps](./08-testing/SPRINT-ERB-04-playwright-deterministic-replay.md)
   - [SPRINT-ERB-06 Device-Sensitive Conformance Suite and Certification](./08-testing/SPRINT-ERB-06-device-sensitive-conformance.md)
-- [**Program SMO (`docs/sprints/01-architecture/`)**](./01-architecture/INDEX.md) (Graduated 2026-10-21; historical `clm-kernel@0.0.10` baseline, superseded in current docs and code by `clm-kernel@0.0.24`)
+- [**Program SMO (`docs/sprints/01-architecture/`)**](./01-architecture/INDEX.md) (Graduated 2026-10-21; historical `clm-kernel@0.0.10` baseline, superseded in current docs and code by `clm-kernel@0.0.26`)
   - [SMO-00 Program Charter](./01-architecture/00-submodule-modularity-and-organizational-program-charter.md)
   - [SMO-01 Submodule Topology, Monorepo Duality, and Binary-Safe Triad API](./01-architecture/sprint-smo01-submodule-topology-and-monorepo-duality.md)
   - [SMO-02 Published Kernel Consensus (Historical `0.0.10`)](./01-architecture/sprint-smo02-published-kernel-consensus-and-dependency-parity.md)

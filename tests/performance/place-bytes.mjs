@@ -567,7 +567,7 @@ export function formatPlaceBytesMarkdown(analysis) {
     const sc = `${p.sharedChunks.eager.rawBytes} / ${p.sharedChunks.eager.gzipBytes} / ${p.sharedChunks.eager.brotliBytes} B`;
     const ps = `${p.pageScripts.external.rawBytes} / ${p.pageScripts.external.gzipBytes} B`;
     const tot = `${p.clientJsBeforeInteraction.rawBytes} / ${p.clientJsBeforeInteraction.gzipBytes} B`;
-    const check = p.expectedIslandFree ? (p.zeroIslandPass ? 'PASS (0 B)' : 'FAIL') : 'N/A (8 islands)';
+    const check = p.expectedIslandFree ? (p.zeroIslandPass ? 'PASS (0 B)' : 'FAIL') : 'N/A (' + p.islandCount + ' islands)';
     lines.push('| `' + p.placeId + '` | `' + p.route + '` | `' + p.migrationState + '` | ' + p.islandCount + ' | ' + ib + ' | ' + sc + ' | ' + ps + ' | ' + tot + ' | ' + check + ' |');
   }
 

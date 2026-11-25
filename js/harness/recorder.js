@@ -14,7 +14,7 @@ import {
   targetSlug
 } from './test-run-schema.js';
 
-export const DEFAULT_CLM_KERNEL_VERSION = '0.0.24';
+export const DEFAULT_CLM_KERNEL_VERSION = '0.0.26';
 const RECORDED_VIEWPORT_CAUSES = new Set(['preset', 'custom', 'rotate']);
 
 function stripDeviceUiFields(dev, width, height) {

@@ -38,7 +38,7 @@ tests/
 ├── conformance/                  # 15 modular device conformance checks and *.conformance.json specs
 ├── performance/                  # place-bytes.mjs, metrics-model.mjs, run-paired-benchmark.mjs
 ├── observability/                # alignment.test.js and correctness.test.js (node:test)
-├── unit/                         # Pure Node contract suites (net, recorder 0.0.24, Triad, docs gate)
+├── unit/                         # Pure Node contract suites (net, recorder 0.0.26, Triad, docs gate)
 ├── fixtures/                     # server-contract.js, app-fixtures.js, net-trace.js, spa-test-target.*
 └── gui-coverage.json             # Surface-to-spec coverage registry
 ```
@@ -50,7 +50,7 @@ Each of the five Astro-hosted workbench routes plus the tombstoned static `pkc-d
 | Route | Host Mode | Characterization Spec | Registered Surface ID |
 | --- | --- | --- | --- |
 | `index.html` (`/` and `/?noredirect=1`) | `astro-wrapped` | [`tests/smoke/root-index.spec.js`](./smoke/root-index.spec.js) | `workbench-landing-portal` |
-| `responsive-lab.html` | `astro-islands` (`8` Preact islands) | [`tests/smoke/root-responsive-lab.spec.js`](./smoke/root-responsive-lab.spec.js) | `workbench-responsive-lab` |
+| `responsive-lab.html` | `astro-islands` (`9` Preact islands) | [`tests/smoke/root-responsive-lab.spec.js`](./smoke/root-responsive-lab.spec.js) | `workbench-responsive-lab` |
 | `fiber-conformance.html` | `astro-wrapped` | [`tests/smoke/root-fiber-conformance.spec.js`](./smoke/root-fiber-conformance.spec.js) | `workbench-fiber-conformance` |
 | `fiber-inspector.html` | `astro-wrapped` | [`tests/smoke/root-fiber-inspector.spec.js`](./smoke/root-fiber-inspector.spec.js) | `workbench-fiber-inspector` |
 | `sprint-registry.html` | `astro-wrapped` | [`tests/smoke/root-sprint-registry.spec.js`](./smoke/root-sprint-registry.spec.js) | `workbench-sprint-registry` |

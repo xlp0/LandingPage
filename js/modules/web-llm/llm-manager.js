@@ -4,6 +4,7 @@
  */
 
 import { LLM_CONFIG, ModelStatus, LLMError } from './config.js';
+import { proposeWebLlmIntent } from './tfz-gate.js';
 
 // Get webllm from global scope (loaded via CDN)
 const getWebLLM = () => window.webllm;
@@ -92,10 +93,30 @@ export class LLMManager {
     }
   }
 
+  async proposeIntent(options = {}) {
+    const provider =
+      options.provider ??
+      (this.engine
+        ? {
+            complete: async ({ prompt }) => {
+              const out = await this.engine.chat.completions.create({
+                messages: [{ role: 'user', content: prompt }],
+                stream: false,
+              });
+              return String(out?.choices?.[0]?.message?.content ?? '');
+            },
+          }
+        : null);
+    return proposeWebLlmIntent({ ...options, provider });
+  }
+
   /**
    * Generate a response with streaming
    */
-  async generateResponse(userMessage, onStreamToken) {
+  async generateResponse(userMessage, onStreamToken, options = {}) {
+    if ((options?.leaseObserver?.activeLeaseCount?.() ?? 0) !== 0) {
+      throw new Error('tfz_requires_zero_active_leases');
+    }
     if (this.status !== ModelStatus.READY) {
       throw new Error('Model is not ready');
     }

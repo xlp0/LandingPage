@@ -1,7 +1,7 @@
 import { TypeInterpreter } from 'clm-kernel/primitives';
 import { detectMime, isBinary } from 'clm-kernel/browser';
 
-export const KERNEL_PROVENANCE = 'clm-kernel@0.0.24';
+export const KERNEL_PROVENANCE = 'clm-kernel@0.0.26';
 export const MODALITY_TYPES = Object.freeze(['media', 'document', 'code', 'webapp']);
 
 const interpreter = TypeInterpreter.createDefault();

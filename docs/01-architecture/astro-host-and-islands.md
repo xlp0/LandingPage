@@ -14,8 +14,8 @@
 | Stack Layer | Package and Version | Current Status | Notes |
 | --- | --- | --- | --- |
 | Page Host and SSR Middleware | `astro@7.4.2`, `@astrojs/node@11.1.9` (`mode: 'middleware'`) | Active in production and development | Mounted inside `ws-server.js` after Express API and security middleware |
-| Interactive Client Islands | `@astrojs/preact@6.1.1`, `preact@11.1.0` | Active on `responsive-lab.html` (`8` islands) | Zero island JS is emitted on `astro-wrapped` pages |
-| Petri Net and MCard Kernel | `clm-kernel@0.0.24` | Server and build-time Node only | Never imported inside browser islands or client bundles |
+| Interactive Client Islands | `@astrojs/preact@6.1.1`, `preact@11.1.0` | Active on `responsive-lab.html` (`9` islands) | Zero island JS is emitted on `astro-wrapped` pages |
+| Petri Net and MCard Kernel | `clm-kernel@0.0.26` | Server and build-time Node only | Never imported inside browser islands or client bundles |
 | Unit and Integration Runner | `node:test` (`npm run test:unit`) | Canonical | Earlier statements saying `LandingPage` did not adopt Astro or Vitest are superseded for Astro, while **Vitest remains un-adopted** for `LandingPage` itself (with a single private tool-local Vitest exception scoped strictly to `tools/ui-verify/`) |
 | Browser E2E and Replay Runner | `@playwright/test@^1.57.0` (`1.64.1` locked) (`npm test`) | Canonical | Runs against `ws-server.js` on isolated `TEST_PORT=3001` |
 
@@ -73,6 +73,7 @@ Astro's client router remains disabled. Every workbench page switch executes as 
 | `ConformancePanelIsland` | [`src/islands/ConformancePanelIsland.jsx`](../../src/islands/ConformancePanelIsland.jsx) | `#conformance-details` | `client:visible` | `js/harness/conformance-panel.js` | Deferred until `<details id="conformance-disclosure">` opens (`~4.0 KB`) | TEA and UX Designer | Disclosure `toggle` listener removal and `panel.destroy()` |
 | `MCardResultIsland` | [`src/islands/MCardResultIsland.jsx`](../../src/islands/MCardResultIsland.jsx) | `#mcard-result-details` | `client:visible` | `runtime.recorder.lastSavedRun` | Deferred until `<details id="mcard-result-disclosure">` opens (`~3.0 KB`) | Product Manager and Dev | Recorder unsubscribe and disclosure `toggle` listener removal |
 | `BombadilDashboardIsland` | [`src/islands/BombadilDashboardIsland.jsx`](../../src/islands/BombadilDashboardIsland.jsx) | `#bombadil-dashboard-panel` | `client:visible` | `js/harness/bombadil-client.js` | Deferred until `Bombadil` mode tab opens (`~4.5 KB`) | Architect, TEA, and Dev | Bombadil subscription cleanup and copy feedback timeout clear |
+| `PkcCardIsland` | [`src/islands/PkcCardIsland.jsx`](../../src/islands/PkcCardIsland.jsx) | `#pkc-card-disclosure` | `client:visible` | `js/harness/pkc-dragology-preview.js` | Deferred until `#pkc-card-disclosure` opens | UX Designer and Dev | Cancel preview and clear atom subscription |
 
 `body[data-page-state="loading"]` clears to `ready` after two `requestAnimationFrame` ticks once the eager boot islands mount and apply the initial device preset and `?target=` parameter, while `[data-testid="spa-test-workflow"][data-island-state="ready"]` marks the five-step guided workflow ready.
 

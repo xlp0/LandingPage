@@ -29,14 +29,14 @@ import {
 } from '../../server/mcard-modality.mjs';
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const EXPECTED_024_INTEGRITY =
-  'sha512-Ew88ilXXpoTmQeDkwOJmq2RPyLlyGxvDHP15sLN4vmF3hCqIw+XEuleq4cvE/wXN69rWAoUYPMrPHpMIyVWrSQ==';
+const EXPECTED_026_INTEGRITY =
+  'sha512-btzi4BD6Sdcc/8bUCxkYY6nN5s3Mf8putkbNyO/4lIpMR11BpchrzFIlmwWfO7H4Rc9ouam0Ljeu32CRhY3uiA==';
 
-test('KC-01: clm-kernel@0.0.24 metadata subpaths and LandingPage lockfile integrity are authentic', () => {
+test('KC-01: clm-kernel@0.0.26 metadata subpaths and LandingPage lockfile integrity are authentic', () => {
   const pkgJsonPath = findPackageJSON('clm-kernel', import.meta.url);
   const pkgDir = path.dirname(pkgJsonPath);
   const installedPkg = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf8'));
-  assert.equal(installedPkg.version, '0.0.24');
+  assert.equal(installedPkg.version, '0.0.26');
 
   const surfacePath = fileURLToPath(import.meta.resolve('clm-kernel/api-surface.json'));
   const capabilitiesPath = fileURLToPath(import.meta.resolve('clm-kernel/published-capabilities.json'));
@@ -50,15 +50,15 @@ test('KC-01: clm-kernel@0.0.24 metadata subpaths and LandingPage lockfile integr
   const byId = new Map(capabilities.capabilities.map((cap) => [cap.id, cap]));
   for (let i = 1; i <= 24; i += 1) {
     const id = `KC-${String(i).padStart(2, '0')}`;
-    assert.equal(byId.get(id)?.status, 'ready', `${id} must be ready in clm-kernel@0.0.24`);
+    assert.equal(byId.get(id)?.status, 'ready', `${id} must be ready in clm-kernel@0.0.26`);
   }
-  assert.equal(byId.get('KC-26')?.status, 'ready', 'KC-26 must be ready in clm-kernel@0.0.24');
+  assert.equal(byId.get('KC-26')?.status, 'ready', 'KC-26 must be ready in clm-kernel@0.0.26');
 
   const lock = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package-lock.json'), 'utf8'));
   const lockEntry = lock.packages['node_modules/clm-kernel'];
-  assert.equal(lockEntry.version, '0.0.24');
-  assert.equal(lockEntry.resolved, 'https://registry.npmjs.org/clm-kernel/-/clm-kernel-0.0.24.tgz');
-  assert.equal(lockEntry.integrity, EXPECTED_024_INTEGRITY);
+  assert.equal(lockEntry.version, '0.0.26');
+  assert.equal(lockEntry.resolved, 'https://registry.npmjs.org/clm-kernel/-/clm-kernel-0.0.26.tgz');
+  assert.equal(lockEntry.integrity, EXPECTED_026_INTEGRITY);
 });
 
 test('KC-02: runConsumerConformance passes on Node SQLite MCardFileSystem with zero failed cases', async () => {
@@ -170,7 +170,7 @@ test('KC-04, KC-19, KC-20, KC-22, KC-26: handleSpellings, portable Ed25519, 3-va
   const { publicKey, privateKey } = crypto.generateKeyPairSync('ed25519');
   const spki = publicKey.export({ type: 'spki', format: 'der' });
   const rawPub = new Uint8Array(spki.subarray(spki.length - 32));
-  const msg = new TextEncoder().encode('clm-kernel-0.0.24-portable');
+  const msg = new TextEncoder().encode('clm-kernel-0.0.26-portable');
   const sig = new Uint8Array(crypto.sign(null, msg, privateKey));
   const did = String(primitivesKernel.deriveDidKey(rawPub));
   assert.deepEqual(await verifyEd25519Portable(did, msg, sig), { status: 'verified' });
@@ -216,7 +216,7 @@ transitions:
   assert.equal(tokenState.p2.length, 0);
 });
 
-test('KC-15: mcard-modality supports clm-kernel@0.0.24 95-type dictionary and compound extensions', () => {
+test('KC-15: mcard-modality supports clm-kernel@0.0.26 95-type dictionary and compound extensions', () => {
   const jsxRes = classifyMCardModality('export const App = () => <div />;', { filename: 'App.jsx' });
   assert.equal(jsxRes.mimeType, 'text/jsx');
   assert.equal(jsxRes.modality, 'code');

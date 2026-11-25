@@ -17,7 +17,7 @@ Run all automated gates from the repository root (`LandingPage/`) before approvi
 - [x] **Zero-Island Wrapper Enforcement** via `node tests/performance/place-bytes.mjs --enforce-zero-island-places`
 - [x] **Production Astro Build** via `npm run build` (`[gqc-net-parity] PASS`)
 - [x] **Playwright Project Non-Overlap** via `npm run check:playwright-discovery` (`48` specs, `644` tests across `smoke`, `components`, `features`)
-- [x] **Node Unit and Contract Suites** via `npm run test:unit` (`clm-kernel@0.0.24` consensus and historical `0.0.10` read compatibility)
+- [x] **Node Unit and Contract Suites** via `npm run test:unit` (`clm-kernel@0.0.26` consensus and historical `0.0.10` read compatibility)
 - [x] **Playwright Smoke, Component, and Feature Suites** via `npm run test:smoke`, `npm run test:components`, and `npm run test:features` on isolated `TEST_PORT=3001`
 
 > [!NOTE]

@@ -10,6 +10,7 @@ import ConformancePanelIsland from '../islands/ConformancePanelIsland.jsx';
 import MCardResultIsland from '../islands/MCardResultIsland.jsx';
 import SpaTestWorkflow from '../islands/SpaTestWorkflow.jsx';
 import BombadilDashboardIsland from '../islands/BombadilDashboardIsland.jsx';
+import PkcCardIsland from '../islands/PkcCardIsland.jsx';
 import PresentationControls from '../components/PresentationControls.astro';
 import { iconMarkup } from '../../js/ui/icons.js';
 import { loadNetEnvelope, validateNetEnvelope } from '../../scripts/check-net.mjs';
@@ -252,6 +253,16 @@ const targetNets = {
             <span id="mcard-result-summary-badge" class="footer-status-pill" style="font-size: 0.7rem; color: var(--color-text-muted);">Idle</span>
           </summary>
           <MCardResultIsland client:visible />
+        </details>
+      </div>
+
+      <div class="toolbar-group" id="pkc-card-panel-group">
+        <details id="pkc-card-disclosure" class="lab-disclosure">
+          <summary class="lab-disclosure-summary">
+            <span class="group-label">PKC Card Interaction</span>
+            <span id="pkc-card-summary-badge" class="footer-status-pill" style="font-size: 0.7rem; color: var(--color-text-muted);">Ready</span>
+          </summary>
+          <PkcCardIsland client:visible />
         </details>
       </div>
     </aside>

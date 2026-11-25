@@ -573,7 +573,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
         'SpaTestWorkflow',
         'ViewportStageIsland'
       ];
-      const deferredNames = ['ConformancePanelIsland', 'MCardResultIsland', 'BombadilDashboardIsland'];
+      const deferredNames = ['ConformancePanelIsland', 'MCardResultIsland', 'BombadilDashboardIsland', 'PkcCardIsland'];
 
       for (const name of eagerNames) {
         const rec = initialSnap.islands[name];
@@ -603,6 +603,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
       await page.locator('#btn-mode-verify').click();
       await page.locator('#conformance-disclosure > summary').click();
       await page.locator('#mcard-result-disclosure > summary').click();
+      await page.locator('#pkc-card-disclosure > summary').click();
       await page.locator('#btn-mode-bombadil').click();
 
       await expect
@@ -611,7 +612,8 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
           return (
             Boolean(snap.islands.ConformancePanelIsland?.hydrated) &&
             Boolean(snap.islands.MCardResultIsland?.hydrated) &&
-            Boolean(snap.islands.BombadilDashboardIsland?.hydrated)
+            Boolean(snap.islands.BombadilDashboardIsland?.hydrated) &&
+            Boolean(snap.islands.PkcCardIsland?.hydrated)
           );
         })
         .toBe(true);
@@ -871,7 +873,7 @@ test.describe('SPRINT-GQC-06: Performance Baselines, Island Hydration, Place Byt
           expect(rec.networkAstroDecodedBytes).toBe(0);
           expect(rec.networkAstroFileCount).toBe(0);
         } else {
-          expect(domIslandCount).toBe(8);
+          expect(domIslandCount).toBe(9);
           expect(rec.astroEagerDeltaBytes).toBe(0);
         }
         expect(rec.matchesWithinDocumentedChunkDifference).toBe(true);

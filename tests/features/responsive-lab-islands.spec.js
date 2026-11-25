@@ -215,7 +215,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     expect(netDoc?.bindings?.places?.p_page_responsive_lab?.migrationState).toBe('astro-islands');
 
     const islandFiles = collectFiles(path.join(REPO_ROOT, 'src/islands'), (f) => /\.(jsx|js|mjs|ts|tsx)$/.test(f));
-    expect(islandFiles.length).toBe(8);
+    expect(islandFiles.length).toBe(9);
     for (const file of islandFiles) {
       const src = fs.readFileSync(file, 'utf8');
       expect(src, `${path.basename(file)} must not reference clm-kernel`).not.toContain('clm-kernel');
@@ -223,7 +223,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
 
     const harnessFiles = collectFiles(path.join(REPO_ROOT, 'js/harness'), (f) => /\.(js|mjs)$/.test(f));
     for (const file of harnessFiles) {
-      const src = fs.readFileSync(file, 'utf8');
+      const src = fs.readFileSync(file, 'utf8').replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '');
       expect(src, `${path.basename(file)} must not import clm-kernel`).not.toContain('clm-kernel');
     }
 
@@ -237,7 +237,7 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     const { page } = isolatedLabPage;
     await workbench.open({ targetPath: SPA_FIXTURE_PATH });
     const islandCount = await page.locator('astro-island').count();
-    expect(islandCount).toBe(8);
+    expect(islandCount).toBe(9);
 
     const staticOutsideIslands = await page.evaluate(() => {
       const header = document.querySelector('header.lab-navbar');
@@ -527,45 +527,52 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     expect(coldNames.some((n) => n.includes('ConformancePanelIsland'))).toBe(false);
     expect(coldNames.some((n) => n.includes('MCardResultIsland'))).toBe(false);
     expect(coldNames.some((n) => n.includes('BombadilDashboardIsland'))).toBe(false);
+    expect(coldNames.some((n) => n.includes('PkcCardIsland'))).toBe(false);
     expect(downloadedScripts.every((entry) => entry.status === 200 && !entry.hasClmKernel)).toBe(true);
 
     const deferredHydratedBefore = await page.evaluate(() => ({
       conformanceHydrated: !document.querySelector('#conformance-disclosure astro-island')?.hasAttribute('ssr'),
       mcardHydrated: !document.querySelector('#mcard-result-disclosure astro-island')?.hasAttribute('ssr'),
-      bombadilHydrated: !document.querySelector('#bombadil-panel-shell astro-island')?.hasAttribute('ssr')
+      bombadilHydrated: !document.querySelector('#bombadil-panel-shell astro-island')?.hasAttribute('ssr'),
+      pkcCardHydrated: !document.querySelector('#pkc-card-disclosure astro-island')?.hasAttribute('ssr')
     }));
     expect(deferredHydratedBefore).toEqual({
       conformanceHydrated: false,
       mcardHydrated: false,
-      bombadilHydrated: false
+      bombadilHydrated: false,
+      pkcCardHydrated: false
     });
 
     await page.locator('#btn-mode-verify').click();
     await page.locator('#conformance-disclosure summary').click();
     await page.locator('#mcard-result-disclosure summary').click();
+    await page.locator('#pkc-card-disclosure summary').click();
     await page.locator('#btn-mode-bombadil').click();
 
     await expect.poll(() =>
       page.evaluate(() => ({
         conformanceHydrated: !document.querySelector('#conformance-disclosure astro-island')?.hasAttribute('ssr'),
         mcardHydrated: !document.querySelector('#mcard-result-disclosure astro-island')?.hasAttribute('ssr'),
-        bombadilHydrated: !document.querySelector('#bombadil-panel-shell astro-island')?.hasAttribute('ssr')
+        bombadilHydrated: !document.querySelector('#bombadil-panel-shell astro-island')?.hasAttribute('ssr'),
+        pkcCardHydrated: !document.querySelector('#pkc-card-disclosure astro-island')?.hasAttribute('ssr')
       }))
     ).toEqual({
       conformanceHydrated: true,
       mcardHydrated: true,
-      bombadilHydrated: true
+      bombadilHydrated: true,
+      pkcCardHydrated: true
     });
 
     const afterNames = downloadedScripts.map((entry) => new URL(entry.url).pathname);
     expect(afterNames.some((n) => n.includes('ConformancePanelIsland'))).toBe(true);
     expect(afterNames.some((n) => n.includes('MCardResultIsland'))).toBe(true);
     expect(afterNames.some((n) => n.includes('BombadilDashboardIsland'))).toBe(true);
+    expect(afterNames.some((n) => n.includes('PkcCardIsland'))).toBe(true);
 
     await context.close();
   });
 
-  test('GQC-02B-E2E-04: mounting and unmounting all 8 islands and switching 4 dock modes 50 times returns listener, observer, and timer counts to baseline', async ({
+  test('GQC-02B-E2E-04: mounting and unmounting all 9 islands and switching 4 dock modes 50 times returns listener, observer, and timer counts to baseline', async ({
     browser
   }) => {
     const context = await browser.newContext({ viewport: { width: 1440, height: 960 } });
@@ -577,12 +584,13 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     await page.locator('#btn-mode-verify').click();
     await page.locator('#conformance-disclosure summary').click();
     await page.locator('#mcard-result-disclosure summary').click();
+    await page.locator('#pkc-card-disclosure summary').click();
     await page.locator('#btn-mode-bombadil').click();
 
     await expect.poll(() =>
       page.evaluate(() => {
         const islands = [...document.querySelectorAll('astro-island')];
-        const allHydrated = islands.length === 8 && islands.every((el) => !el.hasAttribute('ssr'));
+        const allHydrated = islands.length === 9 && islands.every((el) => !el.hasAttribute('ssr'));
         const toolbarReady = document.getElementById('pane-url-bar')?.getAttribute('data-island-state') === 'ready';
         return allHydrated && toolbarReady;
       })
@@ -654,12 +662,13 @@ test.describe('SPRINT-GQC-02B.2: Responsive Lab Preact Islands', () => {
     await page.locator('#btn-mode-verify').click();
     await page.locator('#conformance-disclosure summary').click();
     await page.locator('#mcard-result-disclosure summary').click();
+    await page.locator('#pkc-card-disclosure summary').click();
     await page.locator('#btn-mode-bombadil').click();
 
     await expect.poll(() =>
       page.evaluate(() => {
         const islands = [...document.querySelectorAll('astro-island')];
-        const allHydrated = islands.length === 8 && islands.every((el) => !el.hasAttribute('ssr'));
+        const allHydrated = islands.length === 9 && islands.every((el) => !el.hasAttribute('ssr'));
         const toolbarReady = document.getElementById('pane-url-bar')?.getAttribute('data-island-state') === 'ready';
         return allHydrated && toolbarReady;
       })

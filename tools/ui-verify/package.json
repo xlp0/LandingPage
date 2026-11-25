@@ -12,7 +12,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "clm-kernel": "0.0.24"
+    "clm-kernel": "0.0.26"
   },
   "devDependencies": {
     "typescript": "^5.0.0",

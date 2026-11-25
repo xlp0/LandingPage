@@ -12,13 +12,13 @@ This directory houses sprint planning, execution specifications, evidence report
 
 ## Directory Structure
 
-- [**`_active/`**](./_active/INDEX.md) is in standby (`0` active sprints) and holds the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) decision ledger.
+- [**`_active/`**](./_active/INDEX.md) is in standby (`0` active sprints) and holds the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) decision ledger. It also holds the proposed [**Program DCI plan**](./_active/dci-plan.md) (`SPRINT-DCI-00..05`, proposed `2026-11-24`, all `PLANNED`, scope confirmed by the operator on `2026-11-25` local time, waiting for Flag 1 and Flag 2 of the plan).
 - [**`programs/slc/`**](./programs/slc/INDEX.md) archives graduated **Program SLC** (`SPRINT-SLC-00..04`, graduated `2026-11-20` with operator approval; see [`SLC-04-auth-and-graduation.md`](./programs/slc/evidence/SLC-04-auth-and-graduation.md)).
 - [**`programs/ssg/`**](./programs/ssg/INDEX.md) archives graduated **Program SSG** (`SPRINT-SSG-00..08`, graduated `2026-11-20` with operator approval; see [`SSG-08-graduation.md`](./programs/ssg/evidence/SSG-08-graduation.md)).
 - [**`programs/bpv/`**](./programs/bpv/INDEX.md) archives graduated **Program BPV** (`SPRINT-BPV-00..07`, graduated `2026-11-18` with operator approval; see [`BPV-07-graduation.md`](./programs/bpv/evidence/BPV-07-graduation.md); `bombadil-scheduler` remains active daily at `02:30` UTC).
 - [**`programs/gqc/`**](./programs/gqc/INDEX.md) archives graduated **Program GQC** (`SPRINT-GQC-00..07`, graduated `2026-11-18` with operator approval; see [`GQC-07-docs-and-graduation.md`](./programs/gqc/evidence/GQC-07-docs-and-graduation.md)).
 - [**`08-testing/`**](./08-testing/INDEX.md) archives graduated **Program ERB** (`ERB-00..06`, 2026-10-21).
-- [**`01-architecture/`**](./01-architecture/INDEX.md) archives graduated **Program SMO** (`SMO-00..05`, 2026-10-21; historical `clm-kernel@0.0.10` records preserved unchanged, superseded in living code and docs by `clm-kernel@0.0.24`).
+- [**`01-architecture/`**](./01-architecture/INDEX.md) archives graduated **Program SMO** (`SMO-00..05`, 2026-10-21; historical `clm-kernel@0.0.10` records preserved unchanged, superseded in living code and docs by `clm-kernel@0.0.26`).
 
 ## Sprint Program Ledger
 

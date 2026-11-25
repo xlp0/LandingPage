@@ -5,7 +5,7 @@
 | Audience | QA engineers, developers, and operators certifying responsive web targets with Responsive UI Lab and Playwright |
 | BMAD Owner | Test Architect and Architect (`bmad-agent-architect`) |
 | Source of Truth | [`js/device-registry.js`](../../js/device-registry.js), [`js/harness/`](../../js/harness/), [`scripts/playwright-replay-driver.mjs`](../../scripts/playwright-replay-driver.mjs), and [`server/test-run-api.mjs`](../../server/test-run-api.mjs) |
-| Consensus Kernel | `clm-kernel@0.0.24` |
+| Consensus Kernel | `clm-kernel@0.0.26` |
 
 ## 1. Overview
 
@@ -14,7 +14,7 @@
 1. **Dynamic Geometry and Orientation Reflow (`INV-RVP-01`)** swaps viewport width and height ($W \leftrightarrow H$) without clipping or outer window scrollbars (`INV-RVP-02`).
 2. **Horizontal Viewport Bleed (`INV-DEV-01`)** verifies `document.documentElement.scrollWidth <= window.innerWidth` across all viewports.
 3. **Touch Target Ergonomics (`INV-DEV-02`)** audits interactive controls ($\ge 44\text{px} \times 44\text{px}$) on coarse-pointer profiles.
-4. **Scale-Invariant Interaction Capture (`INV-ERB-01..04`)** buffers normalized $[0.0, 1.0]$ coordinates in memory ($N \le 2048$), redacts sensitive inputs (`INV-PRV-01`), stamps `lab.clmKernel: '0.0.24'` on new `responsive_test_run:v1` records (while keeping historical `0.0.10` runs readable), and persists Triad Blake3 MCards.
+4. **Scale-Invariant Interaction Capture (`INV-ERB-01..04`)** buffers normalized $[0.0, 1.0]$ coordinates in memory ($N \le 2048$), redacts sensitive inputs (`INV-PRV-01`), stamps `lab.clmKernel: '0.0.26'` on new `responsive_test_run:v1` records (while keeping historical `0.0.10` runs readable), and persists Triad Blake3 MCards.
 5. **Frame Budget and Layout Stability (`INV-DEV-04`)** tracks $16.6\text{ms}$ ($60\text{fps}$) frame budgets and Cumulative Layout Shift (CLS).
 
 > [!NOTE]
@@ -55,7 +55,7 @@ TARGET_URL=http://localhost:4321/ npm run test:replay
 5. **[SPRINT-ERB-03](../sprints/08-testing/SPRINT-ERB-03-mcard-clm-persistence.md)** added `telemetry-collector.js` and SQLite Triad persistence (`server/test-run-api.mjs`) using `clm-kernel` Blake3 hashing.
 6. **[SPRINT-ERB-04](../sprints/08-testing/SPRINT-ERB-04-playwright-deterministic-replay.md)** added `scripts/playwright-replay-driver.mjs` and the 16-case multi-device sweep (`tests/features/systematic-landing-test.spec.js`).
 7. **[SPRINT-ERB-06](../sprints/08-testing/SPRINT-ERB-06-device-sensitive-conformance.md)** added the 15-check conformance catalog (`tests/conformance/checks/`) and `urn:mcard:certification:responsive:v1`.
-8. **[Program GQC (`SPRINT-GQC-00..07`)](../sprints/programs/gqc/INDEX.md)** wrapped the workbench in `astro@7.4.2` with Preact islands (`SpaTestWorkflow`), formalized Page-as-Place (`PlaceMCard`) and Functional-Link-as-Transition (`TransitionMCard` + `FiringReceiptMCard`), linked runs via `urn:gqc:navigation-run-link:v1`, aligned `recorder.js` to historical `clm-kernel@0.0.13` (now `0.0.24`), and enforced `npm run docs:check`.
+8. **[Program GQC (`SPRINT-GQC-00..07`)](../sprints/programs/gqc/INDEX.md)** wrapped the workbench in `astro@7.4.2` with Preact islands (`SpaTestWorkflow`), formalized Page-as-Place (`PlaceMCard`) and Functional-Link-as-Transition (`TransitionMCard` + `FiringReceiptMCard`), linked runs via `urn:gqc:navigation-run-link:v1`, aligned `recorder.js` to historical `clm-kernel@0.0.13` (now `0.0.26`), and enforced `npm run docs:check`.
 9. **[Program SSG (`SPRINT-SSG-00..08`)](../sprints/programs/ssg/INDEX.md)** installed StageShow `1.1.1`, consolidated 2D geometry inside `js/harness/viewport-geometry.js` across `12` built-in device presets (`js/device-registry.js`), separated 6 parametric device bezels strictly outside `.stage-screen-slot` (`INV-SSG-GEOM`), added subprocess-isolated Bombadil dashboard handles (`BombadilDashboardIsland`, 8th island), and standardized desktop (`>= 1280px`), tablet (`600..1279px`), and compact (`< 600px`) workbench tiers.
 
 ---
@@ -101,4 +101,4 @@ Conformance specs live under `tests/conformance/<slug>.conformance.json` (note t
 }
 ```
 
-When all device and orientation combinations across the matrix pass `INV-DEV-01` (`no-horizontal-overflow`) and `INV-DEV-03` (`orientation-preserves-state`), the conformance runner mints `urn:mcard:certification:responsive:v1` hashed with Triad Blake3 (`clm-kernel@0.0.24`) and bound to `urn:mcard:certification_latest:<slug>`.
+When all device and orientation combinations across the matrix pass `INV-DEV-01` (`no-horizontal-overflow`) and `INV-DEV-03` (`orientation-preserves-state`), the conformance runner mints `urn:mcard:certification:responsive:v1` hashed with Triad Blake3 (`clm-kernel@0.0.26`) and bound to `urn:mcard:certification_latest:<slug>`.

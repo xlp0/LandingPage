@@ -524,9 +524,10 @@ test.describe('SPRINT-GQC-03: Target Policy Enforcement & Capture Lifecycle', ()
     await page.locator('#btn-mode-verify').click();
     await page.locator('#conformance-disclosure > summary').click();
     await page.locator('#mcard-result-disclosure > summary').click();
+    await page.locator('#pkc-card-disclosure > summary').click();
     await page.locator('#btn-mode-bombadil').click();
 
-    await expect(page.locator('astro-island')).toHaveCount(8);
+    await expect(page.locator('astro-island')).toHaveCount(9);
     await expect.poll(async () =>
       page.locator('astro-island').evaluateAll((els) => els.every((el) => !el.hasAttribute('ssr')))
     ).toBe(true);

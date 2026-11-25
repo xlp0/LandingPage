@@ -1,8 +1,9 @@
 import express from 'express';
 import path from 'node:path';
 import fs from 'node:fs';
-import { DatabaseSync } from 'node:sqlite';
 import { computeHash } from 'clm-kernel/primitives';
+import { MCardCollection, MCardFileSystem } from 'clm-kernel/store';
+import { NodeSqliteBackend } from 'clm-kernel/node';
 
 import {
   MODALITY_TYPES, classifyMCardContent, detectContentType, isBinaryContent, resolveModality, toRawBuffer,
@@ -21,7 +22,7 @@ export {
 
 const router = express.Router();
 
-export const KERNEL_PROVENANCE = 'clm-kernel@0.0.24';
+export const KERNEL_PROVENANCE = 'clm-kernel@0.0.26';
 export const LANDING_HANDLE = 'urn:mcard:content:landing_page';
 export const DEFAULT_ALGORITHM = 'blake3';
 export const LEGACY_ALGORITHM = 'sha256';
@@ -40,7 +41,21 @@ function currentLocale() {
 }
 
 export function formatGTime(algorithm = DEFAULT_ALGORITHM, timestamp = nowIso(), locale = currentLocale()) {
-  return `${algorithm}|${timestamp}|${locale}`;
+  const ts = timestamp instanceof Date ? timestamp.toISOString() : String(timestamp);
+  return `${algorithm}|${ts}|${locale}`;
+}
+
+const KERNEL_GTIME_EXTENSIONS = new Set(['did', 'kid', 'sig']);
+function normalizeKernelGTime(gTime, algorithm) {
+  const raw = String(gTime || formatGTime(algorithm));
+  const parts = raw.split('|');
+  if (parts.length <= 3) return raw;
+  const head = parts.slice(0, 3);
+  const allowed = parts.slice(3).filter((seg) => {
+    const eq = seg.indexOf('=');
+    return eq > 0 && KERNEL_GTIME_EXTENSIONS.has(seg.slice(0, eq).trim().toLowerCase());
+  });
+  return [...head, ...allowed].join('|');
 }
 
 export function algorithmOf(gTime) {
@@ -61,41 +76,17 @@ export function verifyRecord(hash, content, gTime) {
   return hashContent(content, algorithmOf(gTime)) === String(hash).toLowerCase();
 }
 
-const TRIAD_DDL = `
-  PRAGMA journal_mode = WAL;
-  PRAGMA synchronous = NORMAL;
-
-  CREATE TABLE IF NOT EXISTS card (
-    hash TEXT PRIMARY KEY NOT NULL,
-    content BLOB NOT NULL,
-    g_time TEXT NOT NULL
-  );
-
-  CREATE TABLE IF NOT EXISTS handle_registry (
-    handle TEXT PRIMARY KEY NOT NULL,
-    current_hash TEXT NOT NULL,
-    updated_at TEXT NOT NULL
-  );
-
-  CREATE TABLE IF NOT EXISTS handle_history (
-    handle TEXT NOT NULL,
-    previous_hash TEXT NOT NULL,
-    changed_at TEXT NOT NULL
-  );
-
-  CREATE INDEX IF NOT EXISTS idx_handle_history_handle
-    ON handle_history (handle, changed_at);
-`;
-
 export class CanonicalTriadBackend {
   constructor(filename) {
     this.filename = filename;
     const dir = path.dirname(filename);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
-    this.db = new DatabaseSync(filename);
-    this.db.exec(TRIAD_DDL);
+    this.backend = new NodeSqliteBackend({ path: filename, allowLegacySchema: true });
+    this.db = this.backend.db;
     this.migrated = this.migrateLegacyTables();
+    this.collection = new MCardCollection(this.backend);
+    this.fs = MCardFileSystem.fromCollection(this.collection);
   }
 
   tables() {
@@ -118,14 +109,15 @@ export class CanonicalTriadBackend {
     );
 
     let migratedCards = 0;
-    const insertCard = this.db.prepare('INSERT OR IGNORE INTO card (hash, content, g_time) VALUES (?, ?, ?)');
     for (const row of cards) {
       const blob = blobs.get(row.payload_hash);
       if (blob === undefined) continue;
       const content = Buffer.isBuffer(blob) ? blob : Buffer.from(blob);
       const stamp = new Date(Number(row.created_at) || Date.now()).toISOString();
-      insertCard.run(row.hash, content, formatGTime(LEGACY_ALGORITHM, stamp));
-      migratedCards += 1;
+      const gTime = formatGTime(LEGACY_ALGORITHM, stamp);
+      if (!this.has(row.hash) && this.backend.putRaw(row.hash, content, gTime, LEGACY_ALGORITHM)) {
+        migratedCards += 1;
+      }
     }
 
     let migratedHandles = 0;
@@ -149,21 +141,32 @@ export class CanonicalTriadBackend {
   put(content, { algorithm = DEFAULT_ALGORITHM, gTime = null } = {}) {
     const rawBytes = bytesOf(content);
     const hash = hashContent(rawBytes, algorithm);
-    const exists = this.db.prepare('SELECT 1 FROM card WHERE hash = ?').get(hash);
-    if (exists) return { hash, gTime: this.gTimeOf(hash), inserted: false };
+    if (this.has(hash)) return { hash, gTime: this.gTimeOf(hash), inserted: false };
 
-    const stamp = gTime || formatGTime(algorithm);
-    this.db.prepare('INSERT INTO card (hash, content, g_time) VALUES (?, ?, ?)').run(hash, rawBytes, stamp);
-    return { hash, gTime: stamp, inserted: true };
+    const stamp = normalizeKernelGTime(gTime || formatGTime(algorithm), algorithm);
+    const inserted = this.backend.putRaw(hash, rawBytes, stamp, algorithm);
+    return { hash, gTime: stamp, inserted };
   }
 
   gTimeOf(hash) {
+    try {
+      const rec = this.backend.getRecord(hash);
+      if (rec?.gTime) return rec.gTime;
+    } catch {
+      // Fall through for tampered verification reads.
+    }
     const row = this.db.prepare('SELECT g_time FROM card WHERE hash = ?').get(hash);
     return row ? row.g_time : null;
   }
 
   get(hash, options = {}) {
-    const row = this.db.prepare('SELECT hash, content, g_time FROM card WHERE hash = ?').get(hash);
+    let row = null;
+    try {
+      const rec = this.backend.getRecord(hash);
+      if (rec) row = { hash: rec.hash, content: rec.content, g_time: rec.gTime };
+    } catch {
+      row = this.db.prepare('SELECT hash, content, g_time FROM card WHERE hash = ?').get(hash) ?? null;
+    }
     if (!row) return null;
     const rawBytes = Buffer.isBuffer(row.content) ? row.content : Buffer.from(row.content);
     const verified = verifyRecord(row.hash, rawBytes, row.g_time);
@@ -190,23 +193,29 @@ export class CanonicalTriadBackend {
   }
 
   has(hash) {
-    return Boolean(this.db.prepare('SELECT 1 FROM card WHERE hash = ?').get(hash));
+    try {
+      return this.backend.has(hash);
+    } catch {
+      return Boolean(this.db.prepare('SELECT 1 FROM card WHERE hash = ?').get(hash));
+    }
   }
 
   count() {
-    return Number(this.db.prepare('SELECT COUNT(*) AS count FROM card').get()?.count || 0);
+    return this.backend.count();
   }
 
   list() {
     return this.db
       .prepare('SELECT hash FROM card ORDER BY g_time ASC')
       .all()
-      .map((row) => this.get(row.hash));
+      .map((row) => this.get(row.hash))
+      .filter(Boolean);
   }
 
   resolveHandle(handle) {
-    const row = this.db.prepare('SELECT current_hash FROM handle_registry WHERE handle = ?').get(handle);
-    return row ? row.current_hash : null;
+    const resolved = this.backend.resolveHandle(handle);
+    if (!resolved) return null;
+    return typeof resolved === 'string' ? resolved : (resolved.hex ?? resolved.asHex());
   }
 
   bindHandle(handle, hash) {
@@ -214,27 +223,12 @@ export class CanonicalTriadBackend {
     const previous = this.resolveHandle(handle);
     if (previous === hash) return { handle, hash, changed: false, previousHash: null };
 
-    const now = nowIso();
-    if (previous) {
-      this.db
-        .prepare('INSERT INTO handle_history (handle, previous_hash, changed_at) VALUES (?, ?, ?)')
-        .run(handle, previous, now);
-    }
-    this.db
-      .prepare(
-        `INSERT INTO handle_registry (handle, current_hash, updated_at) VALUES (?, ?, ?)
-         ON CONFLICT(handle) DO UPDATE SET current_hash = excluded.current_hash,
-                                           updated_at = excluded.updated_at`
-      )
-      .run(handle, hash, now);
+    this.backend.registerHandle(handle, hash);
     return { handle, hash, changed: true, previousHash: previous };
   }
 
   handleHistory(handle) {
-    return this.db
-      .prepare('SELECT previous_hash, changed_at FROM handle_history WHERE handle = ? ORDER BY changed_at ASC')
-      .all(handle)
-      .map((row) => ({ previousHash: row.previous_hash, changedAt: row.changed_at }));
+    return this.backend.getHandleHistoryWithTimestamps(handle);
   }
 
   listHandles(prefix = '') {
@@ -253,17 +247,19 @@ export class CanonicalTriadBackend {
   }
 
   releaseHandles(hash) {
-    const rows = this.db.prepare('SELECT handle FROM handle_registry WHERE current_hash = ?').all(hash);
-    const handles = rows.map((row) => row.handle);
-    if (handles.length > 0) {
-      this.db.prepare('DELETE FROM handle_registry WHERE current_hash = ?').run(hash);
+    const handles = this.backend
+      .getAllHandles()
+      .filter((entry) => entry.hash === hash)
+      .map((entry) => entry.handle);
+    for (const handle of handles) {
+      this.backend.removeHandle(handle);
     }
     return handles;
   }
 
   close() {
     try {
-      this.db.close();
+      this.backend.close();
     } catch {
     }
   }

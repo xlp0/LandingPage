@@ -27,7 +27,7 @@ Open `http://localhost:3000/responsive-lab.html` in your browser.
 
 ## Role in the MCard_TDD Workspace
 
-`LandingPage` operates as **Estate 4 (Submodule 3)** consuming published `clm-kernel@0.0.24`.
+`LandingPage` operates as **Estate 4 (Submodule 3)** consuming published `clm-kernel@0.0.26`.
 
 1. **Responsive UI Lab Workbench (`/responsive-lab.html`)** certifies chosen web targets (such as `/tests/fixtures/spa-test-target.html`, `/index.html`, or external `http://localhost:4321/`) across 12 device presets, orientation swap, Petri net Places/Transitions, Triad persistence, and Playwright replay.
 2. **Single-Page 4-Modality MCard Viewer (`/?noredirect=1`)** renders `urn:mcard:content:landing_page` and the 6-sample Triad corpus (`data/samples/portal_samples.mcard.db`) across `media`, `document`, `code`, and `webapp` modalities.
@@ -44,4 +44,4 @@ Open `http://localhost:3000/responsive-lab.html` in your browser.
 
 - [01-architecture/README.md](../01-architecture/README.md) for system architecture, Astro islands, and `workbench-net.md`.
 - [08-testing/README.md](../08-testing/README.md) for `node:test` and Playwright suites.
-- [03-data-management/README.md](../03-data-management/README.md) for SQLite Triad storage and `clm-kernel@0.0.24`.
+- [03-data-management/README.md](../03-data-management/README.md) for SQLite Triad storage and `clm-kernel@0.0.26`.

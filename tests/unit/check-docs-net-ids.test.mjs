@@ -85,7 +85,7 @@ describe('GQC-07 documentation alignment and gate contracts', () => {
   it('GQC-07-UNIT-02: verifies kernel version consensus and server/test/Astro port ownership', () => {
     const repoCheck = checkVersionAndPortContracts(DEFAULT_ROOT_DIR);
     assert.deepEqual(repoCheck.errors, []);
-    assert.equal(repoCheck.expectedKernel, '0.0.24');
+    assert.equal(repoCheck.expectedKernel, '0.0.26');
 
     withTempDir((tmpDir) => {
       writeRel(
@@ -308,7 +308,7 @@ describe('GQC-07 documentation alignment and gate contracts', () => {
     assert.equal(isHistoricalDoc('docs/sprints/programs/bpv/bpv-plan.md'), true);
 
     withTempDir((tmpDir) => {
-      writeRel(tmpDir, 'package.json', JSON.stringify({ scripts: {}, dependencies: { 'clm-kernel': '0.0.24' } }));
+      writeRel(tmpDir, 'package.json', JSON.stringify({ scripts: {}, dependencies: { 'clm-kernel': '0.0.26' } }));
       writeRel(tmpDir, 'docs/sprints/_active/INDEX.md', '# Active Index\n\nRuns `npm run nonexistent:script`.\n');
       writeRel(tmpDir, 'docs/sprints/old-sprint.md', '# Old Sprint\n\nRan from `/Users/alice/workspace/LandingPage`.\n');
 

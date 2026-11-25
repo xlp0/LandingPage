@@ -52,5 +52,5 @@ The `#spa-test-workflow` region guides verification across five keyboard-accessi
 ## 5. Record, Persist, and Replay (`INV-ERB-01..04`)
 
 - Click **Record** (`#rec-btn-start`) to capture pointer, keyboard, scroll, and viewport events normalized to $[0.0, 1.0]$ with sensitive input redaction (`INV-PRV-01`).
-- Click **Stop** (`#rec-btn-stop`) to finalize the run (`clmKernel: '0.0.24'`) and persist it to `/api/test-runs` in the SQLite Triad (`data/mcard-api.db`). Interrupted sessions save separately as `urn:gqc:interrupted-capture:v1` (`Incomplete Capture`) and never masquerade as passing runs.
+- Click **Stop** (`#rec-btn-stop`) to finalize the run (`clmKernel: '0.0.26'`) and persist it to `/api/test-runs` in the SQLite Triad (`data/mcard-api.db`). Interrupted sessions save separately as `urn:gqc:interrupted-capture:v1` (`Incomplete Capture`) and never masquerade as passing runs.
 - Open the deferred **Conformance** (`#conformance-disclosure`) or **MCard Result** (`#mcard-result-disclosure`) panels to inspect the 15-check conformance report and Triad Blake3 digest, or replay headlessly via `npm run test:replay`.
