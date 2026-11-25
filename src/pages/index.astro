@@ -1,5 +1,6 @@
 ---
 import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
+import WorkbenchNav from '../components/WorkbenchNav.astro';
 import { iconMarkup } from '../../js/ui/icons.js';
 ---
 <WorkbenchLayout
@@ -499,6 +500,7 @@ import { iconMarkup } from '../../js/ui/icons.js';
       <span id="sidepane-icon" data-icon="ruler" set:html={iconMarkup('ruler')} />
       <span id="sidepane-label">Responsive UI Lab</span>
     </a>
+    <WorkbenchNav placeId="p_view_index_mcard_viewer" variant="inline" />
 
     <button type="button" class="control-btn" id="theme-toggle-btn" data-testid="theme-toggle-btn" title="Toggle Display Theme (Dark / Light / High-Contrast)">
       <span id="theme-icon" data-icon="moon" set:html={iconMarkup('moon')} />

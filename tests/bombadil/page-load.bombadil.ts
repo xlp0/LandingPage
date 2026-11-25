@@ -43,7 +43,10 @@ const SKIPPED_SELECTOR = [
   '[data-effect="destructive"]',
   '[data-effect="download"]',
   '[data-effect="file-picker"]',
-  'a[target="_blank"]'
+  'a[target="_blank"]',
+  '[data-testid^="nav-"]',
+  '[data-testid="workbench-nav-summary"]',
+  '[data-testid="link-conformance-harness"]'
 ].join(",");
 
 const RECT_MARGIN_PX = 2;

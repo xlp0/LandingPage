@@ -152,6 +152,72 @@ export const ARCS = [
     "kind": "link"
   },
   {
+    "transitionId": "t_link_lab_to_registry",
+    "from": "p_page_responsive_lab",
+    "to": "p_page_sprint_registry",
+    "kind": "link"
+  },
+  {
+    "transitionId": "t_link_lab_to_inspector",
+    "from": "p_page_responsive_lab",
+    "to": "p_page_fiber_inspector",
+    "kind": "link"
+  },
+  {
+    "transitionId": "t_link_viewer_to_registry",
+    "from": "p_view_index_mcard_viewer",
+    "to": "p_page_sprint_registry",
+    "kind": "link"
+  },
+  {
+    "transitionId": "t_link_viewer_to_inspector",
+    "from": "p_view_index_mcard_viewer",
+    "to": "p_page_fiber_inspector",
+    "kind": "link"
+  },
+  {
+    "transitionId": "t_link_registry_to_index",
+    "from": "p_page_sprint_registry",
+    "to": "p_view_index_mcard_viewer",
+    "kind": "link"
+  },
+  {
+    "transitionId": "t_link_registry_to_lab",
+    "from": "p_page_sprint_registry",
+    "to": "p_page_responsive_lab",
+    "kind": "link"
+  },
+  {
+    "transitionId": "t_link_registry_to_inspector",
+    "from": "p_page_sprint_registry",
+    "to": "p_page_fiber_inspector",
+    "kind": "link"
+  },
+  {
+    "transitionId": "t_link_inspector_to_index",
+    "from": "p_page_fiber_inspector",
+    "to": "p_view_index_mcard_viewer",
+    "kind": "link"
+  },
+  {
+    "transitionId": "t_link_inspector_to_lab",
+    "from": "p_page_fiber_inspector",
+    "to": "p_page_responsive_lab",
+    "kind": "link"
+  },
+  {
+    "transitionId": "t_link_inspector_to_registry",
+    "from": "p_page_fiber_inspector",
+    "to": "p_page_sprint_registry",
+    "kind": "link"
+  },
+  {
+    "transitionId": "t_link_inspector_to_conformance",
+    "from": "p_page_fiber_inspector",
+    "to": "p_page_fiber_conformance",
+    "kind": "link"
+  },
+  {
     "transitionId": "t_link_viewer_to_index",
     "from": "p_view_index_mcard_viewer",
     "to": "p_page_index",
@@ -260,6 +326,72 @@ export const HISTORY_ARCS = [
     "transitionId": "history:t_link_lab_to_index",
     "from": "p_view_index_mcard_viewer",
     "to": "p_page_responsive_lab",
+    "kind": "history"
+  },
+  {
+    "transitionId": "history:t_link_lab_to_registry",
+    "from": "p_page_sprint_registry",
+    "to": "p_page_responsive_lab",
+    "kind": "history"
+  },
+  {
+    "transitionId": "history:t_link_lab_to_inspector",
+    "from": "p_page_fiber_inspector",
+    "to": "p_page_responsive_lab",
+    "kind": "history"
+  },
+  {
+    "transitionId": "history:t_link_viewer_to_registry",
+    "from": "p_page_sprint_registry",
+    "to": "p_view_index_mcard_viewer",
+    "kind": "history"
+  },
+  {
+    "transitionId": "history:t_link_viewer_to_inspector",
+    "from": "p_page_fiber_inspector",
+    "to": "p_view_index_mcard_viewer",
+    "kind": "history"
+  },
+  {
+    "transitionId": "history:t_link_registry_to_index",
+    "from": "p_view_index_mcard_viewer",
+    "to": "p_page_sprint_registry",
+    "kind": "history"
+  },
+  {
+    "transitionId": "history:t_link_registry_to_lab",
+    "from": "p_page_responsive_lab",
+    "to": "p_page_sprint_registry",
+    "kind": "history"
+  },
+  {
+    "transitionId": "history:t_link_registry_to_inspector",
+    "from": "p_page_fiber_inspector",
+    "to": "p_page_sprint_registry",
+    "kind": "history"
+  },
+  {
+    "transitionId": "history:t_link_inspector_to_index",
+    "from": "p_view_index_mcard_viewer",
+    "to": "p_page_fiber_inspector",
+    "kind": "history"
+  },
+  {
+    "transitionId": "history:t_link_inspector_to_lab",
+    "from": "p_page_responsive_lab",
+    "to": "p_page_fiber_inspector",
+    "kind": "history"
+  },
+  {
+    "transitionId": "history:t_link_inspector_to_registry",
+    "from": "p_page_sprint_registry",
+    "to": "p_page_fiber_inspector",
+    "kind": "history"
+  },
+  {
+    "transitionId": "history:t_link_inspector_to_conformance",
+    "from": "p_page_fiber_conformance",
+    "to": "p_page_fiber_inspector",
     "kind": "history"
   },
   {

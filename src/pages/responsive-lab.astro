@@ -12,6 +12,7 @@ import SpaTestWorkflow from '../islands/SpaTestWorkflow.jsx';
 import BombadilDashboardIsland from '../islands/BombadilDashboardIsland.jsx';
 import PkcCardIsland from '../islands/PkcCardIsland.jsx';
 import PresentationControls from '../components/PresentationControls.astro';
+import WorkbenchNav from '../components/WorkbenchNav.astro';
 import { iconMarkup } from '../../js/ui/icons.js';
 import { loadNetEnvelope, validateNetEnvelope } from '../../scripts/check-net.mjs';
 import { createLayer4TargetAdapter } from '../../scripts/net-to-netmcard.mjs';
@@ -104,6 +105,7 @@ const targetNets = {
         <Fragment set:html={iconMarkup('arrow-left')} />
         <span>GovTech OS</span>
       </a>
+      <WorkbenchNav placeId="p_page_responsive_lab" variant="menu" />
       <div class="lab-title-group">
         <h1 id="lab-main-heading">
           <Fragment set:html={iconMarkup('ruler', { size: 16 })} />

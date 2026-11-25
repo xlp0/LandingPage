@@ -24,7 +24,14 @@ export const ROOT_PAGE_CHARACTERIZATIONS = Object.freeze([
     redirectTarget: '/responsive-lab.html',
     expectedTitle: 'GovTech Platform | Mission Control',
     redirectTitle: 'GovTech OS - Responsive UI Lab (Full-Window Viewport Workbench)',
-    expectedSameOriginLinks: Object.freeze(['/', '/index.html', '/pkc-docs-index.html', '/responsive-lab.html']),
+    expectedSameOriginLinks: Object.freeze([
+      '/',
+      '/fiber-inspector.html',
+      '/index.html',
+      '/pkc-docs-index.html',
+      '/responsive-lab.html',
+      '/sprint-registry.html',
+    ]),
   }),
   Object.freeze({
     pagePath: 'responsive-lab.html',
@@ -34,7 +41,7 @@ export const ROOT_PAGE_CHARACTERIZATIONS = Object.freeze([
     candidateNetPlaceId: 'p_wb_responsive_lab',
     route: '/responsive-lab.html',
     expectedTitle: 'GovTech OS - Responsive UI Lab (Full-Window Viewport Workbench)',
-    expectedSameOriginLinks: Object.freeze(['/index.html']),
+    expectedSameOriginLinks: Object.freeze(['/fiber-inspector.html', '/index.html', '/sprint-registry.html']),
   }),
   Object.freeze({
     pagePath: 'fiber-conformance.html',
@@ -54,7 +61,12 @@ export const ROOT_PAGE_CHARACTERIZATIONS = Object.freeze([
     candidateNetPlaceId: 'p_wb_fiber_inspector',
     route: '/fiber-inspector.html',
     expectedTitle: 'Fiber Inspector \u2014 the correctness panel',
-    expectedSameOriginLinks: Object.freeze([]),
+    expectedSameOriginLinks: Object.freeze([
+      '/fiber-conformance.html',
+      '/index.html',
+      '/responsive-lab.html',
+      '/sprint-registry.html',
+    ]),
   }),
   Object.freeze({
     pagePath: 'sprint-registry.html',
@@ -64,7 +76,11 @@ export const ROOT_PAGE_CHARACTERIZATIONS = Object.freeze([
     candidateNetPlaceId: 'p_wb_sprint_registry',
     route: '/sprint-registry.html',
     expectedTitle: 'CLM Sprint Registry \u2014 SSoT Display Projection',
-    expectedSameOriginLinks: Object.freeze([]),
+    expectedSameOriginLinks: Object.freeze([
+      '/fiber-inspector.html',
+      '/index.html',
+      '/responsive-lab.html',
+    ]),
   }),
   Object.freeze({
     pagePath: 'pkc-docs-index.html',

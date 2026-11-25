@@ -461,3 +461,94 @@ test('BPV-07 traces with an unattributed or unknown netId count as failed rather
   assert.match(out.join(''), /bombadilTraces=1 replayed=0 failed=1/);
   assert.match(err.join(''), /unresolved-trace-net/);
 });
+
+test('DCI-02 rejects a page Place without inbound or outbound link/redirect unless terminalReason or active exception is declared', () => {
+  const baseEnv = loadNetEnvelope(WORKBENCH_NET_PATH);
+  const addStandalonePage = (env, id, extra = {}) => {
+    env.topology.places.push({
+      id,
+      initialTokens: 0,
+      description: `Synthetic page ${id}`
+    });
+    env.bindings.places[id] = {
+      kind: 'page',
+      surface: 'workbench',
+      pageId: `page_${id}`,
+      pagePath: `${id}.html`,
+      route: `/${id}.html`,
+      routeAliases: [],
+      routeHandle: `mcard:route:/${id}.html`,
+      clmTypeUri: `clm://type/view/workbench/${id}`,
+      mcardHash: null,
+      migrationState: 'astro-wrapped',
+      entry: false,
+      deepLinkEntry: true,
+      owner: 'TEA',
+      ...extra
+    };
+  };
+
+  // 1. Page with outbound link only (no inbound link/redirect) -> fails page-place-without-link
+  const noInEnv = structuredClone(baseEnv);
+  addStandalonePage(noInEnv, 'p_page_no_in');
+  noInEnv.topology.transitions.push({ id: 't_no_in_out', inputs: ['p_page_no_in'], outputs: ['p_page_responsive_lab'] });
+  noInEnv.bindings.transitions.t_no_in_out = {
+    kind: 'link',
+    surface: 'workbench',
+    linkId: 'no_in_out',
+    fromPlaceId: 'p_page_no_in',
+    toPlaceId: 'p_page_responsive_lab',
+    route: '/responsive-lab.html',
+    triggerHref: '/responsive-lab.html',
+    trigger: 'click a[data-testid="no-in-out"] at p_page_no_in.html',
+    ownerPage: 'p_page_no_in.html',
+    owner: 'TEA'
+  };
+  const noInRes = validateNetEnvelope(noInEnv, { filePath: 'no-in.yaml', currentSprint: 'SPRINT-DCI-02' });
+  assert.equal(noInRes.valid, false);
+  assert.ok(noInRes.violations.some((v) => v.id === 'p_page_no_in' && v.rule === 'page-place-without-link'));
+
+  // 2. Page with inbound link only (no outbound link/redirect) -> fails page-place-without-link
+  const noOutEnv = structuredClone(baseEnv);
+  addStandalonePage(noOutEnv, 'p_page_no_out');
+  noOutEnv.topology.transitions.push({ id: 't_in_no_out', inputs: ['p_page_responsive_lab'], outputs: ['p_page_no_out'] });
+  noOutEnv.bindings.transitions.t_in_no_out = {
+    kind: 'link',
+    surface: 'workbench',
+    linkId: 'in_no_out',
+    fromPlaceId: 'p_page_responsive_lab',
+    toPlaceId: 'p_page_no_out',
+    route: '/p_page_no_out.html',
+    triggerHref: '/p_page_no_out.html',
+    trigger: 'click a[data-testid="in-no-out"] at responsive-lab.html',
+    ownerPage: 'responsive-lab.html',
+    owner: 'TEA'
+  };
+  const noOutRes = validateNetEnvelope(noOutEnv, { filePath: 'no-out.yaml', currentSprint: 'SPRINT-DCI-02' });
+  assert.equal(noOutRes.valid, false);
+  assert.ok(noOutRes.violations.some((v) => v.id === 'p_page_no_out' && v.rule === 'page-place-without-link'));
+
+  // 3. Page with non-empty terminalReason passes without outbound link
+  const termEnv = structuredClone(noOutEnv);
+  termEnv.bindings.places.p_page_no_out.terminalReason = 'Snapshot terminal harness.';
+  const termRes = validateNetEnvelope(termEnv, { filePath: 'terminal.yaml', currentSprint: 'SPRINT-DCI-02' });
+  assert.equal(
+    termRes.violations.some((v) => v.id === 'p_page_no_out' && v.rule === 'page-place-without-link'),
+    false
+  );
+
+  // 4. Page with active exception passes until expired, then fails page-place-without-link
+  const excEnv = structuredClone(noOutEnv);
+  excEnv.bindings.places.p_page_no_out.exception = {
+    owner: 'Architect',
+    reason: 'Temporary single-link staging',
+    expiresSprint: 'SPRINT-GQC-03'
+  };
+  const activeRes = validateNetEnvelope(excEnv, { filePath: 'active-exc.yaml', currentSprint: 'SPRINT-GQC-02A' });
+  assert.equal(
+    activeRes.violations.some((v) => v.id === 'p_page_no_out' && v.rule === 'page-place-without-link'),
+    false
+  );
+  const expiredRes = validateNetEnvelope(excEnv, { filePath: 'expired-exc.yaml', currentSprint: 'SPRINT-GQC-04' });
+  assert.ok(expiredRes.violations.some((v) => v.id === 'p_page_no_out' && v.rule === 'page-place-without-link'));
+});

@@ -130,6 +130,16 @@ topology:
         - p_page_responsive_lab
       outputs:
         - p_view_index_mcard_viewer
+    - id: t_link_lab_to_registry
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_page_sprint_registry
+    - id: t_link_lab_to_inspector
+      inputs:
+        - p_page_responsive_lab
+      outputs:
+        - p_page_fiber_inspector
     - id: t_link_viewer_to_index
       inputs:
         - p_view_index_mcard_viewer
@@ -140,11 +150,56 @@ topology:
         - p_view_index_mcard_viewer
       outputs:
         - p_page_responsive_lab
+    - id: t_link_viewer_to_registry
+      inputs:
+        - p_view_index_mcard_viewer
+      outputs:
+        - p_page_sprint_registry
+    - id: t_link_viewer_to_inspector
+      inputs:
+        - p_view_index_mcard_viewer
+      outputs:
+        - p_page_fiber_inspector
     - id: t_link_viewer_to_docs
       inputs:
         - p_view_index_mcard_viewer
       outputs:
         - p_page_docs_index
+    - id: t_link_registry_to_index
+      inputs:
+        - p_page_sprint_registry
+      outputs:
+        - p_view_index_mcard_viewer
+    - id: t_link_registry_to_lab
+      inputs:
+        - p_page_sprint_registry
+      outputs:
+        - p_page_responsive_lab
+    - id: t_link_registry_to_inspector
+      inputs:
+        - p_page_sprint_registry
+      outputs:
+        - p_page_fiber_inspector
+    - id: t_link_inspector_to_index
+      inputs:
+        - p_page_fiber_inspector
+      outputs:
+        - p_view_index_mcard_viewer
+    - id: t_link_inspector_to_lab
+      inputs:
+        - p_page_fiber_inspector
+      outputs:
+        - p_page_responsive_lab
+    - id: t_link_inspector_to_registry
+      inputs:
+        - p_page_fiber_inspector
+      outputs:
+        - p_page_sprint_registry
+    - id: t_link_inspector_to_conformance
+      inputs:
+        - p_page_fiber_inspector
+      outputs:
+        - p_page_fiber_conformance
     - id: t_link_docs_to_index
       inputs:
         - p_page_docs_index
@@ -617,6 +672,7 @@ bindings:
       migrationState: astro-wrapped
       entry: false
       deepLinkEntry: true
+      terminalReason: Snapshot harness. Reached from the Fiber Inspector and left with the browser Back button.
       owner: Architect
     p_page_docs_index:
       kind: page
@@ -1057,6 +1113,160 @@ bindings:
         selector: "btn-back-home"
       ownerPage: responsive-lab.html
       owner: Product Manager and TEA
+    t_link_lab_to_registry:
+      kind: link
+      surface: workbench
+      linkId: link_lab_to_registry
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_page_sprint_registry
+      route: /sprint-registry.html
+      triggerHref: /sprint-registry.html
+      trigger: click a[data-testid="nav-lab-to-registry"] at responsive-lab.html
+      triggerSource:
+        file: src/components/WorkbenchNav.astro
+        selector: "nav-lab-to-registry"
+      ownerPage: responsive-lab.html
+      owner: Product Manager and TEA
+    t_link_lab_to_inspector:
+      kind: link
+      surface: workbench
+      linkId: link_lab_to_inspector
+      fromPlaceId: p_page_responsive_lab
+      toPlaceId: p_page_fiber_inspector
+      route: /fiber-inspector.html
+      triggerHref: /fiber-inspector.html
+      trigger: click a[data-testid="nav-lab-to-inspector"] at responsive-lab.html
+      triggerSource:
+        file: src/components/WorkbenchNav.astro
+        selector: "nav-lab-to-inspector"
+      ownerPage: responsive-lab.html
+      owner: Product Manager and TEA
+    t_link_viewer_to_registry:
+      kind: link
+      surface: workbench
+      linkId: link_viewer_to_registry
+      fromPlaceId: p_view_index_mcard_viewer
+      toPlaceId: p_page_sprint_registry
+      route: /sprint-registry.html
+      triggerHref: /sprint-registry.html
+      trigger: click a[data-testid="nav-viewer-to-registry"] at index.html
+      triggerSource:
+        file: src/components/WorkbenchNav.astro
+        selector: "nav-viewer-to-registry"
+      ownerPage: index.html
+      owner: Product Manager and UX Designer
+    t_link_viewer_to_inspector:
+      kind: link
+      surface: workbench
+      linkId: link_viewer_to_inspector
+      fromPlaceId: p_view_index_mcard_viewer
+      toPlaceId: p_page_fiber_inspector
+      route: /fiber-inspector.html
+      triggerHref: /fiber-inspector.html
+      trigger: click a[data-testid="nav-viewer-to-inspector"] at index.html
+      triggerSource:
+        file: src/components/WorkbenchNav.astro
+        selector: "nav-viewer-to-inspector"
+      ownerPage: index.html
+      owner: Product Manager and UX Designer
+    t_link_registry_to_index:
+      kind: link
+      surface: workbench
+      linkId: link_registry_to_index
+      fromPlaceId: p_page_sprint_registry
+      toPlaceId: p_view_index_mcard_viewer
+      route: /index.html?noredirect=1
+      triggerHref: /index.html?noredirect=1
+      trigger: click a[data-testid="nav-registry-to-index"] at sprint-registry.html
+      triggerSource:
+        file: src/components/WorkbenchNav.astro
+        selector: "nav-registry-to-index"
+      ownerPage: sprint-registry.html
+      owner: Scrum Master
+    t_link_registry_to_lab:
+      kind: link
+      surface: workbench
+      linkId: link_registry_to_lab
+      fromPlaceId: p_page_sprint_registry
+      toPlaceId: p_page_responsive_lab
+      route: /responsive-lab.html
+      triggerHref: /responsive-lab.html
+      trigger: click a[data-testid="nav-registry-to-lab"] at sprint-registry.html
+      triggerSource:
+        file: src/components/WorkbenchNav.astro
+        selector: "nav-registry-to-lab"
+      ownerPage: sprint-registry.html
+      owner: Scrum Master
+    t_link_registry_to_inspector:
+      kind: link
+      surface: workbench
+      linkId: link_registry_to_inspector
+      fromPlaceId: p_page_sprint_registry
+      toPlaceId: p_page_fiber_inspector
+      route: /fiber-inspector.html
+      triggerHref: /fiber-inspector.html
+      trigger: click a[data-testid="nav-registry-to-inspector"] at sprint-registry.html
+      triggerSource:
+        file: src/components/WorkbenchNav.astro
+        selector: "nav-registry-to-inspector"
+      ownerPage: sprint-registry.html
+      owner: Scrum Master
+    t_link_inspector_to_index:
+      kind: link
+      surface: workbench
+      linkId: link_inspector_to_index
+      fromPlaceId: p_page_fiber_inspector
+      toPlaceId: p_view_index_mcard_viewer
+      route: /index.html?noredirect=1
+      triggerHref: /index.html?noredirect=1
+      trigger: click a[data-testid="nav-inspector-to-index"] at fiber-inspector.html
+      triggerSource:
+        file: src/components/WorkbenchNav.astro
+        selector: "nav-inspector-to-index"
+      ownerPage: fiber-inspector.html
+      owner: Architect
+    t_link_inspector_to_lab:
+      kind: link
+      surface: workbench
+      linkId: link_inspector_to_lab
+      fromPlaceId: p_page_fiber_inspector
+      toPlaceId: p_page_responsive_lab
+      route: /responsive-lab.html
+      triggerHref: /responsive-lab.html
+      trigger: click a[data-testid="nav-inspector-to-lab"] at fiber-inspector.html
+      triggerSource:
+        file: src/components/WorkbenchNav.astro
+        selector: "nav-inspector-to-lab"
+      ownerPage: fiber-inspector.html
+      owner: Architect
+    t_link_inspector_to_registry:
+      kind: link
+      surface: workbench
+      linkId: link_inspector_to_registry
+      fromPlaceId: p_page_fiber_inspector
+      toPlaceId: p_page_sprint_registry
+      route: /sprint-registry.html
+      triggerHref: /sprint-registry.html
+      trigger: click a[data-testid="nav-inspector-to-registry"] at fiber-inspector.html
+      triggerSource:
+        file: src/components/WorkbenchNav.astro
+        selector: "nav-inspector-to-registry"
+      ownerPage: fiber-inspector.html
+      owner: Architect
+    t_link_inspector_to_conformance:
+      kind: link
+      surface: workbench
+      linkId: link_inspector_to_conformance
+      fromPlaceId: p_page_fiber_inspector
+      toPlaceId: p_page_fiber_conformance
+      route: /fiber-conformance.html
+      triggerHref: /fiber-conformance.html
+      trigger: click a[data-testid="link-conformance-harness"] at fiber-inspector.html
+      triggerSource:
+        file: src/pages/fiber-inspector.astro
+        selector: "link-conformance-harness"
+      ownerPage: fiber-inspector.html
+      owner: Architect
     t_link_viewer_to_index:
       kind: link
       surface: workbench

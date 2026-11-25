@@ -134,7 +134,10 @@ const SKIPPED_SELECTOR = [
   '[data-testid="workflow-select-app-html"]',
   '[data-testid^="bombadil-"]',
   "#bombadil-transport-pill",
-  "#bombadil-dashboard-panel button"
+  "#bombadil-dashboard-panel button",
+  '[data-testid^="nav-"]',
+  '[data-testid="workbench-nav-summary"]',
+  '[data-testid="link-conformance-harness"]'
 ].join(",");
 
 const RECT_MARGIN_PX = 2;

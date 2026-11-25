@@ -19,7 +19,7 @@
 | Target Handle | `mcard:workbench:landing-page` |
 | Entry Place | `p_page_index` |
 | Total Places | 38 |
-| Total Transitions | 85 |
+| Total Transitions | 96 |
 | Non-UI Programmatic Endpoints | 20 |
 
 Related architecture guides include [LandingPage Architecture](./landing-page-architecture.md) and [Astro Host and Preact Islands](./astro-host-and-islands.md).
@@ -38,7 +38,7 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | Transition Kind | Count |
 | --- | --- |
 | `client-route` | 3 |
-| `link` | 5 |
+| `link` | 16 |
 | `recover` | 9 |
 | `redirect` | 1 |
 | `server-call-fail` | 23 |
@@ -94,9 +94,20 @@ Related architecture guides include [LandingPage Architecture](./landing-page-ar
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `t_redirect_index_to_lab` | `redirect` | `p_page_index` | `p_page_responsive_lab` | `/responsive-lab.html` | `index.html` | Product Manager and UX Designer | window.location.replace("responsive-lab.html") at index.html |
 | `t_link_lab_to_index` | `link` | `p_page_responsive_lab` | `p_view_index_mcard_viewer` | `/index.html?noredirect=1` | `responsive-lab.html` | Product Manager and TEA | click a#btn-back-home[href="/index.html?noredirect=1"] at responsive-lab.html |
+| `t_link_lab_to_registry` | `link` | `p_page_responsive_lab` | `p_page_sprint_registry` | `/sprint-registry.html` | `responsive-lab.html` | Product Manager and TEA | click a[data-testid="nav-lab-to-registry"] at responsive-lab.html |
+| `t_link_lab_to_inspector` | `link` | `p_page_responsive_lab` | `p_page_fiber_inspector` | `/fiber-inspector.html` | `responsive-lab.html` | Product Manager and TEA | click a[data-testid="nav-lab-to-inspector"] at responsive-lab.html |
 | `t_link_viewer_to_index` | `link` | `p_view_index_mcard_viewer` | `p_page_index` | `/index.html` | `index.html` | Product Manager and UX Designer | click a.penpot-nav-link[href="index.html"] at index.html |
 | `t_link_viewer_to_lab` | `link` | `p_view_index_mcard_viewer` | `p_page_responsive_lab` | `/responsive-lab.html` | `index.html` | Product Manager and UX Designer | click a[href="responsive-lab.html"] at index.html or openResponsiveUILab at index.html |
+| `t_link_viewer_to_registry` | `link` | `p_view_index_mcard_viewer` | `p_page_sprint_registry` | `/sprint-registry.html` | `index.html` | Product Manager and UX Designer | click a[data-testid="nav-viewer-to-registry"] at index.html |
+| `t_link_viewer_to_inspector` | `link` | `p_view_index_mcard_viewer` | `p_page_fiber_inspector` | `/fiber-inspector.html` | `index.html` | Product Manager and UX Designer | click a[data-testid="nav-viewer-to-inspector"] at index.html |
 | `t_link_viewer_to_docs` | `link` | `p_view_index_mcard_viewer` | `p_page_docs_index` | `/pkc-docs-index.html` | `index.html` | Tech Writer | click a.penpot-nav-link[href="pkc-docs-index.html"] at src/pages/index.astro |
+| `t_link_registry_to_index` | `link` | `p_page_sprint_registry` | `p_view_index_mcard_viewer` | `/index.html?noredirect=1` | `sprint-registry.html` | Scrum Master | click a[data-testid="nav-registry-to-index"] at sprint-registry.html |
+| `t_link_registry_to_lab` | `link` | `p_page_sprint_registry` | `p_page_responsive_lab` | `/responsive-lab.html` | `sprint-registry.html` | Scrum Master | click a[data-testid="nav-registry-to-lab"] at sprint-registry.html |
+| `t_link_registry_to_inspector` | `link` | `p_page_sprint_registry` | `p_page_fiber_inspector` | `/fiber-inspector.html` | `sprint-registry.html` | Scrum Master | click a[data-testid="nav-registry-to-inspector"] at sprint-registry.html |
+| `t_link_inspector_to_index` | `link` | `p_page_fiber_inspector` | `p_view_index_mcard_viewer` | `/index.html?noredirect=1` | `fiber-inspector.html` | Architect | click a[data-testid="nav-inspector-to-index"] at fiber-inspector.html |
+| `t_link_inspector_to_lab` | `link` | `p_page_fiber_inspector` | `p_page_responsive_lab` | `/responsive-lab.html` | `fiber-inspector.html` | Architect | click a[data-testid="nav-inspector-to-lab"] at fiber-inspector.html |
+| `t_link_inspector_to_registry` | `link` | `p_page_fiber_inspector` | `p_page_sprint_registry` | `/sprint-registry.html` | `fiber-inspector.html` | Architect | click a[data-testid="nav-inspector-to-registry"] at fiber-inspector.html |
+| `t_link_inspector_to_conformance` | `link` | `p_page_fiber_inspector` | `p_page_fiber_conformance` | `/fiber-conformance.html` | `fiber-inspector.html` | Architect | click a[data-testid="link-conformance-harness"] at fiber-inspector.html |
 | `t_link_docs_to_index` | `link` | `p_page_docs_index` | `p_page_index` | `/index.html` | `pkc-docs-index.html` | Tech Writer | Penpot flow link Docs Index -> Home in js/nav.js (legacy-static pkc-docs-index.html does not mount PENPOT-GENERATED-NAV) |
 | `t_req_get_app_config` | `server-call-request` | `p_page_responsive_lab` | `p_pending_get_app_config` | `GET /app-config.json` | `responsive-lab.html` | Product Manager and TEA | fetch("/app-config.json") in js/harness/lab-toolbar.js |
 | `t_ok_get_app_config` | `server-call-ok` | `p_pending_get_app_config` | `p_page_responsive_lab` | `GET /app-config.json` | `responsive-lab.html` | Product Manager and TEA | HTTP 2xx response for GET /app-config.json |
@@ -247,9 +258,20 @@ flowchart TD
   p_pending_bombadil_stream["p_pending_bombadil_stream (pending)"]
   p_page_index -->|"t_redirect_index_to_lab (redirect)"| p_page_responsive_lab
   p_page_responsive_lab -->|"t_link_lab_to_index (link)"| p_view_index_mcard_viewer
+  p_page_responsive_lab -->|"t_link_lab_to_registry (link)"| p_page_sprint_registry
+  p_page_responsive_lab -->|"t_link_lab_to_inspector (link)"| p_page_fiber_inspector
   p_view_index_mcard_viewer -->|"t_link_viewer_to_index (link)"| p_page_index
   p_view_index_mcard_viewer -->|"t_link_viewer_to_lab (link)"| p_page_responsive_lab
+  p_view_index_mcard_viewer -->|"t_link_viewer_to_registry (link)"| p_page_sprint_registry
+  p_view_index_mcard_viewer -->|"t_link_viewer_to_inspector (link)"| p_page_fiber_inspector
   p_view_index_mcard_viewer -->|"t_link_viewer_to_docs (link)"| p_page_docs_index
+  p_page_sprint_registry -->|"t_link_registry_to_index (link)"| p_view_index_mcard_viewer
+  p_page_sprint_registry -->|"t_link_registry_to_lab (link)"| p_page_responsive_lab
+  p_page_sprint_registry -->|"t_link_registry_to_inspector (link)"| p_page_fiber_inspector
+  p_page_fiber_inspector -->|"t_link_inspector_to_index (link)"| p_view_index_mcard_viewer
+  p_page_fiber_inspector -->|"t_link_inspector_to_lab (link)"| p_page_responsive_lab
+  p_page_fiber_inspector -->|"t_link_inspector_to_registry (link)"| p_page_sprint_registry
+  p_page_fiber_inspector -->|"t_link_inspector_to_conformance (link)"| p_page_fiber_conformance
   p_page_docs_index -->|"t_link_docs_to_index (link)"| p_page_index
   p_page_responsive_lab -->|"t_req_get_app_config (server-call-request)"| p_pending_get_app_config
   p_pending_get_app_config -->|"t_ok_get_app_config (server-call-ok)"| p_page_responsive_lab

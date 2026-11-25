@@ -51,11 +51,11 @@ Astro's client router remains disabled. Every workbench page switch executes as 
 
 | Route | Astro Page Source | Workbench Place(s) | Migration State | Island Count | Client Runtime Owner |
 | --- | --- | --- | --- | --- | --- |
-| `/` and `/index.html` | [`src/pages/index.astro`](../../src/pages/index.astro) | `p_page_index`, `p_view_index_mcard_viewer` | `astro-wrapped` | `0` | Redirects `/` to `/responsive-lab.html`. Mounts `js/landing-page-mcard.js`, `js/nav.js`, and Shadow DOM `#portal-stageshow-showcase` (`0` Astro islands, `0 B` `_astro/` JS) when `?noredirect=1` is present |
-| `/responsive-lab.html` | [`src/pages/responsive-lab.astro`](../../src/pages/responsive-lab.astro) | `p_page_responsive_lab` | `astro-islands` | `9` | `js/harness/lab-runtime.js` coordinator (`window.__lab`) |
-| `/sprint-registry.html` | [`src/pages/sprint-registry.astro`](../../src/pages/sprint-registry.astro) | `p_page_sprint_registry` | `astro-wrapped` | `0` | Inline `/api/clm/registry` viewer owned by Scrum Master |
-| `/fiber-inspector.html` | [`src/pages/fiber-inspector.astro`](../../src/pages/fiber-inspector.astro) | `p_page_fiber_inspector` | `astro-wrapped` | `0` | `public/js/fibers/registry.js` inspector harness owned by Architect |
-| `/fiber-conformance.html` | [`src/pages/fiber-conformance.astro`](../../src/pages/fiber-conformance.astro) | `p_page_fiber_conformance` | `astro-wrapped` | `0` | `public/js/fibers/registry.js` conformance harness owned by Architect |
+| `/` and `/index.html` | [`src/pages/index.astro`](../../src/pages/index.astro) | `p_page_index`, `p_view_index_mcard_viewer` | `astro-wrapped` | `0` | Redirects `/` to `/responsive-lab.html`. Mounts `js/landing-page-mcard.js`, `js/nav.js`, inline [`WorkbenchNav.astro`](../../src/components/WorkbenchNav.astro), and Shadow DOM `#portal-stageshow-showcase` (`0` Astro islands, `0 B` `_astro/` JS) when `?noredirect=1` is present |
+| `/responsive-lab.html` | [`src/pages/responsive-lab.astro`](../../src/pages/responsive-lab.astro) | `p_page_responsive_lab` | `astro-islands` | `9` | `js/harness/lab-runtime.js` coordinator (`window.__lab`) plus `WorkbenchNav.astro` Pages menu |
+| `/sprint-registry.html` | [`src/pages/sprint-registry.astro`](../../src/pages/sprint-registry.astro) | `p_page_sprint_registry` | `astro-wrapped` | `0` | Inline `/api/clm/registry` viewer and `WorkbenchNav.astro` (`page-place-without-link` net rule enforced in `scripts/check-net.mjs`) |
+| `/fiber-inspector.html` | [`src/pages/fiber-inspector.astro`](../../src/pages/fiber-inspector.astro) | `p_page_fiber_inspector` | `astro-wrapped` | `0` | `public/js/fibers/registry.js` inspector harness plus `WorkbenchNav.astro` and link to `/fiber-conformance.html` |
+| `/fiber-conformance.html` | [`src/pages/fiber-conformance.astro`](../../src/pages/fiber-conformance.astro) | `p_page_fiber_conformance` | `astro-wrapped` | `0` | `public/js/fibers/registry.js` conformance harness declared as `terminalReason` leaf in `workbench-net.yaml` |
 
 `node tests/performance/place-bytes.mjs --enforce-zero-island-places` verifies in CI that every `astro-wrapped` Place downloads `0 B` of `_astro/` island JavaScript.
 

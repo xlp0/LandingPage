@@ -2064,6 +2064,7 @@ body[data-page-state="loading"] .viewport-scale-wrapper {
   .lab-nav-left {
     gap: 6px;
     max-width: 100%;
+    flex-wrap: wrap;
   }
 
   .lab-title-group h1 {

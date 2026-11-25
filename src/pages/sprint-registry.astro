@@ -1,5 +1,6 @@
 ---
 import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
+import WorkbenchNav from '../components/WorkbenchNav.astro';
 import PresentationControls from '../components/PresentationControls.astro';
 ---
 <WorkbenchLayout placeIds={['p_page_sprint_registry']} title={'CLM Sprint Registry \u2014 SSoT Display Projection'} dataTheme="dark" viewport="width=device-width, initial-scale=1" enablePresentationController={true}>
@@ -265,6 +266,7 @@ import PresentationControls from '../components/PresentationControls.astro';
       <p class="subtitle">Live browser projection of SSoT sprint manifests and DoD sealing contracts.</p>
       <div id="registry-status" data-count="0">Loading registry...</div>
     </div>
+    <WorkbenchNav placeId="p_page_sprint_registry" variant="inline" />
     <PresentationControls defaultTheme="dark" />
   </header>
 

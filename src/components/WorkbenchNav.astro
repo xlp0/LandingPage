@@ -1,0 +1,140 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+import yaml from 'js-yaml';
+
+const { placeId, variant = 'inline' } = Astro.props;
+
+const NAV_LINKS = [
+  { transitionId: 't_link_viewer_to_registry', testId: 'nav-viewer-to-registry', from: 'p_view_index_mcard_viewer', href: '/sprint-registry.html', label: 'Sprint Registry' },
+  { transitionId: 't_link_viewer_to_inspector', testId: 'nav-viewer-to-inspector', from: 'p_view_index_mcard_viewer', href: '/fiber-inspector.html', label: 'Fiber Inspector' },
+  { transitionId: 't_link_lab_to_registry', testId: 'nav-lab-to-registry', from: 'p_page_responsive_lab', href: '/sprint-registry.html', label: 'Sprint Registry' },
+  { transitionId: 't_link_lab_to_inspector', testId: 'nav-lab-to-inspector', from: 'p_page_responsive_lab', href: '/fiber-inspector.html', label: 'Fiber Inspector' },
+  { transitionId: 't_link_registry_to_index', testId: 'nav-registry-to-index', from: 'p_page_sprint_registry', href: '/index.html?noredirect=1', label: 'Portal' },
+  { transitionId: 't_link_registry_to_lab', testId: 'nav-registry-to-lab', from: 'p_page_sprint_registry', href: '/responsive-lab.html', label: 'Responsive UI Lab' },
+  { transitionId: 't_link_registry_to_inspector', testId: 'nav-registry-to-inspector', from: 'p_page_sprint_registry', href: '/fiber-inspector.html', label: 'Fiber Inspector' },
+  { transitionId: 't_link_inspector_to_index', testId: 'nav-inspector-to-index', from: 'p_page_fiber_inspector', href: '/index.html?noredirect=1', label: 'Portal' },
+  { transitionId: 't_link_inspector_to_lab', testId: 'nav-inspector-to-lab', from: 'p_page_fiber_inspector', href: '/responsive-lab.html', label: 'Responsive UI Lab' },
+  { transitionId: 't_link_inspector_to_registry', testId: 'nav-inspector-to-registry', from: 'p_page_fiber_inspector', href: '/sprint-registry.html', label: 'Sprint Registry' }
+];
+
+const netPath = path.join(process.cwd(), 'src/net/workbench-net.yaml');
+const envelope = yaml.load(fs.readFileSync(netPath, 'utf8'));
+const transitions = envelope?.bindings?.transitions || {};
+
+for (const entry of NAV_LINKS) {
+  const binding = transitions[entry.transitionId];
+  if (!binding) {
+    throw new Error(`WorkbenchNav missing transition binding "${entry.transitionId}" in workbench-net.yaml`);
+  }
+  if (
+    binding.fromPlaceId !== entry.from ||
+    binding.triggerHref !== entry.href ||
+    binding.triggerSource?.selector !== entry.testId
+  ) {
+    throw new Error(`WorkbenchNav drift detected on transition "${entry.transitionId}"`);
+  }
+}
+
+const links = NAV_LINKS.filter((entry) => entry.from === placeId);
+---
+<nav aria-label="Workbench pages" data-testid="workbench-nav" class:list={['workbench-nav', `workbench-nav--${variant}`]}>
+  {variant === 'menu' ? (
+    <details class="workbench-nav-menu">
+      <summary data-testid="workbench-nav-summary">Pages</summary>
+      <div class="workbench-nav-menu-list">
+        {links.map((entry) => (
+          <a href={entry.href} data-testid={entry.testId} data-effect="navigate" class="workbench-nav-link">
+            {entry.label}
+          </a>
+        ))}
+      </div>
+    </details>
+  ) : (
+    links.map((entry) => (
+      <a href={entry.href} data-testid={entry.testId} data-effect="navigate" class="workbench-nav-link">
+        {entry.label}
+      </a>
+    ))
+  )}
+</nav>
+
+<style>
+  .workbench-nav {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .workbench-nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid color-mix(in srgb, currentColor 28%, transparent);
+    color: inherit;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .workbench-nav-link:hover,
+  .workbench-nav-link:focus-visible {
+    border-color: currentColor;
+    text-decoration: underline;
+    outline: 2px solid currentColor;
+    outline-offset: 1px;
+  }
+
+  .workbench-nav-menu {
+    position: relative;
+  }
+
+  .workbench-nav-menu summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid color-mix(in srgb, currentColor 28%, transparent);
+    color: inherit;
+    font-size: 0.76rem;
+    font-weight: 500;
+    cursor: pointer;
+    list-style: none;
+    white-space: nowrap;
+  }
+
+  .workbench-nav-menu summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .workbench-nav-menu-list {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 80;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 170px;
+    padding: 6px;
+    border-radius: 8px;
+    background: var(--lab-surface, #1e293b);
+    border: 1px solid var(--lab-control-border, color-mix(in srgb, currentColor 28%, transparent));
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  }
+
+  @media (max-width: 599px) {
+    .workbench-nav-menu summary {
+      padding: 0 8px;
+      font-size: 0.72rem;
+    }
+  }
+</style>

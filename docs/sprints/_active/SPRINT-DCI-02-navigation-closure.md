@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-DCI-02` |
 | Source of Truth | [`./dci-plan.md`](./dci-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-DCI-02` |
-| Status | `PLANNED` |
+| Status | `DONE` |
 | Depends on | `SPRINT-DCI-01` |
 | Unblocks | `SPRINT-DCI-03` |
 | Execution unit | `PR-DCI-02` |
@@ -138,8 +138,8 @@ Today the registry, the inspector, and the conformance page each hold `0` same-o
 
 ## Definition of done
 
-- [ ] **DoD-DCI-02-01.** All `11` links exist in the net and in the pages, and each reports its declared Transition. Verified by `npx playwright test tests/features/workbench-nav.spec.js --project=features`.
-- [ ] **DoD-DCI-02-02.** The net rule exists, has its unit cases, accepts a stated terminal page, and passes on the real net. Verified by `grep -q "page-place-without-link" scripts/check-net.mjs && test "$(grep -c "page-place-without-link" tests/unit/check-net.test.mjs)" -ge 3 && grep -q "terminalReason" src/net/workbench-net.yaml && node --test tests/unit/check-net.test.mjs && npm run check:net`.
-- [ ] **DoD-DCI-02-03.** Every selector literal is in its source file, the generated files are fresh, and zero-script pages ship no `_astro/` script. Verified by `npm run check:bombadil-nets && npm run docs:check && npm run build && node tests/performance/place-bytes.mjs --enforce-zero-island-places`.
-- [ ] **DoD-DCI-02-04.** The smoke link sets, every feature spec, and the layout at four widths hold. Verified by `npm run test:smoke && npm run test:features && npm run stageshow:sweep -- --strict`.
-- [ ] **DoD-DCI-02-05.** Evidence and the completion row are recorded with the remaining core gates green. Verified by `test -s docs/sprints/_active/evidence/DCI-02-navigation-closure.md && grep -qE $'\tDCI-02-complete\t' docs/sprints/_active/DECISIONS.tsv && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:playwright-discovery && npm run test:unit`.
+- [x] **DoD-DCI-02-01.** All `11` links exist in the net and in the pages, and each reports its declared Transition. Verified by `npx playwright test tests/features/workbench-nav.spec.js --project=features`.
+- [x] **DoD-DCI-02-02.** The net rule exists, has its unit cases, accepts a stated terminal page, and passes on the real net. Verified by `grep -q "page-place-without-link" scripts/check-net.mjs && test "$(grep -c "page-place-without-link" tests/unit/check-net.test.mjs)" -ge 3 && grep -q "terminalReason" src/net/workbench-net.yaml && node --test tests/unit/check-net.test.mjs && npm run check:net`.
+- [x] **DoD-DCI-02-03.** Every selector literal is in its source file, the generated files are fresh, and zero-script pages ship no `_astro/` script. Verified by `npm run check:bombadil-nets && npm run docs:check && npm run build && node tests/performance/place-bytes.mjs --enforce-zero-island-places`.
+- [x] **DoD-DCI-02-04.** The smoke link sets, every feature spec, and the layout at four widths hold. Verified by `npm run test:smoke && npm run test:features && npm run stageshow:sweep -- --strict`.
+- [x] **DoD-DCI-02-05.** Evidence and the completion row are recorded with the remaining core gates green. Verified by `test -s docs/sprints/_active/evidence/DCI-02-navigation-closure.md && grep -qE $'\tDCI-02-complete\t' docs/sprints/_active/DECISIONS.tsv && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:playwright-discovery && npm run test:unit`.

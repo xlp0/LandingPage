@@ -1,5 +1,6 @@
 ---
 import WorkbenchLayout from '../layouts/WorkbenchLayout.astro';
+import WorkbenchNav from '../components/WorkbenchNav.astro';
 import PresentationControls from '../components/PresentationControls.astro';
 ---
 <WorkbenchLayout placeIds={['p_page_fiber_inspector']} title={'Fiber Inspector \u2014 the correctness panel'} dir="ltr" dataTheme="light" viewport="width=device-width, initial-scale=1" enablePresentationController={true}>
@@ -39,6 +40,7 @@ import PresentationControls from '../components/PresentationControls.astro';
   <main id="inspector" role="main">
   <header class="inspector-header">
     <h1>Fiber Inspector</h1>
+    <WorkbenchNav placeId="p_page_fiber_inspector" variant="inline" />
     <PresentationControls defaultTheme="light" />
   </header>
   <p class="note">
@@ -47,6 +49,7 @@ import PresentationControls from '../components/PresentationControls.astro';
     displayed by one fiber. A fiber that has never rendered is marked{' '}
     <span class="unwitnessed">unwitnessed</span>, never as healthy.
   </p>
+  <p class="note">The <a href="/fiber-conformance.html" data-testid="link-conformance-harness" data-effect="navigate">conformance harness</a> renders every fixture for snapshot tests.</p>
   <div id="panel-status">Loading…</div>
 </main>
 

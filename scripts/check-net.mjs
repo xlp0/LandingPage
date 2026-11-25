@@ -504,6 +504,26 @@ export function validateNetEnvelope(
     }
   }
 
+  const navLinkBindings = Object.values(transitionBindings).filter(
+    (binding) => binding && (binding.kind === 'link' || binding.kind === 'redirect')
+  );
+  for (const place of parsedTopology.places) {
+    const binding = placeBindings[place.id];
+    if (!binding || binding.kind !== 'page') continue;
+    const hasTerminalReason =
+      typeof binding.terminalReason === 'string' && binding.terminalReason.trim().length > 0;
+    if (hasTerminalReason || isExceptionActive(binding.exception, currentSprint)) continue;
+    const hasIn = navLinkBindings.some((tb) => tb.toPlaceId === place.id);
+    const hasOut = navLinkBindings.some((tb) => tb.fromPlaceId === place.id);
+    if (!hasIn || !hasOut) {
+      fail(
+        place.id,
+        'page-place-without-link',
+        `Page Place "${place.id}" is missing a declared ${!hasIn ? 'inbound' : 'outbound'} link or redirect Transition`
+      );
+    }
+  }
+
   for (const transition of parsedTopology.transitions) {
     const binding = transitionBindings[transition.id];
     if (!reachability.enabledTransitions.has(transition.id)) {
