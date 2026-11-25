@@ -5,20 +5,25 @@
 | Audience | Scrum masters, BMAD role leads, developers, and operators |
 | BMAD Owner | Scrum Master |
 | Source of Truth | [`./INDEX.md`](./INDEX.md), [`./DECISIONS.tsv`](./DECISIONS.tsv), and [`../INDEX.md`](../INDEX.md) |
-| Status | `IDLE` (`0` active sprints; `Program SLC` graduated `2026-11-20`) |
-| Consensus Kernel | `clm-kernel@0.0.24` |
+| Status | `IDLE` (`0` active sprints; `Program SLC` graduated `2026-11-20`; `Program DCI` proposed `2026-11-24`) |
+| Consensus Kernel | `clm-kernel@0.0.26` |
 | Drift Gate | `npm run docs:check` |
 
 ## Workspace status
 
 **Standby (`0` active sprints as of `2026-11-20`).**
 
-Program SLC (`SPRINT-SLC-00` through `SPRINT-SLC-04`) completed and graduated with operator approval on `2026-11-20` into [`docs/sprints/programs/slc/`](../programs/slc/INDEX.md). Only [`./INDEX.md`](./INDEX.md), [`./README.md`](./README.md), and the canonical append-only [`./DECISIONS.tsv`](./DECISIONS.tsv) decision ledger remain here until a new sprint program begins.
+Program SLC (`SPRINT-SLC-00` through `SPRINT-SLC-04`) completed and graduated with operator approval on `2026-11-20` into [`docs/sprints/programs/slc/`](../programs/slc/INDEX.md). [`./INDEX.md`](./INDEX.md), [`./README.md`](./README.md), and the canonical append-only [`./DECISIONS.tsv`](./DECISIONS.tsv) decision ledger remain here between programs.
+
+Program DCI was proposed on `2026-11-24`. Its plan, its six sprint specifications, and its local backlog sit in this directory. The sprints have status `PLANNED`. The operator confirmed the scope on `2026-11-25` local time. No sprint starts before Flag 2 of the plan holds. The workspace status stays `IDLE` until then.
 
 ## Active artifacts
 
 - **Workspace status index.** [`./INDEX.md`](./INDEX.md)
 - **Canonical decision ledger.** [`./DECISIONS.tsv`](./DECISIONS.tsv)
+- **Proposed Program DCI plan.** [`./dci-plan.md`](./dci-plan.md), with `SPRINT-DCI-00` through `SPRINT-DCI-05` listed in [`./INDEX.md`](./INDEX.md)
+- **Program DCI local backlog.** [`./dci-local-backlog.md`](./dci-local-backlog.md)
+- **Program DCI planning evidence.** [`./evidence/DCI-pre-program-study.md`](./evidence/DCI-pre-program-study.md) and [`./evidence/DCI-egm-review.md`](./evidence/DCI-egm-review.md)
 
 ## Graduated archives
 
