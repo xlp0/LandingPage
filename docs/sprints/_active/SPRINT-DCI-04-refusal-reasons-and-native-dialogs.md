@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-DCI-04` |
 | Source of Truth | [`./dci-plan.md`](./dci-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-DCI-04` |
-| Status | `PLANNED` |
+| Status | `DONE` |
 | Depends on | `SPRINT-DCI-03` |
 | Unblocks | `SPRINT-DCI-05` |
 | Execution unit | `PR-DCI-04` |
@@ -119,8 +119,8 @@ The controls keep the native `disabled` attribute. Sixteen assertions in the fea
 
 ## Definition of done
 
-- [ ] **DoD-DCI-04-01.** The lint is widened, flags the optional-call form, and passes on the tree. Verified by `grep -q "NATIVE_DIALOG_ONLY_PATHS" scripts/check-explorable-gui.mjs && node -e "import('./scripts/check-explorable-gui.mjs').then((m) => process.exit(m.lintNativeDialogs('globalThis.prompt?.(1)', { file: 'x.js' }).length === 1 ? 0 : 1))" && node --test tests/unit/check-explorable-gui.test.mjs && npm run check:explorable-gui`.
-- [ ] **DoD-DCI-04-02.** Each refusal condition yields its code, its controls, and its sentence. Verified by `node --test tests/unit/refusal-reasons.test.mjs`.
-- [ ] **DoD-DCI-04-03.** The Lab shows the stated reasons, the portal and the navigator use page elements, and no native dialog fires. Verified by `npx playwright test tests/features/refusal-reasons-and-dialogs.spec.js --project=features`.
-- [ ] **DoD-DCI-04-04.** The portal contract tests, the smoke specs, and every feature spec pass, and the layout holds at four widths. Verified by `node --test tests/single-page-mcard.test.mjs && npm run test:smoke && npm run test:features && npm run stageshow:sweep -- --strict`.
-- [ ] **DoD-DCI-04-05.** Evidence and the completion row are recorded with the remaining core gates green. Verified by `test -s docs/sprints/_active/evidence/DCI-04-refusal-reasons.md && grep -qE $'\tDCI-04-complete\t' docs/sprints/_active/DECISIONS.tsv && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run build && npm run test:unit`.
+- [x] **DoD-DCI-04-01.** The lint is widened, flags the optional-call form, and passes on the tree. Verified by `grep -q "NATIVE_DIALOG_ONLY_PATHS" scripts/check-explorable-gui.mjs && node -e "import('./scripts/check-explorable-gui.mjs').then((m) => process.exit(m.lintNativeDialogs('globalThis.prompt?.(1)', { file: 'x.js' }).length === 1 ? 0 : 1))" && node --test tests/unit/check-explorable-gui.test.mjs && npm run check:explorable-gui`.
+- [x] **DoD-DCI-04-02.** Each refusal condition yields its code, its controls, and its sentence. Verified by `node --test tests/unit/refusal-reasons.test.mjs`.
+- [x] **DoD-DCI-04-03.** The Lab shows the stated reasons, the portal and the navigator use page elements, and no native dialog fires. Verified by `npx playwright test tests/features/refusal-reasons-and-dialogs.spec.js --project=features`.
+- [x] **DoD-DCI-04-04.** The portal contract tests, the smoke specs, and every feature spec pass, and the layout holds at four widths. Verified by `node --test tests/single-page-mcard.test.mjs && npm run test:smoke && npm run test:features && npm run stageshow:sweep -- --strict`.
+- [x] **DoD-DCI-04-05.** Evidence and the completion row are recorded with the remaining core gates green. Verified by `test -s docs/sprints/_active/evidence/DCI-04-refusal-reasons.md && grep -qE $'\tDCI-04-complete\t' docs/sprints/_active/DECISIONS.tsv && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run build && npm run test:unit`.

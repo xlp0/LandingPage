@@ -51,6 +51,7 @@ export default function RecordingRibbonIsland() {
       <button id="btn-rec-start" className="toolbar-btn" title="Start recording interactions" data-testid="btn-rec-start">
         <LabIcon name="circle-dot" /> Start
       </button>
+      <span id="rec-start-reason" data-testid="rec-start-reason" className="rec-start-reason" hidden></span>
       <button id="btn-rec-pause" className="toolbar-btn" hidden title="Pause recording" data-testid="btn-rec-pause">
         <LabIcon name="pause" /> Pause
       </button>

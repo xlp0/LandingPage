@@ -5,7 +5,7 @@
 | Audience | Scrum masters, BMAD role leads, developers, and operators |
 | BMAD Owner | Scrum Master |
 | Source of Truth | [`./INDEX.md`](./INDEX.md), [`./DECISIONS.tsv`](./DECISIONS.tsv), and [`../INDEX.md`](../INDEX.md) |
-| Status | `ACTIVE` (`Program DCI`, `SPRINT-DCI-00..03` complete, `SPRINT-DCI-04` in progress) |
+| Status | `ACTIVE` (`Program DCI`, `SPRINT-DCI-00..04` complete, `SPRINT-DCI-05` in progress) |
 | Consensus Kernel | `clm-kernel@0.0.26` |
 | Drift Gate | `npm run docs:check` |
 

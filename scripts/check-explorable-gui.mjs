@@ -17,6 +17,7 @@ const LAYOUT_DIR = path.join(ROOT_DIR, 'src', 'layouts');
 const COMPONENT_DIR = path.join(ROOT_DIR, 'src', 'components');
 const PAGE_DIR = path.join(ROOT_DIR, 'src', 'pages');
 const HARNESS_DIR = path.join(ROOT_DIR, 'js', 'harness');
+export const NATIVE_DIALOG_ONLY_PATHS = Object.freeze(['js/runtime', 'js/landing-page-mcard.js']);
 const EFFECTS = new Set(['navigate', 'persist', 'destructive', 'external', 'download', 'file-picker']);
 const CONTROL_TAGS = new Set(['button', 'a', 'input', 'select', 'textarea']);
 const CLICKABLE_ONCLICK_TAGS = new Set(['button', 'a', 'input']);
@@ -92,6 +93,25 @@ function walk(dir, out = []) {
   return out;
 }
 
+export function lintNativeDialogs(text, { file = 'inline' } = {}) {
+  const violations = [];
+  const pattern = /\b(?:(?:window|globalThis)\s*\.\s*)?(confirm|alert|prompt)\s*(?:\?\.)?\s*\(/g;
+  for (const match of text.matchAll(pattern)) {
+    const line = text.slice(0, match.index).split('\n').length;
+    const before = text.slice(Math.max(0, match.index - 24), match.index);
+    if (/function\s+$/.test(before)) continue;
+    const hasGlobalObject = /^(?:window|globalThis)\s*\./.test(match[0]);
+    if (!hasGlobalObject && /\.\s*$/.test(before)) continue;
+    violations.push({
+      file,
+      line,
+      rule: 'native-dialog',
+      message: `${match[1]}() is a native dialog`
+    });
+  }
+  return violations;
+}
+
 export function lintText(text, { file = 'inline', island = false, inScopePage = false } = {}) {
   const violations = [];
   const add = (rule, line, message) => violations.push({ file, line, rule, message });
@@ -113,12 +133,7 @@ export function lintText(text, { file = 'inline', island = false, inScopePage = 
     }
   }
 
-  for (const match of text.matchAll(/\b(?:window\s*\.\s*)?(confirm|alert|prompt)\s*\(/g)) {
-    const line = text.slice(0, match.index).split('\n').length;
-    const before = text.slice(Math.max(0, match.index - 20), match.index);
-    if (/function\s+$/.test(before)) continue;
-    add('native-dialog', line, `${match[1]}() is a native dialog`);
-  }
+  violations.push(...lintNativeDialogs(text, { file }));
 
   return violations;
 }
@@ -128,7 +143,8 @@ export function lintTree({
   layoutDir = LAYOUT_DIR,
   componentDir = COMPONENT_DIR,
   pageDir = PAGE_DIR,
-  harnessDir = HARNESS_DIR
+  harnessDir = HARNESS_DIR,
+  nativeDialogOnlyPaths = NATIVE_DIALOG_ONLY_PATHS.map((rel) => path.join(ROOT_DIR, rel))
 } = {}) {
   const violations = [];
   for (const file of walk(islandDir)) {
@@ -147,6 +163,13 @@ export function lintTree({
   }
   for (const file of walk(harnessDir)) {
     violations.push(...lintText(fs.readFileSync(file, 'utf8'), { file, island: false }));
+  }
+  for (const target of nativeDialogOnlyPaths) {
+    if (!fs.existsSync(target)) continue;
+    const files = fs.statSync(target).isDirectory() ? walk(target) : [target];
+    for (const file of files) {
+      violations.push(...lintNativeDialogs(fs.readFileSync(file, 'utf8'), { file }));
+    }
   }
   return violations;
 }

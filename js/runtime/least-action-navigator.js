@@ -197,6 +197,7 @@ export class LeastActionNavigator {
             <span>• Suh Axiom 1 & 2: <code>{FR} = [A]{DP}</code>, <code>I = -log₂(P)</code></span>
             <span>• Leinster SNR: <code>1 - (1-s)^D_q</code></span>
           </div>
+          <p id="least-action-status" data-testid="least-action-status" role="status"></p>
           <button class="action-commit-btn" id="lock-direction-btn">
             Lock Direction (Geodesic Geometer)
           </button>
@@ -297,6 +298,8 @@ export class LeastActionNavigator {
   render() {
     const dir = CANDIDATE_SPRINT_DIRECTIONS[this.currentDirection];
     const contentEl = document.getElementById('least-action-content');
+    const statusEl = this.container?.querySelector('#least-action-status');
+    if (statusEl) statusEl.textContent = '';
     if (!contentEl || !dir) return;
 
     const statusColor = dir.isRealAction ? (dir.recommended ? 'var(--color-success)' : 'var(--color-primary)') : 'var(--color-danger)';
@@ -536,7 +539,10 @@ export class LeastActionNavigator {
     if (!dir) return;
 
     if (!dir.isRealAction) {
-      alert(`Cannot lock ${dir.sprintNumber}: Imaginary action metric (ds ∈ iℝ) violates Least Action Principle. Pruned at Maxwell Gate.`);
+      const statusEl = this.container?.querySelector('#least-action-status');
+      if (statusEl) {
+        statusEl.textContent = `Cannot lock ${dir.sprintNumber}: Imaginary action metric (ds ∈ iℝ) violates Least Action Principle. Pruned at Maxwell Gate.`;
+      }
       return;
     }
 

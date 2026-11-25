@@ -835,6 +835,11 @@ button.nav-action-link {
   overflow-wrap: anywhere;
 }
 
+.rec-start-reason {
+  font-size: 0.72rem;
+  color: var(--badge-danger-text, #fca5a5);
+}
+
 .stage-well {
   flex: 1 1 auto;
   min-height: 0;

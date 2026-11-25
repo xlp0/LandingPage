@@ -5,7 +5,7 @@
 | Audience | Scrum masters, BMAD role owners, developers, and operators |
 | BMAD Owner | Scrum Master |
 | Source of Truth | [`./DECISIONS.tsv`](./DECISIONS.tsv) and [`../INDEX.md`](../INDEX.md) |
-| Status | `ACTIVE` (`Program DCI`, `SPRINT-DCI-00` through `SPRINT-DCI-03` complete, `SPRINT-DCI-04` starting) |
+| Status | `ACTIVE` (`Program DCI`, `SPRINT-DCI-00` through `SPRINT-DCI-04` complete, `SPRINT-DCI-05` verification/graduation in progress) |
 | Consensus Kernel | `clm-kernel@0.0.26` |
 | Drift Gate | `npm run docs:check` |
 
@@ -17,7 +17,7 @@ Program SLC (`SPRINT-SLC-00` through `SPRINT-SLC-04`) graduated with operator ap
 
 ## Active program: Program DCI
 
-Program DCI (Declared reach, Closed navigation, and Interface state) was proposed on `2026-11-24`, confirmed for six-sprint scope on `2026-11-25`, and started on pinned commit `7837fab779360ee8daaeb941ee06f809465e6260` on `2026-11-26` after Flag 1 (`DCI-D04`) and Flag 2 approval. `SPRINT-DCI-00` through `SPRINT-DCI-03` are `DONE`; `SPRINT-DCI-04` is `IN_PROGRESS`.
+Program DCI (Declared reach, Closed navigation, and Interface state) was proposed on `2026-11-24`, confirmed for six-sprint scope on `2026-11-25`, and started on pinned commit `7837fab779360ee8daaeb941ee06f809465e6260` on `2026-11-26` after Flag 1 (`DCI-D04`) and Flag 2 approval. `SPRINT-DCI-00` through `SPRINT-DCI-04` are `DONE`; `SPRINT-DCI-05` is `IN_PROGRESS`.
 
 | Order | Sprint | Goal | Status |
 | ---: | --- | --- | :---: |
@@ -26,8 +26,8 @@ Program DCI (Declared reach, Closed navigation, and Interface state) was propose
 | 2 | [`SPRINT-DCI-01`](./SPRINT-DCI-01-sprint-registry-estate-map.md) | Groups, filters, search, and deep links on the sprint registry, with safe rendering | `DONE` |
 | 3 | [`SPRINT-DCI-02`](./SPRINT-DCI-02-navigation-closure.md) | A nav on four pages and a net rule for pages without links | `DONE` |
 | 4 | [`SPRINT-DCI-03`](./SPRINT-DCI-03-linkable-lab-state.md) | Device, size, orientation, and mode in the Lab URL | `DONE` |
-| 5 | [`SPRINT-DCI-04`](./SPRINT-DCI-04-refusal-reasons-and-native-dialogs.md) | A visible reason for each disabled stage control, and no native dialog | `IN_PROGRESS` |
-| 6 | [`SPRINT-DCI-05`](./SPRINT-DCI-05-verification-and-graduation.md) | Full gate matrix, living docs, and the archive | `PLANNED` |
+| 5 | [`SPRINT-DCI-04`](./SPRINT-DCI-04-refusal-reasons-and-native-dialogs.md) | A visible reason for each disabled stage control, and no native dialog | `DONE` |
+| 6 | [`SPRINT-DCI-05`](./SPRINT-DCI-05-verification-and-graduation.md) | Full gate matrix, living docs, and the archive | `IN_PROGRESS` |
 | Held | [`dci-local-backlog.md`](./dci-local-backlog.md) | Five candidates with entry conditions and one to-do list, including the drag and command-line work | `HELD` |
 
 Planning evidence is in [`evidence/DCI-pre-program-study.md`](./evidence/DCI-pre-program-study.md) and [`evidence/DCI-egm-review.md`](./evidence/DCI-egm-review.md).

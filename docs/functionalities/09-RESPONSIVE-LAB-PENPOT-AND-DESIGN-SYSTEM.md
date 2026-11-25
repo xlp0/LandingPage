@@ -76,6 +76,15 @@ Governed by specification **RVP-02**, the device registry replaces ad-hoc CSS me
 
 - **Single Target Ingestion (`?target=<URL>`)**: Dynamically binds the laboratory viewport stage to any designated LandingPage URL (e.g., `http://localhost:4321/` or `/index.html`), enabling focused benchmarking of a single web target.
 - **Linkable Lab URL State (`?device=...&w=...&h=...&orientation=...&mode=...`)**: Synchronizes user-committed device preset (`device`), custom dimensions (`w`, `h`), orientation (`portrait`, `landscape`), and dock mode (`explore`, `guided-spa`, `bombadil`, `verify`) into the address bar with `history.replaceState` and a `#btn-copy-lab-link` copy button, while reporting ignored query parameters in `#lab-url-state-notice`. Example link: `/responsive-lab.html?target=%2Findex.html&device=iphone-16-pro&orientation=landscape&mode=verify`.
+- **Disabled Control Refusal Reasons (`SPRINT-DCI-04`)**: Disabled stage and recorder controls surface visible explanations in `#stage-refusal-hint` and `#rec-start-reason` linked via `aria-describedby` (`js/harness/refusal-reasons.js`):
+
+  | Code | Condition | Controls Named | Sentence |
+  | --- | --- | --- | --- |
+  | `full-size-has-no-device` | Full stage selected | `btn-rotate-viewport`, `btn-orient-vertical`, `btn-orient-horizontal`, `btn-safe-area-toggle` | `Rotate, orientation, and Safe-area need a device. Pick a preset or enter a width and a height.` |
+  | `square-size-has-one-orientation` | Custom square size selected | `btn-rotate-viewport`, `btn-orient-vertical`, `btn-orient-horizontal` | `A square size has one orientation, so Rotate has nothing to change.` |
+  | `device-has-no-safe-area` | Non-full device without insets | `btn-safe-area-toggle` | `Safe-area guides need a device that declares insets. Pick a phone preset.` |
+  | `capture-unavailable` | Recording source unavailable | `btn-rec-start` | `sourceReason` (fallback `Recording unavailable`) |
+
 - **Full-Window Viewport Workbench**: Emulates target screen sizes inside an isolated sandbox container.
 - **Dynamic Rotation (`INV-RVP-01`)**: One-click toggle between Portrait and Landscape orientations, recalculating layout constraints and swapping width/height in real time.
 - **Layout Freeze & Overflow Detection**: Stress-tests reflow performance by cycling rapidly through viewport dimensions and asserting zero element clipping or horizontal overflow.

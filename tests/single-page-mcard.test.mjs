@@ -542,6 +542,40 @@ test('DoD-SMR-09-05: the HUD pill renders hash, switcher, and the Studio deep li
   assert.equal(typeof listeners.keydown, 'function', 'the controller binds the quick-switch key');
   listeners.keydown({ metaKey: true, key: 'k', preventDefault: () => { listeners.prevented = true; } });
   assert.equal(listeners.prevented, true, 'Cmd+K is intercepted');
+
+  // DCI-04: custom requestUrl option drives onExternalUrl without invoking globalThis.prompt.
+  const openBtnHandlers = [];
+  const docWithBtn = {
+    getElementById: (id) => stub(id),
+    querySelector: (selector) => stub(selector),
+    addEventListener: () => {},
+  };
+  let receivedExternal = null;
+  const controller = await mountSinglePageMCard({
+    root: {
+      ...docWithBtn,
+      getElementById: (id) =>
+        id === 'mcard-sovereign-pill-mount'
+          ? {
+              innerHTML: '',
+              querySelector: (sel) => ({
+                addEventListener: (_type, fn) => {
+                  if (sel === '[data-role="open-url"]') openBtnHandlers.push(fn);
+                },
+              }),
+            }
+          : stub(id),
+    },
+    api,
+    samples,
+    requestUrl: async () => 'https://example.org/demo',
+    onExternalUrl: async (url) => {
+      receivedExternal = url;
+    },
+  });
+  assert.ok(controller && openBtnHandlers.length > 0);
+  await openBtnHandlers[0]();
+  assert.equal(receivedExternal, 'https://example.org/demo');
 });
 
 test('DoD-SMR-09-08: the receipt and documentation delta are emitted and schema-shaped', (t) => {

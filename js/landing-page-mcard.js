@@ -187,6 +187,7 @@ export async function mountSinglePageMCard({
   api = createApiClient(''),
   samples = [],
   onExternalUrl = null,
+  requestUrl = async () => '',
 } = {}) {
   if (!root) throw new Error('mountSinglePageMCard requires a document');
   const host = root.getElementById?.('single-page-mcard-host') ?? root.querySelector('#single-page-mcard-host');
@@ -223,7 +224,7 @@ export async function mountSinglePageMCard({
       if (intent.kind === 'sample') bind({ content: `# Sample: ${intent.handle}` });
     });
     pillMount.querySelector('[data-role="open-url"]')?.addEventListener('click', async () => {
-      const input = globalThis.prompt?.('External LandingPage URL') ?? '';
+      const input = (await requestUrl()) ?? '';
       const intent = parseSwitchIntent(input, samples);
       if (intent.kind === 'url' && onExternalUrl) return onExternalUrl(intent.url);
       if (intent.kind === 'url') return bind({ url: intent.url });

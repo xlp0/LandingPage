@@ -14,6 +14,7 @@ import {
   setSelectionOrientation,
   resolveViewportMetrics
 } from './viewport-geometry.js';
+import { stageRefusals } from './refusal-reasons.js';
 
 export function createViewportStage(options = {}) {
   const onPresetDeactivate = options.onPresetDeactivate || null;
@@ -279,6 +280,29 @@ export function createViewportStage(options = {}) {
     btnOrientVertical?.classList.toggle('active', rotatable && isPortrait);
     btnOrientHorizontal?.setAttribute('aria-pressed', String(rotatable && isLandscape));
     btnOrientVertical?.setAttribute('aria-pressed', String(rotatable && isPortrait));
+
+    const refusals = stageRefusals({ kind: metrics.kind, rotatable, hasSafeArea });
+    const refusedControlIds = new Set(refusals.flatMap((entry) => entry.controls));
+    const stageButtonsById = [
+      ['btn-rotate-viewport', rotateBtn],
+      ['btn-orient-vertical', btnOrientVertical],
+      ['btn-orient-horizontal', btnOrientHorizontal],
+      ['btn-safe-area-toggle', safeAreaToggleBtn]
+    ];
+    for (const [id, btn] of stageButtonsById) {
+      if (!btn) continue;
+      if (refusedControlIds.has(id)) {
+        btn.setAttribute('aria-describedby', 'stage-refusal-hint');
+      } else {
+        btn.removeAttribute('aria-describedby');
+      }
+    }
+    const refusalHintEl = typeof document !== 'undefined' ? document.getElementById('stage-refusal-hint') : null;
+    if (refusalHintEl) {
+      const text = refusals.map((entry) => entry.sentence).join(' ');
+      refusalHintEl.textContent = text;
+      refusalHintEl.hidden = refusals.length === 0;
+    }
   }
 
   function orientationDisplayText(orientation) {

@@ -5,6 +5,7 @@
  */
 
 import { setIcon } from '../ui/icons.js';
+import { recorderRefusal } from './refusal-reasons.js';
 
 export function initRecordingRibbon(options = {}) {
   const {
@@ -21,6 +22,7 @@ export function initRecordingRibbon(options = {}) {
   if (!ribbon) return null;
 
   const btnStart = ribbon.querySelector('#btn-rec-start');
+  const recStartReason = ribbon.querySelector('#rec-start-reason');
   const btnPause = ribbon.querySelector('#btn-rec-pause');
   const btnResume = ribbon.querySelector('#btn-rec-resume');
   const btnStop = ribbon.querySelector('#btn-rec-stop');
@@ -69,6 +71,20 @@ export function initRecordingRibbon(options = {}) {
     } else {
       btnStart.disabled = false;
       btnStart.title = 'Start recording interactions';
+    }
+    const recRefusal = recorderRefusal({ sourceKind, sourceReason: recorder.source?.reason });
+    if (recRefusal) {
+      btnStart.setAttribute('aria-describedby', 'rec-start-reason');
+      if (recStartReason) {
+        recStartReason.textContent = recRefusal.sentence;
+        recStartReason.hidden = false;
+      }
+    } else {
+      btnStart.removeAttribute('aria-describedby');
+      if (recStartReason) {
+        recStartReason.textContent = '';
+        recStartReason.hidden = true;
+      }
     }
 
     if (state === 'IDLE' || state === 'FINALIZED') {

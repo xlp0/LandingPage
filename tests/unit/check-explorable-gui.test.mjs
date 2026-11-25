@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { lintText, lintTree } from '../../scripts/check-explorable-gui.mjs';
+import { lintNativeDialogs, lintText, lintTree } from '../../scripts/check-explorable-gui.mjs';
 
 test('the tree passes the lint', () => {
   const violations = lintTree();
@@ -54,4 +54,11 @@ test('an onclick on a non-control fails', () => {
   const violations = lintText('<div onclick="go()">x</div>');
   assert.ok(violations.some((v) => v.rule === 'onclick-on-non-control'));
   assert.ok(lintText('<button onclick="go()" data-testid="b">x</button>', { island: true }).every((v) => v.rule !== 'onclick-on-non-control'));
+});
+
+test('DCI-04 native dialog scanner flags globalThis.prompt?.( and alert(, allows store.confirm( and function confirm(', () => {
+  assert.equal(lintNativeDialogs('const x = globalThis.prompt?.("URL") ?? "";').length, 1);
+  assert.equal(lintNativeDialogs('alert("blocked");').length, 1);
+  assert.deepEqual(lintNativeDialogs('await store.confirm(id);'), []);
+  assert.deepEqual(lintNativeDialogs('function confirm(x) { return x; }'), []);
 });

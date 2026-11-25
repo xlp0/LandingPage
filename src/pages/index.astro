@@ -714,9 +714,9 @@ import { iconMarkup } from '../../js/ui/icons.js';
            aria-label="Active LandingPage MCard"></section>
   <div id="mcard-sovereign-pill-mount"></div>
   <script is:inline type="module">
-    import { mountSinglePageMCard } from './js/landing-page-mcard.js';
+    import { mountSinglePageMCard, createApiClient, parseSwitchIntent } from './js/landing-page-mcard.js';
     import { createMembrane } from './js/external-portal-membrane.js';
-    import { createApiClient } from './js/landing-page-mcard.js';
+    import { requestExternalUrl } from './js/ui/open-url-dialog.js';
 
     const api = createApiClient('');
     const membrane = createMembrane({ probe: (url) => api.probe(url) });
@@ -729,6 +729,11 @@ import { iconMarkup } from '../../js/ui/icons.js';
     mountSinglePageMCard({
       api,
       samples,
+      requestUrl: () =>
+        requestExternalUrl(document.getElementById('open-url-dialog'), {
+          validate: (text) => parseSwitchIntent(text, []).kind === 'url',
+          returnFocusTo: document.querySelector('[data-role="open-url"]'),
+        }),
       onExternalUrl: async (url) => {
         const resolved = await membrane.resolve(url);
         document.getElementById('single-page-mcard-host').innerHTML = resolved.html;
@@ -736,4 +741,16 @@ import { iconMarkup } from '../../js/ui/icons.js';
     }).catch((error) => console.warn('[SMR-09] single-page MCard host:', error.message));
   </script>
   </main>
+
+  <dialog id="open-url-dialog" class="open-url-dialog" data-testid="open-url-dialog" aria-labelledby="open-url-title">
+    <form method="dialog" novalidate>
+      <h2 id="open-url-title">Open an external LandingPage</h2>
+      <input type="url" id="open-url-input" data-testid="open-url-input" placeholder="https://example.org" />
+      <p id="open-url-error" class="open-url-error" data-testid="open-url-error" role="alert" hidden></p>
+      <div class="open-url-actions">
+        <button type="submit" class="control-btn" data-testid="open-url-submit" data-effect="external">Open</button>
+        <button type="button" class="control-btn" data-testid="open-url-cancel">Cancel</button>
+      </div>
+    </form>
+  </dialog>
 </WorkbenchLayout>
