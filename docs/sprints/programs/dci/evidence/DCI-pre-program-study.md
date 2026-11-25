@@ -4,7 +4,7 @@
 | --- | --- |
 | Audience | Scrum masters, BMAD role owners, UX designers, architects, developers, and TEA engineers |
 | BMAD Owner | Product Manager with Architect, UX Designer, and TEA |
-| Source of Truth | [`../dci-plan.md`](../dci-plan.md) and [`../DECISIONS.tsv`](../DECISIONS.tsv) |
+| Source of Truth | [`../dci-plan.md`](../dci-plan.md) and [`../DECISIONS.tsv`](../../../_active/DECISIONS.tsv) |
 | Consensus Kernel | `clm-kernel@0.0.26` in the working tree |
 | Study date | `2026-11-24` |
 

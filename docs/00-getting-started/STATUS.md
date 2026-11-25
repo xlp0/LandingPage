@@ -17,7 +17,7 @@
 | **Program BPV (`SPRINT-BPV-00..07`)** | Bombadil `0.7.10` property verification, shared page-state contract, explorable GUI checks, trace-to-net replay, and local Docker nightly scheduler | Graduated (2026-11-18) | [`docs/sprints/programs/bpv/`](../sprints/programs/bpv/INDEX.md) |
 | **Program SSG (`SPRINT-SSG-00..08`)** | StageShow `1.1.1` device frames and layout craft, Bombadil runner dashboard (`8th` island), `12` built-in device presets, responsive tiers, and Shadow DOM portal showcase | Graduated (2026-11-20) | [`docs/sprints/programs/ssg/`](../sprints/programs/ssg/INDEX.md) |
 | **Program SLC (`SPRINT-SLC-00..04`)** | Post-SSG local cleanup: retired Kubernetes/ArgoCD/Grafana collectors, legacy example games, `app.astro` Mission Control, Redux stores and packages, and `routes/auth.js` | Graduated (2026-11-20) | [`docs/sprints/programs/slc/`](../sprints/programs/slc/INDEX.md) |
-| **Program DCI (`SPRINT-DCI-00..05`)** | Declared reach, closed cross-page navigation (`WorkbenchNav`), safe sprint registry grouping/filters/deep-links, linkable Lab URL state, stage/recorder refusal reasons, and in-page dialogs (`clm-kernel@0.0.26`) | Verification complete (`2026-11-26`; awaiting graduation) | [`docs/sprints/_active/`](../sprints/_active/INDEX.md) |
+| **Program DCI (`SPRINT-DCI-00..05`)** | Declared reach, closed cross-page navigation (`WorkbenchNav`), safe sprint registry grouping/filters/deep-links, linkable Lab URL state, stage/recorder refusal reasons, and in-page dialogs (`clm-kernel@0.0.26`) | Graduated (`2026-11-26`) | [`docs/sprints/programs/dci/`](../sprints/programs/dci/INDEX.md) |
 
 ## Certified Device-Sensitive and Petri Net Capabilities
 

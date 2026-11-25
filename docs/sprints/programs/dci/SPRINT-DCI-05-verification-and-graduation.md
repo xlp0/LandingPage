@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-DCI-05` |
 | Source of Truth | [`./dci-plan.md`](./dci-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-DCI-05` |
-| Status | `IN_PROGRESS` |
+| Status | `DONE` |
 | Depends on | `SPRINT-DCI-01`, `SPRINT-DCI-02`, `SPRINT-DCI-03`, `SPRINT-DCI-04` |
 | Unblocks | Graduation of Program DCI |
 | Execution unit | `PR-DCI-05` |
@@ -42,7 +42,7 @@ The program ends with one run of every gate on one commit, a comparison of that 
    - `docs/01-architecture/workbench-net.md`: regenerate with `npm run docs:gen-net`.
 5. **Review the backlog.** For each candidate in [`./dci-local-backlog.md`](./dci-local-backlog.md), record whether its entry condition holds on the graduation date. A candidate whose condition holds is named in the evidence file for the operator. This sprint starts none of them.
 6. **Ask the operator to graduate.** Graduation needs explicit operator approval, as it did for Program SLC. Record the approval in a `DECISIONS.tsv` row whose `phase` is `DCI-graduation`.
-7. **Archive.** Move `dci-plan.md`, `dci-local-backlog.md`, and the six sprint files to `docs/sprints/programs/dci/`. Move every `evidence/DCI-*.md` file to `docs/sprints/programs/dci/evidence/`. `DECISIONS.tsv` stays in `docs/sprints/_active/`, so rewrite the links to it in the moved files. Each `](./DECISIONS.tsv)` becomes `](../../_active/DECISIONS.tsv)`. Each `](../DECISIONS.tsv)` under `evidence/` becomes `](../../../_active/DECISIONS.tsv)`. Add `docs/sprints/programs/dci/INDEX.md` in the shape of `docs/sprints/programs/ssg/INDEX.md`. Update `docs/sprints/INDEX.md`, `docs/sprints/README.md`, `docs/sprints/_active/INDEX.md`, `docs/sprints/_active/README.md`, `docs/INDEX.md`, `docs/README.md`, and the list of graduated programs in the root `README.md`. Set the Status row of the two active index files to `IDLE` with `Program DCI` graduated and the date.
+7. **Archive.** Move `dci-plan.md`, `dci-local-backlog.md`, and the six sprint files to `docs/sprints/programs/dci/`. Move every `evidence/DCI-*.md` file to `docs/sprints/programs/dci/evidence/`. `DECISIONS.tsv` stays in `docs/sprints/_active/`, so rewrite the links to it in the moved files. Each `](../../../_active/DECISIONS.tsv)` becomes `](../../../_active/DECISIONS.tsv)`. Each `](../../DECISIONS.tsv)` under `evidence/` becomes `](../../../../_active/DECISIONS.tsv)`. Add `docs/sprints/programs/dci/INDEX.md` in the shape of `docs/sprints/programs/ssg/INDEX.md`. Update `docs/sprints/INDEX.md`, `docs/sprints/README.md`, `docs/sprints/_active/INDEX.md`, `docs/sprints/_active/README.md`, `docs/INDEX.md`, `docs/README.md`, and the list of graduated programs in the root `README.md`. Set the Status row of the two active index files to `IDLE` with `Program DCI` graduated and the date.
 
 ## Files
 
@@ -98,5 +98,5 @@ The program ends with one run of every gate on one commit, a comparison of that 
 - [x] **DoD-DCI-05-01.** Thirteen of the fourteen graduation gates exit `0` on one commit. Verified by `npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:net && npm run check:explorable-gui && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run build && npm run test:unit && npm run test:smoke && npm run test:components && npm run test:features && npm run test:smoke:cross-browser`.
 - [x] **DoD-DCI-05-02.** The fourteenth gate passes. The layout holds on every route at four widths. Verified by `npm run stageshow:sweep -- --strict`.
 - [x] **DoD-DCI-05-03.** The four feature sprints each have a completion row, and the registry page writes no markup. Verified by `test "$(grep -cE $'\tDCI-0[1-4]-complete\t' docs/sprints/_active/DECISIONS.tsv)" -eq 4 && ! grep -n 'innerHTML' src/pages/sprint-registry.astro`.
-- [ ] **DoD-DCI-05-04.** The archive holds the program and its evidence, and every doc link resolves. Verified by `test -s docs/sprints/programs/dci/INDEX.md && test -s docs/sprints/programs/dci/dci-plan.md && test -s docs/sprints/programs/dci/evidence/DCI-05-graduation.md && npm run docs:check`.
-- [ ] **DoD-DCI-05-05.** The operator approval is recorded, and the workspace status line reads idle. Verified by `grep -qE $'\tDCI-graduation\t' docs/sprints/_active/DECISIONS.tsv && grep -qE '^\| Status \| .IDLE. \(.*Program DCI. graduated' docs/sprints/_active/INDEX.md`.
+- [x] **DoD-DCI-05-04.** The archive holds the program and its evidence, and every doc link resolves. Verified by `test -s docs/sprints/programs/dci/INDEX.md && test -s docs/sprints/programs/dci/dci-plan.md && test -s docs/sprints/programs/dci/evidence/DCI-05-graduation.md && npm run docs:check`.
+- [x] **DoD-DCI-05-05.** The operator approval is recorded, and the workspace status line reads idle. Verified by `grep -qE $'\tDCI-graduation\t' docs/sprints/_active/DECISIONS.tsv && grep -qE '^\| Status \| .IDLE. \(.*Program DCI. graduated' docs/sprints/_active/INDEX.md`.

@@ -13,7 +13,11 @@ Welcome to the master documentation index for **PKC Landing Page, Universal 4-Mo
 
 ## Sprint Programs and Governance
 
-- **[Active Sprint Workspace (`docs/sprints/_active/`)](sprints/_active/INDEX.md)** (Active with Program DCI; holds the canonical [`DECISIONS.tsv`](sprints/_active/DECISIONS.tsv) ledger)
+- **[Active Sprint Workspace (`docs/sprints/_active/`)](sprints/_active/INDEX.md)** (Standby `IDLE`; `Program DCI` graduated `2026-11-26`; holds the canonical [`DECISIONS.tsv`](sprints/_active/DECISIONS.tsv) ledger)
+- **[Program DCI (`docs/sprints/programs/dci/`)](sprints/programs/dci/INDEX.md)** (Graduated `2026-11-26`)
+  - [Program DCI Plan](sprints/programs/dci/dci-plan.md)
+  - [SPRINT-DCI-05 Verification and Graduation](sprints/programs/dci/SPRINT-DCI-05-verification-and-graduation.md)
+  - [DCI-05 Graduation Report](sprints/programs/dci/evidence/DCI-05-graduation.md)
 - **[Program SLC (`docs/sprints/programs/slc/`)](sprints/programs/slc/INDEX.md)** (Graduated `2026-11-20`)
   - [Program SLC Plan](sprints/programs/slc/slc-plan.md)
   - [SPRINT-SLC-04 Auth Route Retirement, Final Verification, and Graduation](sprints/programs/slc/SPRINT-SLC-04-auth-route-retirement-and-graduation.md)

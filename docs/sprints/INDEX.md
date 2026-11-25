@@ -5,16 +5,26 @@
 | Audience | Scrum masters, product managers, architects, developers, and operators |
 | BMAD Owner | Scrum Master (`bmad-agent-pm` / Scrum Master) |
 | Source of Truth | [`docs/sprints/_active/INDEX.md`](./_active/INDEX.md) and [`docs/sprints/_active/DECISIONS.tsv`](./_active/DECISIONS.tsv) |
-| Status | `ACTIVE` (`Program DCI`; `6` graduated programs archived) |
+| Status | `IDLE` (`0` active sprints; `7` graduated programs archived) |
 | Drift Gate | `npm run docs:check` |
 
-## Active program
+## Active workspace
 
-- [**Active Sprint Workspace (`docs/sprints/_active/`)**](./_active/INDEX.md) (`ACTIVE` with `Program DCI`; holds the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) ledger)
-- [**Program DCI (`docs/sprints/_active/dci-plan.md`)**](./_active/dci-plan.md) (`SPRINT-DCI-00..04` complete; `SPRINT-DCI-05` in progress)
+- [**Active Sprint Workspace (`docs/sprints/_active/`)**](./_active/INDEX.md) (`IDLE`; `Program DCI` graduated `2026-11-26`; holds the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) ledger)
 
 ## Graduated programs
 
+- [**Program DCI (`docs/sprints/programs/dci/`)**](./programs/dci/INDEX.md) (Graduated `2026-11-26`; declared reach, closed cross-page navigation via `WorkbenchNav`, safe sprint registry grouping and deep links, linkable Lab URL state, stage/recorder refusal reasons, and in-page dialogs on `clm-kernel@0.0.26`)
+  - [DCI Program Index](./programs/dci/INDEX.md)
+  - [DCI Execution Plan](./programs/dci/dci-plan.md)
+  - [DCI Local Backlog](./programs/dci/dci-local-backlog.md)
+  - [DCI-00 Pinned Baseline and Stored State](./programs/dci/SPRINT-DCI-00-pinned-baseline-and-stored-state.md)
+  - [DCI-01 Sprint Registry Estate Map](./programs/dci/SPRINT-DCI-01-sprint-registry-estate-map.md)
+  - [DCI-02 Navigation Closure](./programs/dci/SPRINT-DCI-02-navigation-closure.md)
+  - [DCI-03 Linkable Lab State](./programs/dci/SPRINT-DCI-03-linkable-lab-state.md)
+  - [DCI-04 Refusal Reasons and Native Dialogs](./programs/dci/SPRINT-DCI-04-refusal-reasons-and-native-dialogs.md)
+  - [DCI-05 Verification and Graduation](./programs/dci/SPRINT-DCI-05-verification-and-graduation.md)
+  - [DCI-05 Graduation Report](./programs/dci/evidence/DCI-05-graduation.md)
 - [**Program SLC (`docs/sprints/programs/slc/`)**](./programs/slc/INDEX.md) (Graduated `2026-11-20`; retired legacy Kubernetes/ArgoCD/Grafana collectors, example games, `app.astro` Mission Control, Redux stores and packages, and `routes/auth.js`)
   - [SLC Program Index](./programs/slc/INDEX.md)
   - [SLC Execution Plan](./programs/slc/slc-plan.md)

@@ -42,4 +42,4 @@ All `14` graduation gate commands from [`../dci-plan.md`](../dci-plan.md) ran se
 
 ## Stored Interface State Verification
 
-Added `## Stored interface state` with all `10` storage rows to [`../../../01-architecture/astro-host-and-islands.md`](../../../01-architecture/astro-host-and-islands.md), matching `js/runtime/presentation-controller.js`, `js/device-registry.js`, `js/harness/page-state.js`, `js/harness/lab-toolbar.js`, `src/pages/fiber-inspector.astro`, `src/pages/index.astro`, `src/pages/fiber-conformance.astro`, `js/harness/viewport-stage.js`, `js/harness/lab-runtime.js`, and `src/islands/PkcCardIsland.jsx`.
+Added `## Stored interface state` with all `10` storage rows to [`../../../01-architecture/astro-host-and-islands.md`](../../../../01-architecture/astro-host-and-islands.md), matching `js/runtime/presentation-controller.js`, `js/device-registry.js`, `js/harness/page-state.js`, `js/harness/lab-toolbar.js`, `src/pages/fiber-inspector.astro`, `src/pages/index.astro`, `src/pages/fiber-conformance.astro`, `js/harness/viewport-stage.js`, `js/harness/lab-runtime.js`, and `src/islands/PkcCardIsland.jsx`.

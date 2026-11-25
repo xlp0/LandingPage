@@ -1,4 +1,4 @@
-# DCI-05 Verification and Pre-Graduation Evidence
+# DCI-05 Verification and Graduation Evidence
 
 | Field | Value |
 | --- | --- |
@@ -7,7 +7,7 @@
 | End Verification Commit | `1d614564de837c5017dea7aa0f62c52d7de64c88` |
 | Consensus Kernel | `clm-kernel@0.0.26` |
 | Date | `2026-11-26` (`+08:00` local) |
-| Graduation Status | `AWAITING_OPERATOR_APPROVAL` (`Steps 1-5` complete; `Steps 6-7` wait for explicit operator graduation sign-off) |
+| Graduation Status | `GRADUATED (2026-11-26)` (Operator approval recorded in `DCI-graduation` row of [`DECISIONS.tsv`](../../../_active/DECISIONS.tsv); archive sealed at `docs/sprints/programs/dci/`) |
 
 ## 1. End-State vs Baseline Comparison (`SPRINT-DCI-00` to `SPRINT-DCI-05`)
 
@@ -51,7 +51,7 @@
 
 ## 4. Living Docs and Backlog Review (`2026-11-26`)
 
-- Updated [`../../../01-architecture/astro-host-and-islands.md`](../../../01-architecture/astro-host-and-islands.md), [`../../../functionalities/09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md`](../../../functionalities/09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md), and [`../../../00-getting-started/STATUS.md`](../../../00-getting-started/STATUS.md); regenerated [`../../../01-architecture/workbench-net.md`](../../../01-architecture/workbench-net.md) (`38` Places, `96` Transitions).
+- Updated [`../../../01-architecture/astro-host-and-islands.md`](../../../../01-architecture/astro-host-and-islands.md), [`../../../functionalities/09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md`](../../../../functionalities/09-RESPONSIVE-LAB-PENPOT-AND-DESIGN-SYSTEM.md), and [`../../../00-getting-started/STATUS.md`](../../../../00-getting-started/STATUS.md); regenerated [`../../../01-architecture/workbench-net.md`](../../../../01-architecture/workbench-net.md) (`38` Places, `96` Transitions).
 - Backlog entry conditions on `2026-11-26` ([`../dci-local-backlog.md`](../dci-local-backlog.md)):
   - **Candidate 1 (`PKC-06` island slot commit)**: Entry condition **unmet** (`LandingPage` `DoD-PKC-06-03` tests pass at `734f209`, but parent `DoD-PKC-06-03` box and owner intent for stage slot commits remain outside `LandingPage`).
   - **Candidate 2 (`Command line input path`)**: Entry condition **unmet** (requires Candidate 1 and a named user request).

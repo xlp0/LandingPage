@@ -4,8 +4,8 @@
 | --- | --- |
 | Audience | Scrum masters, BMAD role owners, UX designers, architects, developers, and TEA engineers |
 | BMAD Owner | Product Manager with UX Designer, Architect, Developer, Tech Writer, and TEA |
-| Source of Truth | This plan, [`./INDEX.md`](./INDEX.md), [`./DECISIONS.tsv`](./DECISIONS.tsv), [`./dci-local-backlog.md`](./dci-local-backlog.md), [`./evidence/DCI-pre-program-study.md`](./evidence/DCI-pre-program-study.md), and [`./evidence/DCI-egm-review.md`](./evidence/DCI-egm-review.md) |
-| Status | `ACTIVE` (`SPRINT-DCI-00` through `SPRINT-DCI-04` complete; `SPRINT-DCI-05` verification and graduation next) |
+| Source of Truth | This plan, [`./INDEX.md`](./INDEX.md), [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv), [`./dci-local-backlog.md`](./dci-local-backlog.md), [`./evidence/DCI-pre-program-study.md`](./evidence/DCI-pre-program-study.md), and [`./evidence/DCI-egm-review.md`](./evidence/DCI-egm-review.md) |
+| Status | `GRADUATED (2026-11-26)` (`SPRINT-DCI-00` through `SPRINT-DCI-05` complete and archived in `docs/sprints/programs/dci/`) |
 | Program | DCI, Declared reach, Closed navigation, and Interface state |
 | Consensus Kernel | `clm-kernel@0.0.26` |
 | Drift Gate | `npm run docs:check` |
@@ -125,7 +125,7 @@ The scope changed twice, and both changes are part of the record.
 | 3 | [DCI-02](./SPRINT-DCI-02-navigation-closure.md) | A nav on four pages and a net rule for pages without links. | DCI-01 | 2d | `DONE` |
 | 4 | [DCI-03](./SPRINT-DCI-03-linkable-lab-state.md) | Device, size, orientation, and mode in the Lab URL, with a copy-link control. | DCI-02 | 2d | `DONE` |
 | 5 | [DCI-04](./SPRINT-DCI-04-refusal-reasons-and-native-dialogs.md) | A visible reason for each disabled stage control, and no native dialog on the workbench pages. | DCI-03 | 1.5d | `DONE` |
-| 6 | [DCI-05](./SPRINT-DCI-05-verification-and-graduation.md) | Full gate matrix, living docs, and the archive to `docs/sprints/programs/dci/`. | DCI-01, DCI-02, DCI-03, DCI-04 | 1d | `IN_PROGRESS` |
+| 6 | [DCI-05](./SPRINT-DCI-05-verification-and-graduation.md) | Full gate matrix, living docs, and the archive to `docs/sprints/programs/dci/`. | DCI-01, DCI-02, DCI-03, DCI-04 | 1d | `DONE` |
 
 Every effort figure is a guess. The total is `9` days. The sprints run in order, because `SPRINT-DCI-02`, `SPRINT-DCI-03`, and `SPRINT-DCI-04` each edit `src/pages/responsive-lab.astro` or a page header that an earlier sprint also edits.
 
@@ -137,7 +137,7 @@ Every effort figure is a guess. The total is `9` days. The sprints run in order,
 - Give every new control a `data-testid`, inside the lint scope of `scripts/check-explorable-gui.mjs`.
 - Prove layout with `npm run stageshow:sweep -- --strict`. Capture `tests/baselines/layout-baseline.json` again only for the pages a sprint changes among the five that `tests/features/layout-freeze.spec.js` knows, with `STY_FREEZE=capture` and `STY_FREEZE_PAGES`. The sprint registry is not one of the five.
 - List the evidence file, `DECISIONS.tsv`, the sprint file, `INDEX.md`, and this plan in each sprint's Files section, and set the sprint's status in all three when it completes.
-- Save evidence in `docs/sprints/_active/evidence/DCI-0N-<slug>.md`. Append one row to [`./DECISIONS.tsv`](./DECISIONS.tsv) whose `phase` column is `DCI-0N-complete`.
+- Save evidence in `docs/sprints/_active/evidence/DCI-0N-<slug>.md`. Append one row to [`./DECISIONS.tsv`](../../_active/DECISIONS.tsv) whose `phase` column is `DCI-0N-complete`.
 - Pass the core gates: `npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run build && npm run test:unit && npm run test:smoke && npm run test:features`.
 
 ## Scope

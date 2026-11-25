@@ -8,10 +8,10 @@
 
 ## Delivered Changes
 
-1. **DOM-Only Safe Rendering (`PR-DCI-01A`)**: Removed both `innerHTML` writes in [`src/pages/sprint-registry.astro`](../../../../src/pages/sprint-registry.astro) (`replaceChildren()`, `document.createElement`, and `.textContent`). Verified with mocked `<pkc-card>` title injection fixture yielding literal text and zero `<pkc-card>` elements.
-2. **Pure Data Helpers (`PR-DCI-01B`)**: Created [`js/ui/registry-view.js`](../../../../js/ui/registry-view.js) (`programOf`, `matchesQuery`, `filterSprints`, `groupSprints`, `parseRegistryUrlState`, `mergeRegistryUrlState`) with [`tests/unit/registry-view.test.mjs`](../../../../tests/unit/registry-view.test.mjs).
+1. **DOM-Only Safe Rendering (`PR-DCI-01A`)**: Removed both `innerHTML` writes in [`src/pages/sprint-registry.astro`](../../../../../src/pages/sprint-registry.astro) (`replaceChildren()`, `document.createElement`, and `.textContent`). Verified with mocked `<pkc-card>` title injection fixture yielding literal text and zero `<pkc-card>` elements.
+2. **Pure Data Helpers (`PR-DCI-01B`)**: Created [`js/ui/registry-view.js`](../../../../../js/ui/registry-view.js) (`programOf`, `matchesQuery`, `filterSprints`, `groupSprints`, `parseRegistryUrlState`, `mergeRegistryUrlState`) with [`tests/unit/registry-view.test.mjs`](../../../../../tests/unit/registry-view.test.mjs).
 3. **Program Grouping, Filtering, Legend, and Deep Links**: Added `#registry-filters` (`#registry-filter-state`, `#registry-filter-program`, `#registry-filter-query`), `#registry-result`, `#registry-filters-clear`, state legend, sorted `section[data-testid="program-<code>"]` headings with registry totals, hash deep links `#sprint-<code>` (`load` + `hashchange`) that reset conflicting filters on hidden targets and focus `<a data-testid="sprint-link-<code>">`, `replaceState` URL persistence, and zero extra `/api/clm/registry` fetches.
-4. **Stored Interface State Documentation**: Added URL query parameter row (`state`, `program`, `q`) to [`../../../01-architecture/astro-host-and-islands.md`](../../../01-architecture/astro-host-and-islands.md).
+4. **Stored Interface State Documentation**: Added URL query parameter row (`state`, `program`, `q`) to [`../../../01-architecture/astro-host-and-islands.md`](../../../../01-architecture/astro-host-and-islands.md).
 
 ## `INV-DCI-05` Diff Invariant
 
