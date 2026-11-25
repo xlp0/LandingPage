@@ -17,6 +17,7 @@
 | **Program BPV (`SPRINT-BPV-00..07`)** | Bombadil `0.7.10` property verification, shared page-state contract, explorable GUI checks, trace-to-net replay, and local Docker nightly scheduler | Graduated (2026-11-18) | [`docs/sprints/programs/bpv/`](../sprints/programs/bpv/INDEX.md) |
 | **Program SSG (`SPRINT-SSG-00..08`)** | StageShow `1.1.1` device frames and layout craft, Bombadil runner dashboard (`8th` island), `12` built-in device presets, responsive tiers, and Shadow DOM portal showcase | Graduated (2026-11-20) | [`docs/sprints/programs/ssg/`](../sprints/programs/ssg/INDEX.md) |
 | **Program SLC (`SPRINT-SLC-00..04`)** | Post-SSG local cleanup: retired Kubernetes/ArgoCD/Grafana collectors, legacy example games, `app.astro` Mission Control, Redux stores and packages, and `routes/auth.js` | Graduated (2026-11-20) | [`docs/sprints/programs/slc/`](../sprints/programs/slc/INDEX.md) |
+| **Program DCI (`SPRINT-DCI-00..05`)** | Declared reach, closed cross-page navigation (`WorkbenchNav`), safe sprint registry grouping/filters/deep-links, linkable Lab URL state, stage/recorder refusal reasons, and in-page dialogs (`clm-kernel@0.0.26`) | Verification complete (`2026-11-26`; awaiting graduation) | [`docs/sprints/_active/`](../sprints/_active/INDEX.md) |
 
 ## Certified Device-Sensitive and Petri Net Capabilities
 
@@ -27,7 +28,7 @@
 | **Bleed, Tap Targets, and Frame Budget** | `INV-DEV-01`, `INV-DEV-02`, `INV-DEV-04` | `js/harness/telemetry-collector.js`, `js/harness/membrane-interceptor.js` | `tests/features/device-conformance.spec.js` |
 | **Normalized Capture and Privacy** | `INV-ERB-01..04`, `INV-PRV-01` | `js/harness/recorder.js` (`clmKernel: '0.0.26'`), `js/harness/test-run-schema.js` | `tests/unit/test-run-schema.test.mjs`, `tests/features/responsive-capture.spec.js` |
 | **Workbench and Target Petri Nets** | `urn:gqc:net-envelope:v1` | `src/net/workbench-net.yaml`, `scripts/check-net.mjs`, `server/test-run-api.mjs` | `npm run check:net`, `tests/features/spa-workbench-journey.spec.js`, `tests/features/spa-failure-recovery.spec.js` |
-| **Astro Host and 8 Preact Islands** | `astro@7.4.2`, `preact@11.1.0` | `ws-server.js`, `src/pages/*.astro`, `src/islands/*.jsx` | `tests/features/astro-host-parity.spec.js`, `tests/features/responsive-lab-islands.spec.js`, `tests/features/performance-baselines.spec.js` |
+| **Astro Host and 9 Preact Islands** | `astro@7.4.2`, `preact@11.1.0` | `ws-server.js`, `src/pages/*.astro`, `src/islands/*.jsx` | `tests/features/astro-host-parity.spec.js`, `tests/features/responsive-lab-islands.spec.js`, `tests/features/performance-baselines.spec.js` |
 | **Living Docs and Parity Gates** | `GQC-05`, `GQC-07` | `scripts/check-package-source-parity.mjs`, `scripts/check-docs.mjs` | `npm run docs:check`, `tests/unit/check-docs-net-ids.test.mjs` |
 
 ## Standard Verification Battery
