@@ -5,25 +5,25 @@
 | Audience | Scrum masters, BMAD role owners, developers, and operators |
 | BMAD Owner | Scrum Master |
 | Source of Truth | [`./DECISIONS.tsv`](./DECISIONS.tsv) and [`../INDEX.md`](../INDEX.md) |
-| Status | `IDLE` (`0` active sprints; `Program SLC` graduated `2026-11-20`; `Program DCI` proposed `2026-11-24`) |
+| Status | `ACTIVE` (`Program DCI`, `SPRINT-DCI-00` complete, `SPRINT-DCI-01` in progress) |
 | Consensus Kernel | `clm-kernel@0.0.26` |
 | Drift Gate | `npm run docs:check` |
 
 ## Active program status
 
-**Standby (`0` active sprints as of `2026-11-20`).**
+**Active (`Program DCI` in execution as of `2026-11-26`).**
 
 Program SLC (`SPRINT-SLC-00` through `SPRINT-SLC-04`) graduated with operator approval on `2026-11-20` and was archived into [`docs/sprints/programs/slc/`](../programs/slc/INDEX.md). This directory retains [`./DECISIONS.tsv`](./DECISIONS.tsv) as the canonical append-only decision ledger for future sprint programs.
 
-## Proposed program
+## Active program: Program DCI
 
-Program DCI (Declared reach, Closed navigation, and Interface state) was proposed on `2026-11-24` and revised after two EGM review rounds. The operator confirmed its six-sprint scope on `2026-11-25` local time. No sprint has started. The program waits for Flag 1 and Flag 2 of the plan. The workspace status stays `IDLE` until `SPRINT-DCI-00` starts.
+Program DCI (Declared reach, Closed navigation, and Interface state) was proposed on `2026-11-24`, confirmed for six-sprint scope on `2026-11-25`, and started on pinned commit `7837fab779360ee8daaeb941ee06f809465e6260` on `2026-11-26` after Flag 1 (`DCI-D04`) and Flag 2 approval. `SPRINT-DCI-00` is `DONE`; `SPRINT-DCI-01` is `IN_PROGRESS`.
 
 | Order | Sprint | Goal | Status |
 | ---: | --- | --- | :---: |
-| Plan | [`dci-plan.md`](./dci-plan.md) | Outcome, design decisions, scope flags, risks, sequence, and graduation rules | `PLANNED` |
-| 1 | [`SPRINT-DCI-00`](./SPRINT-DCI-00-pinned-baseline-and-stored-state.md) | Pinned start commit, a run of every gate, and the stored-state table | `PLANNED` |
-| 2 | [`SPRINT-DCI-01`](./SPRINT-DCI-01-sprint-registry-estate-map.md) | Groups, filters, search, and deep links on the sprint registry, with safe rendering | `PLANNED` |
+| Plan | [`dci-plan.md`](./dci-plan.md) | Outcome, design decisions, scope flags, risks, sequence, and graduation rules | `ACTIVE` |
+| 1 | [`SPRINT-DCI-00`](./SPRINT-DCI-00-pinned-baseline-and-stored-state.md) | Pinned start commit, a run of every gate, and the stored-state table | `DONE` |
+| 2 | [`SPRINT-DCI-01`](./SPRINT-DCI-01-sprint-registry-estate-map.md) | Groups, filters, search, and deep links on the sprint registry, with safe rendering | `IN_PROGRESS` |
 | 3 | [`SPRINT-DCI-02`](./SPRINT-DCI-02-navigation-closure.md) | A nav on four pages and a net rule for pages without links | `PLANNED` |
 | 4 | [`SPRINT-DCI-03`](./SPRINT-DCI-03-linkable-lab-state.md) | Device, size, orientation, and mode in the Lab URL | `PLANNED` |
 | 5 | [`SPRINT-DCI-04`](./SPRINT-DCI-04-refusal-reasons-and-native-dialogs.md) | A visible reason for each disabled stage control, and no native dialog | `PLANNED` |

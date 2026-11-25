@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-DCI-01` |
 | Source of Truth | [`./dci-plan.md`](./dci-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-DCI-01` |
-| Status | `PLANNED` |
+| Status | `IN_PROGRESS` |
 | Depends on | `PR-DCI-01A` depends on nothing. `PR-DCI-01B` depends on `PR-DCI-01A` and on `SPRINT-DCI-00` |
 | Unblocks | `SPRINT-DCI-02` |
 | Execution unit | `PR-DCI-01A`, then `PR-DCI-01B` |

@@ -52,14 +52,14 @@ Astro's client router remains disabled. Every workbench page switch executes as 
 | Route | Astro Page Source | Workbench Place(s) | Migration State | Island Count | Client Runtime Owner |
 | --- | --- | --- | --- | --- | --- |
 | `/` and `/index.html` | [`src/pages/index.astro`](../../src/pages/index.astro) | `p_page_index`, `p_view_index_mcard_viewer` | `astro-wrapped` | `0` | Redirects `/` to `/responsive-lab.html`. Mounts `js/landing-page-mcard.js`, `js/nav.js`, and Shadow DOM `#portal-stageshow-showcase` (`0` Astro islands, `0 B` `_astro/` JS) when `?noredirect=1` is present |
-| `/responsive-lab.html` | [`src/pages/responsive-lab.astro`](../../src/pages/responsive-lab.astro) | `p_page_responsive_lab` | `astro-islands` | `8` | `js/harness/lab-runtime.js` coordinator (`window.__lab`) |
+| `/responsive-lab.html` | [`src/pages/responsive-lab.astro`](../../src/pages/responsive-lab.astro) | `p_page_responsive_lab` | `astro-islands` | `9` | `js/harness/lab-runtime.js` coordinator (`window.__lab`) |
 | `/sprint-registry.html` | [`src/pages/sprint-registry.astro`](../../src/pages/sprint-registry.astro) | `p_page_sprint_registry` | `astro-wrapped` | `0` | Inline `/api/clm/registry` viewer owned by Scrum Master |
 | `/fiber-inspector.html` | [`src/pages/fiber-inspector.astro`](../../src/pages/fiber-inspector.astro) | `p_page_fiber_inspector` | `astro-wrapped` | `0` | `public/js/fibers/registry.js` inspector harness owned by Architect |
 | `/fiber-conformance.html` | [`src/pages/fiber-conformance.astro`](../../src/pages/fiber-conformance.astro) | `p_page_fiber_conformance` | `astro-wrapped` | `0` | `public/js/fibers/registry.js` conformance harness owned by Architect |
 
 `node tests/performance/place-bytes.mjs --enforce-zero-island-places` verifies in CI that every `astro-wrapped` Place downloads `0 B` of `_astro/` island JavaScript.
 
-## Responsive Lab 8-Island Ownership Map
+## Responsive Lab 9-Island Ownership Map
 
 `src/pages/responsive-lab.astro` validates `src/net/workbench-net.yaml` and `tests/fixtures/spa-test-target.graph.json` in Node frontmatter via `scripts/check-net.mjs`, `assertDisjointNetIds()`, and `scripts/net-to-netmcard.mjs`. Frontmatter passes plain JSON `targetNets` props to `SpaTestWorkflow`. Zero client files import `clm-kernel` or Node `crypto`.
 
@@ -76,6 +76,23 @@ Astro's client router remains disabled. Every workbench page switch executes as 
 | `PkcCardIsland` | [`src/islands/PkcCardIsland.jsx`](../../src/islands/PkcCardIsland.jsx) | `#pkc-card-disclosure` | `client:visible` | `js/harness/pkc-dragology-preview.js` | Deferred until `#pkc-card-disclosure` opens | UX Designer and Dev | Cancel preview and clear atom subscription |
 
 `body[data-page-state="loading"]` clears to `ready` after two `requestAnimationFrame` ticks once the eager boot islands mount and apply the initial device preset and `?target=` parameter, while `[data-testid="spa-test-workflow"][data-island-state="ready"]` marks the five-step guided workflow ready.
+
+## Stored interface state
+
+| Value | Lives in | Written by | After a reload | In a new tab | In another browser |
+| --- | --- | --- | --- | --- | --- |
+| Theme, key `govtech_display_theme` | `localStorage` | `js/runtime/presentation-controller.js` | Kept | Kept | Lost |
+| Power mode, key `govtech_power_mode` | `localStorage` | `js/runtime/presentation-controller.js` | Kept | Kept | Lost |
+| Custom devices, key `pkc_responsive_lab_devices_v2`, with a legacy copy under `pkc_responsive_lab_devices_v1` | `localStorage` | `js/device-registry.js` | Kept | Kept | Lost |
+| Last Place, key `gqc:page-state:last` | `sessionStorage` | `js/harness/page-state.js` | Kept | Lost | Lost |
+| Lab target, parameter `target` | URL | `js/harness/lab-toolbar.js` | Kept | Kept when the URL is copied | Kept when the URL is copied |
+| Theme override, parameter `display_mode` | URL | Read only, by `js/runtime/presentation-controller.js` and by `src/pages/fiber-inspector.astro` | Kept | Kept when the URL is copied | Kept when the URL is copied |
+| Redirect switch, parameter `noredirect` | URL | Read only, by `src/pages/index.astro` | Kept | Kept when the URL is copied | Kept when the URL is copied |
+| Harness parameters of the conformance page | URL | Read only, by `src/pages/fiber-conformance.astro` | Kept | Kept when the URL is copied | Kept when the URL is copied |
+| Lab device, size, orientation, mode, arrangement, scale mode, and safe-area flag | Memory | `js/harness/viewport-stage.js` and `js/harness/lab-runtime.js` | Lost | Lost | Lost |
+| Selection in the `PKC-06` island | Memory | `src/islands/PkcCardIsland.jsx` | Lost | Lost | Lost |
+
+No script enforces this table, and `SPRINT-DCI-03` changes the row for the Lab device, size, orientation, and mode.
 
 ## UI Server-Call Placement Policy
 

@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-DCI-00` |
 | Source of Truth | [`./dci-plan.md`](./dci-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-DCI-00` |
-| Status | `PLANNED` |
+| Status | `DONE` |
 | Depends on | Flag 2. `DoD-PKC-06-03` is ticked in the parent file `docs/sprints/_active/pkc/sprint-pkc-06-dragology-algebra-mpa-spa-unification-and-tfz-llm.md`, and its change set and the `clm-kernel` pin are committed here |
 | Unblocks | `PR-DCI-01B` and every later sprint, when all `14` baseline exit codes are `0` |
 | Execution unit | `PR-DCI-00` |
@@ -126,7 +126,7 @@ The sprint also writes down where the UI keeps state. Today that knowledge is sp
 
 ## Definition of done
 
-- [ ] **DoD-DCI-00-01.** The start commit is recorded, it holds the ninth island, and nothing outside `docs/` has changed since. Verified by `START=$(sed -nE 's/^\| Start commit \| .([0-9a-f]{7,40}). \|.*/\1/p' docs/sprints/_active/evidence/DCI-00-pinned-baseline.md) && git cat-file -e "$START:src/islands/PkcCardIsland.jsx" && test -z "$(git diff --name-only "$START" HEAD -- . ':!docs')"`.
-- [ ] **DoD-DCI-00-02.** All `14` graduation gates exited `0` on the start commit. Verified by `test "$(grep -cE '^\| .(npm run|node scripts)[^|]*. \| 0 \|' docs/sprints/_active/evidence/DCI-00-pinned-baseline.md)" -eq 14`.
-- [ ] **DoD-DCI-00-03.** The stored-state table is in the living architecture doc. Verified by `grep -q '^## Stored interface state' docs/01-architecture/astro-host-and-islands.md && grep -q 'govtech_display_theme' docs/01-architecture/astro-host-and-islands.md && npm run docs:check`.
-- [ ] **DoD-DCI-00-04.** The scope approval and the completion row are recorded. Verified by `grep -qE $'\tDCI-scope-approval\t' docs/sprints/_active/DECISIONS.tsv && grep -qE $'\tDCI-00-complete\t' docs/sprints/_active/DECISIONS.tsv`.
+- [x] **DoD-DCI-00-01.** The start commit is recorded, it holds the ninth island, and nothing outside `docs/` has changed since. Verified by `START=$(sed -nE 's/^\| Start commit \| .([0-9a-f]{7,40}). \|.*/\1/p' docs/sprints/_active/evidence/DCI-00-pinned-baseline.md) && git cat-file -e "$START:src/islands/PkcCardIsland.jsx" && test -z "$(git diff --name-only "$START" HEAD -- . ':!docs')"`.
+- [x] **DoD-DCI-00-02.** All `14` graduation gates exited `0` on the start commit. Verified by `test "$(grep -cE '^\| .(npm run|node scripts)[^|]*. \| 0 \|' docs/sprints/_active/evidence/DCI-00-pinned-baseline.md)" -eq 14`.
+- [x] **DoD-DCI-00-03.** The stored-state table is in the living architecture doc. Verified by `grep -q '^## Stored interface state' docs/01-architecture/astro-host-and-islands.md && grep -q 'govtech_display_theme' docs/01-architecture/astro-host-and-islands.md && npm run docs:check`.
+- [x] **DoD-DCI-00-04.** The scope approval and the completion row are recorded. Verified by `grep -qE $'\tDCI-scope-approval\t' docs/sprints/_active/DECISIONS.tsv && grep -qE $'\tDCI-00-complete\t' docs/sprints/_active/DECISIONS.tsv`.

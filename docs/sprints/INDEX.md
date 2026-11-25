@@ -5,13 +5,13 @@
 | Audience | Scrum masters, product managers, architects, developers, and operators |
 | BMAD Owner | Scrum Master (`bmad-agent-pm` / Scrum Master) |
 | Source of Truth | [`docs/sprints/_active/INDEX.md`](./_active/INDEX.md) and [`docs/sprints/_active/DECISIONS.tsv`](./_active/DECISIONS.tsv) |
-| Status | `IDLE` (`0` active sprints; `6` graduated programs archived) |
+| Status | `ACTIVE` (`Program DCI`; `6` graduated programs archived) |
 | Drift Gate | `npm run docs:check` |
 
 ## Active program
 
-- [**Active Sprint Workspace (`docs/sprints/_active/`)**](./_active/INDEX.md) (Standby with `0` active sprints; holds the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) ledger)
-- [**Program DCI plan (proposed `2026-11-24`)**](./_active/dci-plan.md) (`SPRINT-DCI-00` through `SPRINT-DCI-05`, all `PLANNED`; scope confirmed by the operator on `2026-11-25` local time; waits for Flag 1 and Flag 2 of the plan before any sprint starts)
+- [**Active Sprint Workspace (`docs/sprints/_active/`)**](./_active/INDEX.md) (`ACTIVE` with `Program DCI`; holds the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) ledger)
+- [**Program DCI (`docs/sprints/_active/dci-plan.md`)**](./_active/dci-plan.md) (`SPRINT-DCI-00` complete on `7837fab`; `SPRINT-DCI-01` in progress)
 
 ## Graduated programs
 

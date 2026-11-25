@@ -18,7 +18,7 @@
 | **Domain Engineering Tiers** | [`02-authentication/`](02-authentication/README.md) through [`11-standards/`](11-standards/README.md) | Maintained domain guides and performance baselines | Domain Lead per tier `README.md` |
 | **Capability Reference Library** | [`functionalities/`](functionalities/README.md) | Maintained capability reference (`DECISIONS.tsv` row 63), distinct from operational quickstarts | Tech Writer and Architect |
 | **Graduated Sprint Archives** | [`sprints/01-architecture/`](sprints/01-architecture/INDEX.md), [`sprints/08-testing/`](sprints/08-testing/INDEX.md), [`sprints/programs/gqc/`](sprints/programs/gqc/INDEX.md), [`sprints/programs/bpv/`](sprints/programs/bpv/INDEX.md), [`sprints/programs/ssg/`](sprints/programs/ssg/INDEX.md), [`sprints/programs/slc/`](sprints/programs/slc/INDEX.md) | Sealed sprint records (`SMO-00..05`, `ERB-00..06`, `GQC-00..07`, `BPV-00..07`, `SSG-00..08`, `SLC-00..04`) | Scrum Master |
-| **Active Sprint Workspace** | [`sprints/_active/`](sprints/_active/INDEX.md) | Standby (`0` active sprints; `Program SLC` graduated `2026-11-20`); retains canonical `DECISIONS.tsv` ledger | Scrum Master |
+| **Active Sprint Workspace** | [`sprints/_active/`](sprints/_active/INDEX.md) | Active (`Program DCI`; `Program SLC` graduated `2026-11-20`); retains canonical `DECISIONS.tsv` ledger | Scrum Master |
 | **Legacy Archive** | [`archive/`](archive/REORGANIZATION_PROPOSAL.md) | Historical pre-reorganization snapshots | Tech Writer |
 
 ---

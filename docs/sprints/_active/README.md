@@ -5,17 +5,17 @@
 | Audience | Scrum masters, BMAD role leads, developers, and operators |
 | BMAD Owner | Scrum Master |
 | Source of Truth | [`./INDEX.md`](./INDEX.md), [`./DECISIONS.tsv`](./DECISIONS.tsv), and [`../INDEX.md`](../INDEX.md) |
-| Status | `IDLE` (`0` active sprints; `Program SLC` graduated `2026-11-20`; `Program DCI` proposed `2026-11-24`) |
+| Status | `ACTIVE` (`Program DCI`, `SPRINT-DCI-00` complete, `SPRINT-DCI-01` in progress) |
 | Consensus Kernel | `clm-kernel@0.0.26` |
 | Drift Gate | `npm run docs:check` |
 
 ## Workspace status
 
-**Standby (`0` active sprints as of `2026-11-20`).**
+**Active (`Program DCI` in execution as of `2026-11-26`).**
 
 Program SLC (`SPRINT-SLC-00` through `SPRINT-SLC-04`) completed and graduated with operator approval on `2026-11-20` into [`docs/sprints/programs/slc/`](../programs/slc/INDEX.md). [`./INDEX.md`](./INDEX.md), [`./README.md`](./README.md), and the canonical append-only [`./DECISIONS.tsv`](./DECISIONS.tsv) decision ledger remain here between programs.
 
-Program DCI was proposed on `2026-11-24`. Its plan, its six sprint specifications, and its local backlog sit in this directory. The sprints have status `PLANNED`. The operator confirmed the scope on `2026-11-25` local time. No sprint starts before Flag 2 of the plan holds. The workspace status stays `IDLE` until then.
+Program DCI was proposed on `2026-11-24`, confirmed for scope on `2026-11-25`, and started on pinned commit `7837fab779360ee8daaeb941ee06f809465e6260` on `2026-11-26` after Flag 1 and Flag 2 approval. `SPRINT-DCI-00` is complete and `SPRINT-DCI-01` is in progress.
 
 ## Active artifacts
 
