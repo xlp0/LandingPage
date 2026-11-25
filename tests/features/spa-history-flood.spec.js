@@ -28,12 +28,31 @@ test.describe('SPRINT-BPV-00: SPA fixture under Chrome history flood protection'
           hash: location.hash
         }));
 
-      for (let i = 0; i < CLICKS_PAST_FLOOD_LIMIT; i += 1) {
+      const burstMismatch = await page.evaluate(
+        ({ count, hashByPlace }) => {
+          for (let i = 0; i < count; i += 1) {
+            const root = document.querySelector('[data-testid="spa-app-root"]');
+            const place = root.getAttribute('data-place-id');
+            const testId = place === 'p_spa_details' ? 'btn-back-overview' : 'btn-open-details';
+            document.querySelector(`[data-testid="${testId}"]`).click();
+            const nextPlace = root.getAttribute('data-place-id');
+            if (location.hash !== hashByPlace[nextPlace]) {
+              return { step: i + 1, nextPlace, hash: location.hash };
+            }
+          }
+          return null;
+        },
+        { count: CLICKS_PAST_FLOOD_LIMIT, hashByPlace: HASH_BY_PLACE }
+      );
+      expect(burstMismatch, 'burst clicks keep hash aligned with shown place').toBeNull();
+
+      // Verify real user clicks under active Chrome history throttling also keep view and URL aligned.
+      for (let i = 0; i < 10; i += 1) {
         const before = await readView();
         const testId = before.place === 'p_spa_details' ? 'btn-back-overview' : 'btn-open-details';
         await page.getByTestId(testId).click();
         const view = await readView();
-        expect(view.hash, `click ${i + 1} leaves the hash matching the shown place`).toBe(HASH_BY_PLACE[view.place]);
+        expect(view.hash, `throttled click ${i + 1} leaves the hash matching the shown place`).toBe(HASH_BY_PLACE[view.place]);
       }
 
       expect(warnings.length, 'Chrome throttled history updates during the run').toBeGreaterThan(0);
