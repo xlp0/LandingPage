@@ -90,10 +90,11 @@ Astro's client router remains disabled. Every workbench page switch executes as 
 | Redirect switch, parameter `noredirect` | URL | Read only, by `src/pages/index.astro` | Kept | Kept when the URL is copied | Kept when the URL is copied |
 | Harness parameters of the conformance page | URL | Read only, by `src/pages/fiber-conformance.astro` | Kept | Kept when the URL is copied | Kept when the URL is copied |
 | Sprint registry filters, parameters `state`, `program`, and `q` | URL | `src/pages/sprint-registry.astro` (`js/ui/registry-view.js`) | Kept | Kept when the URL is copied | Kept when the URL is copied |
-| Lab device, size, orientation, mode, arrangement, scale mode, and safe-area flag | Memory | `js/harness/viewport-stage.js` and `js/harness/lab-runtime.js` | Lost | Lost | Lost |
+| Lab device, size, orientation, and mode, parameters `device`, `w`, `h`, `orientation`, and `mode` | URL | `js/harness/lab-runtime.js` (`js/harness/lab-url-state.js`) | Kept | Kept when the URL is copied | Kept when the URL is copied |
+| Lab arrangement, scale mode, and safe-area flag | Memory | `js/harness/viewport-stage.js` and `js/harness/lab-runtime.js` | Lost | Lost | Lost |
 | Selection in the `PKC-06` island | Memory | `src/islands/PkcCardIsland.jsx` | Lost | Lost | Lost |
 
-No script enforces this table, and `SPRINT-DCI-03` changes the row for the Lab device, size, orientation, and mode.
+No script enforces this table.
 
 ## UI Server-Call Placement Policy
 

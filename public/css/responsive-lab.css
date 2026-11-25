@@ -825,6 +825,16 @@ button.nav-action-link {
   flex-wrap: wrap;
 }
 
+#stage-message {
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+  font-size: 0.74rem;
+  line-height: 1.3;
+  color: var(--badge-warning-text, #fbbf24);
+  overflow-wrap: anywhere;
+}
+
 .stage-well {
   flex: 1 1 auto;
   min-height: 0;

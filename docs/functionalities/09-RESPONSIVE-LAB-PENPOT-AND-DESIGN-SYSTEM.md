@@ -75,6 +75,7 @@ Governed by specification **RVP-02**, the device registry replaces ad-hoc CSS me
 ## 3. Responsive Lab Capabilities ([`responsive-lab.html`](../../src/pages/responsive-lab.astro))
 
 - **Single Target Ingestion (`?target=<URL>`)**: Dynamically binds the laboratory viewport stage to any designated LandingPage URL (e.g., `http://localhost:4321/` or `/index.html`), enabling focused benchmarking of a single web target.
+- **Linkable Lab URL State (`?device=...&w=...&h=...&orientation=...&mode=...`)**: Synchronizes user-committed device preset (`device`), custom dimensions (`w`, `h`), orientation (`portrait`, `landscape`), and dock mode (`explore`, `guided-spa`, `bombadil`, `verify`) into the address bar with `history.replaceState` and a `#btn-copy-lab-link` copy button, while reporting ignored query parameters in `#lab-url-state-notice`. Example link: `/responsive-lab.html?target=%2Findex.html&device=iphone-16-pro&orientation=landscape&mode=verify`.
 - **Full-Window Viewport Workbench**: Emulates target screen sizes inside an isolated sandbox container.
 - **Dynamic Rotation (`INV-RVP-01`)**: One-click toggle between Portrait and Landscape orientations, recalculating layout constraints and swapping width/height in real time.
 - **Layout Freeze & Overflow Detection**: Stress-tests reflow performance by cycling rapidly through viewport dimensions and asserting zero element clipping or horizontal overflow.

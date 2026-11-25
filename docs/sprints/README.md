@@ -12,7 +12,7 @@ This directory houses sprint planning, execution specifications, evidence report
 
 ## Directory Structure
 
-- [**`_active/`**](./_active/INDEX.md) is active (`Program DCI`, `SPRINT-DCI-00..02` complete and `SPRINT-DCI-03` in progress) and holds the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) decision ledger and [**Program DCI plan**](./_active/dci-plan.md).
+- [**`_active/`**](./_active/INDEX.md) is active (`Program DCI`, `SPRINT-DCI-00..03` complete and `SPRINT-DCI-04` in progress) and holds the canonical append-only [`DECISIONS.tsv`](./_active/DECISIONS.tsv) decision ledger and [**Program DCI plan**](./_active/dci-plan.md).
 - [**`programs/slc/`**](./programs/slc/INDEX.md) archives graduated **Program SLC** (`SPRINT-SLC-00..04`, graduated `2026-11-20` with operator approval; see [`SLC-04-auth-and-graduation.md`](./programs/slc/evidence/SLC-04-auth-and-graduation.md)).
 - [**`programs/ssg/`**](./programs/ssg/INDEX.md) archives graduated **Program SSG** (`SPRINT-SSG-00..08`, graduated `2026-11-20` with operator approval; see [`SSG-08-graduation.md`](./programs/ssg/evidence/SSG-08-graduation.md)).
 - [**`programs/bpv/`**](./programs/bpv/INDEX.md) archives graduated **Program BPV** (`SPRINT-BPV-00..07`, graduated `2026-11-18` with operator approval; see [`BPV-07-graduation.md`](./programs/bpv/evidence/BPV-07-graduation.md); `bombadil-scheduler` remains active daily at `02:30` UTC).

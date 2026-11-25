@@ -7,7 +7,7 @@
 | Sprint ID | `SPRINT-DCI-03` |
 | Source of Truth | [`./dci-plan.md`](./dci-plan.md) and [`./INDEX.md`](./INDEX.md) |
 | Handle | `urn:pcard:sprint:SPRINT-DCI-03` |
-| Status | `PLANNED` |
+| Status | `DONE` |
 | Depends on | `SPRINT-DCI-02` |
 | Unblocks | `SPRINT-DCI-04` |
 | Execution unit | `PR-DCI-03` |
@@ -130,8 +130,8 @@ This sprint adds five parameters beside `target`. It does not change how `target
 
 ## Definition of done
 
-- [ ] **DoD-DCI-03-01.** Every state the Lab can produce parses back to itself, every invalid value yields its reason, and foreign parameters survive a merge. Verified by `node --test tests/unit/lab-url-state.test.mjs`.
-- [ ] **DoD-DCI-03-02.** A Lab link restores the device, the orientation, and the mode, a reload keeps them, and window resizes write nothing. Verified by `npx playwright test tests/features/lab-url-state.spec.js --project=features`.
-- [ ] **DoD-DCI-03-03.** Every feature spec passes. Verified by `npm run test:features`.
-- [ ] **DoD-DCI-03-04.** The layout holds at four widths against the new baseline. Verified by `npm run stageshow:sweep -- --strict`.
-- [ ] **DoD-DCI-03-05.** Evidence and the completion row are recorded with the remaining core gates green. Verified by `test -s docs/sprints/_active/evidence/DCI-03-linkable-lab-state.md && grep -qE $'\tDCI-03-complete\t' docs/sprints/_active/DECISIONS.tsv && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run build && npm run test:unit && npm run test:smoke`.
+- [x] **DoD-DCI-03-01.** Every state the Lab can produce parses back to itself, every invalid value yields its reason, and foreign parameters survive a merge. Verified by `node --test tests/unit/lab-url-state.test.mjs`.
+- [x] **DoD-DCI-03-02.** A Lab link restores the device, the orientation, and the mode, a reload keeps them, and window resizes write nothing. Verified by `npx playwright test tests/features/lab-url-state.spec.js --project=features`.
+- [x] **DoD-DCI-03-03.** Every feature spec passes. Verified by `npm run test:features`.
+- [x] **DoD-DCI-03-04.** The layout holds at four widths against the new baseline. Verified by `npm run stageshow:sweep -- --strict`.
+- [x] **DoD-DCI-03-05.** Evidence and the completion row are recorded with the remaining core gates green. Verified by `test -s docs/sprints/_active/evidence/DCI-03-linkable-lab-state.md && grep -qE $'\tDCI-03-complete\t' docs/sprints/_active/DECISIONS.tsv && npm run stageshow:check-css && node scripts/check-package-source-parity.mjs && npm run check:explorable-gui && npm run check:net && npm run check:bombadil-nets && npm run check:playwright-discovery && npm run docs:check && npm run build && npm run test:unit && npm run test:smoke`.

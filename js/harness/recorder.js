@@ -15,7 +15,7 @@ import {
 } from './test-run-schema.js';
 
 export const DEFAULT_CLM_KERNEL_VERSION = '0.0.26';
-const RECORDED_VIEWPORT_CAUSES = new Set(['preset', 'custom', 'rotate']);
+export const RECORDED_VIEWPORT_CAUSES = new Set(['preset', 'custom', 'rotate']);
 
 function stripDeviceUiFields(dev, width, height) {
   const safeW = Math.min(DIM_MAX, Math.max(DIM_MIN, Math.round(Number(width))));

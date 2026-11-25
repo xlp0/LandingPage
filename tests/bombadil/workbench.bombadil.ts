@@ -137,7 +137,8 @@ const SKIPPED_SELECTOR = [
   "#bombadil-dashboard-panel button",
   '[data-testid^="nav-"]',
   '[data-testid="workbench-nav-summary"]',
-  '[data-testid="link-conformance-harness"]'
+  '[data-testid="link-conformance-harness"]',
+  '[data-testid="btn-copy-lab-link"]'
 ].join(",");
 
 const RECT_MARGIN_PX = 2;

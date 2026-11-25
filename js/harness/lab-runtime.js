@@ -1,11 +1,18 @@
-import { DeviceRegistry } from '../device-registry.js';
+import { DeviceRegistry, BUILTIN_DEVICES } from '../device-registry.js';
 import { createViewportStage } from './viewport-stage.js';
 import { createTargetMembrane, classifyTargetSelection } from './target-membrane.js';
 import { installLabApi } from './lab-api.js';
 import { createCaptureSource } from './membrane-interceptor.js';
-import { InteractionRecorder } from './recorder.js';
+import { InteractionRecorder, RECORDED_VIEWPORT_CAUSES } from './recorder.js';
 import { resolveFidelity } from './fidelity.js';
 import { createBombadilClient } from './bombadil-client.js';
+import {
+  parseLabUrlState,
+  orientationIssue,
+  labUrlStateFromGeometry,
+  mergeLabUrlState,
+  issueSentence
+} from './lab-url-state.js';
 
 const REQUIRED_BOOT_PARTICIPANTS = ['stage', 'toolbar', 'presets', 'ribbon', 'workflow'];
 const WORKBENCH_MODES = ['explore', 'guided-spa', 'bombadil', 'verify'];
@@ -479,6 +486,30 @@ function createLabRuntimeInstance() {
       runtimeCleanups.push(() => bombadilPill.removeEventListener('click', onPillClick));
     }
 
+    const copyLinkBtn = document.getElementById('btn-copy-lab-link');
+    if (copyLinkBtn) {
+      let copyResetTimer = null;
+      const onCopyLink = () => {
+        if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+          Promise.resolve(navigator.clipboard.writeText(window.location.href)).catch(() => { });
+        }
+        copyLinkBtn.textContent = 'Link copied';
+        if (copyResetTimer !== null) clearTimeout(copyResetTimer);
+        copyResetTimer = setTimeout(() => {
+          copyLinkBtn.textContent = 'Copy link';
+          copyResetTimer = null;
+        }, 1500);
+      };
+      copyLinkBtn.addEventListener('click', onCopyLink);
+      runtimeCleanups.push(() => {
+        copyLinkBtn.removeEventListener('click', onCopyLink);
+        if (copyResetTimer !== null) {
+          clearTimeout(copyResetTimer);
+          copyResetTimer = null;
+        }
+      });
+    }
+
     const unsubBombadil = bombadil.subscribe((ev) => syncBombadilChrome(ev));
     runtimeCleanups.push(unsubBombadil);
 
@@ -514,6 +545,75 @@ function createLabRuntimeInstance() {
     if (!REQUIRED_BOOT_PARTICIPANTS.every((key) => bootReadySet.has(key))) return;
     bootFinished = true;
     syncLabApi();
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+      const builtinIds = new Set(BUILTIN_DEVICES.map((d) => d.id));
+      const { state, issues } = parseLabUrlState(window.location?.search || '', {
+        deviceIds: builtinIds,
+        modes: WORKBENCH_MODES
+      });
+      if (state.device) {
+        if (state.device === 'full') stage.selectFullViewport('boot-param');
+        else stage.selectDevicePreset(state.device, 'boot-param');
+      }
+      if (Number.isFinite(state.w) && Number.isFinite(state.h)) {
+        stage.setViewportSize(state.w, state.h, 'px', '', null, 'boot-param');
+      }
+      if (state.orientation) {
+        const fixedIssue = orientationIssue(stage.getGeometry());
+        if (fixedIssue) {
+          issues.push(fixedIssue);
+        } else {
+          stage.setOrientation(state.orientation, 'boot-param');
+        }
+      }
+      if (state.mode) {
+        setWorkbenchMode(state.mode);
+      }
+
+      const noticeEl = document.getElementById('lab-url-state-notice');
+      if (noticeEl && issues.length > 0) {
+        noticeEl.textContent = issues.map(issueSentence).filter(Boolean).join(' ');
+        noticeEl.hidden = false;
+      }
+
+      const writeUrlState = () => {
+        if (noticeEl && !noticeEl.hidden) {
+          noticeEl.hidden = true;
+          noticeEl.textContent = '';
+        }
+        const geom = stage.getGeometry();
+        const activeDev = geom?.deviceId ? registry.getById(geom.deviceId) : null;
+        const nextState = labUrlStateFromGeometry(geom, workbenchMode, Boolean(activeDev?.isBuiltin));
+        const currentSearch = window.location?.search || '';
+        const merged = mergeLabUrlState(currentSearch, nextState);
+        const rawSearch = new URLSearchParams(currentSearch).toString();
+        const currentNormalized = rawSearch ? `?${rawSearch}` : '';
+        if (merged === currentNormalized) return;
+        if (typeof window.history?.replaceState === 'function') {
+          try {
+            window.history.replaceState(
+              window.history.state,
+              '',
+              `${window.location.pathname}${merged}${window.location.hash || ''}`
+            );
+          } catch { }
+        }
+      };
+
+      const onViewportCommit = (ev) => {
+        if (!RECORDED_VIEWPORT_CAUSES.has(ev?.detail?.cause)) return;
+        writeUrlState();
+      };
+      const onModeCommit = () => {
+        writeUrlState();
+      };
+      document.addEventListener('lab:viewport-change', onViewportCommit);
+      document.addEventListener('lab:workbench-mode-change', onModeCommit);
+      runtimeCleanups.push(() => {
+        document.removeEventListener('lab:viewport-change', onViewportCommit);
+        document.removeEventListener('lab:workbench-mode-change', onModeCommit);
+      });
+    }
     if (typeof requestAnimationFrame === 'function' && typeof document !== 'undefined') {
       outerRafId = requestAnimationFrame(() => {
         outerRafId = null;

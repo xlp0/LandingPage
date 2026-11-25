@@ -282,6 +282,7 @@ const targetNets = {
           <span class="frame-dimension-pill" id="controlled-frame-dim">
             100% × 100% • Responsive
           </span>
+          <p id="stage-message" data-testid="stage-message" role="status"><span id="lab-url-state-notice" data-testid="lab-url-state-notice" hidden></span></p>
         </div>
         <div class="stage-toolbar-actions">
           <button
@@ -318,6 +319,14 @@ const targetNets = {
             data-testid="btn-safe-area-toggle"
           >
             Safe-area: Off
+          </button>
+          <button
+            id="btn-copy-lab-link"
+            type="button"
+            class="toolbar-btn"
+            data-testid="btn-copy-lab-link"
+          >
+            Copy link
           </button>
         </div>
       </div>

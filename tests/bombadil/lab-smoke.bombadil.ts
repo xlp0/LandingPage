@@ -22,7 +22,8 @@ const SKIPPED_SELECTOR = [
   "#bombadil-dashboard-panel button",
   '[data-testid^="nav-"]',
   '[data-testid="workbench-nav-summary"]',
-  '[data-testid="link-conformance-harness"]'
+  '[data-testid="link-conformance-harness"]',
+  '[data-testid="btn-copy-lab-link"]'
 ].join(",");
 
 // A click point can be a fraction of a pixel outside a control and still press it.
