@@ -9,6 +9,11 @@ All notable changes to the PKC Landing Page are documented in this file. The for
 
 ## [Unreleased]
 
+- **Published `clm-kernel@0.0.26` Consensus (`0.0.27` Workspace), `PKC-06` Integration, and `Program DCI` Graduation (`2026-11-26`)**:
+  - Upgraded published `clm-kernel@0.0.26` consumer pins (`0.0.27` active `clm/` workspace) across `package.json`, `package-lock.json`, `tools/ui-verify/`, `server/mcard-api.mjs`, `server/mcard-modality.mjs`, `js/harness/recorder.js`, and documentation hubs.
+  - Integrated `PKC-06`: migrated `CanonicalTriadBackend` (`server/mcard-api.mjs`) onto `MCardFileSystem` (`clm-kernel/store`) and `NodeSqliteBackend` (`clm-kernel/node`), added Web-LLM zero-lease TFZ gating (`js/modules/web-llm/tfz-gate.js`, `llm-manager.js`), mounted `<pkc-card>` (`js/harness/pkc-dragology-preview.js`, `src/islands/PkcCardIsland.jsx`) on `src/pages/responsive-lab.astro`, added `scripts/check-pkc-client-contract.mjs`, and preserved `ws-server.js` byte-identical (`SHA-256 ac2012f4dc5547138f3127655c6ccb2171d2598cd13c7f507a51dcb885035864`).
+  - Graduated `Program DCI` (`SPRINT-DCI-00..05` archived to `docs/sprints/programs/dci/`), verified by `322/322` unit tests, `298` docs passing `docs:check`, `check:net` (`38` places / `96` transitions), and `check-pkc-client-contract.mjs`.
+
 - **Program SLC Graduated (`SPRINT-SLC-00..04`, 2026-11-20)**:
   - **Infrastructure Subtraction (`SPRINT-SLC-00`)**: Removed `61` unmaintained `k8s/`, root `argocd-*.yaml`, `.github/workflows/deploy-k8s.yml`, and Grafana metrics collector workflow/dump/script files while preserving `Dockerfile`, `docker-compose*.yml`, `docker/bombadil/`, and CI test workflows.
   - **Legacy Example Games Subtraction (`SPRINT-SLC-01`)**: Deinitialized the `3DObjectViewer` submodule and removed `.gitmodules`, `public/examples/games/`, `public/examples/3DGames/`, `js/modules/tic-tac-toe-p2p/`, `docs/06-components/games/`, and game net transitions while keeping `Music/`, `WaveVisualizers/`, `THREEJS_ANIMEJS/`, and `location-map.html`.
